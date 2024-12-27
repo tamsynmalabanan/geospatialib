@@ -66,6 +66,7 @@ INSTALLED_APPS = [
 
     # project
     'customuser',
+    'main',
 ]
 
 LEAFLET_CONFIG = {
