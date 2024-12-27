@@ -117,6 +117,9 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
+    # project
+    'htmx.middleware.HTMXDomainRestriction',
 ]
 
 ROOT_URLCONF = 'project.urls'
