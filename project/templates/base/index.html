@@ -10,9 +10,7 @@
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         {% block body %}
-            <div class='container-fluid'>
-                test
-            </div>
+            {% include "base/default/body.html" %}
         {% endblock body %}
         {% include "base/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
