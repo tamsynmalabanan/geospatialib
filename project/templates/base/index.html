@@ -1,13 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock title %}</title>
-</head>
-<body>
-    {% block body %}{% endblock body %}
-    {% include "base/partials/scripts.html" %}
-    {% block scripts %}{% endblock scripts %}
-</body>
-</html>
+{% with app_name=request.resolver_match.app_name url_name=request.resolver_match.url_name %}
+    <!DOCTYPE html>
+    <html lang="en" data-bs-theme='dark'>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock title %} - Geospatialib</title>
+        {% include "base/partials/resources/styles.html" %}
+        {% block styles %}{% endblock styles %}
+    </head>
+    <body>
+        {% block body %}{% endblock body %}
+        {% include "base/partials/resources/scripts.html" %}
+        {% block scripts %}{% endblock scripts %}
+    </body>
+    </html>
+{% endwith %}

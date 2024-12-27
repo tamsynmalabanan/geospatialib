@@ -1,0 +1,13 @@
+{% load static %}
+{% load django_htmx %}
+
+{% comment %} htmx {% endcomment %}
+<script src="{% static 'htmx/js/htmx.min.js' %}" defer></script>
+{% django_htmx_script %}
+
+{% comment %} leaflet and plugins {% endcomment %}
+<script src="{% static 'leaflet/js/leaflet.min.js' %}" defer></script>
+<script src="{% static 'leaflet-control-geocoder/js/Control.Geocoder.min.js' %}" defer></script>
+<script src="{% static 'leaflet-proj4/js/proj4leaflet.min.js' %}" defer></script>
+<script src="{% static 'proj4/js/proj4.js' %}" defer></script>
+<script src="{% static 'turf/js/turf.min.js' %}" defer></script>

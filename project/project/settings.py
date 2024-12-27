@@ -89,17 +89,17 @@ LEAFLET_CONFIG = {
     'NO_GLOBALS': False,
     'FORCE_IMAGE_PATH': True,
 
-    'PLUGINS': {
-        # 'geocoder': {
-        #     'css': [
-        #         'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css', 
-        #     ],
-        #     'js': [
-        #         'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
-        #     ],
-        #     'auto_include': True,
-        # },
-    },
+    # 'PLUGINS': {
+    #     'geocoder': {
+    #         'css': [
+    #             'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css', 
+    #         ],
+    #         'js': [
+    #             'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
+    #         ],
+    #         'auto_include': True,
+    #     },
+    # },
 }
 
 MIDDLEWARE = [
