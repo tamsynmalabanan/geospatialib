@@ -117,6 +117,10 @@ MIDDLEWARE = [
     'django_htmx.middleware.HtmxMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 
+    # project
+    'main.middleware.HTMXDomainRestriction',
+
+
 ]
 
 ROOT_URLCONF = 'project.urls'
