@@ -2,22 +2,22 @@
 {% load django_htmx %}
 
 {% comment %} bootstrap and plugins {% endcomment %}
-<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}" defer></script>
-<script src="{% static 'bootstrap-tagsinput/js/bootstrap-tagsinput.min.js' %}" defer></script>
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}" defer></script>
+<script src="{% static 'plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js' %}" defer></script>
 
 {% comment %} htmx {% endcomment %}
-<script src="{% static 'htmx/js/htmx.min.js' %}" defer></script>
+<script src="{% static 'plugins/htmx/js/htmx.min.js' %}" defer></script>
 {% django_htmx_script %}
 
 {% comment %} jquery {% endcomment %}
-<script src="{% static 'jquery/js/jquery-3.7.1.min.js' %}" defer></script>
+<script src="{% static 'plugins/jquery/js/jquery-3.7.1.min.js' %}" defer></script>
 
 {% comment %} leaflet and plugins {% endcomment %}
-<script src="{% static 'proj4/js/proj4.js' %}" defer></script>
-<script src="{% static 'turf/js/turf.min.js' %}" defer></script>
-<script src="{% static 'leaflet/js/leaflet.min.js' %}" defer></script>
-<script src="{% static 'leaflet-control-geocoder/js/Control.Geocoder.min.js' %}" defer></script>
-<script src="{% static 'leaflet-proj4/js/proj4leaflet.min.js' %}" defer></script>
+<script src="{% static 'plugins/proj4/js/proj4.js' %}" defer></script>
+<script src="{% static 'plugins/turf/js/turf.min.js' %}" defer></script>
+<script src="{% static 'plugins/leaflet/js/leaflet.min.js' %}" defer></script>
+<script src="{% static 'plugins/leaflet-control-geocoder/js/Control.Geocoder.min.js' %}" defer></script>
+<script src="{% static 'plugins/leaflet-proj4/js/proj4leaflet.min.js' %}" defer></script>
 
 {% comment %} project scripts {% endcomment %}
 <script type="text/javascript" src="{% static app_name|add:'/js/'|add:app_name|add:'.js' %}"></script>
