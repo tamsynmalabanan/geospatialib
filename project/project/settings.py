@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+if os.name == 'nt':
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib\\\\site-packages\\\\osgeo') + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib\\\\site-packages\\\\osgeo\\\\data\\\\proj') + ';' + os.environ['PATH']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +34,13 @@ DEBUG = True
 ALLOWED_HOSTS = ['geospatialib.com']
 
 
+AUTHENTICATION_BACKENDS = (
+    'customuser.backends.CustomAuthenticationBackend',
+)
+
+AUTH_USER_MODEL = 'customuser.User'
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,7 +50,57 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # postgres
+    'django.contrib.postgres', # pip install psycopg2
+    
+    # geodjango
+    'django.contrib.gis', 
+
+    # plugins
+    'widget_tweaks',
+    'leaflet',
+    'django_htmx',
+    'debug_toolbar',
+    'corsheaders',
+
+    # project
+    'customuser',
 ]
+
+LEAFLET_CONFIG = {
+    # 'SPATIAL_EXTENT': (5.0, 44.0, 7.5, 46),
+    
+    'DEFAULT_CENTER': (45, 0),
+    'DEFAULT_ZOOM': 2,
+    'MIN_ZOOM': 1,
+    'MAX_ZOOM': 20,
+    'DEFAULT_PRECISION': 6,
+    
+    'TILES': [],
+    # 'OVERLAYS': [('Cadastral', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})],
+    # 'ATTRIBUTION_PREFIX': 'Powered by django-leaflet',
+    
+
+    'SCALE': None,
+    'RESET_VIEW': True,
+    # 'MINIMAP': True,
+
+    'NO_GLOBALS': False,
+    'FORCE_IMAGE_PATH': True,
+
+    'PLUGINS': {
+        # 'geocoder': {
+        #     'css': [
+        #         'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css', 
+        #     ],
+        #     'js': [
+        #         'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
+        #     ],
+        #     'auto_include': True,
+        # },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -47,6 +110,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # plugins
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -74,9 +143,13 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": "geospatialib",
+        "USER": "super",
+        "PASSWORD": "XQ3jhTme$gy8C&",
+        "HOST": "tamsynmalabanan-4261.postgres.pythonanywhere-services.com",
+        "PORT": "14261",
     }
 }
 
@@ -128,3 +201,15 @@ MEDIA_ROOT = '/home/tamsynmalabanan/geospatialib/project/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/tamsynmalabanan/geospatialib/project/static'
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# for debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
+
+# for cors header
+CORS_ALLOWED_ORIGINS = []
