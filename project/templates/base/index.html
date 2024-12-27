@@ -8,7 +8,7 @@
         {% include "base/resources/styles.html" %}
         {% block styles %}{% endblock styles %}
     </head>
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         {% block body %}{% endblock body %}
         {% include "base/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
