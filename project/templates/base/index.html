@@ -9,7 +9,11 @@
         {% block styles %}{% endblock styles %}
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        {% block body %}{% endblock body %}
+        {% block body %}
+            <div class='vh-100'>
+                test
+            </div>
+        {% endblock body %}
         {% include "base/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
     </body>

@@ -2,7 +2,7 @@
 
 {% block title %}Library{% endblock title %}Library
 
-{% block body %}
+{% comment %} {% block body %}
     <div
         hx-get="{% url 'htmx:test_htmx' %}"
         hx-trigger="load delay:2000ms"
@@ -11,4 +11,4 @@
     >
         main view
     </div>
-{% endblock body %}
+{% endblock body %} {% endcomment %}
