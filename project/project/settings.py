@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     # project
     'customuser',
     'main',
+    'htmx',
 ]
 
 LEAFLET_CONFIG = {
