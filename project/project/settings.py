@@ -201,7 +201,6 @@ MEDIA_ROOT = '/home/tamsynmalabanan/geospatialib/project/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/tamsynmalabanan/geospatialib/project/static'
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
