@@ -5,4 +5,5 @@ app_name = 'main'
 
 urlpatterns = [
     path('', index, name='index'),
+    path('test_htmx/', test_htmx, name='test_htmx'),
 ]
