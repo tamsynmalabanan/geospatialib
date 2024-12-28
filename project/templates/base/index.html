@@ -1,4 +1,5 @@
 {% load util_tags util_filters %}
+{% load leaflet_tags %}
 
 {% var request.resolver_match.app_name as app_name %}
 {% var request.resolver_match.url_name as url_name %}
@@ -14,7 +15,92 @@
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         {% block body %}
-            {% include "base/partials/default.html" %}
+            {% var 'geospatialibSidebar' as 'sidebar_id' %}
+            <div class="container-fluid vh-100">
+                <div class="row vh-100">
+                    <div 
+                        id="{{sidebar_id}}" 
+                        class="offcanvas-lg offcanvas-start col-lg-4 vh-100 p-0 m-0 shadow-lg d-flex" 
+                        data-bs-scroll="true" 
+                        data-bs-backdrop="false" 
+                        aria-labelledby="{{sidebar_id}}Label"
+                        tabindex="-1" 
+                        style='min-width:400px;'
+                    >
+                        <div class='d-flex flex-column flex-grow-1 vh-100'>
+                            <div class="offcanvas-header d-flex">
+                                <h4 class="offcanvas-title flex-grow-1 user-select-none" id="{{sidebar_id}}Label">
+                                    <a class='text-reset text-decoration-none' href="{% url 'main:index' %}">Geospatialib</a>
+                                </h4>
+                                <button 
+                                    type="button" 
+                                    class="bg-transparent border-0" 
+                                    title='Toggle dark mode'
+                                    onclick='toggleDarkMode(event)'
+                                ><i class='bi bi-moon-fill me-2'></i></button>    
+                                <button 
+                                    type="button" 
+                                    class="d-none d-lg-block bg-transparent border-0" 
+                                    title='Toggle sidebar'
+                                    onclick='toggleSidebar(event)' 
+                                ><i class='bi bi-layout-sidebar-inset me-2'></i></button>    
+                                <button 
+                                    type="button" 
+                                    class="btn-close d-lg-none" 
+                                    data-bs-dismiss="offcanvas" 
+                                    data-bs-target="#{{sidebar_id}}" 
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            {% block offcanvas_nav %}{% endblock offcanvas_nav %}
+                            {% block offcanvas_body %}{% endblock offcanvas_body %}
+                            {% block offcanvas_footer %}{% endblock offcanvas_footer %}
+                        </div>
+                        <div class="gutter vh-100 p-0 border-end border-3 d-none d-lg-flex" style='cursor:col-resize;'></div>
+                    </div>
+                    <div class='col vh-100 p-0'>
+                        <div class='d-lg-none z-2 position-fixed bottom-0 p-0 m-10 d-flex flex-column gap-2'>
+                            <div class="btn-group dropup shadow-lg">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-sm btn-dark flex-shrink-1"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#{{sidebar_id}}"
+                                    aria-controls="{{sidebar_id}}"
+                                >
+                                    {% block sidebar_toggle_icon %}
+                                        <i class="bi bi-layout-sidebar-inset"></i>
+                                    {% endblock sidebar_toggle_icon %}
+                                    <span class='ms-2 d-none d-xl-inline'>
+                                        {% block sidebar_toggle_name %}
+                                            Sidebar
+                                        {% endblock sidebar_toggle_name %}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div 
+                            class='vh-100 position-relative'
+
+                            {% if title %}
+                                data-leaflet-map-title = "{{title}}"
+                            {% endif %}
+
+                            {% comment %} data-leaflet-map-class="" {% endcomment %}
+                            data-leaflet-info-panels="legend query"
+                            data-leaflet-controls-included='all'
+                            {% comment %} data-leaflet-controls-excluded='reset' {% endcomment %}
+                            data-leaflet-geocoder-fields='.geospatialibMap-geocoder-field'
+                            data-leaflet-bbox-fields='.geospatialibMap-bbox-field'
+                        >
+                            <div class='position-absolute top-0 start-0 z-2 d-flex w-100 justify-content-center px-5' style='margin-top:10px;'>
+                                {% include "base/components/messages/body.html" with tag='map-floating-message' dismissible=1 fadeout=1 hx_swap_oob="true" %}
+                            </div>
+                            {% leaflet_map 'geospatialibMap' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endblock body %}
         {% include "base/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
