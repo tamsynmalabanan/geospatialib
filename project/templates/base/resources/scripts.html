@@ -35,6 +35,7 @@
     <script type="text/javascript" src="{% static 'geog/js/controls.js' %}"></script>
     <script type="text/javascript" src="{% static 'geog/js/init.js' %}"></script>
 
+    <script type="text/javascript" src="{% static app_name|add:'/js/'|add:app_name|add:'.js' %}"></script>
     <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>
     
     {% if user.is_authenticated %}

@@ -1,0 +1,7 @@
+<button
+    class="btn btn-sm btn-secondary badge"
+    hx-get="{% url 'hx_map:config_map' pk=map.pk section=section %}"
+    hx-trigger="click"
+    hx-target="#mapSection_{{section}}"
+    hx-swap="outerHTML"
+>Edit</button>

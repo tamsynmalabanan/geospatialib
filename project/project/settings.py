@@ -37,11 +37,28 @@ ALLOWED_HOSTS = [
 ]
 
 
+SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online'
+        },
+    }
+}
+
+SOCIALACCOUNT_ADAPTER = 'apps.main.adapters.CustomSocialAccountAdapter'
+
 AUTHENTICATION_BACKENDS = (
-    'customuser.backends.CustomAuthenticationBackend',
+    'apps.main.backends.CustomAuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-AUTH_USER_MODEL = 'customuser.User'
+AUTH_USER_MODEL = 'main.User'
 
 
 # Application definition
@@ -54,24 +71,35 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # social auth
+    'django.contrib.sites',
+    'allauth',    
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',          
+
     # postgres
     'django.contrib.postgres', # pip install psycopg2
     
-    # geodjango
+    # gis
     'django.contrib.gis', 
 
-    # plugins
+    # local apps
+    'utils',
+    'htmx.hx_main',
+    'htmx.hx_library',
+    'htmx.hx_map',
+    'apps.main',
+    'apps.library',
+    'apps.map',
+
+    # 3rd-party apps
     'widget_tweaks',
     'leaflet',
     'django_htmx',
     'debug_toolbar',
+    'django_recaptcha',
     'corsheaders',
-
-    # project
-    'tags',
-    'customuser',
-    'main',
-    'htmx',
 ]
 
 LEAFLET_CONFIG = {
@@ -89,8 +117,8 @@ LEAFLET_CONFIG = {
     
 
     'SCALE': None,
-    'RESET_VIEW': True,
     # 'MINIMAP': True,
+    'RESET_VIEW': True,
 
     'NO_GLOBALS': False,
     'FORCE_IMAGE_PATH': True,
@@ -102,12 +130,6 @@ LEAFLET_CONFIG = {
             ],
             'js': [
                 'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
-            ],
-            'auto_include': True,
-        },
-        'proj4': {
-            'js': [
-                'https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.2/proj4leaflet.min.js',
             ],
             'auto_include': True,
         },
@@ -123,13 +145,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # plugins
+    # social auth
+    'allauth.account.middleware.AccountMiddleware',
+
+    # 3rd party
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 
-    # project
-    'htmx.middleware.HTMXDomainRestriction',
+    # local
+    'apps.main.middleware.RedirectCancelledSocialLogin',
+    'htmx.hx_main.middleware.HTMXDomainRestriction',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -145,6 +171,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'apps.main.context_processors.forms',
+                'apps.main.context_processors.social',
+                'apps.library.context_processors.forms',
+                'apps.map.context_processors.forms',
             ],
         },
     },
@@ -167,6 +198,11 @@ DATABASES = {
     }
 }
 
+# DROP DATABASE your_database_name;
+# CREATE DATABASE your_database_name;
+# \c your_database_name
+# CREATE EXTENSION postgis;
+# \dx
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -202,8 +238,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -224,6 +258,10 @@ LOGOUT_REDIRECT_URL = '/'
 INTERNAL_IPS = [
     '127.0.0.1'
 ]
+
+# for captcha
+RECAPTCHA_PUBLIC_KEY = '6LcNimkqAAAAAKstLLJ6qiuIpuHMiwusF7oh9ylF'
+RECAPTCHA_PRIVATE_KEY = '6LcNimkqAAAAALA06RHsr8Gd3u4v55YWlXA5G_eN'
 
 # for cors header
 CORS_ALLOWED_ORIGINS = []

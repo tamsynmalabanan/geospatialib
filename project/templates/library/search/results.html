@@ -1,0 +1,47 @@
+{% load static %}
+{% load util_tags %}
+
+{% if request.headers|get:'HX-Request' and page_obj.number == 1 %}
+    {% include "library/search/filters.html" %}
+{% endif %}
+
+{% if page_obj.number %}
+    {% if page_obj.number == 1 %}
+        <ul 
+            id='searchResults' 
+            class="d-flex flex-wrap p-0 gap-3 px-3"
+        >
+            {% include "library/search/items.html" %}
+            {% for i in '12' %}
+                <li class='list-group-item d-flex border-0 col-xxl-3 col-lg-5 col-12 p-0 gap-3 flex-grow-1'></li>
+            {% endfor %}
+            <script>
+                if (document.readyState === 'complete') {
+                    resetSearchResults()
+                    clearLibraryLayers()
+                }
+            </script>
+        </ul>
+    {% else %}
+        {% include "library/search/items.html" %}
+    {% endif %}
+{% else %}
+    {% if form.is_valid %}
+        <div
+            class='htmx-indicator htmx-indicator-search-results d-flex justify-content-center gap-3 flex-grow-1 align-items-center'
+            hx-get="{% url 'hx_library:search' %}{% querystring %}"
+            hx-trigger="load"
+            hx-swap='outerHTML'
+            hx-target='this'
+            hx-indicator=".htmx-indicator-search-results"
+        >
+            {% for i in '123' %}
+                <div class="spinner-grow spinner-grow-sm text-primary my-3 " role="status"></div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div id='searchResults' class='px-3'>
+            fetch default filters
+        </div>
+    {% endif %}
+{% endif %}

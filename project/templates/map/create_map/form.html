@@ -1,0 +1,28 @@
+{% load util_tags %}
+
+{% csrf_token %}
+<div class='d-flex flex-column gap-3'>
+    {% for field in form %}
+        {% include "base/components/form/field.html" %}
+    {% endfor %}
+</div>
+
+{% if request.headers|get:'HX-Request' %}
+    {% include "base/components/messages/body.html" with dismissible=1 tag='create-map-form' hx_swap_oob="true" %}
+    <script>
+        if (document.readyState === 'complete') {
+            var map = mapQuerySelector('createMapModalMap')
+            if (map) {
+                map.fire('updateBboxFields')
+            }
+
+            var submitBtn = document.querySelector('#createMapModal .btn[type="submit"]')
+            {% if form.is_valid and not content %}
+                submitBtn.removeAttribute('disabled')
+            {% else %}
+                submitBtn.setAttribute('disabled', true)
+            {% endif %}
+        }
+    </script>
+{% endif %}
+

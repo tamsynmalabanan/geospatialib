@@ -1,0 +1,36 @@
+<div class="offcanvas-body d-flex flex-column flex-grow-1 overflow-x-hidden p-0 border-top pt-3" style='margin-top:-1px;'>
+    <div 
+        id="mapAccordion" 
+        class="accordion accordion-flush d-flex flex-column ps-3 pe-4 z-2 h-100" 
+    >
+        <div
+            id="detailsMapAccordion"
+            class="accordion-collapse collapse fade show flex-grow-1"
+            data-bs-parent="#mapAccordion"
+        >
+            <div class="accordion-body d-flex flex-column gap-3 p-0 h-100">
+                {% include "map/sidebar/details.html" %}
+            </div>
+        </div>
+        <div
+            id="contributorsMapAccordion"
+            class="accordion-collapse collapse fade flex-grow-1"
+            data-bs-parent="#mapAccordion"
+        >
+            <div class="accordion-body h-100">
+                {% include "map/sidebar/contributors.html" %}
+            </div>
+        </div>
+        {% comment %} {% if role > 0 %}
+            <div
+                id="logsMapAccordion"
+                class="accordion-collapse collapse fade"
+                data-bs-parent="#mapAccordion"
+            >
+                <div class="accordion-body">
+                    {% include "map/sidebar/logs.html" %}
+                </div>
+            </div>
+        {% endif %} {% endcomment %}
+    </div>
+</div>

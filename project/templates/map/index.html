@@ -1,0 +1,37 @@
+{% extends "base/index.html" %}
+{% load static %}
+
+{% block title_prefix %}
+    {{map.content.title}}
+{% endblock title_prefix %}
+
+{% block sidebar_toggle_name %}
+    {% if role == 0 %}
+        Details
+    {% else %}
+        Configure
+    {% endif %}
+{% endblock sidebar_toggle_name %}
+
+{% block sidebar_toggle_icon %}
+    {% if role == 0 %}
+        <i class="bi bi-info-circle-fill"></i>
+    {% else %}
+        <i class="bi bi-gear-fill"></i>
+    {% endif %}
+{% endblock sidebar_toggle_icon %}
+
+{% block offcanvas_nav %}
+    {% include "map/sidebar/nav.html" %}
+{% endblock offcanvas_nav %}
+
+{% block offcanvas_body_outer %}
+    {% include "map/sidebar/body.html" %}
+{% endblock offcanvas_body_outer %}
+
+{% block toggle_menu %}
+    {% include "map/sidebar/footer/body.html" %}
+{% endblock toggle_menu %}
+{% block offcanvas_footer %}
+    {% include "map/sidebar/footer/body.html" %}
+{% endblock offcanvas_footer %}

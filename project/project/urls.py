@@ -24,6 +24,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include(debug_toolbar.urls)),
 
-    path('', include('main.urls')),
-    path('htmx/', include('htmx.urls')),
+    # social auth paths
+    path('accounts/', include('allauth.urls')),
+
+    path('htmx/main/', include('htmx.hx_main.urls')),
+    path('htmx/library/', include('htmx.hx_library.urls')),
+    path('htmx/map/', include('htmx.hx_map.urls')),
+    
+    path('', include('apps.main.urls')),
+    path('', include('apps.library.urls')),
+    path('', include('apps.map.urls')),
 ]

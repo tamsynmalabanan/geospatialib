@@ -1,0 +1,33 @@
+{% extends "base/index.html" %}
+{% load static %}
+
+{% block title_prefix %}
+    Library
+{% endblock title_prefix %}
+
+{% block sidebar_toggle_name %}
+    Search
+{% endblock sidebar_toggle_name %}
+
+{% block sidebar_toggle_icon %}
+    <i class="bi bi-search"></i>
+{% endblock sidebar_toggle_icon %}
+
+{% block offcanvas_nav %}
+    {% include "library/search/form.html" %}
+{% endblock offcanvas_nav %}
+
+{% block offcanvas_body_inner %}
+    {% include "library/search/results.html" %}
+{% endblock offcanvas_body_inner %}
+
+{% if user.is_authenticated %}
+    {% block toggle_menu %}
+        {% include "library/share_dataset/toggle.html" %}
+        {% include "map/create_map/toggle.html" %}
+    {% endblock toggle_menu %}
+    {% block offcanvas_footer %}
+        {% include "library/share_dataset/toggle.html" %}
+        {% include "map/create_map/toggle.html" %}
+    {% endblock offcanvas_footer %}
+{% endif %}

@@ -1,0 +1,29 @@
+{% load util_tags %}
+
+{% if dataset %}
+    {% var content.title as title %}
+    
+    <div>
+        {% if 'info' in message.tags %}
+            Find this and other related datasets in the library:
+        {% elif 'success' in message.tags %}
+            Successfully onboarded! Find this and other related datasets in the library:
+        {% endif %}
+        <a
+            class="text-reset text-decoration-none"
+            data-bs-toggle="modal"
+            data-bs-target="#shareDatasetModal"
+            role="button"
+            onclick="searchLibrary('{{title}}')"
+        >
+            <i class="bi bi-layers-half mx-1"></i>
+            <span>
+                {{title}}
+            </span>
+        </a>
+    </div>
+{% else %}    
+    {% if 'error' in message.tags %}
+        There was an error while onboarding the dataset. Please try again.
+    {% endif %}
+{% endif %}

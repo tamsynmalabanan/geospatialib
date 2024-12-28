@@ -1,0 +1,80 @@
+{% load util_tags %}
+
+<div id='searchResultsFiltersContainer' hx-swap-oob='true'>
+    {% if page_obj.number %}
+        {% with count=page_obj.paginator.count %}
+            {% if count > 0 %}
+                <div id='searchFormFilters' class='collapse show multi-collapse'>
+                    <div class='d-flex gap-3 flex-nowrap mb-3'>
+                        <a 
+                            class="text-reset text-decoration-none fs-6 d-flex flex-nowrap justify-content-between flex-grow-1 gap-3 fw-lighter" 
+                            tabindex="-1"
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#searchResultsFilters" 
+                            role="button" 
+                            aria-expanded="true"
+                            aria-controls="searchResultsFilters"
+                        >
+                            <span>Results for "{{request.GET.query}}" ({{count}})</span>
+                            <i class="bi bi-funnel"></i>
+                        </a>
+                        <button class='border-0 bg-transparent px-0 d-flex align-items-start geospatialibMap-bbox-field' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Seach map extent' onclick="handleSearchQueryField('{{request.GET.query}}')"><i class="bi bi-bounding-box-circles"></i></button>
+                        {% include "library/search/clear_filters.html" %}
+                    </div>
+                    <div class="collapse show" id="searchResultsFilters">
+                        <div class="d-flex gap-2 mb-3 flex-wrap overflow-y-auto" style='max-height:100px;'>
+                            {% for field, queryset in filters.items %}
+                                {% for i in queryset %}
+                                    {% var i.count as icount %}
+                                    {% var i|get:field as value %}
+                                    
+                                    {% var field|field_name as field_name %}
+                                    {% var value|sub_bool:field_name as label %}
+                                    
+                                    {% var 'btn btn-sm rounded-pill font-monospace fs-12' as button_class %}
+
+                                    {% if label %}
+                                        {% if request.GET|get:field == value|stringify %}
+                                            <button
+                                                type='submit'
+                                                name="{{field}}"
+                                                value=""
+                                                class="{{button_class}} btn-primary"
+                                                onclick="handleSearchQueryField('{{request.GET.query}}')"
+                                            >{{label|upper}} ({{icount}})</button>
+                                        {% else %}
+                                            {% if icount != count %}
+                                                <button
+                                                    type='submit'
+                                                    name="{{field}}"
+                                                    value="{{value}}"
+                                                    class="{{button_class}} btn-outline-primary"
+                                                    onclick="handleSearchQueryField('{{request.GET.query}}')"
+                                                >{{label|upper}} ({{icount}})</button>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class='d-flex justify-content-between'>
+                    <div class="form-check fw-lighter text-muted">
+                        <input id='searchResultsToggleAll' class="form-check-input" type="checkbox" data-layers-toggles="#searchResults" onclick='toggleOffAllLayers(this)' disabled/>
+                        <label for="searchResultsToggleAll"></label>
+                    </div>
+                    <button class="border-0 bg-transparent px-0 text-muted" tabindex="-1" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="searchFormFields searchFormFilters" title='Toggle search form'><i class="bi bi-chevron-expand"></i></button>
+                </div>            
+            {% else %}
+                <div class="d-flex gap-3 flex-nowrap justify-content-between">
+                    <span class-'mb-3'>No results found for "{{request.GET.query}}"</span>
+                    {% include "library/search/clear_filters.html" %}
+                </div>
+                <div class='d-flex mt-3'>
+                    fetch default filters
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+</div>

@@ -1,0 +1,23 @@
+{% load util_tags %}
+
+{% csrf_token %}
+<div class='d-flex flex-column gap-3'>
+    {% for field in form %}
+        {% include "base/components/form/field.html" %}
+    {% endfor %}
+</div>
+
+{% if request.headers|get:'HX-Request' %}
+    {% if dataset %}
+        {% var dataset.content as content %}
+    {% endif %}
+    {% include "base/components/messages/body.html" with dismissible=0 tag='share-dataset-form' hx_swap_oob="true" %}
+    <script>
+        if (document.readyState === 'complete') {
+            handleShareDatasetForm({% if dataset %}'{{content.bbox.extent}}'{% endif %})
+            {% if form.is_valid %}
+                renderSharedDatasetLayer()
+            {% endif %}
+        }
+    </script>
+{% endif %}

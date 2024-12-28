@@ -1,0 +1,39 @@
+{% load static %}
+
+<form
+    hx-post="{% url 'hx_map:config_map' pk=map.pk section=section %}"
+    hx-trigger="submit"
+    hx-target="#mapSection_{{section}}"
+    hx-swap="outerHTML"
+    class='d-flex flex-column h-100'
+>
+    <div class="px-0">
+        {% include "base/components/messages/body.html" with dismissible=1 tag='edit-map-'|add:section|add:'-form' %}
+    </div>
+    <div class='d-flex flex-column gap-3 overflow-hidden p-1'>
+        {% csrf_token %}
+        {% for field in form %}
+            {% include "base/components/form/field.html" with format=default label=1 %}
+        {% endfor %}
+    </div>
+    <div class='d-flex justify-content-between gap-2 mt-auto my-3'>
+        <button
+            type="button"
+            class="btn btn-sm btn-secondary text-nowrap"
+            hx-get="{% url 'hx_map:config_map' pk=map.pk section=section %}"
+            hx-trigger="click"
+            hx-target="#mapSection_{{section}}"
+            hx-swap="outerHTML"
+            hx-vals='{"back":"True"}'
+        >Back</button>
+        <button
+            type="submit"
+            name='submit'
+            class="btn btn-sm btn-primary htmx-request-hide"
+        >Save</button>
+        <button class="btn btn-sm btn-primary htmx-indicator" type="button" disabled>
+            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            <span role="status">Saving...</span>
+        </button>
+    </div>
+</form>
