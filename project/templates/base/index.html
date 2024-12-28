@@ -1,5 +1,7 @@
-{{'test string' as variable}}
+{% load util_tags %}
+{% load util_filters %}
 
+{{'test string' as variable}}
 
 {% with app_name=request.resolver_match.app_name url_name=request.resolver_match.url_name %}
     <!DOCTYPE html>
