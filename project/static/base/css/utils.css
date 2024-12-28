@@ -1,0 +1,140 @@
+body {
+    min-width: 300px;
+}
+
+.no-icon.accordion-button::after {
+    width: 0px !important;
+    --bs-accordion-btn-icon: none !important;
+    --bs-accordion-btn-active-icon: none !important;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+  
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    /* border-radius: 10px; */
+}
+
+.text-wrap {
+    word-wrap:break-word;
+}
+
+.aspect-ratio-1 {
+    aspect-ratio: 1/1;
+}
+
+img {
+    background-color: transparent; /* Set the background to transparent */
+}
+
+.pointer-bottom::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
+    border-color: transparent;
+    z-index: 2;
+}
+
+.btn-dark.pointer-bottom::after {
+    border-top-color: #212529 !important;
+}
+
+.btn-light.pointer-bottom::after {
+    border-top-color: #f8f9fa !important;
+}
+
+.focus-underline-success:active,
+.focus-underline-success:focus,
+.focus-underline-success:hover {
+    border-bottom: var(--bs-border-width) solid #198754 !important;
+}
+
+.focus-underline-primary:active,
+.focus-underline-primary:focus,
+.focus-underline-primary:hover {
+    border-bottom: var(--bs-border-width) solid #0d6efd !important;
+}
+
+.fs-10 {
+    font-size: 10px;
+}
+
+.fs-12 {
+    font-size: 12px;
+}
+
+.fs-14 {
+    font-size: 14px;
+}
+
+.fs-16 {
+    font-size: 16px;
+}
+
+.fs-18 {
+    font-size: 18px;
+}
+
+.m-10 {
+    margin: 10px;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.ms-10 {
+    margin-left: 10px;
+}
+
+.me-10 {
+    margin-right: 10px;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.user-select-none {
+    user-select: none;
+}
+
+.font-family-pacifico {
+    font-family: 'Pacifico';
+}
+
+.underline-on-hover {
+    text-decoration: none;
+}
+
+.underline-on-hover:hover {
+    text-decoration: underline;
+}
+
+table.table-rows-border-0 {
+    tr {
+        border-color: transparent;
+    }
+}
+
+table.table-condensed {
+    td {
+        padding: 5px;
+        padding-right: 10px;
+    }
+}

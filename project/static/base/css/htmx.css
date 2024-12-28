@@ -1,0 +1,34 @@
+.htmx-indicator{
+    display: none;
+}
+
+.htmx-request:not(body) {
+    .htmx-indicator {
+        display: inline;
+    }
+
+    .htmx-request-hide {
+        display: none;
+    }    
+}
+
+.htmx-request.htmx-indicator{
+    display: inline;
+}
+
+.htmx-request.htmx-request-hide {
+    display: none;
+}
+
+.fadeout {
+    animation: fadeOut 4s ease-in-out;
+}
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+}
