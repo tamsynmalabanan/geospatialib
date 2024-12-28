@@ -15,7 +15,9 @@
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         {% block body %}
-            {% leaflet_map 'geospatialibMap' %}
+            <div class='vh-100'>
+                {% leaflet_map 'geospatialibMap' %}
+            </div>
         {% endblock body %}
         {% include "base/partials/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
