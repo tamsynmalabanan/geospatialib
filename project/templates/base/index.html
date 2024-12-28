@@ -1,4 +1,9 @@
 {% load static %}
+{% load util_tags util_filters %}
+{% load leaflet_tags %}
+
+{% var request.resolver_match.app_name as app_name %}
+{% var request.resolver_match.url_name as url_name %}
 
 <!DOCTYPE html>
 <html lang="en" data-bs-theme='dark'>
@@ -11,12 +16,13 @@
 
     {% include "base/resources/styles.html" %}
     {% include "base/resources/leaflet.html" %}
+    {% block styles %}{% endblock styles %}
     
 </head>
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "base/resources/icons.html" %}
-
-    {% with sidebar_id='geospatialibSidebar' %}
+    {% block body %}
+        {% var 'geospatialibSidebar' as 'sidebar_id' %}
         <div class="container-fluid vh-100">
             <div class="row vh-100">
                 <div 
@@ -30,37 +36,26 @@
                 >
                     <div class='d-flex flex-column w-100 vh-100'>
                         {% include "base/sections/header.html" %}
-                        <div>
-                            {% block offcanvas_nav %}{% endblock offcanvas_nav %}
-                        </div>
-                        {% block offcanvas_body_outer %}
-                            <div class="offcanvas-body d-flex flex-column flex-grow-1 overflow-x-hidden p-0 pt-3">
-                                {% block offcanvas_body_inner %}{% endblock offcanvas_body_inner %}
+                        {% block offcanvas_nav %}
+                            <div class='offcanvas-nav'>
+                                {% lorem 1 b random %}
                             </div>
-                        {% endblock offcanvas_body_outer %}
-                        <div class="footer border-top d-none d-lg-flex py-3 gap-3 justify-content-center px-3">
-                            {% with button_class='btn btn-sm d-flex gap-2 justify-content-center align-items-between' label_class='text-nowrap d-none d-xxl-inline' %}
-                                {% if user.is_authenticated %}
-                                    {% include "main/menu/dropup.html" with label_class='text-nowrap' %}
-                                    <div class='d-flex ms-auto gap-2'>
-                                        {% block offcanvas_footer %}{% endblock offcanvas_footer %}
-                                    </div>
-                                {% else %}
-                                    <div class='d-flex w-100 gap-3 px-5'>
-                                        {% include "main/about/toggle.html" %}
-                                        {% include "main/login/toggle.html" with button_class='btn btn-sm d-flex gap-2 justify-content-center btn-primary flex-grow-1' %}
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
-                        </div>
+                        {% endblock offcanvas_nav %}
+                        {% block offcanvas_body %}
+                            <div class="offcanvas-body">
+                                {% lorem 1 b random %}
+                            </div>
+                        {% endblock offcanvas_body %}
+                        {% block offcanvas_footer %}
+                            <div class="offcanvas-footer">
+                                {% lorem 1 b random %}
+                            </div>
+                        {% endblock offcanvas_footer %}
                     </div>
                     <div class="gutter vh-100 p-0 border-end border-3 d-none d-lg-flex" style='cursor:col-resize;'></div>
                 </div>
                 <div class='col vh-100 p-0'>
                     <div class='d-lg-none z-2 position-fixed bottom-0 p-0 m-10 d-flex flex-column gap-2'>
-                        {% if not user.is_authenticated %}
-                            {% include "main/login/toggle.html" with button_class='btn btn-sm d-flex gap-2 justify-content-center btn-primary flex-grow-1' %}
-                        {% endif %}
                         <div class="btn-group dropup shadow-lg">
                             <button 
                                 type="button" 
@@ -78,28 +73,15 @@
                                     {% endblock sidebar_toggle_name %}
                                 </span>
                             </button>
-                            {% if user.is_authenticated %}
-                                {% include "main/menu/toggle.html" with button_class='btn btn-sm btn-dark dropdown-toggle-split rounded-end' %}
-                                <div class="dropdown-menu p-2 mb-1">
-                                    {% with button_class='btn btn-sm btn-dark d-flex gap-2 w-100 justify-content-start' label_class='text-nowrap' %}
-                                        {% block toggle_menu %}{% endblock toggle_menu %}
-                                        <div class="dropdown-divider"></div>
-                                        {% include "main/menu/items.html" %}
-                                    {% endwith %}
-                                </div>
-                            {% else %}
-                                {% include "main/about/toggle.html" with button_class='btn btn-sm btn-dark rounded-end d-flex gap-2' label_class='text-nowrap d-none d-xxl-inline' %}
-                            {% endif %}
                         </div>
                     </div>
                     {% include "base/sections/map.html" %}
                 </div>
             </div>
         </div>
-    {% endwith %}
-
-    {% include "base/sections/modals.html" %}
+    {% endblock body %}
 
     {% include "base/resources/scripts.html" %}
+    {% block scripts %}{% endblock scripts %}
 </body>
 </html>
