@@ -1,0 +1,8 @@
+{% for key,value in data.items %}
+    <option 
+        value="{{key}}" 
+        {% if key != value %}
+            label="{{value}}"
+        {% endif %}
+    >
+{% endfor %}

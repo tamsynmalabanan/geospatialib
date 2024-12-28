@@ -1,0 +1,21 @@
+{% load leaflet_tags %}
+
+<div 
+    class='vh-100 position-relative'
+
+    {% if title %}
+        data-leaflet-map-title = "{{title}}"
+    {% endif %}
+
+    {% comment %} data-leaflet-map-class="" {% endcomment %}
+    data-leaflet-info-panels="legend query"
+    data-leaflet-controls-included='all'
+    {% comment %} data-leaflet-controls-excluded='reset' {% endcomment %}
+    data-leaflet-geocoder-fields='.geospatialibMap-geocoder-field'
+    data-leaflet-bbox-fields='.geospatialibMap-bbox-field'
+>
+    <div class='position-absolute top-0 start-0 z-2 d-flex w-100 justify-content-center px-5' style='margin-top:10px;'>
+        {% include "base/components/messages/body.html" with tag='map-floating-message' dismissible=1 fadeout=1 hx_swap_oob="true" %}
+    </div>
+    {% leaflet_map 'geospatialibMap' %}
+</div>

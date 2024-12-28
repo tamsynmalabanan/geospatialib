@@ -1,0 +1,12 @@
+{% if user.is_authenticated %}
+    {% include "main/account/modal.html" %}
+    {% include "main/dashboard/modal.html" %}
+    
+    {% include "library/share_dataset/modal.html" %}
+    {% include "map/create_map/modal.html" %}
+{% else %}
+    {% include "main/login/modal.html" %}
+{% endif %}
+
+{% include "main/terms/modal.html" %}
+{% include "main/about/modal.html" %}

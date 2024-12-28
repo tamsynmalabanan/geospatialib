@@ -1,0 +1,52 @@
+{% load widget_tweaks %}
+{% load util_tags %}
+
+{% assign_field_attributes field as field %}
+{% var field.field.widget as widget %}
+{% var widget.attrs|get:'data-datalist-endpoint' as datalist_endpoint %}
+{% var widget.input_type as input_type %}
+{% var widget.attrs.meta as meta_attrs %}
+{% var field|remove_attr:"meta" as field %}
+
+<div class="flex-grow-1 field-container">
+    {% if meta_attrs and 'formset' in meta_attrs %}
+        <label for="{{widget.attrs.id}}">{{field.label}}</label>
+        {% render_field field hidden="true" %}
+        {% include "base/components/form/invalid_feedback.html" %}
+        {% include "base/components/form/formset.html" with formset=meta_attrs|get:'formset' %}
+    {% elif format == 'default' or widget|is_captchta_widget or input_type == 'hidden' or widget.attrs.hidden %}
+        {% render_field field %}
+        {% if format == 'default' or widget.attrs|get:'data-role' == 'tagsinput' %}
+            {% include "base/components/form/invalid_feedback.html" %}
+        {% endif %}
+    {% elif input_type and input_type == 'checkbox' %}
+        <div class="form-check">
+            {% render_field field %}
+            <label class="form-check-label" for="{{widget.attrs.id}}">{{field.label}}</label>
+        </div>
+    {% else %}
+        <div class="form-floating">
+            {% render_field field %}
+            <label for="{{widget.attrs.id}}">{{field.label}}</label>
+            {% include "base/components/form/invalid_feedback.html" %}
+        </div>
+    {% endif %}
+    
+    {% if field.help_text %}
+        <p class='small text-muted text-justify m-0'>
+            {{field.help_text|safe}}
+        </p>
+    {% endif %}
+
+    {% if datalist_endpoint %}
+        <datalist 
+            id="{{field.id_for_label}}_datalist"
+            class='text-bg-dark'
+            hx-get="{{datalist_endpoint}}"
+            hx-trigger="input delay:1000ms"
+            hx-include='closest .field-container'
+            hx-target="this"
+            hx-swap='innerHTML'
+        ></datalist>
+    {% endif %}
+</div>
