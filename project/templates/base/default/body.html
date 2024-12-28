@@ -1,0 +1,42 @@
+{% var 'defaultSidebar' as 'sidebar_id' %}
+
+<div class="container-fluid vh-100">
+    <div class="row vh-100">
+        <div
+            class="offcanvas-lg offcanvas-start col-lg-4 vh-100 p-0 m-0 shadow-lg d-flex" 
+            tabindex="-1" 
+            data-bs-scroll="true" 
+            data-bs-backdrop="false" 
+            id="{{sidebar_id}}" 
+            aria-labelledby="{{sidebar_id}}Label"
+            style='min-width:400px;'
+        >
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="{{sidebar_id}}Label">
+                    Backdrop with scrolling
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="offcanvas-body">
+                <p>
+                    Try scrolling the rest of the page to see this option in
+                    action.
+                </p>
+            </div>
+        </div>
+        <div class="col">
+            <button
+                class="btn btn-primary"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#{{sidebar_id}}"
+                aria-controls="{{sidebar_id}}"
+            >Toggle</button>
+        </div>
+    </div>
+</div>
