@@ -198,9 +198,9 @@ DATABASES = {
     }
 }
 
-# DROP DATABASE your_database_name;
-# CREATE DATABASE your_database_name;
-# \c your_database_name
+# DROP DATABASE geospatialib;
+# CREATE DATABASE geospatialib;
+# \c geospatialib
 # CREATE EXTENSION postgis;
 # \dx
 
