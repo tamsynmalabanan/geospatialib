@@ -1,3 +1,6 @@
+{% load util_tags %}
+{% load util_filters %}
+
 {% with app_name=request.resolver_match.app_name url_name=request.resolver_match.url_name %}
     <!DOCTYPE html>
     <html lang="en" data-bs-theme='dark'>
@@ -9,7 +12,12 @@
         {% block styles %}{% endblock styles %}
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        {% block body %}{% endblock body %}
+        {% block body %}
+            {% random_string %}
+            {% var 'test variable' as variable %}
+            {{variable}}
+            {{variable|object_type}}
+        {% endblock body %}
         {% include "base/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
     </body>

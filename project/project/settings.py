@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # project
+    'tags',
     'customuser',
     'main',
     'htmx',
