@@ -4,7 +4,7 @@ from django import template
 from django.utils import timezone
 
 from ..general import form_helpers, model_helpers
-
+from urllib.parse import urlencode
 import json
 import shortuuid
 from shapely.geometry import shape
@@ -13,6 +13,13 @@ import random, string
 
 
 register = template.Library()
+
+@register.simple_tag 
+def querystring(request, **kwargs): 
+    query = request.GET.copy() 
+    for key, value in kwargs.items(): 
+        query[key] = value 
+    return f"?{urlencode(query)}"
 
 @register.filter
 def object_type(value):

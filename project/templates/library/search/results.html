@@ -29,7 +29,7 @@
     {% if form.is_valid %}
         <div
             class='htmx-indicator htmx-indicator-search-results d-flex justify-content-center gap-3 flex-grow-1 align-items-center'
-            hx-get="{% url 'hx_library:search' %}{% querystring %}"
+            hx-get="{% url 'hx_library:search' %}{% querystring request %}"
             hx-trigger="load"
             hx-swap='outerHTML'
             hx-target='this'
