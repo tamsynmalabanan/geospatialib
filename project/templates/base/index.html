@@ -1,11 +1,10 @@
-{% load util_tags %}
-{% load util_filters %}
+{% load util_tags util_filters %}
 
-{{'test string' as variable}}
+{% var request.resolver_match.app_name as app_name %}
+{% var request.resolver_match.url_name as url_name %}
 
-{% with app_name=request.resolver_match.app_name url_name=request.resolver_match.url_name %}
-    <!DOCTYPE html>
-    <html lang="en" data-bs-theme='dark'>
+<!DOCTYPE html>
+<html lang="en" data-bs-theme='dark'>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,13 +14,10 @@
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         {% block body %}
-            {% random_string %}
-            {% comment %} {% var 'test variable' as variable %} {% endcomment %}
-            {{variable}}
-            {{variable|object_type}}
+            {{app_name}}
+            {{url_name}}
         {% endblock body %}
         {% include "base/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
     </body>
-    </html>
-{% endwith %}
+</html>
