@@ -221,8 +221,6 @@ const handleMapLegend = (map) => {
         if (layer.data) {
             const containerId = `${mapId}Legend_${layer._leaflet_id}`
 
-            console.log(layer)
-
             const legendContainer = createButtonAndCollapse(
                 containerId, {
                     label: layer.data.layerTitle,
