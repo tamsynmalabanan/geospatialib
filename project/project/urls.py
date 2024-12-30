@@ -24,8 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include(debug_toolbar.urls)),
 
-    # path('htmx/library/', include('htmx.hx_library.urls')),
+    path('htmx/library/', include('htmx.hx_library.urls')),
     
     path('', include('apps.main.urls')),
-    # path('', include('apps.library.urls')),
+    path('', include('apps.library.urls')),
 ]
