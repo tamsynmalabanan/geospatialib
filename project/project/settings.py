@@ -185,12 +185,13 @@ DATABASES = {
     }
 }
 
-# DROP DATABASE geospatialib;
-# CREATE DATABASE geospatialib;
-# \c geospatialib
-# CREATE EXTENSION postgis;
-# \dx
-
+"""
+DROP DATABASE geospatialib;
+CREATE DATABASE geospatialib;
+\c geospatialib
+CREATE EXTENSION postgis;
+\dx
+"""
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
