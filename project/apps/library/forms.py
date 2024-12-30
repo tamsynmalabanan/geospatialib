@@ -2,7 +2,7 @@ from django import forms
 from django.urls import reverse_lazy
 from django.core.cache import cache
 
-from . import models, choices
+from . import choices
 from utils.general import form_helpers, util_helpers
 from utils.gis import dataset_helpers
 

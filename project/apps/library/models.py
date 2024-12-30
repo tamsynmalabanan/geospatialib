@@ -1,17 +1,10 @@
-from typing import Iterable
 from django.contrib.gis.db import models
-from django.utils.text import slugify
-from django.db.models import Q
-from django.contrib.postgres.search import SearchVectorField
+
 import uuid
-import geojson
 from urllib.parse import urlparse
-import json
 
-from apps.map.models import Map, MapLogAbstract
 from . import choices
-from utils.general import form_helpers, util_helpers
-
+from utils.general import form_helpers
 
 class Dataset(models.Model):
     url = models.ForeignKey("library.URL", verbose_name='URL', on_delete=models.CASCADE, related_name='datasets')
@@ -22,10 +15,17 @@ class Dataset(models.Model):
     default_style = models.CharField('Default style name', max_length=255, blank=True, null=True)
     default_legend = models.ForeignKey("library.URL", verbose_name='Default style url', on_delete=models.SET_NULL, blank=True, null=True)
 
+    title = models.CharField('Title', max_length=255, blank=True, null=True)
+    abstract = models.TextField('Abstract', blank=True, null=True)
+    tags = models.ManyToManyField("library.Tag", verbose_name='Tags', blank=True)
+    bbox = models.PolygonField('Bounding box', blank=True, null=True)
+
     class Meta:
         unique_together = ['url', 'format', 'name']
 
     def __str__(self) -> str:
+        if self.title:
+            return self.title
         return self.name
 
 class Tag(models.Model):
@@ -47,28 +47,3 @@ class URL(models.Model):
     @property
     def domain(self):
         return urlparse(self.url).netloc
-    
-class Content(MapLogAbstract):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-        
-    type = models.CharField('Type', choices=[('dataset','dataset'), ('map', 'map')], editable=False, max_length=8, default='dataset')
-    dataset = models.OneToOneField("library.Dataset", verbose_name='Dataset', on_delete=models.CASCADE, related_name='content', blank=True, null=True, editable=False)
-    map = models.OneToOneField("map.Map", verbose_name='Map', on_delete=models.CASCADE, related_name='content', blank=True, null=True, editable=False)
-
-    title = models.CharField('Title', max_length=255, blank=True, null=True)
-    abstract = models.TextField('Abstract', blank=True, null=True)
-    tags = models.ManyToManyField("library.Tag", verbose_name='Tags', through='library.ContentTag')
-    bbox = models.PolygonField('Bounding box', blank=True, null=True)
-
-    def __str__(self) -> str:
-        if self.title:
-            return self.title
-        return super().__str__()
-
-    @property
-    def instance(self):
-        return getattr(self, self.type)
-    
-class ContentTag(MapLogAbstract):
-    content = models.ForeignKey("library.Content", verbose_name='Content', on_delete=models.CASCADE)
-    tag = models.ForeignKey("library.Tag", verbose_name='Tag', on_delete=models.CASCADE)

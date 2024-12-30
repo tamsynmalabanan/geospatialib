@@ -37,17 +37,15 @@ class XYZHandler(DatasetHandler):
         self.layers = self.get_layers()
 
     def populate_dataset(self, dataset):
-        content = dataset.content
-
-        content.title = dataset.name.replace('_', ' ')
-        content.bbox = geom_helpers.WORLD_GEOM
-        content.tags.set(
+        dataset.title = dataset.name.replace('_', ' ')
+        dataset.bbox = geom_helpers.WORLD_GEOM
+        dataset.tags.set(
             model_helpers.collect_url_tags(
                 util_helpers.remove_query_params(self.access_url)
             )
         )
 
-        content.save()
+        dataset.save()
 
 class ArcGISImageHandler(DatasetHandler):
 
@@ -64,17 +62,15 @@ class ArcGISImageHandler(DatasetHandler):
         self.layers = self.get_layers()
 
     def populate_dataset(self, dataset):
-        content = dataset.content
-
-        content.title = dataset.name.replace('_', ' ')
-        content.bbox = geom_helpers.WORLD_GEOM
-        content.tags.set(
+        dataset.title = dataset.name.replace('_', ' ')
+        dataset.bbox = geom_helpers.WORLD_GEOM
+        dataset.tags.set(
             model_helpers.collect_url_tags(
                 util_helpers.remove_query_params(self.access_url)
             )
         )
 
-        content.save()
+        dataset.save()
 
 class WMSHandler(DatasetHandler):
     
@@ -206,14 +202,11 @@ class WMSHandler(DatasetHandler):
                     if url_instance:
                         dataset.default_legend = url_instance
             
+            dataset.title = self.get_title(layer)
+            dataset.bbox = self.get_bbox(layer)
+            dataset.abstract = self.get_abstract(id, layer)
+            dataset.tags.set(self.get_tags(id, layer))
             dataset.save()
-
-            content = dataset.content
-            content.title = self.get_title(layer)
-            content.bbox = self.get_bbox(layer)
-            content.abstract = self.get_abstract(id, layer)
-            content.tags.set(self.get_tags(id, layer))
-            content.save()
 
     def test_connection(self, layer_name):
         service = self.get_service()
@@ -363,14 +356,11 @@ class WFSHandler(DatasetHandler):
                 if url_instance:
                     dataset.default_style_url = url_instance
             
+            dataset.title = self.get_title(layer)
+            dataset.bbox = self.get_bbox(layer)
+            dataset.abstract = self.get_abstract(id, layer)
+            dataset.tags.set(self.get_tags(id, layer))
             dataset.save()
-
-            content = dataset.content
-            content.title = self.get_title(layer)
-            content.bbox = self.get_bbox(layer)
-            content.abstract = self.get_abstract(id, layer)
-            content.tags.set(self.get_tags(id, layer))
-            content.save()
 
 
 

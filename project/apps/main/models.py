@@ -9,40 +9,37 @@ import uuid
 
 from random_username.generate import generate_username
 
-from . import validators, choices
+from . import validators
 from utils.general import form_helpers
 
 class UserManager(BaseUserManager):
 
-    def username_is_available(self, username, user=None):
-        user_query = self.model.objects.filter(username__iexact=username)
-        if user and user.pk:
-            user_query = user_query.exclude(pk=user.pk)
+    def username_is_available(self, username, user_pk=None):
+        user_query = self.filter(username__iexact=username)
+        if user_pk:
+            user_query = user_query.exclude(pk=user_pk)
         return not user_query.exists()
 
-    def generate_random_username(self, user=None):
+    def generate_random_username(self, user_pk=None):
         while True:
-            username = slugify(generate_username(1)[0])
-            if self.username_is_available(username, user):
-                try:
-                    validators.validate_username(username)
-                    break
-                except ValidationError:
-                    continue
-        return username.lower()
+            username = slugify(generate_username(1)[0]).lower()
+            if self.username_is_available(username, user_pk):
+                break
+        return username
 
     def create_user(self, email, username=None, password=None, **kwargs):
         if not email:
             raise ValueError("User must have an email address.")
         email = self.normalize_email(email)
 
-        if username and not self.username_is_available(username):
-            raise ValueError('Username is not available.')
-        if not username:
+        if username: 
+            username = username.lower()
+            if not self.username_is_available(username):
+                raise ValueError('Username is not available.')
+        else:
             username = self.generate_random_username()
-        username = username.lower()
 
-        user = self.model(email=email, username=username, **kwargs)
+        user = User(email=email, username=username, **kwargs)
         user.set_password(password)
         user.save()
         
@@ -52,8 +49,7 @@ class UserManager(BaseUserManager):
         if password is None:
             raise ValueError('Password is required.')
         
-        status_fields = ['is_active', 'is_staff', 'is_superuser']
-        for field in status_fields:
+        for field in ['is_active', 'is_staff', 'is_superuser']:
             kwargs.setdefault(field, True)        
             if kwargs.get(field) is not True:
                 raise ValueError(f'Field "{field}" must be set as True.')
@@ -67,9 +63,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    dashboard_privacy = models.CharField('Dashboard', max_length=8, choices=form_helpers.dict_to_choices(choices.USER_PRIVACY), default='public')
-    map_privacy = models.CharField('Map (default)', max_length=8, choices=form_helpers.dict_to_choices(choices.USER_PRIVACY), default='public')
-    
     joined_on = models.DateTimeField('Join date', auto_now_add=True)
     first_name = models.CharField('First name', max_length=32, blank=True, null=True)
     last_name = models.CharField('Last name', max_length=32, blank=True, null=True)
@@ -85,9 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def proper_name(self):
         names = [name for name in [self.first_name, self.last_name] if name]
-        if len(names) > 0:
-            return ' '.join([self.first_name, self.last_name])
-        return self.username
+        return ' '.join(names) if names else self.username
 
     @property
     def has_no_password(self):

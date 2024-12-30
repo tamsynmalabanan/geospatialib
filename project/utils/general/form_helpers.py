@@ -1,4 +1,3 @@
-from django_recaptcha.widgets import ReCaptchaV2Checkbox
 from django.db import models
 from django.forms.models import ModelMultipleChoiceField
 from collections import OrderedDict
@@ -38,10 +37,7 @@ def assign_field_style_classes(field):
     field_classes = []
     
     widget = field.field.widget
-    if isinstance(widget, ReCaptchaV2Checkbox):
-        field_classes.append('d-flex')
-        field_classes.append('justify-content-center')
-    elif isinstance(widget, forms.CheckboxSelectMultiple):
+    if isinstance(widget, forms.CheckboxSelectMultiple):
         pass
     else:
         if hasattr(widget, 'input_type'):
@@ -66,8 +62,7 @@ def assign_field_attributes(field):
     id = f'{field.form.__class__.__name__.lower()}_{field.name}'
     attrs['id'] = id
 
-    if not isinstance(widget, ReCaptchaV2Checkbox):
-        attrs['placeholder'] = field.label
+    attrs['placeholder'] = field.label
 
     if attrs.get('data-role') == 'tagsinput':
         attrs['hidden'] = True

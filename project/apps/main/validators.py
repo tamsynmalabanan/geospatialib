@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 
 USERNAME_BLACKLIST = [
-    '',
     'admin', 
     'admin_geospatialib',
     'geospatialib', 

@@ -51,11 +51,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SOCIALACCOUNT_ADAPTER = 'apps.main.adapters.CustomSocialAccountAdapter'
-
 AUTHENTICATION_BACKENDS = (
     'apps.main.backends.CustomAuthenticationBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 AUTH_USER_MODEL = 'main.User'
@@ -73,10 +70,6 @@ INSTALLED_APPS = [
 
     # social auth
     'django.contrib.sites',
-    'allauth',    
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',          
 
     # postgres
     'django.contrib.postgres', # pip install psycopg2
@@ -88,17 +81,14 @@ INSTALLED_APPS = [
     'utils',
     'htmx.hx_main',
     'htmx.hx_library',
-    'htmx.hx_map',
     'apps.main',
     'apps.library',
-    'apps.map',
 
     # 3rd-party apps
     'widget_tweaks',
     'leaflet',
     'django_htmx',
     'debug_toolbar',
-    'django_recaptcha',
     'corsheaders',
 ]
 
@@ -144,9 +134,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # social auth
-    'allauth.account.middleware.AccountMiddleware',
 
     # 3rd party
     'debug_toolbar.middleware.DebugToolbarMiddleware',

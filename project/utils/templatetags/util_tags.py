@@ -1,5 +1,4 @@
 from django import template
-from django_recaptcha.widgets import ReCaptchaV2Checkbox
 from django import template
 from django.utils import timezone
 
