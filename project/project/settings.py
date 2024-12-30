@@ -159,7 +159,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'apps.library.context_processors.forms',
-                'apps.map.context_processors.forms',
             ],
         },
     },
