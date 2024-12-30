@@ -141,7 +141,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 
     # local
-    'apps.main.middleware.RedirectCancelledSocialLogin',
     'htmx.hx_main.middleware.HTMXDomainRestriction',
 ]
 
