@@ -90,7 +90,7 @@ class SearchList(ListView):
 
         search_query = SearchQuery(query, search_type=search_type)
 
-        search_vector = SearchVector('type')
+        search_vector = SearchVector('name')
         
         search_fields = [
             'title',
@@ -99,7 +99,6 @@ class SearchList(ListView):
 
             'url__url',
             'format',
-            'name',
         ]
         
         for field in search_fields:
