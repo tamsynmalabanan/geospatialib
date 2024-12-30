@@ -8,13 +8,10 @@
 </div>
 
 {% if request.headers|get:'HX-Request' %}
-    {% if dataset %}
-        {% var dataset.content as content %}
-    {% endif %}
     {% include "base/components/messages/body.html" with dismissible=0 tag='share-dataset-form' hx_swap_oob="true" %}
     <script>
         if (document.readyState === 'complete') {
-            handleShareDatasetForm({% if dataset %}'{{content.bbox.extent}}'{% endif %})
+            handleShareDatasetForm({% if dataset %}'{{dataset.bbox.extent}}'{% endif %})
             {% if form.is_valid %}
                 renderSharedDatasetLayer()
             {% endif %}

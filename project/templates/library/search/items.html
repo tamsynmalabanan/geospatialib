@@ -1,7 +1,7 @@
 {% load static %}
 {% load util_tags %}
 
-{% for content in page_obj.object_list %}
+{% for dataset in page_obj.object_list %}
     <li 
         class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1"
         style='min-width:180px;'
@@ -17,58 +17,43 @@
             <div class="card-body w-100 d-flex flex-column">
                 <div>
                     {% var 'badge font-monospace fs-10 align-top user-select-none' as badge_class %}
-                    {% if content.type == 'map' %}
-                        <span class="{{badge_class}} bg-danger" title="{{content.type}}">{{content.type}}</span>
+                    {% var dataset.format as format %}
+                    {% if dataset.format == 'wms' %}
+                        <span class="{{badge_class}} bg-success" title="{{format}}">{{format}}</span>
+                    {% elif dataset.format == 'xyz' %}
+                        <span class="{{badge_class}} bg-info" title="{{format}}">{{format}}</span>
                     {% else %}
-                        {% var content.dataset.format as format %}
-                        {% if content.dataset.format == 'wms' %}
-                            <span class="{{badge_class}} bg-success" title="{{format}}">{{format}}</span>
-                        {% elif content.dataset.format == 'xyz' %}
-                            <span class="{{badge_class}} bg-info" title="{{format}}">{{format}}</span>
-                        {% else %}
-                            <span class="{{badge_class}} bg-warning" title="{{format}}">{{format}}</span>
-                        {% endif %}
+                        <span class="{{badge_class}} bg-warning" title="{{format}}">{{format}}</span>
                     {% endif %}
                 </div>
-                <h6 class="card-title">{{content.title}}</h6>
-                {% if content.type == 'dataset' %}
-                    {% if content.dataset.format != 'xyz' %}
-                        <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{content.dataset.name}}</h6>
-                    {% endif %}
-                    <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{content.dataset.url.url}}" target="_blank" rel="noopener noreferrer" title="Go to {{content.dataset.url.url}}">
-                        {{content.dataset.url.url|domain}}
-                    </a>
-                {% else %}
-                    {% if content.map.focus_area %}
-                        <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{content.map.focus_area}}</h6>
-                    {% endif %}
-                    <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{% url 'map:index' content.pk %}" target="_blank" rel="noopener noreferrer" title="Go to {{content.dataset.url.url}}">
-                        go to map
-                    </a>
+                <h6 class="card-title">{{dataset.title}}</h6>
+                {% if dataset.format != 'xyz' %}
+                    <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{dataset.name}}</h6>
                 {% endif %}
+                <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{dataset.url.url}}" target="_blank" rel="noopener noreferrer" title="Go to {{dataset.url.url}}">
+                    {{dataset.url.url|domain}}
+                </a>
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <input 
                     class="form-check-input" 
                     tabindex="-1"
                     type="checkbox" 
-                    {% if content.type == 'dataset' %}
-                        onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
-                        data-layer-bbox="{{content.bbox.extent}}"
-                        data-layer-title="{{content.title}}"
-                        data-layer-url="{{content.dataset.url.url}}"
-                        data-layer-format="{{content.dataset.format}}"
-                        data-layer-name="{{content.dataset.name}}"
-                        {% if content.dataset.default_style %}
-                            data-layer-style="{{content.dataset.default_style}}"
-                        {% endif %}
-                        {% if content.dataset.default_legend.url %}
-                            data-layer-legend-url="{{content.dataset.default_legend.url}}"
-                        {% endif %}
+                    onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
+                    data-layer-bbox="{{bbox.extent}}"
+                    data-layer-title="{{dataset.title}}"
+                    data-layer-url="{{dataset.url.url}}"
+                    data-layer-format="{{dataset.format}}"
+                    data-layer-name="{{dataset.name}}"
+                    {% if dataset.default_style %}
+                        data-layer-style="{{dataset.default_style}}"
+                    {% endif %}
+                    {% if dataset.default_legend.url %}
+                        data-layer-legend-url="{{dataset.default_legend.url}}"
                     {% endif %}
                 >
                 <div class="dropdown">
-                    <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{content.bbox.extent}}', layerGroup:'library'})">
+                    <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox.extent}}', layerGroup:'library'})">
                         <i class="bi bi-three-dots"></i>
                     </button>
                     <ul class="dropdown-menu fs-12"></ul>
