@@ -163,11 +163,11 @@ class SearchList(ListView):
 
 
 @require_http_methods(['POST'])
-def share_dataset(request):
+def add_dataset(request):
     user = request.user
     dataset_instance = None
     
-    form = lib_forms.ShareDatasetForm(data={})
+    form = lib_forms.AddDatasetForm(data={})
     
     data = request.POST.dict()
     url_value = data.get('url', '')
@@ -201,8 +201,8 @@ def share_dataset(request):
                 form.data.update({'name': name_value})
                 form.full_clean()
 
-        message_template = 'library/share_dataset/message.html'
-        message_tags = 'share-dataset-form message-template'
+        message_template = 'library/add_dataset/message.html'
+        message_tags = 'add-dataset-form message-template'
 
         dataset_handler = cache.get(form.cached_handler_key)
         url_instance = None
@@ -240,7 +240,7 @@ def share_dataset(request):
             else:
                 messages.error(request, message_template, message_tags)
 
-    return render(request, 'library/share_dataset/form.html', {
+    return render(request, 'library/add_dataset/form.html', {
         'form':form, 
         'dataset':dataset_instance,
     })

@@ -1,39 +1,39 @@
-let shareDatasetBounds
-let shareDatasetLayerLoadErrorTimeout
+let addDatasetBounds
+let addDatasetLayerLoadErrorTimeout
 
-const getShareDatasetSubmitBtn = () => document.querySelector('#shareDatasetModal .btn[type="submit"]')
-const getShareDatasetNameField = () => document.querySelector('#shareDatasetModal [name="name"]')
-const getShareDatasetMap = () => mapQuerySelector('#shareDatasetModal .leaflet-container')
+const getAddDatasetSubmitBtn = () => document.querySelector('#AddDatasetModal .btn[type="submit"]')
+const getAddDatasetNameField = () => document.querySelector('#AddDatasetModal [name="name"]')
+const getAddDatasetMap = () => mapQuerySelector('#AddDatasetModal .leaflet-container')
 
-const disableShareDatasetSubmitBtn = () => {
-    getShareDatasetSubmitBtn().setAttribute('disabled', true)
+const disableAddDatasetSubmitBtn = () => {
+    getAddDatasetSubmitBtn().setAttribute('disabled', true)
 }
 
-const resetShareDatasetSubmitBtn = () => {
-    clearTimeout(shareDatasetLayerLoadErrorTimeout)
-    disableShareDatasetSubmitBtn()
+const resetAddDatasetSubmitBtn = () => {
+    clearTimeout(addDatasetLayerLoadErrorTimeout)
+    disableAddDatasetSubmitBtn()
 }
 
-const handleShareDatasetForm = (bounds) => {
+const handleAddDatasetForm = (bounds) => {
     if (bounds) {
         bounds = bounds.replace('(', '[').replace(')', ']')
-        shareDatasetBounds = JSON.parse(bounds)
+        addDatasetBounds = JSON.parse(bounds)
     } else {
-        shareDatasetBounds = undefined
+        addDatasetBounds = undefined
     }
-    disableShareDatasetSubmitBtn()
-    clearAllLayers(getShareDatasetMap())
+    disableAddDatasetSubmitBtn()
+    clearAllLayers(getAddDatasetMap())
 }
 
-const shareDatasetLayerLoaded = (event) => {
-    clearTimeout(shareDatasetLayerLoadErrorTimeout)
+const AddDatasetLayerLoaded = (event) => {
+    clearTimeout(addDatasetLayerLoadErrorTimeout)
 
-    const submitButton = getShareDatasetSubmitBtn()
-    if (!shareDatasetBounds) {
+    const submitButton = getAddDatasetSubmitBtn()
+    if (!addDatasetBounds) {
         submitButton.removeAttribute('disabled')
     }
 
-    const nameField = getShareDatasetNameField()
+    const nameField = getAddDatasetNameField()
     if (nameField.classList.contains('is-invalid')) {
         nameField.classList.remove('is-invalid')
         
@@ -42,10 +42,10 @@ const shareDatasetLayerLoaded = (event) => {
     }
 }
 
-const shareDatasetLayerLoadError = (event) => {
-    disableShareDatasetSubmitBtn()
+const AddDatasetLayerLoadError = (event) => {
+    disableAddDatasetSubmitBtn()
 
-    const nameField = getShareDatasetNameField()
+    const nameField = getAddDatasetNameField()
     if (!nameField.classList.contains('is-invalid')) {
         nameField.classList.add('is-invalid')
         
@@ -54,10 +54,10 @@ const shareDatasetLayerLoadError = (event) => {
     }    
 }
 
-const renderSharedDatasetLayer = () => {
-    const map = getShareDatasetMap()
+const renderAddedDatasetLayer = () => {
+    const map = getAddDatasetMap()
     if (map) {
-        const formElements = document.querySelector('#shareDatasetModal form').elements
+        const formElements = document.querySelector('#AddDatasetModal form').elements
         const fields = {
             layerUrl: formElements.url, 
             layerFormat: formElements.format,
@@ -74,15 +74,15 @@ const renderSharedDatasetLayer = () => {
             if (layer) {
                 assignLayerLoadEventHandlers(
                     layer, 
-                    shareDatasetLayerLoaded,
-                    shareDatasetLayerLoadError,
+                    AddDatasetLayerLoaded,
+                    AddDatasetLayerLoadError,
                 )
         
                 map.getLayerGroups().client.addLayer(layer)
             }
         
-            if (shareDatasetBounds) {
-                const [minX, minY, maxX, maxY] = shareDatasetBounds
+            if (addDatasetBounds) {
+                const [minX, minY, maxX, maxY] = addDatasetBounds
                 const bounds = L.latLngBounds([[minY, minX], [maxY, maxX]]);
                 map.fitBounds(bounds)
             }

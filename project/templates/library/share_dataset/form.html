@@ -8,12 +8,12 @@
 </div>
 
 {% if request.headers|get:'HX-Request' %}
-    {% include "base/components/messages/body.html" with dismissible=0 tag='share-dataset-form' hx_swap_oob="true" %}
+    {% include "base/components/messages/body.html" with dismissible=0 tag='add-dataset-form' hx_swap_oob="true" %}
     <script>
         if (document.readyState === 'complete') {
-            handleShareDatasetForm({% if dataset %}'{{dataset.bbox.extent}}'{% endif %})
+            handleAddDatasetForm({% if dataset %}'{{dataset.bbox.extent}}'{% endif %})
             {% if form.is_valid %}
-                renderSharedDatasetLayer()
+                renderAddedDatasetLayer()
             {% endif %}
         }
     </script>

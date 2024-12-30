@@ -17,15 +17,15 @@ class SearchForm(forms.Form):
         })
     )
 
-class ShareDatasetForm(forms.Form):
+class AddDatasetForm(forms.Form):
     url = forms.URLField(
         label='URL',
         required=True,
         widget=forms.URLInput(attrs={
             'type':'search',
-            'hx-post':reverse_lazy('hx_library:share_dataset'),
+            'hx-post':reverse_lazy('hx_library:add_dataset'),
             'hx-trigger':'input changed delay:1000ms',
-            'hx-target':'#shareDatasetFormFields',
+            'hx-target':'#AddDatasetFormFields',
             'hx-swap': 'innerHTML',
         })
     )
@@ -37,9 +37,9 @@ class ShareDatasetForm(forms.Form):
             'required': 'Select a format.',
         },
         widget=forms.Select(attrs={
-            'hx-post':reverse_lazy('hx_library:share_dataset'),
+            'hx-post':reverse_lazy('hx_library:add_dataset'),
             'hx-trigger':'change',
-            'hx-target':'#shareDatasetFormFields',
+            'hx-target':'#AddDatasetFormFields',
             'hx-swap': 'innerHTML',
             'disabled': True
         })
@@ -51,11 +51,11 @@ class ShareDatasetForm(forms.Form):
             'required': 'Select a layer.',
         },
         widget=forms.Select(attrs={
-            'hx-post':reverse_lazy('hx_library:share_dataset'),
+            'hx-post':reverse_lazy('hx_library:add_dataset'),
             'hx-trigger':'change',
-            'hx-target':'#shareDatasetFormFields',
+            'hx-target':'#AddDatasetFormFields',
             'hx-swap': 'innerHTML',
-            'onchange':'resetShareDatasetSubmitBtn()',
+            'onchange':'resetAddDatasetSubmitBtn()',
             'disabled':True,
         })
     )

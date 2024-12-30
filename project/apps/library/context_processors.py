@@ -6,7 +6,7 @@ from htmx.hx_library import views
 def forms(request):
     if not request.htmx:
         return {
-            'share_dataset_form': lib_forms.ShareDatasetForm(),
+            'add_dataset_form': lib_forms.AddDatasetForm(),
         }
     
     return {}
