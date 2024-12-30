@@ -35,12 +35,13 @@
                 </a>
             </div>
             <div class="card-footer d-flex justify-content-between">
+                {% var dataset.bbox.extent as bbox_extent %}
                 <input 
                     class="form-check-input" 
                     tabindex="-1"
                     type="checkbox" 
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
-                    data-layer-bbox="{{dataset.bbox.extent}}"
+                    data-layer-bbox="{{bbox_extent}}"
                     data-layer-title="{{dataset.title}}"
                     data-layer-url="{{dataset.url.url}}"
                     data-layer-format="{{dataset.format}}"
@@ -53,7 +54,7 @@
                     {% endif %}
                 >
                 <div class="dropdown">
-                    <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox.extent}}', layerGroup:'library'})">
+                    <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox_extent}}', layerGroup:'library'})">
                         <i class="bi bi-three-dots"></i>
                     </button>
                     <ul class="dropdown-menu fs-12"></ul>
