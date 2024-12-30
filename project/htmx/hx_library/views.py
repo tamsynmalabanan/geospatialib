@@ -164,7 +164,6 @@ class SearchList(ListView):
 
 
 @require_http_methods(['POST'])
-@login_required
 def share_dataset(request):
     user = request.user
     dataset_instance = None
