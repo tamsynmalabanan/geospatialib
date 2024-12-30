@@ -38,8 +38,6 @@
     <script type="text/javascript" src="{% static app_name|add:'/js/'|add:app_name|add:'.js' %}"></script>
     <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>
     
-    {% if user.is_authenticated %}
-        <script type="text/javascript" src="{% static 'library/js/share_dataset.js' %}"></script>
-    {% endif %}
+    <script type="text/javascript" src="{% static 'library/js/share_dataset.js' %}"></script>
 {% endwith %}
 

@@ -21,13 +21,11 @@
     {% include "library/search/results.html" %}
 {% endblock offcanvas_body_inner %}
 
-{% if user.is_authenticated %}
-    {% block toggle_menu %}
-        {% include "library/share_dataset/toggle.html" %}
-        {% include "map/create_map/toggle.html" %}
-    {% endblock toggle_menu %}
-    {% block offcanvas_footer %}
-        {% include "library/share_dataset/toggle.html" %}
-        {% include "map/create_map/toggle.html" %}
-    {% endblock offcanvas_footer %}
-{% endif %}
+{% block toggle_menu %}
+    {% include "library/share_dataset/toggle.html" %}
+    {% include "map/create_map/toggle.html" %}
+{% endblock toggle_menu %}
+{% block offcanvas_footer %}
+    {% include "library/share_dataset/toggle.html" %}
+    {% include "map/create_map/toggle.html" %}
+{% endblock offcanvas_footer %}

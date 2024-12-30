@@ -40,17 +40,10 @@
                         {% endblock offcanvas_body_outer %}
                         <div class="footer border-top d-none d-lg-flex py-3 gap-3 justify-content-center px-3">
                             {% with button_class='btn btn-sm d-flex gap-2 justify-content-center align-items-between' label_class='text-nowrap d-none d-xxl-inline' %}
-                                {% if user.is_authenticated %}
-                                    {% include "main/menu/dropup.html" with label_class='text-nowrap' %}
-                                    <div class='d-flex ms-auto gap-2'>
-                                        {% block offcanvas_footer %}{% endblock offcanvas_footer %}
-                                    </div>
-                                {% else %}
-                                    <div class='d-flex w-100 gap-3 px-5'>
-                                        {% include "main/about/toggle.html" %}
-                                        {% include "main/login/toggle.html" with button_class='btn btn-sm d-flex gap-2 justify-content-center btn-primary flex-grow-1' %}
-                                    </div>
-                                {% endif %}
+                                {% include "main/menu/dropup.html" with label_class='text-nowrap' %}
+                                <div class='d-flex ms-auto gap-2'>
+                                    {% block offcanvas_footer %}{% endblock offcanvas_footer %}
+                                </div>
                             {% endwith %}
                         </div>
                     </div>
@@ -58,9 +51,6 @@
                 </div>
                 <div class='col vh-100 p-0'>
                     <div class='d-lg-none z-2 position-fixed bottom-0 p-0 m-10 d-flex flex-column gap-2'>
-                        {% if not user.is_authenticated %}
-                            {% include "main/login/toggle.html" with button_class='btn btn-sm d-flex gap-2 justify-content-center btn-primary flex-grow-1' %}
-                        {% endif %}
                         <div class="btn-group dropup shadow-lg">
                             <button 
                                 type="button" 
@@ -78,18 +68,14 @@
                                     {% endblock sidebar_toggle_name %}
                                 </span>
                             </button>
-                            {% if user.is_authenticated %}
-                                {% include "main/menu/toggle.html" with button_class='btn btn-sm btn-dark dropdown-toggle-split rounded-end' %}
-                                <div class="dropdown-menu p-2 mb-1">
-                                    {% with button_class='btn btn-sm btn-dark d-flex gap-2 w-100 justify-content-start' label_class='text-nowrap' %}
-                                        {% block toggle_menu %}{% endblock toggle_menu %}
-                                        <div class="dropdown-divider"></div>
-                                        {% include "main/menu/items.html" %}
-                                    {% endwith %}
-                                </div>
-                            {% else %}
-                                {% include "main/about/toggle.html" with button_class='btn btn-sm btn-dark rounded-end d-flex gap-2' label_class='text-nowrap d-none d-xxl-inline' %}
-                            {% endif %}
+                            {% include "main/menu/toggle.html" with button_class='btn btn-sm btn-dark dropdown-toggle-split rounded-end' %}
+                            <div class="dropdown-menu p-2 mb-1">
+                                {% with button_class='btn btn-sm btn-dark d-flex gap-2 w-100 justify-content-start' label_class='text-nowrap' %}
+                                    {% block toggle_menu %}{% endblock toggle_menu %}
+                                    <div class="dropdown-divider"></div>
+                                    {% include "main/menu/items.html" %}
+                                {% endwith %}
+                            </div>
                         </div>
                     </div>
                     {% include "base/sections/map.html" %}
