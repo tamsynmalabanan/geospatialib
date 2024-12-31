@@ -192,6 +192,7 @@ def add_dataset(request):
             if clean_format:
                 name_field = form['name']
                 name_field.field.widget.attrs['disabled'] = False
+                name_field.field.widget.attrs['autofocus'] = True
 
                 layers = [layer[0] for layer in name_field.field.choices]
                 name_value = data.get('name', '')
