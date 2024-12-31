@@ -52,12 +52,15 @@ class SearchList(ListView):
     @property
     def filter_fields(self):
         return [
-            'format', 
+            'format',
+            'tags__tag',
         ]
 
     @property
     def filter_expressions(self):
-        return ['bbox__bboverlaps']
+        return [
+            'bbox__bboverlaps'
+        ]
 
     @property
     def filters(self):
@@ -93,12 +96,11 @@ class SearchList(ListView):
         search_vector = SearchVector('name')
         
         search_fields = [
+            'url__url',
+            'format',
             'title',
             'abstract',
             'tags__tag',
-
-            'url__url',
-            'format',
         ]
         
         for field in search_fields:
@@ -111,7 +113,7 @@ class SearchList(ListView):
                 'default_legend', 
             )
             .prefetch_related(
-                'tags', 
+                'tags',
             )
             .annotate(
                 rank=SearchRank(search_vector, search_query),
@@ -190,7 +192,6 @@ def add_dataset(request):
             if clean_format:
                 name_field = form['name']
                 name_field.field.widget.attrs['disabled'] = False
-                # name_field.field.widget.attrs['autofocus'] = True
 
                 layers = [layer[0] for layer in name_field.field.choices]
                 name_value = data.get('name', '')
