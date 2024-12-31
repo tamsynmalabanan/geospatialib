@@ -9,7 +9,7 @@
 {% var widget.attrs.meta as meta_attrs %}
 {% var field|remove_attr:"meta" as field %}
 
-<div class="flex-grow-1 field-container">
+<div class="flex-grow-1 field-container d-flex gap-2">
     {% if meta_attrs and 'formset' in meta_attrs %}
         <label for="{{field_id}}">{{field.label}}</label>
         {% render_field field hidden="true" %}
