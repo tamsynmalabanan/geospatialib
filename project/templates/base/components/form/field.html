@@ -5,12 +5,13 @@
 {% var field.field.widget as widget %}
 {% var widget.attrs|get:'data-datalist-endpoint' as datalist_endpoint %}
 {% var widget.input_type as input_type %}
+{% var widget.attrs.id as field_id %}
 {% var widget.attrs.meta as meta_attrs %}
 {% var field|remove_attr:"meta" as field %}
 
 <div class="flex-grow-1 field-container">
     {% if meta_attrs and 'formset' in meta_attrs %}
-        <label for="{{widget.attrs.id}}">{{field.label}}</label>
+        <label for="{{field_id}}">{{field.label}}</label>
         {% render_field field hidden="true" %}
         {% include "base/components/form/invalid_feedback.html" %}
         {% include "base/components/form/formset.html" with formset=meta_attrs|get:'formset' %}
@@ -22,12 +23,12 @@
     {% elif input_type and input_type == 'checkbox' %}
         <div class="form-check">
             {% render_field field %}
-            <label class="form-check-label" for="{{widget.attrs.id}}">{{field.label}}</label>
+            <label class="form-check-label" for="{{field_id}}">{{field.label}}</label>
         </div>
     {% else %}
         <div class="form-floating">
             {% render_field field %}
-            <label for="{{widget.attrs.id}}">{{field.label}}</label>
+            <label for="{{field_id}}">{{field.label}}</label>
             {% include "base/components/form/invalid_feedback.html" %}
         </div>
     {% endif %}
@@ -50,7 +51,7 @@
         ></datalist>
     {% endif %}
 
-    {% if widget.attrs|get:'hx-get' or widget.attrs|get:'hx-post' %}
-        {% render_field field %}
+    {% if meta_attrs.htmx_field %}
+        <div id="#{{field_id}}_hxIndicator" class='htmx-indicator'>test</div>
     {% endif %}
 </div>

@@ -58,6 +58,7 @@ def assign_field_attributes(field):
     widget = field.field.widget
     
     attrs = widget.attrs
+    meta_attrs = attrs.get('meta', {})
 
     id = f'{field.form.__class__.__name__.lower()}_{field.name}'
     attrs['id'] = id
@@ -66,11 +67,14 @@ def assign_field_attributes(field):
 
     if attrs.get('data-role') == 'tagsinput':
         attrs['hidden'] = True
+    
+    if attrs.get('hx-get') or attrs.get('hx-post'):
+        attrs['hx-indicator'] = f'#{id}_hxIndicator'
+        meta_attrs['htmx_field'] = True
 
     if 'data-datalist-endpoint' in attrs:
         attrs['list'] = f'{field.id_for_label}_datalist'
 
-    meta_attrs = attrs.get('meta', {})
     if 'formset' in meta_attrs:
         formset = meta_attrs['formset']
         for form in formset:
