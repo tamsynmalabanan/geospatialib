@@ -51,8 +51,16 @@ def assign_field_style_classes(field):
             field_classes.append('form-check-input') 
         else:
             field_classes.append('form-control')
+            if is_htmx_field(field):
+                field_classes.append('pe-4')
 
     append_classes_to_field(field, field_classes)
+
+def is_htmx_field(field):
+    widget = field.field.widget
+    attrs = widget.attrs
+    if attrs.get('hx-get') or attrs.get('hx-post'):
+        return True
 
 def assign_field_attributes(field):
     widget = field.field.widget
@@ -68,7 +76,7 @@ def assign_field_attributes(field):
     if attrs.get('data-role') == 'tagsinput':
         attrs['hidden'] = True
     
-    if attrs.get('hx-get') or attrs.get('hx-post'):
+    if is_htmx_field(field):
         attrs['hx-indicator'] = f'#{id}_hxIndicator'
         meta_attrs['htmx_field'] = True
 
