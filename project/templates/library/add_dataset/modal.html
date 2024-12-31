@@ -23,7 +23,7 @@
                             {% include "base/components/messages/body.html" with dismissible=0 tag='add-dataset-form' hx_swap_oob="true" %}
                         </div>
                         <div class="row gap-4 gap-lg-0">
-                            <div class='col-12 col-lg-6' data-leaflet-controls-excluded='all' data-leaflet-map-class='rounded border'>
+                            <div class='col-12 col-lg-6' data-leaflet-controls-included='reset' data-leaflet-map-class='rounded border'>
                                 {% leaflet_map id|add:"Map" %}
                             </div>
                             <div id='AddDatasetFormFields' class="col">
