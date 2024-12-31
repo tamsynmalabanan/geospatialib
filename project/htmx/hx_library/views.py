@@ -157,7 +157,7 @@ class SearchList(ListView):
                     .annotate(count=Count('id', distinct=True))
                     .order_by('-count')
                 )
-                print(values)
+                print(list(values))
                 filters[field] = values
 
         return filters
