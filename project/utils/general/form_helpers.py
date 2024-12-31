@@ -51,8 +51,6 @@ def assign_field_style_classes(field):
             field_classes.append('form-check-input') 
         else:
             field_classes.append('form-control')
-            if is_htmx_field(field):
-                field_classes.append('pe-4')
 
     append_classes_to_field(field, field_classes)
 
