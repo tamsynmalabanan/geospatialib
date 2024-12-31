@@ -49,4 +49,8 @@
             hx-swap='innerHTML'
         ></datalist>
     {% endif %}
+
+    {% if widget.attrs|get:'hx-get' or widget.attrs|get:'hx-post' %}
+        {% render_field field %}
+    {% endif %}
 </div>
