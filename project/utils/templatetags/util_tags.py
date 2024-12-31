@@ -60,10 +60,6 @@ def assign_field_attributes(field):
     return field
 
 @register.filter
-def is_captchta_widget(widget):
-    return isinstance(widget, ReCaptchaV2Checkbox)
-
-@register.filter
 def field_name(exp):
     return exp.split('__')[-1]
 

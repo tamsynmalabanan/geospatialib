@@ -243,9 +243,5 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
-# for captcha
-RECAPTCHA_PUBLIC_KEY = '6LcNimkqAAAAAKstLLJ6qiuIpuHMiwusF7oh9ylF'
-RECAPTCHA_PRIVATE_KEY = '6LcNimkqAAAAALA06RHsr8Gd3u4v55YWlXA5G_eN'
-
 # for cors header
 CORS_ALLOWED_ORIGINS = []
