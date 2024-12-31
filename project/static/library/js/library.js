@@ -26,6 +26,7 @@ const searchLibrary = (query=null) => {
     form.dispatchEvent(event)
 
     const sidebar = getSidebarOffcanvas()
+    console.log(sidebar)
     console.log(sidebar.classList.contains('offcanvas-lg'))
     console.log(sidebar.getAttribute('aria-modal'))
 }
