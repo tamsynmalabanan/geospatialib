@@ -51,7 +51,7 @@
         ></datalist>
     {% endif %}
 
-    {% if meta_attrs.htmx_field %}
+    {% if widget.attrs|get:'hx-indicator' %}
         <div id="{{field_id}}_hxIndicator" class='htmx-indicator'>test</div>
     {% endif %}
 </div>
