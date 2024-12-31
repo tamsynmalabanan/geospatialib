@@ -234,9 +234,9 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/tamsynmalabanan/geospatialib/project/static'
 STATIC_URL = '/static/'
 
-LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+# LOGIN_URL = '/'
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
 
 # for debug toolbar
 INTERNAL_IPS = [
