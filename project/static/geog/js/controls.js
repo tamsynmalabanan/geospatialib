@@ -101,7 +101,7 @@ const resetView = (map, include) => {
         
         console.log(map.getBounds())
 
-        const defautMapBounds = L.latLngBounds(L.latLng(-80, -220), L.latLng(80, 220));
+        const defautMapBounds = L.latLngBounds(L.latLng(-80, -220), L.latLng(85, 220));
         resetViewControl.getBounds = () => defautMapBounds
 
         control.addEventListener('click', () => {
