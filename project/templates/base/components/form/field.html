@@ -52,6 +52,8 @@
     {% endif %}
 
     {% if widget.attrs|get:'hx-indicator' %}
-        <div id="{{field_id}}_hxIndicator" class='htmx-indicator'>test</div>
+        <div id="{{field_id}}_hxIndicator" class="htmx-indicator spinner-grow" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     {% endif %}
 </div>
