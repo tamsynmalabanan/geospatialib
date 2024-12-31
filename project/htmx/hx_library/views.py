@@ -147,15 +147,18 @@ class SearchList(ListView):
         return queryset
 
     def get_filters(self):
-        return {
-            field: (
-                self.queryset
-                .values(field)
-                .annotate(count=Count('id', distinct=True))
-                .order_by('-count')
-            )
-            for field in self.filter_fields
-        }
+        filters = {}
+
+        for field in self.filter_fields:
+            if field not in filters:
+                filters[field] = (
+                    self.queryset
+                    .values(field)
+                    .annotate(count=Count('id', distinct=True))
+                    .order_by('-count')
+                )
+
+        return filters
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
