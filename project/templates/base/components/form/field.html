@@ -14,7 +14,7 @@
         {% render_field field hidden="true" %}
         {% include "base/components/form/invalid_feedback.html" %}
         {% include "base/components/form/formset.html" with formset=meta_attrs|get:'formset' %}
-    {% elif format == 'default' or widget|is_captchta_widget or input_type == 'hidden' or widget.attrs.hidden %}
+    {% elif format == 'default' or input_type == 'hidden' or widget.attrs.hidden %}
         {% render_field field %}
         {% if format == 'default' or widget.attrs|get:'data-role' == 'tagsinput' %}
             {% include "base/components/form/invalid_feedback.html" %}
