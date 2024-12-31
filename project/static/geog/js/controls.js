@@ -98,6 +98,8 @@ const resetView = (map, include) => {
         const container = resetViewControl.getContainer()
         const control = container.querySelector('a')
         control.classList.add('rounded', 'bi', 'bi-globe-americas', 'fs-6')
+        
+        console.log(map.getBounds())
 
         const defautMapBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
         resetViewControl.getBounds = () => defautMapBounds
