@@ -32,6 +32,7 @@ SECRET_KEY = 'django-insecure-fzcgqia_kn-%pc=23ufaqis=#jyfbkkq=$om^h5behqtl#fwc2
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
     'www.geospatialib.com',
     'geospatialib.com',
 ]
@@ -181,13 +182,6 @@ DATABASES = {
     }
 }
 
-"""
-DROP DATABASE geospatialib;
-CREATE DATABASE geospatialib;
-\c geospatialib
-CREATE EXTENSION postgis;
-\dx
-"""
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
