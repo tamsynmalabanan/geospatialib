@@ -151,14 +151,14 @@ class SearchList(ListView):
 
         for field in self.filter_fields:
             if field not in filters:
-                filters[field] = (
+                values = (
                     self.queryset
                     .values(field)
                     .annotate(count=Count('id', distinct=True))
                     .order_by('-count')
                 )
-
-        print(filters)
+                print(values)
+                filters[field] = values
 
         return filters
 
