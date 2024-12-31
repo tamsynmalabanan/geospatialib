@@ -100,6 +100,7 @@ const resetView = (map, include) => {
         control.classList.add('rounded', 'bi', 'bi-globe-americas', 'fs-6')
         
         const defautMapBounds = map.getBounds()
+        console.log(defautMapBounds)
         resetViewControl.getBounds = () => defautMapBounds
 
         control.addEventListener('click', () => {
