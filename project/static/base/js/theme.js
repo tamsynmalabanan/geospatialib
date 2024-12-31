@@ -24,7 +24,7 @@ const setAsThemedControl = (element) => {
 const getThemedControls = (parent=document) => {
     return [
         {
-            elements: parent.querySelectorAll(`[onclick='toggleDarkMode(event)']`),
+            elements: parent.querySelectorAll(`[onclick='toggleDarkMode(event)']`).children[0],
             classes: {
                 light: ['bi-moon'],
                 dark: ['bi-moon-fill'],
