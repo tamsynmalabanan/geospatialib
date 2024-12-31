@@ -7,7 +7,7 @@
         {% if 'info' in message.tags %}
             Find this and other related datasets in the library:
         {% elif 'success' in message.tags %}
-            Successfully onboarded! Find this and other related datasets in the library:
+            Successfully added! Find this and other related datasets in the library:
         {% endif %}
         <a
             class="text-reset text-decoration-none"
@@ -22,8 +22,6 @@
             </span>
         </a>
     </div>
-{% else %}    
-    {% if 'error' in message.tags %}
-        There was an error while onboarding the dataset. Please try again.
-    {% endif %}
+{% else %} 
+    There was an error while adding the dataset. Please try again.
 {% endif %}

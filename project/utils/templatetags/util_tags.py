@@ -10,7 +10,6 @@ from shapely.geometry import shape
 from urllib.parse import urlparse
 import random, string
 
-
 register = template.Library()
 
 @register.simple_tag 
