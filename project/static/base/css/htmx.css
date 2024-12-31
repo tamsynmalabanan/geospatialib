@@ -1,5 +1,7 @@
 .htmx-indicator{
     display: none;
+    width: 0px;
+    height: 0px;
 }
 
 .htmx-request:not(body) {
@@ -14,6 +16,8 @@
 
 .htmx-request.htmx-indicator{
     display: inline;
+    width: auto;
+    height: auto;
 }
 
 .htmx-request.htmx-request-hide {
