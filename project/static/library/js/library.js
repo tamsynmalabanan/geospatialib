@@ -24,6 +24,9 @@ const searchLibrary = (query=null) => {
     
     const event = new CustomEvent('submit')
     form.dispatchEvent(event)
+
+    const sidebar = getSidebarOffcanvas()
+    console.log(sidebar)
 }
 
 const handleSearchQueryField = (value) => {
