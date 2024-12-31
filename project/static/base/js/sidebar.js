@@ -2,9 +2,13 @@ const getSidebarOffcanvas = () => {
     return document.getElementById('geospatialibSidebar')
 }
 
+const getSidebarToggle = () => {
+    return document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="#geospatialibSidebar"]`)
+}
+
 const toggleSidebar = (event) => {
     const offcanvas = getSidebarOffcanvas()
-    const toggle = document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="#${offcanvas.id}"]`)
+    const toggle = getSidebarToggle()
     const toggleContainer = toggle.parentElement.parentElement
     const dismiss = document.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="#${offcanvas.id}"]`)
     const footer = offcanvas.querySelector('.footer')
