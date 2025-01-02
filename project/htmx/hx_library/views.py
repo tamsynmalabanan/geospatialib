@@ -138,12 +138,12 @@ class SearchList(ListView):
 
         queryset = self.queryset
         if queryset and queryset.exists():
-            print(queryset)
             queryset = (
                 self.queryset
                 .annotate(rank=Max('rank'))
                 .order_by(*['-rank']+self.filter_fields+['title'])
             )
+            print(queryset)
 
         return queryset
 
