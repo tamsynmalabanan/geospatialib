@@ -141,7 +141,7 @@ class SearchList(ListView):
             queryset = (
                 self.queryset
                 .annotate(rank=Max('rank'))
-                .order_by(*['-rank']+['title'])
+                .order_by(*['-rank']+['format','title'])
             )
 
         return queryset
