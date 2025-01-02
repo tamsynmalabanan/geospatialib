@@ -1,5 +1,18 @@
 @media (min-width: 1400px) { 
-    .search-result-item > * { 
+    #searchResults > * { 
+        width: 33.3%; 
+    } 
+
+}
+
+@media (min-width: 1200px) { 
+    #searchResults > * { 
         width: 50%; 
+    } 
+}
+
+@media (max-width: 1199px) { 
+    #searchResults > * { 
+        width: 100%; 
     } 
 }
