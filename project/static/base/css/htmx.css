@@ -16,8 +16,8 @@
 
 .htmx-request.htmx-indicator{
     display: inline;
-    width: inherit;
-    height: inherit;
+    width: 100%;
+    height: 100%;
 }
 
 .htmx-request.htmx-request-hide {
