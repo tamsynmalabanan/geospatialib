@@ -2,10 +2,9 @@
     #searchResults > * { 
         width: 33.3%; 
     } 
-
 }
 
-@media (min-width: 1200px) { 
+@media (min-width: 1200px) and (max-width: 1399px) { 
     #searchResults > * { 
         width: 50%; 
     } 
