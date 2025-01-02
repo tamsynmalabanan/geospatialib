@@ -15,7 +15,8 @@ class DatasetHandler():
     access_url = None
     layers = None
 
-    def __init__(self, url, key):
+    def __init__(self, format, url, key):
+        self.format = format
         self.url = url
         self.key = key
         
@@ -72,14 +73,25 @@ class ArcGISImageHandler(DatasetHandler):
 
         dataset.save()
 
-class WMSHandler(DatasetHandler):
+class OGCHandlers(DatasetHandler):
     
     def get_service(self):
-        try:
-            return wms.WebMapService(self.access_url)
-        except:
-            return
+        handler = None
 
+        if self.format == 'wms':
+            handler = wms.WebMapService
+        
+        if self.format == 'wfs':
+            handler = wfs.WebFeatureService
+
+        if handler:
+            try:
+                return handler(self.access_url)
+            except:
+                pass
+
+class WMSHandler(OGCHandlers):
+    
     def get_layers(self, service):
         contents = service.contents
         layers = {}
@@ -226,13 +238,7 @@ class WMSHandler(DatasetHandler):
                 except Exception as e:
                     return None
 
-class WFSHandler(DatasetHandler):
-
-    def get_service(self):
-        try:
-            return wfs.WebFeatureService(self.access_url)
-        except:
-            return
+class WFSHandler(OGCHandlers):
 
     def get_layers(self, service):
         contents = service.contents
@@ -373,7 +379,7 @@ def get_dataset_handler(format, **kwargs):
     }.get(format)
 
     if handler:
-        return handler(**kwargs)
+        return handler(format, **kwargs)
 
 def get_dataset_format(url):
     helpers = {
