@@ -52,7 +52,7 @@ class SearchList(ListView):
     @property
     def filter_fields(self):
         return [
-            'format',
+            # 'format',
             # 'tags__tag',
         ]
 
