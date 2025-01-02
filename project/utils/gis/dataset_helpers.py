@@ -208,7 +208,7 @@ class OGCHandlers(DatasetHandler):
                 dataset.default_style = name
                 
                 url = styles[name].get('legend')
-                if validators(url):
+                if validators.url(url):
                     url_instance, created = models.URL.objects.get_or_create(url=url)
                     if url_instance:
                         dataset.default_legend = url_instance
