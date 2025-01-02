@@ -1,9 +1,9 @@
 let addDatasetBounds
 let addDatasetLayerLoadErrorTimeout
 
-const getAddDatasetSubmitBtn = () => document.querySelector('#AddDatasetModal .btn[type="submit"]')
-const getAddDatasetNameField = () => document.querySelector('#AddDatasetModal [name="name"]')
-const getAddDatasetMap = () => mapQuerySelector('#AddDatasetModal .leaflet-container')
+const getAddDatasetSubmitBtn = () => document.querySelector('#addDatasetModal .btn[type="submit"]')
+const getAddDatasetNameField = () => document.querySelector('#addDatasetModal [name="name"]')
+const getAddDatasetMap = () => mapQuerySelector('#addDatasetModal .leaflet-container')
 
 const disableAddDatasetSubmitBtn = () => {
     getAddDatasetSubmitBtn().setAttribute('disabled', true)
@@ -57,7 +57,7 @@ const AddDatasetLayerLoadError = (event) => {
 const renderAddedDatasetLayer = () => {
     const map = getAddDatasetMap()
     if (map) {
-        const formElements = document.querySelector('#AddDatasetModal form').elements
+        const formElements = document.querySelector('#addDatasetModal form').elements
         const fields = {
             layerUrl: formElements.url, 
             layerFormat: formElements.format,
