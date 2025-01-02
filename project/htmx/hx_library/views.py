@@ -137,6 +137,7 @@ class SearchList(ListView):
             self.queryset = queryset
 
         queryset = self.queryset
+        print(queryset)
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
