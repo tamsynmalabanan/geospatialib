@@ -53,7 +53,7 @@ class SearchList(ListView):
     def filter_fields(self):
         return [
             'format',
-            'tags__tag',
+            # 'tags__tag',
         ]
 
     @property
@@ -143,7 +143,6 @@ class SearchList(ListView):
                 .annotate(rank=Max('rank'))
                 .order_by(*['-rank']+self.filter_fields+['title'])
             )
-            print(queryset)
 
         return queryset
 
