@@ -25,7 +25,7 @@ class AddDatasetForm(forms.Form):
             'type':'search',
             'hx-post':reverse_lazy('hx_library:add_dataset'),
             'hx-trigger':'input changed delay:1000ms',
-            'hx-target':'#AddDatasetFormFields',
+            'hx-target':'#addDatasetFormFields',
             'hx-swap': 'innerHTML',
         })
     )
@@ -39,7 +39,7 @@ class AddDatasetForm(forms.Form):
         widget=forms.Select(attrs={
             'hx-post':reverse_lazy('hx_library:add_dataset'),
             'hx-trigger':'change',
-            'hx-target':'#AddDatasetFormFields',
+            'hx-target':'#addDatasetFormFields',
             'hx-swap': 'innerHTML',
             'disabled': True
         })
@@ -53,7 +53,7 @@ class AddDatasetForm(forms.Form):
         widget=forms.Select(attrs={
             'hx-post':reverse_lazy('hx_library:add_dataset'),
             'hx-trigger':'change',
-            'hx-target':'#AddDatasetFormFields',
+            'hx-target':'#addDatasetFormFields',
             'hx-swap': 'innerHTML',
             'onchange':'resetAddDatasetSubmitBtn()',
             'disabled':True,

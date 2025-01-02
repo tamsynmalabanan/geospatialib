@@ -8,8 +8,9 @@
                 class='modal-content d-flex flex-column'
                 hx-post="{% url endpoint %}"
                 hx-trigger='submit'
-                hx-target="#AddDatasetFormFields"
+                hx-target="#addDatasetFormFields"
                 hx-swap='innerHTML'
+                hx-indicator='#addDatasetForm_hxIndicator'
             >
                 <div class="modal-header">
                     <h5 class="modal-title" id="{{id}}Title">
@@ -26,7 +27,7 @@
                             <div class='col-12 col-lg-6' data-leaflet-controls-included='reset' data-leaflet-map-class='rounded border'>
                                 {% leaflet_map id|add:"Map" %}
                             </div>
-                            <div id='AddDatasetFormFields' class="col">
+                            <div id='addDatasetFormFields' class="col">
                                 {% include "library/add_dataset/form.html" with form=add_dataset_form %}
                             </div>
                         </div>
@@ -34,7 +35,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" name='submit' class="btn btn-primary htmx-request-hide" disabled>Add dataset</button>
-                    <button class="btn btn-primary htmx-indicator" type="button" disabled>
+                    <button id='addDatasetForm_hxIndicator' class="btn btn-primary htmx-indicator" type="button" disabled>
                         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                         <span role="status">Adding dataset...</span>
                     </button>               
