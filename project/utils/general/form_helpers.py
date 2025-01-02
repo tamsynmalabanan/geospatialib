@@ -52,6 +52,9 @@ def assign_field_style_classes(field):
         else:
             field_classes.append('form-control')
 
+    if is_htmx_field(field):
+        field_classes.append('hxtm-request-lock')
+
     append_classes_to_field(field, field_classes)
 
 def is_htmx_field(field):

@@ -10,6 +10,10 @@
     .htmx-request-hide {
         display: none;
     }    
+
+    .htmx-request-lock {
+        display: none;
+    }    
 }
 
 .htmx-request.htmx-indicator{
@@ -17,6 +21,10 @@
 }
 
 .htmx-request.htmx-request-hide {
+    display: none;
+}
+
+.htmx-request.htmx-request-lock {
     display: none;
 }
 
