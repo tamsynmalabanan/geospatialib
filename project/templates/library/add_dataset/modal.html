@@ -10,7 +10,6 @@
                 hx-trigger='submit'
                 hx-target="#addDatasetFormFields"
                 hx-swap='innerHTML'
-                hx-indicator='#addDatasetForm_hxIndicator'
             >
                 <div class="modal-header">
                     <h5 class="modal-title" id="{{id}}Title">
@@ -35,7 +34,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" name='submit' class="btn btn-primary htmx-request-hide" disabled>Add dataset</button>
-                    <button id='addDatasetForm_hxIndicator' class="btn btn-primary htmx-indicator" type="button" disabled>
+                    <button class="btn btn-primary htmx-indicator" type="button" disabled>
                         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                         <span role="status">Adding dataset...</span>
                     </button>               
