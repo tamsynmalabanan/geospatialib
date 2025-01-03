@@ -34,7 +34,7 @@ class SearchList(ListView):
     template_name = 'library/search/results.html'
     model = lib_models.Dataset
     context_object_name = 'datasets'
-    paginate_by = 20
+    paginate_by = 18
 
     @property
     def page(self):
