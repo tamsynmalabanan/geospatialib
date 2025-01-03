@@ -31,7 +31,7 @@
                                     {% var field|field_name as field_name %}
                                     {% var value|sub_bool:field_name as label %}
                                     
-                                    {% var 'btn btn-sm rounded-pill font-monospace fs-12' as button_class %}
+                                    {% var 'btn btn-sm rounded-pill font-monospace fs-12 fw-bold' as button_class %}
 
                                     {% if label %}
                                         {% if request.GET|get:field == value|stringify %}
