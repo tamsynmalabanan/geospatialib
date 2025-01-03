@@ -41,7 +41,7 @@
                                                 value=""
                                                 class="{{button_class}} btn-primary"
                                                 onclick="handleSearchQueryField('{{request.GET.query}}')"
-                                            >{{label|upper}} ({{icount}})</button>
+                                            >{{label}} ({{icount}})</button>
                                         {% else %}
                                             {% if icount != count %}
                                                 <button
@@ -50,7 +50,7 @@
                                                     value="{{value}}"
                                                     class="{{button_class}} btn-outline-primary"
                                                     onclick="handleSearchQueryField('{{request.GET.query}}')"
-                                                >{{label|upper}} ({{icount}})</button>
+                                                >{{label}} ({{icount}})</button>
                                             {% endif %}
                                         {% endif %}
                                     {% endif %}
