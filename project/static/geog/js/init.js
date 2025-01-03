@@ -159,7 +159,7 @@ const constructInfoPanel = (map, name, options={}) => {
     header.appendChild(span)
 
     const collapseToggle = document.createElement('button')
-    collapseToggle.setAttribute('title', name)
+    collapseToggle.setAttribute('title', 'Collapse')
     collapseToggle.className = 'border-0 bg-transparent px-0 text-muted bi bi-chevron-up'
     header.appendChild(collapseToggle)
     
