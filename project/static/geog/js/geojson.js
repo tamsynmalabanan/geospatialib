@@ -86,6 +86,7 @@ const handleGeoJSON = async (geojson, options={}) => {
 
     geojson.features.forEach(feature => {
         const geomAssigned = handleFeatureGeom(feature, options.defaultGeom)
+        console.log(geomAssigned)
         if (!geomAssigned) {
             handleFeatureCRS(feature, crs)
         }
