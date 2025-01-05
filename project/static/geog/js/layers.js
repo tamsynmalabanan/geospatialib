@@ -406,10 +406,8 @@ const createWMSLayer = (data) => {
     return L.tileLayer.wms(baseUrl, options)
 }
 
-const createWFSLayer = (data) => {
-    const color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
-
-    const geojsonLayer = L.geoJSON({type: "FeatureCollection", features: []}, {
+const getDefaultGeoJSONLayer = (color=`hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`) => {
+    L.geoJSON({type: "FeatureCollection", features: []}, {
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
@@ -429,7 +427,10 @@ const createWFSLayer = (data) => {
             }
         }
     })
+}
 
+const createWFSLayer = (data) => {
+    const geojsonLayer = getDefaultGeoJSONLayer()
     geojsonLayer.data = data
     geojsonLayer.data.layerLegendObj = '{}'
 
