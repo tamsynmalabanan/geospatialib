@@ -35,6 +35,8 @@ const handleFeatureCRS = (feature, crs) => {
             const coords = feature.geometry.coordinates
             feature.geometry.coordinates = transformCoordinatesToEPSG4326(coords, crs_text)
         }
+    } else {
+        console.log('exception: ', crs)
     }
 }
 
