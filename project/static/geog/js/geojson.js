@@ -30,9 +30,13 @@ const getGeoJSONCRS = async (geojson) => {
 const handleFeatureCRS = (feature, crs) => {
     if (crs && crs !== 4326) {
         const crs_text = `EPSG:${crs}`
+        console.log(feature)
         if (proj4.defs(crs_text)) {
+            console.log(proj4.defs(crs_text))
             const coords = feature.geometry.coordinates
             feature.geometry.coordinates = transformCoordinatesToEPSG4326(coords, crs_text)
+        } else {
+            console.log('error')
         }
     }
 }
