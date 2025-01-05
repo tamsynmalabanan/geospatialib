@@ -407,7 +407,7 @@ const createWMSLayer = (data) => {
 }
 
 const getDefaultGeoJSONLayer = (color=`hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`) => {
-    L.geoJSON({type: "FeatureCollection", features: []}, {
+    return L.geoJSON({type: "FeatureCollection", features: []}, {
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
