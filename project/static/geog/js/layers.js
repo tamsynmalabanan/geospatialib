@@ -448,6 +448,7 @@ const createWFSLayer = (data) => {
 
         const fetchData = async () => {
             let geojson = await fetchWFSData(event, geojsonLayer)
+            console.log('fetched geojson', geojson)
 
             let prefix
             let suffix
