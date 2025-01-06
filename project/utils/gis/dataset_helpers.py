@@ -171,7 +171,7 @@ class OGCHandlers(DatasetHandler):
             if hasattr(layer, 'auth') and hasattr(getattr(layer, 'auth'), '__dict__'):
                 layer_vars['auth'] = vars(getattr(layer, 'auth'))
             if hasattr(layer, 'crsOptions'):
-                layer_vars['crsOptions'] = [int(str(i).split(':')[-1]) for i in getattr(layer, 'crsOptions')]
+                layer_vars['crsOptions'] = [str(i) for i in getattr(layer, 'crsOptions')]
             data['layer'] = layer_vars
 
         if provider:
@@ -216,10 +216,10 @@ class OGCHandlers(DatasetHandler):
                         dataset.default_legend = url_instance
             
             crs_options = extra_data.get('layer', {}).get('crsOptions')
-            if crs_options and 4326 not in crs_options:
-                default_crs = crs_options[0]
-            else:
-                default_crs = 4326
+            default_crs = 'EPSG:4326'
+            for crs in crs_options:
+                if '4326' in crs:
+                    default_crs = crs
             dataset.default_crs = default_crs
 
             dataset.title = self.get_title(layer)
@@ -269,22 +269,14 @@ class WFSHandler(OGCHandlers):
             layer = service[layer_name]
             bbox = list(layer.boundingBox)[:-1]
             crs = str(list(layer.boundingBox)[-1])
-            print(bbox)
-            print(crs)
-            url = service.getGETGetFeatureRequest(
+            response = service.getfeature(
                 typename=layer_name, 
                 bbox=bbox + [crs], 
                 srsname=crs,
                 outputFormat='json',
             )
-            return url
-            # response = service.getfeature(
-            #     typename=layer_name, 
-            #     bbox=bbox + [crs], 
-            #     srsname=crs,
-            #     outputFormat='json',
-            # )
-            # return response.read()
+            return response.read()
+
 
 def get_dataset_handler(format, **kwargs):
     handler = {
