@@ -127,7 +127,7 @@ class OGCHandlers(DatasetHandler):
             w,s,e,n,*srid = bbox
             bbox_corners = [(w,s), (e,s), (e,n), (w,n), (w,s)]
             if len(srid) != 0 and ':' in srid[0]:
-                bbox_srid = int(srid[0].split(':')[1])
+                bbox_srid = int(srid[0].split(':')[-1])
             else:
                 bbox_srid = 4326
             
