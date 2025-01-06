@@ -14,7 +14,7 @@ class Dataset(models.Model):
     extra_data = models.JSONField('Data', blank=True, null=True)
     default_style = models.CharField('Default style name', max_length=255, blank=True, null=True)
     default_legend = models.ForeignKey("library.URL", verbose_name='Default style url', on_delete=models.SET_NULL, blank=True, null=True)
-    crs_options = models.TextField('CRS Options', blank=True, null=True)
+    crs_options = models.JSONField('CRS Options', blank=True, null=True)
 
     title = models.CharField('Title', max_length=255, blank=True, null=True)
     abstract = models.TextField('Abstract', blank=True, null=True)
