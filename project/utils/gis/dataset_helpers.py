@@ -115,30 +115,38 @@ class OGCHandlers(DatasetHandler):
         return title.replace('_', ' ')
 
     def get_bbox(self, layer):
-        bbox = None
+        bboxes = []
         
         if layer:
             for attr in ['boundingBoxWGS84', 'boundingBox']:
                 if hasattr(layer, attr) and isinstance(getattr(layer, attr), (list, tuple)):
-                    bbox = getattr(layer, attr)
-                    break
+                    bboxes.append(getattr(layer, attr))
         
-        if bbox:
-            w,s,e,n,*srid = bbox
-            bbox_corners = [(w,s), (e,s), (e,n), (w,n), (w,s)]
-            if len(srid) != 0 and ':' in srid[0]:
-                bbox_srid = int(srid[0].split(':')[-1])
-            else:
-                bbox_srid = 4326
-            
-            geom = Polygon(bbox_corners, srid=bbox_srid)
-            if bbox_srid == 4326:
-                return geom
-            else:
-                wgs84_srs = SpatialReference(4326)
-                return geom.transform(wgs84_srs, clone=True)
-        else:
-            return geom_helpers.WORLD_GEOM
+        if bboxes:
+            geoms = []
+            for bbox in bboxes:
+                w,s,e,n,*srid = bbox
+                bbox_corners = [(w,s), (e,s), (e,n), (w,n), (w,s)]
+                try:
+                    bbox_srid = int(srid[0].split(':')[-1])
+                except:
+                    bbox_srid = 4326
+                
+                geom = Polygon(bbox_corners, srid=bbox_srid)
+                if geom.is_valid:
+                    if bbox_srid != 4326:
+                        wgs84_srs = SpatialReference(4326)
+                        geom = geom.transform(wgs84_srs, clone=True)
+                    geoms.append(geom)
+
+            if geoms: 
+                merged_geom = geoms[0] 
+                if len(geoms) > 1:
+                    for geom in geoms[1:]: 
+                        merged_geom = merged_geom.union(geom) 
+                return merged_geom
+
+        return geom_helpers.WORLD_GEOM
 
     def get_tags(self, id, layer):
         url_tag_instances = model_helpers.collect_url_tags(self.access_url)
