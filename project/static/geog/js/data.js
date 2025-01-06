@@ -475,7 +475,10 @@ const fetchWFSData = async (event, layer, options={}) => {
         var [n,e,s,w] = [xy.lat+buffer, xy.lng+buffer, xy.lat-buffer, xy.lng-buffer]
     }
 
-    // transformCoordinates([[, getMapBbox(maps[0])[0]], [getMapBbox(maps[0])[3], getMapBbox(maps[0])[2]]], 4326, 25831)
+    if(!crs.endsWith(':4326')) {
+        const tc = transformCoordinates([[e, n], [w, s]], 4326, crs.split(':')[crs.split(':').length-1])
+        var [n,e,s,w] = [tc[0][1], tc[0][0], tc[1][1], tc[1][0]]
+    }
 
     const bbox = [s,w,n,e,crs]
     params.bbox = bbox
