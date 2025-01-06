@@ -86,3 +86,9 @@ def check_or_add_message(request, method, message, tags):
         if msg.message == message and msg.extra_tags == tags:
             return
     method(request, message, tags)
+
+def find_nearest_divisible(num, divisors): 
+    while True: 
+        if all([num % i == 0 for i in divisors]): 
+            return num
+        num += 1

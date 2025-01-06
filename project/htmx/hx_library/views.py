@@ -160,6 +160,7 @@ class SearchList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.page == 1:
+            print(context['page_obj'])
             context['filters'] = self.get_filters()
         return context
 
