@@ -10,15 +10,15 @@ from urllib.parse import urlparse, parse_qs
 from utils.gis import dataset_helpers
 
 def test(request):
-    url = 'https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?service=WFS&request=GetFeature&version=2.0.0'
-    handler = dataset_helpers.OGCHandlers('wfs', url)
-    service = handler.get_service()
-    # layers = handler.get_layers(service)
-    layer_name = 'militaire_gebieden:militaire_gebieden'
-    layer = service[layer_name]
+    # url = 'https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?service=WFS&request=GetFeature&version=2.0.0'
+    # handler = dataset_helpers.OGCHandlers('wfs', url)
+    # service = handler.get_service()
+    # # layers = handler.get_layers(service)
+    # layer_name = 'militaire_gebieden:militaire_gebieden'
+    # layer = service[layer_name]
 
-    print(
-        'id', vars(service.identification),
-        'layer', vars(layer),
-    )
+    # print(
+    #     'id', vars(service.identification),
+    #     'layer', vars(layer),
+    # )
     return HttpResponse('test')
