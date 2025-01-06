@@ -16,14 +16,15 @@ class DatasetHandler():
     access_url = None
     layers = None
 
-    def __init__(self, format, url, key):
+    def __init__(self, format, url, key=None):
         self.format = format
         self.url = url
         self.key = key
         
         self.handler()
 
-        cache.set(key, self, timeout=3600)
+        if key:
+            cache.set(key, self, timeout=3600)
 
     def handler(self):
         pass
