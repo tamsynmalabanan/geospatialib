@@ -16,5 +16,9 @@ def test(request):
     layer_name = 'militaire_gebieden:militaire_gebieden'
     layer = service[layer_name]
 
-    print(handler.test_connection(layer_name))
+    features = handler.test_connection(layer_name)
+    print(
+        type(features),
+        features
+    )
     return HttpResponse('test')
