@@ -198,8 +198,8 @@ class OGCHandlers(DatasetHandler):
             data['provider'] = provider_vars
 
         print(
-            hasattr(id, 'crsOptions'),
-            hasattr(layer, 'crsOptions'),
+            getattr(layer, 'crsOptions'),
+            type(getattr(layer, 'crsOptions')),
         )
 
         return data
