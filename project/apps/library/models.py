@@ -15,7 +15,7 @@ class Dataset(models.Model):
     extra_data = models.JSONField('Data', blank=True, null=True)
     default_style = models.CharField('Default style name', max_length=255, blank=True, null=True)
     default_legend = models.ForeignKey("library.URL", verbose_name='Default style url', on_delete=models.SET_NULL, blank=True, null=True)
-    crs_options = models.JSONField('CRS Options', blank=True, null=True)
+    default_crs = models.PositiveIntegerField('Default CRS', blank=True, null=True)
 
     title = models.CharField('Title', max_length=255, blank=True, null=True)
     abstract = models.TextField('Abstract', blank=True, null=True)
@@ -29,12 +29,6 @@ class Dataset(models.Model):
         if self.title:
             return self.title
         return self.name
-
-    def default_crs(self):
-        crs_options = json.loads(self.crs_options)
-        if 4326 in crs_options:
-            return 4326
-        return crs_options[0]
 
 class Tag(models.Model):
     tag = models.CharField('Tag', max_length=64, unique=True)
