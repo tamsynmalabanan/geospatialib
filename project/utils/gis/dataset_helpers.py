@@ -197,6 +197,11 @@ class OGCHandlers(DatasetHandler):
                 provider_vars['contact'] = vars(getattr(provider, 'contact'))
             data['provider'] = provider_vars
 
+        print(
+            hasattr(id, 'crsOptions'),
+            hasattr(layer, 'crsOptions'),
+        )
+
         return data
 
     def populate_dataset(self, dataset):
