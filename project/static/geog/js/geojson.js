@@ -26,8 +26,6 @@ const handleFeatureCRS = async (feature, crs) => {
     if (crs && crs !== 4326) {
         const coords = feature.geometry.coordinates
         feature.geometry.coordinates = await transformCoordinates(coords, crs, 4326)
-    } else {
-        console.log('exception: ', crs)
     }
 }
 
@@ -77,7 +75,6 @@ const handleGeoJSON = async (geojson, options={}) => {
 
     geojson.features.forEach(async feature => {
         const geomAssigned = handleFeatureGeom(feature, options.defaultGeom)
-        console.log(geomAssigned)
         if (!geomAssigned) {
             await handleFeatureCRS(feature, crs)
         }
