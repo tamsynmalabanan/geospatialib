@@ -14,8 +14,9 @@ def test(request):
     handler = dataset_helpers.OGCHandlers('wfs', url)
     service = handler.get_service()
     # layers = handler.get_layers(service)
-    layer = service['militaire_gebieden:militaire_gebieden']
-    
+    layer_name = 'militaire_gebieden:militaire_gebieden'
+    layer = service[layer_name]
+
     print(
         service,
         layer,
