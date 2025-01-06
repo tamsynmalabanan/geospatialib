@@ -16,8 +16,7 @@ class DatasetHandler():
     access_url = None
     layers = None
 
-    def __init__(self, format, url, key=None):
-        self.format = format
+    def __init__(self, url, key=None):
         self.url = url
         self.key = key
         
@@ -283,7 +282,7 @@ def get_dataset_handler(format, **kwargs):
     }.get(format)
 
     if handler:
-        return handler(format, **kwargs)
+        return handler(**kwargs)
 
 def get_dataset_format(url):
     helpers = {
