@@ -32,23 +32,48 @@ const validateCoordinates = (coords, precision=6) => {
     })
 }
 
-const transformCoordinatesToEPSG4326 = async (coordinates, crs) => {
-    const crs_text = `EPSG:${crs}`
+const transformCoordinates = async (coordinates, source, target) => {
+    const source_text = `EPSG:${source}`
+    const target_text = `EPSG:${target}`
     
-    if (!proj4.defs(crs_text)) {
-        await fetchProj4Def(crs)
+    if (!proj4.defs(source_text)) {
+        await fetchProj4Def(source)
     }    
 
-    if (proj4.defs(crs_text)) {
+    if (!proj4.defs(target_text)) {
+        await fetchProj4Def(target)
+    }    
+    
+    if (proj4.defs(source_text) && proj4.defs(target_text)) {
         loopThroughCoordinates(coordinates, (coords) => {
-            const projectedCoord = proj4(crs_text, 'EPSG:4326', [coords[0], coords[1]]);
+            const projectedCoord = proj4(source_text, target_text, [coords[0], coords[1]]);
             coords[0] = projectedCoord[0]
             coords[1] = projectedCoord[1]
         })
-
     } else {
         console.log('CRS definition is not on Proj4: ', crs_text)
     }
 
     return coordinates
 }
+
+// const transformCoordinatesToEPSG4326 = async (coordinates, crs) => {
+//     const crs_text = `EPSG:${crs}`
+
+//     if (!proj4.defs(crs_text)) {
+//         await fetchProj4Def(crs)
+//     }    
+
+//     if (proj4.defs(crs_text)) {
+//         loopThroughCoordinates(coordinates, (coords) => {
+//             const projectedCoord = proj4(crs_text, 'EPSG:4326', [coords[0], coords[1]]);
+//             coords[0] = projectedCoord[0]
+//             coords[1] = projectedCoord[1]
+//         })
+
+//     } else {
+//         console.log('CRS definition is not on Proj4: ', crs_text)
+//     }
+
+//     return coordinates
+// }
