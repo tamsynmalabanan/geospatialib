@@ -216,11 +216,16 @@ class OGCHandlers(DatasetHandler):
                         dataset.default_legend = url_instance
             
             crs_options = extra_data.get('layer', {}).get('crsOptions')
-            default_crs = 'EPSG:4326'
-            for crs in crs_options:
-                if '4326' in crs:
-                    default_crs = crs
-                    break
+            default_crs = None
+            if crs_options:
+                for crs in crs_options:
+                    if crs.endswith(':4326'):
+                        default_crs = crs
+                        break
+                if not default_crs:
+                    default_crs = crs_options[0]
+            else:
+                default_crs = 'EPSG:4326'
             dataset.default_crs = default_crs
 
             dataset.title = self.get_title(layer)

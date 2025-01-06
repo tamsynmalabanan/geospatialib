@@ -453,7 +453,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         map = event.target._map
         if (map) {
             const [n,e,s,w] = getMapBbox(map)
-            params.bbox = [s,w,n,e]
+            bbox = [s,w,n,e]
         }
     }
 
@@ -467,8 +467,10 @@ const fetchWFSData = async (event, layer, options={}) => {
         }
 
         const xy = event.latlng
-        params.bbox = [xy.lat-buffer, xy.lng-buffer, xy.lat+buffer, xy.lng+buffer]
+        bbox = [xy.lat-buffer, xy.lng-buffer, xy.lat+buffer, xy.lng+buffer]
     }
+
+    params.bbox = bbox
 
     const url = pushQueryParamsToURLString(cleanURL, params)
     const data = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
