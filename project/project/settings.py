@@ -234,7 +234,8 @@ STATIC_URL = '/static/'
 
 # for debug toolbar
 INTERNAL_IPS = [
-    '127.0.0.1'
+    '127.0.0.1',
+    'www.geospatialib.com',
 ]
 
 # for cors header
