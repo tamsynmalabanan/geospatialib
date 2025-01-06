@@ -267,12 +267,14 @@ class WFSHandler(OGCHandlers):
         service = self.get_service()
         if service:
             layer = service[layer_name]
-            print(list(layer.boundingBox)[:-1]+['EPSG::4326'])
-            print(layer.crsOptions[0])
+            bbox = list(layer.boundingBox)[:-1]
+            crs = list(layer.boundingBox)[-1]
+            print(bbox)
+            print(crs)
             return service.getfeature(
                 typename=layer_name, 
-                bbox=list(layer.boundingBox)[:-1]+['EPSG::4326'], 
-                srsname='EPSG::4326',
+                bbox=bbox + [crs], 
+                srsname=crs,
             )
 
 def get_dataset_handler(format, **kwargs):
