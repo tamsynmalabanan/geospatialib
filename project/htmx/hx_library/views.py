@@ -161,12 +161,11 @@ class SearchList(ListView):
         context = super().get_context_data(**kwargs)
         if self.page == 1:
             count = context['page_obj'].paginator.count
-            fillers = util_helpers.find_nearest_divisible(count, [2,3])-count
+            fillers = range(util_helpers.find_nearest_divisible(count, [2,3])-count)
 
             context['count'] = count
             context['fillers'] = fillers
             print('fillers', fillers)
-            print('count', count)
             context['filters'] = self.get_filters()
         return context
 
