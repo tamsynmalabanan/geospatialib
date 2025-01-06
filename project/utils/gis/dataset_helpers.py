@@ -197,12 +197,12 @@ class OGCHandlers(DatasetHandler):
                 provider_vars['contact'] = vars(getattr(provider, 'contact'))
             data['provider'] = provider_vars
 
-        print(
-            getattr(layer, 'crsOptions'),
-            ','.join((getattr(layer, 'crsOptions'))),
-        )
-
         return data
+    
+    def get_crs_options(self, layer):
+        if hasattr(layer, 'crsOptions'):
+            crs_options = [int(i.split(':')[-1]) for i in getattr(layer, 'crsOptions')]
+            return ','.join(crs_options)
 
     def populate_dataset(self, dataset):
         self.dataset = dataset
@@ -231,6 +231,7 @@ class OGCHandlers(DatasetHandler):
             dataset.bbox = self.get_bbox(layer)
             dataset.abstract = self.get_abstract(id, layer)
             dataset.tags.set(self.get_tags(id, layer))
+            print(self.get_crs_options(layer))
             dataset.save()
 
     def test_connection(self, layer_name):
