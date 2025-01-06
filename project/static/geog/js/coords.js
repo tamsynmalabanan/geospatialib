@@ -58,24 +58,3 @@ const transformCoordinates = async (coordinates, source, target) => {
 
     return coordinates
 }
-
-// const transformCoordinatesToEPSG4326 = async (coordinates, crs) => {
-//     const crs_text = `EPSG:${crs}`
-
-//     if (!proj4.defs(crs_text)) {
-//         await fetchProj4Def(crs)
-//     }    
-
-//     if (proj4.defs(crs_text)) {
-//         loopThroughCoordinates(coordinates, (coords) => {
-//             const projectedCoord = proj4(crs_text, 'EPSG:4326', [coords[0], coords[1]]);
-//             coords[0] = projectedCoord[0]
-//             coords[1] = projectedCoord[1]
-//         })
-
-//     } else {
-//         console.log('CRS definition is not on Proj4: ', crs_text)
-//     }
-
-//     return coordinates
-// }
