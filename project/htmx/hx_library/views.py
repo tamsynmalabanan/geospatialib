@@ -165,7 +165,6 @@ class SearchList(ListView):
 
             context['count'] = count
             context['fillers'] = fillers
-            print('fillers', fillers)
             context['filters'] = self.get_filters()
         return context
 
