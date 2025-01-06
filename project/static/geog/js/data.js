@@ -440,7 +440,7 @@ const fetchWMSData = async (event, layer, options={}) => {
 const fetchWFSData = async (event, layer, options={}) => {
     const cleanURL = removeQueryParams(layer.data.layerUrl)
     const params = {
-        service: 'wfs',
+        service: 'WFS',
         version: '2.0.0',
         request: 'GetFeature',
         typeNames: layer.data.layerName,
@@ -471,6 +471,7 @@ const fetchWFSData = async (event, layer, options={}) => {
     }
 
     const url = pushQueryParamsToURLString(cleanURL, params)
+    print(url)
     const data = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
         if (response.ok || response.status === 200) {
             return response
