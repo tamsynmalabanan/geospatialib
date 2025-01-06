@@ -199,7 +199,7 @@ class OGCHandlers(DatasetHandler):
 
         print(
             getattr(layer, 'crsOptions'),
-            type(getattr(layer, 'crsOptions')),
+            str(getattr(layer, 'crsOptions')),
         )
 
         return data
