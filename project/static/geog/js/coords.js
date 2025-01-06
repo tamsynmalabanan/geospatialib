@@ -33,6 +33,8 @@ const validateCoordinates = (coords, precision=6) => {
 }
 
 const transformCoordinates = async (coordinates, source, target) => {
+    console.log(coordinates, source, target)
+
     const source_text = `EPSG:${source}`
     const target_text = `EPSG:${target}`
     
