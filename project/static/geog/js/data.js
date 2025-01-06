@@ -12,7 +12,6 @@ const getOSMGeoJSON = (features) => {
 
 const fetchProj4Def = async (crs, options={}) => {
     const url = `https://spatialreference.org/ref/epsg/${crs}/ogcwkt`
-    // const url = `https://spatialreference.org/ref/epsg/${crs}/proj4.txt`
     return fetchDataWithTimeout(url, {abortBtn:options.abortBtn})
     .then(response => {
         if (response.ok || response.status === 200) {
