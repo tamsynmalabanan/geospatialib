@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 
 import uuid
+import json
 from urllib.parse import urlparse
 
 from . import choices
@@ -28,6 +29,12 @@ class Dataset(models.Model):
         if self.title:
             return self.title
         return self.name
+
+    def default_crs(self):
+        crs_options = json.loads(self.crs_options)
+        if 4326 in crs_options:
+            return 4326
+        return crs_options[0]
 
 class Tag(models.Model):
     tag = models.CharField('Tag', max_length=64, unique=True)
