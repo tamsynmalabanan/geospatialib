@@ -19,8 +19,6 @@ def test(request):
     bbox = handler.get_bbox(layer)
 
     print(
-        service,
-        layer,
-        bbox,
+        vars(layer),
     )
     return HttpResponse('test')
