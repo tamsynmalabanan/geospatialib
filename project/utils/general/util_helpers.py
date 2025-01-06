@@ -91,5 +91,7 @@ def find_nearest_divisible(num, divisors):
     if num != 0:
         while True: 
             if all([num % i == 0 for i in divisors]): 
-                return num
-            num += 1
+                break
+            else:
+                num += 1
+    return num
