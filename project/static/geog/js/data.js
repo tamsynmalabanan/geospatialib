@@ -448,6 +448,12 @@ const fetchWFSData = async (event, layer, options={}) => {
         outputFormat: 'json',
     }
 
+    let crs = layer.data.layerCrs
+    if (!crs) {
+        crs = 'EPSG:4326'
+    }
+    params.srsname = crs
+
     let map
     if (event.type === 'add') {
         map = event.target._map
