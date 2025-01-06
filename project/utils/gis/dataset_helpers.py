@@ -76,22 +76,7 @@ class ArcGISImageHandler(DatasetHandler):
         dataset.save()
 
 class OGCHandlers(DatasetHandler):
-    
-    def get_service(self):
-        handler = None
-
-        if self.format == 'wms':
-            handler = wms.WebMapService
         
-        if self.format == 'wfs':
-            handler = wfs.WebFeatureService
-
-        if handler:
-            try:
-                return handler(self.access_url)
-            except:
-                pass
-    
     def get_layers(self, service):
         contents = service.contents
         layers = {}
@@ -237,6 +222,14 @@ class OGCHandlers(DatasetHandler):
             dataset.tags.set(self.get_tags(id, layer))
             dataset.save()
 
+class WMSHandler(OGCHandlers):
+    
+    def get_service(self):
+        try:
+            return wms.WebMapService(self.access_url)
+        except Exception as e:
+            print(e)
+            
     def test_connection(self, layer_name):
         service = self.get_service()
         if service:
@@ -256,12 +249,18 @@ class OGCHandlers(DatasetHandler):
                     print(e)
                     return None
 
-class WMSHandler(OGCHandlers):
-    pass
-
 class WFSHandler(OGCHandlers):
-    pass
+    
+    def get_service(self):
+        try:
+            return wfs.WebFeatureService(self.access_url, version='2.0.0')
+        except Exception as e:
+            print(e)
 
+    # def test_connection(self, layer_name):
+    #     service = self.get_service()
+    #     if service:
+    #         service.getfeature(typename=layer_name, bbox=(4500000,5500000,4500500,5500500), srsname='urn:x-ogc:def:crs:EPSG:31468')
 
 def get_dataset_handler(format, **kwargs):
     handler = {
