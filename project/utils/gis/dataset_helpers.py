@@ -202,7 +202,6 @@ class OGCHandlers(DatasetHandler):
     def get_crs_options(self, layer):
         if hasattr(layer, 'crsOptions'):
             crs_options = [i.split(':')[-1] for i in getattr(layer, 'crsOptions')]
-            print(crs_options)
             return json.dumps(crs_options)
         
     def populate_dataset(self, dataset):
