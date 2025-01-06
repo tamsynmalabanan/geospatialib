@@ -136,7 +136,7 @@ class OGCHandlers(DatasetHandler):
                 if bbox_srid != 4326:
                     wgs84_srs = SpatialReference(4326)
                     geom = geom.transform(wgs84_srs, clone=True)
-                print(vars(geom), hasattr(geom, 'is_valid'))
+                print(geom.geojson)
                 geoms.append(geom)
 
             if geoms: 
