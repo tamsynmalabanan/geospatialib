@@ -442,7 +442,7 @@ const fetchWFSData = async (event, layer, options={}) => {
     const cleanURL = removeQueryParams(layer.data.layerUrl)
     const params = {
         service: 'wfs',
-        version: '1.1.0',
+        version: '2.0.0',
         request: 'GetFeature',
         typeNames: layer.data.layerName,
         srsname: 'EPSG:4326',
