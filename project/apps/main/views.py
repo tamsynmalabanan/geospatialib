@@ -16,9 +16,11 @@ def test(request):
     # layers = handler.get_layers(service)
     layer_name = 'militaire_gebieden:militaire_gebieden'
     layer = service[layer_name]
+    bbox = handler.get_bbox(layer)
 
     print(
         service,
         layer,
+        bbox,
     )
     return HttpResponse('test')
