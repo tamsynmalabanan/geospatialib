@@ -20,5 +20,6 @@ def test(request):
 
     print(
         vars(layer),
+        bbox,
     )
     return HttpResponse('test')
