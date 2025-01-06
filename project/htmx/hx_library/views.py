@@ -164,7 +164,7 @@ class SearchList(ListView):
             fillers = util_helpers.find_nearest_divisible(count, [2,3])-count
 
             context['count'] = count
-            context['fillers'] = fillers
+            context['fillers'] = range(fillers-1)
             context['filters'] = self.get_filters()
         return context
 
