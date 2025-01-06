@@ -220,6 +220,7 @@ class OGCHandlers(DatasetHandler):
             for crs in crs_options:
                 if '4326' in crs:
                     default_crs = crs
+                    break
             dataset.default_crs = default_crs
 
             dataset.title = self.get_title(layer)
