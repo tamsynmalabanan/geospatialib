@@ -13,10 +13,11 @@ def test(request):
     url = 'https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?service=WFS&request=GetFeature&version=2.0.0'
     handler = dataset_helpers.OGCHandlers('wfs', url)
     service = handler.get_service()
-    layers = handler.get_layers(service)
-
+    # layers = handler.get_layers(service)
+    layer = service['militaire_gebieden:militaire_gebieden']
+    
     print(
         service,
-        layers,
+        layer,
     )
     return HttpResponse('test')
