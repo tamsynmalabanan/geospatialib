@@ -181,7 +181,10 @@ class OGCHandlers(DatasetHandler):
                 if hasattr(provider, attr):
                     provider_vars[attr] = getattr(provider, attr)
             if hasattr(provider, 'contact') and hasattr(getattr(provider, 'contact'), '__dict__'):
-                provider_vars['contact'] = vars(getattr(provider, 'contact'))
+                contact = vars(getattr(provider, 'contact'))
+                if 'root' in contact:
+                    del contact['root']
+                provider_vars['contact'] = contact
             data['provider'] = provider_vars
 
         return data
