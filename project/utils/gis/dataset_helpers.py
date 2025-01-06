@@ -253,6 +253,7 @@ class OGCHandlers(DatasetHandler):
                     )
                     return response.read()
                 except Exception as e:
+                    print(e)
                     return None
 
 class WMSHandler(OGCHandlers):
