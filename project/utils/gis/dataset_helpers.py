@@ -249,7 +249,8 @@ class OGCHandlers(DatasetHandler):
                         bbox=layer.boundingBoxWGS84,
                         size=(512, 512),
                         format='image/jpeg',
-                        transparent=True
+                        transparent=True,
+                        version='2.0.0',
                     )
                     return response.read()
                 except Exception as e:
