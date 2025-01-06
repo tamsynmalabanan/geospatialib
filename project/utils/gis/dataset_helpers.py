@@ -275,6 +275,7 @@ class WFSHandler(OGCHandlers):
                 typename=layer_name, 
                 bbox=bbox + [crs], 
                 srsname=crs,
+                outputFormat='json',
             )
             return response.read()
 
