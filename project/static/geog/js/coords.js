@@ -32,7 +32,13 @@ const validateCoordinates = (coords, precision=6) => {
     })
 }
 
-const transformCoordinatesToEPSG4326 = (coordinates, crs_text) => {
+const transformCoordinatesToEPSG4326 = async (coordinates, crs) => {
+    const crs_text = `EPSG:${crs}`
+    
+    if (!proj4.defs(crs_text)) {
+        await fetchProj4Def(crs)
+    }    
+
     if (proj4.defs(crs_text)) {
         loopThroughCoordinates(coordinates, (coords) => {
             const projectedCoord = proj4(crs_text, 'EPSG:4326', [coords[0], coords[1]]);
