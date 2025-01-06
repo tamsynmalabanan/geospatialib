@@ -19,6 +19,7 @@ def test(request):
     bbox = handler.get_bbox(layer)
 
     print(
+        vars(service.identification),
         vars(layer),
         bbox,
     )
