@@ -264,10 +264,15 @@ class WFSHandler(OGCHandlers):
         except Exception as e:
             print(e)
 
-    # def test_connection(self, layer_name):
-    #     service = self.get_service()
-    #     if service:
-    #         service.getfeature(typename=layer_name, bbox=(4500000,5500000,4500500,5500500), srsname='urn:x-ogc:def:crs:EPSG:31468')
+    def test_connection(self, layer_name):
+        service = self.get_service()
+        if service:
+            layer = service[layer_name]
+            return service.getfeature(
+                typename=layer_name, 
+                bbox=layer.boundingBox, 
+                srsname='urn:x-ogc:def:crs:EPSG:25831'
+            )
 
 def get_dataset_handler(format, **kwargs):
     handler = {
