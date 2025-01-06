@@ -133,11 +133,11 @@ class OGCHandlers(DatasetHandler):
                     bbox_srid = 4326
                 
                 geom = Polygon(bbox_corners, srid=bbox_srid)
-                if geom.is_valid:
-                    if bbox_srid != 4326:
-                        wgs84_srs = SpatialReference(4326)
-                        geom = geom.transform(wgs84_srs, clone=True)
-                    geoms.append(geom)
+                print(vars(geom))
+                if bbox_srid != 4326:
+                    wgs84_srs = SpatialReference(4326)
+                    geom = geom.transform(wgs84_srs, clone=True)
+                geoms.append(geom)
 
             if geoms: 
                 merged_geom = geoms[0] 
