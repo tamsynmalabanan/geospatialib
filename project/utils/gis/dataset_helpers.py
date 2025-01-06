@@ -143,7 +143,8 @@ class OGCHandlers(DatasetHandler):
                 merged_geom = geoms[0] 
                 if len(geoms) > 1:
                     for geom in geoms[1:]: 
-                        merged_geom = merged_geom.union(geom) 
+                        merged_geom = merged_geom.union(geom)
+                    merged_geom = merged_geom.envelope
                 return merged_geom
 
         return geom_helpers.WORLD_GEOM
