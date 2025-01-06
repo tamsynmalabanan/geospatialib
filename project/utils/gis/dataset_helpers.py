@@ -277,6 +277,7 @@ class WFSHandler(OGCHandlers):
                 srsname=crs,
                 outputFormat='json',
             )
+            print(vars(response))
             return response.read()
 
 def get_dataset_handler(format, **kwargs):
