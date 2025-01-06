@@ -267,6 +267,8 @@ class WFSHandler(OGCHandlers):
         service = self.get_service()
         if service:
             layer = service[layer_name]
+            print(layer.boundingBox)
+            print(layer.crsOptions[0])
             return service.getfeature(
                 typename=layer_name, 
                 bbox=layer.boundingBox, 
