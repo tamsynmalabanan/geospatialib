@@ -2,10 +2,10 @@ const getOSMGeoJSON = (features) => {
     return {
         type: "FeatureCollection",
         licence: "Data © <a href='http://osm.org/copyright' target='_blank'>OpenStreetMap contributors, ODbL 1.0.</a>",
-        note:   "If the query results from OSM don't include your target feature, try zooming in and querying along its boundaries;" + " " +
-                "for efficiency, features are grouped when the query results exceed 100 features;" + " " +
-                "layer toggle is disabled when the query results exceed 1,000 features;" + " " +
-                "the geojson containing all features is still downloadable and can be viewed with other applications.",
+        // note:   "If the query results from OSM don't include your target feature, try zooming in and querying along its boundaries;" + " " +
+        //         "for efficiency, features are grouped when the query results exceed 100 features;" + " " +
+        //         "layer toggle is disabled when the query results exceed 1,000 features;" + " " +
+        //         "the geojson containing all features is still downloadable and can be viewed with other applications.",
         features: features
     }
 }
