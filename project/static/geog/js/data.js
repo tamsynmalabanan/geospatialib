@@ -450,7 +450,7 @@ const fetchWFSData = async (event, layer, options={}) => {
 
     let crs = layer.data.layerCrs
     if (!crs) {
-        crs = 'EPSG:4326'
+        crs = 'urn:ogc:def:crs:EPSG::4326'
     }
     params.srsname = crs
 
@@ -458,8 +458,7 @@ const fetchWFSData = async (event, layer, options={}) => {
     if (event.type === 'add') {
         map = event.target._map
         if (map) {
-            const [n,e,s,w] = getMapBbox(map)
-            bbox = [s,w,n,e]
+            var [n,e,s,w] = getMapBbox(map)
         }
     }
 
@@ -473,9 +472,12 @@ const fetchWFSData = async (event, layer, options={}) => {
         }
 
         const xy = event.latlng
-        bbox = [xy.lat-buffer, xy.lng-buffer, xy.lat+buffer, xy.lng+buffer]
+        var [n,e,s,w] = [xy.lat+buffer, xy.lng+buffer, xy.lat-buffer, xy.lng-buffer]
     }
 
+    // transformCoordinates([[, getMapBbox(maps[0])[0]], [getMapBbox(maps[0])[3], getMapBbox(maps[0])[2]]], 4326, 25831)
+
+    const bbox = [s,w,n,e,crs]
     params.bbox = bbox
 
     const url = pushQueryParamsToURLString(cleanURL, params)
