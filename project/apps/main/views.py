@@ -11,7 +11,7 @@ from utils.gis import dataset_helpers
 
 def test(request):
     url = 'https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?service=WFS&request=GetFeature&version=2.0.0'
-    handler = dataset_helpers.WFSHandler('wfs', url)
+    handler = dataset_helpers.WFSHandler(url)
     service = handler.get_service()
     layer_name = 'militaire_gebieden:militaire_gebieden'
     layer = service[layer_name]
