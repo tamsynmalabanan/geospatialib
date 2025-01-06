@@ -445,7 +445,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         version: '2.0.0',
         request: 'GetFeature',
         typeNames: layer.data.layerName,
-        srsname: 'EPSG:4326',
+        srsname: layer.data.layerCrs,
         outputFormat: 'json',
     }
 
