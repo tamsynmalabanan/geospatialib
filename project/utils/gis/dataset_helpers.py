@@ -224,8 +224,8 @@ class OGCHandlers(DatasetHandler):
                     if url_instance:
                         dataset.default_legend = url_instance
             
-            crs_options = extra_data.get('crsOptions')
-            print(crs_options, 4326 not in crs_options)
+            crs_options = extra_data.get('crsOptions', [])
+            print(crs_options)
             if crs_options and 4326 not in crs_options:
                 default_crs = crs_options[0]
             else:
