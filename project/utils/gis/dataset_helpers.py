@@ -228,9 +228,9 @@ class OGCHandlers(DatasetHandler):
             
             dataset.title = self.get_title(layer)
             dataset.bbox = self.get_bbox(layer)
+            dataset.crs_options = self.get_crs_options(layer)
             dataset.abstract = self.get_abstract(id, layer)
             dataset.tags.set(self.get_tags(id, layer))
-            print(self.get_crs_options(layer))
             dataset.save()
 
     def test_connection(self, layer_name):
