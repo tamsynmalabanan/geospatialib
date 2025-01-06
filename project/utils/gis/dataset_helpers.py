@@ -268,7 +268,7 @@ class WFSHandler(OGCHandlers):
         if service:
             layer = service[layer_name]
             bbox = list(layer.boundingBox)[:-1]
-            crs = list(layer.boundingBox)[-1]
+            crs = str(list(layer.boundingBox)[-1])
             print(bbox)
             print(crs)
             return service.getfeature(
