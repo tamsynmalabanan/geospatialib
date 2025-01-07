@@ -39,7 +39,10 @@ document.addEventListener('htmx:afterSwap', (event) => {
     if (event.target.id === 'searchResults') {
         const map = mapQuerySelector('#geospatialibMap')
         map.fire('updateBboxFields')
+        resetSearchResults()
     }
+
+    console.log(event)
 })
 
 document.addEventListener('htmx:configRequest', (event) => {
