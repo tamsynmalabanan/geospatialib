@@ -6,19 +6,18 @@ from django.contrib.auth import logout
 from django.contrib import messages
 
 from urllib.parse import urlparse, parse_qs
-
+from apps.library.models import Dataset
 from utils.gis import dataset_helpers
 
-def test(request):
-    url = 'https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?service=WFS&request=GetFeature&version=2.0.0'
-    handler = dataset_helpers.WFSHandler(url)
-    service = handler.get_service()
-    layer_name = 'militaire_gebieden:militaire_gebieden'
-    layer = service[layer_name]
+import uuid
 
-    features = handler.test_connection(layer_name)
-    print(
-        type(features),
-        features
-    )
+def test(request):
+    datasets = Dataset.objects.all()
+    for dataset in datasets:
+        while True:
+            uuid_value = uuid.uuid4
+            if not Dataset.objects.filter(uuid=uuid_value).exists():
+                dataset.uuid = uuid_value
+                dataset.save()
+                break
     return HttpResponse('test')
