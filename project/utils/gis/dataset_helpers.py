@@ -216,17 +216,13 @@ class OGCHandlers(DatasetHandler):
                         dataset.default_legend = url_instance
             
             crs_options = extra_data.get('layer', {}).get('crsOptions')
-            default_crs = None
             if crs_options:
-                for crs in crs_options:
-                    if crs.endswith(':4326'):
-                        default_crs = crs
-                        break
-                if not default_crs:
-                    default_crs = crs_options[0]
-            else:
-                default_crs = 'EPSG:4326'
-            dataset.default_crs = default_crs
+                epsg_4326 = [i for i in crs_options if i.endswith(':4326')]
+                if epsg_4326:
+                    self.default_crs = epsg_4326[0]
+                else:
+                    self.default_crs = crs_options[0]
+            dataset.default_crs = self.default_crs
 
             dataset.title = self.get_title(layer)
             dataset.bbox = self.get_bbox(layer)
@@ -235,6 +231,7 @@ class OGCHandlers(DatasetHandler):
             dataset.save()
 
 class WMSHandler(OGCHandlers):
+    default_crs = 'EPSG:4326'
     
     def get_service(self):
         try:
@@ -262,6 +259,7 @@ class WMSHandler(OGCHandlers):
                     return None
 
 class WFSHandler(OGCHandlers):
+    default_crs = 'urn:ogc:def:crs:EPSG::4326'
     
     def get_service(self):
         try:
