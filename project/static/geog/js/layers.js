@@ -324,7 +324,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
     const mainCheckbox = mainToggle.querySelector('input')
 
     if (layerCount > 0) {
-        mainToggle.classList.add('dataset-group')
+        mainCheckbox.classList.add('dataset-group')
     }
 
     if (layerCount > 0 && layerCount <= 100) {
