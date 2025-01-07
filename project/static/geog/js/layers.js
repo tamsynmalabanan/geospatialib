@@ -146,7 +146,12 @@ const toggleLayer = async (event, options={}) => {
         }
 
         if (toggleAll) {
-            const layersCount = layerGroup.getLayers().length
+            const layersCount = Array.from(
+                datasetList.querySelectorAll('input.form-check-input')
+            ).filter(checkbox => {
+                return checkbox.checked
+            }).length
+            // const layersCount = layerGroup.getLayers().length
             if (layersCount < 1) {
                 toggleAll.setAttribute('disabled', true)
                 toggleAll.checked = false
