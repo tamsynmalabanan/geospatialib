@@ -188,7 +188,7 @@ const constructInfoPanel = (map, name, options={}) => {
         body.style.maxHeight = `${(mapContainerHeight * 0.9)-topMargin-siblingsHeight}px`;
         
         if (mapContainerWidth > 1000) {
-            body.parentElement.style.maxWidth = `${mapContainerWidth * 0.3}px`;
+            body.parentElement.style.maxWidth = `${mapContainerWidth * 0.4}px`;
         } else {
             body.parentElement.style.maxWidth = `${mapContainerWidth * 0.8}px`;
         }
