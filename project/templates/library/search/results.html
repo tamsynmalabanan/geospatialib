@@ -15,11 +15,6 @@
             {% for i in fillers %}
                 <li class='list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1' style="min-width:180px;"></li>
             {% endfor %}
-            {% comment %} <script>
-                if (document.readyState === 'complete') {
-                    resetSearchResults()
-                }
-            </script> {% endcomment %}
         </ul>
     {% else %}
         {% include "library/search/items.html" %}
