@@ -308,6 +308,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
                 collapseToggle.setAttribute('aria-controls', collapse.id)
                 collapseToggle.setAttribute('aria-expanded', `false`)
+                console.log(buttonContainer)
                 buttonContainer.appendChild(collapseToggle)
             }
         }
