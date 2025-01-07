@@ -198,11 +198,11 @@ class OGCHandlers(DatasetHandler):
             layer = service[dataset.name]
 
             extra_data = self.get_extra_data(id, provider, layer)
-            try:
-                dataset.extra_data = json.dumps(extra_data)
-            except Exception as e:
-                print(e)
-                print(extra_data)
+            # try:
+            #     dataset.extra_data = json.dumps(extra_data)
+            # except Exception as e:
+            #     print(e)
+            #     print(extra_data)
 
             styles = extra_data.get('layer', {}).get('styles', {})
             if styles:
