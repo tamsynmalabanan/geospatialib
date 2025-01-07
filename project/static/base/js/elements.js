@@ -167,7 +167,7 @@ const createFormCheck = (id, options={}) => {
         }
 
         const buttonContainer = document.createElement('div')
-        buttonContainer.classList.add('ms-auto')
+        buttonContainer.classList.add('ms-auto', 'd-flex')
         buttonContainer.appendChild(button)
         formCheck.appendChild(buttonContainer)
         
