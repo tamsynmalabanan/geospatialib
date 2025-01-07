@@ -167,7 +167,7 @@ const createFormCheck = (id, options={}) => {
         }
 
         const buttonContainer = document.createElement('div')
-        buttonContainer.classList.add('ms-auto', 'd-inline', 'hstack')
+        buttonContainer.classList.add('ms-auto', 'hstack', 'gap-3')
         buttonContainer.appendChild(button)
         formCheck.appendChild(buttonContainer)
         
