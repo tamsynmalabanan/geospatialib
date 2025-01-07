@@ -600,29 +600,13 @@ const handleMapQuery = (map) => {
                     featureId:true,
                 })
                 
-                const geoJSONLayer = L.geoJSON(geojson, {
-                    pointToLayer: (geoJsonPoint, latlng) => {
-                        return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
-                    },
-                    style: (geoJsonFeature) => {
-                        return getDefaultLayerStyle('other', {color:color, fillColor:true, weight:2})
-                    },        
-                    onEachFeature: (feature, layer) => {
-                        layer.options.pane = 'queryPane'
-                        layer.title = getLayerTitle(layer)
-                        layer.bindTooltip(layer.title, {sticky:true})
-
-                        if (Object.keys(feature.properties).length > 0) {
-                            const createPopup = () => {
-                                layer.bindPopup(createFeaturePropertiesTable(feature.properties).outerHTML, {
-                                    autoPan: false,
-                                }).openPopup()
-                                layer.off('click', createPopup)
-                            }
-
-                            layer.on('click', createPopup)
-                        }
-                    }    
+                const geoJSONLayer = getDefaultGeoJSONLayer(geojson, {
+                    color:color,
+                    fillColor:true,
+                    weight:2,
+                    pane:'queryPane',
+                    getTitleFromLayer:true,
+                    bindTitleAsTooltip:true,
                 })
 
                 geoJSONLayer.title = title
