@@ -52,8 +52,8 @@ document.addEventListener('htmx:afterSwap', (event) => {
             searchResultCheckboxes = searchResults.querySelectorAll('input.form-check-input')
         } else {
             const searchResultItems = searchResults.children
-            searchResultCheckboxes = Array.prototype.indexOf.call(searchResultItems, event.target)
-
+            const targetIndex = Array.prototype.indexOf.call(searchResultItems, event.target)
+            searchResultCheckboxes = Array.prototype.slice.call(searchResultItems, targetIndex + 1)
         }
         console.log(searchResultCheckboxes)
     }
