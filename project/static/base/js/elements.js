@@ -149,6 +149,7 @@ const createFormCheck = (id, options={}) => {
 
     if (options.label) {
         const span = document.createElement('span')
+        span.classList.add('text-nowrap')
         span.innerText = options.label
         label.appendChild(span)
     }
