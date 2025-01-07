@@ -36,8 +36,9 @@ const handleSearchQueryField = (value) => {
 }
 
 document.addEventListener('htmx:afterSwap', (event) => {
+    const target = event.target
     if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
-        const firstPageResults = event.target.id === 'searchResults'
+        const firstPageResults = target.id === 'searchResults'
 
         if (firstPageResults) {
             const map = mapQuerySelector('#geospatialibMap')
@@ -45,17 +46,21 @@ document.addEventListener('htmx:afterSwap', (event) => {
             resetSearchResults()
         }
 
-        const searchResults = document.querySelector('#searchResults')
-
-        let searchResultCheckboxes
-        if (firstPageResults) {
-            searchResultCheckboxes = searchResults.querySelectorAll('input.form-check-input')
-        } else {
-            const searchResultItems = searchResults.children
-            const targetIndex = Array.prototype.indexOf.call(searchResultItems, event.target)
-            searchResultCheckboxes = Array.prototype.slice.call(searchResultItems, targetIndex + 1)
+        const targetHxGet = target.getAttribute('hx-get')
+        const nextPageResults = targetHxGet && targetHxGet.startsWith(searchEndpoint)
+        if (firstPageResults || nextPageResults) {
+            const searchResults = document.querySelector('#searchResults')
+    
+            let searchResultCheckboxes
+            if (firstPageResults) {
+                searchResultCheckboxes = searchResults.querySelectorAll('input.form-check-input')
+            } else {
+                const searchResultItems = searchResults.children
+                const targetIndex = Array.prototype.indexOf.call(searchResultItems, target)
+                searchResultCheckboxes = Array.prototype.slice.call(searchResultItems, targetIndex + 1)
+            }
+            console.log(searchResultCheckboxes)
         }
-        console.log(searchResultCheckboxes)
     }
 })
 
