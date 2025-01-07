@@ -276,7 +276,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
 
         const dropdown = document.createElement('ul')
         dropdown.className = 'dropdown-menu fs-12'
-        formCheck.appendChild(dropdown)
+        formCheck.lastElementChild.appendChild(dropdown)
 
         const toggle = formCheck.querySelector('button')
         toggle.addEventListener('click', () => {
