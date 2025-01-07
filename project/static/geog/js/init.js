@@ -353,7 +353,7 @@ const handleMapQuery = (map) => {
     header.appendChild(queryDropdown)
 
     const queryToggle = createButton({
-        buttonClass: 'dropdown-toggle p-0',
+        buttonClass: 'dropdown-toggle py-0 px-2',
         buttonAttrs: {
             'type': 'button',
             'data-bs-toggle': 'dropdown',
