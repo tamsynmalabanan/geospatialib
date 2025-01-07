@@ -165,7 +165,11 @@ const createFormCheck = (id, options={}) => {
             span.innerText = options.buttonInnerText
             button.appendChild(span)
         }
-        formCheck.appendChild(button)
+
+        const buttonContainer = document.createElement('div')
+        buttonContainer.appendChild(button)
+        formCheck.appendChild(buttonContainer)
+        
         if (options.buttonCallback) {
             button.addEventListener('click', options.buttonCallback)
         }
