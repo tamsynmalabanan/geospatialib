@@ -194,29 +194,31 @@ class OGCHandlers(DatasetHandler):
         service = self.get_service()
         if service:
             id = service.identification
-            provider = service.provider
+            # provider = service.provider
             layer = service[dataset.name]
 
-            extra_data = self.get_extra_data(id, provider, layer)
+            # extra_data = self.get_extra_data(id, provider, layer)
 
-            styles = extra_data.get('layer', {}).get('styles', {})
-            if styles:
-                name = list(styles.keys())[0]
-                dataset.default_style = name
-                
-                url = styles[name].get('legend')
-                if validators.url(url):
-                    url_instance, created = models.URL.objects.get_or_create(url=url)
-                    if url_instance:
-                        dataset.default_legend = url_instance
+            if hasattr(layer, 'styles'):
+                styles = layer.styles
+                if styles:
+                    name = list(styles.keys())[0]
+                    dataset.default_style = name
+                    
+                    url = styles[name].get('legend')
+                    if validators.url(url):
+                        url_instance, created = models.URL.objects.get_or_create(url=url)
+                        if url_instance:
+                            dataset.default_legend = url_instance
             
-            crs_options = extra_data.get('layer', {}).get('crsOptions')
-            if crs_options:
-                epsg_4326 = [i for i in crs_options if i.endswith(':4326')]
-                if epsg_4326:
-                    self.default_crs = epsg_4326[0]
-                else:
-                    self.default_crs = crs_options[0]
+            if hasattr(layer, 'crsOptions'):
+                crs_options = [str(i) for i in layer.crsOptions]
+                if crs_options:
+                    epsg_4326 = [i for i in crs_options if i.endswith(':4326')]
+                    if epsg_4326:
+                        self.default_crs = epsg_4326[0]
+                    else:
+                        self.default_crs = crs_options[0]
             dataset.default_crs = self.default_crs
 
             dataset.title = self.get_title(layer)
