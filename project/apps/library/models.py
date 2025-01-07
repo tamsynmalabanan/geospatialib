@@ -9,7 +9,7 @@ from . import choices
 from utils.general import form_helpers
 
 class Dataset(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, blank=True, null=True)#, editable=False, unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     url = models.ForeignKey("library.URL", verbose_name='URL', on_delete=models.CASCADE, related_name='datasets')
     format = models.CharField('Format', max_length=32, choices=form_helpers.dict_to_choices(choices.DATASET_FORMATS))
