@@ -151,11 +151,10 @@ const toggleLayer = async (event, options={}) => {
             ).filter(checkbox => {
                 return checkbox.checked
             }).length
-            // const layersCount = layerGroup.getLayers().length
+
             if (layersCount < 1) {
                 toggleAll.setAttribute('disabled', true)
                 toggleAll.checked = false
-
                 toggleLabel.innerHTML = ''
             } else {
                 toggleAll.removeAttribute('disabled')
@@ -167,10 +166,10 @@ const toggleLayer = async (event, options={}) => {
                 }
 
                 if (layersCount > 1) {
-                    toggleLabel.innerHTML = `showing ${layersCount} ${label}s`
-                } else {
-                    toggleLabel.innerHTML = `showing ${layersCount} ${label}`
+                    label = `${label}s`
                 }
+
+                toggleLabel.innerHTML = `showing ${layersCount} ${label}`
             }
         }
     }
