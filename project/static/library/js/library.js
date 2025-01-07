@@ -60,7 +60,7 @@ document.addEventListener('htmx:afterSwap', (event) => {
                 const newSearchResultItems = Array.prototype.slice.call(searchResultItems, targetIndex + 1)
                 searchResultCheckboxes = newSearchResultItems.map(item => {
                     return item.querySelector('input.form-check-input')
-                })
+                }).filter(checkbox => checkbox !== null)
             }
             console.log(searchResultCheckboxes)
         }
