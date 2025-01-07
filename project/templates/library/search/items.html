@@ -37,6 +37,7 @@
             <div class="card-footer d-flex justify-content-between">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <input 
+                    id="dataset_{{dataset.uuid}}"
                     class="form-check-input" 
                     tabindex="-1"
                     type="checkbox" 
