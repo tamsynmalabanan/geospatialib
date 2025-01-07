@@ -151,7 +151,7 @@ const constructInfoPanel = (map, name, options={}) => {
     accordion.appendChild(collapse)
     
     const header = document.createElement('h6')
-    header.classList.add('p-3', 'm-0', 'fw-semibold', 'fs-14', 'd-flex', 'gap-5', 'justify-content-between')
+    header.classList.add('p-3', 'm-0', 'fw-semibold', 'fs-16', 'd-flex', 'gap-5', 'justify-content-between')
     collapse.appendChild(header)
 
     const span = document.createElement('span')
