@@ -147,7 +147,7 @@ const toggleLayer = async (event, options={}) => {
 
         if (toggleAll) {
             const layersCount = Array.from(
-                datasetList.querySelectorAll('input.form-check-input')
+                datasetList.querySelectorAll('input.form-check-input:not(.dataset-group)')
             ).filter(checkbox => {
                 return checkbox.checked
             }).length
@@ -322,6 +322,10 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
     
     const mainToggle = handler(layer, parent, geojson, label)
     const mainCheckbox = mainToggle.querySelector('input')
+
+    if (layerCount > 0) {
+        mainToggle.classList.add('dataset-group')
+    }
 
     if (layerCount > 0 && layerCount <= 100) {
         const collapse = document.createElement('div')
