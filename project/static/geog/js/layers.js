@@ -117,6 +117,7 @@ const toggleLayer = async (event, options={}) => {
         let toggleAll
         let toggleLabel
         const layerList = toggle.closest('ul')
+        console.log(layerList)
         if (layerList) {
             toggleAll = document.querySelector(`input[data-layers-toggles="#${layerList.id}"]`)
             toggleLabel = document.querySelector(`label[for="${toggleAll.id}"]`)
