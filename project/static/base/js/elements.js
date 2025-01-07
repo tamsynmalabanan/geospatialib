@@ -126,7 +126,7 @@ const createButtonAndCollapse = (id, options={}) => {
 
 const createFormCheck = (id, options={}) => {
     const formCheck = document.createElement('div')
-    formCheck.className = `d-flex flex-grow-1 ${options.formCheckClass}`
+    formCheck.className = `d-flex gap-2 flex-grow-1 ${options.formCheckClass}`
     // formCheck.className = `form-check d-flex flex-grow-1 ${options.formCheckClass}`
 
     const checkbox = document.createElement('input')
@@ -141,7 +141,7 @@ const createFormCheck = (id, options={}) => {
     formCheck.appendChild(checkbox)
 
     const label = document.createElement('label')
-    label.className = `ms-2 w-75 text-truncate ${options.labelClass}`
+    label.className = `w-75 text-truncate ${options.labelClass}`
     label.setAttribute('for', id)
     formCheck.appendChild(label)
     if (options.button) {
