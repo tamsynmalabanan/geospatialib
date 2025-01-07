@@ -15,7 +15,7 @@ def test(request):
     datasets = Dataset.objects.all()
     for dataset in datasets:
         while True:
-            uuid_value = uuid.uuid4
+            uuid_value = uuid.uuid4()
             if not Dataset.objects.filter(uuid=uuid_value).exists():
                 dataset.uuid = uuid_value
                 dataset.save()
