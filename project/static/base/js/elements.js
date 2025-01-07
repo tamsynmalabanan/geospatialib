@@ -145,7 +145,7 @@ const createFormCheck = (id, options={}) => {
     label.setAttribute('for', id)
     formCheck.appendChild(label)
     if (options.button) {
-        label.classList.add('me-5')
+        label.classList.add('me-3')
     }
 
     if (options.label) {
