@@ -117,7 +117,6 @@ const toggleLayer = async (event, options={}) => {
         let toggleAll
         let toggleLabel
         const datasetList = toggle.closest('ul.dataset-list')
-        console.log(datasetList)
         if (datasetList) {
             toggleAll = document.querySelector(`input[data-layers-toggles="#${datasetList.id}"]`)
             toggleLabel = document.querySelector(`label[for="${toggleAll.id}"]`)
