@@ -37,13 +37,25 @@ const handleSearchQueryField = (value) => {
 
 document.addEventListener('htmx:afterSwap', (event) => {
     if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
-        if (event.target.id === 'searchResults') {
+        const firstPageResults = event.target.id === 'searchResults'
+
+        if (firstPageResults) {
             const map = mapQuerySelector('#geospatialibMap')
             map.fire('updateBboxFields')
             resetSearchResults()
         }
 
-        console.log(event)
+        const searchResults = document.querySelector('#searchResults')
+
+        let searchResultCheckboxes
+        if (firstPageResults) {
+            searchResultCheckboxes = searchResults.querySelectorAll('input.form-check-input')
+        } else {
+            const searchResultItems = searchResults.children
+            searchResultCheckboxes = Array.prototype.indexOf.call(searchResultItems, target)
+
+        }
+        console.log(searchResultCheckboxes)
     }
 })
 
