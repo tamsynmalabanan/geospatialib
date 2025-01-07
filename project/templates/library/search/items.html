@@ -37,12 +37,12 @@
             <div class="card-footer d-flex justify-content-between">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <input 
-                    id="dataset_{{dataset.uuid}}"
                     class="form-check-input" 
                     tabindex="-1"
                     type="checkbox" 
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
+                    data-layer-uuid="{{dataset.uuid}}"
                     data-layer-title="{{dataset.title}}"
                     data-layer-url="{{dataset.url.url}}"
                     data-layer-format="{{dataset.format}}"
