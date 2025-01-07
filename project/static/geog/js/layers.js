@@ -276,7 +276,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
 
         const dropdown = document.createElement('ul')
         dropdown.className = 'dropdown-menu fs-12'
-        formCheck.lastElementChild.appendChild(dropdown)
+        formCheck.appendChild(dropdown)
 
         const toggle = formCheck.querySelector('button')
         toggle.addEventListener('click', () => {
@@ -306,7 +306,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
                 collapseToggle.setAttribute('aria-controls', collapse.id)
                 collapseToggle.setAttribute('aria-expanded', `false`)
-                formCheck.lastElementChild.appendChild(collapseToggle)
+                formCheck.appendChild(collapseToggle)        
             }
         }
 
@@ -410,7 +410,6 @@ const getDefaultGeoJSONLayer = (
     geojson={type: "FeatureCollection", features: []},
     options={}
 ) => {
-    
     let color = options.color
     if (!color) {
         color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
