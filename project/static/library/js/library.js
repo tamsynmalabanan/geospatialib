@@ -44,6 +44,8 @@ document.addEventListener('htmx:afterSwap', (event) => {
         }
 
         console.log(event)
+    } else {
+        console.log(event.detail.pathInfo)
     }
 })
 
