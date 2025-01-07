@@ -36,7 +36,7 @@ const handleSearchQueryField = (value) => {
 }
 
 document.addEventListener('htmx:afterSwap', (event) => {
-    if (event.detail.pathInfo.requestPath === searchEndpoint) {
+    if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
         if (event.target.id === 'searchResults') {
             const map = mapQuerySelector('#geospatialibMap')
             map.fire('updateBboxFields')
@@ -44,8 +44,6 @@ document.addEventListener('htmx:afterSwap', (event) => {
         }
 
         console.log(event)
-    } else {
-        console.log(event.detail.pathInfo)
     }
 })
 
