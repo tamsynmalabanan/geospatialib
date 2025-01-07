@@ -9,7 +9,7 @@
     {% if page_obj.number == 1 %}
         <ul 
             id='searchResults' 
-            class="d-flex flex-wrap p-0 gap-3 px-3"
+            class="dataset-list d-flex flex-wrap p-0 gap-3 px-3"
         >
             {% include "library/search/items.html" %}
             {% for i in fillers %}

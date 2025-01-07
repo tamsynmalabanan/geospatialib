@@ -561,7 +561,7 @@ const handleMapQuery = (map) => {
         footer.innerText = 'Running query...'
         
         const queryResults = document.createElement('ul')
-        queryResults.className = 'list-group list-group-flush fs-14 w-100 overflow-auto px-3'
+        queryResults.className = 'dataset-list list-group list-group-flush fs-14 w-100 overflow-auto px-3'
         queryResults.id = 'queryResults'
 
         const toolbar = createFormCheck('queryResultsToggleAll', {

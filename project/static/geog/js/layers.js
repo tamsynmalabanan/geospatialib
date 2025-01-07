@@ -6,9 +6,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             map = mapQuerySelector(options.mapSelector)
         }
 
-        const layerList = toggle.closest('ul')
-        if (map && layerList) {
-            const toggleAll = document.querySelector(`[data-layers-toggles="#${layerList.id}"]`)
+        const datasetList = toggle.closest('ul')
+        if (map && datasetList) {
+            const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
             let label = toggleAll.getAttribute('data-layers-label')
             if (!label) {
                 label = 'layer'
@@ -48,7 +48,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             isolateBtn.addEventListener('click', () => {
                 const checkbox = findOuterElement('input.form-check-input', toggle)
                 if (checkbox) {
-                    layerList.querySelectorAll('input').forEach(input => {
+                    datasetList.querySelectorAll('input').forEach(input => {
                         if (input.checked && input !== checkbox) {
                             input.click()
                         }
@@ -116,10 +116,10 @@ const toggleLayer = async (event, options={}) => {
         
         let toggleAll
         let toggleLabel
-        const layerList = toggle.closest('ul')
-        console.log(layerList)
-        if (layerList) {
-            toggleAll = document.querySelector(`input[data-layers-toggles="#${layerList.id}"]`)
+        const datasetList = toggle.closest('ul.dataset-list')
+        console.log(datasetList)
+        if (datasetList) {
+            toggleAll = document.querySelector(`input[data-layers-toggles="#${datasetList.id}"]`)
             toggleLabel = document.querySelector(`label[for="${toggleAll.id}"]`)
         }
 
