@@ -308,7 +308,6 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
                 collapseToggle.setAttribute('aria-controls', collapse.id)
                 collapseToggle.setAttribute('aria-expanded', `false`)
-                console.log(buttonContainer)
                 buttonContainer.appendChild(collapseToggle)
             }
         }
@@ -332,7 +331,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
         collapseToggle.setAttribute('aria-controls', collapse.id)
         collapseToggle.setAttribute('aria-expanded', `true`)
-        mainToggle.appendChild(collapseToggle)
+        mainToggle.lastElementChild.appendChild(collapseToggle)
 
         mainCheckbox.addEventListener('click', async (event) => {
             if (mainCheckbox.checked) {
