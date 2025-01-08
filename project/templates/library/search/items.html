@@ -37,7 +37,7 @@
             <div class="card-footer d-flex gap-3">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <button 
-                    class="btn btn-sm btn-dark" 
+                    class="btn btn-sm btn-dark bi bi-plus-lg" 
                     tabindex="-1"
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
@@ -55,16 +55,10 @@
                     {% if dataset.default_legend.url %}
                         data-layer-legend-url="{{dataset.default_legend.url}}"
                     {% endif %}
-                >
-                    <i class='bi bi-plus-lg'></i>
-                    <span>Add layer</span>
-                </button>
+                ></button>
                 <button 
-                    class='btn btn-sm btn-dark'
-                >   
-                    <i class='bi bi-zoom-in'></i>
-                    <span>Zoom to layer</span>
-                </button>
+                    class='btn btn-sm btn-dark bi bi-zoom-in'
+                ></button>
             </div>
         </div>
     </li>
