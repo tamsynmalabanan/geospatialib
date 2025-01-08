@@ -37,7 +37,7 @@
             <div class="card-footer d-flex gap-3">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <button 
-                    class="bg-transparent border-0 p-0 bi bi-plus-lg" 
+                    class="btn btn-sm bi bi-plus-lg" 
                     tabindex="-1"
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
@@ -57,14 +57,8 @@
                     {% endif %}
                 ></button>
                 <button 
-                    class='bg-transparent border-0 p-0 bi bi-zoom-in'
+                    class='btn btn-sm bi bi-zoom-in'
                 ></button>
-                <div class="dropdown ms-auto">
-                    <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox_extent}}', layerGroup:'library'})">
-                        <i class="bi bi-three-dots"></i>
-                    </button>
-                    <ul class="dropdown-menu fs-12"></ul>
-                </div>
             </div>
         </div>
     </li>
