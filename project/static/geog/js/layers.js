@@ -118,6 +118,7 @@ const toggleLayer = async (event, options={}) => {
 
     if (map) {
         const toggle = event.target
+        console.log(toggle)
         
         let toggleAll
         let toggleLabel
