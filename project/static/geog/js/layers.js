@@ -119,7 +119,9 @@ const toggleLayer = async (event, options={}) => {
         const datasetList = toggle.closest('ul.dataset-list')
         if (datasetList) {
             toggleAll = document.querySelector(`input[data-layers-toggles="#${datasetList.id}"]`)
-            toggleLabel = document.querySelector(`label[for="${toggleAll.id}"]`)
+            if (toggleAll) {
+                toggleLabel = document.querySelector(`label[for="${toggleAll.id}"]`)
+            }
         }
 
         let layerGroup = map.getLayerGroups()[options.layerGroup]
