@@ -135,7 +135,7 @@ const toggleLayer = async (event, options={}) => {
         }
         
         const data = toggle.dataset
-        if (toggle.checked || toggle.tagName === 'BUTTON') {
+        if (toggle.checked || toggle.tagName.toLowerCase() === 'buttton') {
             let layer = options.layer
             if (!layer && data) {
                 layer = createLayerFromURL(data)
