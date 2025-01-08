@@ -37,7 +37,7 @@
             <div class="card-footer d-flex gap-3">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <button 
-                    class="btn btn-sm" 
+                    class="btn btn-sm btn-dark" 
                     tabindex="-1"
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
@@ -60,7 +60,7 @@
                     <span>Add layer</span>
                 </button>
                 <button 
-                    class='btn btn-sm'
+                    class='btn btn-sm btn-dark'
                 >   
                     <i class='bi bi-zoom-in'></i>
                     <span>Zoom to layer</span>
