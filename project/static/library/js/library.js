@@ -62,7 +62,8 @@ document.addEventListener('htmx:afterSwap', (event) => {
                     return item.querySelector('input.form-check-input')
                 }).filter(checkbox => checkbox !== null)
             }
-            console.log(searchResultCheckboxes)
+            
+            // get map library layers and check if any of the search result items are already in the legend
         }
     }
 })
