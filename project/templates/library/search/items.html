@@ -56,7 +56,9 @@
                         data-layer-legend-url="{{dataset.default_legend.url}}"
                     {% endif %}
                 ></button>
-                <button class='bg-transparent border-0 bi bi-zoom-in'></button>
+                <button 
+                    class='bg-transparent border-0 p-0 bi bi-zoom-in'
+                ></button>
                 <div class="dropdown ms-auto">
                     <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox_extent}}', layerGroup:'library'})">
                         <i class="bi bi-three-dots"></i>
