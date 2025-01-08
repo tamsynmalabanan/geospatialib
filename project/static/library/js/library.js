@@ -49,20 +49,8 @@ document.addEventListener('htmx:afterSwap', (event) => {
 
         if (firstPageResults || nextPageResults) {
             const searchResults = document.querySelector('#searchResults')
-    
-            // let searchResultCheckboxes
-            // if (firstPageResults) {
-            //     searchResultCheckboxes = searchResults.querySelectorAll('input.form-check-input')
-            // } else {
-            //     const searchResultItems = searchResults.children
-            //     const targetIndex = Array.prototype.indexOf.call(searchResultItems, target)
-            //     const newSearchResultItems = Array.prototype.slice.call(searchResultItems, targetIndex + 1)
-            //     searchResultCheckboxes = newSearchResultItems.map(item => {
-            //         return item.querySelector('input.form-check-input')
-            //     }).filter(checkbox => checkbox !== null)
-            // }
-
             const checkboxSelector = 'input.form-check-input'
+            
             let searchResultCheckboxes = searchResults.querySelectorAll(checkboxSelector)
             if (nextPageResults) {
                 const targetCheckbox = target.querySelector(checkboxSelector)
