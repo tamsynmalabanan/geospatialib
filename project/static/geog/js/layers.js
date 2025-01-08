@@ -6,10 +6,15 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             map = mapQuerySelector(options.mapSelector)
         }
 
-        const datasetList = toggle.closest('ul')
+        const datasetList = toggle.closest('ul.dataset-list')
         if (map && datasetList) {
+            let label
+            
             const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
-            let label = toggleAll.getAttribute('data-layers-label')
+            if (toggleAll) {
+                label = toggleAll.getAttribute('data-layers-label')
+            }
+            
             if (!label) {
                 label = 'layer'
             }
