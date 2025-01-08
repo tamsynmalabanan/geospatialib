@@ -34,7 +34,7 @@
                     {{dataset.url.url|domain}}
                 </a>
             </div>
-            <div class="card-footer d-flex justify-content-between">
+            <div class="card-footer d-flex gap-3">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <button 
                     class="bg-transparent border-0 p-0 bi bi-plus-lg" 
@@ -56,7 +56,8 @@
                         data-layer-legend-url="{{dataset.default_legend.url}}"
                     {% endif %}
                 ></button>
-                <div class="dropdown">
+                <button class='bg-transparent border-0 bi bi-zoom-in'></button>
+                <div class="dropdown ms-auto">
                     <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox_extent}}', layerGroup:'library'})">
                         <i class="bi bi-three-dots"></i>
                     </button>
