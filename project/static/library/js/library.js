@@ -41,28 +41,29 @@ document.addEventListener('htmx:afterSwap', (event) => {
         const firstPageResults = target.id === 'searchResults'
         const nextPageResults = target.hasAttribute('hx-get') && target.getAttribute('hx-get').startsWith(searchEndpoint)
         
-        if (firstPageResults || nextPageResults) {
-            const map = mapQuerySelector('#geospatialibMap')
-            
-            if (firstPageResults) {
-                map.fire('updateBboxFields')
-                resetSearchResults()
-            }
-
-            const searchResults = document.querySelector('#searchResults')
-            const checkboxSelector = 'input.form-check-input'
-
-            let searchResultCheckboxes = searchResults.querySelectorAll(checkboxSelector)
-            if (nextPageResults) {
-                const targetCheckbox = target.querySelector(checkboxSelector)
-                const targetCheckboxIndex = Array.prototype.indexOf.call(searchResultCheckboxes, targetCheckbox)
-                searchResultCheckboxes = Array.prototype.slice.call(searchResultCheckboxes, targetCheckboxIndex+1)
-            }
-
-            console.log(searchResultCheckboxes)
-            
-            // get map library layers and check if any of the search result items are already in the legend
+        const map = mapQuerySelector('#geospatialibMap')
+        
+        if (firstPageResults) {
+            map.fire('updateBboxFields')
+            resetSearchResults()
         }
+
+        // if (firstPageResults || nextPageResults) {
+
+        //     const searchResults = document.querySelector('#searchResults')
+        //     const checkboxSelector = 'input.form-check-input'
+
+        //     let searchResultCheckboxes = searchResults.querySelectorAll(checkboxSelector)
+        //     if (nextPageResults) {
+        //         const targetCheckbox = target.querySelector(checkboxSelector)
+        //         const targetCheckboxIndex = Array.prototype.indexOf.call(searchResultCheckboxes, targetCheckbox)
+        //         searchResultCheckboxes = Array.prototype.slice.call(searchResultCheckboxes, targetCheckboxIndex+1)
+        //     }
+
+        //     console.log(searchResultCheckboxes)
+            
+        //     // get map library layers and check if any of the search result items are already in the legend
+        // }
     }
 })
 
