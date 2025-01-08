@@ -36,10 +36,9 @@
             </div>
             <div class="card-footer d-flex justify-content-between">
                 {% var dataset.bbox.extent as bbox_extent %}
-                <input 
-                    class="form-check-input" 
+                <button 
+                    class="bg-transparent border-0" 
                     tabindex="-1"
-                    type="checkbox" 
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
                     data-layer-uuid="{{dataset.uuid}}"
@@ -56,7 +55,7 @@
                     {% if dataset.default_legend.url %}
                         data-layer-legend-url="{{dataset.default_legend.url}}"
                     {% endif %}
-                >
+                ><i class="bi bi-plus-lg"></i></button>
                 <div class="dropdown">
                     <button class="p-0 border-0 bg-transparent" tabindex="-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="populateLayerDropdownMenu(this, {mapSelector:'#geospatialibMap', bboxCoords:'{{bbox_extent}}', layerGroup:'library'})">
                         <i class="bi bi-three-dots"></i>
