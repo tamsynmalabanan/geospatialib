@@ -146,7 +146,6 @@ const toggleLayer = async (event, options={}) => {
                 toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
             }
         } else {
-            console.log(toggle, toggle.tagName)
             const layer = layerGroup.getLayer(data.leafletId)
             if (layer) {
                 layerGroup.removeLayer(layer)
