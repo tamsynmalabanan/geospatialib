@@ -37,7 +37,7 @@
             <div class="card-footer d-flex justify-content-between">
                 {% var dataset.bbox.extent as bbox_extent %}
                 <button 
-                    class="bg-transparent border-0" 
+                    class="bg-transparent border-0 p-0" 
                     tabindex="-1"
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
