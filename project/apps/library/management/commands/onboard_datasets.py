@@ -20,7 +20,6 @@ class Command(BaseCommand):
                 'dataset_names',
             )
             .filter(datasets__isnull=False)
-            .distinct('id')
         )
 
         for url in urls:
