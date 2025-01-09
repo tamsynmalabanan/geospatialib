@@ -508,7 +508,7 @@ const createWFSLayer = (data) => {
 
                 if ((mapScale && mapScale > 10000) || (!mapScale && map.getZoom() < 9)) {
                     if (featureCount > 1000) {
-                        console.log(L.rectangle(L.geoJSON(geojson).getBounds()))
+                        console.log(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
                         geojson.features = [turf.bboxPolygon(turf.bbox(geojson))]
                         geojson.tooltip = defaultTooltip
                         prefix = 'Bounding'
