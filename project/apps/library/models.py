@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.contrib.postgres.indexes import GinIndex
 
 from urllib.parse import urlparse
 
@@ -21,6 +22,14 @@ class Dataset(models.Model):
 
     class Meta:
         unique_together = ['url', 'format', 'name']
+        indexes = [
+            models.Index(fields=['format']),
+            models.Index(fields=['bbox']), 
+            models.Index(fields=['url']), 
+            models.Index(fields=['title']), 
+            models.Index(fields=['abstract']), 
+            GinIndex(fields=['title', 'abstract', 'tags__tag']),
+        ]
 
     def __str__(self) -> str:
         if self.title:
@@ -29,6 +38,12 @@ class Dataset(models.Model):
 
 class Tag(models.Model):
     tag = models.CharField('Tag', max_length=64, unique=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['tag']),
+        ]
+
 
     def __str__(self) -> str:
         return self.tag
@@ -39,6 +54,11 @@ class Tag(models.Model):
 
 class URL(models.Model):
     url = models.URLField('URL', max_length=255, unique=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['url']),
+        ]
 
     def __str__(self) -> str:
         return self.url

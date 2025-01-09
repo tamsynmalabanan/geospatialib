@@ -95,12 +95,10 @@ class SearchList(ListView):
 
         search_vector = SearchVector('name')
         
-        search_fields = [
+        search_fields = self.filter_fields + [
             'url__url',
-            'format',
             'title',
             'abstract',
-            'tags__tag',
         ]
         
         for field in search_fields:
