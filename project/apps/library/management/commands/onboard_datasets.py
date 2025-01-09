@@ -6,10 +6,9 @@ class Command(BaseCommand):
     help = 'Onboard other datasets through URLS of existing datasets.'
 
     def handle(self, *args, **kwargs):
-        while True:
-            self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
+        self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
 
-            urls = models.URL.objects.filter(datasets__isnull=False)
+        urls = models.URL.objects.filter(datasets__isnull=False)
 
-            for url in urls:
-                print(url)
+        for url in urls:
+            print(url)
