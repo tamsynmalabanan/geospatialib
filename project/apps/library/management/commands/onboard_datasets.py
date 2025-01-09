@@ -34,7 +34,6 @@ class Command(BaseCommand):
                 names = url_instance['names']
 
                 print(f'URL: {url}')
-                print(f'EXISTING LAYERS: {names}')
 
                 for format in formats:
                     print(f'FORMAT: {format}')
@@ -45,10 +44,8 @@ class Command(BaseCommand):
                             url=url,
                         )
                         layers = list(handler.layers.keys())
-                        print(f'LAYERS: {layers}')
 
                         new_layers = [layer for layer in layers if layer not in names]
-                        print(f'LAYERS TO ONBOARD: {new_layers}')
 
                         for layer in new_layers[:1]:
                             print(f'NEW LAYER: {layer}')
