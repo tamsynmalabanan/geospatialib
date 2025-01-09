@@ -63,8 +63,8 @@ def test(request):
                             handler.populate_dataset(dataset_instance)
                             print(f'SUCCESSFUL DATASET ONBOARDING!')
                         except Exception as e:
-                            print(f'FAILED TO CREATE DATASET: {e}')
                             dataset_instance.delete()
+                            print(f'FAILED TO CREATE DATASET: {e}')
             except Exception as e:
                 print(f'FAILED TO RETRIEVE LAYERS: {e}')
 
