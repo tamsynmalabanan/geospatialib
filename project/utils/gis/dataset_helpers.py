@@ -13,7 +13,10 @@ from apps.library import choices, models
 
 
 class DatasetHandler():
+    access_url = None
+    layers = None
 
+    def __init__(self, url, key=None):
         self.url = url
         self.key = key
         
@@ -149,6 +152,7 @@ class OGCHandlers(DatasetHandler):
         for obj in [id, layer]:
             if obj and hasattr(obj, 'abstract'):
                 abstract = obj.abstract
+                if isinstance(abstract, str) and abstract.strip() not in ['', 'None', 'null']:
                     abstracts.append(abstract)
         return '<br><br>'.join(abstracts)
 
@@ -280,6 +284,7 @@ class WFSHandler(OGCHandlers):
                     return response.read()
                 except Exception as e:
                     print(e)
+
 
 def get_dataset_handler(format, **kwargs):
     handler = {
