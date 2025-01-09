@@ -26,7 +26,7 @@ class Dataset(models.Model):
             models.Index(fields=['format']),
             models.Index(fields=['bbox']), 
             models.Index(fields=['url']), 
-            # models.Index(fields=['name']), 
+            models.Index(fields=['name']), 
             # models.Index(fields=['title']), 
             # models.Index(fields=['abstract']), 
             # GinIndex( 
