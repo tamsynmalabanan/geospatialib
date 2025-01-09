@@ -98,7 +98,7 @@ class SearchList(ListView):
 
         search_vector = SearchVector('name')
         
-        search_fields = [
+        search_fields = self.filter_fields + [
             'url__url',
             'title',
             'abstract',
