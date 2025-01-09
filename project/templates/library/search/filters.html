@@ -1,6 +1,6 @@
 {% load util_tags %}
 
-<div id='searchResultsFiltersContainer' hx-swap-oob='true' class="py-2 {% if page_obj.number %}border-bottom{% endif %}">
+<div id='searchResultsFiltersContainer' hx-swap-oob='true' class="py-2 {% if page_obj.number and count > 0 %}border-bottom{% endif %}">
     {% if page_obj.number %}
         {% if count > 0 %}
             <div id='searchFormFilters' class='collapse show multi-collapse'>
