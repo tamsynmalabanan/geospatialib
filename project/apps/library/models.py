@@ -28,7 +28,7 @@ class Dataset(models.Model):
             models.Index(fields=['url']), 
             models.Index(fields=['title']), 
             models.Index(fields=['abstract']), 
-            GinIndex(fields=['title', 'abstract', 'tags__tag']),
+            GinIndex(fields=['title', 'abstract']),
         ]
 
     def __str__(self) -> str:
