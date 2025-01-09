@@ -20,7 +20,7 @@
                     <div class="d-flex gap-2 mb-3 flex-wrap overflow-y-auto overflow-x-hidden px-3 me-3" style='max-height:100px;'>
                         {% for field, queryset in filters.items %}
                             {% for i in queryset %}
-                                {% var i.count as icount %}
+                                {% comment %} {% var i.count as icount %} {% endcomment %}
                                 {% var i|get:field as value %}
                                 
                                 {% var field|field_name as field_name %}
@@ -36,9 +36,23 @@
                                             value=""
                                             class="{{button_class}} btn-primary"
                                             onclick="handleSearchQueryField('{{request.GET.query}}')"
-                                        >{{label}} ({{icount}})</button>
+                                        >{{label}}</button>
+                                        {% comment %} <button
+                                            type='submit'
+                                            name="{{field}}"
+                                            value=""
+                                            class="{{button_class}} btn-primary"
+                                            onclick="handleSearchQueryField('{{request.GET.query}}')"
+                                        >{{label}} ({{icount}})</button> {% endcomment %}
                                     {% else %}
-                                        {% if icount != count %}
+                                        <button
+                                            type='submit'
+                                            name="{{field}}"
+                                            value="{{value}}"
+                                            class="{{button_class}} bg-primary-subtle text-muted"
+                                            onclick="handleSearchQueryField('{{request.GET.query}}')"
+                                        >{{label}} ({{icount}})</button>
+                                        {% comment %} {% if icount != count %}
                                             <button
                                                 type='submit'
                                                 name="{{field}}"
@@ -46,7 +60,7 @@
                                                 class="{{button_class}} bg-primary-subtle text-muted"
                                                 onclick="handleSearchQueryField('{{request.GET.query}}')"
                                             >{{label}} ({{icount}})</button>
-                                        {% endif %}
+                                        {% endif %} {% endcomment %}
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
