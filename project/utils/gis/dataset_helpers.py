@@ -28,6 +28,21 @@ class DatasetHandler():
     def handler(self):
         pass
 
+    def get_tags(self):
+        return model_helpers.collect_url_tags(
+            util_helpers.remove_query_params(self.access_url)
+        )
+    
+    def populate_dataset(self, dataset):
+        dataset.title = dataset.name.replace('_', ' ')
+        dataset.bbox = geom_helpers.WORLD_GEOM
+        
+        tag_instances = self.get_tags()
+        dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
+        dataset.tags.set(tag_instances)
+
+        dataset.save()
+
 class XYZHandler(DatasetHandler):
 
     def get_layers(self):
@@ -37,19 +52,6 @@ class XYZHandler(DatasetHandler):
     def handler(self):
         self.access_url = self.url
         self.layers = self.get_layers()
-
-    def populate_dataset(self, dataset):
-        dataset.title = dataset.name.replace('_', ' ')
-        dataset.bbox = geom_helpers.WORLD_GEOM
-        
-        tag_instances = model_helpers.collect_url_tags(
-            util_helpers.remove_query_params(self.access_url)
-        )
-
-        dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
-        dataset.tags.set(tag_instances)
-
-        dataset.save()
 
 class ArcGISImageHandler(DatasetHandler):
 
@@ -64,17 +66,6 @@ class ArcGISImageHandler(DatasetHandler):
     def handler(self):
         self.access_url = self.url
         self.layers = self.get_layers()
-
-    def populate_dataset(self, dataset):
-        dataset.title = dataset.name.replace('_', ' ')
-        dataset.bbox = geom_helpers.WORLD_GEOM
-        dataset.tags.set(
-            model_helpers.collect_url_tags(
-                util_helpers.remove_query_params(self.access_url)
-            )
-        )
-
-        dataset.save()
 
 class OGCHandlers(DatasetHandler):
     
