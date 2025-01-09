@@ -24,7 +24,7 @@ class Dataset(models.Model):
         unique_together = ['url', 'format', 'name']
         indexes = [
             models.Index(fields=['format']),
-            # models.Index(fields=['bbox']), 
+            models.Index(fields=['bbox']), 
             # models.Index(fields=['url']), 
             # models.Index(fields=['title']), 
             # models.Index(fields=['abstract']), 
