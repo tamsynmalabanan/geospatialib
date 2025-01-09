@@ -477,7 +477,7 @@ const fetchWFSData = async (event, layer, options={}) => {
     if(!crs.endsWith(':4326')) {
         const crsParts = crs.split(':')
         console.log(crsParts)
-        const tc = transformCoordinates([[e, n], [w, s]], 4326, crsParts[crsParts.length-1])
+        const tc = await transformCoordinates([[e, n], [w, s]], 4326, crsParts[crsParts.length-1])
         console.log(tc)
         var [n,e,s,w] = [tc[0][1], tc[0][0], tc[1][1], tc[1][0]]
     }
