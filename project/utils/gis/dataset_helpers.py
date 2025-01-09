@@ -75,7 +75,10 @@ class ArcGISImageHandler(DatasetHandler):
         dataset.save()
 
 class OGCHandlers(DatasetHandler):
-        
+    
+    def get_service(self):
+        pass
+
     def get_layers(self, service):
         contents = service.contents
         layers = {}

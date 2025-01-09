@@ -13,8 +13,6 @@ from apps.library import models
 from utils.gis import dataset_helpers
 
 def test(request):
-    data = []
-    
     url_instances = (models.URL.objects
         .annotate(
             formats=ArrayAgg('datasets__format', distinct=True), 
@@ -34,20 +32,21 @@ def test(request):
         formats = url_instance['formats']
         names = url_instance['names']
 
-        data.append(f'URL: {url}')
+        print(f'URL: {url}')
+        print(f'EXISTING LAYERS: {names}')
 
         for format in formats:
-            data.append(f'FORMAT: {format}')
+            print(f'FORMAT: {format}')
 
             handler = dataset_helpers.get_dataset_handler(
                 format, 
                 url=url,
             )
 
-            data.append(f'HANDLER: {handler}')
+            print(f'LAYERS: {handler.layers}')
 
-        data.append('\n')
+        print('\n')
 
-    data.append(f'TOTAL: {url_instances.count()}')
+    print(f'TOTAL: {url_instances.count()}')
 
-    return HttpResponse(data)
+    return HttpResponse('Done running. Check service logs.')
