@@ -99,6 +99,7 @@ class SearchList(ListView):
         search_vector = SearchVector('name')
         
         search_fields = [
+            'format',
             'url__url',
             'title',
             'abstract',
