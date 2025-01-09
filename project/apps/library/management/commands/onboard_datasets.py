@@ -9,19 +9,19 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
 
         urls = (models.URL.objects
-            .prefetch_related('datasets')
             .annotate(
-                dataset_formats=ArrayAgg('datasets__format'),
-                dataset_names=ArrayAgg('datasets__name'), 
+                dataset_formats=ArrayAgg('datasets__format', distinct=True), 
+                dataset_names=ArrayAgg('datasets__name', distinct=True),
             )
             .values(
-                'url',
-                'dataset_formats',
-                'dataset_names',
+                'url', 
+                'dataset_formats', 
+                'dataset_names', 
             )
             .filter(datasets__isnull=False)
+            .distinct()
         )
-
+        
         for url in urls:
             print(url)
 
