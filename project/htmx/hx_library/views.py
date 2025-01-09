@@ -111,6 +111,7 @@ class SearchList(ListView):
                 'url__url',
                 'title',
                 'abstract',
+                'tags_text',
             ] # + self.filter_fields
             
             for field in search_fields:

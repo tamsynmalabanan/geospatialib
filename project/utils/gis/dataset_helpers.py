@@ -36,7 +36,10 @@ class DatasetHandler():
     def populate_dataset(self, dataset):
         dataset.title = dataset.name.replace('_', ' ')
         dataset.bbox = geom_helpers.WORLD_GEOM
-        dataset.tags.set(self.get_tags())
+        
+        tag_instances = self.get_tags()
+        dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
+        dataset.tags.set(tag_instances)
 
         dataset.save()
 
@@ -217,7 +220,11 @@ class OGCHandlers(DatasetHandler):
             dataset.title = self.get_title(layer)
             dataset.bbox = self.get_bbox(layer)
             dataset.abstract = self.get_abstract(id, layer)
-            dataset.tags.set(self.get_tags(id, layer))
+
+            tag_instances = self.get_tags(id, layer)
+            dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
+            dataset.tags.set(tag_instances)
+
             dataset.save()
 
 class WMSHandler(OGCHandlers):
