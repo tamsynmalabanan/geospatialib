@@ -23,17 +23,20 @@ class Dataset(models.Model):
     class Meta:
         unique_together = ['url', 'format', 'name']
         indexes = [
-            models.Index(fields=['format']),
-            models.Index(fields=['bbox']), 
-            models.Index(fields=['url']), 
-            models.Index(fields=['name']), 
-            # models.Index(fields=['title']), 
-            # models.Index(fields=['abstract']), 
-            # GinIndex( 
-            #     name='dataset_gin_index', 
-            #     fields=['title', 'abstract'], 
-            #     opclasses=['gin_trgm_ops', 'gin_trgm_ops']
-            # ),
+            # for apply_query_filters()
+            models.Index(fields=[
+                'format', 
+                'bbox'
+            ]),
+
+            # for perform_full_text_search()
+            models.Index(fields=[
+                'format',
+                'name',
+                'url',
+                'title',
+                'abstract',
+            ]),
         ]
 
     def __str__(self) -> str:
@@ -44,10 +47,10 @@ class Dataset(models.Model):
 class Tag(models.Model):
     tag = models.CharField('Tag', max_length=64, unique=True)
 
-    # class Meta:
-    #     indexes = [
-    #         models.Index(fields=['tag']),
-    #     ]
+    class Meta:
+        indexes = [
+            models.Index(fields=['tag']),
+        ]
 
 
     def __str__(self) -> str:
@@ -60,10 +63,10 @@ class Tag(models.Model):
 class URL(models.Model):
     url = models.URLField('URL', max_length=255, unique=True)
     
-    # class Meta:
-    #     indexes = [
-    #         models.Index(fields=['url']),
-    #     ]
+    class Meta:
+        indexes = [
+            models.Index(fields=['url']),
+        ]
 
     def __str__(self) -> str:
         return self.url
