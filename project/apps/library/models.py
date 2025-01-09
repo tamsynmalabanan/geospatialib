@@ -31,9 +31,8 @@ class Dataset(models.Model):
 
             # for perform_full_text_search()
             models.Index(fields=[
-                'format',
-                'name',
                 'url',
+                'name',
                 'title',
                 'abstract',
             ]),
