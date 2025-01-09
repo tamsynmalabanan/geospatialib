@@ -24,8 +24,7 @@ def object_type(value):
 
 @register.filter
 def round_extent_coords(value, precision):
-    print(value, type(value))
-    return value
+    return [round(i,precision) for i in list(value)]
 
 @register.filter
 def vars_dict(value):
