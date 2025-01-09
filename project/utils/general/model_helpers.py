@@ -19,10 +19,12 @@ def list_to_tags(tags_list):
     for value in tags_list:
         tags = util_helpers.split_by_special_characters(value, ['_', '-'])
         for tag in tags:
-            tag_instance, created = lib_models.Tag.objects.get_or_create(tag=tag.lower())
-            if tag_instance:
-                tag_instances.append(tag_instance)
-
+            try:
+                tag_instance, created = lib_models.Tag.objects.get_or_create(tag=tag.lower())
+                if tag_instance:
+                    tag_instances.append(tag_instance)
+            except Exception as e:
+                print(f'ERROR in list_to_tags: {e}')
     return tag_instances
     
 
