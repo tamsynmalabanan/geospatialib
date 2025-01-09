@@ -35,7 +35,7 @@
                 </a>
             </div>
             <div class="card-footer d-flex gap-3">
-                {% var dataset.bbox.extent as bbox_extent %}
+                {% var dataset.bbox.extent|round_extent_coords:2 as bbox_extent %}
                 <button 
                     class="bg-transparent border-0 p-0  bi bi-plus-lg fs-14" 
                     tabindex="-1"

@@ -23,6 +23,11 @@ def object_type(value):
     return str(type(value))
 
 @register.filter
+def round_extent_coords(value, precision):
+    print(value, type(value))
+    return value
+
+@register.filter
 def vars_dict(value):
     return vars(value)
 
