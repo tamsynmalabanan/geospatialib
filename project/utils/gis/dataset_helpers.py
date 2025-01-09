@@ -38,7 +38,6 @@ class DatasetHandler():
         dataset.bbox = geom_helpers.WORLD_GEOM
         
         tag_instances = self.get_tags()
-        dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
         dataset.tags.set(tag_instances)
 
         dataset.save()
@@ -222,7 +221,6 @@ class OGCHandlers(DatasetHandler):
             dataset.abstract = self.get_abstract(id, layer)
 
             tag_instances = self.get_tags(id, layer)
-            dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
             dataset.tags.set(tag_instances)
 
             dataset.save()
