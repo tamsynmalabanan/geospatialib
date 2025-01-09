@@ -50,7 +50,7 @@ class Command(BaseCommand):
                     for layer in new_layers[:1]:
                         print(f'NEW LAYER: {layer}')
                         dataset_instance, created = models.Dataset.objects.get_or_create(
-                            url__id=id,
+                            url_id=id,
                             format=format,
                             name=layer
                         )
