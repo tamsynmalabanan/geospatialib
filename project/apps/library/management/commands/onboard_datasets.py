@@ -7,63 +7,69 @@ class Command(BaseCommand):
     help = 'Onboard other datasets through URLS of existing datasets.'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
-        
-        url_instances = (models.URL.objects
-            .annotate(
-                formats=ArrayAgg('datasets__format', distinct=True), 
-                names=ArrayAgg('datasets__name', distinct=True),
+        while True:
+            self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
+            
+            url_instances = (models.URL.objects
+                .annotate(
+                    formats=ArrayAgg('datasets__format', distinct=True), 
+                    names=ArrayAgg('datasets__name', distinct=True),
+                )
+                .values(
+                    'id', 
+                    'url', 
+                    'formats', 
+                    'names', 
+                )
+                .filter(datasets__isnull=False)
+                .distinct()
             )
-            .values(
-                'id', 
-                'url', 
-                'formats', 
-                'names', 
-            )
-            .filter(datasets__isnull=False)
-            .distinct()
-        )
-        
-        for url_instance in url_instances:
-            id = url_instance['id']
-            url = url_instance['url']
-            formats = url_instance['formats']
-            names = url_instance['names']
+            
+            new_datasets = 0
 
-            print(f'URL: {url}')
-            print(f'EXISTING LAYERS: {names}')
+            for url_instance in url_instances:
+                id = url_instance['id']
+                url = url_instance['url']
+                formats = url_instance['formats']
+                names = url_instance['names']
 
-            for format in formats:
-                print(f'FORMAT: {format}')
+                print(f'URL: {url}')
+                print(f'EXISTING LAYERS: {names}')
 
-                try:
-                    handler = dataset_helpers.get_dataset_handler(
-                        format, 
-                        url=url,
-                    )
-                    layers = list(handler.layers.keys())
-                    print(f'LAYERS: {layers}')
+                for format in formats:
+                    print(f'FORMAT: {format}')
 
-                    new_layers = [layer for layer in layers if layer not in names]
-                    print(f'LAYERS TO ONBOARD: {new_layers}')
-
-                    for layer in new_layers[:1]:
-                        print(f'NEW LAYER: {layer}')
-                        dataset_instance, created = models.Dataset.objects.get_or_create(
-                            url_id=id,
-                            format=format,
-                            name=layer
+                    try:
+                        handler = dataset_helpers.get_dataset_handler(
+                            format, 
+                            url=url,
                         )
-                        if dataset_instance and created:
-                            try:
-                                handler.populate_dataset(dataset_instance)
-                                print(f'SUCCESSFUL DATASET ONBOARDING!')
-                            except Exception as e:
-                                dataset_instance.delete()
-                                print(f'FAILED TO CREATE DATASET: {e}')
-                except Exception as e:
-                    print(f'FAILED TO RETRIEVE LAYERS: {e}')
+                        layers = list(handler.layers.keys())
+                        print(f'LAYERS: {layers}')
 
-            print('\n')
+                        new_layers = [layer for layer in layers if layer not in names]
+                        print(f'LAYERS TO ONBOARD: {new_layers}')
 
-        print(f'TOTAL: {url_instances.count()}')
+                        for layer in new_layers:
+                            print(f'NEW LAYER: {layer}')
+                            dataset_instance, created = models.Dataset.objects.get_or_create(
+                                url_id=id,
+                                format=format,
+                                name=layer
+                            )
+                            if dataset_instance and created:
+                                try:
+                                    handler.populate_dataset(dataset_instance)
+                                    new_datasets +=1
+                                    print(f'SUCCESSFUL DATASET ONBOARDING!')
+                                except Exception as e:
+                                    dataset_instance.delete()
+                                    print(f'FAILED TO CREATE DATASET: {e}')
+                    except Exception as e:
+                        print(f'FAILED TO RETRIEVE LAYERS: {e}')
+
+                print('\n')
+
+            print(f'TOTAL URLS: {url_instances.count()}')
+            print(f'NEW DATASETS: {new_datasets}')
+            print(f'TOTAL DATASETS: {models.Dataset.objects.count()}')
