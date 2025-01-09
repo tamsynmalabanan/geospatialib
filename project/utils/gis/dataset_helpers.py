@@ -13,10 +13,7 @@ from apps.library import choices, models
 
 
 class DatasetHandler():
-    access_url = None
-    layers = None
 
-    def __init__(self, url, key=None):
         self.url = url
         self.key = key
         
@@ -152,7 +149,6 @@ class OGCHandlers(DatasetHandler):
         for obj in [id, layer]:
             if obj and hasattr(obj, 'abstract'):
                 abstract = obj.abstract
-                if isinstance(abstract, str) and abstract.strip() not in ['', 'None', 'null']:
                     abstracts.append(abstract)
         return '<br><br>'.join(abstracts)
 
@@ -256,7 +252,6 @@ class WMSHandler(OGCHandlers):
                     return response.read()
                 except Exception as e:
                     print(e)
-                    return None
 
 class WFSHandler(OGCHandlers):
     default_crs = 'urn:ogc:def:crs:EPSG::4326'
@@ -271,16 +266,20 @@ class WFSHandler(OGCHandlers):
         service = self.get_service()
         if service:
             layer = service[layer_name]
-            bbox = list(layer.boundingBox)[:-1]
-            crs = str(list(layer.boundingBox)[-1])
-            response = service.getfeature(
-                typename=layer_name, 
-                bbox=bbox + [crs], 
-                srsname=crs,
-                outputFormat='json',
-            )
-            return response.read()
-
+            if layer:
+                try:
+                    bbox = list(layer.boundingBox)
+                    crs = str(bbox[-1])
+                    response = service.getfeature(
+                        typename=layer_name, 
+                        bbox=bbox[:-1] + [crs], 
+                        srsname=crs,
+                        outputFormat='json',
+                        maxfeatures=1,
+                    )
+                    return response.read()
+                except Exception as e:
+                    print(e)
 
 def get_dataset_handler(format, **kwargs):
     handler = {
