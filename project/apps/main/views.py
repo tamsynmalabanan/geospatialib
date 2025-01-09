@@ -38,12 +38,16 @@ def test(request):
         for format in formats:
             print(f'FORMAT: {format}')
 
-            handler = dataset_helpers.get_dataset_handler(
-                format, 
-                url=url,
-            )
-
-            print(f'LAYERS: {handler.layers}')
+            try:
+                handler = dataset_helpers.get_dataset_handler(
+                    format, 
+                    url=url,
+                )
+                layers = list(handler.layers.keys())
+                print(f'LAYERS: {layers}')
+                print(f'LAYERS TO ONBOARD: {[layer for layer in layers if layer not in names]}')
+            except Exception as e:
+                print(f'LAYERS: FAILED TO RETRIEVE LAYERS', e)
 
         print('\n')
 
