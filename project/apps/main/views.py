@@ -19,6 +19,7 @@ def test(request):
             names=ArrayAgg('datasets__name', distinct=True),
         )
         .values(
+            'id', 
             'url', 
             'formats', 
             'names', 
@@ -28,6 +29,7 @@ def test(request):
     )
     
     for url_instance in url_instances:
+        id = url_instance['id']
         url = url_instance['url']
         formats = url_instance['formats']
         names = url_instance['names']
@@ -50,10 +52,21 @@ def test(request):
                 print(f'LAYERS TO ONBOARD: {new_layers}')
 
                 for layer in new_layers[:1]:
-                    print('NEW LAYER', layer)
-
+                    print(f'NEW LAYER: {layer}')
+                    dataset_instance, created = models.Dataset.objects.get_or_create(
+                        url__id=id,
+                        format=format,
+                        name=layer
+                    )
+                    if dataset_instance and created:
+                        try:
+                            handler.populate_dataset(dataset_instance)
+                            print(f'SUCCESSFUL DATASET ONBOARDING!')
+                        except Exception as e:
+                            print(f'FAILED TO CREATE DATASET: {e}')
+                            dataset_instance.delete()
             except Exception as e:
-                print(f'LAYERS: FAILED TO RETRIEVE LAYERS', e)
+                print(f'FAILED TO RETRIEVE LAYERS: {e}')
 
         print('\n')
 
