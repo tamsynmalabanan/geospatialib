@@ -30,7 +30,7 @@ class Dataset(models.Model):
             models.Index(fields=['abstract']), 
             GinIndex( 
                 name='dataset_gin_index', 
-                fields=['title', 'abstract', 'tags__tag'], 
+                fields=['title', 'abstract'], 
                 opclasses=['gin_trgm_ops', 'gin_trgm_ops', 'gin_trgm_ops']
             ),
         ]
