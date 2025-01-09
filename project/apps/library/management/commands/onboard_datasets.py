@@ -12,11 +12,10 @@ class Command(BaseCommand):
             .prefetch_related('datasets')
             .values(
                 'url',
-                'datasets__format',
-                'datasets__name',
+                'datasets',
             )
             .filter(datasets__isnull=False)
-            .distinct()
+            .distinct('id')
         )
 
         for url in urls:
