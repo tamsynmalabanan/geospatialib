@@ -13,4 +13,13 @@ from apps.library import models
 from utils.gis import dataset_helpers
 
 def test(request):
+    datasets = models.Dataset.objects.all()
+    for dataset in datasets:
+        tags_text = dataset.tags_text
+        if not tags_text or tags_text == '':
+            if dataset.tags.exists():
+                tags = ' '.join(dataset.tags.values_list('tag', flat=True))
+                dataset.tags_text = tags
+                dataset.save()
+
     return HttpResponse('Done running. Check service logs.')

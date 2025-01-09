@@ -112,7 +112,7 @@ class SearchList(ListView):
                 'title',
                 'abstract',
                 'tags_text',
-            ] # + self.filter_fields
+            ]
             
             for field in search_fields:
                 search_vector = search_vector + SearchVector(field)
