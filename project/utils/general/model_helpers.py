@@ -24,7 +24,7 @@ def list_to_tags(tags_list):
                 if tag_instance:
                     tag_instances.append(tag_instance)
             except Exception as e:
-                print(f'ERROR in list_to_tags: {e}')
+                pass
     return tag_instances
     
 
