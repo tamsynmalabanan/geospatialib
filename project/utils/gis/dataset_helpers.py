@@ -45,8 +45,8 @@ class XYZHandler(DatasetHandler):
         tag_instances = model_helpers.collect_url_tags(
             util_helpers.remove_query_params(self.access_url)
         )
-        
-        dataset.tags_text = ' '.join(tag_instances.values_list('tag', flat=True))
+
+        dataset.tags_text = ' '.join([str(tag) for tag in tag_instances])
         dataset.tags.set(tag_instances)
 
         dataset.save()
