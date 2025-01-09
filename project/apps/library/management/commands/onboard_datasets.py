@@ -52,19 +52,27 @@ class Command(BaseCommand):
 
                         for layer in new_layers:
                             print(f'NEW LAYER: {layer}')
-                            dataset_instance, created = models.Dataset.objects.get_or_create(
-                                url_id=id,
-                                format=format,
-                                name=layer
-                            )
-                            if dataset_instance and created:
-                                try:
-                                    handler.populate_dataset(dataset_instance)
-                                    new_datasets +=1
-                                    print(f'SUCCESSFUL DATASET ONBOARDING!')
-                                except Exception as e:
-                                    dataset_instance.delete()
-                                    print(f'FAILED TO CREATE DATASET: {e}')
+
+                            response = True
+                            if isinstance(handler, dataset_helpers.OGCHandlers):
+                                response = handler.test_connection(layer)
+
+                            if response:
+                                dataset_instance, created = models.Dataset.objects.get_or_create(
+                                    url_id=id,
+                                    format=format,
+                                    name=layer
+                                )
+                                if dataset_instance and created:
+                                    try:
+                                        handler.populate_dataset(dataset_instance)
+                                        new_datasets +=1
+                                        print(f'SUCCESSFUL DATASET ONBOARDING!')
+                                    except Exception as e:
+                                        dataset_instance.delete()
+                                        print(f'FAILED TO CREATE DATASET: {e}')
+                            else:
+                                print(f'TEST CONNECTION FAILED')
                     except Exception as e:
                         print(f'FAILED TO RETRIEVE LAYERS: {e}')
 
