@@ -50,7 +50,7 @@ class Command(BaseCommand):
                         new_layers = [layer for layer in layers if layer not in names]
                         print(f'LAYERS TO ONBOARD: {new_layers}')
 
-                        for layer in new_layers:
+                        for layer in new_layers[:1]:
                             print(f'NEW LAYER: {layer}')
 
                             response = True
