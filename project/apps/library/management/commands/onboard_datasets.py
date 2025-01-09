@@ -52,6 +52,7 @@ class Command(BaseCommand):
 
                             response = True
                             if isinstance(handler, dataset_helpers.OGCHandlers):
+                                print('TESTING CONNECTION...')
                                 response = handler.test_connection(layer)
 
                             if response:
