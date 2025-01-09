@@ -111,7 +111,7 @@ class SearchList(ListView):
                 'url__url',
                 'title',
                 'abstract',
-                'tags_text',
+                # 'tags_text',
             ]
             
             for field in search_fields:
