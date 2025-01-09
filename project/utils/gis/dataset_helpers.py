@@ -206,12 +206,14 @@ class OGCHandlers(DatasetHandler):
                 styles = layer.styles
                 if styles:
                     name = list(styles.keys())[0]
+                    print('default_style')
                     dataset.default_style = name
                     
                     url = styles[name].get('legend')
                     if validators.url(url):
                         url_instance, created = models.URL.objects.get_or_create(url=url)
                         if url_instance:
+                            print('default_legend')
                             dataset.default_legend = url_instance
             
             if hasattr(layer, 'crsOptions'):
@@ -222,13 +224,20 @@ class OGCHandlers(DatasetHandler):
                         self.default_crs = epsg_4326[0]
                     else:
                         self.default_crs = crs_options[0]
+            print('default_crs')
             dataset.default_crs = self.default_crs
 
+            print('title')
             dataset.title = self.get_title(layer)
+            print('bbox')
             dataset.bbox = self.get_bbox(layer)
+            print('abstract')
             dataset.abstract = self.get_abstract(id, layer)
+            print('tags')
             dataset.tags.set(self.get_tags(id, layer))
+            print('done')
             dataset.save()
+            print('saved')
 
 class WMSHandler(OGCHandlers):
     default_crs = 'EPSG:4326'
