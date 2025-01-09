@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand
 from django.contrib.postgres.aggregates import ArrayAgg
 from apps.library import models
-
+from utils.gis import dataset_helpers
 class Command(BaseCommand):
     help = 'Onboard other datasets through URLS of existing datasets.'
 
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
 
-        urls = (models.URL.objects
+        url_instances = (models.URL.objects
             .annotate(
                 dataset_formats=ArrayAgg('datasets__format', distinct=True), 
                 dataset_names=ArrayAgg('datasets__name', distinct=True),
@@ -22,7 +22,23 @@ class Command(BaseCommand):
             .distinct()
         )
         
-        for url in urls:
+        for url_instance in url_instances:
+            url = ['url']
+            dataset_formats = ['dataset_formats']
+            dataset_names = ['dataset_names']
+
             print(url)
 
-        print(urls.count())
+            for format in dataset_formats:
+                print(format)
+
+                handler = dataset_helpers.get_dataset_handler(
+                    format, 
+                    url=url,
+                )
+
+                print(handler)
+
+            print('\n')
+
+        print(url_instances.count())
