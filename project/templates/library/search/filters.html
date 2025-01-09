@@ -17,7 +17,7 @@
                     {% include "library/search/clear_filters.html" %}
                 </div>
                 <div class="collapse show" id="searchResultsFilters">
-                    <div class="d-flex gap-2 mb-3 flex-wrap overflow-y-auto px-3 me-3" style='max-height:100px;'>
+                    <div class="d-flex gap-2 mb-3 flex-wrap overflow-y-auto overflow-x-hidden px-3 me-3" style='max-height:100px;'>
                         {% for field, queryset in filters.items %}
                             {% for i in queryset %}
                                 {% var i.count as icount %}
@@ -26,7 +26,7 @@
                                 {% var field|field_name as field_name %}
                                 {% var value|sub_bool:field_name as label %}
                                 
-                                {% var 'btn btn-sm rounded-pill border-0 fs-12 fw-bold' as button_class %}
+                                {% var 'btn btn-sm rounded-pill border-0 fs-12 fw-bold text-wrap text-break' as button_class %}
 
                                 {% if label %}
                                     {% if request.GET|get:field == value|stringify %}
