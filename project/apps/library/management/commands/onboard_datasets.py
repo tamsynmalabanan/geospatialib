@@ -8,7 +8,16 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
 
-        urls = models.URL.objects.filter(datasets__isnull=False)
+        urls = (models.URL.objects
+            .prefetch_related('datasets')
+            .values(
+                'url',
+                'datasets__format',
+                'datasets__name',
+            )
+            .filter(datasets__isnull=False)
+            .distinct()
+        )
 
         for url in urls:
             print(url.id, url)
