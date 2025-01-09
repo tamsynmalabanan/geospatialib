@@ -44,8 +44,11 @@ class SearchList(ListView):
     def query(self):
         query = self.request.GET.get('query')
         
-        if validators.url(query) == True and query.endswith('?'):
-            query = query[:-1]
+        if validators.url(query) == True:
+            if query.endswith('?'):
+                query = query[:-1]
+        else:
+            query = query.replace(' ', ' OR ')
 
         return query
 
