@@ -152,7 +152,7 @@ class SearchList(ListView):
                 .annotate(count=Count('id', distinct=True))
                 .order_by('-count')
             )
-            for field in self.filter_fields
+            for field in self.filter_fields + ['tags__tag']
         }
 
     def get_context_data(self, **kwargs):
