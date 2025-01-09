@@ -78,7 +78,7 @@ def get(dictionary, key):
     try:
         return dictionary.get(key)
     except:
-        pass    
+        pass
         
 
 @register.filter
