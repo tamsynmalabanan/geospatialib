@@ -1,3 +1,5 @@
+{% load util_tags %}
+
 {% var request.GET|get:'bbox__bboverlaps' as bbox_filter %}
 
 <button class='border-0 bg-transparent px-0 geospatialibMap-bbox-field' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Seach map extent' onclick="handleSearchQueryField('{{request.GET.query}}')"><i class="bi bi-bounding-box-circles"></i></button>
