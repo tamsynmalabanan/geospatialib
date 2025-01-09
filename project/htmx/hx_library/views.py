@@ -87,40 +87,44 @@ class SearchList(ListView):
     def perform_full_text_search(self):
         query = self.query
 
-        queryset = super().get_queryset()
-        
-        if validators.url(query) == True:
-            search_type="plain"
-        else:
-            search_type="websearch"
-
-        search_query = SearchQuery(query, search_type=search_type)
-
-        search_vector = SearchVector('name')
-        
-        search_fields = [
-            'url__url',
-            'title',
-            'abstract',
-        ] # + self.filter_fields
-        
-        for field in search_fields:
-            search_vector = search_vector + SearchVector(field)
-
-        queryset = (
-            queryset
+        queryset = (super().get_queryset()
             .select_related(
                 'url', 
                 'default_legend', 
             )
-            .prefetch_related(
-                'tags',
-            )
-            .annotate(
-                rank=SearchRank(search_vector, search_query),
-            )
-            .filter(rank__gte=0.001)
+            # .prefetch_related(
+            #     'tags',
+            # )
         )
+
+        if query and query != 'all':        
+            if validators.url(query) == True:
+                search_type="plain"
+            else:
+                search_type="websearch"
+
+            search_query = SearchQuery(query, search_type=search_type)
+
+            search_vector = SearchVector('name')
+            
+            search_fields = [
+                'url__url',
+                'title',
+                'abstract',
+            ] # + self.filter_fields
+            
+            for field in search_fields:
+                search_vector = search_vector + SearchVector(field)
+
+            queryset = (
+                queryset
+                .annotate(
+                    rank=SearchRank(search_vector, search_query),
+                )
+                .filter(rank__gte=0.001)
+            )
+        else:
+            queryset = queryset.annotate(rank=Value(1))
 
         cache.set(self.cache_key, queryset, timeout=3600)
         return queryset
