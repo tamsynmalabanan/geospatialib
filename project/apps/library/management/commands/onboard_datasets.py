@@ -23,9 +23,9 @@ class Command(BaseCommand):
         )
         
         for url_instance in url_instances:
-            url = ['url']
-            dataset_formats = ['dataset_formats']
-            dataset_names = ['dataset_names']
+            url = url_instance['url']
+            dataset_formats = url_instance['dataset_formats']
+            dataset_names = url_instance['dataset_names']
 
             print(url)
 

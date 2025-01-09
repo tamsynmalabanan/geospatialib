@@ -8,6 +8,45 @@ from django.contrib import messages
 from urllib.parse import urlparse, parse_qs
 from apps.library.models import Dataset
 from utils.gis import dataset_helpers
+from django.contrib.postgres.aggregates import ArrayAgg
+from apps.library import models
+from utils.gis import dataset_helpers
 
 def test(request):
+    
+    url_instances = (models.URL.objects
+        .annotate(
+            formats=ArrayAgg('datasets__format', distinct=True), 
+            names=ArrayAgg('datasets__name', distinct=True),
+        )
+        .values(
+            'url', 
+            'formats', 
+            'names', 
+        )
+        .filter(datasets__isnull=False)
+        .distinct()
+    )
+    
+    for url_instance in url_instances:
+        url = url_instance['url']
+        formats = url_instance['formats']
+        names = url_instance['names']
+
+        print(url)
+
+        for format in formats:
+            print(format)
+
+            handler = dataset_helpers.get_dataset_handler(
+                format, 
+                url=url,
+            )
+
+            print(handler)
+
+        print('\n')
+
+    print(url_instances.count())
+
     return HttpResponse('test')
