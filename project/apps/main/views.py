@@ -21,5 +21,6 @@ def test(request):
                 tags = ' '.join(dataset.tags.values_list('tag', flat=True))
                 dataset.tags_text = tags
                 dataset.save()
+                print(dataset, tags)
 
     return HttpResponse('Done running. Check service logs.')
