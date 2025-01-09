@@ -5,7 +5,6 @@ from django.utils import timezone
 from ..general import form_helpers, model_helpers
 from urllib.parse import urlencode
 import json
-import shortuuid
 from shapely.geometry import shape
 from urllib.parse import urlparse
 import random, string

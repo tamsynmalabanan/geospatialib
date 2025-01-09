@@ -9,7 +9,5 @@ from urllib.parse import urlparse, parse_qs
 from apps.library.models import Dataset
 from utils.gis import dataset_helpers
 
-import uuid
-
 def test(request):
     return HttpResponse('test')

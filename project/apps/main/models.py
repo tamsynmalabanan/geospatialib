@@ -5,7 +5,6 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.contrib.auth.hashers import UNUSABLE_PASSWORD_PREFIX
 
 from urllib.parse import urlparse
-import uuid
 
 from random_username.generate import generate_username
 
