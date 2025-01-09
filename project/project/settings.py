@@ -236,6 +236,7 @@ STATIC_URL = '/static/'
 INTERNAL_IPS = [
     '127.0.0.1',
     'www.geospatialib.com',
+    'geospatialib.com',
 ]
 
 # for cors header

@@ -74,4 +74,3 @@ class URL(models.Model):
     @property
     def domain(self):
         return urlparse(self.url).netloc
-        
