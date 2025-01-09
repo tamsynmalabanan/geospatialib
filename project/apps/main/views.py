@@ -45,7 +45,13 @@ def test(request):
                 )
                 layers = list(handler.layers.keys())
                 print(f'LAYERS: {layers}')
-                print(f'LAYERS TO ONBOARD: {[layer for layer in layers if layer not in names]}')
+
+                new_layers = [layer for layer in layers if layer not in names]
+                print(f'LAYERS TO ONBOARD: {new_layers}')
+
+                for layer in new_layers[:1]:
+                    print('NEW LAYER', layer)
+
             except Exception as e:
                 print(f'LAYERS: FAILED TO RETRIEVE LAYERS', e)
 
