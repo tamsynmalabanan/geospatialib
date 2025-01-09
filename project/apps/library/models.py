@@ -28,8 +28,7 @@ class Dataset(models.Model):
             models.Index(fields=['url']), 
             models.Index(fields=['title']), 
             models.Index(fields=['abstract']), 
-            GinIndex(fields=['title', 'abstract']),
-        ]
+            GinIndex(fields=['title', 'abstract', 'tags__tag'], opclasses=['gin_trgm_ops', 'gin_trgm_ops', 'gin_trgm_ops']), ]
 
     def __str__(self) -> str:
         if self.title:
