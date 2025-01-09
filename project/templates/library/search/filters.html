@@ -13,10 +13,10 @@
                         aria-expanded="true"
                         aria-controls="searchResultsFilters"
                     ><i class="bi bi-funnel"></i></a>
-                    <button class='border-0 bg-transparent px-0 d-flex align-items-start geospatialibMap-bbox-field' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Seach map extent' onclick="handleSearchQueryField('{{request.GET.query}}')"><i class="bi bi-bounding-box-circles"></i></button>
-                    <button class='border-0 bg-transparent px-0 d-flex align-items-start' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Remove search limit' onclick="handleSearchQueryField('{{request.GET.query}}')" value="">
+                    <button class='border-0 bg-transparent px-0 geospatialibMap-bbox-field' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Seach map extent' onclick="handleSearchQueryField('{{request.GET.query}}')"><i class="bi bi-bounding-box-circles"></i></button>
+                    <button class='border-0 bg-transparent px-0' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Remove search limit' onclick="handleSearchQueryField('{{request.GET.query}}')" value="">
                         <i class="bi bi-bounding-box-circles"></i>
-                        <i class="bi bi-slash-lg"></i>
+                        <i class="bi bi-slash-lg position-absolute"></i>
                     </button>
                     {% include "library/search/clear_filters.html" %}
                 </div>
