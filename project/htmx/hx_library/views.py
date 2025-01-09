@@ -102,8 +102,7 @@ class SearchList(ListView):
             'url__url',
             'title',
             'abstract',
-            'tags_text',
-        ]
+        ] #+ self.filter_fields
         
         for field in search_fields:
             search_vector = search_vector + SearchVector(field)
@@ -153,8 +152,8 @@ class SearchList(ListView):
             field: (
                 self.queryset
                 .values(field)
-                # .annotate(count=Count('id', distinct=True))
-                # .order_by('-count')
+                .annotate(count=Count('id', distinct=True))
+                .order_by('-count')
             ) for field in self.filter_fields
         }
 
