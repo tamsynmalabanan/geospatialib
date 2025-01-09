@@ -10,16 +10,16 @@ class Command(BaseCommand):
 
         urls = (models.URL.objects
             .prefetch_related('datasets')
-            .filter(datasets__isnull=False)
             .annotate(
+                dataset_formats=ArrayAgg('datasets__format'),
                 dataset_names=ArrayAgg('datasets__name'), 
-                dataset_formats=ArrayAgg('datasets__format')
             )
             .values(
                 'url',
                 'dataset_formats',
                 'dataset_names',
             )
+            .filter(datasets__isnull=False)
             .distinct('id')
         )
 
