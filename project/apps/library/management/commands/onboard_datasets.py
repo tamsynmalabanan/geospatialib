@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-
+from django.contrib.postgres.aggregates import ArrayAgg
 from apps.library import models
 
 class Command(BaseCommand):
@@ -10,11 +10,16 @@ class Command(BaseCommand):
 
         urls = (models.URL.objects
             .prefetch_related('datasets')
+            .filter(datasets__isnull=False)
+            .annotate(
+                dataset_names=ArrayAgg('datasets__name'), 
+                dataset_formats=ArrayAgg('datasets__format')
+            )
             .values(
                 'url',
-                'datasets',
+                'dataset_formats',
+                'dataset_names',
             )
-            .filter(datasets__isnull=False)
             .distinct('id')
         )
 
