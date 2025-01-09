@@ -28,11 +28,11 @@ class Dataset(models.Model):
             models.Index(fields=['url']), 
             models.Index(fields=['title']), 
             models.Index(fields=['abstract']), 
-            GinIndex( 
-                name='dataset_gin_index', 
-                fields=['title', 'abstract'], 
-                opclasses=['gin_trgm_ops', 'gin_trgm_ops']
-            ),
+            # GinIndex( 
+            #     name='dataset_gin_index', 
+            #     fields=['title', 'abstract'], 
+            #     opclasses=['gin_trgm_ops', 'gin_trgm_ops']
+            # ),
         ]
 
     def __str__(self) -> str:
