@@ -31,7 +31,7 @@ class Dataset(models.Model):
             GinIndex( 
                 name='dataset_gin_index', 
                 fields=['title', 'abstract'], 
-                opclasses=['gin_trgm_ops', 'gin_trgm_ops', 'gin_trgm_ops']
+                opclasses=['gin_trgm_ops', 'gin_trgm_ops']
             ),
         ]
 
