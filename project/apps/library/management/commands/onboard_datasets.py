@@ -71,6 +71,8 @@ class Command(BaseCommand):
                                     except Exception as e:
                                         dataset_instance.delete()
                                         print(f'FAILED TO CREATE DATASET: {e}')
+                                else:
+                                    print(f'DATASET INSTANCE NOT CREATED: {dataset_instance} {created}')
                             else:
                                 print(f'TEST CONNECTION FAILED')
                     except Exception as e:
