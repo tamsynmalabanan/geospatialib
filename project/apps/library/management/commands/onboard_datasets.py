@@ -73,3 +73,4 @@ class Command(BaseCommand):
             print(f'TOTAL URLS: {url_instances.count()}')
             print(f'NEW DATASETS: {new_datasets}')
             print(f'TOTAL DATASETS: {models.Dataset.objects.count()}')
+            print('\n')
