@@ -53,7 +53,7 @@ class SearchList(ListView):
     def filter_fields(self):
         return [
             'format',
-            # 'tags__tag',
+            'tags__tag',
         ]
 
     @property
@@ -95,7 +95,8 @@ class SearchList(ListView):
 
         search_vector = SearchVector('name')
         
-        search_fields = self.filter_fields + [
+        search_fields = [
+            'format',
             'url__url',
             'title',
             'abstract',
@@ -152,7 +153,7 @@ class SearchList(ListView):
                 .annotate(count=Count('id', distinct=True))
                 .order_by('-count')
             )
-            for field in self.filter_fields + ['tags__tag']
+            for field in self.filter_fields
         }
 
     def get_context_data(self, **kwargs):
