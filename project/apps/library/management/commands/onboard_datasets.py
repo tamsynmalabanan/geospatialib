@@ -20,3 +20,5 @@ class Command(BaseCommand):
 
         for url in urls:
             print(url)
+
+        print(urls.count())
