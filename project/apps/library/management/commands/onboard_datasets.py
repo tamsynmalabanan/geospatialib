@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
                         new_layers = [layer for layer in layers if layer not in names]
 
-                        for layer in new_layers[:1]:
+                        for layer in new_layers:
                             print(f'NEW LAYER: {layer}')
 
                             response = True
