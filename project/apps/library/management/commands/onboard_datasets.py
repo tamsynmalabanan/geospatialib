@@ -11,4 +11,4 @@ class Command(BaseCommand):
         urls = models.URL.objects.filter(datasets__isnull=False)
 
         for url in urls:
-            print(url)
+            print(url.id, url)
