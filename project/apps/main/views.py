@@ -13,6 +13,7 @@ from apps.library import models
 from utils.gis import dataset_helpers
 
 def test(request):
+    data = []
     
     url_instances = (models.URL.objects
         .annotate(
@@ -33,20 +34,20 @@ def test(request):
         formats = url_instance['formats']
         names = url_instance['names']
 
-        print(url)
+        data.append(f'URL: {url}')
 
         for format in formats:
-            print(format)
+            data.append(f'FORMAT: {format}')
 
             handler = dataset_helpers.get_dataset_handler(
                 format, 
                 url=url,
             )
 
-            print(handler)
+            data.append(f'HANDLER: {handler}')
 
-        print('\n')
+        data.append('\n')
 
-    print(url_instances.count())
+    data.append(f'TOTAL: {url_instances.count()}')
 
-    return HttpResponse('test')
+    return HttpResponse(data)
