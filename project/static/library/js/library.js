@@ -36,7 +36,9 @@ const handleSearchQueryField = (value) => {
 }
 
 document.addEventListener('htmx:afterSwap', (event) => {
-    if (event.target.id === 'searchResults') {
+    console.log(event)
+    const firstPageResults = event.target.id === 'searchResults'
+    if (firstPageResults) {
         const map = mapQuerySelector('#geospatialibMap')
         map.fire('updateBboxFields')
         resetSearchResults()
