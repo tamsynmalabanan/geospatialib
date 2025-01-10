@@ -13,4 +13,7 @@ class Command(BaseCommand):
         datasets = models.Dataset.objects.all()
 
         for dataset in datasets:
-            print(f'{dataset}, {dataset.tags.count()}')
+            tags = dataset.tags.values_list('tags')
+            if len(tags) > 10:
+                sorted_tags = sorted(tags, key=len)
+                print(dataset, sorted_tags[:10])
