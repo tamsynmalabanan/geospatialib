@@ -8,11 +8,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
         const datasetList = toggle.closest('ul.dataset-list')
         if (map && datasetList) {
-            let label
+            let label = options.label
             
-            const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
-            if (toggleAll) {
-                label = toggleAll.getAttribute('data-layers-label')
+            if (!label) {
+                const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
+                if (toggleAll) {
+                    label = toggleAll.getAttribute('data-layers-label')
+                }
             }
             
             if (!label) {
@@ -312,6 +314,8 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         const dropdown = document.createElement('ul')
         dropdown.className = 'dropdown-menu fs-12'
         buttonContainer.appendChild(dropdown)
+
+        console.log(geojson)
 
         const toggle = formCheck.querySelector('button')
         toggle.addEventListener('click', () => {
