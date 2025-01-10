@@ -37,6 +37,12 @@
             <div class="card-footer d-flex gap-3">
                 {% var dataset.bbox.extent|round_extent_coords:3 as bbox_extent %}
                 <button 
+                    title=''
+                    class='bg-transparent border-0 p-0 bi bi-check-circle-fill fs-12'
+                    tabindex="-1"
+                    diasbled
+                ></button>
+                <button 
                     title='Add layer to map'
                     class="bg-transparent border-0 p-0  bi bi-plus-lg fs-14" 
                     tabindex="-1"
