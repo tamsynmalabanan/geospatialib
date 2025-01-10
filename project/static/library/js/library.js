@@ -40,27 +40,37 @@ document.addEventListener('htmx:afterSwap', (event) => {
         const map = mapQuerySelector('#geospatialibMap')
         if (map) {
             const target = event.target
-            const firstPageResults = target.id === 'searchResults'
-            const nextPathResults = (
-                target.tagName.toLowerCase() === 'li' && 
-                target.hasAttribute('hx-get') && 
-                target.getAttribute('hx-get').startsWith(searchEndpoint)
-            )
 
+            const firstPageResults = target.id === 'searchResults'
             if (firstPageResults) {
                 map.fire('updateBboxFields')
                 resetSearchResults()
             }
 
-            const searchResults = document.querySelector('#searchResults')
-            const btnSelector = 'button.bi.bi-check-circle'
-            let searchResultBtns = Array.from(searchResults.querySelectorAll(btnSelector))
-            if (nextPathResults) {
-                const targetBtn = target.querySelector(btnSelector)
-                const targetBtnIndex = searchResultBtns.indexOf(targetBtn)
-                searchResultBtns = searchResultBtns.slice(targetBtnIndex+1)
+            const nextPathResults = (
+                target.tagName.toLowerCase() === 'li' && 
+                target.hasAttribute('hx-get') && 
+                target.getAttribute('hx-get').startsWith(searchEndpoint)
+            )
+            if (firstPageResults || nextPathResults) {
+                const libraryLayers = map.getLayerGroups().library.getLayers()
+                if (libraryLayers.length > 0) {
+                    const searchResults = document.querySelector('#searchResults')
+                    const btnSelector = 'button.bi.bi-check-circle'
+                    let searchResultBtns = Array.from(searchResults.querySelectorAll(btnSelector))
+                    if (nextPathResults) {
+                        const targetBtn = target.querySelector(btnSelector)
+                        const targetBtnIndex = searchResultBtns.indexOf(targetBtn)
+                        searchResultBtns = searchResultBtns.slice(targetBtnIndex+1)
+                    }
+
+                    if (searchResultBtns.length > 0) {
+                        console.log(libraryLayers)
+                        console.log(searchResultBtns)
+                    }
+                }
             }
-            console.log(searchResultBtns)
+
         }
     }
 })
