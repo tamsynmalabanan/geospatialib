@@ -315,7 +315,10 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         dropdown.className = 'dropdown-menu fs-12'
         buttonContainer.appendChild(dropdown)
 
-        console.log(geojson)
+        let label = 'feature'
+        if (geojson.type === "FeatureCollection") {
+            label = 'features'
+        }
 
         const toggle = formCheck.querySelector('button')
         toggle.addEventListener('click', () => {
@@ -324,6 +327,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 layer: layer,
                 layerGroup: layerGroup,
                 geojson: geojson,
+                label: label
             })
         })
 
