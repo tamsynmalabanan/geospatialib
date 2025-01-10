@@ -506,7 +506,7 @@ const createWFSLayer = (data) => {
                 const mapScale = getMeterScale(map)
                 const featureCount = geojson.features.length
 
-                if ((mapScale && mapScale > 10000) || (!mapScale && map.getZoom() < 9)) {
+                if ((mapScale && mapScale > 300000) || (!mapScale && map.getZoom() < 5)) {
                     if (featureCount > 1000) {
                         geojson.features = [L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()]
                         geojson.tooltip = defaultTooltip
