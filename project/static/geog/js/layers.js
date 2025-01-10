@@ -225,6 +225,7 @@ const createFeaturePropertiesTable = (properties, options={}) => {
     table.classList.add('table', 'table-striped', 'fs-12')
     
     const header = options.header
+    console.log(header)
     if (header) {
         const thead = document.createElement('thead')
         table.appendChild(thead)
@@ -331,6 +332,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 collapse.className = 'collapse px-4'
                 parent.appendChild(collapse)
 
+                console.log(label)
                 const table = createFeaturePropertiesTable(properties, {header:label})
                 collapse.appendChild(table)
 
