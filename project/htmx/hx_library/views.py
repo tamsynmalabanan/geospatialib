@@ -72,7 +72,7 @@ class SearchList(ListView):
     @property
     def cache_key(self):
         return util_helpers.build_cache_key(
-            'search-queryset',
+            'SearchList',
             self.query
         )
 
@@ -85,9 +85,27 @@ class SearchList(ListView):
         })
 
     def perform_full_text_search(self):
-        query = self.query
+        queryset = super().get_queryset()
 
-        queryset = (super().get_queryset()
+        query = self.query
+        if validators.url(query) == True:
+            search_type = "plain"
+        else:
+            search_type = "websearch"
+
+        search_query = SearchQuery(query, search_type=search_type)
+
+        search_vector = SearchVector('name')
+        search_fields = [
+            'url__url',
+            'title',
+            'abstract',
+        ]
+        for field in search_fields:
+            search_vector = search_vector + SearchVector(field)
+
+        queryset = (
+            queryset
             .select_related(
                 'url', 
                 'default_legend', 
@@ -95,48 +113,23 @@ class SearchList(ListView):
             # .prefetch_related(
             #     'tags',
             # )
-        )
-
-        if query and query != 'all':        
-            if validators.url(query) == True:
-                search_type="plain"
-            else:
-                search_type="websearch"
-
-            search_query = SearchQuery(query, search_type=search_type)
-
-            search_vector = SearchVector('name')
-            
-            search_fields = [
-                'url__url',
-                'title',
-                'abstract',
-            ]
-            
-            for field in search_fields:
-                search_vector = search_vector + SearchVector(field)
-
-            queryset = (
-                queryset
-                .annotate(
-                    rank=SearchRank(search_vector, search_query),
-                )
-                .filter(rank__gte=0.001)
+            .annotate(
+                rank=SearchRank(search_vector, search_query),
             )
-        else:
-            queryset = queryset.annotate(rank=Value(1))
-
-        cache.set(self.cache_key, queryset, timeout=3600)
+            .filter(rank__gte=0.001)
+        )
+        
         return queryset
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
             queryset = cache.get(self.cache_key)
 
-            if not queryset:
+            if not queryset or not queryset.exists():
                 queryset = self.perform_full_text_search()
 
             if queryset.exists():
+                cache.set(self.cache_key, queryset, timeout=3600)
                 queryset = self.apply_query_filters(queryset)
                 
             self.queryset = queryset
