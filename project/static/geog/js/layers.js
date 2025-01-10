@@ -220,12 +220,14 @@ const getLayerTitle = (layer) => {
     return title
 }
 
-const createFeaturePropertiesTable = (properties) => {
+const createFeaturePropertiesTable = (properties, options={}) => {
     const table = document.createElement('table')
     table.classList.add('table', 'table-striped', 'fs-12')
     
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
+
+    console.log(options.header)
     
     const handler = (properties) => {
         Object.keys(properties).forEach(property => {
@@ -470,7 +472,7 @@ const getDefaultGeoJSONLayer = (
 
             if (Object.keys(feature.properties).length > 0) {
                 const createPopup = () => {
-                    layer.bindPopup(createFeaturePropertiesTable(feature.properties).outerHTML, {
+                    layer.bindPopup(createFeaturePropertiesTable(feature.properties, {header:layer.options.popupHeader}).outerHTML, {
                         autoPan: false,
                     }).openPopup()
                     layer.off('click', createPopup)
@@ -484,8 +486,11 @@ const getDefaultGeoJSONLayer = (
 
 const createWFSLayer = (data) => {
     const geojsonLayer = getDefaultGeoJSONLayer()
+
     geojsonLayer.data = data
     geojsonLayer.data.layerLegendObj = '{}'
+
+    geojsonLayer.options.popupHeader = data.layerTitle
 
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
