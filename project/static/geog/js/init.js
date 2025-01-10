@@ -568,7 +568,7 @@ const handleMapQuery = (map) => {
             formCheckClass: 'fs-14 ms-3 mb-3 pe-3',
             checkboxAttrs: {
                 'data-layers-toggles': '#queryResults',
-                'data-layers-label': 'feature',
+                'data-layers-type': 'feature',
                 'disabled': 'true',
                 'onclick': 'toggleOffAllLayers(this)',
             },

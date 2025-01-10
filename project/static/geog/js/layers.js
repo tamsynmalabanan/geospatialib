@@ -8,17 +8,17 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
         const datasetList = toggle.closest('ul.dataset-list')
         if (map && datasetList) {
-            let label = options.label
+            let type = options.type
             
-            if (!label) {
+            if (!type) {
                 const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
                 if (toggleAll) {
-                    label = toggleAll.getAttribute('data-layers-label')
+                    type = toggleAll.getAttribute('data-layers-type')
                 }
             }
             
-            if (!label) {
-                label = 'layer'
+            if (!type) {
+                type = 'layer'
             }
 
             let bounds = options.bounds
@@ -34,7 +34,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
             if (bounds) {
                 const zoomBtn = createDropdownMenuListItem({
-                    label: `Zoom to ${label}`,
+                    label: `Zoom to ${type}`,
                     buttonClass: 'bi bi-zoom-in',
                 })
                 dropdown.appendChild(zoomBtn)
@@ -50,7 +50,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const checkbox = findOuterElement('input.form-check-input', toggle)
             if (checkbox) {
                 const isolateBtn = createDropdownMenuListItem({
-                    label: `Isolate ${label}`,
+                    label: `Isolate ${type}`,
                     buttonClass: 'bi bi-subtract',
                 })
                 dropdown.appendChild(isolateBtn)
@@ -315,9 +315,9 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         dropdown.className = 'dropdown-menu fs-12'
         buttonContainer.appendChild(dropdown)
 
-        let label = 'feature'
+        let type = 'feature'
         if (geojson.type === "FeatureCollection") {
-            label = 'features'
+            type = 'features'
         }
 
         const toggle = formCheck.querySelector('button')
@@ -327,7 +327,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 layer: layer,
                 layerGroup: layerGroup,
                 geojson: geojson,
-                label: label
+                type: type
             })
         })
 
