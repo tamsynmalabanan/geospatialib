@@ -147,6 +147,7 @@ const toggleLayer = async (event, options={}) => {
                 toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
 
                 if (tagName === 'button') {
+                    toggle.classList.remove('text-secondary')
                     toggle.classList.add('text-primary')
                 }
             }
