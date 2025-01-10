@@ -20,4 +20,5 @@ class Command(BaseCommand):
                     if len(tag) > 2 and tag not in ['wms', 'wfs', '-']:
                         valid_tags.append(tag)
                 sorted_tags = sorted(valid_tags, key=len)
-                print(dataset, sorted_tags[:10])
+                new_tags = models.Tag.objects.filter(tag__in=sorted_tags[:10])
+                print(new_tags)
