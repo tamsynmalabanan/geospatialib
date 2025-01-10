@@ -315,6 +315,8 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         dropdown.className = 'dropdown-menu fs-12'
         buttonContainer.appendChild(dropdown)
 
+        console.log(geojson)
+
         let type = 'feature'
         if (geojson.type === "FeatureCollection") {
             type = 'features'
