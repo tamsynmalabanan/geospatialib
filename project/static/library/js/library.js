@@ -35,6 +35,14 @@ const handleSearchQueryField = (value) => {
     getSearchForm().elements.query.value = value
 }
 
+const updateSearchResultToggleStyle = (toggle, added=true) => {
+    if (added) {
+        toggle.classList.remove('text-secondary')
+        toggle.classList.add('text-primary')
+        toggle.setAttribute('title', 'Layer added to map')
+    }
+}
+
 document.addEventListener('htmx:afterSwap', (event) => {
     if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
         const map = mapQuerySelector('#geospatialibMap')
@@ -68,9 +76,7 @@ document.addEventListener('htmx:afterSwap', (event) => {
                         const libraryLayerIds = libraryLayers.map(layer => layer.data.layerId)
                         searchResultToggles.forEach(toggle => {
                             if (libraryLayerIds.contains(toggle.dataset.layerId)) {
-                                toggle.classList.remove('text-secondary')
-                                toggle.classList.add('text-primary')
-                                toggle.setAttribute('title', 'Layer added to map')
+                                updateSearchResultToggleStyle(toggle)
                             }
                         })
                     }
