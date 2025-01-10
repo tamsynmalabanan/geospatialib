@@ -149,7 +149,7 @@ const toggleLayer = async (event, options={}) => {
                 if (tagName === 'button') {
                     toggle.classList.remove('text-secondary')
                     toggle.classList.add('text-primary')
-                    toggle.setAttribute('title','Layer added to map')
+                    toggle.setAttribute('title', 'Layer added to map')
                 }
             }
         } else {
