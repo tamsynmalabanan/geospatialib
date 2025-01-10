@@ -224,10 +224,25 @@ const createFeaturePropertiesTable = (properties, options={}) => {
     const table = document.createElement('table')
     table.classList.add('table', 'table-striped', 'fs-12')
     
+    const header = options.header
+    if (header) {
+        const thead = document.createElement('thead')
+        table.appendChild(thead)
+
+        const theadtr = document.createElement('tr')
+        thead.appendChild(theadtr)
+
+        const theadth = document.createElement('th')
+        theadth.setAttribute('scope', 'col')
+        theadth.setAttribute('span', '2')
+        theadth.innerText = header
+        theadtr.appendChild(theadth)
+    }
+
+
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
 
-    console.log(options.header)
     
     const handler = (properties) => {
         Object.keys(properties).forEach(property => {
