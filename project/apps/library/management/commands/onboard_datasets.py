@@ -2,20 +2,24 @@ from django.core.management.base import BaseCommand
 from django.contrib.postgres.aggregates import ArrayAgg
 from apps.library import models
 from utils.gis import dataset_helpers
+from django.db.models import Q
 
 class Command(BaseCommand):
     help = 'Onboard other datasets through URLS of existing datasets.'
 
     def handle(self, *args, **kwargs):
         while True:
-            self.stdout.write(self.style.SUCCESS('Onboard other datasets through URLS of existing datasets.'))
+            self.stdout.write(self.style.SUCCESS('Onboarding datasets...'))
+            
+            datasets = models.Dataset.objects.filter(Q(title__isnull=True) | Q(title=''))
+            datasets.delete()
             
             url_instances = (models.URL.objects
                 .annotate(
                     formats=ArrayAgg('datasets__format', distinct=True), 
                     names=ArrayAgg('datasets__name', distinct=True),
                 )
-                .values(
+                .values_list(
                     'id', 
                     'url', 
                     'formats', 
@@ -28,10 +32,7 @@ class Command(BaseCommand):
             new_datasets = 0
 
             for url_instance in url_instances:
-                id = url_instance['id']
-                url = url_instance['url']
-                formats = url_instance['formats']
-                names = url_instance['names']
+                id, url, formats, names = url_instance
 
                 print(f'URL: {url}')
 
@@ -43,8 +44,8 @@ class Command(BaseCommand):
                             format, 
                             url=url,
                         )
-                        layers = list(handler.layers.keys())
 
+                        layers = list(handler.layers.keys())
                         new_layers = [layer for layer in layers if layer not in names]
 
                         for layer in new_layers:
@@ -68,7 +69,7 @@ class Command(BaseCommand):
                                         print(f'SUCCESSFUL DATASET ONBOARDING!')
                                     except Exception as e:
                                         dataset_instance.delete()
-                                        print(f'FAILED TO CREATE DATASET: {e}')
+                                        print(f'FAILED TO ONBOARD DATASET: {e}')
                                 else:
                                     print(f'DATASET INSTANCE NOT CREATED: {dataset_instance} {created}')
                             else:
