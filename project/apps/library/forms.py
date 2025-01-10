@@ -14,7 +14,7 @@ class SearchForm(forms.Form):
         widget=forms.TextInput(attrs={
             'type':'search',
             'class':'h-100 border-0 rounded-0 focus-underline-primary box-shadow-none ps-0',
-            'title':'Type in * for wildcard search.'
+            'title':'Type in * for wildcard search'
         })
     )
 
