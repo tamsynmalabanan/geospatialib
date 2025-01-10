@@ -115,6 +115,7 @@ class SearchList(ListView):
             search_type = "websearch"
 
         search_query = SearchQuery(query, search_type=search_type)
+        print(search_query)
 
         search_vector = SearchVector('name')
         search_fields = [
