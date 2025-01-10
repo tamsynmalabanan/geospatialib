@@ -93,7 +93,7 @@ const createButtonAndCollapse = (id, options={}) => {
     container.classList.add('d-flex', 'flex-column', 'gap-2')
 
     const button = document.createElement('button')
-    button.className = `fw-medium ${options.buttonClassName}` 
+    button.className = `fw-medium d-flex ${options.buttonClassName}` 
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${id}`)
@@ -111,7 +111,7 @@ const createButtonAndCollapse = (id, options={}) => {
         button.appendChild(span)
     }
     const dropdownIcon = document.createElement('i')
-    dropdownIcon.className = 'bi bi-chevron-expand ms-auto'
+    dropdownIcon.className = 'bi bi-chevron-down ms-auto fs-12'
     button.appendChild(dropdownIcon)
 
     setAsThemedControl(button)
