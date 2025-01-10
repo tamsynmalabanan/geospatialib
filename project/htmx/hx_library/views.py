@@ -59,7 +59,7 @@ class SearchList(ListView):
     def filter_fields(self):
         return [
             'format',
-            # 'tags__tag',
+            'tags__tag',
         ]
 
     @property
@@ -118,7 +118,7 @@ class SearchList(ListView):
         print(search_query)
 
         search_vector = SearchVector('name')
-        search_fields = [
+        search_fields = self.filter_fields + [
             'url__url',
             'title',
             'abstract',
