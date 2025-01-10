@@ -38,7 +38,7 @@
                 {% var dataset.bbox.extent|round_extent_coords:3 as bbox_extent %}
                 <button 
                     title='Add layer to map'
-                    class="bg-transparent border-0 p-0  bi bi-plus-circle-fill fs-14" 
+                    class="bg-transparent border-0 p-0 bi bi-plus-circle-fill fs-12" 
                     tabindex="-1"
                     onclick="toggleLayer(event, {mapSelector:'#geospatialibMap'})"
                     data-layer-bbox="{{bbox_extent}}"
