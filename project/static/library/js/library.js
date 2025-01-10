@@ -56,17 +56,23 @@ document.addEventListener('htmx:afterSwap', (event) => {
                 const libraryLayers = map.getLayerGroups().library.getLayers()
                 if (libraryLayers.length > 0) {
                     const searchResults = document.querySelector('#searchResults')
-                    const btnSelector = 'button.bi.bi-check-circle'
-                    let searchResultBtns = Array.from(searchResults.querySelectorAll(btnSelector))
+                    const toggleSelector = 'button.bi.bi-check-circle'
+                    let searchResultToggles = Array.from(searchResults.querySelectorAll(toggleSelector))
                     if (nextPathResults) {
-                        const targetBtn = target.querySelector(btnSelector)
-                        const targetBtnIndex = searchResultBtns.indexOf(targetBtn)
-                        searchResultBtns = searchResultBtns.slice(targetBtnIndex+1)
+                        const targetToggle = target.querySelector(toggleSelector)
+                        const targetToggleIndex = searchResultToggles.indexOf(targetToggle)
+                        searchResultToggles = searchResultToggles.slice(targetToggleIndex+1)
                     }
 
-                    if (searchResultBtns.length > 0) {
-                        console.log(libraryLayers)
-                        console.log(searchResultBtns)
+                    if (searchResultToggles.length > 0) {
+                        const libraryLayerIds = libraryLayers.map(layer => layer.data.layerId)
+                        searchResultToggles.forEach(toggle => {
+                            if (libraryLayerIds.contains(toggle.dataset.layerId)) {
+                                toggle.classList.remove('text-secondary')
+                                toggle.classList.add('text-primary')
+                                toggle.setAttribute('title', 'Layer added to map')
+                            }
+                        })
                     }
                 }
             }
