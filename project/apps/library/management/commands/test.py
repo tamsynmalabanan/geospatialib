@@ -15,10 +15,9 @@ class Command(BaseCommand):
         for dataset in datasets:
             tags = dataset.tags.values_list('tag', flat=True)
             if len(tags) > 10:
-                sorted_tags = sorted(tags, key=len)
-                for tag in sorted_tags:
-                    if len(tag) < 3:
-                        sorted_tags.remove(tag)
-                    elif tag in ['wms', 'wfs', '-']:
-                        sorted_tags.remove(tag)
+                valid_tags = []
+                for tag in tags:
+                    if len(tag) > 2 and tag not in ['wms', 'wfs', '-']:
+                        valid_tags.append(tag)
+                sorted_tags = sorted(valid_tags, key=len)
                 print(dataset, sorted_tags[:10])
