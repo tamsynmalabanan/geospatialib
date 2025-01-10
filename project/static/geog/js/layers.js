@@ -234,7 +234,7 @@ const createFeaturePropertiesTable = (properties, options={}) => {
 
         const theadth = document.createElement('th')
         theadth.setAttribute('scope', 'col')
-        theadth.setAttribute('span', '2')
+        theadth.setAttribute('colspan', '2')
         theadth.innerText = header
         theadtr.appendChild(theadth)
     }
