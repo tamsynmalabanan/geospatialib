@@ -160,10 +160,10 @@ const constructInfoPanel = (map, name, options={}) => {
 
     const collapseToggle = document.createElement('button')
     collapseToggle.setAttribute('title', 'Collapse')
-    collapseToggle.className = 'border-0 bg-transparent px-0 text-muted bi bi-chevron-up'
+    collapseToggle.className = 'border-0 bg-transparent px-0 text-muted bi bi-chevron-expand'
     header.appendChild(collapseToggle)
     
-    collapseToggle.addEventListener('click', () => hideAllSubCollapse(collapse))
+    collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
     
     const body = document.createElement('div')
     body.classList.add('accordion-body', 'd-flex', 'flex-column', 'overflow-auto', 'p-0')
@@ -575,7 +575,7 @@ const handleMapQuery = (map) => {
             labelClass: 'text-muted',
             button: true,
             buttonClass: 'bi bi-chevron-expand text-muted',
-            buttonCallback: () => hideAllSubCollapse(queryResults),
+            buttonCallback: () => toggleAllSubCollapse(queryResults),
             parent: body
         })
         

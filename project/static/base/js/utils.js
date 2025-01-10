@@ -58,14 +58,23 @@ const validateUrl = (str) => {
     }
 }
 
-const hideAllSubCollapse = (element) => {
+const toggleAllSubCollapse = (element) => {
     const collapseElements = element.querySelectorAll('.collapse')
-    collapseElements.forEach(collapse => {
-        if (collapse.classList.contains('show')) {
-            const bsCollapse = new bootstrap.Collapse(collapse)
-            bsCollapse.hide()
-        }
-    })
+    if (Array.from(collapseElements).some(element => element.classList.contains('show'))) {
+        collapseElements.forEach(collapse => {
+            if (collapse.classList.contains('show')) {
+                const bsCollapse = new bootstrap.Collapse(collapse)
+                bsCollapse.hide()
+            }
+        })
+    } else {
+        collapseElements.forEach(collapse => {
+            if (!collapse.classList.contains('show')) {
+                const bsCollapse = new bootstrap.Collapse(collapse)
+                bsCollapse.show()
+            }
+        })
+    }
 }
 
 const pushQueryParamsToURLString = (url, params) => {
