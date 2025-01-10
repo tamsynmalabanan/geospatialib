@@ -332,7 +332,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 collapse.className = 'collapse px-4'
                 parent.appendChild(collapse)
 
-                const table = createFeaturePropertiesTable(properties, {header:label})
+                const table = createFeaturePropertiesTable(properties)
                 collapse.appendChild(table)
 
                 const collapseToggle = document.createElement('button')
