@@ -224,7 +224,6 @@ const createFeaturePropertiesTable = (properties, options={}) => {
     const table = document.createElement('table')
     table.classList.add('table', 'table-striped', 'fs-12')
     
-    console.log(options)
     const header = options.header
     if (header) {
         const thead = document.createElement('thead')
@@ -403,6 +402,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         })
 
         layer.eachLayer(feature => {
+            feature.options.popupHeader = feature.title
             const layerToggle = handler(feature, collapse, feature.feature, feature.title)
             const layerCheckbox = layerToggle.querySelector('input')
             layerCheckbox.addEventListener('click', (event) => {
@@ -487,6 +487,7 @@ const getDefaultGeoJSONLayer = (
             }
 
             if (Object.keys(feature.properties).length > 0) {
+                console.log(layer)
                 const createPopup = () => {
                     layer.bindPopup(createFeaturePropertiesTable(feature.properties, {header:layer.options.popupHeader}).outerHTML, {
                         autoPan: false,

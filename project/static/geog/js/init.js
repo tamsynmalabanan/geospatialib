@@ -610,7 +610,6 @@ const handleMapQuery = (map) => {
                 })
 
                 geoJSONLayer.title = title
-                geoJSONLayer.options.popupHeader = title
                 createLayerToggles(geoJSONLayer, queryResults, map, 'query', geojson)
 
                 const layerFooter = document.createElement('div')
