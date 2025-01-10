@@ -36,12 +36,32 @@ const handleSearchQueryField = (value) => {
 }
 
 document.addEventListener('htmx:afterSwap', (event) => {
-    console.log(event)
-    const firstPageResults = event.target.id === 'searchResults'
-    if (firstPageResults) {
+    if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
         const map = mapQuerySelector('#geospatialibMap')
-        map.fire('updateBboxFields')
-        resetSearchResults()
+        if (map) {
+            const target = event.target
+            const firstPageResults = target.id === 'searchResults'
+            const nextPathResults = (
+                target.tagName.toLowerCase() === 'li' && 
+                target.hasAttribute('hx-get') && 
+                target.getAttribute('hx-get').startsWith(searchEndpoint)
+            )
+
+            if (firstPageResults) {
+                map.fire('updateBboxFields')
+                resetSearchResults()
+            }
+
+            const searchResults = document.querySelector('#searchResults')
+            const btnSelector = 'button.bi.bi-check-circle'
+            let searchResultBtns = Array.from(searchResults.querySelectorAll(btnSelector))
+            if (nextPathResults) {
+                const targetBtn = target.querySelector(btnSelector)
+                const targetBtnIndex = searchResultBtns.indexOf(targetBtn)
+                searchResultBtns = searchResultBtns.slice(targetBtnIndex+1)
+            }
+            console.log(searchResultBtns)
+        }
     }
 })
 
