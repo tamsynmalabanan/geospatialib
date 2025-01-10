@@ -257,7 +257,7 @@ const handleMapLegend = (map) => {
 
                         let labelText = name
                         if (style.count > 1) {
-                            labelText = labelText + ` (${style.count})`
+                            labelText = labelText + ` (${formatNumberWithCommas(style.count)})`
                         }
 
                         const label = document.createElement('div')
