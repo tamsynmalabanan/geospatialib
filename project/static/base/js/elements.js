@@ -110,6 +110,10 @@ const createButtonAndCollapse = (id, options={}) => {
         span.innerText = options.label
         button.appendChild(span)
     }
+    const dropdownIcon = document.createElement('i')
+    dropdownIcon.className = 'bi bi-chevron-expand ms-auto'
+    button.appendChild(dropdownIcon)
+
     setAsThemedControl(button)
     container.appendChild(button)
 
