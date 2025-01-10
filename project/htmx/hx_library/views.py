@@ -85,7 +85,7 @@ class SearchList(ListView):
         })
 
     def perform_full_text_search(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(Q(title__isnull=False) & ~Q(title=''))
 
         query = self.query
         if validators.url(query) == True:
