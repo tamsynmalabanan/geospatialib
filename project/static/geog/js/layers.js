@@ -402,7 +402,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         })
 
         layer.eachLayer(feature => {
-            feature.options.popupHeader = feature.title
+            feature.options.popupHeader = `${layer.title}: ${feature.title}`
             const layerToggle = handler(feature, collapse, feature.feature, feature.title)
             const layerCheckbox = layerToggle.querySelector('input')
             layerCheckbox.addEventListener('click', (event) => {
