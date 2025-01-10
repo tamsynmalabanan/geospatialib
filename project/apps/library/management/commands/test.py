@@ -21,4 +21,4 @@ class Command(BaseCommand):
                         valid_tags.append(tag)
                 sorted_tags = sorted(valid_tags, key=len)
                 new_tags = models.Tag.objects.filter(tag__in=sorted_tags[:10])
-                print(new_tags)
+                dataset.tags.set(new_tags)
