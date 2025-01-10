@@ -488,7 +488,6 @@ const getDefaultGeoJSONLayer = (
 
             if (Object.keys(feature.properties).length > 0) {
                 const createPopup = () => {
-                    console.log(layer)
                     layer.bindPopup(createFeaturePropertiesTable(feature.properties, {header:layer.options.popupHeader}).outerHTML, {
                         autoPan: false,
                     }).openPopup()
