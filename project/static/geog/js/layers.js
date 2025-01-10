@@ -579,6 +579,8 @@ const createWFSLayer = (data) => {
 
                 let legend = {}
                 geojsonLayer.eachLayer(feature => {
+                    feature.options.popupHeader = data.layerTitle
+                    
                     if (geojson.tooltip) {
                         feature.bindTooltip(geojson.tooltip, {sticky:true})
                     } 
