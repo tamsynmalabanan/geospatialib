@@ -48,7 +48,7 @@ class Command(BaseCommand):
                         layers = list(handler.layers.keys())
                         new_layers = [layer for layer in layers if layer not in names]
 
-                        for layer in new_layers:
+                        for layer in new_layers[:-1]:
                             print(f'NEW LAYER: {layer}')
 
                             response = True
