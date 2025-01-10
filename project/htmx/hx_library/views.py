@@ -103,6 +103,7 @@ class SearchList(ListView):
         ]
         for field in search_fields:
             search_vector = search_vector + SearchVector(field)
+        search_vector = search_vector + SearchVector()
 
         queryset = (
             queryset
