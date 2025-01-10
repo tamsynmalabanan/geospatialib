@@ -135,7 +135,8 @@ const toggleLayer = async (event, options={}) => {
         }
         
         const data = toggle.dataset
-        if (toggle.checked || toggle.tagName.toLowerCase() === 'button') {
+        const tagName = toggle.tagName.toLowerCase()
+        if ((tagName === 'input' && toggle.checked) || tagName === 'button') {
             let layer = options.layer
             if (!layer && data) {
                 layer = createLayerFromURL(data)
@@ -144,6 +145,10 @@ const toggleLayer = async (event, options={}) => {
             if (layer) {
                 layerGroup.addLayer(layer)
                 toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
+
+                if (tagName === 'button') {
+                    toggle.classList.add('text-primary')
+                }
             }
         } else {
             const layer = layerGroup.getLayer(data.leafletId)
