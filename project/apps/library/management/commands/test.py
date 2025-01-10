@@ -13,7 +13,7 @@ class Command(BaseCommand):
         datasets = models.Dataset.objects.all()
 
         for dataset in datasets:
-            tags = dataset.tags.values_list('tag', flat=True)
+            tags = dataset.tags.filter(~Q(tag='wms') & ~Q(tag='wfs')).values_list('tag', flat=True)
             if len(tags) > 10:
                 sorted_tags = sorted(tags, key=len)
                 print(dataset, sorted_tags[:10])
