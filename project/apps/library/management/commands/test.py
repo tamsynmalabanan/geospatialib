@@ -22,3 +22,4 @@ class Command(BaseCommand):
                 sorted_tags = sorted(valid_tags, key=len)
                 new_tags = models.Tag.objects.filter(tag__in=sorted_tags[:10])
                 dataset.tags.set(new_tags)
+                print(dataset, dataset.tags.count())
