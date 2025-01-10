@@ -19,6 +19,6 @@ class Command(BaseCommand):
                 for tag in sorted_tags:
                     if len(tag) < 3:
                         sorted_tags.remove(tag)
-                    if tag in ['wms', 'wfs', '-']:
+                    elif tag in ['wms', 'wfs', '-']:
                         sorted_tags.remove(tag)
                 print(dataset, sorted_tags[:10])
