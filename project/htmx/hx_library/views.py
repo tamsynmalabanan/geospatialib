@@ -44,6 +44,9 @@ class SearchList(ListView):
     def query(self):
         query = self.request.GET.get('query')
         
+        if not query or query.strip() in ['', '*']:
+            return '*'
+
         if validators.url(query) == True:
             if query.endswith('?'):
                 query = query[:-1]
@@ -85,9 +88,27 @@ class SearchList(ListView):
         })
 
     def perform_full_text_search(self):
-        queryset = super().get_queryset().filter(Q(title__isnull=False) & ~Q(title=''))
-
+        queryset = (
+            super().get_queryset()
+            .filter(Q(title__isnull=False) & ~Q(title=''))
+            .select_related(
+                'url', 
+                'default_legend', 
+            )
+            # .prefetch_related(
+            #     'tags',
+            # )
+        )
+        
         query = self.query
+        if query == '*':
+            return (
+                queryset
+                .annotate(
+                    rank=Value(1,output_field=IntegerField())
+                )
+            )
+
         if validators.url(query) == True:
             search_type = "plain"
         else:
@@ -106,13 +127,6 @@ class SearchList(ListView):
 
         queryset = (
             queryset
-            .select_related(
-                'url', 
-                'default_legend', 
-            )
-            # .prefetch_related(
-            #     'tags',
-            # )
             .annotate(
                 rank=SearchRank(search_vector, search_query),
             )
