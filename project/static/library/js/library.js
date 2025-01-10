@@ -75,7 +75,7 @@ document.addEventListener('htmx:afterSwap', (event) => {
                     if (searchResultToggles.length > 0) {
                         const libraryLayerIds = libraryLayers.map(layer => layer.data.layerId)
                         searchResultToggles.forEach(toggle => {
-                            if (libraryLayerIds.contains(toggle.dataset.layerId)) {
+                            if (libraryLayerIds.includes(toggle.dataset.layerId)) {
                                 updateSearchResultToggleStyle(toggle)
                             }
                         })
