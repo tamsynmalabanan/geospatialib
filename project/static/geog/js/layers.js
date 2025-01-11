@@ -1,4 +1,5 @@
 const populateLayerDropdownMenu = (toggle, options={}) => {
+    console.log(toggle)
     const dropdown = toggle.nextElementSibling
     if (dropdown && dropdown.innerHTML.trim() === '') {
         let map = options.map
