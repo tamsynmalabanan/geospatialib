@@ -321,7 +321,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 'aria-expanded': 'false',
             },
             buttonCallback: () => {
-                populateLayerDropdownMenu(toggle, {
+                populateLayerDropdownMenu(menuBtn, {
                     map: map,
                     layer: layer,
                     layerGroup: layerGroup,
