@@ -159,32 +159,6 @@ const createFormCheck = (id, options={}) => {
         label.appendChild(span)
     }
 
-    if (options.button) {
-        const button = document.createElement('button')
-        button.setAttribute('type', 'button')
-        button.className = `bg-transparent border-0 p-0 ${options.buttonClass}`
-        if (options.buttonInnerText) {
-            const span = document.createElement('span')
-            span.className = 'ms-2 d-none d-lg-inline'
-            span.innerText = options.buttonInnerText
-            button.appendChild(span)
-        }
-
-        const buttonContainer = document.createElement('div')
-        buttonContainer.classList.add('ms-auto', 'hstack', 'gap-2', 'align-items-start')
-        buttonContainer.appendChild(button)
-        formCheck.appendChild(buttonContainer)
-        
-        if (options.buttonCallback) {
-            button.addEventListener('click', options.buttonCallback)
-        }
-        if (options.buttonAttrs) {
-            for (const key in options.buttonAttrs) {
-                button.setAttribute(key, options.buttonAttrs[key])
-            }
-        }    
-    }
-
     if (options.parent) {
         options.parent.appendChild(formCheck)
     }
