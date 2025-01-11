@@ -217,6 +217,10 @@ const handleMapLegend = (map) => {
         collapsed: false,
     })
 
+    const ul = document.createElement('ul')
+    ul.className = 'dataset-list list-group list-group-flush'
+    body.appendChild(ul)
+
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer.data) {
@@ -230,7 +234,7 @@ const handleMapLegend = (map) => {
             )
 
             legendContainer.classList.add('mb-3', 'px-3')
-            body.insertBefore(legendContainer, body.firstChild)
+            ul.insertBefore(legendContainer, ul.firstChild)
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             
@@ -323,7 +327,7 @@ const handleMapLegend = (map) => {
 
     map.on('layerremove', (event) => {
         const id = `${mapId}Legend_${event.layer._leaflet_id}`
-        const legendToggle = body.querySelector(`#${id}`)
+        const legendToggle = ul.querySelector(`#${id}`)
         if (legendToggle) {
             legendToggle.parentElement.remove()
         }
@@ -346,7 +350,6 @@ const handleMapQuery = (map) => {
     footer.className = 'border-top p-3 d-flex flex-wrap font-monospace'
     body.parentElement.appendChild(footer)
 
-    
     
     const queryDropdown = document.createElement('div')
     queryDropdown.className = 'dropdown ms-auto'
