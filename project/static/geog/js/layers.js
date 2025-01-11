@@ -1,5 +1,4 @@
 const populateLayerDropdownMenu = (toggle, options={}) => {
-    console.log(toggle)
     const dropdown = toggle.nextElementSibling
     if (dropdown && dropdown.innerHTML.trim() === '') {
         let map = options.map
@@ -177,7 +176,7 @@ const toggleLayer = async (event, options={}) => {
                 toggleAll.removeAttribute('disabled')
                 toggleAll.checked = true
 
-                let label = toggleAll.getAttribute('data-layers-label')
+                let label = toggleAll.getAttribute('data-layers-type')
                 if (!label) {
                     label = 'layer'
                 }
