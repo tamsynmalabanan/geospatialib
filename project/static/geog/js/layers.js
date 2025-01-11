@@ -6,14 +6,16 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             map = mapQuerySelector(options.mapSelector)
         }
 
-        const datasetList = toggle.closest('ul.dataset-list')
-        if (map && datasetList) {
-            let type = options.type
+        if (map) {
+            const datasetList = toggle.closest('ul.dataset-list')
             
+            let type = options.type
             if (!type) {
-                const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
-                if (toggleAll) {
-                    type = toggleAll.getAttribute('data-layers-type')
+                if (datasetList) {
+                    const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
+                    if (toggleAll) {
+                        type = toggleAll.getAttribute('data-layers-type')
+                    }
                 }
             }
             
@@ -48,7 +50,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             }
 
             const checkbox = findOuterElement('input.form-check-input', toggle)
-            if (checkbox) {
+            if (checkbox && datasetList) {
                 const isolateBtn = createDropdownMenuListItem({
                     label: `Isolate ${type}`,
                     buttonClass: 'bi bi-subtract',
