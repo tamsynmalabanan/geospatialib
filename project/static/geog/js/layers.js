@@ -310,7 +310,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         formCheck.appendChild(buttonContainer)
 
         const menuBtn = createInlineBtn(buttonContainer, {
-            buttonClass: 'bi bi-three-dots',
+            buttonClass: 'bi bi-three-dots text-muted',
             buttonAttrs: {
                 'data-bs-toggle': 'dropdown',
                 'aria-expanded': 'false',
