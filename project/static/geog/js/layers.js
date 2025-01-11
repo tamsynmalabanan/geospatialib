@@ -57,7 +57,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
                 dropdown.appendChild(isolateBtn)
                 isolateBtn.addEventListener('click', () => {
-                    datasetList.querySelectorAll('input').forEach(input => {
+                    datasetList.querySelectorAll('input.form-check-input').forEach(input => {
                         if (input.checked && input !== checkbox) {
                             input.click()
                         }
