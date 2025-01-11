@@ -162,7 +162,7 @@ const createFormCheck = (id, options={}) => {
     if (options.button) {
         const button = document.createElement('button')
         button.setAttribute('type', 'button')
-        button.className = `ms-auto bg-transparent border-0 p-0 ${options.buttonClass}`
+        button.className = `bg-transparent border-0 p-0 ${options.buttonClass}`
         if (options.buttonInnerText) {
             const span = document.createElement('span')
             span.className = 'ms-2 d-none d-lg-inline'
@@ -190,6 +190,32 @@ const createFormCheck = (id, options={}) => {
     }
 
     return formCheck
+}
+
+const createInlineBtn = (container, options={}) => {
+    const button = document.createElement('button')
+    button.setAttribute('type', 'button')
+    button.className = `bg-transparent border-0 p-0 ${options.buttonClass}`
+    
+    if (options.buttonInnerText) {
+        const span = document.createElement('span')
+        span.className = 'ms-2 d-none d-lg-inline'
+        span.innerText = options.buttonInnerText
+        button.appendChild(span)
+    }
+    
+    if (options.buttonCallback) {
+        button.addEventListener('click', options.buttonCallback)
+    }
+
+    if (options.buttonAttrs) {
+        for (const key in options.buttonAttrs) {
+            button.setAttribute(key, options.buttonAttrs[key])
+        }
+    }    
+
+    container.appendChild(button)
+    return button
 }
 
 const createButton = (options={}) => {

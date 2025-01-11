@@ -303,15 +303,20 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
             formCheckClass: 'fw-medium',
             label: label,
             parent: parent,
-            button: true,
+        })
+
+        const buttonContainer = document.createElement('div')
+        buttonContainer.classList.add('ms-auto', 'hstack', 'gap-2', 'align-items-start')
+        formCheck.appendChild(buttonContainer)
+
+        const menuBtn = createInlineBtn(buttonContainer, {
             buttonClass: 'bi bi-three-dots',
             buttonAttrs: {
                 'data-bs-toggle': 'dropdown',
                 'aria-expanded': 'false',
             }
         })
-
-        const buttonContainer = formCheck.lastElementChild
+        buttonContainer.appendChild(menuBtn)
 
         const dropdown = document.createElement('ul')
         dropdown.className = 'dropdown-menu fs-12'
