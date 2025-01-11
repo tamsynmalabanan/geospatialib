@@ -309,34 +309,31 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
         buttonContainer.classList.add('ms-auto', 'hstack', 'gap-2', 'align-items-start')
         formCheck.appendChild(buttonContainer)
 
-        const menuBtn = createInlineBtn(buttonContainer, {
-            buttonClass: 'bi bi-three-dots text-muted',
-            buttonAttrs: {
-                'data-bs-toggle': 'dropdown',
-                'aria-expanded': 'false',
-            }
-        })
-        buttonContainer.appendChild(menuBtn)
-
-        const dropdown = document.createElement('ul')
-        dropdown.className = 'dropdown-menu fs-12'
-        buttonContainer.appendChild(dropdown)
-
         let type = 'feature'
         if (geojson && geojson.type === "FeatureCollection") {
             type = 'features'
         }
 
-        const toggle = formCheck.querySelector('button')
-        toggle.addEventListener('click', () => {
-            populateLayerDropdownMenu(toggle, {
-                map: map,
-                layer: layer,
-                layerGroup: layerGroup,
-                geojson: geojson,
-                type: type
-            })
+        const menuBtn = createInlineBtn(buttonContainer, {
+            buttonClass: 'bi bi-three-dots text-muted',
+            buttonAttrs: {
+                'data-bs-toggle': 'dropdown',
+                'aria-expanded': 'false',
+            },
+            buttonCallback: () => {
+                populateLayerDropdownMenu(toggle, {
+                    map: map,
+                    layer: layer,
+                    layerGroup: layerGroup,
+                    geojson: geojson,
+                    type: type
+                })
+            }
         })
+
+        const dropdown = document.createElement('ul')
+        dropdown.className = 'dropdown-menu fs-12'
+        buttonContainer.appendChild(dropdown)
 
         if (layer.feature && layer.feature.properties) {
             const properties = layer.feature.properties

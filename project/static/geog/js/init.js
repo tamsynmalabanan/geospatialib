@@ -576,10 +576,16 @@ const handleMapQuery = (map) => {
                 'onclick': 'toggleOffAllLayers(this)',
             },
             labelClass: 'text-muted',
-            button: true,
+            parent: body
+        })
+
+        const buttonContainer = document.createElement('div')
+        buttonContainer.classList.add('ms-auto', 'hstack', 'gap-2', 'align-items-start')
+        toolbar.appendChild(buttonContainer)
+
+        const menuBtn = createInlineBtn(buttonContainer, {
             buttonClass: 'bi bi-chevron-expand text-muted',
             buttonCallback: () => toggleAllSubCollapse(queryResults),
-            parent: body
         })
         
         setAsThemedControl(toolbar)
