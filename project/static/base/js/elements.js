@@ -131,7 +131,6 @@ const createButtonAndCollapse = (id, options={}) => {
 const createFormCheck = (id, options={}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `d-flex gap-2 flex-grow-1 ${options.formCheckClass}`
-    // formCheck.className = `form-check d-flex flex-grow-1 ${options.formCheckClass}`
 
     const checkbox = document.createElement('input')
     checkbox.id = id
