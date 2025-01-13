@@ -111,9 +111,8 @@ class SearchList(ListView):
         if exclusions:
             ex_queries = Q(title__icontains=exclusions[0]) | Q(name__icontains=exclusions[0])
             if len(exclusions) > 1:
-                for word in exclusions:
+                for word in exclusions[1:]:
                     ex_queries |= Q(title__icontains=word) | Q(name__icontains=word)
-            print(ex_queries)
             queryset = queryset.exclude(ex_queries)
 
         if query == '*':
