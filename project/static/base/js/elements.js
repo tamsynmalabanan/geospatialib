@@ -89,7 +89,12 @@ const createImgElement = (url, alt) => {
 }
 
 const createButtonAndCollapse = (id, options={}) => {
-    const container = document.createElement('div')
+    let containerTag = options.containerTag
+    if (!containerTag) {
+        containerTag = 'div'
+    }
+
+    const container = document.createElement(containerTag)
     container.classList.add('d-flex', 'flex-column', 'gap-2')
 
     const button = document.createElement('button')
