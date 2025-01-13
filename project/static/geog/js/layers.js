@@ -556,7 +556,7 @@ const createWFSLayer = (data) => {
                 const mapScale = getMeterScale(map)
                 const mapZoom = map.getZoom()
                 if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                    if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                    if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
                         geojson.features = [L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()]
                         geojson.tooltip = defaultTooltip
                         prefix = 'Bounding'
