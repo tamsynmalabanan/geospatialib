@@ -4,13 +4,17 @@ const setStoredTheme = theme => {
     localStorage.setItem('theme', theme)
 }
 
-const getPreferredTheme = () => {
-    const storedTheme = getStoredTheme()
-    if (storedTheme) {
-      return storedTheme
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
+const getPreferredTheme = (reverse=false) => {
+    const storedTheme = getStoredTheme(); 
+    
+    let theme = storedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); 
+    
+    if (reverse) { 
+        theme = theme === 'dark' ? 'light' : 'dark'; 
+    } 
+    
+    return theme; 
+};
 
 const setAsThemedControl = (element) => {
     const tagName = element.tagName.toLowerCase()
