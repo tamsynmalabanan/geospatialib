@@ -643,7 +643,7 @@ const handleMapQuery = (map) => {
             }
         } else {
             createSpanElement({
-                label: 'No queryable layers shown on map.',
+                label: 'No query-enabled layers shown on map.',
                 className: 'mb-3 fs-12 font-monospace',
                 parent: queryResults
             })
