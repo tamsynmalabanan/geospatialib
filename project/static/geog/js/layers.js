@@ -347,7 +347,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
                 collapse.appendChild(table)
 
                 const collapseToggle = document.createElement('button')
-                collapseToggle.className = 'dropdown-toggle bg-transparent border-0 px-0'
+                collapseToggle.className = 'dropdown-toggle bg-transparent border-0 px-0 text-muted'
                 collapseToggle.setAttribute('type', 'button')
                 collapseToggle.setAttribute('data-bs-toggle', 'collapse')
                 collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
