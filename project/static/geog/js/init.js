@@ -160,7 +160,7 @@ const constructInfoPanel = (map, name, options={}) => {
 
     const collapseToggle = document.createElement('button')
     collapseToggle.setAttribute('title', 'Collapse')
-    collapseToggle.className = 'border-0 bg-transparent px-0 text-muted bi bi-chevron-expand'
+    collapseToggle.className = 'border-0 bg-transparent px-0 bi bi-chevron-expand'
     header.appendChild(collapseToggle)
     
     collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
@@ -575,7 +575,7 @@ const handleMapQuery = (map) => {
                 'disabled': 'true',
                 'onclick': 'toggleOffAllLayers(this)',
             },
-            labelClass: 'text-muted',
+            // labelClass: '',
             parent: body
         })
 
@@ -584,7 +584,7 @@ const handleMapQuery = (map) => {
         toolbar.appendChild(buttonContainer)
 
         const menuBtn = createInlineBtn(buttonContainer, {
-            buttonClass: 'bi bi-chevron-expand text-muted',
+            buttonClass: 'bi bi-chevron-expand',
             buttonCallback: () => toggleAllSubCollapse(queryResults),
         })
         
