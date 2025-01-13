@@ -245,7 +245,7 @@ const handleMapLegend = (map) => {
             
             if (layer.data.layerLegendObj) {
                 layer.on('fetchingData', () => {
-                    legendCollapse.innerHTML = 'fetching data...'
+                    legendCollapse.innerHTML = 'updating legend...'
                 })
 
                 layer.on('legendUpdated', () => {
