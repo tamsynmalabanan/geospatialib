@@ -246,7 +246,7 @@ const handleMapLegend = (map) => {
             if (layer.data.layerLegendObj) {
                 layer.on('fetchingData', () => {
                     legendCollapse.innerHTML = `
-                        <div class="spinner-border spinner-border-sm text-${getPreferredTheme()}" role="status">
+                        <div class="spinner-border spinner-border-sm text-${getPreferredTheme()} m-0 p-0" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     `
