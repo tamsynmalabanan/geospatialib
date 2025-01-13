@@ -347,7 +347,7 @@ const handleMapQuery = (map) => {
     header.querySelector('button').remove()
 
     const footer = document.createElement('div')
-    footer.className = 'border-top p-3 d-flex flex-wrap font-monospace'
+    footer.className = 'border-top p-3 d-flex flex-wrap font-monospace text-muted'
     body.parentElement.appendChild(footer)
 
     
