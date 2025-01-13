@@ -42,24 +42,21 @@ class SearchList(ListView):
 
     @property
     def query(self):
+        query = self.request.GET.get('query', '').strip()
         exclusions = None
 
-        query = self.request.GET.get('query')
-        
-        if not query or query.strip() in ['', '*']:
-            query = '*'
+        if validators.url(query) == True:
+            if query.endswith('?'):
+                query = query[:-1]
         else:
-            query = query.strip()
+            if ' -' in f' {query}':
+                keywords = query.split(' ')
+                exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
+                query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
 
-            if validators.url(query) == True:
-                if query.endswith('?'):
-                    query = query[:-1]
+            if query in ['', '*']:
+                query = '*'
             else:
-                if ' -' in f' {query}':
-                    keywords = query.split(' ')
-                    exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
-                    query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
-
                 query = query.replace(' ', ' OR ')
 
         return (query, exclusions)
