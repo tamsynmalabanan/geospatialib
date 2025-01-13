@@ -360,7 +360,8 @@ const handleMapQuery = (map) => {
         buttonAttrs: {
             'type': 'button',
             'data-bs-toggle': 'dropdown',
-            'aria-expanded': 'false'
+            'aria-expanded': 'false',
+            'title': 'Query options'
         },
         labelClass: 'text-nowrap',
         parent: queryDropdown,
