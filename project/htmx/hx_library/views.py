@@ -42,18 +42,27 @@ class SearchList(ListView):
 
     @property
     def query(self):
+        exclusions = None
+
         query = self.request.GET.get('query')
         
         if not query or query.strip() in ['', '*']:
-            return '*'
-
-        if validators.url(query) == True:
-            if query.endswith('?'):
-                query = query[:-1]
+            query = '*'
         else:
-            query = query.replace(' ', ' OR ')
+            query = query.strip()
 
-        return query
+            if validators.url(query) == True:
+                if query.endswith('?'):
+                    query = query[:-1]
+            else:
+                if ' -' in f' {query}':
+                    keywords = query.split(' ')
+                    exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
+                    query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+
+                query = query.replace(' ', ' OR ')
+
+        return (query, exclusions)
 
     @property
     def filter_fields(self):
@@ -76,7 +85,7 @@ class SearchList(ListView):
     def cache_key(self):
         return util_helpers.build_cache_key(
             'SearchList',
-            self.query
+            self.request.GET.get('query','')
         )
 
     def apply_query_filters(self, queryset):
@@ -99,8 +108,15 @@ class SearchList(ListView):
             #     'tags',
             # )
         )
-        
-        query = self.query
+
+        query, exclusions = self.query
+
+        if exclusions:
+            ex_queries = Q()
+            for word in exclusions:
+                ex_queries |= Q(title__icontains=word) | Q(name__icontains=word)
+            queryset = queryset.exclude(ex_queries)
+
         if query == '*':
             return (
                 queryset
@@ -108,14 +124,13 @@ class SearchList(ListView):
                     rank=Value(1,output_field=IntegerField())
                 )
             )
-
+        
         if validators.url(query) == True:
             search_type = "plain"
         else:
             search_type = "websearch"
 
         search_query = SearchQuery(query, search_type=search_type)
-        print(search_query)
 
         search_vector = SearchVector('name')
         search_fields = self.filter_fields + [
