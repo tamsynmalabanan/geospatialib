@@ -551,23 +551,20 @@ const createWFSLayer = (data) => {
 
             if (geojson) {
                 const featureCount = geojson.features.length
-                if (featureCount > 1000) {
-                    const mapScale = getMeterScale(map)
-                    const mapZoom = map.getZoom()
-                    
-                    if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 9)) {
-                        if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
-                            geojson.features = [L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()]
-                            geojson.tooltip = defaultTooltip
-                            prefix = 'Bounding'
-                            suffix = `for ${formatNumberWithCommas(featureCount)} features`
-                        } else {
-                            try {
-                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                                prefix = 'Simplified'
-                            } catch {
-                            
-                            }
+                const mapScale = getMeterScale(map)
+                const mapZoom = map.getZoom()
+                if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
+                    if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                        geojson.features = [L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()]
+                        geojson.tooltip = defaultTooltip
+                        prefix = 'Bounding'
+                        suffix = `for ${formatNumberWithCommas(featureCount)} features`
+                    } else {
+                        try {
+                            geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                            prefix = 'Simplified'
+                        } catch {
+                        
                         }
                     }
                 }
