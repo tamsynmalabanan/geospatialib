@@ -361,7 +361,7 @@ const handleMapQuery = (map) => {
             'type': 'button',
             'data-bs-toggle': 'dropdown',
             'aria-expanded': 'false',
-            'title': 'Query options'
+            'title': 'Query menu'
         },
         labelClass: 'text-nowrap',
         parent: queryDropdown,
