@@ -244,7 +244,11 @@ const handleMapLegend = (map) => {
             }
             
             if (layer.data.layerLegendObj) {
-                layer.on('legend_updated', () => {
+                layer.on('fetchingData', () => {
+                    legendCollapse.innerHTML = 'fetching data...'
+                })
+
+                layer.on('legendUpdated', () => {
                     legendCollapse.innerHTML = ''
                     
                     const styles = JSON.parse(layer.data.layerLegendObj)

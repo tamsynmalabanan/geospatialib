@@ -542,6 +542,8 @@ const createWFSLayer = (data) => {
         const map = event.target._map
 
         const fetchData = async () => {
+            geojsonLayer.fire('fetchingData')
+
             let geojson = await fetchWFSData(event, geojsonLayer)
 
             let prefix
@@ -630,7 +632,7 @@ const createWFSLayer = (data) => {
                 })
 
                 geojsonLayer.data.layerLegendObj = JSON.stringify(legend)
-                geojsonLayer.fire('legend_updated')
+                geojsonLayer.fire('legendUpdated')
             }
         }
 
