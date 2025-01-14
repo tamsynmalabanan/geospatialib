@@ -77,13 +77,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             }
 
             if (geojson) {
-                let filename
-                if (options.layer) {
-                    filename = options.layer.title
-                } else {
-                    filename = 'geojson'
+                let filename = 'geojson'; 
+                if (options.layer) { 
+                    filename = options.layer.title || options.layer.data.layerTitle || filename;
                 }
-
                 const downloadBtn = createDropdownMenuListItem({
                     label: `Download geojson`,
                     buttonClass: 'bi bi-download',
