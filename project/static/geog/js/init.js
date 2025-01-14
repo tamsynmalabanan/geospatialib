@@ -86,6 +86,8 @@ const handleMapBasemap = (map) => {
 }
 
 const handleMapLayerGroups = (map) => {
+    map.hiddenLayers = []
+
     const layerGroups = {
         client: L.layerGroup(),
         library: L.layerGroup(),
@@ -94,7 +96,6 @@ const handleMapLayerGroups = (map) => {
 
     for (let group in layerGroups) {
         const layerGroup = layerGroups[group]
-        layerGroup.hiddenLayers = []
         layerGroup.show = () => {
             if (group === 'query') {
                 const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
@@ -359,11 +360,13 @@ const handleMapLegend = (map) => {
     })
 
     map.on('layerremove', (event) => {
-        console.log(event)
-        const id = `${mapId}Legend_${event.layer._leaflet_id}`
-        const legendToggle = ul.querySelector(`#${id}`)
-        if (legendToggle) {
-            legendToggle.remove()
+        const layer = event.layer
+        if (!map.hiddenLayers.contains(layer)) {
+            const id = `${mapId}Legend_${layer._leaflet_id}`
+            const legendToggle = ul.querySelector(`#${id}`)
+            if (legendToggle) {
+                legendToggle.remove()
+            }
         }
     })
 }
