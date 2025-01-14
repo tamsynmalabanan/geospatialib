@@ -138,9 +138,14 @@ const createFormCheck = (id, options={}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `d-flex gap-2 flex-grow-1 ${options.formCheckClass}`
 
+    let checkboxClass = options.checkboxClass
+    if (!checkboxClass) {
+        checkboxClass = ''
+    }
+
     const checkbox = document.createElement('input')
     checkbox.id = id
-    checkbox.className = `form-check-input ${options.checkboxClass}`
+    checkbox.className = `form-check-input ${checkboxClass}`
     checkbox.setAttribute('type', 'checkbox')
     if (options.checkboxAttrs) {
         for (const key in options.checkboxAttrs) {
