@@ -3,13 +3,11 @@ body {
 }
 
 .show-on-hover {
-    visibility: hidden;
+    opacity: 0.1;
 }
 
 .show-on-hover:hover {
-    visibility: visible;
-}
-
+    opacity: 1;
 .no-icon.accordion-button::after {
     width: 0px !important;
     --bs-accordion-btn-icon: none !important;
