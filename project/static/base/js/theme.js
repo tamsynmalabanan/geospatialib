@@ -104,6 +104,16 @@ const getThemedControls = (parent=document) => {
                 dark: ['table-dark'],
             }
         },
+        {
+            elements: Array().concat(
+                Array.from(parent.querySelectorAll(`.text-light`)),
+                Array.from(parent.querySelectorAll(`.text-dark`))
+            ),
+            classes: {
+                light: ['text-light'],
+                dark: ['text-dark'],
+            }
+        },
     ]
 }
 
