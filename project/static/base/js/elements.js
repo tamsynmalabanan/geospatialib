@@ -95,18 +95,25 @@ const createButtonAndCollapse = (id, options={}) => {
     }
 
     const container = document.createElement(containerTag)
+    container.id = id
     container.className = `d-flex flex-column gap-2 ${options.containerClass}`
+
+    const collapse = document.createElement('div')
+    collapse.id = `${id}_collapse`
+    collapse.classList.add('collapse')
+    if (!options.collapsed) {
+        collapse.classList.add('show')
+    }
 
     const btnContainer = document.createElement('div')
     btnContainer.className = 'd-flex gap-2'
-    container.appendChild(btnContainer)
 
     const button = document.createElement('button')
     button.className = `bg-transparent border-0 px-0 ${options.buttonClassName }`
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
-    button.setAttribute('data-bs-target', `#${id}`)
-    button.setAttribute('aria-controls', id)
+    button.setAttribute('data-bs-target', `#${collapse.id}`)
+    button.setAttribute('aria-controls', collapse.id)
     if (options.collapsed) {
         button.classList.add('collapsed')
         button.setAttribute('aria-expanded', 'false')
@@ -125,14 +132,9 @@ const createButtonAndCollapse = (id, options={}) => {
     button.appendChild(dropdownIcon)
 
     setAsThemedControl(button)
-    btnContainer.appendChild(button)
 
-    const collapse = document.createElement('div')
-    collapse.id = id
-    collapse.classList.add('collapse')
-    if (!options.collapsed) {
-        collapse.classList.add('show')
-    }
+    btnContainer.appendChild(button)
+    container.appendChild(btnContainer)
     container.appendChild(collapse)
 
     return container

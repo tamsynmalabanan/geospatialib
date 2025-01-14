@@ -49,24 +49,28 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            const checkbox = findOuterElement('input.form-check-input', toggle)
-            if (checkbox && datasetList) {
-                const isolateBtn = createDropdownMenuListItem({
-                    label: `Isolate ${type}`,
-                    buttonClass: 'bi bi-subtract',
-                })
-                dropdown.appendChild(isolateBtn)
-                isolateBtn.addEventListener('click', () => {
-                    datasetList.querySelectorAll('input.form-check-input').forEach(input => {
-                        if (input.checked && input !== checkbox) {
-                            input.click()
+            if (datasetList) {
+                const checkbox = findOuterElement('input.form-check-input', toggle)
+                if (checkbox) {
+                    const isolateBtn = createDropdownMenuListItem({
+                        label: `Isolate ${type}`,
+                        buttonClass: 'bi bi-subtract',
+                    })
+                    dropdown.appendChild(isolateBtn)
+                    isolateBtn.addEventListener('click', () => {
+                        datasetList.querySelectorAll('input.form-check-input').forEach(input => {
+                            if (input.checked && input !== checkbox) {
+                                input.click()
+                            }
+                        })
+    
+                        if (!checkbox.checked) {
+                            checkbox.click()
                         }
                     })
-
-                    if (!checkbox.checked) {
-                        checkbox.click()
-                    }
-                })
+                } else {
+                    //
+                }
             }
 
             let geojson = options.geojson
