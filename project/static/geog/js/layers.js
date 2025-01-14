@@ -151,10 +151,10 @@ const toggleLayer = async (event, options={}) => {
 
             if (layer) {
                 layerGroup.addLayer(layer)
-                toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
-
                 if (toggle.matches('button.add-layer-button')) {
                     updateSearchResultToggleStyle(toggle)
+                } else {
+                    toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
                 }
             }
         } else {
