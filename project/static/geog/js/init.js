@@ -360,12 +360,17 @@ const handleMapLegend = (map) => {
     })
 
     map.on('layerremove', (event) => {
-        const layer = event.layer
-        if (!map.hiddenLayers.includes(layer)) {
-            const id = `${mapId}Legend_${layer._leaflet_id}`
-            const legendToggle = ul.querySelector(`#${id}`)
-            if (legendToggle) {
-                legendToggle.remove()
+        const id = `${mapId}Legend_${layer._leaflet_id}`
+        const legend = ul.querySelector(`#${id}`)
+        if (legend) {
+            const layer = event.layer
+            if (!map.hiddenLayers.includes(layer)) {
+                if (legend) {
+                    legend.remove()
+                }
+            } else {
+                const collapse = legend.querySelector(`#${id}_collapse`)
+                collapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
             }
         }
     })
