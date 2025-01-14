@@ -246,7 +246,7 @@ const handleMapLegend = (map) => {
             if (layer.data.layerLegendObj) {
                 layer.on('fetchingData', () => {
                     legendCollapse.innerHTML = `
-                        <div class="spinner-border spinner-border-sm text-${getPreferredTheme(reverse=true)} m-0 p-0" role="status">
+                        <div class="spinner-border spinner-border-sm theme-reverse text-${getPreferredTheme(reverse=true)} m-0 p-0" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     `
@@ -577,7 +577,7 @@ const handleMapQuery = (map) => {
 
         const toolbar = createFormCheck('queryResultsToggleAll', {
             formCheckClass: 'fs-14 ms-3 mb-3 pe-3',
-            checkboxClass: `bg-transparent border border-${getPreferredTheme(reverse=true)}`,
+            checkboxClass: `bg-transparent theme-reverse border border-${getPreferredTheme(reverse=true)}`,
             checkboxAttrs: {
                 'data-layers-toggles': '#queryResults',
                 'data-layers-type': 'feature',

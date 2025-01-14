@@ -46,6 +46,16 @@ const getThemedControls = (parent=document) => {
         },
         {
             elements: Array().concat(
+                Array.from(parent.querySelectorAll(`.border-light`)),
+                Array.from(parent.querySelectorAll(`.border-dark`)),
+            ),
+            classes: {
+                light: ['border-light'],
+                dark: ['border-dark'],
+            }
+        },
+        {
+            elements: Array().concat(
                 Array.from(parent.querySelectorAll(`.btn-outline-light`)),
                 Array.from(parent.querySelectorAll(`.btn-outline-dark`)),
             ),
@@ -103,9 +113,12 @@ const toggleControlsTheme = async (theme, parent=document) => {
     let toggleControlsThemeTimeout
     getThemedControls(parent).forEach(control => {
         control.elements.forEach(element => {
+            const reverse = element.classList.contains('theme-reverse')
+            
             for (let themeName in control.classes) {
                 const themeClasses = control.classes[themeName];
-                if (themeName === theme) {
+
+                if ((!reverse && themeName === theme) || (reverse && themeName !== theme)) {  
                     themeClasses.forEach(className => {
                         element.classList.add(className);
                     });
@@ -123,7 +136,8 @@ const toggleControlsTheme = async (theme, parent=document) => {
             }, 250)
         });
     
-    });}
+    });
+}
 
 const setTheme = theme => {
     if (theme === 'auto') {
