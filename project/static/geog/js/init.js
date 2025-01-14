@@ -361,7 +361,7 @@ const handleMapLegend = (map) => {
 
     map.on('layerremove', (event) => {
         const layer = event.layer
-        if (!map.hiddenLayers.contains(layer)) {
+        if (!map.hiddenLayers.includes(layer)) {
             const id = `${mapId}Legend_${layer._leaflet_id}`
             const legendToggle = ul.querySelector(`#${id}`)
             if (legendToggle) {
