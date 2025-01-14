@@ -74,7 +74,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         }
                     } else {
                         const mapLayerGroup = map.getLayerGroups()[layerGroup]
-                        mapLayerGroup.getLayers().forEach(mapLayer => {
+                        mapLayerGroup.eachLayer(mapLayer => {
                             if (layer !== mapLayer) {
                                 map.removeLayer(mapLayer)
                             }
