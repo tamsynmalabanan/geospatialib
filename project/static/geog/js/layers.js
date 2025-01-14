@@ -301,7 +301,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
     const handler = (layer, parent, geojson, label) => {
         const formCheck = createFormCheck(`${mapContainer.id}_${layer._leaflet_id}`, {
             formCheckClass: 'fw-medium',
-            checkboxClass: `bg-transparent theme-reverse border border-${getPreferredTheme(reverse=true)}`,
+            checkboxClass: `bg-transparent border border-secondary`,
             label: label,
             parent: parent,
         })
