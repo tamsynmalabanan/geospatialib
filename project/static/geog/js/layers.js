@@ -55,14 +55,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             }
 
             if (datasetList) {
+                const isolateBtn = createDropdownMenuListItem({
+                    label: `Isolate ${type}`,
+                    buttonClass: 'bi bi-subtract',
+                })
+                dropdown.appendChild(isolateBtn)
                 const checkbox = findOuterElement('input.form-check-input', toggle)
-                if (checkbox) {
-                    const isolateBtn = createDropdownMenuListItem({
-                        label: `Isolate ${type}`,
-                        buttonClass: 'bi bi-subtract',
-                    })
-                    dropdown.appendChild(isolateBtn)
-                    isolateBtn.addEventListener('click', () => {
+                isolateBtn.addEventListener('click', () => {
+                    if (checkbox) {
                         datasetList.querySelectorAll('input.form-check-input').forEach(input => {
                             if (input.checked && input !== checkbox) {
                                 input.click()
@@ -72,14 +72,16 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         if (!checkbox.checked) {
                             checkbox.click()
                         }
-                    })
-                } else {
-                    map.getLayerGroups()[layerGroup].eachLayer(mapLayer => {
-                        if (layer !== mapLayer) {
-                            map.removeLayer(mapLayer)
-                        }
-                    })
-                }
+                    } else {
+                        const mapLayerGroup = map.getLayerGroups()[layerGroup]
+                        mapLayerGroup.eachLayer(mapLayer => {
+                            if (layer !== mapLayer) {
+                                map.removeLayer(mapLayer)
+                            }
+                        })
+                        map.addLayer(layer)
+                    }
+                })
             }
 
             let geojson = options.geojson
