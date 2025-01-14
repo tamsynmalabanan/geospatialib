@@ -241,7 +241,7 @@ const handleMapLegend = (map) => {
             const label= document.createElement('span')
             label.classList.add('me-2', 'fs-14')
             label.innerText = layer.data.layerTitle
-            legendHeader.insertBefore(label, ul.firstChild)
+            legendHeader.insertBefore(label, legendHeader.firstChild)
             
 
             const legendCollapse = legendContainer.querySelector('.collapse')
