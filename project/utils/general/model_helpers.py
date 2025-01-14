@@ -2,6 +2,16 @@ from . import util_helpers
 from apps.library import models as lib_models
 from django.db.models import Q
 
+def collect_url_tags(url):
+    tag_instances = []
+
+    for tag in util_helpers.split_filter_string(url, min_len=4, exclusions=['http']):
+        tag_instance, created = lib_models.Tag.objects.get_or_create(tag=tag.lower())
+        if tag_instance:
+            tag_instances.append(tag_instance)
+    
+    return tag_instances
+
 def list_to_tags(tags_list):
     tag_instances = []
 
@@ -16,6 +26,7 @@ def list_to_tags(tags_list):
                 pass
     return tag_instances
     
+
 def get_field_from_instance(instance, field_exp):
     field_names = field_exp.split('__')
     model_class = instance.__class__
