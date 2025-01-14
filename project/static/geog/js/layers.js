@@ -88,7 +88,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             if (!geojson && options.layer) {
                 try {
                     geojson = options.layer.toGeoJSON()
-                    console.log(options.layer, geojson)
                 } catch {}
             }
 
@@ -103,6 +102,12 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
                 dropdown.appendChild(downloadBtn)
                 downloadBtn.addEventListener('click', () => {
+                    if (!options.geojson && options.layer) {
+                        try {
+                            geojson = options.layer.toGeoJSON()
+                        } catch {}
+                    }
+
                     let geojson_str = geojson
                     if (typeof geojson === 'object') {
                         geojson_str = JSON.stringify(geojson)
