@@ -73,8 +73,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                             checkbox.click()
                         }
                     } else {
+                        console.log(map, layerGroup, map.getLayerGroups())
                         const mapLayerGroup = map.getLayerGroups()[layerGroup]
-                        console.log(mapLayerGroup)
                         mapLayerGroup.getLayers().forEach(mapLayer => {
                             if (layer !== mapLayer) {
                                 map.removeLayer(mapLayer)
