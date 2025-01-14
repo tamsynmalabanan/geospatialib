@@ -361,7 +361,7 @@ const handleMapLegend = (map) => {
         const id = `${mapId}Legend_${event.layer._leaflet_id}`
         const legendToggle = ul.querySelector(`#${id}`)
         if (legendToggle) {
-            legendToggle.parentElement.remove()
+            legendToggle.remove()
         }
     })
 }

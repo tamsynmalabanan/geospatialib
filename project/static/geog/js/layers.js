@@ -49,10 +49,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            let layerGroup = options.layerGroup
-            if (!layerGroup) {
-                layerGroup = 'library'
-            }
+            const layerGroup = options.layerGroup || 'library'
 
             if (datasetList) {
                 const isolateBtn = createDropdownMenuListItem({
@@ -60,8 +57,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     buttonClass: 'bi bi-subtract',
                 })
                 dropdown.appendChild(isolateBtn)
-                const checkbox = findOuterElement('input.form-check-input', toggle)
+                
                 isolateBtn.addEventListener('click', () => {
+                    const checkbox = findOuterElement('input.form-check-input', toggle)
                     if (checkbox) {
                         datasetList.querySelectorAll('input.form-check-input').forEach(input => {
                             if (input.checked && input !== checkbox) {
