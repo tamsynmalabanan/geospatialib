@@ -74,12 +74,12 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         }
                     } else {
                         const mapLayerGroup = map.getLayerGroups()[layerGroup]
-                        mapLayerGroup.eachLayer(mapLayer => {
-                            if (layer !== mapLayer) {
-                                map.removeLayer(mapLayer)
+                        mapLayerGroup.eachLayer(layer => {
+                            if (options.layer !== layer) {
+                                map.removeLayer(layer)
                             }
                         })
-                        mapLayerGroup.addLayer(layer)
+                        mapLayerGroup.addLayer(options.layer)
                     }
                 })
             }
