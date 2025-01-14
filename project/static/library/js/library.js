@@ -64,7 +64,7 @@ document.addEventListener('htmx:afterSwap', (event) => {
                 const libraryLayers = map.getLayerGroups().library.getLayers()
                 if (libraryLayers.length > 0) {
                     const searchResults = document.querySelector('#searchResults')
-                    const toggleSelector = ''
+                    const toggleSelector = 'button.add-layer-button'
                     let searchResultToggles = Array.from(searchResults.querySelectorAll(toggleSelector))
                     if (nextPathResults) {
                         const targetToggle = target.querySelector(toggleSelector)
