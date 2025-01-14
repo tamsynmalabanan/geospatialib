@@ -43,6 +43,7 @@ class SearchList(ListView):
     @property
     def query(self):
         query = self.request.GET.get('query', '').strip()
+
         exclusions = None
 
         if validators.url(query) == True:
@@ -94,6 +95,8 @@ class SearchList(ListView):
         })
 
     def perform_full_text_search(self):
+        query, exclusions = self.query
+
         queryset = (
             super().get_queryset()
             .filter(Q(title__isnull=False) & ~Q(title=''))
@@ -105,8 +108,6 @@ class SearchList(ListView):
             #     'tags',
             # )
         )
-
-        query, exclusions = self.query
 
         if exclusions:
             ex_queries = Q(title__icontains=exclusions[0]) | Q(name__icontains=exclusions[0])
