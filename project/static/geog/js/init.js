@@ -231,11 +231,18 @@ const handleMapLegend = (map) => {
                     containerTag: 'li',
                     containerClass: 'mb-3 px-3',
                     buttonClassName: 'ms-auto',
-                    // label: layer.data.layerTitle,
                 }
             )
 
             ul.insertBefore(legendContainer, ul.firstChild)
+
+            const legendHeader = legendContainer.children[0]
+
+            const label= document.createElement('span')
+            label.classList.add('me-2', 'fs-14')
+            label.innerText = layer.data.layerTitle
+            legendHeader.appendChild(label)
+    
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             
