@@ -224,6 +224,8 @@ const handleMapLegend = (map) => {
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer.data) {
+            createLayerToggles(layer, ul, map, 'library')
+
             // const layerLeafletId = layer._leaflet_id
             // const legendContainer = createButtonAndCollapse(
             //     `${mapId}Legend_${layerLeafletId}`, {
