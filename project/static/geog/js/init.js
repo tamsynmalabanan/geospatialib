@@ -230,7 +230,7 @@ const handleMapLegend = (map) => {
                 containerId, {
                     containerTag: 'li',
                     label: layer.data.layerTitle,
-                    buttonClassName: 'text-wrap'
+                    buttonClassName: 'text-wrap',
                 }
             )
 
@@ -593,7 +593,8 @@ const handleMapQuery = (map) => {
         buttonContainer.classList.add('ms-auto', 'hstack', 'gap-2', 'align-items-start')
         toolbar.appendChild(buttonContainer)
 
-        const menuBtn = createInlineBtn(buttonContainer, {
+        const menuBtn = createInlineBtn({
+            container: buttonContainer,
             buttonClass: 'bi bi-chevron-expand',
             buttonCallback: () => toggleAllSubCollapse(queryResults),
         })

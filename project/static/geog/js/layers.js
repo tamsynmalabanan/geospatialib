@@ -314,7 +314,8 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
             type = 'features'
         }
 
-        const menuBtn = createInlineBtn(buttonContainer, {
+        const menuBtn = createInlineBtn({
+            container: buttonContainer,
             buttonClass: 'bi bi-three-dots',
             buttonAttrs: {
                 'data-bs-toggle': 'dropdown',

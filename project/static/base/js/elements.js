@@ -115,6 +115,7 @@ const createButtonAndCollapse = (id, options={}) => {
         span.innerText = options.label
         button.appendChild(span)
     }
+
     const dropdownIcon = document.createElement('i')
     dropdownIcon.className = 'dropdown-toggle ms-auto'
     button.appendChild(dropdownIcon)
@@ -170,7 +171,7 @@ const createFormCheck = (id, options={}) => {
     return formCheck
 }
 
-const createInlineBtn = (container, options={}) => {
+const createInlineBtn = (options={}) => {
     const button = document.createElement('button')
     button.setAttribute('type', 'button')
     button.className = `bg-transparent border-0 p-0 ${options.buttonClass}`
@@ -192,7 +193,11 @@ const createInlineBtn = (container, options={}) => {
         }
     }    
 
-    container.appendChild(button)
+    container = options.container
+    if (container) {
+        container.appendChild(button)
+    }
+
     return button
 }
 
