@@ -6,10 +6,12 @@ def collect_url_tags(url):
     tag_instances = []
 
     for tag in util_helpers.split_filter_string(url, min_len=4, exclusions=['http']):
-        tag_instance, created = lib_models.Tag.objects.get_or_create(tag=tag.lower())
-        if tag_instance:
-            tag_instances.append(tag_instance)
-    
+        try:
+            tag_instance, created = lib_models.Tag.objects.get_or_create(tag=tag.lower())
+            if tag_instance:
+                tag_instances.append(tag_instance)
+        except Exception as e:
+            print(e)    
     return tag_instances
 
 def list_to_tags(tags_list):
