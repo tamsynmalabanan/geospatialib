@@ -251,6 +251,7 @@ const handleMapLegend = (map) => {
                 buttonCallback: () => {
                     populateLayerDropdownMenu(menuBtn, {
                         map: map,
+                        layerGroup: 'layer',
                         layer: layer,
                     })
                 }

@@ -49,6 +49,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
+            let layerGroup = options.layerGroup
+            if (!layerGroup) {
+                layerGroup = 'library'
+            }
+
             if (datasetList) {
                 const checkbox = findOuterElement('input.form-check-input', toggle)
                 if (checkbox) {
@@ -69,7 +74,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         }
                     })
                 } else {
-                    //
+                    map.getLayerGroups()[layerGroup].eachLayer(mapLayer => {
+                        if (layer !== mapLayer) {
+                            map.removeLayer(mapLayer)
+                        }
+                    })
                 }
             }
 
