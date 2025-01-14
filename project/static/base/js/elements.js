@@ -97,6 +97,9 @@ const createButtonAndCollapse = (id, options={}) => {
     const container = document.createElement(containerTag)
     container.className = `d-flex flex-column gap-2 ${options.containerClass}`
 
+    const btnContainer = document.createElement('div')
+    container.appendChild(btnContainer)
+
     const button = document.createElement('button')
     button.className = `fw-medium d-flex ${options.buttonClassName}` 
     button.setAttribute('type', 'button')
@@ -121,7 +124,7 @@ const createButtonAndCollapse = (id, options={}) => {
     button.appendChild(dropdownIcon)
 
     setAsThemedControl(button)
-    container.appendChild(button)
+    btnContainer.appendChild(button)
 
     const collapse = document.createElement('div')
     collapse.id = id
