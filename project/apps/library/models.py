@@ -4,7 +4,7 @@ from django.contrib.postgres.indexes import GinIndex
 from urllib.parse import urlparse
 
 from . import choices
-from utils.general import form_helpers, model_helpers, util_helpers
+from utils.general import form_helpers
 
 class Dataset(models.Model):
     url = models.ForeignKey("library.URL", verbose_name='URL', on_delete=models.CASCADE, related_name='datasets')
@@ -62,8 +62,7 @@ class Tag(models.Model):
 
 class URL(models.Model):
     url = models.URLField('URL', max_length=255, unique=True)
-    tags = models.ManyToManyField("library.Tag", verbose_name='Tags', blank=True)
-
+    
     class Meta:
         indexes = [
             models.Index(fields=['url']),
@@ -75,24 +74,3 @@ class URL(models.Model):
     @property
     def domain(self):
         return urlparse(self.url).netloc
-
-    def populate_tags(self):
-        if self.id and not self.tags.exists():
-            tag_instances = []
-
-            tags = util_helpers.split_filter_string(self.url, min_len=4, exclusions=['http'])
-            for tag in tags:
-                try:
-                    tag_instance, created = Tag.objects.get_or_create(tag=tag.lower())
-                    if tag_instance:
-                        tag_instances.append(tag_instance)
-                except Exception as e:
-                    print(tag)
-                    print(e)          
-            if len(tag_instances) > 0:
-                self.tags.set(tag_instances)
-
-    def save(self, *args, **kwargs):
-        save = super().save(*args, **kwargs)
-        self.populate_tags()
-        return save
