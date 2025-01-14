@@ -249,15 +249,12 @@ const handleMapLegend = (map) => {
                     'data-bs-toggle': 'dropdown',
                     'aria-expanded': 'false',
                 },
-                // buttonCallback: () => {
-                //     populateLayerDropdownMenu(menuBtn, {
-                //         map: map,
-                //         layer: layer,
-                //         // layerGroup: layerGroup,
-                //         // geojson: geojson,
-                //         // type: type
-                //     })
-                // }
+                buttonCallback: () => {
+                    populateLayerDropdownMenu(menuBtn, {
+                        map: map,
+                        layer: layer,
+                    })
+                }
             })
             legendHeader.insertBefore(menuBtn, legendHeader.lastChild)
     
