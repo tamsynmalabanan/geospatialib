@@ -301,7 +301,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
     const handler = (layer, parent, geojson, label) => {
         const formCheck = createFormCheck(`${mapContainer.id}_${layer._leaflet_id}`, {
             formCheckClass: 'fw-medium',
-            checkboxClass: `bg-transparent border border-secondary`,
+            checkboxClass: `bg-transparent border border-secondary box-shadow-none`,
             label: label,
             parent: parent,
         })

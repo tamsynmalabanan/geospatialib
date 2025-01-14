@@ -577,7 +577,7 @@ const handleMapQuery = (map) => {
 
         const toolbar = createFormCheck('queryResultsToggleAll', {
             formCheckClass: 'fs-14 ms-3 mb-3 pe-3',
-            checkboxClass: `bg-transparent border border-secondary`,
+            checkboxClass: `bg-transparent border border-secondary box-shadow-none`,
             checkboxAttrs: {
                 'data-layers-toggles': '#queryResults',
                 'data-layers-type': 'feature',
