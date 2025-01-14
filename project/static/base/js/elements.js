@@ -98,11 +98,11 @@ const createButtonAndCollapse = (id, options={}) => {
     container.className = `d-flex flex-column gap-2 ${options.containerClass}`
 
     const btnContainer = document.createElement('div')
-    btnContainer.className = 'd-flex'
+    btnContainer.className = 'd-flex gap-2'
     container.appendChild(btnContainer)
 
     const button = document.createElement('button')
-    button.className = `bg-transparent border-0 ${options.buttonClassName }`
+    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName }`
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${id}`)
