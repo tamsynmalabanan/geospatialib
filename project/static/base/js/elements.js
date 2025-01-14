@@ -102,7 +102,7 @@ const createButtonAndCollapse = (id, options={}) => {
     container.appendChild(btnContainer)
 
     const button = document.createElement('button')
-    button.className = options.buttonClassName 
+    button.className = `bg-transparent border-0 ${options.buttonClassName }`
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${id}`)
