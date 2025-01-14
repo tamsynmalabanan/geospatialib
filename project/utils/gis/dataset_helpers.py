@@ -127,8 +127,6 @@ class OGCHandlers(DatasetHandler):
         return geom_helpers.WORLD_GEOM
 
     def get_tags(self, id, layer):
-        url_tag_instances = []
-
         keywords = []
         for obj in [id, layer]:
             if obj and hasattr(obj, 'keywords') and isinstance(obj.keywords, (list, tuple)):
@@ -136,7 +134,7 @@ class OGCHandlers(DatasetHandler):
         keywords = list(set([kw for kw in keywords if isinstance(kw, str)]))
         kw_tag_instances = model_helpers.list_to_tags(keywords)
 
-        return url_tag_instances + kw_tag_instances
+        return kw_tag_instances
 
     def get_abstract(self, id, layer):
         abstracts = []
