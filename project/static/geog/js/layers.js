@@ -294,7 +294,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
 
     const mapContainer = map.getContainer()
 
-    let label = layer.title
+    let label = layer.title || layer.data.layerTitle
     let layerCount = 0
     if (layer._layers) {
         layerCount = layer.getLayers().length
