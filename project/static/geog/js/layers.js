@@ -150,7 +150,7 @@ const toggleLayer = async (event, options={}) => {
                 layerGroup.addLayer(layer)
                 toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
 
-                if (tagName === 'button') {
+                if (toggle.matches('button.add-layer-button')) {
                     updateSearchResultToggleStyle(toggle)
                 }
             }

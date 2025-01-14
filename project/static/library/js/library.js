@@ -37,8 +37,8 @@ const handleSearchQueryField = (value) => {
 
 const updateSearchResultToggleStyle = (toggle, added=true) => {
     if (added) {
-        toggle.classList.remove('text-secondary')
-        toggle.classList.add('text-primary')
+        toggle.classList.remove('bi-circle', 'text-secondary')
+        toggle.classList.add('bi-check-circle', 'text-primary')
         toggle.setAttribute('title', 'Layer added to map')
     }
 }
@@ -64,7 +64,7 @@ document.addEventListener('htmx:afterSwap', (event) => {
                 const libraryLayers = map.getLayerGroups().library.getLayers()
                 if (libraryLayers.length > 0) {
                     const searchResults = document.querySelector('#searchResults')
-                    const toggleSelector = 'button.bi.bi-check-circle'
+                    const toggleSelector = ''
                     let searchResultToggles = Array.from(searchResults.querySelectorAll(toggleSelector))
                     if (nextPathResults) {
                         const targetToggle = target.querySelector(toggleSelector)
