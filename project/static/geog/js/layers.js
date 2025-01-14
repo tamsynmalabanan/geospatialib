@@ -84,14 +84,18 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            let geojson = options.geojson
-            if (!geojson && options.layer) {
-                try {
-                    geojson = options.layer.toGeoJSON()
-                } catch {}
+            const getGeoJSON = () => {
+                let geojson = options.geojson
+                if (!geojson && options.layer) {
+                    try {
+                        geojson = options.layer.toGeoJSON()
+                    } catch {}
+                }
+
+                return geojson
             }
 
-            if (geojson) {
+            if (getGeoJSON()) {
                 let filename = 'geojson'; 
                 if (options.layer) { 
                     filename = options.layer.title || options.layer.data.layerTitle || filename;
@@ -108,9 +112,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         } catch {}
                     }
 
-                    let geojson_str = geojson
-                    if (typeof geojson === 'object') {
-                        geojson_str = JSON.stringify(geojson)
+                    let geojson_str = getGeoJSON()
+                    if (typeof geojson_str === 'object') {
+                        geojson_str = JSON.stringify(geojson_str)
                     }
         
                     downloadGeoJSON(geojson_str, filename)
