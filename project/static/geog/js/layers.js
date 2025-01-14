@@ -106,12 +106,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
                 dropdown.appendChild(downloadBtn)
                 downloadBtn.addEventListener('click', () => {
-                    if (!options.geojson && options.layer) {
-                        try {
-                            geojson = options.layer.toGeoJSON()
-                        } catch {}
-                    }
-
                     let geojson_str = getGeoJSON()
                     if (typeof geojson_str === 'object') {
                         geojson_str = JSON.stringify(geojson_str)
