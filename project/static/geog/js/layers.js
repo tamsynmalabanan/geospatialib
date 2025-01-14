@@ -49,7 +49,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            const layerGroup = options.layerGroup || 'library'
+            const layerGroup = map.getLayerGroups()[options.layerGroup || 'library']
+            const checkbox = findOuterElement('input.form-check-input', toggle)
 
             if (datasetList) {
                 const isolateBtn = createDropdownMenuListItem({
@@ -59,7 +60,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 dropdown.appendChild(isolateBtn)
                 
                 isolateBtn.addEventListener('click', () => {
-                    const checkbox = findOuterElement('input.form-check-input', toggle)
                     if (checkbox) {
                         datasetList.querySelectorAll('input.form-check-input').forEach(input => {
                             if (input.checked && input !== checkbox) {
@@ -71,14 +71,35 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                             checkbox.click()
                         }
                     } else {
-                        const mapLayerGroup = map.getLayerGroups()[layerGroup]
-                        mapLayerGroup.eachLayer(layer => {
+                        layerGroup.eachLayer(layer => {
                             if (options.layer !== layer) {
                                 map.hiddenLayers.push(layer)
                                 map.removeLayer(layer)
                             }
                         })
-                        mapLayerGroup.addLayer(options.layer)
+                        layerGroup.addLayer(options.layer)
+                        map.hiddenLayers = map.hiddenLayers.filter(layer => layer !== options.layer)
+                    }
+                })
+            }
+            
+            
+            if (!checkbox) {
+                const showHideBtn = createDropdownMenuListItem({
+                    label: `Show/hide ${type}`,
+                    buttonClass: 'bi bi-eye',
+                })
+                dropdown.appendChild(showHideBtn)
+                showHideBtn.addEventListener('click', () => {
+                    const layer = options.layer
+                    if (layer) {
+                        if (layerGroup.hasLayer(layer)) {
+                            map.hiddenLayers.push(layer)
+                            map.removeLayer(layer)
+                        } else {
+                            layerGroup.addLayer(layer)
+                            map.hiddenLayers = map.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                        }
                     }
                 })
             }
