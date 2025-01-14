@@ -144,6 +144,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 removeLayerBtn.addEventListener('click', () => {
                     const layer = options.layer
                     if (layer) {
+                        if (!layerGroup.hasLayer(layer)) {
+                            layerGroup.addLayer(layer)
+                            layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                        }
                         layerGroup.removeLayer(layer)
                     }
                 })

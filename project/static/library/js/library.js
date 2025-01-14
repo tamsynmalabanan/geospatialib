@@ -43,6 +43,8 @@ const updateSearchResultToggleStyle = (toggle, added=true) => {
     }
 }
 
+// listen for when layer is removed from map/legend; rmeove blue tick
+
 document.addEventListener('htmx:afterSwap', (event) => {
     if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
         const map = mapQuerySelector('#geospatialibMap')
