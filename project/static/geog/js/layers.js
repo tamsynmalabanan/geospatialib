@@ -88,6 +88,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             if (!geojson && options.layer) {
                 try {
                     geojson = options.layer.toGeoJSON()
+                    console.log(options.layer, geojson)
                 } catch {}
             }
 
