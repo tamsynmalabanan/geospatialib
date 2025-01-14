@@ -227,48 +227,54 @@ const handleMapLegend = (map) => {
         const layer = event.layer
         if (layer.data) {
             const layerLeafletId = layer._leaflet_id
-            const legendContainer = createButtonAndCollapse(
-                `${mapId}Legend_${layerLeafletId}`, {
-                    containerTag: 'li',
-                    containerClass: 'mb-3 px-3',
-                    buttonClassName: 'ms-auto show-on-hover',
-                }
-            )
-            legendContainer.setAttribute('data-leaflet-id', layerLeafletId)
-            ul.insertBefore(legendContainer, ul.firstChild)
-
-            const legendHeader = legendContainer.firstChild
-
-            const label= document.createElement('span')
-            label.classList.add('me-2', 'fs-14', 'flex-grow-1')
-            label.innerText = layer.data.layerTitle
-            legendHeader.insertBefore(label, legendHeader.firstChild)
+            const legendContainerId = `${mapId}Legend_${layerLeafletId}`
             
-            const menuBtn = createInlineBtn({
-                buttonClass: 'bi bi-three-dots show-on-hover',
-                buttonAttrs: {
-                    'data-bs-toggle': 'dropdown',
-                    'aria-expanded': 'false',
-                },
-                buttonCallback: () => {
-                    populateLayerDropdownMenu(menuBtn, {
-                        map: map,
-                        layerGroup: 'library',
-                        layer: layer,
-                    })
-                }
-            })
-            legendHeader.insertBefore(menuBtn, legendHeader.lastChild)
-    
-            const dropdown = document.createElement('ul')
-            dropdown.className = 'dropdown-menu fs-12'
-            legendHeader.insertBefore(dropdown, legendHeader.lastChild)
+            let legendContainer = ul.querySelector(`#${legendContainerId}`)
+            if (!legendContainer) {
+                legendContainer = createButtonAndCollapse(
+                    legendContainerId, {
+                        containerTag: 'li',
+                        containerClass: 'mb-3 px-3',
+                        buttonClassName: 'ms-auto show-on-hover',
+                    }
+                )
+                legendContainer.setAttribute('data-leaflet-id', layerLeafletId)
+                ul.insertBefore(legendContainer, ul.firstChild)
 
+                const legendHeader = legendContainer.firstChild
+    
+                const label= document.createElement('span')
+                label.classList.add('me-2', 'fs-14', 'flex-grow-1')
+                label.innerText = layer.data.layerTitle
+                legendHeader.insertBefore(label, legendHeader.firstChild)
+                
+                const menuBtn = createInlineBtn({
+                    buttonClass: 'bi bi-three-dots show-on-hover',
+                    buttonAttrs: {
+                        'data-bs-toggle': 'dropdown',
+                        'aria-expanded': 'false',
+                    },
+                    buttonCallback: () => {
+                        populateLayerDropdownMenu(menuBtn, {
+                            map: map,
+                            layerGroup: 'library',
+                            layer: layer,
+                        })
+                    }
+                })
+                legendHeader.insertBefore(menuBtn, legendHeader.lastChild)
+        
+                const dropdown = document.createElement('ul')
+                dropdown.className = 'dropdown-menu fs-12'
+                legendHeader.insertBefore(dropdown, legendHeader.lastChild)
+            } else {
+
+            }
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             
             if (layer.data.layerLegendUrl) {
-                legendCollapse.appendChild(createImgElement(layer.data.layerLegendUrl, 'Legend not found.'))
+                legendCollapse.innerHTML = createImgElement(layer.data.layerLegendUrl, 'Legend not found.').outerHTML
             }
             
             if (layer.data.layerLegendObj) {
