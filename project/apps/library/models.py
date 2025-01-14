@@ -62,7 +62,7 @@ class Tag(models.Model):
 
 class URL(models.Model):
     url = models.URLField('URL', max_length=255, unique=True)
-    tags = models.ManyToManyField("library.Tag", verbose_name='Tags', blank=True, null=True)
+    tags = models.ManyToManyField("library.Tag", verbose_name='Tags', blank=True)
 
     class Meta:
         indexes = [
@@ -82,10 +82,13 @@ class URL(models.Model):
 
             tags = util_helpers.split_filter_string(self.url, min_len=4, exclusions=['http'])
             for tag in tags:
-                tag_instance, created = Tag.objects.get_or_create(tag=tag.lower())
-                if tag_instance:
-                    tag_instances.append(tag_instance)
-            
+                try:
+                    tag_instance, created = Tag.objects.get_or_create(tag=tag.lower())
+                    if tag_instance:
+                        tag_instances.append(tag_instance)
+                except Exception as e:
+                    print(tag)
+                    print(e)            
             if len(tag_instances) > 0:
                 self.tags.set(tag_instances)
 

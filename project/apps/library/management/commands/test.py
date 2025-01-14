@@ -13,4 +13,6 @@ class Command(BaseCommand):
         url_instances = models.URL.objects.all()
 
         for url in url_instances:
+            print(url)
             url.save()
+            print(url.tags)
