@@ -360,10 +360,10 @@ const handleMapLegend = (map) => {
     })
 
     map.on('layerremove', (event) => {
+        const layer = event.layer
         const id = `${mapId}Legend_${layer._leaflet_id}`
         const legend = ul.querySelector(`#${id}`)
         if (legend) {
-            const layer = event.layer
             if (!map.hiddenLayers.includes(layer)) {
                 if (legend) {
                     legend.remove()
