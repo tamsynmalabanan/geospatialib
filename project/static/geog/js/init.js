@@ -353,9 +353,6 @@ const handleMapLegend = (map) => {
                     
                 })
             }
-
-            // const legendToggle = legendContainer.querySelector('button')
-            // legendToggle.classList.add('bg-transparent', 'border-0', 'px-0', 'fs-6', 'text-start')
         }
     })
 
@@ -634,7 +631,9 @@ const handleMapQuery = (map) => {
         defaultLayer.options.pane = 'queryPane'
         defaultLayer.title = `Query location`
         assignDefaultLayerStyle(defaultLayer, {color:color})
-        const [coordsToggle, coordsCollapse] = createLayerToggles(defaultLayer, queryResults, map, 'query')
+        const [coordsToggle, coordsCollapse] = createLayerToggles(
+            defaultLayer, queryResults, map, 'query'
+        )
         coordsToggle.classList.add('mb-3')
         coordsToggle.querySelector('input').click()
 
@@ -657,7 +656,9 @@ const handleMapQuery = (map) => {
                 })
 
                 geoJSONLayer.title = title
-                createLayerToggles(geoJSONLayer, queryResults, map, 'query', geojson)
+                createLayerToggles(geoJSONLayer, queryResults, map, 'query', {
+                    geojson: geojson,
+                })
 
                 const layerFooter = document.createElement('div')
                 layerFooter.className = 'mb-3 '

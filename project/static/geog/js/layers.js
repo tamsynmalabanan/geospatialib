@@ -289,7 +289,9 @@ const getLayerBounds = (layer) => {
     }
 }
 
-const createLayerToggles = (layer, parent, map, layerGroup, geojson) => {
+const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
+    const geojson = options.geojson
+
     const mapContainer = map.getContainer()
 
     let label = layer.title
