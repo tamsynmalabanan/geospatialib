@@ -179,7 +179,7 @@ const createFormCheck = (id, options={}) => {
 const createInlineBtn = (options={}) => {
     const button = document.createElement('button')
     button.setAttribute('type', 'button')
-    button.className = `bg-transparent border-0 p-0 ${options.buttonClass}`
+    button.className = `ms-5 bg-transparent border-0 p-0 ${options.buttonClass}`
     
     if (options.buttonInnerText) {
         const span = document.createElement('span')
