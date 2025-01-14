@@ -2,6 +2,14 @@ body {
     min-width: 300px;
 }
 
+.show-on-hover {
+    visibility: hidden;
+}
+
+.show-on-hover:hover {
+    visibility: visible;
+}
+
 .no-icon.accordion-button::after {
     width: 0px !important;
     --bs-accordion-btn-icon: none !important;

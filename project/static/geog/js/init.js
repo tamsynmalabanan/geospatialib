@@ -229,7 +229,7 @@ const handleMapLegend = (map) => {
                 `${mapId}Legend_${layerLeafletId}`, {
                     containerTag: 'li',
                     containerClass: 'mb-3 px-3',
-                    buttonClassName: 'ms-auto',
+                    buttonClassName: 'ms-auto show-on-hover',
                 }
             )
             legendContainer.setAttribute('data-leaflet-id', layerLeafletId)
@@ -243,7 +243,7 @@ const handleMapLegend = (map) => {
             legendHeader.insertBefore(label, legendHeader.firstChild)
             
             const menuBtn = createInlineBtn({
-                buttonClass: 'bi bi-three-dots',
+                buttonClass: 'bi bi-three-dots show-on-hover',
                 buttonAttrs: {
                     'data-bs-toggle': 'dropdown',
                     'aria-expanded': 'false',
