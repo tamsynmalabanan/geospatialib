@@ -542,9 +542,12 @@ const handleMapQuery = (map) => {
         if (libraryLayers.length > 0) {
             libraryLayers.forEach(layer => {
                 const data = layer.data
-                fetchers[`${data.layerUrl}:${data.layerFormat}:${data.layerName}`] = {
-                    label: data.layerTitle,
-                    data: fetchLibraryData(event, layer, {abortBtn:cancelQueryBtn}),
+                const key = `${data.layerUrl}:${data.layerFormat}:${data.layerName}`
+                if (!(key in fetchers)) {
+                    fetchers[key] = {
+                        label: data.layerTitle,
+                        data: fetchLibraryData(event, layer, {abortBtn:cancelQueryBtn}),
+                    }
                 }
             })
         }
