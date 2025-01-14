@@ -95,7 +95,7 @@ const createButtonAndCollapse = (id, options={}) => {
     }
 
     const container = document.createElement(containerTag)
-    container.classList.add('d-flex', 'flex-column', 'gap-2')
+    container.className = `d-flex flex-column gap-2 ${options.containerClass}`
 
     const button = document.createElement('button')
     button.className = `fw-medium d-flex ${options.buttonClassName}` 

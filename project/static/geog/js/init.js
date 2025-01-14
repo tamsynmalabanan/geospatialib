@@ -229,12 +229,12 @@ const handleMapLegend = (map) => {
             const legendContainer = createButtonAndCollapse(
                 containerId, {
                     containerTag: 'li',
+                    containerClass: 'mb-3 px-3'
                     // label: layer.data.layerTitle,
                     // buttonClassName: 'text-wrap',
                 }
             )
 
-            legendContainer.classList.add('mb-3', 'px-3')
             ul.insertBefore(legendContainer, ul.firstChild)
 
             const legendCollapse = legendContainer.querySelector('.collapse')
