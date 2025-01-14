@@ -2,11 +2,15 @@ from . import util_helpers
 from apps.library import models as lib_models
 from django.db.models import Q
 
+def get_tag_tags(string, min_len=4, exclusions=[]):
+    tags = util_helpers.split_by_special_characters(string, ['_', '-'])
+    filtered_tags =  [tag for tag in tags if len(tag) >= min_len and all(i not in tag for i in exclusions)]
+    return list(set(filtered_tags))
+
 def collect_url_tags(url):
     tag_instances = []
 
-    tags = util_helpers.split_by_special_characters(url, ['_', '-'])
-    for tag in [tag for tag in tags if len(tag) > 3 and 'http' not in tag]:
+    for tag in get_tag_tags(url, exclusions=['http']):
         tag_instance, created = lib_models.Tag.objects.get_or_create(tag=tag.lower())
         if tag_instance:
             tag_instances.append(tag_instance)
