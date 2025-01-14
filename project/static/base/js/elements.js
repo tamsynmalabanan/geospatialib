@@ -101,7 +101,7 @@ const createButtonAndCollapse = (id, options={}) => {
     container.appendChild(btnContainer)
 
     const button = document.createElement('button')
-    button.className = `fw-medium d-flex ${options.buttonClassName}` 
+    button.className = options.buttonClassName 
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${id}`)

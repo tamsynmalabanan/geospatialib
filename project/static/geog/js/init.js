@@ -230,7 +230,7 @@ const handleMapLegend = (map) => {
                 containerId, {
                     containerTag: 'li',
                     containerClass: 'mb-3 px-3',
-                    buttonClassName: 'text-wrap',
+                    buttonClassName: 'ms-auto',
                     // label: layer.data.layerTitle,
                 }
             )
