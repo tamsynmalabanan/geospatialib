@@ -74,12 +74,12 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     } else {
                         layerGroup.eachLayer(layer => {
                             if (options.layer !== layer) {
-                                map.hiddenLayers.push(layer)
+                                layerGroup.hiddenLayers.push(layer)
                                 layerGroup.removeLayer(layer)
                             }
                         })
                         layerGroup.addLayer(options.layer)
-                        map.hiddenLayers = map.hiddenLayers.filter(layer => layer !== options.layer)
+                        layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(layer => layer !== options.layer)
                     }
                 })
             }
@@ -94,11 +94,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     const layer = options.layer
                     if (layer) {
                         if (layerGroup.hasLayer(layer)) {
-                            map.hiddenLayers.push(layer)
+                            layerGroup.hiddenLayers.push(layer)
                             layerGroup.removeLayer(layer)
                         } else {
                             layerGroup.addLayer(layer)
-                            map.hiddenLayers = map.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                            layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
                         }
                     }
                 })

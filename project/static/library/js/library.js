@@ -61,8 +61,9 @@ document.addEventListener('htmx:afterSwap', (event) => {
                 target.getAttribute('hx-get').startsWith(searchEndpoint)
             )
             if (firstPageResults || nextPathResults) {
-                const libraryLayers = map.getLayerGroups().library.getLayers()
-                if (libraryLayers.length > 0) {
+                const mapLibrary =  map.getLayerGroups().library
+                const libraryLayers = mapLibrary.getLayers().concat(mapLibrary.hiddenLayers)
+                if (libraryLayers.length > 0 ) {
                     const searchResults = document.querySelector('#searchResults')
                     const toggleSelector = 'button.add-layer-button'
                     let searchResultToggles = Array.from(searchResults.querySelectorAll(toggleSelector))
