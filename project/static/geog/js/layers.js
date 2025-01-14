@@ -551,7 +551,7 @@ const createWFSLayer = (data) => {
             let prefix
             let suffix
 
-            const defaultTooltip = `Zoom in to load individual ${data.layerTitle} features.`
+            // const defaultTooltip = `Zoom in to load individual ${data.layerTitle} features.`
 
             if (geojson) {
                 const featureCount = geojson.features.length
@@ -560,7 +560,7 @@ const createWFSLayer = (data) => {
                 if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
                     if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
                         geojson.features = [L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()]
-                        geojson.tooltip = defaultTooltip
+                        // geojson.tooltip = defaultTooltip
                         prefix = 'Bounding'
                         suffix = `for ${formatNumberWithCommas(featureCount)} features`
                     } else {
@@ -579,7 +579,7 @@ const createWFSLayer = (data) => {
                     geojson = {
                         type: 'FeatureCollection',
                         features: [turf.bboxPolygon(data.layerBbox.slice(1, -1).split(','))],
-                        tooltip: defaultTooltip
+                        // tooltip: defaultTooltip
                     }
     
                     prefix = 'Bounding'
@@ -602,9 +602,9 @@ const createWFSLayer = (data) => {
                 geojsonLayer.eachLayer(feature => {
                     feature.options.popupHeader = data.layerTitle
                     
-                    if (geojson.tooltip) {
-                        feature.bindTooltip(geojson.tooltip, {sticky:true})
-                    } 
+                    // if (geojson.tooltip) {
+                    //     feature.bindTooltip(geojson.tooltip, {sticky:true})
+                    // } 
 
                     const type = feature.feature.geometry.type.replace('Multi', '')
                     
