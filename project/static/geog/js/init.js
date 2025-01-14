@@ -224,16 +224,15 @@ const handleMapLegend = (map) => {
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer.data) {
-            const containerId = `${mapId}Legend_${layer._leaflet_id}`
-
+            const layerLeafletId = layer._leaflet_id
             const legendContainer = createButtonAndCollapse(
-                containerId, {
+                `${mapId}Legend_${layerLeafletId}`, {
                     containerTag: 'li',
                     containerClass: 'mb-3 px-3',
                     buttonClassName: 'ms-auto',
                 }
             )
-
+            legendContainer.setAttribute('data-leaflet-id', layerLeafletId)
             ul.insertBefore(legendContainer, ul.firstChild)
 
             const legendHeader = legendContainer.firstChild
