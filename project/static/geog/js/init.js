@@ -267,8 +267,6 @@ const handleMapLegend = (map) => {
                 const dropdown = document.createElement('ul')
                 dropdown.className = 'dropdown-menu fs-12'
                 legendHeader.insertBefore(dropdown, legendHeader.lastChild)
-            } else {
-
             }
 
             const legendCollapse = legendContainer.querySelector('.collapse')
