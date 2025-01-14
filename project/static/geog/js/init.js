@@ -263,7 +263,6 @@ const handleMapLegend = (map) => {
     
             const dropdown = document.createElement('ul')
             dropdown.className = 'dropdown-menu fs-12'
-            buttonContainer.appendChild(dropdown)
             legendHeader.insertBefore(dropdown, legendHeader.lastChild)
 
 
