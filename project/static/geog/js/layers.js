@@ -74,7 +74,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         layerGroup.eachLayer(layer => {
                             if (options.layer !== layer) {
                                 map.hiddenLayers.push(layer)
-                                map.removeLayer(layer)
+                                layerGroup.removeLayer(layer)
                             }
                         })
                         layerGroup.addLayer(options.layer)
@@ -95,7 +95,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     if (layer) {
                         if (layerGroup.hasLayer(layer)) {
                             map.hiddenLayers.push(layer)
-                            map.removeLayer(layer)
+                            layerGroup.removeLayer(layer)
                         } else {
                             layerGroup.addLayer(layer)
                             map.hiddenLayers = map.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
