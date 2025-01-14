@@ -8,6 +8,8 @@ body {
 
 .show-on-hover:hover {
     opacity: 1;
+}
+
 .no-icon.accordion-button::after {
     width: 0px !important;
     --bs-accordion-btn-icon: none !important;
