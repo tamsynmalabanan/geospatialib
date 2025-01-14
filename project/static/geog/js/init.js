@@ -354,8 +354,8 @@ const handleMapLegend = (map) => {
                 })
             }
 
-            const legendToggle = legendContainer.querySelector('button')
-            legendToggle.classList.add('bg-transparent', 'border-0', 'px-0', 'fs-6', 'text-start')
+            // const legendToggle = legendContainer.querySelector('button')
+            // legendToggle.classList.add('bg-transparent', 'border-0', 'px-0', 'fs-6', 'text-start')
         }
     })
 
