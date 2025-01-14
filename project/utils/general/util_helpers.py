@@ -4,6 +4,10 @@ from urllib.parse import urlparse, urlunparse
 from django.contrib import messages
 import random
 
+def split_filter_string(string, min_len=1, exclusions=[]):
+    tags = split_by_special_characters(string, ['_', '-'])
+    filtered_tags =  [tag for tag in tags if len(tag) >= min_len and all(i not in tag for i in exclusions)]
+    return list(set(filtered_tags))
 
 def get_domain_name(url):
     domain = urlparse(url).netloc

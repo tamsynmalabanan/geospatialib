@@ -29,16 +29,15 @@ class DatasetHandler():
         pass
 
     def get_tags(self):
-        return model_helpers.collect_url_tags(
-            util_helpers.remove_query_params(self.access_url)
-        )
+        pass
     
     def populate_dataset(self, dataset):
         dataset.title = dataset.name.replace('_', ' ')
         dataset.bbox = geom_helpers.WORLD_GEOM
         
         tag_instances = self.get_tags()
-        dataset.tags.set(tag_instances)
+        if tag_instances:
+            dataset.tags.set(tag_instances)
 
         dataset.save()
 
@@ -128,7 +127,7 @@ class OGCHandlers(DatasetHandler):
         return geom_helpers.WORLD_GEOM
 
     def get_tags(self, id, layer):
-        url_tag_instances = model_helpers.collect_url_tags(self.access_url)
+        url_tag_instances = []
 
         keywords = []
         for obj in [id, layer]:
