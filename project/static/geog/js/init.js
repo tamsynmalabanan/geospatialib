@@ -243,6 +243,29 @@ const handleMapLegend = (map) => {
             label.innerText = layer.data.layerTitle
             legendHeader.insertBefore(label, legendHeader.firstChild)
             
+            const menuBtn = createInlineBtn({
+                buttonClass: 'bi bi-three-dots',
+                buttonAttrs: {
+                    'data-bs-toggle': 'dropdown',
+                    'aria-expanded': 'false',
+                },
+                // buttonCallback: () => {
+                //     populateLayerDropdownMenu(menuBtn, {
+                //         map: map,
+                //         layer: layer,
+                //         // layerGroup: layerGroup,
+                //         // geojson: geojson,
+                //         // type: type
+                //     })
+                // }
+            })
+            legendHeader.insertBefore(menuBtn, legendHeader.lastChild)
+    
+            const dropdown = document.createElement('ul')
+            dropdown.className = 'dropdown-menu fs-12'
+            buttonContainer.appendChild(dropdown)
+            legendHeader.insertBefore(dropdown, legendHeader.lastChild)
+
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             
