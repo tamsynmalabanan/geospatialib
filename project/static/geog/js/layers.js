@@ -49,7 +49,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            const layerGroup = map.getLayerGroups()[options.layerGroup || 'library']
+            const layerGroupName = options.layerGroup || 'library'
+            const layerGroup = map.getLayerGroups()[layerGroupName]
             const checkbox = findOuterElement('input.form-check-input', toggle)
 
             if (datasetList) {
@@ -82,7 +83,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     }
                 })
             }
-            
             
             if (!checkbox) {
                 const showHideBtn = createDropdownMenuListItem({
@@ -132,6 +132,20 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     }
         
                     downloadGeoJSON(geojson_str, filename)
+                })
+            }
+
+            if (layerGroupName === 'library') {
+                const removeLayerBtn = createDropdownMenuListItem({
+                    label: `Remove ${type}`,
+                    buttonClass: 'bi bi-trash3',
+                })
+                dropdown.appendChild(removeLayerBtn)
+                removeLayerBtn.addEventListener('click', () => {
+                    const layer = options.layer
+                    if (layer) {
+                        layerGroup.removeLayer(layer)
+                    }
                 })
             }
         }
