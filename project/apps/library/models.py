@@ -77,7 +77,7 @@ class URL(models.Model):
         return urlparse(self.url).netloc
 
     def populate_tags(self):
-        if not self.tags.exists():
+        if self.id and not self.tags.exists():
             tag_instances = []
 
             tags = util_helpers.split_filter_string(self.url, min_len=4, exclusions=['http'])
@@ -90,5 +90,6 @@ class URL(models.Model):
                 self.tags.set(tag_instances)
 
     def save(self, *args, **kwargs):
+        save = super().save(*args, **kwargs)
         self.populate_tags()
-        return super().save(*args, **kwargs)
+        return save
