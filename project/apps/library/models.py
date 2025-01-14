@@ -88,7 +88,7 @@ class URL(models.Model):
                         tag_instances.append(tag_instance)
                 except Exception as e:
                     print(tag)
-                    print(e)            
+                    print(e)          
             if len(tag_instances) > 0:
                 self.tags.set(tag_instances)
 

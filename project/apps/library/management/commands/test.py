@@ -9,10 +9,3 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.SUCCESS('Test'))
-        
-        url_instances = models.URL.objects.all()
-
-        for url in url_instances:
-            print(url)
-            url.save()
-            print(url.tags)

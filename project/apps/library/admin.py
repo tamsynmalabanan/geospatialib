@@ -9,7 +9,7 @@ class MetaDatasetAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
     )
-    search_fields = ['title', 'tags__tag']
+    search_fields = ['title', 'tags__tag', 'url__tag']
     list_filter = ['format']
 
 admin.site.register(models.Dataset, MetaDatasetAdmin)
