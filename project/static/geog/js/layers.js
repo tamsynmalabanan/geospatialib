@@ -74,6 +74,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         const mapLayerGroup = map.getLayerGroups()[layerGroup]
                         mapLayerGroup.eachLayer(layer => {
                             if (options.layer !== layer) {
+                                mapLayerGroup.hiddenLayers.push(layer)
                                 map.removeLayer(layer)
                             }
                         })
