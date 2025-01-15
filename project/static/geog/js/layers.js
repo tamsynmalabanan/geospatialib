@@ -124,11 +124,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     removeLayerBtn.addEventListener('click', () => {
                         const layer = options.layer
                         if (layer) {
-                            if (!layerGroup.hasLayer(layer)) {
-                                layerGroup.addLayer(layer)
+                            if (isHiddenInLegend(layer, map)) {
                                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                                map.fire('layerremove', {layer:layer})
+                                // layerGroup.addLayer(layer)
+                            } else {
+                                layerGroup.removeLayer(layer)
                             }
-                            layerGroup.removeLayer(layer)
                         }
                     })
                 }    
