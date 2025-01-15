@@ -192,7 +192,7 @@ class SearchList(ListView):
             context['count'] = count
             context['fillers'] = range(fillers)
             context['filters'] = self.get_filters()
-            context['params'] = list(self.request.GET.values())
+            context['params'] = [i for i in list(self.request.GET.values()) if i and i != '']
         return context
 
 
