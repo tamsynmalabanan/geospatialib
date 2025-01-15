@@ -616,98 +616,100 @@ const createWFSLayer = (data) => {
         const map = event.target._map
 
         const fetchData = async () => {
-            geojsonLayer.fire('fetchingData')
-
-            let geojson = await fetchWFSData(event, geojsonLayer)
-
-            let prefix
-            let suffix
-
-            const defaultTooltip = `Zoom in to load individual ${data.layerTitle} features.`
-
-            if (geojson) {
-                const featureCount = geojson.features.length
-                const mapScale = getMeterScale(map)
-                const mapZoom = map.getZoom()
-                if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                    if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
-                        const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
-                        geojson.features = [feature]
-                        geojson.tooltip = defaultTooltip
-                        prefix = 'Bounding'
-                        suffix = `for ${formatNumberWithCommas(featureCount)} features`
-                    } else {
-                        try {
-                            geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                            prefix = 'Simplified'
-                        } catch {
-                        
+            if (!isHiddenInLegend(geojsonLayer, map)) {
+                geojsonLayer.fire('fetchingData')
+    
+                let geojson = await fetchWFSData(event, geojsonLayer)
+    
+                let prefix
+                let suffix
+    
+                const defaultTooltip = `Zoom in to load individual ${data.layerTitle} features.`
+    
+                if (geojson) {
+                    const featureCount = geojson.features.length
+                    const mapScale = getMeterScale(map)
+                    const mapZoom = map.getZoom()
+                    if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
+                        if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                            const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
+                            geojson.features = [feature]
+                            geojson.tooltip = defaultTooltip
+                            prefix = 'Bounding'
+                            suffix = `for ${formatNumberWithCommas(featureCount)} features`
+                        } else {
+                            try {
+                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                                prefix = 'Simplified'
+                            } catch {
+                            
+                            }
                         }
                     }
                 }
-            }
-            
-            if (!geojson) {
-                if (data.layerBbox) {
-                    geojson = {
-                        type: 'FeatureCollection',
-                        features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
-                        tooltip: defaultTooltip
+                
+                if (!geojson) {
+                    if (data.layerBbox) {
+                        geojson = {
+                            type: 'FeatureCollection',
+                            features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
+                            tooltip: defaultTooltip
+                        }
+        
+                        prefix = 'Bounding'
+                        suffix = 'for all features'
+                    }
+                }
+    
+                if (geojson) {
+                    await handleGeoJSON(geojson)
+    
+                    geojsonLayer.clearLayers()
+                    geojsonLayer.addData(geojson)
+    
+                    if (geojsonLayer._openPopups.length > 0) {
+                        geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
+                        geojsonLayer._openPopups = []
                     }
     
-                    prefix = 'Bounding'
-                    suffix = 'for all features'
-                }
-            }
-
-            if (geojson) {
-                await handleGeoJSON(geojson)
-
-                geojsonLayer.clearLayers()
-                geojsonLayer.addData(geojson)
-
-                if (geojsonLayer._openPopups.length > 0) {
-                    geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
-                    geojsonLayer._openPopups = []
-                }
-
-                let legend = {}
-                geojsonLayer.eachLayer(feature => {
-                    feature.options.popupHeader = data.layerTitle
-                    
-                    if (geojson.tooltip) {
-                        feature.bindTooltip(geojson.tooltip, {sticky:true})
-                    } 
-
-                    const type = feature.feature.geometry.type.replace('Multi', '')
-                    
-                    let label
-                    if (type === 'Point') {
-                        label = type
-                    } else {
-                        label = Array(prefix, type, suffix).filter(part => part).join(' ')
-                    }
-
-                    if (!Object.keys(legend).includes(label)) {
-                        let style
+                    let legend = {}
+                    geojsonLayer.eachLayer(feature => {
+                        feature.options.popupHeader = data.layerTitle
+                        
+                        if (geojson.tooltip) {
+                            feature.bindTooltip(geojson.tooltip, {sticky:true})
+                        } 
+    
+                        const type = feature.feature.geometry.type.replace('Multi', '')
+                        
+                        let label
                         if (type === 'Point') {
-                            style = geojsonLayer.options.pointToLayer().options.icon
+                            label = type
                         } else {
-                            style = geojsonLayer.options.style()
+                            label = Array(prefix, type, suffix).filter(part => part).join(' ')
                         }
-
-                        legend[label] = {
-                            type: type,
-                            style: style,
-                            count: 1,
+    
+                        if (!Object.keys(legend).includes(label)) {
+                            let style
+                            if (type === 'Point') {
+                                style = geojsonLayer.options.pointToLayer().options.icon
+                            } else {
+                                style = geojsonLayer.options.style()
+                            }
+    
+                            legend[label] = {
+                                type: type,
+                                style: style,
+                                count: 1,
+                            }
+                        } else {
+                            legend[label].count += 1 
                         }
-                    } else {
-                        legend[label].count += 1 
-                    }
-                })
-
-                geojsonLayer.data.layerLegendObj = JSON.stringify(legend)
-                geojsonLayer.fire('legendUpdated')
+                    })
+    
+                    geojsonLayer.data.layerLegendObj = JSON.stringify(legend)
+                    geojsonLayer.fire('legendUpdated')
+                }
             }
         }
 
