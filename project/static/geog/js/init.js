@@ -163,6 +163,7 @@ const constructInfoPanel = (map, name, options={}) => {
     const collapseToggle = document.createElement('button')
     collapseToggle.setAttribute('title', 'Collapse')
     collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand theme-reverse text-${getPreferredTheme(reverse=true)}`
+    collapseToggle.setAttribute('title', `Expand/collapse ${name.toLowerCase()}`)
     header.appendChild(collapseToggle)
     
     collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
