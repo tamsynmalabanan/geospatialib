@@ -64,8 +64,6 @@ window.addEventListener("map:init", (event) => {
                                 const libraryLayers = map.getLayerGroups().library.getLayers()
                                 if (!libraryLayers.some(libLayer => libLayer !== layer && libLayer.data && libLayer.data.layerId === layerId)) {
                                     updateSearchResultToggleStyle(toggleBtn, false)
-                                } else {
-                                    console.log(libraryLayers)
                                 }
                             }
                         }
