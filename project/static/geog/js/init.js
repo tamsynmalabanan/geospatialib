@@ -370,6 +370,10 @@ const handleMapLegend = (map) => {
         if (legend) {
             if (!isHiddenInLegend(layer, map)) {
                 legend.remove()
+
+                if (ul.innerHTML === '') {
+                    clearLibraryLayers()
+                }
             } else {
                 const collapse = legend.querySelector(`#${id}_collapse`)
                 collapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
