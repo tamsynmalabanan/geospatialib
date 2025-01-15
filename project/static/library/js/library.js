@@ -62,7 +62,7 @@ window.addEventListener("map:init", (event) => {
                         if (toggleBtn) {
                             if (!isHiddenInLegend(layer, map)) {
                                 const libraryLayers = map.getLayerGroups().library.getLayers()
-                                if (!libraryLayers.some(libLayer => libLayer.data && libLayer.data.layerId === layerId)) {
+                                if (!libraryLayers.some(libLayer => libLayer !== layer && libLayer.data && libLayer.data.layerId === layerId)) {
                                     updateSearchResultToggleStyle(toggleBtn, false)
                                 } else {
                                     console.log(libraryLayers)
