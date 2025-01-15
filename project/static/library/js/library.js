@@ -47,7 +47,6 @@ const updateSearchResultToggleStyle = (toggle, added=true) => {
     }
 }
 
-// listen for when layer is removed from map/legend; rmeove blue tick
 document.addEventListener('DOMContentLoaded', () => {
     const map = mapQuerySelector(`#geospatialibMap`)
     if (map) {
@@ -55,11 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const layer = event.layer
             if (layer.data) {
                 const layerId = layer.data.layerId
-                const searchResults = document.querySelector('#searchResults')
-                const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
-                const toggleBtn = searchResults.querySelector(toggleBtnSelector)
-                if (toggleBtn) {
-                    updateSearchResultToggleStyle(toggleBtn, false)
+                if (layerId) {
+                    const searchResults = document.querySelector('#searchResults')
+                    const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
+                    const toggleBtn = searchResults.querySelector(toggleBtnSelector)
+                    if (toggleBtn) {
+                        updateSearchResultToggleStyle(toggleBtn, false)
+                    }
                 }
             }
         })
