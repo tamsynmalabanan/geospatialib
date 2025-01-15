@@ -1,3 +1,15 @@
+const isHiddenInLegend = (layer, map) => {
+    const layerGroups = map.getLayerGroups()
+    for (const layerGroupName in layerGroups) {
+        const layerGroup = layerGroups[layerGroupName]
+        if (layerGroup.hiddenLegendLayers.includes(layer)) {
+            return layerGroup
+        }
+    }
+
+    return false
+}
+
 const populateLayerDropdownMenu = (toggle, options={}) => {
     const dropdown = toggle.nextElementSibling
     if (dropdown && dropdown.innerHTML.trim() === '') {
@@ -74,12 +86,12 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     } else {
                         layerGroup.eachLayer(layer => {
                             if (options.layer !== layer) {
-                                layerGroup.hiddenLayers.push(layer)
+                                layerGroup.hiddenLegendLayers.push(layer)
                                 layerGroup.removeLayer(layer)
                             }
                         })
                         layerGroup.addLayer(options.layer)
-                        layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(layer => layer !== options.layer)
+                        layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== options.layer)
                     }
                 })
             }
@@ -94,11 +106,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     const layer = options.layer
                     if (layer) {
                         if (layerGroup.hasLayer(layer)) {
-                            layerGroup.hiddenLayers.push(layer)
+                            layerGroup.hiddenLegendLayers.push(layer)
                             layerGroup.removeLayer(layer)
                         } else {
                             layerGroup.addLayer(layer)
-                            layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                            layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
                         }
                     }
                 })
@@ -146,7 +158,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     if (layer) {
                         if (!layerGroup.hasLayer(layer)) {
                             layerGroup.addLayer(layer)
-                            layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                            layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
                         }
                         layerGroup.removeLayer(layer)
                     }
