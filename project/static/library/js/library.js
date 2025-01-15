@@ -49,6 +49,7 @@ const updateSearchResultToggleStyle = (toggle, added=true) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     const map = mapQuerySelector(`#geospatialibMap`)
+    console.log(map)
     if (map) {
         map.on('layerremove', (event) => {
             console.log(event)
