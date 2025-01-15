@@ -66,24 +66,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const checkbox = findOuterElement('input.form-check-input', toggle)
 
             if (datasetList) {
+                const datasetListId = datasetList.id
                 const isolateBtn = createDropdownMenuListItem({
                     label: `Isolate ${type}`,
                     buttonClass: 'bi bi-subtract',
                 })
                 dropdown.appendChild(isolateBtn)
-                
                 isolateBtn.addEventListener('click', () => {
-                    if (checkbox) {
-                        datasetList.querySelectorAll('input.form-check-input').forEach(input => {
-                            if (input.checked && input !== checkbox) {
-                                input.click()
-                            }
-                        })
-    
-                        if (!checkbox.checked) {
-                            checkbox.click()
-                        }
-                    } else {
+                    if (datasetListId === 'legendLayers') {
                         layerGroup.eachLayer(layer => {
                             if (options.layer !== layer) {
                                 layerGroup.hiddenLegendLayers.push(layer)
@@ -92,29 +82,58 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         })
                         layerGroup.addLayer(options.layer)
                         layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== options.layer)
-                    }
-                })
-            }
-            
-            if (!checkbox) {
-                const showHideBtn = createDropdownMenuListItem({
-                    label: `Show/hide ${type}`,
-                    buttonClass: 'bi bi-eye',
-                })
-                dropdown.appendChild(showHideBtn)
-                showHideBtn.addEventListener('click', () => {
-                    const layer = options.layer
-                    if (layer) {
-                        if (layerGroup.hasLayer(layer)) {
-                            layerGroup.hiddenLegendLayers.push(layer)
-                            layerGroup.removeLayer(layer)
-                        } else {
-                            layerGroup.addLayer(layer)
-                            layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                    } else {
+                        if (checkbox) {
+                            datasetList.querySelectorAll('input.form-check-input').forEach(input => {
+                                if (input.checked && input !== checkbox) {
+                                    input.click()
+                                }
+                            })
+        
+                            if (!checkbox.checked) {
+                                checkbox.click()
+                            }
                         }
                     }
                 })
+
+                if (datasetListId === 'legendLayers') {
+                    const showHideBtn = createDropdownMenuListItem({
+                        label: `Show/hide ${type}`,
+                        buttonClass: 'bi bi-eye',
+                    })
+                    dropdown.appendChild(showHideBtn)
+                    showHideBtn.addEventListener('click', () => {
+                        const layer = options.layer
+                        if (layer) {
+                            if (layerGroup.hasLayer(layer)) {
+                                layerGroup.hiddenLegendLayers.push(layer)
+                                layerGroup.removeLayer(layer)
+                            } else {
+                                layerGroup.addLayer(layer)
+                                layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                            }
+                        }
+                    })
+
+                    const removeLayerBtn = createDropdownMenuListItem({
+                        label: `Remove ${type}`,
+                        buttonClass: 'bi bi-trash3',
+                    })
+                    dropdown.appendChild(removeLayerBtn)
+                    removeLayerBtn.addEventListener('click', () => {
+                        const layer = options.layer
+                        if (layer) {
+                            if (!layerGroup.hasLayer(layer)) {
+                                layerGroup.addLayer(layer)
+                                layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                            }
+                            layerGroup.removeLayer(layer)
+                        }
+                    })
+                }    
             }
+            
 
             const getGeoJSON = () => {
                 let geojson = options.geojson
@@ -144,24 +163,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     }
         
                     downloadGeoJSON(geojson_str, filename)
-                })
-            }
-
-            if (layerGroupName === 'library') {
-                const removeLayerBtn = createDropdownMenuListItem({
-                    label: `Remove ${type}`,
-                    buttonClass: 'bi bi-trash3',
-                })
-                dropdown.appendChild(removeLayerBtn)
-                removeLayerBtn.addEventListener('click', () => {
-                    const layer = options.layer
-                    if (layer) {
-                        if (!layerGroup.hasLayer(layer)) {
-                            layerGroup.addLayer(layer)
-                            layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
-                        }
-                        layerGroup.removeLayer(layer)
-                    }
                 })
             }
         }

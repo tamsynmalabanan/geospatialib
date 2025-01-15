@@ -220,6 +220,7 @@ const handleMapLegend = (map) => {
     })
 
     const ul = document.createElement('ul')
+    ul.id = 'legendLayers'
     ul.className = 'dataset-list list-group list-group-flush'
     body.appendChild(ul)
 
