@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const map = mapQuerySelector(`#geospatialibMap`)
     if (map) {
         map.on('layerremove', (event) => {
+            console.log(event)
             const layer = event.layer
             if (layer.data) {
                 const layerId = layer.data.layerId
