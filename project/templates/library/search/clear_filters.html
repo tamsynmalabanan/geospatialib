@@ -4,5 +4,5 @@
     type='submit' 
     title='Clear all filters'
     onclick="handleSearchQueryField('{{request.GET.query}}')"
-    {% if request.GET.keys|length == 1 %}disabled{% endif %}
-><i class="bi bi-arrow-clockwise"></i>{{params}}</button>
+    {% if params|length == 1 %}disabled{% endif %}
+><i class="bi bi-arrow-clockwise"></i></button>
