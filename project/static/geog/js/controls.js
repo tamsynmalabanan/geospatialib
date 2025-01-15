@@ -35,7 +35,7 @@ const scaleBar = (map, include=true) => {
 }
 
 const searchBar = (map, include=true) => {
-    if (include) {
+    if (include && L.Control.geocoder) {
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             // collapsed: true,
