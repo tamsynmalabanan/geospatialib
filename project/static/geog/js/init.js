@@ -369,7 +369,6 @@ const handleMapLegend = (map) => {
     })
 
     map.on('layerremove', (event) => {
-        console.log(event)
         const layer = event.layer
         const id = `${mapId}Legend_${layer._leaflet_id}`
         const legend = ul.querySelector(`#${id}`)
