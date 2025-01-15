@@ -245,7 +245,7 @@ const handleMapLegend = (map) => {
                 legendHeader.insertBefore(label, legendHeader.firstChild)
                 
                 const menuBtn = createInlineBtn({
-                    buttonClass: 'bi bi-three-dots show-on-hover',
+                    buttonClass: `bi bi-three-dots theme-reverse text-${getPreferredTheme(reverse=true)} show-on-hover`,
                     buttonAttrs: {
                         'data-bs-toggle': 'dropdown',
                         'aria-expanded': 'false',

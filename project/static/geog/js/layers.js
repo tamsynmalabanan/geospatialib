@@ -389,7 +389,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
 
         const menuBtn = createInlineBtn({
             container: buttonContainer,
-            buttonClass: 'bi bi-three-dots show-on-hover',
+            buttonClass: `bi bi-three-dots theme-reverse text-${getPreferredTheme(reverse=true)} show-on-hover`,
             buttonAttrs: {
                 'data-bs-toggle': 'dropdown',
                 'aria-expanded': 'false',
