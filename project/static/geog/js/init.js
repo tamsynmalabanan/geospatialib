@@ -58,7 +58,7 @@ const handleMapControls = (map) => {
 
     const leafletControls = container.querySelectorAll('.leaflet-control')
     leafletControls.forEach(control => {
-        Array('mouseover', 'touchstart').forEach(trigger => {
+        Array('mouseover', 'touchstart', 'touchmove', 'wheel').forEach(trigger => {
             control.addEventListener(trigger, (e) => {
                 disableMapInteractivity(map)
             })
