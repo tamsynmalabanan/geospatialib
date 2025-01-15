@@ -40,10 +40,31 @@ const updateSearchResultToggleStyle = (toggle, added=true) => {
         toggle.classList.remove('bi-circle', 'text-secondary')
         toggle.classList.add('bi-check-circle', 'text-primary')
         toggle.setAttribute('title', 'Layer added to map')
+    } else {
+        toggle.classList.remove('bi-check-circle', 'text-primary')
+        toggle.classList.add('bi-circle', 'text-secondary')
+        toggle.setAttribute('title', 'Add layer to map')
     }
 }
 
 // listen for when layer is removed from map/legend; rmeove blue tick
+document.addEventListener('DOMContentLoaded', () => {
+    const map = mapQuerySelector(`#geospatialibMap`)
+    if (map) {
+        map.on('layerremove', (event) => {
+            const layer = event.layer
+            if (layer.data) {
+                const layerId = layer.data.layerId
+                const searchResults = document.querySelector('#searchResults')
+                const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
+                const toggleBtn = searchResults.querySelector(toggleBtnSelector)
+                if (toggleBtn) {
+                    updateSearchResultToggleStyle(toggleBtn, false)
+                }
+            }
+        })
+    }
+})
 
 document.addEventListener('htmx:afterSwap', (event) => {
     if (event.detail.pathInfo.requestPath.startsWith(searchEndpoint)) {
