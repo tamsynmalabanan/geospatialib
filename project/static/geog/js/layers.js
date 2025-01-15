@@ -80,8 +80,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                                 layerGroup.removeLayer(layer)
                             }
                         })
-                        layerGroup.addLayer(options.layer)
                         layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== options.layer)
+                        layerGroup.addLayer(options.layer)
                     } else {
                         if (checkbox) {
                             datasetList.querySelectorAll('input.form-check-input').forEach(input => {
@@ -110,8 +110,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                                 layerGroup.hiddenLegendLayers.push(layer)
                                 layerGroup.removeLayer(layer)
                             } else {
-                                layerGroup.addLayer(layer)
                                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                                layerGroup.addLayer(layer)
                             }
                         }
                     })
@@ -127,7 +127,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                             if (isHiddenInLegend(layer, map)) {
                                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
                                 map.fire('layerremove', {layer:layer})
-                                // layerGroup.addLayer(layer)
                             } else {
                                 layerGroup.removeLayer(layer)
                             }
