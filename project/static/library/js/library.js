@@ -56,12 +56,15 @@ window.addEventListener("map:init", (event) => {
                 if (layer.data) {
                     const layerId = layer.data.layerId
                     if (layerId) {
-                        if (!isHiddenInLegend(layer, map)) {
-                            const searchResults = document.querySelector('#searchResults')
-                            const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
-                            const toggleBtn = searchResults.querySelector(toggleBtnSelector)
-                            if (toggleBtn) {
-                                updateSearchResultToggleStyle(toggleBtn, false)
+                        const searchResults = document.querySelector('#searchResults')
+                        const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
+                        const toggleBtn = searchResults.querySelector(toggleBtnSelector)
+                        if (toggleBtn) {
+                            if (!isHiddenInLegend(layer, map)) {
+                                const libraryLayers = map.getLayerGroups().library.getLayers()
+                                if (!libraryLayers.some(libLayer => libLayer.data && libLayer.data.layerId === layerId)) {
+                                    updateSearchResultToggleStyle(toggleBtn, false)
+                                }
                             }
                         }
                     }
