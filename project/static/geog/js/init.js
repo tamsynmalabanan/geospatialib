@@ -156,7 +156,7 @@ const constructInfoPanel = (map, name, options={}) => {
 
     const collapseToggle = document.createElement('button')
     collapseToggle.setAttribute('title', 'Collapse')
-    collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand theme-reverse text-${getPreferredTheme(reverse=true)}`
+    collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand text-bg-${getPreferredTheme()}`
     collapseToggle.setAttribute('title', `Expand/collapse ${name.toLowerCase()}`)
     header.appendChild(collapseToggle)
     
@@ -245,7 +245,7 @@ const handleMapLegend = (map) => {
                 legendHeader.insertBefore(label, legendHeader.firstChild)
                 
                 const menuBtn = createInlineBtn({
-                    buttonClass: `bi bi-three-dots theme-reverse text-${getPreferredTheme(reverse=true)} show-on-hover`,
+                    buttonClass: `bi bi-three-dots text-bg-${getPreferredTheme()} show-on-hover`,
                     buttonAttrs: {
                         'data-bs-toggle': 'dropdown',
                         'aria-expanded': 'false',
@@ -275,7 +275,7 @@ const handleMapLegend = (map) => {
                 layer.on('fetchingData', () => {
                     if (!isHiddenInLegend(layer, map)) {
                         legendCollapse.innerHTML = `
-                            <div class="spinner-border spinner-border-sm theme-reverse text-${getPreferredTheme(reverse=true)} m-0 p-0" role="status">
+                            <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                         `
@@ -632,7 +632,7 @@ const handleMapQuery = (map) => {
 
         createInlineBtn({
             container: buttonContainer,
-            buttonClass: `bi bi-chevron-expand theme-reverse text-${getPreferredTheme(reverse=true)}`,
+            buttonClass: `bi bi-chevron-expand text-bg-${getPreferredTheme()}`,
             buttonCallback: () => toggleAllSubCollapse(queryResults),
         })
         
