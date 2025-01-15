@@ -60,19 +60,13 @@ const handleMapControls = (map) => {
     leafletControls.forEach(control => {
         Array('mouseover', 'touchstart').forEach(trigger => {
             control.addEventListener(trigger, (e) => {
-                map.dragging.disable()
-                map.touchZoom.disable()
-                map.doubleClickZoom.disable()
-                map.scrollWheelZoom.disable()
+                disableMapInteractivity(map)
             })
         })    
 
         Array('mouseout', 'touchend').forEach(trigger => {
             control.addEventListener(trigger, (e) => {
-                map.dragging.enable()
-                map.touchZoom.enable()
-                map.doubleClickZoom.enable()
-                map.scrollWheelZoom.enable()
+                enableMapInteractivity(map)
             })
         })
     })

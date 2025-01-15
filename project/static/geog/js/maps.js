@@ -13,6 +13,20 @@ const mapQuerySelector = (selector) => {
     return map
 }
 
+const disableMapInteractivity = (map) => {
+    map.dragging.disable()
+    map.touchZoom.disable()
+    map.doubleClickZoom.disable()
+    map.scrollWheelZoom.disable()
+}
+
+const enableMapInteractivity = (map) => {
+    map.dragging.enable()
+    map.touchZoom.enable()
+    map.doubleClickZoom.enable()
+    map.scrollWheelZoom.enable()
+}
+
 const clearAllLayers = (map) => {
     map.eachLayer(layer => {
         if (layer._url === "//tile.openstreetmap.org/{z}/{x}/{y}.png") {return}
