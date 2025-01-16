@@ -61,6 +61,17 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
+            if (options.layer) {
+                const refreshBtn = createDropdownMenuListItem({
+                    label: `Refresh ${type}`,
+                    buttonClass: 'bi bi-arrow-clockwise',
+                })
+                dropdown.appendChild(refreshBtn)
+                refreshBtn.addEventListener('click', () => {
+                    options.layer.fire('refreshLayer')
+                })
+            }
+
             const layerGroupName = options.layerGroup || 'library'
             const layerGroup = map.getLayerGroups()[layerGroupName]
             const checkbox = findOuterElement('input.form-check-input', toggle)
@@ -532,69 +543,6 @@ const createWMSLayer = (data) => {
     return L.tileLayer.wms(baseUrl, options)
 }
 
-const getDefaultGeoJSONLayer = (
-    geojson={type: "FeatureCollection", features: []},
-    options={}
-) => {
-    
-    let color = options.color
-    if (!color) {
-        color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
-    }
-
-    return L.geoJSON(geojson, {
-        pointToLayer: (geoJsonPoint, latlng) => {
-            return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
-        },
-        style: (geoJsonFeature) => {
-            const params = {color:color}
-
-            if (options.fillColor) {
-                params.fillColor = options.fillColor
-            }
-
-            if (options.weight) {
-                params.weight = options.weight
-            }
-
-            return getDefaultLayerStyle('other', params)
-        },
-        onEachFeature: (feature, layer) => {
-            if (options.pane) {
-                layer.options.pane = options.pane
-            }
-
-            if (options.getTitleFromLayer) {
-                layer.title = getLayerTitle(layer)
-            }
-
-            if (options.bindTitleAsTooltip) {
-                layer.bindTooltip(layer.title, {sticky:true})
-            }
-
-            if (Object.keys(feature.properties).length > 0) {
-                const createPopup = () => {
-                    const propertiesTable = createFeaturePropertiesTable(feature.properties, {
-                            header:layer.options.popupHeader
-                    })
-
-                    const popup = layer.bindPopup(propertiesTable.outerHTML, {
-                        autoPan: false,
-                    })
-                    
-                    if (popup){
-                        popup.openPopup()
-                    }
-                    
-                    layer.off('click', createPopup)
-                }
-
-                layer.on('click', createPopup)
-            }
-        }
-    })
-}
-
 const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer()
@@ -719,6 +667,7 @@ const createWFSLayer = (data) => {
         }
 
         fetchDataOnTimeout()
+        geojsonLayer.on('refreshLayer', fetchData)
         map.on('moveend zoomend', fetchDataOnTimeout)
         geojsonLayer.on('remove', () => {
             map.off('moveend zoomend', fetchDataOnTimeout)
