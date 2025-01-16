@@ -176,7 +176,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
         if (response.ok) {
             const data = await response.clone().text(); 
             const headers = {}
-            console.log('response.headers', response.headers)
+            console.log('response.headers', response.headers, response.headers.get('Content-Type'))
             response.headers.forEach(value, key => {
                 headers[key] = value
             })
