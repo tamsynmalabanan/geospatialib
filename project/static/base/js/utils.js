@@ -118,6 +118,26 @@ const getCookie = (name) => {
     return cookieValue
 }
 
+const cacheResponse = async (response, cacheKey) => {
+    const data = await response.clone().text(); 
+    
+    const headers = {}
+    for (const [key, value] of response.headers.entries()) {
+        headers[key] = value; 
+    }
+    
+    sessionStorage.setItem(`${cacheKey}_data`, data); 
+    sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
+
+    return new Response(new Blob([data]), {
+        status: 200, 
+        statusText: 'OK', 
+        headers: new Headers(headers) }
+    ); 
+}
+
+const fetchRequestMap = new Map()
+
 const fetchDataWithTimeout = async (url, options={}) => {
     const cacheKey = `${url}_${JSON.stringify(options)}`
     
@@ -131,6 +151,10 @@ const fetchDataWithTimeout = async (url, options={}) => {
             statusText: 'OK', 
             headers 
         })); 
+    }
+
+    if (fetchRequestMap.has(cacheKey)) {
+        return fetchRequestMap.get(cacheKey)
     }
 
     let timeoutMs = options.timeoutMs
@@ -152,40 +176,73 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
-    let response
-    try {
-        response = await fetch(url, params)
+    const fetchPromise = fetch(url, params)
+    .then(async response => {
         clearTimeout(timeoutId)
-    } catch (error) {
+        if (response.ok) {
+            return await cacheResponse(response, cacheKey)
+        }
+        return response
+    }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            const csrftoken = getCookie('csrftoken')
-            response = await fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
+            return await fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
                 method: 'POST',
                 body: JSON.stringify(options),
                 headers: {
                     'HX-Request': 'true',
-                    'X-CSRFToken': csrftoken,
+                    'X-CSRFToken': getCookie('csrftoken'),
                 }
+            }).then(response => {
+                if (response.ok) {
+                    return cacheResponse(response, cacheKey)
+                }
+                return response
+            }).catch(error => {
+                throw error
             })
         } else {
             throw error
         }
-    }
+    }).finally(() => {
+        fetchRequestMap.delete(cacheKey)
+    })
 
-    if (response) {
-        if (response.ok) {
-            const data = await response.clone().text(); 
-            const headers = {}
-            for (const [key, value] of response.headers.entries()) {
-                headers[key] = value; 
-            }
-            sessionStorage.setItem(`${cacheKey}_data`, data); 
-            sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers)); 
-        }
-
-        return response
-    }
+    fetchRequestMap.set(cacheKey, fetchPromise)
+    return fetchPromise
 }
+// let response
+// try {
+//     // response = await fetch(url, params)
+//     // clearTimeout(timeoutId)
+// } catch (error) {
+//     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+//         const csrftoken = getCookie('csrftoken')
+//         response = await fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
+//             method: 'POST',
+//             body: JSON.stringify(options),
+//             headers: {
+//                 'HX-Request': 'true',
+//                 'X-CSRFToken': csrftoken,
+//             }
+//         })
+//     } else {
+//         throw error
+//     }
+// }
+
+// if (response) {
+//     if (response.ok) {
+//         const data = await response.clone().text(); 
+//         const headers = {}
+//         for (const [key, value] of response.headers.entries()) {
+//             headers[key] = value; 
+//         }
+//         sessionStorage.setItem(`${cacheKey}_data`, data); 
+//         sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers)); 
+//     }
+
+//     return response
+// }
 
 const getDomain = (url) => {
     const urlObj = new URL(url);
