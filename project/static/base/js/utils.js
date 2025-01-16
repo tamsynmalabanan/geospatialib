@@ -161,6 +161,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     if (fetchDataWithTimeoutMap.has(cacheKey)) {
         console.log('MAPPED', cacheKey)
         const response = await fetchDataWithTimeoutMap.get(cacheKey)
+        console.log(response)
         return response
     }
 
