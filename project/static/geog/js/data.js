@@ -486,10 +486,8 @@ const fetchWFSData = async (event, layer, options={}) => {
     const url = pushQueryParamsToURLString(cleanURL, params)
     const data = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
         if (response.ok || response.status === 200) {
-            console.log(1)
             return response
         } else {
-            console.log(2)
             throw new Error('Response not ok')
         }
     }).then(response => {
@@ -504,6 +502,7 @@ const fetchWFSData = async (event, layer, options={}) => {
             throw new Error('Unsupported format')
         }
     }).then(data => {
+
         if (data && !data.licence) {
             data.licence = `Data © <a href='${cleanURL}' target='_blank'>${getDomain(cleanURL)}</a>`
         }
@@ -518,5 +517,6 @@ const fetchWFSData = async (event, layer, options={}) => {
         layer.fire('error')
     }
 
+    console.log('data', data)
     return data
 }
