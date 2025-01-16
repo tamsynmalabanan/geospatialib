@@ -136,8 +136,7 @@ const cacheResponse = async (response, cacheKey) => {
     ); 
 }
 
-const fetchRequestMap = new Map()
-
+const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
     const cacheKey = `${url}_${JSON.stringify(options)}`
     
@@ -153,8 +152,8 @@ const fetchDataWithTimeout = async (url, options={}) => {
         })); 
     }
 
-    if (fetchRequestMap.has(cacheKey)) {
-        const response = await fetchRequestMap.get(cacheKey)
+    if (fetchDataWithTimeoutMap.has(cacheKey)) {
+        const response = await fetchDataWithTimeoutMap.get(cacheKey)
         return response
     }
 
@@ -205,45 +204,12 @@ const fetchDataWithTimeout = async (url, options={}) => {
             throw error
         }
     }).finally(() => {
-        fetchRequestMap.delete(cacheKey)
+        fetchDataWithTimeoutMap.delete(cacheKey)
     })
 
-    fetchRequestMap.set(cacheKey, fetchPromise)
+    fetchDataWithTimeoutMap.set(cacheKey, fetchPromise)
     return fetchPromise
 }
-// let response
-// try {
-//     // response = await fetch(url, params)
-//     // clearTimeout(timeoutId)
-// } catch (error) {
-//     if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-//         const csrftoken = getCookie('csrftoken')
-//         response = await fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
-//             method: 'POST',
-//             body: JSON.stringify(options),
-//             headers: {
-//                 'HX-Request': 'true',
-//                 'X-CSRFToken': csrftoken,
-//             }
-//         })
-//     } else {
-//         throw error
-//     }
-// }
-
-// if (response) {
-//     if (response.ok) {
-//         const data = await response.clone().text(); 
-//         const headers = {}
-//         for (const [key, value] of response.headers.entries()) {
-//             headers[key] = value; 
-//         }
-//         sessionStorage.setItem(`${cacheKey}_data`, data); 
-//         sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers)); 
-//     }
-
-//     return response
-// }
 
 const getDomain = (url) => {
     const urlObj = new URL(url);
@@ -291,7 +257,12 @@ const formatNumberWithCommas = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+const parseChunkedResponseToJSONMap = new Map()
 const parseChunkedResponseToJSON = async (response, timeout=5000) => {
+    if (parseChunkedResponseToJSONMap.has(response)) {
+        return await parseChunkedResponseToJSONMap.get(response)
+    }
+
     const reader = response.body.getReader();
     const decoder = new TextDecoder('utf-8');
     let result = '';
@@ -302,22 +273,27 @@ const parseChunkedResponseToJSON = async (response, timeout=5000) => {
         }, timeout);
     });
   
-    try {
-        while (true) {
-            const { done, value } = await Promise.race([reader.read(), timeoutPromise]);
-            if (done) break;
-            result += decoder.decode(value, { stream: true });
+    const parsePromise = (async () => {
+        try {
+            while (true) {
+                const { done, value } = await Promise.race([reader.read(), timeoutPromise]);
+                if (done) break;
+                result += decoder.decode(value, { stream: true });
+            }
+        
+            return JSON.parse(result);
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                return
+            } else {
+                throw error
+            }
+        } finally {
+            reader.releaseLock()
+            parseChunkedResponseToJSONMap.delete(response)
         }
-    
-        const json = JSON.parse(result);
-        return json;
-    } catch (error) {
-        if (error.name === 'AbortError') {
-            return
-        } else {
-            throw error
-        }
-    } finally {
-        reader.releaseLock()
-    }
+    })()
+
+    parseChunkedResponseToJSONMap.set(response, parsePromise)
+    return parsePromise
 };
