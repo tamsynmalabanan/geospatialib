@@ -270,8 +270,6 @@ const parseChunkedResponseToJSONMap = new Map()
 const parseChunkedResponseToJSON = async (response, timeout=5000) => {
     if (parseChunkedResponseToJSONMap.has(response)) {
         return await parseChunkedResponseToJSONMap.get(response)
-        // const data = await parseChunkedResponseToJSONMap.get(response)
-        // return Object.assign({}, data)
     }
 
     const reader = response.body.getReader();

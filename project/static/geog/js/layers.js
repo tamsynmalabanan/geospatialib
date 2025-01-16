@@ -596,12 +596,13 @@ const getDefaultGeoJSONLayer = (
 }
 
 const createWFSLayer = (data) => {
+    const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer()
-
     geojsonLayer.data = data
     geojsonLayer.data.layerLegendObj = '{}'
+    geojsonLayer.options.popupHeader = layerTitle
 
-    geojsonLayer.options.popupHeader = data.layerTitle
+    const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
 
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
@@ -623,8 +624,6 @@ const createWFSLayer = (data) => {
     
                 let prefix
                 let suffix
-    
-                const defaultTooltip = `Zoom in to load individual ${data.layerTitle} features.`
     
                 if (geojson) {
                     const featureCount = geojson.features.length
