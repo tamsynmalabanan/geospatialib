@@ -149,7 +149,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
     const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
     if (cachedData && cachedHeaders) { 
-        console.log('cacheKey', cacheKey)
+        console.log('CACHED', cacheKey)
         const headers = new Headers(JSON.parse(cachedHeaders))
         return Promise.resolve(new Response(new Blob([cachedData]), {
             status: 200, 
@@ -157,8 +157,9 @@ const fetchDataWithTimeout = async (url, options={}) => {
             headers 
         })); 
     }
-
+    
     if (fetchDataWithTimeoutMap.has(cacheKey)) {
+        console.log('MAPPED', cacheKey)
         const response = await fetchDataWithTimeoutMap.get(cacheKey)
         return response
     }
