@@ -119,9 +119,17 @@ const getCookie = (name) => {
 }
 
 const fetchDataWithTimeout = async (url, options={}) => {
-    let timeoutMs
-    if (options.timeoutMs) {
-        timeoutMs = options.timeoutMs
+    const cacheKey = `${url}_${JSON.stringify(options)}`
+    console.log('cacheKey', cacheKey)
+
+    const cachedData = localStorage.getItem(cacheKey); 
+    if (cachedData) { 
+        console.log('cachedData', cachedData)
+        return Promise.resolve(new Response(new Blob([cachedData]), { status: 200, statusText: 'OK' }))
+    }
+
+    let timeoutMs = options.timeoutMs
+    if (timeoutMs) {
         delete options.timeoutMs
     } else {
         timeoutMs = 10000
@@ -139,15 +147,21 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
-    
+    let response
     try {
-        const response = await fetch(url, params)
+        response = await fetch(url, params)
         clearTimeout(timeoutId)
-        return response
+        
+        // if (response.ok) {
+        //     const data = await response.clone().text(); 
+        //     localStorage.setItem(cacheKey, data); 
+        // }
+        
+        // return response;
     } catch (error) {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
             const csrftoken = getCookie('csrftoken')
-            return await fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
+            response = await fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
                 method: 'POST',
                 body: JSON.stringify(options),
                 headers: {
@@ -155,9 +169,25 @@ const fetchDataWithTimeout = async (url, options={}) => {
                     'X-CSRFToken': csrftoken,
                 }
             })
+
+            // if (response.ok) {
+            //     const data = await response.clone().text(); 
+            //     localStorage.setItem(cacheKey, data); 
+            // }
+            
+            // return response;
         } else {
             throw error
         }
+    }
+
+    if (response) {
+        if (response.ok) {
+            const data = await response.clone().text(); 
+            localStorage.setItem(cacheKey, data); 
+        }
+
+        return response
     }
 }
 
