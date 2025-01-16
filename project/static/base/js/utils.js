@@ -130,8 +130,7 @@ const cacheResponse = async (response, cacheKey) => {
         sessionStorage.setItem(`${cacheKey}_data`, data); 
         sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
     } catch (error) {
-        sessionStorage.removeItem(`${cacheKey}_data`)
-        sessionStorage.removeItem(`${cacheKey}_headers`)
+        console.log(error)
     }
 
     return new Response(new Blob([data]), {
