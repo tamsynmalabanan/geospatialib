@@ -620,7 +620,6 @@ const createWFSLayer = (data) => {
                 geojsonLayer.fire('fetchingData')
     
                 let geojson = await fetchWFSData(event, geojsonLayer)
-                console.log('geojson', geojson)
     
                 let prefix
                 let suffix
