@@ -130,7 +130,6 @@ const cacheResponse = async (response, cacheKey) => {
         sessionStorage.setItem(`${cacheKey}_data`, data); 
         sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
     } catch (error) {
-        console.log(error)
         sessionStorage.removeItem(`${cacheKey}_data`)
         sessionStorage.removeItem(`${cacheKey}_headers`)
     }
@@ -161,7 +160,6 @@ const fetchDataWithTimeout = async (url, options={}) => {
     if (fetchDataWithTimeoutMap.has(cacheKey)) {
         console.log('MAPPED', cacheKey)
         const response = await fetchDataWithTimeoutMap.get(cacheKey)
-        console.log(response)
         return response
     }
 
