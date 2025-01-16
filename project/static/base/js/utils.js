@@ -176,7 +176,10 @@ const fetchDataWithTimeout = async (url, options={}) => {
         if (response.ok) {
             const data = await response.clone().text(); 
             const headers = {}
-            response.headers.forEach(value, key => headers[key] = value)
+            console.log('response.headers', response.headers)
+            response.headers.forEach(value, key => {
+                headers[key] = value
+            })
             sessionStorage.setItem(`${cacheKey}_data`, data); 
             sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers)); 
         }
