@@ -121,10 +121,16 @@ const getCookie = (name) => {
 const fetchDataWithTimeout = async (url, options={}) => {
     const cacheKey = `${url}_${JSON.stringify(options)}`
     
-    const cachedData = localStorage.getItem(cacheKey); 
-    if (cachedData) { 
+    const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
+    const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
+    if (cachedData && cachedHeaders) { 
         console.log('cacheKey', cacheKey)
-        return Promise.resolve(new Response(new Blob([cachedData]), { status: 200, statusText: 'OK' }))
+        const headers = new Headers(JSON.parse(cachedHeaders))
+        return Promise.resolve(new Response(new Blob([cachedData]), {
+            status: 200, 
+            statusText: 'OK', 
+            headers 
+        })); 
     }
 
     let timeoutMs = options.timeoutMs
@@ -150,13 +156,6 @@ const fetchDataWithTimeout = async (url, options={}) => {
     try {
         response = await fetch(url, params)
         clearTimeout(timeoutId)
-        
-        // if (response.ok) {
-        //     const data = await response.clone().text(); 
-        //     localStorage.setItem(cacheKey, data); 
-        // }
-        
-        // return response;
     } catch (error) {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
             const csrftoken = getCookie('csrftoken')
@@ -168,13 +167,6 @@ const fetchDataWithTimeout = async (url, options={}) => {
                     'X-CSRFToken': csrftoken,
                 }
             })
-
-            // if (response.ok) {
-            //     const data = await response.clone().text(); 
-            //     localStorage.setItem(cacheKey, data); 
-            // }
-            
-            // return response;
         } else {
             throw error
         }
@@ -183,7 +175,10 @@ const fetchDataWithTimeout = async (url, options={}) => {
     if (response) {
         if (response.ok) {
             const data = await response.clone().text(); 
-            localStorage.setItem(cacheKey, data); 
+            const headers = {}
+            response.headers.forEach(value, key => headers[key] = value)
+            sessionStorage.setItem(`${cacheKey}_data`, data); 
+            sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers)); 
         }
 
         return response
