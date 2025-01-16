@@ -120,11 +120,10 @@ const getCookie = (name) => {
 
 const fetchDataWithTimeout = async (url, options={}) => {
     const cacheKey = `${url}_${JSON.stringify(options)}`
-    console.log('cacheKey', cacheKey)
-
+    
     const cachedData = localStorage.getItem(cacheKey); 
     if (cachedData) { 
-        console.log('cachedData', cachedData)
+        console.log('cacheKey', cacheKey)
         return Promise.resolve(new Response(new Blob([cachedData]), { status: 200, statusText: 'OK' }))
     }
 
