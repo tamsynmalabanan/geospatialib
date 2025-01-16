@@ -485,10 +485,11 @@ const fetchWFSData = async (event, layer, options={}) => {
 
     const url = pushQueryParamsToURLString(cleanURL, params)
     const data = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
-        console.log('response', response)
         if (response.ok || response.status === 200) {
+            console.log(1)
             return response
         } else {
+            console.log(2)
             throw new Error('Response not ok')
         }
     }).then(response => {
