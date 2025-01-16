@@ -502,7 +502,6 @@ const fetchWFSData = async (event, layer, options={}) => {
             throw new Error('Unsupported format')
         }
     }).then(data => {
-
         if (data && !data.licence) {
             data.licence = `Data © <a href='${cleanURL}' target='_blank'>${getDomain(cleanURL)}</a>`
         }
