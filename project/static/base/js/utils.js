@@ -126,8 +126,12 @@ const cacheResponse = async (response, cacheKey) => {
         headers[key] = value; 
     }
     
-    sessionStorage.setItem(`${cacheKey}_data`, data); 
-    sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
+    try {
+        sessionStorage.setItem(`${cacheKey}_data`, data); 
+        sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
+    } catch (error) {
+        console.log(error)
+    }
 
     return new Response(new Blob([data]), {
         status: 200, 
