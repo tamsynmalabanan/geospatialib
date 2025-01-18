@@ -558,42 +558,47 @@ const createWFSLayer = (data) => {
                 geojsonLayer.fire('fetchingData')
     
                 let geojson = await fetchWFSData(event, geojsonLayer)
-        
-                if (geojson) {
-                    const featureCount = geojson.features.length
-                    const mapScale = getMeterScale(map)
-                    const mapZoom = map.getZoom()
-                    if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                        if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
-                            const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
-                            geojson.features = [feature]
-                            geojson.tooltip = defaultTooltip
-                            geojson.prefix = 'Bounding'
-                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} features`
-                        } else {
-                            try {
-                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                                geojson.prefix = 'Simplified'
-                            } catch {
-                            
-                            }
-                        }
-                    }
+                geojson = geojson || {
+                    type: 'FeatureCollection',
+                    features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
+                    tooltip: defaultTooltip,
+                    prefix: 'Bounding',
+                    suffix: 'for all features',
                 }
                 
-                if (!geojson) {
-                    if (data.layerBbox) {
-                        geojson = {
-                            type: 'FeatureCollection',
-                            features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
-                            tooltip: defaultTooltip
-                        }
-        
+                const featureCount = geojson.features.length
+                const mapScale = getMeterScale(map)
+                const mapZoom = map.getZoom()
+                if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
+                    if (featureCount > 10000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                        const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
+                        geojson.features = [feature]
+                        geojson.tooltip = defaultTooltip
                         geojson.prefix = 'Bounding'
-                        geojson.suffix = 'for all features'
+                        geojson.suffix = `for ${formatNumberWithCommas(featureCount)} features`
+                    } else {
+                        try {
+                            geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                            geojson.prefix = 'Simplified'
+                        } catch {
+                        
+                        }
                     }
                 }
-    
+
+                // if (geojson) {
+                // } else if (data.layerBbox) {
+                //     geojson = {
+                //         type: 'FeatureCollection',
+                //         features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
+                //         tooltip: defaultTooltip,
+                //         prefix: 'Bounding',
+                //         suffix: 'for all features',
+                //     }
+                // }
+                
+
+
                 if (geojson) {
                     await handleGeoJSON(geojson)
     
