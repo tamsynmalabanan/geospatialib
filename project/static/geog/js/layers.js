@@ -578,10 +578,10 @@ const createGeoJSONLayer = (data) => {
                                 const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                                 const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                                 if (equalBounds || withinBounds) {
-                                    const features = cachedGeoJSON.features.filter(feature => {
+                                    cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                                         return turf.booleanIntersects(mapBounds, feature)
                                     })
-                                    console.log(features)
+                                    geojson = cachedGeoJSON
                                 }
                             }
                         }
