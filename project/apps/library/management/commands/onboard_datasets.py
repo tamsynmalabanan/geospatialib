@@ -31,7 +31,6 @@ class Command(BaseCommand):
             )
 
             
-            
             for url_instance in url_instances:
                 id, url, formats, names = url_instance
 
