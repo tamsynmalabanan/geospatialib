@@ -14,3 +14,7 @@ class Command(BaseCommand):
         with open('dataset_urls.txt', 'w') as file:
             for i in dataset_urls:
                 file.write(i + '\n')
+
+        with open('dataset_urls.txt', 'r') as file:
+            for url in file:
+                print(url, end='')
