@@ -29,7 +29,6 @@ class Command(BaseCommand):
                 .filter(datasets__isnull=False)
                 .distinct()
             )
-
             
             for url_instance in url_instances:
                 id, url, formats, names = url_instance
