@@ -535,7 +535,7 @@ const createWMSLayer = (data) => {
 const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer()
-    geojsonLayer.data = Object.assign({}, data)
+    geojsonLayer.data = data
     geojsonLayer.data.layerLegendObj = '{}'
     geojsonLayer.options.popupHeader = layerTitle
 
@@ -566,8 +566,6 @@ const createWFSLayer = (data) => {
                     suffix: 'for all features',
                 }
                 
-                console.log(geojson)
-
                 if (!geojson.processed) {
                     const featureCount = geojson.features.length
                     const mapScale = getMeterScale(map)
