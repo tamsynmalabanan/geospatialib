@@ -563,7 +563,7 @@ const createGeoJSONLayer = (data) => {
                 let geojson
 
                 const cachedGeoJSONString = sessionStorage.getItem(cacheKey)
-                if (cachedGeoJSON) {
+                if (cachedGeoJSONString) {
                     const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                     if (cachedGeoJSON.tooltip !== defaultTooltip) {
                         console.log(cachedGeoJSON)
