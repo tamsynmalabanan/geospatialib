@@ -11,8 +11,9 @@ class Command(BaseCommand):
         while True:
             self.stdout.write(self.style.SUCCESS('Onboarding datasets...'))
             
-            datasets = models.Dataset.objects.filter(Q(title__isnull=True) | Q(title=''))
-            datasets.delete()
+            # delete datasets in db with null or blank title fields
+            invalid_datasets_instances = models.Dataset.objects.filter(Q(title__isnull=True) | Q(title=''))
+            invalid_datasets_instances.delete()
             
             url_instances = (models.URL.objects
                 .annotate(
@@ -28,9 +29,9 @@ class Command(BaseCommand):
                 .filter(datasets__isnull=False)
                 .distinct()
             )
-            
-            new_datasets = 0
 
+            
+            
             for url_instance in url_instances:
                 id, url, formats, names = url_instance
 
@@ -48,7 +49,7 @@ class Command(BaseCommand):
                         layers = list(handler.layers.keys())
                         new_layers = [layer for layer in layers if layer not in names]
 
-                        for layer in new_layers[:-1]:
+                        for layer in new_layers:
                             print(f'NEW LAYER: {layer}')
 
                             response = True
@@ -65,7 +66,6 @@ class Command(BaseCommand):
                                 if dataset_instance and created:
                                     try:
                                         handler.populate_dataset(dataset_instance)
-                                        new_datasets +=1
                                         print(f'SUCCESSFUL DATASET ONBOARDING!')
                                     except Exception as e:
                                         dataset_instance.delete()
@@ -78,8 +78,3 @@ class Command(BaseCommand):
                         print(f'FAILED TO RETRIEVE LAYERS: {e}')
 
                 print('\n')
-
-            print(f'TOTAL URLS: {url_instances.count()}')
-            print(f'NEW DATASETS: {new_datasets}')
-            print(f'TOTAL DATASETS: {models.Dataset.objects.count()}')
-            print('\n')

@@ -8,8 +8,9 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        dataset_urls = list(set(models.Dataset.objects.values_list('url__url', flat=True)))
-        for i in dataset_urls:
-            print(i)
-
         self.stdout.write(self.style.SUCCESS('Test'))
+        
+        dataset_urls = list(set(models.Dataset.objects.values_list('url__url', flat=True)))
+        with open('dataset_urls.txt', 'w') as file:
+            for i in dataset_urls:
+                file.write(i, '\n')
