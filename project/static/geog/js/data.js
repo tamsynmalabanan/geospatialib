@@ -484,7 +484,11 @@ const fetchWFSData = async (event, layer, options={}) => {
     params.bbox = bbox
 
     const url = pushQueryParamsToURLString(cleanURL, params)
-    const data = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
+
+    const cacheKeys = Object.keys(sessionStorage).filter(key => key.startsWith(url))
+    console.log(cacheKeys)
+
+    const geojson = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
         if (response.ok || response.status === 200) {
             return response
         } else {
@@ -510,11 +514,11 @@ const fetchWFSData = async (event, layer, options={}) => {
         return
     })
 
-    if (data && data.features) {
+    if (geojson && geojson.features) {
         layer.fire('fetched')
     } else {
         layer.fire('error')
     }
 
-    return data
+    return geojson
 }
