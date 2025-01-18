@@ -235,8 +235,8 @@ const toggleLayer = async (event, options={}) => {
             let layersCount = Array.from(datasetList.querySelectorAll('input.form-check-input'))
             .map(checkbox => {
                 if (checkbox.checked) {
-                    if (checkbox.classList.includes('dataset-group')) {
-                        if (checkbox.classList.includes('dataset-group-collapsed') && options.layer) {
+                    if (checkbox.classList.contains('dataset-group')) {
+                        if (checkbox.classList.contains('dataset-group-collapsed') && options.layer) {
                             return options.layer.getLayers()
                         } else {
                             return 1
