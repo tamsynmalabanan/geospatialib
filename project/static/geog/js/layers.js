@@ -532,33 +532,33 @@ const createWMSLayer = (data) => {
     return L.tileLayer.wms(baseUrl, options)
 }
 
-const createWFSLayer = (data) => {
-    const layerTitle = data.layerTitle
+const createGeoJSONLayer = (data) => {
     const geojsonLayer = getDefaultGeoJSONLayer()
+
+    const layerTitle = data.layerTitle
     geojsonLayer.data = data
     geojsonLayer.layerLegendStyle = true
     geojsonLayer.popupHeader = layerTitle
-
+    
     const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
-
+    
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
         geojsonLayer._openPopups.push(event.popup)
     })
-
+    
     geojsonLayer.on('popupclose', (event) => {
         geojsonLayer._openPopups = geojsonLayer._openPopups.filter(popup => popup !== event.popup)
     })
     
     geojsonLayer.on('add', (event) => {
         const map = event.target._map
-
+    
         const fetchData = async () => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
     
                 let geojson = await fetchLibraryData(event, geojsonLayer)
-                // let geojson = await fetchWFSData(event, geojsonLayer)
                 geojson = geojson || {
                     type: 'FeatureCollection',
                     features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
@@ -566,7 +566,7 @@ const createWFSLayer = (data) => {
                     prefix: 'Bounding',
                     suffix: 'for all features',
                 }
-
+    
                 if (!geojson.processed) {
                     geojson.processed = true
                     const featureCount = geojson.features.length
@@ -591,15 +591,15 @@ const createWFSLayer = (data) => {
     
                     await handleGeoJSON(geojson)
                 }
-
+    
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-
+    
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
                     geojsonLayer._openPopups = []
                 }
-
+    
                 let legend = {}
                 geojsonLayer.eachLayer(feature => {
                     feature.popupHeader = data.layerTitle
@@ -607,14 +607,14 @@ const createWFSLayer = (data) => {
                     if (geojson.tooltip) {
                         feature.bindTooltip(geojson.tooltip, {sticky:true})
                     } 
-
+    
                     const type = feature.feature.geometry.type.replace('Multi', '')
                     
                     let label = type
                     if (type !== 'Point') {
                         label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
                     }
-
+    
                     if (!Object.keys(legend).includes(label)) {
                         let style
                         if (type === 'Point') {
@@ -622,7 +622,7 @@ const createWFSLayer = (data) => {
                         } else {
                             style = geojsonLayer.options.style()
                         }
-
+    
                         legend[label] = {
                             type: type,
                             style: style,
@@ -632,18 +632,18 @@ const createWFSLayer = (data) => {
                         legend[label].count += 1 
                     }
                 })
-
+    
                 geojsonLayer.layerLegendStyle = legend
                 geojsonLayer.fire('legendUpdated')
             }
         }
-
+    
         let fetchWFSDataTimeout
         const fetchDataOnTimeout = () => {
             clearTimeout(fetchWFSDataTimeout)
             fetchWFSDataTimeout = setTimeout(fetchData, 2000)
         }
-
+    
         fetchDataOnTimeout()
         map.on('moveend zoomend', fetchDataOnTimeout)
         geojsonLayer.on('remove', () => {
@@ -652,6 +652,10 @@ const createWFSLayer = (data) => {
     })
 
     return geojsonLayer
+}
+
+const createWFSLayer = (data) => {
+    return createGeoJSONLayer(data)
 }
 
 const createXYZTilesLayer = (data) => {
