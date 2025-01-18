@@ -163,3 +163,4 @@ const downloadGeoJSON = (geojson, file_name) => {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 }
+

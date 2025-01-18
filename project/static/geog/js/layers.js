@@ -61,17 +61,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            if (options.layer) {
-                const refreshBtn = createDropdownMenuListItem({
-                    label: `Refresh ${type}`,
-                    buttonClass: 'bi bi-arrow-clockwise',
-                })
-                dropdown.appendChild(refreshBtn)
-                refreshBtn.addEventListener('click', () => {
-                    options.layer.fire('refreshLayer')
-                })
-            }
-
             const layerGroupName = options.layerGroup || 'library'
             const layerGroup = map.getLayerGroups()[layerGroupName]
             const checkbox = findOuterElement('input.form-check-input', toggle)
@@ -667,7 +656,6 @@ const createWFSLayer = (data) => {
         }
 
         fetchDataOnTimeout()
-        geojsonLayer.on('refreshLayer', fetchData)
         map.on('moveend zoomend', fetchDataOnTimeout)
         geojsonLayer.on('remove', () => {
             map.off('moveend zoomend', fetchDataOnTimeout)
