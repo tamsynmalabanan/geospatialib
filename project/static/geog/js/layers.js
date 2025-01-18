@@ -557,6 +557,7 @@ const createWFSLayer = (data) => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
     
+                console.log(geojsonLayer.data.layerFormat)
                 // let geojson = await fetchLibraryData(event, geojsonLayer)
                 let geojson = await fetchWFSData(event, geojsonLayer)
                 geojson = geojson || {
