@@ -283,7 +283,7 @@ const handleMapLegend = (map) => {
                 layer.on('legendUpdated', () => {
                     legendCollapse.innerHTML = ''
                     const styles = layer.layerLegendStyle
-                    if (styles) {
+                    if (typeof styles === 'object') {
                         Object.keys(styles).forEach(name => {
                             const style = styles[name]
     
