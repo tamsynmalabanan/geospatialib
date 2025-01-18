@@ -123,7 +123,6 @@ const cacheDataToSessionStorage = (key, data) => {
         sessionStorage.setItem(key, data)
         return data
     } catch (error) {
-        console.log(error)
         sessionStorage.clear()
         try {
             sessionStorage.setItem(key, data)
