@@ -562,29 +562,21 @@ const createGeoJSONLayer = (data) => {
     
                 const mapScale = getMeterScale(map)
                 const mapZoom = map.getZoom()
+                const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
                 let geojson
+                let geojsonRaw
 
                 const cachedGeoJSONString = sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSONString) {
                     const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-                    if (cachedGeoJSON.tooltip !== defaultTooltip) {
-                        const featureCount = cachedGeoJSON.features.length
-                        if (featureCount > 0) {
-                            if (cachedGeoJSON.prefix !== 'Simplified' || (
-                                featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))
-                            )) {
-                                const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                                const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
-                                const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                                if (equalBounds || withinBounds) {
-                                    cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                                        return turf.booleanIntersects(mapBounds, feature)
-                                    })
-                                    geojson = cachedGeoJSON
-                                }
-                            }
-                        }
+                    const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                    const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                    if (equalBounds || withinBounds) {
+                        cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                            return turf.booleanIntersects(mapBounds, feature)
+                        })
+                        geojson = cachedGeoJSON
                     }
                 }
 
@@ -597,33 +589,39 @@ const createGeoJSONLayer = (data) => {
                         suffix: 'for all features',
                     }
 
-                    if (!geojson.processed) {
-                        geojson.processed = true
-                        geojson.mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                        
-                        const featureCount = geojson.features.length
-                        if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                            if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
-                                const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
-                                geojson.features = [feature]
-                                geojson.tooltip = defaultTooltip
-                                geojson.prefix = 'Bounding'
-                                geojson.suffix = `for ${formatNumberWithCommas(featureCount)} features`
-                            } else {
-                                try {
-                                    geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                                    geojson.prefix = 'Simplified'
-                                } catch {
-                                
-                                }
-                            }
-                        }                
-        
-                        await handleGeoJSON(geojson)
-                    }
+                    geojson.mapBounds = mapBounds
+                    geojsonRaw = Object.assign({}, geojson)
+                }
 
-                    if (geojson.tooltip !== defaultTooltip && geojson.features.length > 0) {
+                if (!geojson.processed) {
+                    geojson.processed = true
+                    
+                    const featureCount = geojson.features.length
+                    if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
+                        if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                            const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
+                            geojson.features = [feature]
+                            geojson.tooltip = defaultTooltip
+                            geojson.prefix = 'Bounding'
+                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} features`
+                        } else {
+                            try {
+                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                                geojson.prefix = 'Simplified'
+                            } catch {
+                            
+                            }
+                        }
+                    }                
+    
+                    await handleGeoJSON(geojson)
+                }    
+
+                if (geojsonRaw && geojsonRaw.features.length > 0) {
+                    if (!Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
+                    } else {
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojsonRaw))
                     }
                 }
 
