@@ -538,7 +538,7 @@ const createWFSLayer = (data) => {
         // data: data
     })
     console.log(geojsonLayer)
-    // geojsonLayer.data = data
+    geojsonLayer.data = data
     geojsonLayer.data.layerLegendObj = '{}'
     geojsonLayer.options.popupHeader = layerTitle
 
