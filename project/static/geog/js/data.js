@@ -341,6 +341,7 @@ const fetchLibraryData = async (event, layer, options={}) => {
     }[layer.data.layerFormat]
     
     if (handler) {
+        console.log(handler)
         return await handler(event, layer, options)
     }
 }
