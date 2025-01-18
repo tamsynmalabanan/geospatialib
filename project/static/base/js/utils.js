@@ -118,27 +118,31 @@ const getCookie = (name) => {
     return cookieValue
 }
 
+const cacheDataToSessionStorage = (key, data) => {
+    try {
+        sessionStorage.setItem(key, data)
+        return data
+    } catch {
+        sessionStorage.clear()
+        try {
+            sessionStorage.setItem(key, data)
+            return data
+        } catch {
+            sessionStorage.removeItem(key)
+        }
+    }
+}
+
 const cacheResponse = async (response, cacheKey) => {
-    const data = await response.clone().text(); 
+    const data = await response.clone().text();
+    cacheDataToSessionStorage(`${cacheKey}_data`, data)
     
     const headers = {}
     for (const [key, value] of response.headers.entries()) {
         headers[key] = value; 
     }
-    
-    try {
-        sessionStorage.setItem(`${cacheKey}_data`, data); 
-        sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
-    } catch (error) {
-        sessionStorage.clear();
-        try {
-            sessionStorage.setItem(`${cacheKey}_data`, data); 
-            sessionStorage.setItem(`${cacheKey}_headers`, JSON.stringify(headers));
-        } catch {
-            sessionStorage.removeItem(`${cacheKey}_data`); 
-            sessionStorage.removeItem(`${cacheKey}_headers`);
-        }
-    }
+    const headersString = JSON.stringify(headers)
+    cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
 
     return new Response(new Blob([data]), {
         status: 200, 
@@ -153,7 +157,8 @@ const fetchDataWithTimeout = async (url, options={}) => {
     
     const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
     const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
-    if (cachedData && cachedHeaders) { 
+    if (cachedData && cachedHeaders) {
+        console.log('CACHED RESPONSE')
         const headers = new Headers(JSON.parse(cachedHeaders))
         return Promise.resolve(new Response(new Blob([cachedData]), {
             status: 200, 
@@ -163,6 +168,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     }
     
     if (fetchDataWithTimeoutMap.has(cacheKey)) {
+        console.log('MAPPED RESPONSE')
         return await fetchDataWithTimeoutMap.get(cacheKey)
     }
 
@@ -269,6 +275,7 @@ const formatNumberWithCommas = (number) => {
 const parseChunkedResponseToJSONMap = new Map()
 const parseChunkedResponseToJSON = async (response, timeout=5000) => {
     if (parseChunkedResponseToJSONMap.has(response)) {
+        console.log('MAPPED DATA')
         return await parseChunkedResponseToJSONMap.get(response)
     }
 
