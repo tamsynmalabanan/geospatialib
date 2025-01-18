@@ -12,7 +12,7 @@ class Dataset(models.Model):
     name = models.CharField('Layer', max_length=255)
 
     default_style = models.CharField('Default style name', max_length=255, blank=True, null=True)
-    default_legend = models.ForeignKey("library.URL", verbose_name='Default style url', on_delete=models.SET_NULL, blank=True, null=True)
+    default_legend = models.ForeignKey("library.URL", verbose_name='Default style url', on_delete=models.PROTECT, blank=True, null=True)
     default_crs = models.CharField('Default CRS', max_length=32, blank=True, null=True)
 
     title = models.CharField('Title', max_length=255, blank=True, null=True)
