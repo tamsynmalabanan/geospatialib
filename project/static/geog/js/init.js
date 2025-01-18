@@ -273,21 +273,17 @@ const handleMapLegend = (map) => {
             
             if (layer.data.layerLegendObj) {
                 layer.on('fetchingData', () => {
-                    if (!isHiddenInLegend(layer, map)) {
-                        legendCollapse.innerHTML = `
-                            <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        `
-                    } else {
-                        legendCollapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
-                    }
+                    legendCollapse.innerHTML = `
+                        <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    `
                 })
 
                 layer.on('legendUpdated', () => {
-                    if (!isHiddenInLegend(layer, map)) {
-                        legendCollapse.innerHTML = ''
-                        const styles = JSON.parse(layer.data.layerLegendObj)
+                    legendCollapse.innerHTML = ''
+                    const styles = layer.data.layerLegendObj
+                    if (styles) {
                         Object.keys(styles).forEach(name => {
                             const style = styles[name]
     
@@ -355,8 +351,6 @@ const handleMapLegend = (map) => {
                                 }
                             }
                         })
-                    } else {
-                        legendCollapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
                     }
                 })
             }

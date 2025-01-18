@@ -535,9 +535,7 @@ const createWMSLayer = (data) => {
 const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer()
-    geojsonLayer.data = data
-    console.log(data, Object.assign({}, data))
-    geojsonLayer.data.layerLegendObj = '{}'
+    geojsonLayer.data = Object.assign({}, data)
     geojsonLayer.options.popupHeader = layerTitle
 
     const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
@@ -635,7 +633,8 @@ const createWFSLayer = (data) => {
                     }
                 })
 
-                geojsonLayer.data.layerLegendObj = JSON.stringify(legend)
+                geojsonLayer.data.layerLegendObj = legend
+                console.log(geojsonLayer)
                 geojsonLayer.fire('legendUpdated')
             }
         }
