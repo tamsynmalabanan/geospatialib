@@ -10,25 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.SUCCESS('Test'))
         
-        url_instances = (models.URL.objects
-            .annotate(
-                formats=ArrayAgg('datasets__format', distinct=True), 
-                names=ArrayAgg('datasets__name', distinct=True),
-            )
-            .values_list(
-                'id', 
-                'url', 
-                'formats', 
-                'names', 
-            )
-            .filter(datasets__isnull=False)
-            .distinct()
-        )
-
-        with open('dataset_urls.csv', 'w') as file:
-            for i in url_instances:
-                file.write(f'{i[1]},{" ".join(i[2])}\n')
-
-        with open('dataset_urls.csv', 'r') as file:
-            for url in file:
-                print(url, end='')
+        dataset_urls = list(set(models.Dataset.objects.values_list('url__url', flat=True)))
+        with open('dataset_urls.txt', 'w') as file:
+            for i in dataset_urls:
+                file.write(i + '\n')
