@@ -622,7 +622,9 @@ const createGeoJSONLayer = (data) => {
                         await handleGeoJSON(geojson)
                     }
 
-                    cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
+                    if (geojson.tooltip !== defaultTooltip && geojson.features.length > 0) {
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
+                    }
                 }
 
                 geojsonLayer.clearLayers()
