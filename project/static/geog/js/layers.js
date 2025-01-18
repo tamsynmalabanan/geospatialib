@@ -488,7 +488,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
         })
 
         layer.eachLayer(feature => {
-            feature.options.popupHeader = `${layer.title}: ${feature.title}`
+            feature.popupHeader = `${layer.title}: ${feature.title}`
             const layerToggle = handler(feature, collapse, feature.feature, feature.title)
             const layerCheckbox = layerToggle.querySelector('input')
             layerCheckbox.addEventListener('click', (event) => {
@@ -536,7 +536,7 @@ const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer()
     geojsonLayer.data = data
-    geojsonLayer.options.popupHeader = layerTitle
+    geojsonLayer.popupHeader = layerTitle
 
     const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
 
@@ -602,7 +602,7 @@ const createWFSLayer = (data) => {
 
                 let legend = {}
                 geojsonLayer.eachLayer(feature => {
-                    feature.options.popupHeader = data.layerTitle
+                    feature.popupHeader = data.layerTitle
     
                     if (geojson.tooltip) {
                         feature.bindTooltip(geojson.tooltip, {sticky:true})
