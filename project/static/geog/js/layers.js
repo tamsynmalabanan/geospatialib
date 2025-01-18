@@ -565,6 +565,7 @@ const createGeoJSONLayer = (data) => {
                 const cachedGeoJSON = sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSON) {
                     if (cachedGeoJSON.tooltip !== defaultTooltip) {
+                        console.log(cachedGeoJSON)
                         const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
                         const cachedGeoJSONBounds = turf.bboxPolygon(turf.bbox(cachedGeoJSON))
                         console.log(mapBounds, cachedGeoJSONBounds)
