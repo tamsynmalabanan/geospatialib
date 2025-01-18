@@ -566,6 +566,8 @@ const createWFSLayer = (data) => {
                     suffix: 'for all features',
                 }
                 
+                console.log(geojson)
+
                 if (!geojson.processed) {
                     geojson.processed = true
                     const featureCount = geojson.features.length
