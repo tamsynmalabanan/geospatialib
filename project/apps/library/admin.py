@@ -11,5 +11,6 @@ class MetaDatasetAdmin(admin.ModelAdmin):
     )
     search_fields = ['title', 'tags__tag', 'url__tag']
     list_filter = ['format']
+    list_per_page = 20
 
 admin.site.register(models.Dataset, MetaDatasetAdmin)
