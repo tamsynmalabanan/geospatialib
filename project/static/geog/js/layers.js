@@ -534,9 +534,12 @@ const createWMSLayer = (data) => {
 
 const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
-    const geojsonLayer = getDefaultGeoJSONLayer()
-    geojsonLayer.data = data
-    geojsonLayer.data.layerLegendObj = '{}'
+    data.layerLegendObj = '{}'
+    
+    const geojsonLayer = getDefaultGeoJSONLayer({
+        data: data,
+        popupHeader: layerTitle,
+    })
     geojsonLayer.options.popupHeader = layerTitle
 
     const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
