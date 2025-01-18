@@ -567,7 +567,9 @@ const createGeoJSONLayer = (data) => {
                     const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                     if (cachedGeoJSON.tooltip !== defaultTooltip) {
                         const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                        console.log(mapBounds, cachedGeoJSON.mapBbox)
+                        const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                        const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                        console.log(equalBounds, withinBounds)
                     }
                 }
 
@@ -582,7 +584,7 @@ const createGeoJSONLayer = (data) => {
 
                     if (!geojson.processed) {
                         geojson.processed = true
-                        geojson.mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
+                        geojson.mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
                         
                         const featureCount = geojson.features.length
                         const mapScale = getMeterScale(map)
