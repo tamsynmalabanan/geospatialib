@@ -572,7 +572,7 @@ const createWFSLayer = (data) => {
                     const mapScale = getMeterScale(map)
                     const mapZoom = map.getZoom()
                     if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                        if (featureCount > 5000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                        if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
                             const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
