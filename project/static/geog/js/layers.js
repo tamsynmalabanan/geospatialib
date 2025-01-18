@@ -232,6 +232,8 @@ const toggleLayer = async (event, options={}) => {
         }
 
         if (toggleAll) {
+            console.log(options.layer)
+
             const layersCount = Array.from(
                 datasetList.querySelectorAll('input.form-check-input:not(.dataset-group)')
             ).filter(checkbox => {
