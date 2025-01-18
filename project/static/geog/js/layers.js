@@ -560,16 +560,31 @@ const createGeoJSONLayer = (data) => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
     
+                const mapScale = getMeterScale(map)
+                const mapZoom = map.getZoom()
+
                 let geojson
 
                 const cachedGeoJSONString = sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSONString) {
                     const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                     if (cachedGeoJSON.tooltip !== defaultTooltip) {
-                        const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                        const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
-                        const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                        console.log(equalBounds, withinBounds)
+                        const featureCount = cachedGeoJSON.features.length
+                        if (featureCount > 0) {
+                            if (cachedGeoJSON.prefix !== 'Simplified' || (
+                                featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))
+                            )) {
+                                const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                                const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                                const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                                if (equalBounds || withinBounds) {
+                                    const features = cachedGeoJSON.features.filter(feature => {
+                                        return turf.booleanIntersects(mapBounds, feature)
+                                    })
+                                    console.log(features)
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -587,8 +602,6 @@ const createGeoJSONLayer = (data) => {
                         geojson.mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
                         
                         const featureCount = geojson.features.length
-                        const mapScale = getMeterScale(map)
-                        const mapZoom = map.getZoom()
                         if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
                             if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
                                 const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
