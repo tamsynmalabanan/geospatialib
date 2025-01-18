@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
         with open('dataset_urls.csv', 'w') as file:
             for i in url_instances:
-                file.write(f'{i[1]},{' '.join(i[2])}\n')
+                file.write(f'{i[1]},{" ".join(i[2])}\n')
 
         with open('dataset_urls.csv', 'r') as file:
             for url in file:
