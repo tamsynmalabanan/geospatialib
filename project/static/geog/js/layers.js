@@ -567,6 +567,7 @@ const createWFSLayer = (data) => {
                 }
                 
                 if (!geojson.processed) {
+                    geojson.processed = true
                     const featureCount = geojson.features.length
                     const mapScale = getMeterScale(map)
                     const mapZoom = map.getZoom()
@@ -588,7 +589,6 @@ const createWFSLayer = (data) => {
                     }                
     
                     await handleGeoJSON(geojson)
-                    geojson.processed = true
                 } else {
                     console.log('GEOJSON PROCESSED')
                 }
