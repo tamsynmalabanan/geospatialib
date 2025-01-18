@@ -60,10 +60,12 @@ const getDefaultGeoJSONLayer = (
         }
     })
 
-    let data = options.data
-    if (data) {
-        geojsonLayer.data = data
-    }
+    
+
+    // let data = options.data
+    // if (data) {
+    //     geojsonLayer.data = data
+    // }
 
     return geojsonLayer
 }
