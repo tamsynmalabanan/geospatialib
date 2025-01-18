@@ -535,7 +535,7 @@ const createWMSLayer = (data) => {
 const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer({
-        data: data
+        // data: data
     })
     console.log(geojsonLayer)
     // geojsonLayer.data = data
