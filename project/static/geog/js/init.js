@@ -271,7 +271,7 @@ const handleMapLegend = (map) => {
                 legendCollapse.innerHTML = createImgElement(layer.data.layerLegendUrl, 'Legend not found.').outerHTML
             }
             
-            if (layer.data.layerLegendObj) {
+            if (layer.layerLegendStyle) {
                 layer.on('fetchingData', () => {
                     legendCollapse.innerHTML = `
                         <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
@@ -282,7 +282,7 @@ const handleMapLegend = (map) => {
 
                 layer.on('legendUpdated', () => {
                     legendCollapse.innerHTML = ''
-                    const styles = layer.data.layerLegendObj
+                    const styles = layer.layerLegendStyle
                     if (styles) {
                         Object.keys(styles).forEach(name => {
                             const style = styles[name]
