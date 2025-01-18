@@ -232,21 +232,11 @@ const toggleLayer = async (event, options={}) => {
         }
 
         if (toggleAll) {
-            let layersCount = Array.from(datasetList.querySelectorAll('input.form-check-input'))
-            .map(checkbox => {
-                if (!checkbox.checked) {
-                    return 0
-                } else if (checkbox.classList.includes('dataset-group')) {
-                    if (checkbox.classList.includes('dataset-group-collapsed') && options.layer) {
-                        return options.layer.getLayers().length
-                    } else {
-                        return 0
-                    }
-                } else {
-                    return 1
-                }
-            })
-            .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+            const layersCount = Array.from(
+                datasetList.querySelectorAll('input.form-check-input:not(.dataset-group)')
+            ).filter(checkbox => {
+                return checkbox.checked
+            }).length
 
             if (layersCount < 1) {
                 toggleAll.setAttribute('disabled', true)
@@ -449,85 +439,84 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
 
     if (layerCount > 0) {
         mainCheckbox.classList.add('dataset-group')
+    }
 
-        if (layerCount <= 100) {
-            const collapse = document.createElement('div')
-            collapse.id = `${mapContainer.id}_${layer._leaflet_id}_group`
-            collapse.className = 'collapse show ps-3'
-            parent.appendChild(collapse)
-    
-            const collapseToggle = document.createElement('button')
-            collapseToggle.className = 'dropdown-toggle bg-transparent border-0 px-0 show-on-hover'
-            collapseToggle.setAttribute('type', 'button')
-            collapseToggle.setAttribute('data-bs-toggle', 'collapse')
-            collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
-            collapseToggle.setAttribute('aria-controls', collapse.id)
-            collapseToggle.setAttribute('aria-expanded', `true`)
-            mainToggle.lastElementChild.appendChild(collapseToggle)
-    
-            mainCheckbox.addEventListener('click', async (event) => {
-                if (mainCheckbox.checked) {
-                    collapse.querySelectorAll('input').forEach(checkbox => {
-                        if (!checkbox.checked) {
-                            checkbox.click()
-                        }
-                    })
-                } else {
-                    collapse.querySelectorAll('input').forEach(checkbox => {
-                        if (checkbox.checked) {
-                            checkbox.click()
-                        }
-                    })
-                }
-            })
-    
-            map.on('layeradd', (event) => {
-                if (layer.hasLayer(event.layer)) {
-                    if (layer.getLayers().every(feature => map.hasLayer(feature))) {
-                        mainCheckbox.removeAttribute('disabled')
-                        mainCheckbox.checked = true
+    if (layerCount > 0 && layerCount <= 100) {
+        const collapse = document.createElement('div')
+        collapse.id = `${mapContainer.id}_${layer._leaflet_id}_group`
+        collapse.className = 'collapse show ps-3'
+        parent.appendChild(collapse)
+
+        const collapseToggle = document.createElement('button')
+        collapseToggle.className = 'dropdown-toggle bg-transparent border-0 px-0 show-on-hover'
+        collapseToggle.setAttribute('type', 'button')
+        collapseToggle.setAttribute('data-bs-toggle', 'collapse')
+        collapseToggle.setAttribute('data-bs-target', `#${collapse.id}`)
+        collapseToggle.setAttribute('aria-controls', collapse.id)
+        collapseToggle.setAttribute('aria-expanded', `true`)
+        mainToggle.lastElementChild.appendChild(collapseToggle)
+
+        mainCheckbox.addEventListener('click', async (event) => {
+            if (mainCheckbox.checked) {
+                collapse.querySelectorAll('input').forEach(checkbox => {
+                    if (!checkbox.checked) {
+                        checkbox.click()
                     }
-                }
-            })
-    
-            map.on('layerremove', (event) => {
-                if (layer.hasLayer(event.layer)) {
-                    mainCheckbox.checked = false
-                }
-            })
-    
-            layer.eachLayer(feature => {
-                feature.popupHeader = `${layer.title}: ${feature.title}`
-                const layerToggle = handler(feature, collapse, feature.feature, feature.title)
-                const layerCheckbox = layerToggle.querySelector('input')
-                layerCheckbox.addEventListener('click', (event) => {
-                    toggleLayer(event, {
-                        map: map,
-                        layer: feature,
-                        layerGroup: layerGroup,
-                    })
-                })    
-            })
-    
-            return [mainToggle, collapse]
-        } else {
-            if (layerCount > 1000) {
-                mainCheckbox.setAttribute('disabled',true)
+                })
             } else {
-                mainCheckbox.classList.add('dataset-group-collapsed')
-                mainCheckbox.addEventListener('click', (event) => {
-                    toggleLayer(event, {
-                        map: map,
-                        layer: layer,
-                        layerGroup: layerGroup,
-                    })
-                })    
+                collapse.querySelectorAll('input').forEach(checkbox => {
+                    if (checkbox.checked) {
+                        checkbox.click()
+                    }
+                })
             }
-    
-            mainToggle.classList.add('pe-3')
-    
-            return [mainToggle, undefined]
+        })
+
+        map.on('layeradd', (event) => {
+            if (layer.hasLayer(event.layer)) {
+                if (layer.getLayers().every(feature => map.hasLayer(feature))) {
+                    mainCheckbox.removeAttribute('disabled')
+                    mainCheckbox.checked = true
+                }
+            }
+        })
+
+        map.on('layerremove', (event) => {
+            if (layer.hasLayer(event.layer)) {
+                mainCheckbox.checked = false
+            }
+        })
+
+        layer.eachLayer(feature => {
+            feature.popupHeader = `${layer.title}: ${feature.title}`
+            const layerToggle = handler(feature, collapse, feature.feature, feature.title)
+            const layerCheckbox = layerToggle.querySelector('input')
+            layerCheckbox.addEventListener('click', (event) => {
+                toggleLayer(event, {
+                    map: map,
+                    layer: feature,
+                    layerGroup: layerGroup,
+                })
+            })    
+        })
+
+        return [mainToggle, collapse]
+    } else {
+        if (layerCount > 1000) {
+            mainCheckbox.setAttribute('disabled',true)
+        } else {
+            mainCheckbox.addEventListener('click', (event) => {
+                toggleLayer(event, {
+                    map: map,
+                    layer: layer,
+                    layerGroup: layerGroup,
+                })
+            })    
         }
+
+        mainToggle.classList.add('pe-3')
+
+        return [mainToggle, undefined]
     }
 }
 
