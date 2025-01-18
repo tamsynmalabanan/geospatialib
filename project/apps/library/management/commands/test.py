@@ -8,4 +8,7 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
+        dataset_urls = models.Dataset.objects.values_list('url', flat=True)
+        print(dataset_urls)
+
         self.stdout.write(self.style.SUCCESS('Test'))
