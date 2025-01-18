@@ -557,8 +557,8 @@ const createWFSLayer = (data) => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
     
-                let geojson = await fetchLibraryData(event, geojsonLayer)
-                // let geojson = await fetchWFSData(event, geojsonLayer)
+                // let geojson = await fetchLibraryData(event, geojsonLayer)
+                let geojson = await fetchWFSData(event, geojsonLayer)
                 geojson = geojson || {
                     type: 'FeatureCollection',
                     features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
