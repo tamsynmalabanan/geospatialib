@@ -26,8 +26,6 @@ const getDefaultGeoJSONLayer = (
             return getDefaultLayerStyle('other', params)
         },
         onEachFeature: (feature, layer) => {
-            console.log(feature, layer)
-
             if (options.pane) {
                 layer.options.pane = options.pane
             }
@@ -66,8 +64,6 @@ const getDefaultGeoJSONLayer = (
     if (data) {
         geojsonLayer.data = data
     }
-
-
 
     return geojsonLayer
 }
