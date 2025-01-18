@@ -562,8 +562,9 @@ const createGeoJSONLayer = (data) => {
     
                 let geojson
 
-                const cachedGeoJSON = sessionStorage.getItem(cacheKey)
+                const cachedGeoJSONString = sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSON) {
+                    const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                     if (cachedGeoJSON.tooltip !== defaultTooltip) {
                         console.log(cachedGeoJSON)
                         const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
@@ -606,7 +607,7 @@ const createGeoJSONLayer = (data) => {
                         await handleGeoJSON(geojson)
                     }
 
-                    cacheDataToSessionStorage(cacheKey, geojson)
+                    cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                 }
 
                 geojsonLayer.clearLayers()
