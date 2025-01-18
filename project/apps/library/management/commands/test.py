@@ -13,4 +13,4 @@ class Command(BaseCommand):
         dataset_urls = list(set(models.Dataset.objects.values_list('url__url', flat=True)))
         with open('dataset_urls.txt', 'w') as file:
             for i in dataset_urls:
-                file.write(i, '\n')
+                file.write(i + '\n')
