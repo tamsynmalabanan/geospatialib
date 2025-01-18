@@ -232,11 +232,23 @@ const toggleLayer = async (event, options={}) => {
         }
 
         if (toggleAll) {
-            const layersCount = Array.from(
-                datasetList.querySelectorAll('input.form-check-input:not(.dataset-group)')
-            ).filter(checkbox => {
-                return checkbox.checked
-            }).length
+            let layersCount = Array.from(datasetList.querySelectorAll('input.form-check-input'))
+            .map(checkbox => {
+                if (checkbox.checked) {
+                    if (checkbox.classList.includes('dataset-group')) {
+                        if (checkbox.classList.includes('dataset-group-collapsed') && options.layer) {
+                            return options.layer.getLayers()
+                        } else {
+                            return 1
+                        }
+                    } else {
+                        return 1
+                    }
+                } else {
+                    return 0
+                }                
+            })
+            .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
             if (layersCount < 1) {
                 toggleAll.setAttribute('disabled', true)
@@ -505,6 +517,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
         if (layerCount > 1000) {
             mainCheckbox.setAttribute('disabled',true)
         } else {
+            mainCheckbox.classList.add('dataset-group-collapsed')
             mainCheckbox.addEventListener('click', (event) => {
                 toggleLayer(event, {
                     map: map,
