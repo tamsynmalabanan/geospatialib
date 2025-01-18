@@ -536,7 +536,6 @@ const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
     const geojsonLayer = getDefaultGeoJSONLayer()
     geojsonLayer.data = data
-    console.log(geojsonLayer)
     geojsonLayer.data.layerLegendObj = '{}'
     geojsonLayer.options.popupHeader = layerTitle
 
@@ -559,10 +558,7 @@ const createWFSLayer = (data) => {
                 geojsonLayer.fire('fetchingData')
     
                 let geojson = await fetchWFSData(event, geojsonLayer)
-    
-                let prefix
-                let suffix
-    
+        
                 if (geojson) {
                     const featureCount = geojson.features.length
                     const mapScale = getMeterScale(map)
@@ -572,12 +568,12 @@ const createWFSLayer = (data) => {
                             const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
-                            prefix = 'Bounding'
-                            suffix = `for ${formatNumberWithCommas(featureCount)} features`
+                            geojson.prefix = 'Bounding'
+                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} features`
                         } else {
                             try {
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                                prefix = 'Simplified'
+                                geojson.prefix = 'Simplified'
                             } catch {
                             
                             }
@@ -593,8 +589,8 @@ const createWFSLayer = (data) => {
                             tooltip: defaultTooltip
                         }
         
-                        prefix = 'Bounding'
-                        suffix = 'for all features'
+                        geojson.prefix = 'Bounding'
+                        geojson.suffix = 'for all features'
                     }
                 }
     
@@ -623,7 +619,7 @@ const createWFSLayer = (data) => {
                         if (type === 'Point') {
                             label = type
                         } else {
-                            label = Array(prefix, type, suffix).filter(part => part).join(' ')
+                            label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
                         }
     
                         if (!Object.keys(legend).includes(label)) {
