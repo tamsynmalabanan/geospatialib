@@ -8,7 +8,7 @@ const getDefaultGeoJSONLayer = (
         color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
     }
 
-    const geojsonLayer = L.geoJSON(geojson, {
+    const geojsonLayer = (() => {L.geoJSON(geojson, {
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
@@ -58,9 +58,7 @@ const getDefaultGeoJSONLayer = (
                 layer.on('click', createPopup)
             }
         }
-    })
-
-    
+    })})()
 
     // let data = options.data
     // if (data) {
