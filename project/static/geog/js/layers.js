@@ -589,8 +589,6 @@ const createWFSLayer = (data) => {
                     }                
     
                     await handleGeoJSON(geojson)
-                } else {
-                    console.log('GEOJSON PROCESSED')
                 }
 
                 geojsonLayer.clearLayers()
@@ -635,7 +633,6 @@ const createWFSLayer = (data) => {
                 })
 
                 geojsonLayer.layerLegendStyle = legend
-                console.log(geojsonLayer)
                 geojsonLayer.fire('legendUpdated')
             }
         }
