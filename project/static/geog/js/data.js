@@ -334,14 +334,14 @@ const fetchOSMDataFromNominatim = async (event, options={}) => {
     });
 }
 
-const fetchLibraryData = (event, layer, options={}) => {
+const fetchLibraryData = async (event, layer, options={}) => {
     const handler = {
         wms: fetchWMSData,
         wfs: fetchWFSData,
     }[layer.data.layerFormat]
     
     if (handler) {
-        return handler(event, layer, options)
+        return await handler(event, layer, options)
     }
 }
 
@@ -484,9 +484,6 @@ const fetchWFSData = async (event, layer, options={}) => {
     params.bbox = bbox
 
     const url = pushQueryParamsToURLString(cleanURL, params)
-
-    const cacheKeys = Object.keys(sessionStorage).filter(key => key.startsWith(url))
-    console.log(cacheKeys)
 
     const geojson = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
         if (response.ok || response.status === 200) {
