@@ -534,8 +534,10 @@ const createWMSLayer = (data) => {
 
 const createWFSLayer = (data) => {
     const layerTitle = data.layerTitle
-    const geojsonLayer = getDefaultGeoJSONLayer()
-    geojsonLayer.data = data
+    const geojsonLayer = getDefaultGeoJSONLayer({
+        data: data
+    })
+    // geojsonLayer.data = data
     geojsonLayer.data.layerLegendObj = '{}'
     geojsonLayer.options.popupHeader = layerTitle
 
