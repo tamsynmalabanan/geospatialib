@@ -68,6 +68,10 @@ img {
     border-bottom: var(--bs-border-width) solid #198754 !important;
 }
 
+.focus-underline-primary {
+    border-bottom: transparent;
+}
+
 .focus-underline-primary:active,
 .focus-underline-primary:focus,
 .focus-underline-primary:hover {
