@@ -594,7 +594,13 @@ const createGeoJSONLayer = (data) => {
                 ).map(cachedGeoJSONString => {
                     if (cachedGeoJSONString) {
                         const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-                        return cachedGeoJSON
+                        if (cachedGeoJSON) {
+                            const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                            const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                            if (equalBounds || withinBounds) {
+                                return cachedGeoJSON
+                            }    
+                        }
                     }
                 }).filter(cachedGeoJSON => cachedGeoJSON)
                 console.log(cachedGeoJSONStrings)
