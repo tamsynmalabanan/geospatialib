@@ -589,9 +589,14 @@ const createGeoJSONLayer = (data) => {
                     const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                     if (equalBounds || withinBounds) {
                         geojson = Object.assign({}, cachedGeoJSON)
+
+                        const filterBounds = handleFeatureCRS(
+                            Object.assign({}, mapBounds), getGeoJSONCRS(cachedGeoJSON)
+                        )
                         geojson.features = cachedGeoJSON.features.filter(feature => {
-                            return turf.booleanIntersects(mapBounds, feature)
+                            return turf.booleanIntersects(filterBounds, feature)
                         })
+
                         console.log(geojson)
                     }
                 }

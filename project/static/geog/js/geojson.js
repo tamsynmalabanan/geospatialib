@@ -90,6 +90,8 @@ const handleFeatureCRS = async (feature, crs) => {
         const coords = feature.geometry.coordinates
         feature.geometry.coordinates = await transformCoordinates(coords, crs, 4326)
     }
+
+    return feature
 }
 
 const handleFeatureId = (feature) => {
@@ -138,7 +140,7 @@ const handleGeoJSON = async (geojson, options={}) => {
 
     geojson.features.forEach(async feature => {
         const geomAssigned = handleFeatureGeom(feature, options.defaultGeom)
-        if (!geomAssigned) {
+        if (crs && !geomAssigned) {
             await handleFeatureCRS(feature, crs)
         }
 
