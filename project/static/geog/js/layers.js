@@ -587,13 +587,16 @@ const createGeoJSONLayer = (data) => {
                 let geojson
 
                 const cachedGeoJSONStrings = Array(
-                    geojsonLayer.cachedGeoJSON, 
                     sessionStorage.getItem(cacheKey)
                 ).concat(
                     getLayersViaCacheKey(map, cacheKey)
-                    .filter(layer => layer !== geojsonLayer)
                     .map(layer => layer.cachedGeoJSON)
-                ).filter(geoJSONString => geoJSONString)
+                ).map(cachedGeoJSONString => {
+                    if (cachedGeoJSONString) {
+                        const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                        return cachedGeoJSON
+                    }
+                })
                 console.log(cachedGeoJSONStrings)
 
                 const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
