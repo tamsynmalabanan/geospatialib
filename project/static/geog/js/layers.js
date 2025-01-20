@@ -237,10 +237,11 @@ const toggleLayer = async (event, options={}) => {
                 if (checkbox.checked) {
                     if (checkbox.classList.contains('dataset-group')) {
                         if (checkbox.classList.contains('dataset-group-collapsed') && options.layer) {
+                            console.log(checkbox, options.layer)
                             try {
                                 return options.layer.getLayers().length
                             } catch (error) {
-                                console.log(options.layer)
+                                return 0
                             }
                         } else {
                             return 0
