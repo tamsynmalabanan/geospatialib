@@ -527,6 +527,7 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
     let cacheKey = options.cacheKey
 
     if (cacheKey && fetchGeoJSONDataMap.has(cacheKey)) {
+        console.log('mapped geojson')
         return await fetchGeoJSONDataMap.get(cacheKey)
     }
 
@@ -618,7 +619,6 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
                 }
             }
 
-            console.log(geojson)
             return geojson
         } catch (error) {
             console.log(error)
