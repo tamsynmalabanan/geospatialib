@@ -645,6 +645,8 @@ const createGeoJSONLayer = (data) => {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
+
+                console.log(geojsonLayer)
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
