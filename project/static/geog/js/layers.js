@@ -595,6 +595,8 @@ const createGeoJSONLayer = (data) => {
                                 filterBounds, 4326, crs
                             )
                         }
+                        console.log(mapBounds, filterBounds)
+
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = cachedGeoJSON.features.filter(feature => {
                             const featureBounds = turf.bboxPolygon(turf.bbox(feature));
