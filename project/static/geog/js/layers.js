@@ -584,7 +584,7 @@ const createGeoJSONLayer = (data) => {
 
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
-                let geojson = await (async () => {
+                let geojson = (() => {
                     const cachedGeoJSONs = Array(
                         sessionStorage.getItem(cacheKey)
                     ).concat(
@@ -627,7 +627,6 @@ const createGeoJSONLayer = (data) => {
                         })
                     }
                 })()
-
 
                 console.log(geojson)
 
