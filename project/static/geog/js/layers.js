@@ -603,6 +603,8 @@ const createGeoJSONLayer = (data) => {
                     }
                 }
 
+                console.log(geojson)
+
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
                     if (!geojson) {
