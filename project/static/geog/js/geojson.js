@@ -94,7 +94,7 @@ const handleFeatureCRS = async (feature, crs) => {
     return feature
 }
 
-const transformGeoJSONFeatureGeometry = async (feature, source, target) => {
+const transformFeatureGeometry = async (feature, source, target) => {
     const coords = feature.geometry.coordinates
     feature.geometry.coordinates = await transformCoordinates(coords, source, target)
     return feature
