@@ -593,13 +593,14 @@ const createGeoJSONLayer = (data) => {
                         if (crs && crs !== 4326) {
                             filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                         }
-                        console.log(crs, mapBounds, filterBounds, await transformFeatureGeometry(Object.assign({},filterBounds), crs, 4326))
-
+                        
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = cachedGeoJSON.features.filter(feature => {
                             const featureBounds = turf.bboxPolygon(turf.bbox(feature));
                             return turf.booleanIntersects(filterBounds, featureBounds)
                         })
+                        
+                        console.log(crs, mapBounds, filterBounds, await transformFeatureGeometry(Object.assign({},filterBounds), crs, 4326))
                     }
                 }
 
