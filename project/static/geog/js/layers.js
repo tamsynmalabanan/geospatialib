@@ -626,7 +626,7 @@ const createGeoJSONLayer = (data) => {
 
                 if (!geojson.processed) {
                     geojson.processed = true
-
+    
                     const mapScale = getMeterScale(map)
                     const mapZoom = map.getZoom()    
                     const featureCount = geojson.features.length
@@ -638,13 +638,14 @@ const createGeoJSONLayer = (data) => {
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
                             geojson.prefix = 'Bounding'
-
+    
                             let totalMatched = 'features'
                             const numberMatched = geojson.numberMatched
-                            if (numberMatched && numberMatched !== featureCount) {
+                            const numberReturned = geojson.numberReturned
+                            if (numberMatched && numberReturned && numberMatched !== numberReturned) {
                                 totalMatched = `of ${formatNumberWithCommas(numberMatched)} matched features`
                             }
-
+    
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
                         } else {
                             try {
@@ -658,7 +659,7 @@ const createGeoJSONLayer = (data) => {
     
                     await handleGeoJSON(geojson)
                 }
-
+    
                 if (geojson.cachedGeoJSON) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
