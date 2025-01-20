@@ -604,7 +604,7 @@ const createGeoJSONLayer = (data) => {
                     }).filter(cachedGeoJSON => cachedGeoJSON)
                     
                     if (cachedGeoJSONs.length > 0) {
-                        return cachedGeoJSONs.forEach(async cachedGeoJSON => {
+                        for (const cachedGeoJSON of cachedGeoJSONs) {
                             if (!geojsonLayer.cachedGeoJSON) {
                                 geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
                             }
@@ -625,7 +625,7 @@ const createGeoJSONLayer = (data) => {
                                 console.log(cachedGeoJSON)
                                 return cachedGeoJSON
                             }
-                        })
+                        }
                     }
 
                     return
