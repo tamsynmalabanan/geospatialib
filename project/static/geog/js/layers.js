@@ -691,7 +691,7 @@ const createGeoJSONLayer = (data) => {
         let fetchWFSDataTimeout
         const fetchDataOnTimeout = () => {
             clearTimeout(fetchWFSDataTimeout)
-            fetchWFSDataTimeout = setTimeout(fetchData, 2000)
+            fetchWFSDataTimeout = setTimeout(fetchData, 1000)
         }
     
         fetchDataOnTimeout()
