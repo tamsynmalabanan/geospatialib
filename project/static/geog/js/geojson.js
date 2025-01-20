@@ -164,3 +164,13 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
+const getCachedGeoJSON = (key, storage) => {
+    const cachedGeoJSONString = storage.getItem(key)
+    if (cachedGeoJSONString) {
+        try {
+            return JSON.parse(cachedGeoJSONString)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}

@@ -583,33 +583,32 @@ const createGeoJSONLayer = (data) => {
 
                 let geojson
 
-                const cachedGeoJSONString = sessionStorage.getItem(cacheKey)
-                if (cachedGeoJSONString) {
-                    const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                const cachedGeoJSON = geojsonLayer.cachedGeoJSON || getCachedGeoJSON(cacheKey, sessionStorage)
+                if (cachedGeoJSON) {
                     const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                     const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                     if (equalBounds || withinBounds) {
-                        cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                        geojson = Object.assign({}, cachedGeoJSON)
+                        geojson.features = cachedGeoJSON.features.filter(feature => {
                             return turf.booleanIntersects(mapBounds, feature)
                         })
-                        geojson = cachedGeoJSON
                     }
                 }
 
                 if (!geojson) {
-                    geojson = await fetchLibraryData(event, geojsonLayer)
-                    if (!geojson) {
-                        geojson = {
-                            type: 'FeatureCollection',
-                            features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
-                            tooltip: defaultTooltip,
-                            prefix: 'Bounding',
-                            suffix: 'for all features',
-                        }
-                    } else {
-                        geojson.raw = Object.assign({}, geojson)
+                    geojson = await fetchLibraryData(event, geojsonLayer) || {
+                        type: 'FeatureCollection',
+                        features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
+                        tooltip: defaultTooltip,
+                        prefix: 'Bounding',
+                        suffix: 'for all features',
                     }
+                    
                     geojson.mapBounds = mapBounds
+                    
+                    if (!geojson.prefix === 'Bounding') {
+                        geojson.cachedGeoJSON = Object.assign({}, geojson)
+                    }
                 }
 
                 if (!geojson.processed) {
@@ -638,16 +637,14 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                if (geojson.raw && geojson.raw.features.length > 0) {
-                    geojsonLayer.geojsonRaw = geojson.raw
+                if (geojson.cachedGeoJSON && geojson.cachedGeoJSON.features.length > 0) {
+                    geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.raw))
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.cachedGeoJSON))
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
-                
-                console.log(geojsonLayer)
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
