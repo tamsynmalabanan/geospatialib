@@ -162,16 +162,6 @@ const constructInfoPanel = (map, name, options={}) => {
     span.innerText = name
     header.appendChild(span)
 
-
-
-    // const collapseToggle = document.createElement('button')
-    // collapseToggle.setAttribute('title', 'Collapse')
-    // collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand show-on-hover text-bg-${getPreferredTheme()}`
-    // collapseToggle.setAttribute('title', `Expand/collapse ${name.toLowerCase()}`)
-    // header.appendChild(collapseToggle)
-    // collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
-
-
     const panelMenuContainer = document.createElement('div')
     panelMenuContainer.className = 'dropdown ms-auto info-panel-menu'
     header.appendChild(panelMenuContainer)
@@ -246,10 +236,16 @@ const handleMapLegend = (map) => {
         collapsed: false,
     })
 
-    const header = body.parentElement.querySelector('h6')
-    const dropdownContainer = header.querySelector('.info-panel-menu')
+    const collapse = body.parentElement
+    const dropdownContainer = collapse.querySelector('.info-panel-menu')
     const dropdownToggle = dropdownContainer.querySelector('button')
     const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
+
+    const collapseExpandBtn = createDropdownMenuListItem({
+        label: 'Collapse/expand layers', 
+        parent: dropdownMenu,
+    }).querySelector('button')
+    collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
     const ul = document.createElement('ul')
     ul.id = 'legendLayers'
@@ -427,8 +423,8 @@ const handleMapQuery = (map) => {
     footer.className = 'border-top p-3 d-flex flex-wrap font-monospace text-muted'
     body.parentElement.appendChild(footer)
 
-    const header = body.parentElement.querySelector('h6')
-    const dropdownContainer = header.querySelector('.info-panel-menu')
+    const collapse = body.parentElement
+    const dropdownContainer = collapse.querySelector('.info-panel-menu')
     const dropdownToggle = dropdownContainer.querySelector('button')
     const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
 
