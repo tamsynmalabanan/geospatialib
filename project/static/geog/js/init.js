@@ -425,7 +425,7 @@ const handleMapQuery = (map) => {
     body.parentElement.appendChild(footer)
 
     
-    const queryDropdown = body.querySelector('.info-panel-menu')
+    const queryDropdown = header.querySelector('.info-panel-menu')
     // queryDropdown.className = 'dropdown ms-auto'
     // header.appendChild(queryDropdown)
 
