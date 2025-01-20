@@ -580,6 +580,7 @@ const createGeoJSONLayer = (data) => {
                 const geojson = fetchGeoJSONData(event, geojsonLayer, {
                     cacheKey: cacheKey,
                 })
+                console.log(geojson)
 
                 // const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
@@ -660,13 +661,13 @@ const createGeoJSONLayer = (data) => {
                 //     await handleGeoJSON(geojson)
                 // }
     
-                if (geojson.cachedGeoJSON) {
-                    if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
-                    } else {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
-                    }
-                }
+                // if (geojson.cachedGeoJSON) {
+                //     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
+                //         cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
+                //     } else {
+                //         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
+                //     }
+                // }
 
 
 
