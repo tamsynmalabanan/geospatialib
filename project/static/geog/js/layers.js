@@ -637,7 +637,7 @@ const createGeoJSONLayer = (data) => {
                             let totalMatched = 'features'
                             const numberMatched = geojson.numberMatched
                             if (numberMatched && numberMatched !== featureCount) {
-                                totalMatched = `of ${formatNumberWithCommas(numberMatched)} features`
+                                totalMatched = `of ${formatNumberWithCommas(numberMatched)} matched features`
                             }
 
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
