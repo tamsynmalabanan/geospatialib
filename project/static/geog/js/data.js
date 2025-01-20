@@ -624,7 +624,7 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
             console.log(error)
         } finally {
             if (cacheKey) {
-                fetchGeoJSONDataMap.delete(cacheKey)
+                // fetchGeoJSONDataMap.delete(cacheKey)
             }
         }
     })()
