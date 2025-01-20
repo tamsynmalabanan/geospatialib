@@ -246,6 +246,11 @@ const handleMapLegend = (map) => {
         collapsed: false,
     })
 
+    const header = body.parentElement.querySelector('h6')
+    const dropdownContainer = header.querySelector('.info-panel-menu')
+    const dropdownToggle = dropdownContainer.querySelector('button')
+    const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
+
     const ul = document.createElement('ul')
     ul.id = 'legendLayers'
     ul.className = 'dataset-list list-group list-group-flush'
@@ -417,38 +422,19 @@ const handleMapQuery = (map) => {
         collapsed: true,
     })
 
-    const header = body.parentElement.querySelector('h6')
-    // header.querySelector('button').remove()
 
     const footer = document.createElement('div')
     footer.className = 'border-top p-3 d-flex flex-wrap font-monospace text-muted'
     body.parentElement.appendChild(footer)
 
-    
-    const queryDropdown = header.querySelector('.info-panel-menu')
-    // queryDropdown.className = 'dropdown ms-auto'
-    // header.appendChild(queryDropdown)
-
-    const queryToggle = queryDropdown.querySelector('button')
-    // createButton({
-    //     buttonClass: 'bi bi-list p-0 bg-transparent border-0',
-    //     buttonAttrs: {
-    //         'type': 'button',
-    //         'data-bs-toggle': 'dropdown',
-    //         'aria-expanded': 'false',
-    //         'title': 'Query options'
-    //     },
-    //     labelClass: 'text-nowrap',
-    //     parent: queryDropdown,
-    // })
-
-    const queryMenu = queryDropdown.querySelector('.dropdown-menu')
-    // queryMenu.className = 'dropdown-menu fs-14'
-    // queryDropdown.appendChild(queryMenu)
+    const header = body.parentElement.querySelector('h6')
+    const dropdownContainer = header.querySelector('.info-panel-menu')
+    const dropdownToggle = dropdownContainer.querySelector('button')
+    const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
 
     const layersQueryBtn = createDropdownMenuListItem({
         label: 'Query layers', 
-        parent: queryMenu,
+        parent: dropdownMenu,
         buttonAttrs: {
             'data-query-osm': 'false'
         }
@@ -456,7 +442,7 @@ const handleMapQuery = (map) => {
 
     const layersOSMQueryBtn = createDropdownMenuListItem({
         label: 'Query layers & OSM', 
-        parent: queryMenu,
+        parent: dropdownMenu,
         buttonAttrs: {
             'data-query-osm': 'true'
         }
@@ -464,7 +450,7 @@ const handleMapQuery = (map) => {
 
     const queryOSMBtn = createDropdownMenuListItem({
         label: 'Query OSM in map view', 
-        parent: queryMenu,
+        parent: dropdownMenu,
         buttonAttrs: {
             'disabled': true
         }
@@ -472,11 +458,11 @@ const handleMapQuery = (map) => {
     
     const divider = document.createElement('li')
     divider.className = 'dropdown-divider'
-    queryMenu.appendChild(divider)
+    dropdownMenu.appendChild(divider)
 
     const cancelQueryBtn = createDropdownMenuListItem({
         label: 'Cancel query', 
-        parent: queryMenu,
+        parent: dropdownMenu,
         buttonAttrs: {
             'disabled': true
         }
@@ -484,7 +470,7 @@ const handleMapQuery = (map) => {
 
     const clearQueryBtn = createDropdownMenuListItem({
         label: 'Clear query features', 
-        parent: queryMenu,
+        parent: dropdownMenu,
         buttonAttrs: {
             'disabled': true
         }
@@ -506,8 +492,8 @@ const handleMapQuery = (map) => {
     }
 
     const disableQueryBtns = () => {
-        if (queryMenu.classList.contains('show')) {
-            queryToggle.click()
+        if (dropdownMenu.classList.contains('show')) {
+            dropdownToggle.click()
         }
 
         Array(queryOSMBtn, layersQueryBtn, layersOSMQueryBtn).forEach(btn => {
