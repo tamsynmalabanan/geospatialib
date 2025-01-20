@@ -583,22 +583,25 @@ const createGeoJSONLayer = (data) => {
 
                 let geojson
 
-                const cachedGeoJSON = geojsonLayer.cachedGeoJSON || getCachedGeoJSON(cacheKey, sessionStorage)
-                if (cachedGeoJSON) {
-                    const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
-                    const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                    if (equalBounds || withinBounds) {
-                        let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                        const crs = getGeoJSONCRS(cachedGeoJSON)
-                        if (crs && crs !== 4326) {
-                            filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
+                if (cachedGeoJSONString) {
+                    const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                    if (cachedGeoJSON) {
+                        const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                        const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                        if (equalBounds || withinBounds) {
+                            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                            const crs = getGeoJSONCRS(cachedGeoJSON)
+                            if (crs && crs !== 4326) {
+                                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                            }
+                            
+                            geojson = Object.assign({}, cachedGeoJSON)
+                            geojson.features = geojson.features.filter(feature => {
+                                const featureBounds = turf.bboxPolygon(turf.bbox(feature));
+                                return turf.booleanIntersects(filterBounds, featureBounds)
+                            })
                         }
-                        
-                        geojson = Object.assign({}, cachedGeoJSON)
-                        geojson.features = geojson.features.filter(feature => {
-                            const featureBounds = turf.bboxPolygon(turf.bbox(feature));
-                            return turf.booleanIntersects(filterBounds, featureBounds)
-                        })
                     }
                 }
 
@@ -616,7 +619,9 @@ const createGeoJSONLayer = (data) => {
                         }
                     } else {
                         geojson.mapBounds = mapBounds
-                        geojson.cachedGeoJSON = Object.assign({}, geojson)
+                        if (geojson.features.length > 0) {
+                            geojson.cachedGeoJSON = JSON.stringify(geojson)
+                        }
                     }
                 }
 
@@ -647,10 +652,10 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                if (geojson.cachedGeoJSON && geojson.cachedGeoJSON.features.length > 0) {
+                if (geojson.cachedGeoJSON) {
                     geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.cachedGeoJSON))
+                        cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }

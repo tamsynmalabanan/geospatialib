@@ -89,14 +89,12 @@ const handleFeatureCRS = async (feature, crs) => {
     if (crs && crs !== 4326) {
         feature = transformFeatureGeometry(feature, crs, 4326)
     }
-    
     return feature
 }
 
 const transformFeatureGeometry = async (feature, source, target) => {
     const coords = feature.geometry.coordinates
     feature.geometry.coordinates = await transformCoordinates(coords, source, target)
-    
     return feature
 }
 
@@ -170,15 +168,4 @@ const downloadGeoJSON = (geojson, file_name) => {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-}
-
-const getCachedGeoJSON = (key, storage) => {
-    const cachedGeoJSONString = storage.getItem(key)
-    if (cachedGeoJSONString) {
-        try {
-            return JSON.parse(cachedGeoJSONString)
-        } catch (error) {
-            console.log(error)
-        }
-    }
 }
