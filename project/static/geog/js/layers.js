@@ -622,7 +622,7 @@ const createGeoJSONLayer = (data) => {
                     if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
                         if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
-                            const feature = turf.polygonToLine(Object.assign({}, boundsGeoJSON))
+                            const feature = turf.polygonToLine(boundsGeoJSON)
                             console.log(
                                 'boundsGeoJSON', boundsGeoJSON,
                                 'feature', feature,
@@ -668,8 +668,11 @@ const createGeoJSONLayer = (data) => {
                         feature.bindTooltip(geojson.tooltip, {sticky:true})
                     } 
     
-                    const type = feature.feature.geometry.type.replace('Multi', '')
-                    
+                    let type = feature.feature.geometry.type.replace('Multi', '')
+                    if (geojson.prefix === 'Bounding') {
+                        type = 'box'
+                    }
+
                     let label = type
                     if (type !== 'Point') {
                         label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
