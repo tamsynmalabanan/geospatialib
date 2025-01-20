@@ -9,7 +9,7 @@ class MetaDatasetAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
     )
-    search_fields = ['title', 'tags__tag', 'url__tag']
+    search_fields = ['title', 'tags__tag', 'name']
     list_filter = ['format']
     list_per_page = 15
 
