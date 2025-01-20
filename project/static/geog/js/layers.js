@@ -626,6 +626,8 @@ const createGeoJSONLayer = (data) => {
                             }
                         })
                     }
+
+                    return
                 })()
 
                 console.log(geojson)
