@@ -590,7 +590,7 @@ const createGeoJSONLayer = (data) => {
                     if (equalBounds || withinBounds) {
                         geojson = Object.assign({}, cachedGeoJSON)
 
-                        const filterBounds = handleFeatureCRS(
+                        const filterBounds = await handleFeatureCRS(
                             Object.assign({}, mapBounds), getGeoJSONCRS(cachedGeoJSON)
                         )
                         console.log(filterBounds)
