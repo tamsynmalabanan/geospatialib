@@ -234,24 +234,23 @@ const toggleLayer = async (event, options={}) => {
         if (toggleAll) {
             let layersCount = Array.from(datasetList.querySelectorAll('input.form-check-input'))
             .map(checkbox => {
+                let count = 0
                 if (checkbox.checked) {
-                    if (checkbox.classList.contains('dataset-group')) {
-                        if (checkbox.classList.contains('dataset-group-collapsed') && options.layer) {
-                            console.log(checkbox, options.layer)
-                            try {
-                                return options.layer.getLayers().length
-                            } catch (error) {
-                                return 0
-                            }
-                        } else {
-                            return 0
+                    if (
+                        checkbox.classList.contains('dataset-group') && 
+                        checkbox.classList.contains('dataset-group-collapsed') && 
+                        checkbox.hasAttribute('data-leaflet-id')
+                    ) {
+                        const leafletId = checkbox.getAttribute('data-leaflet-id')
+                        const layer = layerGroup.getLayer(leafletId)
+                        if (layer && layer.getLayers) {
+                            count = layer.getLayers().length
                         }
                     } else {
-                        return 1
+                        count = 1
                     }
-                } else {
-                    return 0
-                }                
+                }
+                return count              
             })
             .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 
