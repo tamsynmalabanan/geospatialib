@@ -598,7 +598,6 @@ const createGeoJSONLayer = (data) => {
                             
                             geojson = cachedGeoJSON
                             geojson.features = geojson.features.filter(feature => {
-                                // const featureBounds = turf.bboxPolygon(turf.bbox(feature));
                                 return turf.booleanIntersects(filterBounds, feature)
                             })
                         }
@@ -607,6 +606,7 @@ const createGeoJSONLayer = (data) => {
 
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
+                    console.log(geojson)
                     if (!geojson) {
                         geojson = {
                             type: 'FeatureCollection',
