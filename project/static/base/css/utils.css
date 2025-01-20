@@ -69,7 +69,7 @@ img {
 }
 
 .focus-underline-primary {
-    border-bottom: transparent;
+    border-bottom: transparent !important;
 }
 
 .focus-underline-primary:active,
