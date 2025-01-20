@@ -622,6 +622,7 @@ const createGeoJSONLayer = (data) => {
     
                             
                             if (cachedGeoJSON.features.length > 0) {
+                                console.log(cachedGeoJSON)
                                 return cachedGeoJSON
                             }
                         })
