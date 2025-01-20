@@ -596,9 +596,8 @@ const createGeoJSONLayer = (data) => {
                         
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = geojson.features.filter(feature => {
-                            const featureCopy = Object.assign({}, feature)
-                            const featureBounds = turf.bboxPolygon(turf.bbox(featureCopy));
-                            return turf.booleanIntersects(filterBounds, featureBounds)
+                            const featureBounds = turf.bboxPolygon(turf.bbox(feature));
+                            return turf.booleanIntersects(mapBounds, featureBounds)
                         })
                     }
                 }

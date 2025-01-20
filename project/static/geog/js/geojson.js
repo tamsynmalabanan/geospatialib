@@ -87,8 +87,7 @@ const getGeoJSONCRS = (geojson) => {
 
 const handleFeatureCRS = async (feature, crs) => {
     if (crs && crs !== 4326) {
-        const coords = feature.geometry.coordinates
-        feature.geometry.coordinates = await transformCoordinates(coords, crs, 4326)
+        feature = transformFeatureGeometry(feature, crs, 4326)
     }
     
     return feature
@@ -97,6 +96,7 @@ const handleFeatureCRS = async (feature, crs) => {
 const transformFeatureGeometry = async (feature, source, target) => {
     const coords = feature.geometry.coordinates
     feature.geometry.coordinates = await transformCoordinates(coords, source, target)
+    
     return feature
 }
 
