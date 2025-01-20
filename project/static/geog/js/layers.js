@@ -646,6 +646,7 @@ const createGeoJSONLayer = (data) => {
                     }
                 }
 
+                console.log(geojson)
                 console.log(geojsonLayer)
     
                 if (geojsonLayer._openPopups.length > 0) {
