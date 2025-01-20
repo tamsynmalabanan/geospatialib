@@ -549,10 +549,13 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
                             filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                         }
                         
-                        geojson = cachedGeoJSON
-                        geojson.features = geojson.features.filter(feature => {
+                        cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                             return turf.booleanIntersects(filterBounds, feature)
                         })
+
+                        if (cachedGeoJSON.features.length > 0) {
+                            geojson = cachedGeoJSON
+                        }
                     }
                 }
             }
