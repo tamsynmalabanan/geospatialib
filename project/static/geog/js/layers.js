@@ -595,13 +595,15 @@ const createGeoJSONLayer = (data) => {
                                 filterBounds, crs, 4326
                             )
                         }
-                        
+
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = cachedGeoJSON.features.filter(feature => {
                             return turf.booleanIntersects(filterBounds, feature)
                         })
                     }
                 }
+
+                console.log(geojson)
 
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
@@ -619,6 +621,8 @@ const createGeoJSONLayer = (data) => {
                     }
                 }
 
+                console.log(geojson)
+
                 if (!geojson.processed) {
                     geojson.processed = true
                     
@@ -627,10 +631,6 @@ const createGeoJSONLayer = (data) => {
                         if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
                             const feature = turf.polygonToLine(boundsGeoJSON)
-                            console.log(
-                                'boundsGeoJSON', boundsGeoJSON,
-                                'feature', feature,
-                            )
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
                             geojson.prefix = 'Bounding'
@@ -647,6 +647,8 @@ const createGeoJSONLayer = (data) => {
     
                     await handleGeoJSON(geojson)
                 }    
+
+                console.log(geojson)
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
