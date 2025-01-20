@@ -607,6 +607,10 @@ const createGeoJSONLayer = (data) => {
                 if (cachedGeoJSONs.length > 0) {
                     cachedGeoJSONs.forEach(async cachedGeoJSON => {
                         if (!geojson) {
+                            if (!geojsonLayer.cachedGeoJSON) {
+                                geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
+                            }
+
                             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                             const crs = getGeoJSONCRS(cachedGeoJSON)
                             if (crs && crs !== 4326) {
@@ -619,9 +623,6 @@ const createGeoJSONLayer = (data) => {
     
                             if (cachedGeoJSON.features.length > 0) {
                                 geojson = cachedGeoJSON
-                                if (!geojsonLayer.cachedGeoJSON) {
-                                    geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
-                                }
                             }
                         }
                     })
