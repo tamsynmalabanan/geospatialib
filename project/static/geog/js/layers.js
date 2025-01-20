@@ -575,7 +575,7 @@ const createGeoJSONLayer = (data) => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
 
-                const geojson = fetchGeoJSONData(event, geojsonLayer, {
+                const geojson = await fetchGeoJSONData(event, geojsonLayer, {
                     cacheKey: cacheKey,
                 })
 
