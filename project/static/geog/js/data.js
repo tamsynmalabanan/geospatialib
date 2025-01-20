@@ -542,7 +542,6 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
                 if (cachedGeoJSON) {
                     const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                     const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                    console.log(equalBounds, withinBounds)
                     if (equalBounds || withinBounds) {
                         let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                         const crs = getGeoJSONCRS(cachedGeoJSON)
