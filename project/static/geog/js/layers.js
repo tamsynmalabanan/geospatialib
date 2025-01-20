@@ -586,7 +586,7 @@ const createGeoJSONLayer = (data) => {
 
                 let geojson
 
-                const cachedGeoJSONStrings = Array(
+                const cachedGeoJSONs = Array(
                     sessionStorage.getItem(cacheKey)
                 ).concat(
                     getLayersViaCacheKey(map, cacheKey)
@@ -603,15 +603,10 @@ const createGeoJSONLayer = (data) => {
                         }
                     }
                 }).filter(cachedGeoJSON => cachedGeoJSON)
-                console.log(cachedGeoJSONStrings)
-
-                const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
-                if (cachedGeoJSONString) {
-                    const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-                    if (cachedGeoJSON) {
-                        const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
-                        const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                        if (equalBounds || withinBounds) {
+                
+                if (cachedGeoJSONs.length > 0) {
+                    cachedGeoJSONs.forEach(async cachedGeoJSON => {
+                        if (!geojson) {
                             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                             const crs = getGeoJSONCRS(cachedGeoJSON)
                             if (crs && crs !== 4326) {
@@ -626,8 +621,8 @@ const createGeoJSONLayer = (data) => {
                                 geojson = cachedGeoJSON
                             }
                         }
-                    }
-                }    
+                    })
+                }
 
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
@@ -693,7 +688,7 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                if (geojson.cachedGeoJSON) {
+                if (geojson.cachedGeoJSON || !geojsonLayer.cachedGeoJSON) {
                     geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                 }
     
