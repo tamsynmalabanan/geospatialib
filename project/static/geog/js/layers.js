@@ -585,7 +585,7 @@ const createGeoJSONLayer = (data) => {
 
                 let geojson
 
-                const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
+                const cachedGeoJSONString = layer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSONString) {
                     const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                     if (cachedGeoJSON) {
@@ -598,13 +598,16 @@ const createGeoJSONLayer = (data) => {
                                 filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                             }
                             
-                            geojson = cachedGeoJSON
-                            geojson.features = geojson.features.filter(feature => {
+                            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                                 return turf.booleanIntersects(filterBounds, feature)
                             })
+    
+                            if (cachedGeoJSON.features.length > 0) {
+                                geojson = cachedGeoJSON
+                            }
                         }
                     }
-                }
+                }    
 
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
