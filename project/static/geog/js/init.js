@@ -156,7 +156,7 @@ const constructInfoPanel = (map, name, options={}) => {
 
     const collapseToggle = document.createElement('button')
     collapseToggle.setAttribute('title', 'Collapse')
-    collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand text-bg-${getPreferredTheme()}`
+    collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand show-on-hover text-bg-${getPreferredTheme()}`
     collapseToggle.setAttribute('title', `Expand/collapse ${name.toLowerCase()}`)
     header.appendChild(collapseToggle)
     
@@ -630,7 +630,7 @@ const handleMapQuery = (map) => {
 
         createInlineBtn({
             container: buttonContainer,
-            buttonClass: `bi bi-chevron-expand text-bg-${getPreferredTheme()}`,
+            buttonClass: `bi bi-chevron-expand show-on-hover text-bg-${getPreferredTheme()}`,
             buttonCallback: () => toggleAllSubCollapse(queryResults),
         })
         
