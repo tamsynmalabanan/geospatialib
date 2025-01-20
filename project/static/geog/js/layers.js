@@ -633,7 +633,14 @@ const createGeoJSONLayer = (data) => {
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
                             geojson.prefix = 'Bounding'
-                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} features`
+
+                            let totalMatched = 'features'
+                            const numberMatched = geojson.numberMatched
+                            if (numberMatched && numberMatched !== featureCount) {
+                                totalMatched = `of ${formatNumberWithCommas(numberMatched)} features`
+                            }
+
+                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
                         } else {
                             try {
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
