@@ -595,8 +595,6 @@ const createGeoJSONLayer = (data) => {
                                 filterBounds, 4326, crs
                             )
                         }
-                        console.log(filterBounds)
-
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = cachedGeoJSON.features.filter(feature => {
                             return turf.booleanIntersects(filterBounds, feature)
@@ -661,6 +659,9 @@ const createGeoJSONLayer = (data) => {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
+
+                console.log(geojson)
+                console.log(geojsonLayer)
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
