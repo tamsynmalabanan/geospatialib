@@ -236,15 +236,13 @@ const toggleLayer = async (event, options={}) => {
             .map(checkbox => {
                 let count = 0
                 if (checkbox.checked) {
-                    if (
-                        checkbox.classList.contains('dataset-group') && 
-                        checkbox.classList.contains('dataset-group-collapsed') && 
-                        checkbox.hasAttribute('data-leaflet-id')
-                    ) {
-                        const leafletId = checkbox.getAttribute('data-leaflet-id')
-                        const layer = layerGroup.getLayer(leafletId)
-                        if (layer && layer.getLayers) {
-                            count = layer.getLayers().length
+                    if (checkbox.classList.contains('dataset-group')) {
+                        if (checkbox.classList.contains('dataset-group-collapsed') && checkbox.hasAttribute('data-leaflet-id')) {
+                            const leafletId = checkbox.getAttribute('data-leaflet-id')
+                            const layer = layerGroup.getLayer(leafletId)
+                            if (layer && layer.getLayers) {
+                                count = layer.getLayers().length
+                            }
                         }
                     } else {
                         count = 1
