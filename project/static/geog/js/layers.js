@@ -637,7 +637,7 @@ const createGeoJSONLayer = (data) => {
 
                 if (geojson.raw && geojson.raw.features.length > 0) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojsonRaw))
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.raw))
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
