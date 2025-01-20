@@ -610,17 +610,14 @@ const createGeoJSONLayer = (data) => {
                             if (!geojsonLayer.cachedGeoJSON) {
                                 geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
                             }
-
-                            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                            
                             const crs = getGeoJSONCRS(cachedGeoJSON)
-                            if (crs && crs !== 4326) {
-                                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-                            }
-
                             cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                                const featureBounds = turf.bboxPolygon(turf.bbox(feature))
-                                console.log(filterBounds.geometry.coordinates, featureBounds.geometry.coordinates)
-                                return turf.booleanIntersects(filterBounds, featureBounds)
+                                const featureBounds = transformFeatureGeometry(
+                                    turf.bboxPolygon(turf.bbox(feature)),
+                                    crs, 4326
+                                )
+                                return turf.booleanIntersects(mapBounds, featureBounds)
                             })
     
                             if (cachedGeoJSON.features.length > 0) {
