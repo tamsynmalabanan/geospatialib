@@ -72,6 +72,12 @@ const handleMapControls = (map) => {
     })
 }
 
+const handleMapContextMenu = (map) => {
+    map.on('click', (event) => {
+        console.log(event)
+    })
+}
+
 const handleMapBasemap = (map) => {
     L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -858,6 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleMapInfoPanels(map)
         handleMapControls(map) // needs to be after handleMapInfoPanels
         handleMapObservers(map)
+        handleMapContextMenu(map)
 
         map.initComplete = true
         map.fire('mapInitComplete')
