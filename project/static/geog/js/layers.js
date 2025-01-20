@@ -619,7 +619,7 @@ const createGeoJSONLayer = (data) => {
                                 filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                             }
                             
-                            console.log(filterBounds)
+                            console.log(cachedGeoJSON)
 
                             cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                                 const featureBounds = turf.bboxPolygon(turf.bbox(feature))
