@@ -172,7 +172,7 @@ const constructInfoPanel = (map, name, options={}) => {
     // collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
 
-    const panelMenuContainer = createElement('div')
+    const panelMenuContainer = document.createElement('div')
     panelMenuContainer.className = 'dropdown ms-auto info-panel-menu'
     header.appendChild(panelMenuContainer)
 
