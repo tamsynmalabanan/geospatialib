@@ -584,33 +584,31 @@ const createGeoJSONLayer = (data) => {
 
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
-                let geojson
-
-                const cachedGeoJSONs = Array(
-                    sessionStorage.getItem(cacheKey)
-                ).concat(
-                    getLayersViaCacheKey(map, cacheKey)
-                    .map(layer => layer.cachedGeoJSON)
-                ).map(cachedGeoJSONString => {
-                    if (cachedGeoJSONString) {
-                        const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-                        if (cachedGeoJSON) {
-                            const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
-                            const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                            if (equalBounds || withinBounds) {
-                                return cachedGeoJSON
-                            }    
+                let geojson = await (async () => {
+                    const cachedGeoJSONs = Array(
+                        sessionStorage.getItem(cacheKey)
+                    ).concat(
+                        getLayersViaCacheKey(map, cacheKey)
+                        .map(layer => layer.cachedGeoJSON)
+                    ).map(cachedGeoJSONString => {
+                        if (cachedGeoJSONString) {
+                            const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                            if (cachedGeoJSON) {
+                                const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                                const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                                if (equalBounds || withinBounds) {
+                                    return cachedGeoJSON
+                                }    
+                            }
                         }
-                    }
-                }).filter(cachedGeoJSON => cachedGeoJSON)
-                
-                if (cachedGeoJSONs.length > 0) {
-                    cachedGeoJSONs.forEach(async cachedGeoJSON => {
-                        if (!geojson) {
+                    }).filter(cachedGeoJSON => cachedGeoJSON)
+                    
+                    if (cachedGeoJSONs.length > 0) {
+                        return cachedGeoJSONs.forEach(async cachedGeoJSON => {
                             if (!geojsonLayer.cachedGeoJSON) {
                                 geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
                             }
-
+    
                             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                             const crs = getGeoJSONCRS(cachedGeoJSON)
                             if (crs && crs !== 4326) {
@@ -621,15 +619,15 @@ const createGeoJSONLayer = (data) => {
                                 const featureBounds = turf.bboxPolygon(turf.bbox(feature))
                                 return turf.booleanIntersects(filterBounds, featureBounds)
                             })
-
+    
                             
                             if (cachedGeoJSON.features.length > 0) {
-                                geojson = cachedGeoJSON
-                                console.log(geojson)
+                                return cachedGeoJSON
                             }
-                        }
-                    })
-                }
+                        })
+                    }
+                })()
+
 
                 console.log(geojson)
 
