@@ -597,16 +597,16 @@ const createGeoJSONLayer = (data) => {
                 }
 
                 if (!geojson) {
-                    geojson = await fetchLibraryData(event, geojsonLayer) || {
-                        type: 'FeatureCollection',
-                        features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
-                        tooltip: defaultTooltip,
-                        prefix: 'Bounding',
-                        suffix: 'for all features',
-                    }
-
-                    geojson.mapBounds = mapBounds
-                    if (!geojson.prefix === 'Bounding') {
+                    geojson = await fetchLibraryData(event, geojsonLayer)
+                    if (!geojson) {
+                        geojson = {
+                            type: 'FeatureCollection',
+                            features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
+                            tooltip: defaultTooltip,
+                            prefix: 'Bounding',
+                            suffix: 'for all features',
+                        }
+                    } else {
                         geojson.raw = Object.assign({}, geojson)
                     }
                 }
