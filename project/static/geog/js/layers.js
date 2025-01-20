@@ -607,7 +607,7 @@ const createGeoJSONLayer = (data) => {
                             suffix: 'for all features',
                         }
                     } else {
-                        geojson.raw = Object.assign({}, geojson)
+                        geojsonLayer.raw = Object.assign({}, geojson)
                     }
                 }
 
@@ -635,9 +635,9 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }    
 
-                if (geojson.raw && geojson.raw.features.length > 0) {
+                if (geojsonLayer.raw && geojsonLayer.raw.features.length > 0) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.raw))
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojsonLayer.raw))
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
