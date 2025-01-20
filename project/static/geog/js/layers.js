@@ -595,6 +595,7 @@ const createGeoJSONLayer = (data) => {
                                 filterBounds, crs, 4326
                             )
                         }
+                        console.log(filterBounds)
 
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = cachedGeoJSON.features.filter(feature => {
