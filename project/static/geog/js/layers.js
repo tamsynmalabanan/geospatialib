@@ -619,6 +619,9 @@ const createGeoJSONLayer = (data) => {
     
                             if (cachedGeoJSON.features.length > 0) {
                                 geojson = cachedGeoJSON
+                                if (!geojsonLayer.cachedGeoJSON) {
+                                    geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
+                                }
                             }
                         }
                     })
@@ -679,6 +682,7 @@ const createGeoJSONLayer = (data) => {
                 }
     
                 if (geojson.cachedGeoJSON) {
+                    geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
                     } else {
@@ -688,9 +692,6 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                if (geojson.cachedGeoJSON || !geojsonLayer.cachedGeoJSON) {
-                    geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
-                }
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
