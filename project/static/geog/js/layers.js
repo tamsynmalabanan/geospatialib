@@ -665,7 +665,7 @@ const createGeoJSONLayer = (data) => {
                 //     }
                 // }
 
-
+                console.log(geojson)
 
 
                 geojsonLayer.clearLayers()
