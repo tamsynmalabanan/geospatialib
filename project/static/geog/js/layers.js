@@ -621,7 +621,7 @@ const createGeoJSONLayer = (data) => {
                     const featureCount = geojson.features.length
                     if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
                         if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
-                            console.log(geojson, L.geoJSON(geojson))
+                            console.log(getGeoJSONCRS(geojson), L.geoJSON(geojson), L.geoJSON(geojson).getBounds())
                             const feature = turf.polygonToLine(L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON())
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
