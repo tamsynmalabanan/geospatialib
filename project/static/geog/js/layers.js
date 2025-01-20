@@ -606,7 +606,6 @@ const createGeoJSONLayer = (data) => {
 
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
-                    console.log(geojson)
                     if (!geojson) {
                         geojson = {
                             type: 'FeatureCollection',
@@ -648,15 +647,22 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }
 
-                geojsonLayer.clearLayers()
-                geojsonLayer.addData(geojson)
                 if (geojson.cachedGeoJSON) {
-                    geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
+                }
+
+                console.log(geojson)
+
+
+
+                geojsonLayer.clearLayers()
+                geojsonLayer.addData(geojson)
+                if (geojson.cachedGeoJSON) {
+                    geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                 }
     
                 if (geojsonLayer._openPopups.length > 0) {
