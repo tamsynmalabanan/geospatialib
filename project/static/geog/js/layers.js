@@ -610,6 +610,8 @@ const createGeoJSONLayer = (data) => {
                     geojsonRaw = Object.assign({}, geojson)
                 }
 
+                console.log(geojson)
+
                 if (!geojson.processed) {
                     geojson.processed = true
                     
