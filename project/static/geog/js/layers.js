@@ -585,6 +585,7 @@ const createGeoJSONLayer = (data) => {
 
                 const cachedGeoJSON = geojsonLayer.cachedGeoJSON || getCachedGeoJSON(cacheKey, sessionStorage)
                 if (cachedGeoJSON) {
+                    console.log(cachedGeoJSON, mapBounds, cachedGeoJSON.mapBounds)
                     const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                     const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                     if (equalBounds || withinBounds) {
@@ -645,9 +646,6 @@ const createGeoJSONLayer = (data) => {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
-
-                console.log(geojson)
-                console.log(geojsonLayer)
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
