@@ -607,7 +607,7 @@ const createGeoJSONLayer = (data) => {
                             suffix: 'for all features',
                         }
                     } else {
-                        geojsonLayer.rawGeoJSON = Object.assign({}, geojson)
+                        geojson.raw = Object.assign({}, geojson)
                     }
                     geojson.mapBounds = mapBounds
                 }
@@ -636,16 +636,17 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }    
 
-                if (geojsonLayer.rawGeoJSON && geojsonLayer.rawGeoJSON.features.length > 0) {
+                geojsonLayer.clearLayers()
+                geojsonLayer.addData(geojson)
+                if (geojson.raw && geojson.raw.features.length > 0) {
+                    geojsonLayer.geojsonRaw = geojson.raw
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojsonLayer.rawGeoJSON))
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.raw))
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
-
-                geojsonLayer.clearLayers()
-                geojsonLayer.addData(geojson)
+                
                 console.log(geojsonLayer)
     
                 if (geojsonLayer._openPopups.length > 0) {
