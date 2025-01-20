@@ -596,7 +596,7 @@ const createGeoJSONLayer = (data) => {
                         const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                         return cachedGeoJSON
                     }
-                })
+                }).filter(cachedGeoJSON => cachedGeoJSON)
                 console.log(cachedGeoJSONStrings)
 
                 const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
