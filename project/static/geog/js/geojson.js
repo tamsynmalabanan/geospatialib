@@ -169,3 +169,23 @@ const downloadGeoJSON = (geojson, file_name) => {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 }
+
+const getCachedGeoJSONMap = new Map()
+const getCachedGeoJSON = async (cacheKey, options={}) => {
+    if (getCachedGeoJSONMap.has(cacheKey)) {
+        return await getCachedGeoJSONMap.get(cacheKey)
+    }
+
+    const geojson = (async () => {
+        try {
+            
+        } catch {
+
+        } finally {
+            getCachedGeoJSONMap.delete(cacheKey)
+        }
+    })()
+
+    getCachedGeoJSONMap.set(cacheKey, geojson)
+    return geojson
+}
