@@ -558,7 +558,9 @@ const createGeoJSONLayer = (data) => {
     geojsonLayer.data = data
     geojsonLayer.layerLegendStyle = true
     geojsonLayer.popupHeader = layerTitle
-        
+    
+    const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
+    
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
         geojsonLayer._openPopups.push(event.popup)
@@ -575,8 +577,8 @@ const createGeoJSONLayer = (data) => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
 
-                // const geojson = await fetchGeoJSONData(event, geojsonLayer, {
-                //     cacheKey: cacheKey,
+                // const geojson = fetchGeoJSONData(event, geojsonLayer, {
+                //     layer: geojsonLayer,
                 // })
 
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
@@ -664,6 +666,9 @@ const createGeoJSONLayer = (data) => {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
+
+
+
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
