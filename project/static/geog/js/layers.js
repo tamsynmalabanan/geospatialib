@@ -558,9 +558,7 @@ const createGeoJSONLayer = (data) => {
     geojsonLayer.data = data
     geojsonLayer.layerLegendStyle = true
     geojsonLayer.popupHeader = layerTitle
-    
-    const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
-    
+        
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
         geojsonLayer._openPopups.push(event.popup)
@@ -576,93 +574,97 @@ const createGeoJSONLayer = (data) => {
         const fetchData = async () => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
-    
-                const mapScale = getMeterScale(map)
-                const mapZoom = map.getZoom()
-                const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
-                let geojson
+                const geojson = fetchGeoJSONData(event, geojsonLayer, {
+                    cacheKey: cacheKey,
+                })
 
-                const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
-                if (cachedGeoJSONString) {
-                    const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-                    if (cachedGeoJSON) {
-                        const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
-                        const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
-                        if (equalBounds || withinBounds) {
-                            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                            const crs = getGeoJSONCRS(cachedGeoJSON)
-                            if (crs && crs !== 4326) {
-                                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-                            }
+                // const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
+
+                // let geojson
+
+                // const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
+                // if (cachedGeoJSONString) {
+                //     const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                //     if (cachedGeoJSON) {
+                //         const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
+                //         const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
+                //         if (equalBounds || withinBounds) {
+                //             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                //             const crs = getGeoJSONCRS(cachedGeoJSON)
+                //             if (crs && crs !== 4326) {
+                //                 filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                //             }
                             
-                            geojson = cachedGeoJSON
-                            geojson.features = geojson.features.filter(feature => {
-                                return turf.booleanIntersects(filterBounds, feature)
-                            })
-                        }
-                    }
-                }
+                //             geojson = cachedGeoJSON
+                //             geojson.features = geojson.features.filter(feature => {
+                //                 return turf.booleanIntersects(filterBounds, feature)
+                //             })
+                //         }
+                //     }
+                // }
 
-                if (!geojson) {
-                    geojson = await fetchLibraryData(event, geojsonLayer)
-                    if (!geojson) {
-                        geojson = {
-                            type: 'FeatureCollection',
-                            features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
-                            tooltip: defaultTooltip,
-                            prefix: 'Bounding',
-                            suffix: 'for all features',
-                        }
-                    } else {
-                        geojson.mapBounds = mapBounds
-                        if (geojson.features.length > 0) {
-                            geojson.cachedGeoJSON = JSON.stringify(geojson)
-                        }
-                    }
-                }
+                // if (!geojson) {
+                //     geojson = await fetchLibraryData(event, geojsonLayer)
+                //     if (!geojson) {
+                //         geojson = {
+                //             type: 'FeatureCollection',
+                //             features: [turf.polygonToLine(turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')))],
+                //             tooltip: defaultTooltip,
+                //             prefix: 'Bounding',
+                //             suffix: 'for all features',
+                //         }
+                //     } else {
+                //         geojson.mapBounds = mapBounds
+                //         if (geojson.features.length > 0) {
+                //             geojson.cachedGeoJSON = JSON.stringify(geojson)
+                //         }
+                //     }
+                // }
 
-                if (!geojson.processed) {
-                    geojson.processed = true
+                // if (!geojson.processed) {
+                //     geojson.processed = true
+
+                //     const mapScale = getMeterScale(map)
+                //     const mapZoom = map.getZoom()    
+                //     const featureCount = geojson.features.length
                     
-                    const featureCount = geojson.features.length
-                    if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                        if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
-                            const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
-                            const feature = turf.polygonToLine(boundsGeoJSON)
-                            geojson.features = [feature]
-                            geojson.tooltip = defaultTooltip
-                            geojson.prefix = 'Bounding'
+                //     if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
+                //         if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                //             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
+                //             const feature = turf.polygonToLine(boundsGeoJSON)
+                //             geojson.features = [feature]
+                //             geojson.tooltip = defaultTooltip
+                //             geojson.prefix = 'Bounding'
 
-                            let totalMatched = 'features'
-                            const numberMatched = geojson.numberMatched
-                            if (numberMatched && numberMatched !== featureCount) {
-                                totalMatched = `of ${formatNumberWithCommas(numberMatched)} matched features`
-                            }
+                //             let totalMatched = 'features'
+                //             const numberMatched = geojson.numberMatched
+                //             if (numberMatched && numberMatched !== featureCount) {
+                //                 totalMatched = `of ${formatNumberWithCommas(numberMatched)} matched features`
+                //             }
 
-                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-                        } else {
-                            try {
-                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                                geojson.prefix = 'Simplified'
-                            } catch {
+                //             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
+                //         } else {
+                //             try {
+                //                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                //                 geojson.prefix = 'Simplified'
+                //             } catch {
                             
-                            }
-                        }
-                    }                
+                //             }
+                //         }
+                //     }                
     
-                    await handleGeoJSON(geojson)
-                }
+                //     await handleGeoJSON(geojson)
+                // }
 
-                if (geojson.cachedGeoJSON) {
-                    if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
-                    } else {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
-                    }
-                }
+                // if (geojson.cachedGeoJSON) {
+                //     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
+                //         cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
+                //     } else {
+                //         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
+                //     }
+                // }
 
-                console.log(geojson)
 
 
 
