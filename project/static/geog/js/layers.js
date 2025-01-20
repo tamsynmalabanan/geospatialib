@@ -621,6 +621,8 @@ const createGeoJSONLayer = (data) => {
                                 const featureBounds = turf.bboxPolygon(turf.bbox(feature))
                                 return turf.booleanIntersects(filterBounds, featureBounds)
                             })
+
+                            console.log(cachedGeoJSON)
     
                             if (cachedGeoJSON.features.length > 0) {
                                 geojson = cachedGeoJSON
