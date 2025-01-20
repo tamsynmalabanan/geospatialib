@@ -624,11 +624,8 @@ const createGeoJSONLayer = (data) => {
 
                             
                             if (cachedGeoJSON.features.length > 0) {
-                                console.log(cachedGeoJSON.features)
                                 geojson = cachedGeoJSON
-                            } else {
-                                console.log(filterBounds)
-                                console.log(cachedGeoJSON)
+                                console.log(geojson)
                             }
                         }
                     })
