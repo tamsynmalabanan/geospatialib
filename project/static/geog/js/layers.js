@@ -602,8 +602,6 @@ const createGeoJSONLayer = (data) => {
                     }
                 }
 
-                console.log(geojson)
-
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
                     if (!geojson) {
@@ -619,8 +617,6 @@ const createGeoJSONLayer = (data) => {
                         geojson.cachedGeoJSON = Object.assign({}, geojson)
                     }
                 }
-
-                console.log(geojson)
 
                 if (!geojson.processed) {
                     geojson.processed = true
@@ -646,8 +642,6 @@ const createGeoJSONLayer = (data) => {
     
                     await handleGeoJSON(geojson)
                 }    
-
-                console.log(geojson)
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
