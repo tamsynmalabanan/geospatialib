@@ -341,7 +341,6 @@ const handleMapLegend = (map) => {
                                 icon.appendChild(box)
                                 box.style.border = `${weight}px solid hsla(${h}, ${s}%, ${l}%, ${opacity})`
     
-                                console.log(style.type)
                                 if (Array('LineString', 'box').includes(style.type)) {
                                     icon.style.height = '0px'
                                     box.className = 'h-0 w-100'
