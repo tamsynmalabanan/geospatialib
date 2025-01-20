@@ -612,8 +612,8 @@ const createGeoJSONLayer = (data) => {
                             }
                             
                             const crs = getGeoJSONCRS(cachedGeoJSON)
-                            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                                const featureBounds = transformFeatureGeometry(
+                            cachedGeoJSON.features = cachedGeoJSON.features.filter(async feature => {
+                                const featureBounds = await transformFeatureGeometry(
                                     turf.bboxPolygon(turf.bbox(feature)),
                                     crs, 4326
                                 )
