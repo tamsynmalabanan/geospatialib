@@ -574,8 +574,6 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
                 }
             }
 
-            console.log(geojson)
-
             if (!geojson.processed) {
                 geojson.processed = true
 
@@ -619,6 +617,7 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
                 }
             }
 
+            return geojson
         } catch (error) {
             console.log(error)
         } finally {
