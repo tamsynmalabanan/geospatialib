@@ -582,7 +582,6 @@ const createGeoJSONLayer = (data) => {
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
                 let geojson
-                let geojsonRaw
 
                 const cachedGeoJSONString = sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSONString) {
@@ -607,10 +606,10 @@ const createGeoJSONLayer = (data) => {
                     }
 
                     geojson.mapBounds = mapBounds
-                    geojsonRaw = Object.assign({}, geojson)
+                    if (!geojson.prefix === 'Bounding') {
+                        geojson.raw = Object.assign({}, geojson)
+                    }
                 }
-
-                console.log(geojsonRaw)
 
                 if (!geojson.processed) {
                     geojson.processed = true
@@ -636,13 +635,15 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }    
 
-                if (geojsonRaw && geojsonRaw.features.length > 0) {
+                if (geojson.raw && geojson.raw.features.length > 0) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojsonRaw))
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
                 }
+
+                console.log(geojson)
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
