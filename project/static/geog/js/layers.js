@@ -627,7 +627,8 @@ const createGeoJSONLayer = (data) => {
                                 'geojson layer', L.geoJSON(geojson), 
                                 'bounds', L.geoJSON(geojson).getBounds(), 
                                 'rectangle layer', L.rectangle(L.geoJSON(geojson).getBounds()), 
-                                'geojson again', L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
+                                'geojson again', L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON(),
+                                'boundsGeoJSON', boundsGeoJSON,
                             )
                             const feature = turf.polygonToLine(boundsGeoJSON)
                             geojson.features = [feature]
