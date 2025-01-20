@@ -580,8 +580,6 @@ const createGeoJSONLayer = (data) => {
                 const geojson = await fetchGeoJSONData(event, geojsonLayer, {
                     cacheKey: cacheKey,
                 })
-                
-                console.log(geojson)
 
                 // const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
