@@ -451,6 +451,9 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
 
     if (layerCount > 0) {
         mainCheckbox.classList.add('dataset-group')
+        if (layerCount > 100 && layerCount <= 1000) {
+            mainCheckbox.classList.add('dataset-group-collapsed')
+        }
     }
 
     if (layerCount > 0 && layerCount <= 100) {
@@ -517,7 +520,6 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
         if (layerCount > 1000) {
             mainCheckbox.setAttribute('disabled',true)
         } else {
-            mainCheckbox.classList.add('dataset-group-collapsed')
             mainCheckbox.addEventListener('click', (event) => {
                 toggleLayer(event, {
                     map: map,
