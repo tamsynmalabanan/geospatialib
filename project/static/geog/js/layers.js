@@ -609,6 +609,7 @@ const createGeoJSONLayer = (data) => {
                     } else {
                         geojson.raw = Object.assign({}, geojson)
                     }
+                    geojson.mapBounds = mapBounds
                 }
 
                 if (!geojson.processed) {
@@ -645,7 +646,6 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                console.log(geojsonLayer.getData)
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
