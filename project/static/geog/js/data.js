@@ -447,7 +447,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         outputFormat: 'json',
     }
 
-    let crs = layer.data.layerCrs
+    let crs //= layer.data.layerCrs
     if (!crs) {
         crs = 'urn:ogc:def:crs:EPSG::4326'
     }
