@@ -162,14 +162,38 @@ const constructInfoPanel = (map, name, options={}) => {
     span.innerText = name
     header.appendChild(span)
 
-    const collapseToggle = document.createElement('button')
-    collapseToggle.setAttribute('title', 'Collapse')
-    collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand show-on-hover text-bg-${getPreferredTheme()}`
-    collapseToggle.setAttribute('title', `Expand/collapse ${name.toLowerCase()}`)
-    header.appendChild(collapseToggle)
-    
-    collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
-    
+
+
+    // const collapseToggle = document.createElement('button')
+    // collapseToggle.setAttribute('title', 'Collapse')
+    // collapseToggle.className = `border-0 bg-transparent px-0 bi bi-chevron-expand show-on-hover text-bg-${getPreferredTheme()}`
+    // collapseToggle.setAttribute('title', `Expand/collapse ${name.toLowerCase()}`)
+    // header.appendChild(collapseToggle)
+    // collapseToggle.addEventListener('click', () => toggleAllSubCollapse(collapse))
+
+
+    const panelMenuContainer = createElement('div')
+    panelMenuContainer.className = 'dropdown ms-auto info-panel-menu'
+    header.appendChild(panelMenuContainer)
+
+    const panelMenuToggle = createButton({
+        buttonClass: 'bi bi-list p-0 bg-transparent border-0',
+        buttonAttrs: {
+            'type': 'button',
+            'data-bs-toggle': 'dropdown',
+            'aria-expanded': 'false',
+            'title': `${name} options`
+        },
+        labelClass: 'text-nowrap',
+        parent: panelMenuContainer,
+    })
+
+    const panelMenu = document.createElement('div')
+    panelMenu.className = 'dropdown-menu fs-14'
+    panelMenuContainer.appendChild(panelMenu)
+
+
+
     const body = document.createElement('div')
     body.classList.add('accordion-body', 'd-flex', 'flex-column', 'overflow-auto', 'p-0')
     collapse.appendChild(body)
@@ -394,34 +418,33 @@ const handleMapQuery = (map) => {
     })
 
     const header = body.parentElement.querySelector('h6')
-    header.querySelector('button').remove()
+    // header.querySelector('button').remove()
 
     const footer = document.createElement('div')
     footer.className = 'border-top p-3 d-flex flex-wrap font-monospace text-muted'
     body.parentElement.appendChild(footer)
 
     
-    const queryDropdown = document.createElement('div')
-    queryDropdown.className = 'dropdown ms-auto'
-    header.appendChild(queryDropdown)
+    const queryDropdown = body.querySelector('.info-panel-menu')
+    // queryDropdown.className = 'dropdown ms-auto'
+    // header.appendChild(queryDropdown)
 
-    const queryToggle = createButton({
-        buttonClass: 'dropdown-toggle p-0 bg-transparent border-0',
-        buttonAttrs: {
-            'type': 'button',
-            'data-bs-toggle': 'dropdown',
-            'aria-expanded': 'false',
-            'title': 'Query options'
-        },
-        labelClass: 'text-nowrap',
-        parent: queryDropdown,
-    })
+    const queryToggle = queryDropdown.querySelector('button')
+    // createButton({
+    //     buttonClass: 'bi bi-list p-0 bg-transparent border-0',
+    //     buttonAttrs: {
+    //         'type': 'button',
+    //         'data-bs-toggle': 'dropdown',
+    //         'aria-expanded': 'false',
+    //         'title': 'Query options'
+    //     },
+    //     labelClass: 'text-nowrap',
+    //     parent: queryDropdown,
+    // })
 
-    queryToggle.appendChild(createSpanElement({className:'bi bi-question-circle-fill me-1'}))
-
-    const queryMenu = document.createElement('div')
-    queryMenu.className = 'dropdown-menu fs-14'
-    queryDropdown.appendChild(queryMenu)
+    const queryMenu = queryDropdown.querySelector('.dropdown-menu')
+    // queryMenu.className = 'dropdown-menu fs-14'
+    // queryDropdown.appendChild(queryMenu)
 
     const layersQueryBtn = createDropdownMenuListItem({
         label: 'Query layers', 
