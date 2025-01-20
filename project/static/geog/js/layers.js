@@ -607,7 +607,7 @@ const createGeoJSONLayer = (data) => {
                             suffix: 'for all features',
                         }
                     } else {
-                        geojsonLayer.rawGeoJSON = Object.assign({}, geojson)
+                        geojson.raw = Object.assign({}, geojson)
                     }
                 }
 
@@ -635,9 +635,9 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }    
 
-                if (geojsonLayer.rawGeoJSON && geojsonLayer.rawGeoJSON.features.length > 0) {
+                if (geojson.raw && geojson.raw.features.length > 0) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojsonLayer.rawGeoJSON))
+                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson.raw))
                     } else {
                         cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
                     }
@@ -645,7 +645,7 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                console.log(geojsonLayer)
+                console.log(geojsonLayer.getData)
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
