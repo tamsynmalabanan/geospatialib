@@ -592,7 +592,7 @@ const createGeoJSONLayer = (data) => {
                         const crs = getGeoJSONCRS(cachedGeoJSON)
                         if (crs && crs !== 4326) {
                             filterBounds = await transformGeoJSONFeatureGeometry(
-                                filterBounds, crs, 4326
+                                filterBounds, 4325, crs
                             )
                         }
                         console.log(filterBounds)
