@@ -549,6 +549,10 @@ const createWMSLayer = (data) => {
     return L.tileLayer.wms(baseUrl, options)
 }
 
+const getLayersViaCacheKey = (source, cacheKey) => {
+    return Object.values(source._layers).filter(layer => layer.cacheKey === cacheKey)
+}
+
 const createGeoJSONLayer = (data) => {
     const cacheKey = `${data.layerUrl}_${data.layerFormat}_${data.layerName}`
 
@@ -558,6 +562,7 @@ const createGeoJSONLayer = (data) => {
     geojsonLayer.data = data
     geojsonLayer.layerLegendStyle = true
     geojsonLayer.popupHeader = layerTitle
+    geojsonLayer.cacheKey = cacheKey
     
     const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
     
@@ -577,13 +582,15 @@ const createGeoJSONLayer = (data) => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
 
-                // const geojson = await fetchGeoJSONData(event, geojsonLayer, {
-                //     cacheKey: cacheKey,
-                // })
-
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
                 let geojson
+
+                const cachedGeoJSONStrings = Array(
+                    geojsonLayer.cachedGeoJSON, 
+                    sessionStorage.getItem(cacheKey)
+                ).concat(getLayersViaCacheKey(map, cacheKey).map(layer => layer.cachedGeoJSON))
+                console.log(cachedGeoJSONStrings)
 
                 const cachedGeoJSONString = geojsonLayer.cachedGeoJSON || sessionStorage.getItem(cacheKey)
                 if (cachedGeoJSONString) {
