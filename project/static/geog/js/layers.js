@@ -588,11 +588,11 @@ const createGeoJSONLayer = (data) => {
                     const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                     const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                     if (equalBounds || withinBounds) {
-                        let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                        const crs = getGeoJSONCRS(cachedGeoJSON)
-                        if (crs && crs !== 4326) {
-                            filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-                        }
+                        // let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                        // const crs = getGeoJSONCRS(cachedGeoJSON)
+                        // if (crs && crs !== 4326) {
+                        //     filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                        // }
                         
                         geojson = Object.assign({}, cachedGeoJSON)
                         geojson.features = geojson.features.filter(feature => {
