@@ -591,7 +591,8 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
 
                         let totalMatched = 'features'
                         const numberMatched = geojson.numberMatched
-                        if (numberMatched && numberMatched !== featureCount) {
+                        const numberReturned = geojson.numberReturned
+                        if (numberMatched && numberReturned && numberMatched !== numberReturned) {
                             totalMatched = `of ${formatNumberWithCommas(numberMatched)} matched features`
                         }
 
