@@ -665,9 +665,6 @@ const createGeoJSONLayer = (data) => {
                 //     }
                 // }
 
-                console.log(geojson)
-
-
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
                 if (geojson.cachedGeoJSON) {

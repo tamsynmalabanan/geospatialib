@@ -618,6 +618,7 @@ const fetchGeoJSONData = async (event, layer, options={}) => {
                 }
             }
 
+            console.log(geojson)
             return geojson
         } catch (error) {
             console.log(error)
