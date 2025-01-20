@@ -597,7 +597,6 @@ const createGeoJSONLayer = (data) => {
 
                 if (!geojson) {
                     geojson = await fetchLibraryData(event, geojsonLayer)
-
                     if (!geojson) {
                         geojson = {
                             type: 'FeatureCollection',
