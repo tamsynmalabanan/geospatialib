@@ -263,13 +263,6 @@ const handleMapLegend = (map) => {
     const dropdownToggle = dropdownContainer.querySelector('button')
     const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
 
-    const collapseExpandBtn = createDropdownMenuListItem({
-        label: 'Toggle legend', 
-        parent: dropdownMenu,
-        buttonClass: 'bi bi-chevron-expand fs-12',
-    }).querySelector('button')
-    collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
-
     const zoomBtn = createDropdownMenuListItem({
         label: 'Zoom to layers', 
         parent: dropdownMenu,
@@ -311,6 +304,26 @@ const handleMapLegend = (map) => {
         legendLayerGroup.hiddenLegendLayers = []
         ul.innerHTML = ''
     })
+
+    const divider = document.createElement('li')
+    divider.className = 'dropdown-divider'
+    dropdownMenu.appendChild(divider)
+
+    const printBtn = createDropdownMenuListItem({
+        label: 'Print current view', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-print fs-12',
+    }).querySelector('button')
+    printBtn.addEventListener('click', () => {
+        print(mapContainer)
+    })
+
+    const collapseExpandBtn = createDropdownMenuListItem({
+        label: 'Toggle legend', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-chevron-expand fs-12',
+    }).querySelector('button')
+    collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
 
     map.on('layeradd', (event) => {
