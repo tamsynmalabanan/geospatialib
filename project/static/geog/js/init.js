@@ -89,7 +89,7 @@ const handleMapBasemap = (map) => {
 
 const handleMapLayerGroups = (map) => {
     const layerGroups = {}
-    Array('client', 'library', 'query').forEach(group => {
+    Array('client', 'legend', 'query').forEach(group => {
         layerGroups[group] = L.layerGroup()
     })
     
@@ -270,15 +270,24 @@ const handleMapLegend = (map) => {
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
     const zoomBtn = createDropdownMenuListItem({
-        label: 'Zoom to all layers', 
+        label: 'Zoom to layers', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-zoom-in fs-12',
     }).querySelector('button')
     zoomBtn.addEventListener('click', () => {
-        const bounds = map.getLayerGroups().library.getBounds()
+        const bounds = map.getLayerGroups().legend.getBounds()
         if (bounds) {
             map.fitBounds(bounds)
         }
+    })
+
+    const showHideBtn = createDropdownMenuListItem({
+        label: 'Show/hide layers', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-zoom-in fs-12',
+    }).querySelector('button')
+    showHideBtn.addEventListener('click', () => {
+        
     })
 
     map.on('layeradd', (event) => {
@@ -315,7 +324,7 @@ const handleMapLegend = (map) => {
                     buttonCallback: () => {
                         populateLayerDropdownMenu(menuBtn, {
                             map: map,
-                            layerGroup: 'library',
+                            layerGroup: 'legend',
                             layer: layer,
                         })
                     }
@@ -428,7 +437,7 @@ const handleMapLegend = (map) => {
                 legend.remove()
 
                 if (ul.innerHTML === '') {
-                    clearLibraryLayers()
+                    clearLegendLayers()
                 }
             } else {
                 const collapse = legend.querySelector(`#${id}_collapse`)
@@ -617,9 +626,9 @@ const handleMapQuery = (map) => {
     const collectFetchers = (event) => {
         const fetchers = {}
     
-        const libraryLayers = map.getLayerGroups().library.getLayers()
-        if (libraryLayers.length > 0) {
-            libraryLayers.forEach(layer => {
+        const legendLayers = map.getLayerGroups().legend.getLayers()
+        if (legendLayers.length > 0) {
+            legendLayers.forEach(layer => {
                 const data = layer.data
                 const key = `${data.layerUrl}:${data.layerFormat}:${data.layerName}`
                 if (!(key in fetchers)) {

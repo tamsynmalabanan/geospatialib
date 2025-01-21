@@ -61,7 +61,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 })
             }
 
-            const layerGroupName = options.layerGroup || 'library'
+            const layerGroupName = options.layerGroup || 'legend'
             const layerGroup = map.getLayerGroups()[layerGroupName]
             const checkbox = findOuterElement('input.form-check-input', toggle)
 
@@ -203,7 +203,7 @@ const toggleLayer = async (event, options={}) => {
             }
         }
 
-        const layerGroup = map.getLayerGroups()[options.layerGroup || 'library']
+        const layerGroup = map.getLayerGroups()[options.layerGroup || 'legend']
         
         const data = toggle.dataset
         const tagName = toggle.tagName.toLowerCase()

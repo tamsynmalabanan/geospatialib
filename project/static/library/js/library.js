@@ -8,10 +8,10 @@ const resetSearchResults = () => {
     }
 }
 
-const clearLibraryLayers = () => {
+const clearLegendLayers = () => {
     const map = mapQuerySelector('#geospatialibMap')
     if (map) {
-        map.getLayerGroups().library.clearLayers()
+        map.getLayerGroups().legend.clearLayers()
     }
 }
 
@@ -61,8 +61,8 @@ window.addEventListener("map:init", (event) => {
                         const toggleBtn = searchResults.querySelector(toggleBtnSelector)
                         if (toggleBtn) {
                             if (!isHiddenInLegend(layer, map)) {
-                                const libraryLayers = map.getLayerGroups().library.getLayers()
-                                if (!libraryLayers.some(libLayer => libLayer !== layer && libLayer.data && libLayer.data.layerId === layerId)) {
+                                const legendLayers = map.getLayerGroups().legend.getLayers()
+                                if (!legendLayers.some(libLayer => libLayer !== layer && libLayer.data && libLayer.data.layerId === layerId)) {
                                     updateSearchResultToggleStyle(toggleBtn, false)
                                     enableMapInteractivity(map)
                                 }
@@ -93,9 +93,9 @@ document.addEventListener('htmx:afterSwap', (event) => {
                 target.getAttribute('hx-get').startsWith(searchEndpoint)
             )
             if (firstPageResults || nextPathResults) {
-                const mapLibrary =  map.getLayerGroups().library
-                const libraryLayers = mapLibrary.getLayers().concat(mapLibrary.hiddenLegendLayers)
-                if (libraryLayers.length > 0 ) {
+                const mapLegend =  map.getLayerGroups().legend
+                const legendLayers = mapLegend.getLayers().concat(mapLegend.hiddenLegendLayers)
+                if (legendLayers.length > 0 ) {
                     const searchResults = document.querySelector('#searchResults')
                     const toggleSelector = 'button.add-layer-button'
                     let searchResultToggles = Array.from(searchResults.querySelectorAll(toggleSelector))
@@ -106,9 +106,9 @@ document.addEventListener('htmx:afterSwap', (event) => {
                     }
 
                     if (searchResultToggles.length > 0) {
-                        const libraryLayerIds = libraryLayers.map(layer => layer.data.layerId)
+                        const legendLayerIds = legendLayers.map(layer => layer.data.layerId)
                         searchResultToggles.forEach(toggle => {
-                            if (libraryLayerIds.includes(toggle.dataset.layerId)) {
+                            if (legendLayerIds.includes(toggle.dataset.layerId)) {
                                 updateSearchResultToggleStyle(toggle)
                             }
                         })
