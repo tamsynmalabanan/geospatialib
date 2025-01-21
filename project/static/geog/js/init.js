@@ -108,7 +108,6 @@ const handleMapLayerGroups = (map) => {
             } else {
                 map.addLayer(layerGroup)
             }
-
         }
 
         layerGroup.getBounds = () => {
@@ -342,7 +341,7 @@ const handleMapLegend = (map) => {
                     }
                 )
                 legendContainer.setAttribute('data-leaflet-id', layerLeafletId)
-                ul.appendChild(legendContainer)
+                ul.insertBefore(legendContainer, legendContainer.firstChild)
 
                 const legendHeader = legendContainer.firstChild
     
