@@ -583,7 +583,7 @@ const createGeoJSONLayer = (data) => {
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
                 const layerBounds = turf.bboxPolygon(data.layerBbox.slice(1, -1).split(','))
                 const queryBounds = turf.intersect(mapBounds, layerBounds)
-                console.log(queryBounds)
+                console.log(mapBounds, layerBounds, queryBounds)
 
                 if (queryBounds) {
                     geojsonLayer.fire('fetchingData')
