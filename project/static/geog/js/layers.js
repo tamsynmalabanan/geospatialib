@@ -149,7 +149,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     const data = options.layer.data
                     const newLayer = createLayerFromURL(data)
                     if (newLayer) {
-                        layerGroup.addLayer(newLayer, {pane:'legendPane'})
+                        layerGroup.addLayer(newLayer)
                     } 
                 })
 
@@ -814,6 +814,8 @@ const createLayerFromURL = (data) => {
     if (layer) {
         layer.data = data
 
+        console.log(layer)
+        
         if (data.layerBbox) {
             const [minX, minY, maxX, maxY] = data.layerBbox.slice(1, -1).split(',')
             const bounds = L.latLngBounds([[minY, minX], [maxY, maxX]]);
