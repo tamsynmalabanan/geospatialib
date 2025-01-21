@@ -698,7 +698,7 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
-                console.log(geojsonLayer)
+                console.log(JSON.parse(geojsonLayer.cachedGeoJSON))
     
                 if (geojsonLayer._openPopups.length > 0) {
                     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
