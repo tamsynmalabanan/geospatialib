@@ -326,8 +326,6 @@ const handleMapLegend = (map) => {
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
 
-
-
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer.data) {
