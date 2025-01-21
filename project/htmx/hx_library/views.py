@@ -133,7 +133,6 @@ class SearchList(ListView):
 
         search_vector = SearchVector('name')
         search_fields = self.filter_fields + [
-            'format',
             'url__url',
             'title',
             'abstract',
