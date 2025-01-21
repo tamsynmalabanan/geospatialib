@@ -432,6 +432,7 @@ const handleMapQuery = (map) => {
     const layersQueryBtn = createDropdownMenuListItem({
         label: 'Query layers', 
         parent: dropdownMenu,
+        buttonClass: 'bi bi-layers',
         buttonAttrs: {
             'data-query-osm': 'false'
         }
@@ -440,6 +441,7 @@ const handleMapQuery = (map) => {
     const layersOSMQueryBtn = createDropdownMenuListItem({
         label: 'Query layers & OSM', 
         parent: dropdownMenu,
+        buttonClass: 'bi bi-globe-america',
         buttonAttrs: {
             'data-query-osm': 'true'
         }
@@ -448,6 +450,7 @@ const handleMapQuery = (map) => {
     const queryOSMBtn = createDropdownMenuListItem({
         label: 'Query OSM in map view', 
         parent: dropdownMenu,
+        buttonClass: 'bi bi-bounding-box',
         buttonAttrs: {
             'disabled': true
         }
@@ -460,6 +463,7 @@ const handleMapQuery = (map) => {
     const cancelQueryBtn = createDropdownMenuListItem({
         label: 'Cancel query', 
         parent: dropdownMenu,
+        buttonClass: 'bi bi-arrow-counterclockwise',
         buttonAttrs: {
             'disabled': true
         }
@@ -468,6 +472,7 @@ const handleMapQuery = (map) => {
     const clearQueryBtn = createDropdownMenuListItem({
         label: 'Clear query features', 
         parent: dropdownMenu,
+        buttonClass: 'bi bi-trash',
         buttonAttrs: {
             'disabled': true
         }
