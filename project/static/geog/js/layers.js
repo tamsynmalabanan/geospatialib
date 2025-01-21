@@ -139,7 +139,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         label: `Hide ${type} legend`,
                         buttonClass: 'bi bi-eye-slash',
                     })
-                    dropdown.appendChild(isolateBtn)
+                    dropdown.appendChild(hideLegendBtn)
                     hideLegendBtn.addEventListener('click', () => {
                         const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
                         if (legend) {
