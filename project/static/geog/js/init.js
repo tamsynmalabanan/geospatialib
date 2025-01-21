@@ -467,9 +467,11 @@ const handleMapLegend = (map) => {
                 layer.bringToFront()
             }
 
+            const legendCollapse = legendContainer.querySelector('.collapse')
             if (layer.data.layerLegendUrl) {
-                const legendCollapse = legendContainer.querySelector('.collapse')
                 legendCollapse.innerHTML = createImgElement(layer.data.layerLegendUrl, 'Legend not found.').outerHTML
+            } else if (!layer.layerLegendStyle) {
+                legendCollapse.innerHTML = ''
             }
         }
     })
