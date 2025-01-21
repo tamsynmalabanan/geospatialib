@@ -100,7 +100,7 @@ const handleMapLayerGroups = (map) => {
         layerGroup.hide = () => map.removeLayer(layerGroup)
         layerGroup.show = () => {
             const paneName = `${group}Pane`
-            const pane = map.get(paneName) || map.createPane(paneName)
+            const pane = map.getPane(paneName) || map.createPane(paneName)
             
             let zIndex
             if (group === 'query') {
