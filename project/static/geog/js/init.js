@@ -105,8 +105,14 @@ const handleMapLayerGroups = (map) => {
                 map.addLayer(layerGroup, {
                     pane:'queryPane'
                 })
-            } else {
-                map.addLayer(layerGroup)
+            }
+            
+            if (group === 'legend') {
+                const legendPane = map.getPane('legendPane') || map.createPane('legendPane')
+                legendPane.style.zIndex = 201
+                map.addLayer(layerGroup, {
+                    pane:'legendPane'
+                })
             }
         }
 
