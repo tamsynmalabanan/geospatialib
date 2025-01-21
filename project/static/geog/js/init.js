@@ -319,11 +319,13 @@ const handleMapLegend = (map) => {
     })
 
     const collapseExpandBtn = createDropdownMenuListItem({
-        label: 'Toggle legend', 
+        label: 'Expand/collapse legend', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-chevron-expand fs-12',
     }).querySelector('button')
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
+
+
 
 
     map.on('layeradd', (event) => {
