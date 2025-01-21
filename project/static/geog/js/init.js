@@ -118,7 +118,9 @@ const handleMapLayerGroups = (map) => {
                     bounds.push(L.rectangle(layer.getBounds()).toGeoJSON())
                 }
             })
-            return L.geoJSON(turf.featureCollection(bounds)).getBounds()
+            if (bounds.length > 0) {
+                return L.geoJSON(turf.featureCollection(bounds)).getBounds()
+            }
         }
         
         layerGroup.show()
@@ -269,7 +271,10 @@ const handleMapLegend = (map) => {
         buttonClass: 'bi bi-zoom-in fs-12',
     }).querySelector('button')
     zoomBtn.addEventListener('click', () => {
-        console.log(map.getLayerGroups().library.getBounds())
+        const bounds = map.getLayerGroups().library.getBounds()
+        if (bounds) {
+            map.fitBounds(bounds)
+        }
     })
 
     map.on('layeradd', (event) => {
