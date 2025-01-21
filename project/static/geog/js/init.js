@@ -441,7 +441,7 @@ const handleMapQuery = (map) => {
     const layersOSMQueryBtn = createDropdownMenuListItem({
         label: 'Query layers & OSM', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-globe-america',
+        buttonClass: 'bi bi-globe-americas',
         buttonAttrs: {
             'data-query-osm': 'true'
         }
