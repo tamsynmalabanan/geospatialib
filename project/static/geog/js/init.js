@@ -88,15 +88,10 @@ const handleMapBasemap = (map) => {
 }
 
 const handleMapLayerGroups = (map) => {
-    const layerGroups = {
-        client: L.layerGroup(),
-        library: L.layerGroup(),
-        query: L.layerGroup(),
-    }
-    // const layerGroups = {}
-    // Array('client', 'library', 'query').forEach(group => {
-    //     layerGroups[group] = L.layerGroup()
-    // })
+    const layerGroups = {}
+    Array('client', 'library', 'query').forEach(group => {
+        layerGroups[group] = L.layerGroup()
+    })
     
     for (let group in layerGroups) {
         const layerGroup = layerGroups[group]
@@ -429,7 +424,6 @@ const handleMapQuery = (map) => {
         collapsed: true,
     })
 
-
     const footer = document.createElement('div')
     footer.className = 'border-top p-3 d-flex flex-wrap font-monospace text-muted'
     body.parentElement.appendChild(footer)
@@ -649,7 +643,6 @@ const handleMapQuery = (map) => {
                 'disabled': 'true',
                 'onclick': 'toggleOffAllLayers(this)',
             },
-            // labelClass: '',
             parent: body
         })
 
@@ -695,10 +688,13 @@ const handleMapQuery = (map) => {
                     bindTitleAsTooltip:true,
                 })
 
+                
                 geoJSONLayer.title = title
                 createLayerToggles(geoJSONLayer, queryResults, map, 'query', {
                     geojson: geojson,
                 })
+                
+                console.log(geoJSONLayer)
 
                 const layerFooter = document.createElement('div')
                 layerFooter.className = 'mb-3 '
