@@ -309,14 +309,14 @@ const handleMapLegend = (map) => {
     divider.className = 'dropdown-divider'
     dropdownMenu.appendChild(divider)
 
-    // const printBtn = createDropdownMenuListItem({
-    //     label: 'Print current view', 
-    //     parent: dropdownMenu,
-    //     buttonClass: 'bi bi-printer fs-12',
-    // }).querySelector('button')
-    // printBtn.addEventListener('click', () => {
-    //     print(mapContainer)
-    // })
+    const showHiddenLegendsBtn = createDropdownMenuListItem({
+        label: 'Show hidden layer legends', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-eye-slash fs-12',
+    }).querySelector('button')
+    showHiddenLegendsBtn.addEventListener('click', () => {
+        ul.querySelectorAll('li.d-none').forEach(li => li.classList.remove('d-none'))
+    })
 
     const collapseExpandBtn = createDropdownMenuListItem({
         label: 'Toggle legend', 
