@@ -88,15 +88,15 @@ const handleMapBasemap = (map) => {
 }
 
 const handleMapLayerGroups = (map) => {
-    // const layerGroups = {
-    //     client: L.layerGroup(),
-    //     library: L.layerGroup(),
-    //     query: L.layerGroup(),
-    // }
-    const layerGroups = {}
-    Array('client', 'library', 'query').forEach(group => {
-        layerGroups[group] = L.layerGroup()
-    })
+    const layerGroups = {
+        client: L.layerGroup(),
+        library: L.layerGroup(),
+        query: L.layerGroup(),
+    }
+    // const layerGroups = {}
+    // Array('client', 'library', 'query').forEach(group => {
+    //     layerGroups[group] = L.layerGroup()
+    // })
     
     for (let group in layerGroups) {
         const layerGroup = layerGroups[group]
