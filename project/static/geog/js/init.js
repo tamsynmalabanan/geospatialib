@@ -263,7 +263,7 @@ const handleMapLegend = (map) => {
     const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
 
     const collapseExpandBtn = createDropdownMenuListItem({
-        label: 'Collapse/expand legend', 
+        label: 'Toggle legend', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-chevron-expand fs-12',
     }).querySelector('button')
