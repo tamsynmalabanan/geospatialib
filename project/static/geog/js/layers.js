@@ -608,7 +608,6 @@ const createGeoJSONLayer = (data) => {
                                     
                                     if (cachedGeoJSON.features.length > 0) {
                                         if (!geojsonLayer.cachedGeoJSON) {
-                                            console.log('cachedGeoJSON', JSON.parse(cachedGeoJSONString))
                                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
                                         }
 
@@ -681,10 +680,8 @@ const createGeoJSONLayer = (data) => {
     
                 if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        console.log('geojson.cachedGeoJSON', JSON.parse(geojson.cachedGeoJSON))
                         geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     } else {
-                        console.log('processed geojson', geojson)
                         geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                     }
                 }
