@@ -149,7 +149,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     const data = options.layer.data
                     const newLayer = createLayerFromURL(data)
                     if (newLayer) {
-                        layerGroup.addLayer(newLayer)
+                        layerGroup.addLayer(newLayer, {pane:'legendPane'})
                     } 
                 })
 
