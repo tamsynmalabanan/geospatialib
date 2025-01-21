@@ -312,7 +312,7 @@ const handleMapLegend = (map) => {
     const printBtn = createDropdownMenuListItem({
         label: 'Print current view', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-print fs-12',
+        buttonClass: 'bi bi-printer fs-12',
     }).querySelector('button')
     printBtn.addEventListener('click', () => {
         print(mapContainer)
