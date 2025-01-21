@@ -583,12 +583,13 @@ const createGeoJSONLayer = (data) => {
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
                 const layerBounds = turf.bboxPolygon(data.layerBbox.slice(1, -1).split(','))
                 const queryBounds = turf.intersect(mapBounds, layerBounds)
-                console.log(mapBounds, layerBounds, queryBounds)
+
+                let geojson
 
                 if (queryBounds) {
                     geojsonLayer.fire('fetchingData')
     
-                    let geojson = await (async () => {
+                    geojson = await (async () => {
                         const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
                         .map(layer => layer.cachedGeoJSON)
                         .filter(cachedGeoJSONString => cachedGeoJSONString)                    
@@ -689,56 +690,59 @@ const createGeoJSONLayer = (data) => {
                             geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                         }
                     }
-    
-                    geojsonLayer.clearLayers()
-                    geojsonLayer.addData(geojson)
-        
-                    if (geojsonLayer._openPopups.length > 0) {
-                        geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
-                        geojsonLayer._openPopups = []
-                    }
-        
-                    let legend = {}
-                    geojsonLayer.eachLayer(feature => {
-                        feature.popupHeader = data.layerTitle
-        
-                        if (geojson.tooltip) {
-                            feature.bindTooltip(geojson.tooltip, {sticky:true})
-                        } 
-        
-                        let type = feature.feature.geometry.type.replace('Multi', '')
-                        if (geojson.prefix === 'Bounding') {
-                            type = 'box'
-                        }
-    
-                        let label = type
-                        if (type !== 'Point') {
-                            label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
-                        }
-        
-                        if (!Object.keys(legend).includes(label)) {
-                            let style
-                            if (type === 'Point') {
-                                style = geojsonLayer.options.pointToLayer().options.icon
-                            } else {
-                                style = geojsonLayer.options.style()
-                            }
-        
-                            legend[label] = {
-                                type: type,
-                                style: style,
-                                count: 1,
-                            }
-                        } else {
-                            legend[label].count += 1 
-                        }
-                    })
-        
-                    geojsonLayer.layerLegendStyle = legend
-                    geojsonLayer.fire('legendUpdated')
                 } else {
-                    console.log('here')
+                    geojson = {
+                        type: 'FeatureCollection',
+                        features: [],
+                    }
                 }
+
+                geojsonLayer.clearLayers()
+                geojsonLayer.addData(geojson)
+    
+                if (geojsonLayer._openPopups.length > 0) {
+                    geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
+                    geojsonLayer._openPopups = []
+                }
+    
+                let legend = {}
+                geojsonLayer.eachLayer(feature => {
+                    feature.popupHeader = data.layerTitle
+    
+                    if (geojson.tooltip) {
+                        feature.bindTooltip(geojson.tooltip, {sticky:true})
+                    } 
+    
+                    let type = feature.feature.geometry.type.replace('Multi', '')
+                    if (geojson.prefix === 'Bounding') {
+                        type = 'box'
+                    }
+
+                    let label = type
+                    if (type !== 'Point') {
+                        label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
+                    }
+    
+                    if (!Object.keys(legend).includes(label)) {
+                        let style
+                        if (type === 'Point') {
+                            style = geojsonLayer.options.pointToLayer().options.icon
+                        } else {
+                            style = geojsonLayer.options.style()
+                        }
+    
+                        legend[label] = {
+                            type: type,
+                            style: style,
+                            count: 1,
+                        }
+                    } else {
+                        legend[label].count += 1 
+                    }
+                })
+    
+                geojsonLayer.layerLegendStyle = legend
+                geojsonLayer.fire('legendUpdated')
             }
         }
     
