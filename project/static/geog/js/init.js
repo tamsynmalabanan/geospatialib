@@ -178,8 +178,8 @@ const constructInfoPanel = (map, name, options={}) => {
         parent: panelMenuContainer,
     })
 
-    const panelMenu = document.createElement('div')
-    panelMenu.className = 'dropdown-menu fs-14'
+    const panelMenu = document.createElement('ul')
+    panelMenu.className = 'dropdown-menu fs-14 list-unstyled'
     panelMenuContainer.appendChild(panelMenu)
 
 
