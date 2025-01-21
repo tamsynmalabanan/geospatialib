@@ -341,7 +341,7 @@ const handleMapLegend = (map) => {
                     }
                 )
                 legendContainer.setAttribute('data-leaflet-id', layerLeafletId)
-                ul.insertBefore(legendContainer, legendContainer.firstChild)
+                ul.insertBefore(legendContainer, ul.firstChild)
 
                 const legendHeader = legendContainer.firstChild
     
