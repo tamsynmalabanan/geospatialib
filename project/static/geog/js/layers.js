@@ -134,6 +134,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     })
                 }
             }
+
+            const divider = document.createElement('li')
+            divider.className = 'dropdown-divider'
+            dropdown.appendChild(divider)        
             
             if (layerGroupName === 'legend' && options.layer) {
                 const duplicateBtn = createDropdownMenuListItem({
