@@ -301,6 +301,18 @@ const handleMapLegend = (map) => {
         }
     })
 
+    const removeLayersBtn = createDropdownMenuListItem({
+        label: 'Remove layers', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-trash3 fs-12',
+    }).querySelector('button')
+    removeLayersBtn.addEventListener('click', () => {
+        legendLayerGroup.clearLayers()
+        legendLayerGroup.hiddenLegendLayers = []
+        ul.innerHTML = ''
+    })
+
+
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer.data) {
