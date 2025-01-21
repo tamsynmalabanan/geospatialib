@@ -1,8 +1,6 @@
-const getDefaultGeoJSONLayer = (
-    geojson={type: "FeatureCollection", features: []},
-    options={}
-) => {
-    
+const getDefaultGeoJSONLayer = (options={}) => {
+    const geojson = options.geojson || {type: "FeatureCollection", features: []}
+
     let color = options.color
     if (!color) {
         color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`

@@ -757,7 +757,8 @@ const handleMapQuery = (map) => {
                     featureId:true,
                 })
                 
-                const geoJSONLayer = getDefaultGeoJSONLayer(geojson, {
+                const geoJSONLayer = getDefaultGeoJSONLayer({
+                    geojson: geojson,
                     color:color,
                     fillColor:true,
                     weight:2,
