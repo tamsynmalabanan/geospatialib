@@ -578,19 +578,17 @@ const createGeoJSONLayer = (data) => {
     geojsonLayer.on('add', (event) => {
         const map = event.target._map
     
-        const fetchData = async () => {
+        const handler = async () => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
                 geojsonLayer.fire('fetchingData')
 
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
                 let geojson = await (async () => {
-                    const cachedGeoJSONs = Array(
-                        sessionStorage.getItem(cacheKey)
-                    ).concat(
-                        getLayersViaCacheKey(map, cacheKey)
-                        .map(layer => layer.cachedGeoJSON)
-                    ).map(cachedGeoJSONString => {
+                    const cachedGeoJSONs = getLayersViaCacheKey(map, cacheKey)
+                    .map(layer => layer.cachedGeoJSON)
+                    .concat([sessionStorage.getItem(cacheKey)])
+                    .map(cachedGeoJSONString => {
                         if (cachedGeoJSONString) {
                             const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                             if (cachedGeoJSON) {
@@ -598,7 +596,7 @@ const createGeoJSONLayer = (data) => {
                                 const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                                 if (equalBounds || withinBounds) {
                                     return cachedGeoJSON
-                                }    
+                                }
                             }
                         }
                     }).filter(cachedGeoJSON => cachedGeoJSON)
@@ -618,7 +616,6 @@ const createGeoJSONLayer = (data) => {
                             cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                                 return turf.booleanIntersects(filterBounds, feature)
                             })
-    
                             
                             if (cachedGeoJSON.features.length > 0) {
                                 return cachedGeoJSON
@@ -666,7 +663,7 @@ const createGeoJSONLayer = (data) => {
                             const numberMatched = geojson.numberMatched
                             const numberReturned = geojson.numberReturned
                             if (numberMatched && numberReturned && numberMatched !== numberReturned) {
-                                totalMatched = `of ${formatNumberWithCommas(numberMatched)} matched features`
+                                totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
                             }
     
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
@@ -742,15 +739,15 @@ const createGeoJSONLayer = (data) => {
         }
     
         let fetchWFSDataTimeout
-        const fetchDataOnTimeout = () => {
+        const handlerOnTimeout = () => {
             clearTimeout(fetchWFSDataTimeout)
-            fetchWFSDataTimeout = setTimeout(fetchData, 1000)
+            fetchWFSDataTimeout = setTimeout(handler, 1000)
         }
     
-        fetchDataOnTimeout()
-        map.on('moveend zoomend', fetchDataOnTimeout)
+        handlerOnTimeout()
+        map.on('moveend zoomend', handlerOnTimeout)
         geojsonLayer.on('remove', () => {
-            map.off('moveend zoomend', fetchDataOnTimeout)
+            map.off('moveend zoomend', handlerOnTimeout)
         })
     })
 
