@@ -88,12 +88,15 @@ const handleMapBasemap = (map) => {
 }
 
 const handleMapLayerGroups = (map) => {
-    
-    const layerGroups = {
-        client: L.layerGroup(),
-        library: L.layerGroup(),
-        query: L.layerGroup(),
-    }
+    // const layerGroups = {
+    //     client: L.layerGroup(),
+    //     library: L.layerGroup(),
+    //     query: L.layerGroup(),
+    // }
+    const layerGroups = {}
+    Array('client', 'library', 'query').forEach(group => {
+        layerGroups[group] = L.layerGroup()
+    })
     
     for (let group in layerGroups) {
         const layerGroup = layerGroups[group]
@@ -242,9 +245,16 @@ const handleMapLegend = (map) => {
     const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
 
     const collapseExpandBtn = createDropdownMenuListItem({
-        label: 'Collapse/expand layers', 
+        label: 'Collapse/expand legend', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-chevron-expand fs-12',
+    }).querySelector('button')
+    collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
+
+    const zoomBtn = createDropdownMenuListItem({
+        label: 'Zoom to all layers', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-zoom-in fs-12',
     }).querySelector('button')
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
