@@ -133,33 +133,33 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         }
                     })
                 }
+            }
+            
+            if (layerGroupName === 'legend' && options.layer) {
+                const duplicateBtn = createDropdownMenuListItem({
+                    label: `Duplicate ${type}`,
+                    buttonClass: 'bi bi-copy',
+                })
+                dropdown.appendChild(duplicateBtn)
+                duplicateBtn.addEventListener('click', () => {
+                    const data = options.layer.data
+                    const newLayer = createLayerFromURL(data)
+                    if (newLayer) {
+                        layerGroup.addLayer(newLayer)
+                    } 
+                })
 
-                if (layerGroupName === 'legend' && options.layer) {
-                    const duplicateBtn = createDropdownMenuListItem({
-                        label: `Duplicate ${type}`,
-                        buttonClass: 'bi bi-copy',
-                    })
-                    dropdown.appendChild(duplicateBtn)
-                    duplicateBtn.addEventListener('click', () => {
-                        const data = options.layer.data
-                        const newLayer = createLayerFromURL(data)
-                        if (newLayer) {
-                            layerGroup.addLayer(newLayer)
-                        } 
-                    })
-
-                    const hideLegendBtn = createDropdownMenuListItem({
-                        label: `Hide ${type} legend`,
-                        buttonClass: 'bi bi-eye-slash',
-                    })
-                    dropdown.appendChild(hideLegendBtn)
-                    hideLegendBtn.addEventListener('click', () => {
-                        const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
-                        if (legend) {
-                            legend.classList.add('d-none')
-                        }
-                    })
-                }
+                const hideLegendBtn = createDropdownMenuListItem({
+                    label: `Hide ${type} legend`,
+                    buttonClass: 'bi bi-eye-slash',
+                })
+                dropdown.appendChild(hideLegendBtn)
+                hideLegendBtn.addEventListener('click', () => {
+                    const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
+                    if (legend) {
+                        legend.classList.add('d-none')
+                    }
+                })
             }
             
             const getGeoJSON = () => {
