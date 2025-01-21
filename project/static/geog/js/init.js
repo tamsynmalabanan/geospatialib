@@ -694,8 +694,6 @@ const handleMapQuery = (map) => {
                     geojson: geojson,
                 })
                 
-                console.log(geoJSONLayer)
-
                 const layerFooter = document.createElement('div')
                 layerFooter.className = 'mb-3 '
                 queryResults.appendChild(layerFooter)
