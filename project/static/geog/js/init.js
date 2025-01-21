@@ -113,11 +113,15 @@ const handleMapLayerGroups = (map) => {
 
         layerGroup.getBounds = () => {
             const bounds = []
-            layerGroup.eachLayer(layer => {
-                if (layer.getBounds) {
-                    bounds.push(L.rectangle(layer.getBounds()).toGeoJSON())
-                }
+            
+            Array(layerGroup.getLayers(), layerGroup.hiddenLegendLayers).forEach(set => {
+                set.forEach(layer => {
+                    if (layer.getBounds) {
+                        bounds.push(L.rectangle(layer.getBounds()).toGeoJSON())
+                    }
+                })
             })
+
             if (bounds.length > 0) {
                 return L.geoJSON(turf.featureCollection(bounds)).getBounds()
             }
