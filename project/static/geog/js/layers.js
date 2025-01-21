@@ -132,10 +132,23 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                             }
                         }
                     })
-                }    
+                }
+
+                if (layerGroupName === 'legend' && options.layer) {
+                    const hideLegendBtn = createDropdownMenuListItem({
+                        label: `Hide ${type} legend`,
+                        buttonClass: 'bi bi-eye-slash',
+                    })
+                    dropdown.appendChild(isolateBtn)
+                    hideLegendBtn.addEventListener('click', () => {
+                        const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
+                        if (legend) {
+                            legend.classList.add('d-none')
+                        }
+                    })
+                }
             }
             
-
             const getGeoJSON = () => {
                 let geojson = options.geojson
                 if (!geojson && options.layer) {
