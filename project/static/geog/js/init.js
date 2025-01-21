@@ -244,7 +244,7 @@ const handleMapLegend = (map) => {
     const collapseExpandBtn = createDropdownMenuListItem({
         label: 'Collapse/expand layers', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-chevron-expand',
+        buttonClass: 'bi bi-chevron-expand fs-12',
     }).querySelector('button')
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
@@ -432,7 +432,7 @@ const handleMapQuery = (map) => {
     const layersQueryBtn = createDropdownMenuListItem({
         label: 'Query layers', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-layers',
+        buttonClass: 'bi bi-layers fs-12',
         buttonAttrs: {
             'data-query-osm': 'false'
         }
@@ -441,7 +441,7 @@ const handleMapQuery = (map) => {
     const layersOSMQueryBtn = createDropdownMenuListItem({
         label: 'Query layers & OSM', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-globe-americas',
+        buttonClass: 'bi bi-globe-americas fs-12',
         buttonAttrs: {
             'data-query-osm': 'true'
         }
@@ -450,7 +450,7 @@ const handleMapQuery = (map) => {
     const queryOSMBtn = createDropdownMenuListItem({
         label: 'Query OSM in map view', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-bounding-box',
+        buttonClass: 'bi bi-bounding-box fs-12',
         buttonAttrs: {
             'disabled': true
         }
@@ -463,7 +463,7 @@ const handleMapQuery = (map) => {
     const cancelQueryBtn = createDropdownMenuListItem({
         label: 'Cancel query', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-arrow-counterclockwise',
+        buttonClass: 'bi bi-arrow-counterclockwise fs-12',
         buttonAttrs: {
             'disabled': true
         }
@@ -472,7 +472,7 @@ const handleMapQuery = (map) => {
     const clearQueryBtn = createDropdownMenuListItem({
         label: 'Clear query features', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-trash',
+        buttonClass: 'bi bi-trash fs-12',
         buttonAttrs: {
             'disabled': true
         }
