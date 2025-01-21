@@ -601,6 +601,10 @@ const createGeoJSONLayer = (data) => {
                                     const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                                     const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                                     if (equalBounds || withinBounds) {
+                                        if (!geojsonLayer.cachedGeoJSON) {
+                                            geojsonLayer.cachedGeoJSON = cachedGeoJSONString
+                                        }
+
                                         let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                                         const crs = getGeoJSONCRS(cachedGeoJSON)
                                         if (crs && crs !== 4326) {
@@ -611,13 +615,7 @@ const createGeoJSONLayer = (data) => {
                                             return turf.booleanIntersects(filterBounds, feature)
                                         })
                                         
-                                        if (cachedGeoJSON.features.length > 0) {
-                                            if (!geojsonLayer.cachedGeoJSON) {
-                                                geojsonLayer.cachedGeoJSON = cachedGeoJSONString
-                                            }
-    
-                                            return cachedGeoJSON
-                                        }
+                                        return cachedGeoJSON
                                     }
     
                                 }
