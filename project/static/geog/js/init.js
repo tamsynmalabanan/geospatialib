@@ -455,6 +455,8 @@ const handleMapLegend = (map) => {
                         }
                     })
                 }
+
+                layer.bringToFront()
             }
 
             if (layer.data.layerLegendUrl) {
