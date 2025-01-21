@@ -608,10 +608,10 @@ const createGeoJSONLayer = (data) => {
                                     
                                     if (cachedGeoJSON.features.length > 0) {
                                         if (!geojsonLayer.cachedGeoJSON) {
-                                            console.log('cached geojson', JSON.parse(cachedGeoJSONString))
+                                            console.log('cachedGeoJSON', JSON.parse(geojson.cachedGeoJSON))
                                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
                                         }
-                                        console.log(JSON.stringify(cachedGeoJSON.cachedGeoJSON))
+
                                         return cachedGeoJSON
                                     }
                                 }
@@ -624,6 +624,8 @@ const createGeoJSONLayer = (data) => {
                 })()
 
                 if (!geojson) {
+                    delete geojsonLayer.cachedGeoJSON
+
                     geojson = await fetchLibraryData(event, geojsonLayer)
                     if (!geojson) {
                         geojson = {
@@ -677,7 +679,7 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }
     
-                if (geojson.cachedGeoJSON) {
+                if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         console.log('geojson.cachedGeoJSON', JSON.parse(geojson.cachedGeoJSON))
                         geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
