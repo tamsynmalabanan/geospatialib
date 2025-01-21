@@ -99,21 +99,23 @@ const handleMapLayerGroups = (map) => {
         
         layerGroup.hide = () => map.removeLayer(layerGroup)
         layerGroup.show = () => {
-            if (group === 'query') {
-                const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
-                queryPane.style.zIndex = 625
-                map.addLayer(layerGroup, {
-                    pane:'queryPane'
-                })
-            }
+            const paneName = `${group}Pane`
+            const pane = map.get(paneName) || map.createPane(paneName)
             
-            if (group === 'legend') {
-                const legendPane = map.getPane('legendPane') || map.createPane('legendPane')
-                legendPane.style.zIndex = 201
-                map.addLayer(layerGroup, {
-                    pane:'legendPane'
-                })
+            let zIndex
+            if (group === 'query') {
+                zIndex = 625
             }
+
+            if (group === 'legend') {
+                zIndex = 201
+            }
+
+            pane.style.zIndex = zIndex
+
+            map.addLayer(layerGroup, {
+                pane: paneName
+            })
         }
 
         layerGroup.getBounds = () => {
