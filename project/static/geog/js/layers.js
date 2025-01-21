@@ -608,7 +608,7 @@ const createGeoJSONLayer = (data) => {
                                     
                                     if (cachedGeoJSON.features.length > 0) {
                                         if (!geojsonLayer.cachedGeoJSON) {
-                                            console.log('cachedGeoJSON', JSON.parse(geojson.cachedGeoJSON))
+                                            console.log('cachedGeoJSON', JSON.parse(cachedGeoJSONString))
                                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
                                         }
 
