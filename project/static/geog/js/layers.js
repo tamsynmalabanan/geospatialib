@@ -203,10 +203,7 @@ const toggleLayer = async (event, options={}) => {
             }
         }
 
-        let layerGroup = map.getLayerGroups()[options.layerGroup]
-        if (!layerGroup) {
-            layerGroup = map.getLayerGroups().library
-        }
+        const layerGroup = map.getLayerGroups()[options.layerGroup || 'library']
         
         const data = toggle.dataset
         const tagName = toggle.tagName.toLowerCase()
