@@ -580,6 +580,8 @@ const createGeoJSONLayer = (data) => {
     
         const handler = async () => {
             if (!isHiddenInLegend(geojsonLayer, map)) {
+                geojsonLayer.fire('fetchingData')
+                
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
                 const layerBounds = turf.bboxPolygon(data.layerBbox.slice(1, -1).split(','))
                 const queryBounds = turf.intersect(mapBounds, layerBounds)
@@ -588,8 +590,6 @@ const createGeoJSONLayer = (data) => {
                 let geojson
 
                 if (queryBounds) {
-                    geojsonLayer.fire('fetchingData')
-    
                     geojson = await (async () => {
                         const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
                         .map(layer => layer.cachedGeoJSON)
