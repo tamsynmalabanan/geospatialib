@@ -89,7 +89,7 @@ const handleMapBasemap = (map) => {
 
 const handleMapLayerGroups = (map) => {
     const layerGroups = {}
-    Array('client', 'legend', 'query').forEach(group => {
+    Array('legend', 'query').forEach(group => {
         layerGroups[group] = L.layerGroup()
     })
     
@@ -245,6 +245,7 @@ const constructInfoPanel = (map, name, options={}) => {
 const handleMapLegend = (map) => {
     const mapContainer = map.getContainer()
     const mapId = mapContainer.id
+    const legendLayerGroup = map.getLayerGroups().legend
 
     const body = constructInfoPanel(map, 'Legend', {
         toggleTitle: 'Toggle legend panel',
@@ -275,7 +276,7 @@ const handleMapLegend = (map) => {
         buttonClass: 'bi bi-zoom-in fs-12',
     }).querySelector('button')
     zoomBtn.addEventListener('click', () => {
-        const bounds = map.getLayerGroups().legend.getBounds()
+        const bounds = legendLayerGroup.getBounds()
         if (bounds) {
             map.fitBounds(bounds)
         }
@@ -284,10 +285,20 @@ const handleMapLegend = (map) => {
     const showHideBtn = createDropdownMenuListItem({
         label: 'Show/hide layers', 
         parent: dropdownMenu,
-        buttonClass: 'bi bi-zoom-in fs-12',
+        buttonClass: 'bi bi-eye fs-12',
     }).querySelector('button')
     showHideBtn.addEventListener('click', () => {
-        
+        if (legendLayerGroup.getLayers().length > 0) {
+            legendLayerGroup.eachLayer(layer => {
+                legendLayerGroup.hiddenLegendLayers.push(layer)
+                legendLayerGroup.removeLayer(layer)
+            })
+        } else if (legendLayerGroup.hiddenLegendLayers.length > 0) {
+            legendLayerGroup.hiddenLegendLayers.forEach(layer => {
+                legendLayerGroup.hiddenLegendLayers = legendLayerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                legendLayerGroup.addLayer(layer)
+            })
+        }
     })
 
     map.on('layeradd', (event) => {
