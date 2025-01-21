@@ -736,6 +736,8 @@ const createGeoJSONLayer = (data) => {
         
                     geojsonLayer.layerLegendStyle = legend
                     geojsonLayer.fire('legendUpdated')
+                } else {
+                    console.log('here')
                 }
             }
         }
