@@ -118,7 +118,12 @@ const handleMapLayerGroups = (map) => {
                     bounds.push(L.rectangle(layer.getBounds()).toGeoJSON())
                 }
             })
-            return turf.bboxPolygon(turf.bbox(turf.union(turf.featureCollection(bounds))))
+            console.log(bounds)
+            const fc = turf.featureCollection(bounds)
+            const union = turf.union(fc)
+            const bbox = turf.bbox(union)
+            const polygon = turf.bboxPolygon(bbox)
+            return polygon
         }
         
         layerGroup.show()
