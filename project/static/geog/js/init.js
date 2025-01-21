@@ -96,6 +96,8 @@ const handleMapLayerGroups = (map) => {
     for (let group in layerGroups) {
         const layerGroup = layerGroups[group]
         layerGroup.hiddenLegendLayers = []
+        
+        layerGroup.hide = () => map.removeLayer(layerGroup)
         layerGroup.show = () => {
             if (group === 'query') {
                 const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
@@ -108,7 +110,17 @@ const handleMapLayerGroups = (map) => {
             }
 
         }
-        layerGroup.hide = () => map.removeLayer(layerGroup)
+
+        layerGroup.getBounds = () => {
+            const bounds = []
+            layerGroup.eachLayer(layer => {
+                if (layer.getBounds) {
+                    bounds.push(L.rectangle(layer.getBounds()).toGeoJSON())
+                }
+            })
+            return turf.bboxPolygon(turf.bbox(turf.union(turf.featureCollection(bounds))))
+        }
+        
         layerGroup.show()
     }
 
@@ -234,6 +246,11 @@ const handleMapLegend = (map) => {
         collapsed: false,
     })
 
+    const ul = document.createElement('ul')
+    ul.id = 'legendLayers'
+    ul.className = 'dataset-list list-group list-group-flush'
+    body.appendChild(ul)
+
     const collapse = body.parentElement
     const dropdownContainer = collapse.querySelector('.info-panel-menu')
     const dropdownToggle = dropdownContainer.querySelector('button')
@@ -251,12 +268,9 @@ const handleMapLegend = (map) => {
         parent: dropdownMenu,
         buttonClass: 'bi bi-zoom-in fs-12',
     }).querySelector('button')
-    collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
-
-    const ul = document.createElement('ul')
-    ul.id = 'legendLayers'
-    ul.className = 'dataset-list list-group list-group-flush'
-    body.appendChild(ul)
+    zoomBtn.addEventListener('click', () => {
+        console.log(map.getLayerGroups().library.getBounds())
+    })
 
     map.on('layeradd', (event) => {
         const layer = event.layer
