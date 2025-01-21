@@ -611,6 +611,7 @@ const createGeoJSONLayer = (data) => {
                                             console.log('cached geojson', JSON.parse(cachedGeoJSONString))
                                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
                                         }
+                                        console.log(JSON.stringify(cachedGeoJSON.cachedGeoJSON))
                                         return cachedGeoJSON
                                     }
                                 }
