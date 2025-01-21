@@ -58,7 +58,7 @@ const getDefaultGeoJSONLayer = (
                 layer.on('click', createPopup)
             }
         },
-        pane: options.pane || 'overlayPane'
+        // pane: options.pane || 'overlayPane'
     })
 }
 
