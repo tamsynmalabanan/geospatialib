@@ -585,40 +585,35 @@ const createGeoJSONLayer = (data) => {
                 const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 
                 let geojson = await (async () => {
-                    const cachedGeoJSONs = getLayersViaCacheKey(map, cacheKey)
+                    const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
                     .map(layer => layer.cachedGeoJSON)
-                    .concat([sessionStorage.getItem(cacheKey)])
-                    .map(cachedGeoJSONString => {
-                        if (cachedGeoJSONString) {
+                    .filter(cachedGeoJSONString => cachedGeoJSONString)                    
+
+                    if (cachedGeoJSONStrings.length > 0) {
+                        for (const cachedGeoJSONString of cachedGeoJSONStrings) {
                             const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                             if (cachedGeoJSON) {
                                 const equalBounds = turf.booleanEqual(mapBounds, cachedGeoJSON.mapBounds)
                                 const withinBounds = turf.booleanWithin(mapBounds, cachedGeoJSON.mapBounds)
                                 if (equalBounds || withinBounds) {
-                                    return cachedGeoJSON
+                                    let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                                    const crs = getGeoJSONCRS(cachedGeoJSON)
+                                    if (crs && crs !== 4326) {
+                                        filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                                    }
+                                    
+                                    cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                                        return turf.booleanIntersects(filterBounds, feature)
+                                    })
+                                    
+                                    if (cachedGeoJSON.features.length > 0) {
+                                        if (!geojsonLayer.cachedGeoJSON) {
+                                            geojsonLayer.cachedGeoJSON = cachedGeoJSONString
+                                        }
+                                        return cachedGeoJSON
+                                    }
                                 }
-                            }
-                        }
-                    }).filter(cachedGeoJSON => cachedGeoJSON)
-                    
-                    if (cachedGeoJSONs.length > 0) {
-                        for (const cachedGeoJSON of cachedGeoJSONs) {
-                            if (!geojsonLayer.cachedGeoJSON) {
-                                geojsonLayer.cachedGeoJSON = JSON.stringify(cachedGeoJSON)
-                            }
-    
-                            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                            const crs = getGeoJSONCRS(cachedGeoJSON)
-                            if (crs && crs !== 4326) {
-                                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-                            }
-                            
-                            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                                return turf.booleanIntersects(filterBounds, feature)
-                            })
-                            
-                            if (cachedGeoJSON.features.length > 0) {
-                                return cachedGeoJSON
+
                             }
                         }
                     }
@@ -681,11 +676,10 @@ const createGeoJSONLayer = (data) => {
                 }
     
                 if (geojson.cachedGeoJSON) {
-                    geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-                        cacheDataToSessionStorage(cacheKey, geojson.cachedGeoJSON)
+                        geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     } else {
-                        cacheDataToSessionStorage(cacheKey, JSON.stringify(geojson))
+                        geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                     }
                 }
 
