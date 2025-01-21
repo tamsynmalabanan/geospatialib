@@ -564,7 +564,7 @@ const createGeoJSONLayer = (data) => {
     geojsonLayer.popupHeader = layerTitle
     geojsonLayer.cacheKey = cacheKey
     
-    const defaultTooltip = `Zoom in to load individual ${layerTitle} features.`
+    const defaultTooltip = `Zoom in to load ${layerTitle} features.`
     
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {

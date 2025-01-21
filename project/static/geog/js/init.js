@@ -526,7 +526,7 @@ const handleMapQuery = (map) => {
             if (!map._querying) {
                 const span = document.createElement('span')
                 span.className = 'font-monospace fs-12 text-wrap'
-                span.innerText = 'Zoom in to at least 100-km scale to enable query.'
+                span.innerText = 'Zoom in to enable query.'
                 footer.innerHTML = span.outerHTML
             }
         }
@@ -573,7 +573,7 @@ const handleMapQuery = (map) => {
         } else {
             const span = document.createElement('span')
             span.className = 'font-monospace fs-12 text-wrap'
-            span.innerText = 'Zoom in to at least 10-km scale to query OSM in map view.'
+            span.innerText = 'Zoom in to query OSM in map view.'
             footer.innerHTML = span.outerHTML
         }
     })
