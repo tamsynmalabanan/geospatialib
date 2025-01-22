@@ -571,7 +571,6 @@ const createWMSLayer = (data) => {
         layers: data.layerName, 
         format: 'image/png',
         transparent: true,
-        pane: 'legendPane'
     }
 
     return L.tileLayer.wms(baseUrl, options)
@@ -584,7 +583,7 @@ const getLayersViaCacheKey = (source, cacheKey) => {
 const createGeoJSONLayer = (data) => {
     const cacheKey = `${data.layerUrl}_${data.layerFormat}_${data.layerName}`
 
-    const geojsonLayer = getDefaultGeoJSONLayer({pane: 'legendPane'})
+    const geojsonLayer = getDefaultGeoJSONLayer()
 
     const layerTitle = data.layerTitle
     geojsonLayer.data = data
@@ -793,7 +792,7 @@ const createWFSLayer = (data) => {
 }
 
 const createXYZTilesLayer = (data) => {
-    return L.tileLayer(data.layerUrl, {pane: 'legendPane'})
+    return L.tileLayer(data.layerUrl)
 }
 
 const getCreateLayerHandler = (format) => {
