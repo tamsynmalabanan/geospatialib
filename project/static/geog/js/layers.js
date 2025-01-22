@@ -143,7 +143,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 const duplicateBtn = createDropdownMenuListItem({
                     label: `Duplicate ${type}`,
                     buttonClass: 'bi bi-copy',
-                })
+                }).querySelector('button')
                 const data = options.layer.data
                 for (var key in data) { 
                     if (data.hasOwnProperty(key)) {
@@ -153,14 +153,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         ); 
                     } 
                 }
-                console.log(duplicateBtn)
                 dropdown.appendChild(duplicateBtn)
                 duplicateBtn.addEventListener('click', (event) => {
-                    const newLayer = createLayerFromURL(data)
-                    if (newLayer) {
-                        layerGroup.addLayer(newLayer)
-                    }
-                    // toggleLayer(event, {map:map})
+                    // const newLayer = createLayerFromURL(data)
+                    // if (newLayer) {
+                    //     layerGroup.addLayer(newLayer)
+                    // }
+                    toggleLayer(event, {map:map})
                 })
 
                 const hideLegendBtn = createDropdownMenuListItem({
