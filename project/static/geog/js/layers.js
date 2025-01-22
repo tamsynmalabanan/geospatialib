@@ -244,6 +244,7 @@ const toggleLayer = async (event, options={}) => {
             }
 
             if (layer) {
+                console.log(layer, layerGroup)
                 layerGroup.addLayer(layer)
                 if (toggle.matches('button.add-layer-button')) {
                     updateSearchResultToggleStyle(toggle)
@@ -817,9 +818,7 @@ const createLayerFromURL = (data) => {
             const [minX, minY, maxX, maxY] = data.layerBbox.slice(1, -1).split(',')
             const bounds = L.latLngBounds([[minY, minX], [maxY, maxX]]);
             layer.getBounds = () => {
-                if (bounds) {
-                    return bounds
-                }
+                return bounds
             }
         }
     }
