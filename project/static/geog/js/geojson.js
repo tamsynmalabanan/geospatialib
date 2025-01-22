@@ -6,7 +6,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
         color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
     }
 
-    return L.geoJSON(geojson, {
+    const geojsonLayer =  L.geoJSON(geojson, {
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
@@ -24,9 +24,10 @@ const getDefaultGeoJSONLayer = (options={}) => {
             return getDefaultLayerStyle('other', params)
         },
         onEachFeature: (feature, layer) => {
-            if (options.pane) {
-                layer.options.pane = options.pane
-            }
+            layer.setPane(geojsonLayer.options.pane)
+            // if (options.pane) {
+            //     layer.options.pane = options.pane
+            // }
 
             if (options.getTitleFromLayer) {
                 layer.title = getLayerTitle(layer)
@@ -58,6 +59,8 @@ const getDefaultGeoJSONLayer = (options={}) => {
         },
         pane: options.pane || 'overlayPane'
     })
+
+    return geojsonLayer
 }
 
 const handleFeatureGeom = (feature, defaultGeom) => {
