@@ -310,3 +310,15 @@ const parseChunkedResponseToJSON = async (response, timeout=5000) => {
     parseChunkedResponseToJSONMap.set(response, parsePromise)
     return parsePromise
 };
+
+const getRandomString = (length) => { 
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; 
+    var result = ''; 
+    var charactersLength = characters.length; 
+    
+    for (var i = 0; i < length; i++) { 
+        result += characters.charAt(Math.floor(Math.random() * charactersLength)); 
+    } 
+    
+    return result; 
+}
