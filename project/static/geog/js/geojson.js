@@ -24,7 +24,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
             return getDefaultLayerStyle('other', params)
         },
         onEachFeature: (feature, layer) => {
-            layer.setPane(geojsonLayer.options.pane)
+            layer.options.pane = geojsonLayer.options.pane
             // if (options.pane) {
             //     layer.options.pane = options.pane
             // }
