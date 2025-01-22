@@ -250,6 +250,7 @@ const toggleLayer = async (event, options={}) => {
             }
 
             if (layer) {
+                console.log(datasetList, datasetList.children)
                 if (layerGroupName === 'legend') {
                     const paneName = `legendLayer${layer._leaflet_id}Pane`
                     const pane = map.getPane(paneName) || map.createPane(paneName)
