@@ -23,7 +23,6 @@ const getDefaultGeoJSONLayer = (options={}) => {
 
             return getDefaultLayerStyle('other', params)
         },
-        onEachFeature: 
     })
 
     const pane = options.pane
