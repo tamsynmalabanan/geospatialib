@@ -145,12 +145,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     buttonClass: 'bi bi-copy',
                 })
                 dropdown.appendChild(duplicateBtn)
-                duplicateBtn.addEventListener('click', () => {
+                duplicateBtn.addEventListener('click', (event) => {
                     const data = options.layer.data
                     const newLayer = createLayerFromURL(data)
                     if (newLayer) {
                         layerGroup.addLayer(newLayer)
-                    } 
+                    }
+                    console.log(data)
+                    // toggleLayer(event, {map:map})
                 })
 
                 const hideLegendBtn = createDropdownMenuListItem({
