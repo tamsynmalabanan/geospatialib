@@ -486,14 +486,15 @@ const handleMapLegend = (map) => {
                     if (ul.innerHTML === '') {
                         clearLegendLayers()
                     }
+
+                    const pane = layer.getPane()
+                    console.log(pane)
                 } else {
                     const collapse = legend.querySelector(`#${id}_collapse`)
                     collapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
                 }
             }
 
-            const pane = layer.getPane()
-            console.log(pane)
         }
     })
 }
