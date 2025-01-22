@@ -30,7 +30,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
         geojsonLayer.options.pane = pane
     }
 
-    geojsonLayer.onEachFeature = (feature, layer) => {
+    geojsonLayer.options.onEachFeature = (feature, layer) => {
         const pane = geojsonLayer.options.pane
         console.log(geojsonLayer, pane)
         if (pane) {
