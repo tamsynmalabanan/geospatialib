@@ -143,7 +143,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 const duplicateBtn = createDropdownMenuListItem({
                     label: `Duplicate ${type}`,
                     buttonClass: 'bi bi-copy',
-                }).querySelector('button')
+                })
                 const data = options.layer.data
                 for (var key in data) { 
                     if (data.hasOwnProperty(key)) {
