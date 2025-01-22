@@ -488,7 +488,9 @@ const handleMapLegend = (map) => {
                     }
 
                     const pane = layer.getPane()
-                    console.log(pane)
+                    L.DomUtil.remove(pane)
+                    delete map._panes[layer.options.pane]
+                    delete map._paneRenderers[layer.options.pane]
                 } else {
                     const collapse = legend.querySelector(`#${id}_collapse`)
                     collapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
