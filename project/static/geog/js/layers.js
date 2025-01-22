@@ -147,14 +147,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 const data = options.layer.data
                 for (var key in data) { 
                     if (data.hasOwnProperty(key)) {
-                        duplicateBtn.setAttribute(
+                        duplicateBtn.querySelector('button').setAttribute(
                             'data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase(),
                             data[key]
                         ); 
                     } 
                 }
                 dropdown.appendChild(duplicateBtn)
-                duplicateBtn.addEventListener('click', (event) => {
+                duplicateBtn.querySelector('button').addEventListener('click', (event) => {
                     // const newLayer = createLayerFromURL(data)
                     // if (newLayer) {
                     //     layerGroup.addLayer(newLayer)
