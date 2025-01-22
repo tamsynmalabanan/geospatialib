@@ -224,6 +224,7 @@ const toggleOffAllLayers = (toggle) => {
 }
 
 const toggleLayer = async (event, options={}) => {
+    console.log('here')
     let map = options.map
     if (!map && options.mapSelector) {
         map = mapQuerySelector(options.mapSelector)
