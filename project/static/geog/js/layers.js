@@ -154,7 +154,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     } 
                 }
                 dropdown.appendChild(duplicateBtn)
-                duplicateBtn.querySelector('button').addEventListener('click', (event) => {
+                duplicateBtn.addEventListener('click', (event) => {
+                    event.target = duplicateBtn.querySelector('button')
                     toggleLayer(event, {map:map})
                 })
 
