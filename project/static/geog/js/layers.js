@@ -155,10 +155,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 }
                 dropdown.appendChild(duplicateBtn)
                 duplicateBtn.querySelector('button').addEventListener('click', (event) => {
-                    // const newLayer = createLayerFromURL(data)
-                    // if (newLayer) {
-                    //     layerGroup.addLayer(newLayer)
-                    // }
                     toggleLayer(event, {map:map})
                 })
 
@@ -224,11 +220,12 @@ const toggleOffAllLayers = (toggle) => {
 }
 
 const toggleLayer = async (event, options={}) => {
-    console.log('here')
     let map = options.map
     if (!map && options.mapSelector) {
         map = mapQuerySelector(options.mapSelector)
     }
+
+    console.log(map, event)
 
     if (map) {
         const toggle = event.target
