@@ -1,12 +1,12 @@
 const getDefaultGeoJSONLayer = (options={}) => {
-    const geojson = options.geojson || {type: "FeatureCollection", features: []}
+    const geojson = options.geojson
 
     let color = options.color
     if (!color) {
         color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
     }
 
-    const geojsonLayer =  L.geoJSON(geojson, {
+    const geojsonLayer =  L.geoJSON({type: "FeatureCollection", features: []}, {
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
@@ -32,7 +32,6 @@ const getDefaultGeoJSONLayer = (options={}) => {
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const pane = geojsonLayer.options.pane
-        console.log(geojsonLayer, pane)
         if (pane) {
             layer.options.pane = pane
         }
@@ -64,6 +63,10 @@ const getDefaultGeoJSONLayer = (options={}) => {
 
             layer.on('click', createPopup)
         }
+    }
+
+    if (geojson) {
+        geojsonLayer.addData(geojson)
     }
 
     return geojsonLayer
