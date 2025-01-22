@@ -24,10 +24,10 @@ const getDefaultGeoJSONLayer = (options={}) => {
             return getDefaultLayerStyle('other', params)
         },
         onEachFeature: (feature, layer) => {
-            // layer.options.pane = geojsonLayer.options.pane
-            // if (options.pane) {
-            //     layer.options.pane = options.pane
-            // }
+            const pane = geojsonLayer.options.pane
+            if (pane) {
+                layer.options.pane = pane
+            }
 
             if (options.getTitleFromLayer) {
                 layer.title = getLayerTitle(layer)
@@ -57,8 +57,12 @@ const getDefaultGeoJSONLayer = (options={}) => {
                 layer.on('click', createPopup)
             }
         },
-        pane: options.pane || 'overlayPane'
     })
+
+    const pane = options.pane
+    if (pane) {
+        geojsonLayer.options.pane = pane
+    }
 
     return geojsonLayer
 }
