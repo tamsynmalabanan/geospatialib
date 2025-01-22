@@ -153,6 +153,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                         ); 
                     } 
                 }
+                console.log(duplicateBtn)
                 dropdown.appendChild(duplicateBtn)
                 duplicateBtn.addEventListener('click', (event) => {
                     const newLayer = createLayerFromURL(data)
