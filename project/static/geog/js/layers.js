@@ -250,13 +250,12 @@ const toggleLayer = async (event, options={}) => {
             }
 
             if (layer) {
-                console.log(datasetList, datasetList.children)
                 if (layerGroupName === 'legend') {
+                    console.log(layer._leaflet_id)
                     const paneName = `legendLayer${layer._leaflet_id}Pane`
                     const pane = map.getPane(paneName) || map.createPane(paneName)
-                    pane.style.zIndex = datasetList.children.length + 201
+                    pane.style.zIndex = document.querySelector('#legendLayers').children.length + 201
                     layer.options.pane = paneName
-                    console.log(layer)
                 }
 
                 layerGroup.addLayer(layer)
