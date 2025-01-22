@@ -155,8 +155,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 }
                 dropdown.appendChild(duplicateBtn)
                 duplicateBtn.addEventListener('click', () => {
-                    const event = new CustomEvent('click', {target:duplicateBtn.querySelector('button')})
-                    toggleLayer(event, {map:map})
+                    toggleLayer({target:duplicateBtn.querySelector('button')}, {map:map})
                 })
 
                 const hideLegendBtn = createDropdownMenuListItem({
