@@ -25,9 +25,9 @@ const getDefaultGeoJSONLayer = (options={}) => {
         },
         onEachFeature: (feature, layer) => {
             let pane
-            const parents = Object.values(layer._eventParents)
-            if (parents.length > 0) {
-                pane = parents[0].options.pane
+            const parents = layer._eventParents
+            if (parents) {
+                pane = Object.values(parents)[0].options.pane
             } else {
                 pane = options.pane
             }
