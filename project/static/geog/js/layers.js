@@ -643,7 +643,7 @@ const createGeoJSONLayer = (data) => {
                                     if (equalBounds || withinBounds) {
                                         if (!geojsonLayer.cachedGeoJSON) {
                                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
-                                            console.log(JSON.parse(geojsonLayer.cachedGeoJSON).features)
+                                            
                                         }
 
                                         let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
@@ -728,7 +728,7 @@ const createGeoJSONLayer = (data) => {
                         } else {
                             geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                         }
-                        console.log(JSON.parse(geojsonLayer.cachedGeoJSON).features)
+                        
                     }
                 } else {
                     geojson = {
