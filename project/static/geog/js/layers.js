@@ -638,27 +638,28 @@ const createGeoJSONLayer = (data) => {
                             for (const cachedGeoJSONString of cachedGeoJSONStrings) {
                                 const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                                 if (cachedGeoJSON) {
-                                    const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
-                                    const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
-                                    if (equalBounds || withinBounds) {
-                                        if (!geojsonLayer.cachedGeoJSON) {
-                                            geojsonLayer.cachedGeoJSON = cachedGeoJSONString
-                                            
-                                        }
-
-                                        let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                                        const crs = getGeoJSONCRS(cachedGeoJSON)
-                                        if (crs && crs !== 4326) {
-                                            filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-                                        }
-                                        
-                                        cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                                            return turf.booleanIntersects(filterBounds, feature)
-                                        })
-                                        
-                                        return cachedGeoJSON
-                                    }
+                                    if (!Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {
+                                        const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
+                                        const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
+                                        if (equalBounds || withinBounds) {
+                                            if (!geojsonLayer.cachedGeoJSON) {
+                                                geojsonLayer.cachedGeoJSON = cachedGeoJSONString
+                                                
+                                            }
     
+                                            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                                            const crs = getGeoJSONCRS(cachedGeoJSON)
+                                            if (crs && crs !== 4326) {
+                                                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                                            }
+                                            
+                                            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                                                return turf.booleanIntersects(filterBounds, feature)
+                                            })
+                                            
+                                            return cachedGeoJSON
+                                        }
+                                    }
                                 }
                             }
                         }
