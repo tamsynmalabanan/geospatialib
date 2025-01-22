@@ -144,14 +144,21 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     label: `Duplicate ${type}`,
                     buttonClass: 'bi bi-copy',
                 })
+                const data = options.layer.data
+                for (var key in data) { 
+                    if (data.hasOwnProperty(key)) {
+                        duplicateBtn.setAttribute(
+                            'data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase(),
+                            data[key]
+                        ); 
+                    } 
+                }
                 dropdown.appendChild(duplicateBtn)
                 duplicateBtn.addEventListener('click', (event) => {
-                    const data = options.layer.data
                     const newLayer = createLayerFromURL(data)
                     if (newLayer) {
                         layerGroup.addLayer(newLayer)
                     }
-                    console.log(data)
                     // toggleLayer(event, {map:map})
                 })
 
