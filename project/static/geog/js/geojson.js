@@ -32,7 +32,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
                 pane = options.pane
             }
 
-            console.log(parents, pane)
+            console.log(layer, parents, pane)
             if (pane) {
                 layer.options.pane = pane
             }
