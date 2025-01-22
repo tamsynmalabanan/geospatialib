@@ -476,19 +476,24 @@ const handleMapLegend = (map) => {
 
     map.on('layerremove', (event) => {
         const layer = event.layer
-        const id = `${mapId}Legend_${layer._leaflet_id}`
-        const legend = ul.querySelector(`#${id}`)
-        if (legend) {
-            if (!isHiddenInLegend(layer, map)) {
-                legend.remove()
-
-                if (ul.innerHTML === '') {
-                    clearLegendLayers()
+        if (layer) {
+            const id = `${mapId}Legend_${layer._leaflet_id}`
+            const legend = ul.querySelector(`#${id}`)
+            if (legend) {
+                if (!isHiddenInLegend(layer, map)) {
+                    legend.remove()
+    
+                    if (ul.innerHTML === '') {
+                        clearLegendLayers()
+                    }
+                } else {
+                    const collapse = legend.querySelector(`#${id}_collapse`)
+                    collapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
                 }
-            } else {
-                const collapse = legend.querySelector(`#${id}_collapse`)
-                collapse.innerHTML = '<i class="bi bi-eye-slash"></i>'
             }
+
+            const pane = layer.getPane()
+            console.log(pane)
         }
     })
 }
