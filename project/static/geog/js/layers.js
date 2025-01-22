@@ -250,20 +250,21 @@ const toggleLayer = async (event, options={}) => {
             }
 
             if (layer) {
-                if (layerGroupName === 'legend') {
-                    console.log(layer._leaflet_id)
-                    const paneName = `legendLayer${layer._leaflet_id}Pane`
-                    const pane = map.getPane(paneName) || map.createPane(paneName)
-                    pane.style.zIndex = document.querySelector('#legendLayers').children.length + 201
-                    layer.options.pane = paneName
-                }
+                console.log(layer)
+                // if (layerGroupName === 'legend') {
+                //     console.log(layer._leaflet_id)
+                //     const paneName = `legendLayer${layer._leaflet_id}Pane`
+                //     const pane = map.getPane(paneName) || map.createPane(paneName)
+                //     pane.style.zIndex = document.querySelector('#legendLayers').children.length + 201
+                //     layer.options.pane = paneName
+                // }
 
-                layerGroup.addLayer(layer)
-                if (toggle.matches('button.add-layer-button')) {
-                    updateSearchResultToggleStyle(toggle)
-                } else {
-                    toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
-                }
+                // layerGroup.addLayer(layer)
+                // if (toggle.matches('button.add-layer-button')) {
+                //     updateSearchResultToggleStyle(toggle)
+                // } else {
+                //     toggle.setAttribute('data-leaflet-id', layer._leaflet_id)
+                // }
             }
         } else {
             const layer = layerGroup.getLayer(data.leafletId)
