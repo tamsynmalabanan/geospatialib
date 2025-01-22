@@ -462,7 +462,7 @@ const handleMapLegend = (map) => {
                             })
                         }
                     })
-                }                
+                }
             }
 
             const legendCollapse = legendContainer.querySelector('.collapse')

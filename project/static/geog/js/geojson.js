@@ -23,45 +23,46 @@ const getDefaultGeoJSONLayer = (options={}) => {
 
             return getDefaultLayerStyle('other', params)
         },
-        onEachFeature: (feature, layer) => {
-            const pane = geojsonLayer.options.pane
-            if (pane) {
-                layer.options.pane = pane
-            }
-
-            if (options.getTitleFromLayer) {
-                layer.title = getLayerTitle(layer)
-            }
-
-            if (options.bindTitleAsTooltip) {
-                layer.bindTooltip(layer.title, {sticky:true})
-            }
-
-            if (Object.keys(feature.properties).length > 0) {
-                const createPopup = () => {
-                    const propertiesTable = createFeaturePropertiesTable(feature.properties, {
-                            header:layer.popupHeader
-                    })
-
-                    const popup = layer.bindPopup(propertiesTable.outerHTML, {
-                        autoPan: false,
-                    })
-                    
-                    if (popup){
-                        popup.openPopup()
-                    }
-                    
-                    layer.off('click', createPopup)
-                }
-
-                layer.on('click', createPopup)
-            }
-        },
     })
 
     const pane = options.pane
     if (pane) {
         geojsonLayer.options.pane = pane
+    }
+
+    geojsonLayer.onEachFeature = (feature, layer) => {
+        const pane = geojsonLayer.options.pane
+        if (pane) {
+            layer.options.pane = pane
+        }
+
+        if (options.getTitleFromLayer) {
+            layer.title = getLayerTitle(layer)
+        }
+
+        if (options.bindTitleAsTooltip) {
+            layer.bindTooltip(layer.title, {sticky:true})
+        }
+
+        if (Object.keys(feature.properties).length > 0) {
+            const createPopup = () => {
+                const propertiesTable = createFeaturePropertiesTable(feature.properties, {
+                        header:layer.popupHeader
+                })
+
+                const popup = layer.bindPopup(propertiesTable.outerHTML, {
+                    autoPan: false,
+                })
+                
+                if (popup){
+                    popup.openPopup()
+                }
+                
+                layer.off('click', createPopup)
+            }
+
+            layer.on('click', createPopup)
+        }
     }
 
     return geojsonLayer
