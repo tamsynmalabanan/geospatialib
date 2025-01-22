@@ -225,8 +225,6 @@ const toggleLayer = async (event, options={}) => {
         map = mapQuerySelector(options.mapSelector)
     }
 
-    console.log(map, event)
-
     if (map) {
         const toggle = event.target
         
@@ -240,7 +238,8 @@ const toggleLayer = async (event, options={}) => {
             }
         }
 
-        const layerGroup = map.getLayerGroups()[options.layerGroup || 'legend']
+        const layerGroupName = options.layerGroup || 'legend'
+        const layerGroup = map.getLayerGroups()[layerGroupName]
         
         const data = toggle.dataset
         const tagName = toggle.tagName.toLowerCase()
@@ -251,7 +250,14 @@ const toggleLayer = async (event, options={}) => {
             }
 
             if (layer) {
-                console.log(layer, layerGroup)
+                if (layerGroupName === 'legend') {
+                    const paneName = `legendLayer${layer._leaflet_id}Pane`
+                    const pane = map.getPane(paneName) || map.createPane(paneName)
+                    pane.style.zIndex = datasetList.children.length + 201
+                    layer.options.pane = paneName
+                    console.log(layer)
+                }
+
                 layerGroup.addLayer(layer)
                 if (toggle.matches('button.add-layer-button')) {
                     updateSearchResultToggleStyle(toggle)
