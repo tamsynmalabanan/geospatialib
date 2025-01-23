@@ -40,13 +40,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             label: `Zoom to ${type}`,
             buttonClass: 'bi bi-zoom-in',
             buttonAttrs: {
-                onclick: () => {
+                onclick: (() => {
                     if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
                         map.setView(bounds.getNorthEast(), 15)
                     } else {
                         map.fitBounds(bounds)
                     }
-                }
+                })()
             }
         })
     }
