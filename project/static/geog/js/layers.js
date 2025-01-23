@@ -20,7 +20,7 @@ const layerToGeoJSON = (layer) => {
 
 const populateLayerDropdownMenu = (toggle, options={}) => {
     const dropdown = toggle.nextElementSibling
-    if (!dropdown || dropdown.innerHTML.trim() !== '') {return}
+    if (!dropdown || dropdown.innerHTML !== '') {return}
 
     const map = options.map || mapQuerySelector(options.mapSelector)
     if (!map) {return}
@@ -28,8 +28,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const currentLayer = options.layer
     if (!currentLayer) {return}
 
-    const layerGroupName = options.layerGroup || 'legend'
-    const layerGroup = map.getLayerGroups()[layerGroupName]
+    const layerGroup = map.getLayerGroup(currentLayer)
     if (!layerGroup) {return}
     
     const datasetList = toggle.closest('ul.dataset-list')

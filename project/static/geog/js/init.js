@@ -108,10 +108,6 @@ const handleMapLayerGroups = (map) => {
                 zIndex = 625
             }
 
-            if (group === 'legend') {
-                zIndex = 201
-            }
-
             pane.style.zIndex = zIndex
 
             map.addLayer(layerGroup, {
@@ -179,13 +175,19 @@ const handleMapLayerGroups = (map) => {
         }
 
         layerGroup.moveLayerToTop = (layer) => {
-            
+            const leafletId = layer._leaflet_id
+
         }
 
         layerGroup.show()
     }
 
-    map.getLayerGroups = () => layerGroups
+    map.getLayerGroups = (name) => name ? layerGroups[name] : layerGroups
+
+    map.getLayerGroup = (layer) => {
+        const layerGroups = Object.values(layerGroups).filter(group => group.hasLayer(layer))
+        return layerGroups.length > 0 ? layerGroups[0] : null
+    }
 }
 
 const constructInfoPanel = (map, name, options={}) => {
