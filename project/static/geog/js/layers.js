@@ -2,7 +2,7 @@ const isHiddenInLegend = (layer, map) => {
     const layerGroups = map.getLayerGroups()
     for (const layerGroupName in layerGroups) {
         const layerGroup = layerGroups[layerGroupName]
-        if (layerGroup.hiddenLegendLayers.includes(layer)) {
+        if (layerGroup.hasHiddenLayer(layer)) {
             return layerGroup
         }
     }
@@ -40,42 +40,31 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => map.zoomToBounds(bounds)
     }) : null
 
-    // // Isolate layer button
-    // const isolateBtn = (datasetList && currentCheckbox) || layerGroupName === 'legend' ? createDropdownMenuListItem({
-    //     label: `Isolate ${type}`,
-    //     buttonClass: 'bi bi-subtract',
-    //     buttonClickHandler: () => {
-    //         if (layerGroupName === 'legend') {
-    //             layerGroup.eachLayer(layer => {
-    //                 if (layer !== currentLayer) {
-    //                     layerGroup.hiddenLegendLayers.push(layer)
-    //                     layerGroup.removeLayer(layer)
-    //                 }
-    //             })
+    // Isolate layer button
+    const isolateBtnPrereqs = (datasetList && currentCheckbox) || layerGroupName === 'legend'
+    const isolateBtn = isolateBtnPrereqs ? createDropdownMenuListItem({
+        label: `Isolate ${type}`,
+        buttonClass: 'bi bi-subtract',
+        buttonClickHandler: () => {
+            if (layerGroupName === 'legend') {
+                return layerGroup.isolateLayer(currentLayer)
+            }
 
-    //             if (!layerGroup.hasLayer(currentLayer)) {
-    //                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== currentLayer)
-    //                 layerGroup.addLayer(currentLayer)
-    //             }
+            if (currentCheckbox && datasetList) {
+                datasetList.querySelectorAll('input.form-check-input').forEach(checkbox => {
+                    if (checkbox.checked && checkbox !== currentCheckbox) {
+                        checkbox.click()
+                    }
+                })
 
-    //             return
-    //         }
+                if (!currentCheckbox.checked) {
+                    currentCheckbox.click()
+                }
 
-    //         if (currentCheckbox && datasetList) {
-    //             datasetList.querySelectorAll('input.form-check-input').forEach(checkbox => {
-    //                 if (checkbox.checked && checkbox !== currentCheckbox) {
-    //                     checkbox.click()
-    //                 }
-    //             })
-
-    //             if (!currentCheckbox.checked) {
-    //                 currentCheckbox.click()
-    //             }
-
-    //             return
-    //         }
-    //     }
-    // }) : null
+                return
+            }
+        }
+    }) : null
 
     // // show or hide layer button
     // const showHideBtn = (
@@ -120,7 +109,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
     Array(
         zoomBtn,
-        // isolateBtn,
+        isolateBtn,
         // showHideBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 

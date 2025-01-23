@@ -136,7 +136,25 @@ const handleMapLayerGroups = (map) => {
         
         layerGroup.show()
 
-        // layerGroup.
+        layerGroup.hasHiddenLayer = (layer) => {
+            return layerGroup.hiddenLegendLayers.includes(layer)
+        }
+
+        layerGroup.isolateLayer = (currentLayer) => {
+            if (layerGroup.hasLayer(currentLayer) || layerGroup.hasHiddenLayer(currentLayer)) {
+                layerGroup.eachLayer(layer => {
+                    if (layer !== currentLayer) {
+                        layerGroup.hiddenLegendLayers.push(layer)
+                        layerGroup.removeLayer(layer)
+                    }
+                })
+
+                if (!layerGroup.hasLayer(currentLayer)) {
+                    layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== currentLayer)
+                    layerGroup.addLayer(currentLayer)
+                }
+            }
+        }
     }
 
     map.getLayerGroups = () => layerGroups
