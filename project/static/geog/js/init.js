@@ -182,32 +182,36 @@ const handleMapLayerGroups = (map) => {
         }
 
         if (group === 'legend') {
-            layerGroup.moveLayer = (currentLayer, index) => {
+            layerGroup.moveLayer = (currentLayer, options={}) => {
                 const legend = document.querySelector(`#${map.getContainer().id}_legend`)
+                
                 const layerLegend = legend?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
-                if (layerLegend) {
-                    if (index === -1 || index >= legend.children.length) {
-                        legend.appendChild(layerLegend)
-                    } else {
-                        const currentIndexElement = legend.children[index]
-                        if (currentIndexElement !== layerLegend) {
-                            legend.insertBefore(layerLegend, currentIndexElement)
+                if (!layerLegend) {return}
+                
+                const index = options.index || options.indexIncrement ? options.indexIncrement - legend.indexOf(layerLegend) : null
+                if (!index) {return}
+                
+                if (index === -1 || index >= legend.children.length) {
+                    legend.appendChild(layerLegend)
+                } else {
+                    const currentIndexElement = legend.children[index]
+                    if (currentIndexElement !== layerLegend) {
+                        legend.insertBefore(layerLegend, currentIndexElement)
+                    }
+                }
+
+                const layerLegends = Array.from(legend.children).reverse()
+                layerLegends.forEach(element => {
+                    const leafletId = element.getAttribute('data-leaflet-id')
+                    const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
+                    if (layer) {
+                        const paneName = layer.options.pane
+                        const pane = map.getPane(paneName)
+                        if (pane) {
+                            pane.style.zIndex = layerLegends.indexOf(element) + 201
                         }
                     }
-
-                    const layerLegends = Array.from(legend.children).reverse()
-                    layerLegends.forEach(element => {
-                        const leafletId = element.getAttribute('data-leaflet-id')
-                        const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
-                        if (layer) {
-                            const paneName = layer.options.pane
-                            const pane = map.getPane(paneName)
-                            if (pane) {
-                                pane.style.zIndex = layerLegends.indexOf(element) + 201
-                            }
-                        }
-                    })
-                }
+                })
             }
         }
 
