@@ -185,7 +185,7 @@ const handleMapLayerGroups = (map) => {
     map.getLayerGroups = (name) => name ? layerGroups[name] : layerGroups
 
     map.getLayerGroup = (layer) => {
-        const filteredLayerGroups = Object.values(layerGroups).filter(group => group.hasLayer(layer))
+        const filteredLayerGroups = Object.values(layerGroups).filter(group => group.hasLayer(layer) || group.hasHiddenLayer(layer))
         return filteredLayerGroups.length > 0 ? filteredLayerGroups[0] : null
     }
 }
