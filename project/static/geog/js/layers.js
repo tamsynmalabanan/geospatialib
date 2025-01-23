@@ -60,30 +60,18 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.toggleLayerVisibility(currentLayer)
     }) : null
 
-    // if (datasetList && layerGroupName === 'legend') {
-
-    //     const removeLayerBtn = createDropdownMenuListItem({
-    //         label: `Remove ${type}`,
-    //         buttonClass: 'bi bi-trash3',
-    //     })
-    //     dropdown.appendChild(removeLayerBtn)
-    //     removeLayerBtn.addEventListener('click', () => {
-    //         const layer = options.layer
-    //         if (layer) {
-    //             if (isHiddenInLegend(layer, map)) {
-    //                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
-    //                 map.fire('layerremove', {layer:layer})
-    //             } else {
-    //                 layerGroup.removeLayer(layer)
-    //             }
-    //         }
-    //     })
-    // }
+    const removeLayerBtn = datasetList ? 
+    createDropdownMenuListItem({
+        label: `Remove ${type}`,
+        buttonClass: 'bi bi-trash3',
+        buttonClickHandler: () => layerGroup.customRemoveLayer(currentLayer)
+    }) : null
 
     Array(
         zoomBtn,
         isolateBtn,
         showHideBtn,
+        removeLayerBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 
     // const divider = document.createElement('li')

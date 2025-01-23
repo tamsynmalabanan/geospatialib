@@ -95,7 +95,7 @@ const handleMapLayerGroups = (map) => {
     
     for (let group in layerGroups) {
         const layerGroup = layerGroups[group]
-        layerGroup.hiddenLegendLayers = []
+        layerGroup.hiddenLayers = []
         
         layerGroup.hide = () => map.removeLayer(layerGroup)
         layerGroup.show = () => {
@@ -121,7 +121,7 @@ const handleMapLayerGroups = (map) => {
         layerGroup.getBounds = () => {
             const bounds = []
             
-            Array(layerGroup.getLayers(), layerGroup.hiddenLegendLayers).forEach(set => {
+            Array(layerGroup.getLayers(), layerGroup.hiddenLayers).forEach(set => {
                 set.forEach(layer => {
                     if (layer.getBounds) {
                         bounds.push(L.rectangle(layer.getBounds()).toGeoJSON())
@@ -137,20 +137,20 @@ const handleMapLayerGroups = (map) => {
         layerGroup.show()
 
         layerGroup.hasHiddenLayer = (layer) => {
-            return layerGroup.hiddenLegendLayers.includes(layer)
+            return layerGroup.hiddenLayers.includes(layer)
         }
 
         layerGroup.isolateLayer = (currentLayer) => {
             if (layerGroup.hasLayer(currentLayer) || layerGroup.hasHiddenLayer(currentLayer)) {
                 layerGroup.eachLayer(layer => {
                     if (layer !== currentLayer) {
-                        layerGroup.hiddenLegendLayers.push(layer)
+                        layerGroup.hiddenLayers.push(layer)
                         layerGroup.removeLayer(layer)
                     }
                 })
 
                 if (!layerGroup.hasLayer(currentLayer)) {
-                    layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== currentLayer)
+                    layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(layer => layer !== currentLayer)
                     layerGroup.addLayer(currentLayer)
                 }
             }
@@ -158,11 +158,20 @@ const handleMapLayerGroups = (map) => {
 
         layerGroup.toggleLayerVisibility = (layer) => {
             if (layerGroup.hasLayer(layer)) {
-                layerGroup.hiddenLegendLayers.push(layer)
+                layerGroup.hiddenLayers.push(layer)
                 layerGroup.removeLayer(layer)
             } else {
-                layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
                 layerGroup.addLayer(layer)
+            }
+        }
+
+        layerGroup.customRemoveLayer = (layer) => {
+            if (layerGroup.hasHiddenLayer(layer)) {
+                layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                map.fire('layerremove', {layer:layer})
+            } else {
+                layerGroup.removeLayer(layer)
             }
         }
     }
@@ -320,12 +329,12 @@ const handleMapLegend = (map) => {
     showHideBtn.addEventListener('click', () => {
         if (legendLayerGroup.getLayers().length > 0) {
             legendLayerGroup.eachLayer(layer => {
-                legendLayerGroup.hiddenLegendLayers.push(layer)
+                legendLayerGroup.hiddenLayers.push(layer)
                 legendLayerGroup.removeLayer(layer)
             })
-        } else if (legendLayerGroup.hiddenLegendLayers.length > 0) {
-            legendLayerGroup.hiddenLegendLayers.forEach(layer => {
-                legendLayerGroup.hiddenLegendLayers = legendLayerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+        } else if (legendLayerGroup.hiddenLayers.length > 0) {
+            legendLayerGroup.hiddenLayers.forEach(layer => {
+                legendLayerGroup.hiddenLayers = legendLayerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
                 legendLayerGroup.addLayer(layer)
             })
         }
@@ -338,7 +347,7 @@ const handleMapLegend = (map) => {
     }).querySelector('button')
     removeLayersBtn.addEventListener('click', () => {
         legendLayerGroup.clearLayers()
-        legendLayerGroup.hiddenLegendLayers = []
+        legendLayerGroup.hiddenLayers = []
         ul.innerHTML = ''
     })
 

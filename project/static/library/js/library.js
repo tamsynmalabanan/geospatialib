@@ -94,7 +94,7 @@ document.addEventListener('htmx:afterSwap', (event) => {
             )
             if (firstPageResults || nextPathResults) {
                 const mapLegend =  map.getLayerGroups().legend
-                const legendLayers = mapLegend.getLayers().concat(mapLegend.hiddenLegendLayers)
+                const legendLayers = mapLegend.getLayers().concat(mapLegend.hiddenLayers)
                 if (legendLayers.length > 0 ) {
                     const searchResults = document.querySelector('#searchResults')
                     const toggleSelector = 'button.add-layer-button'
