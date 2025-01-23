@@ -18,7 +18,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     if (!map) {return}
     
     const currentLayer = options.layer
-    
+    if (!currentLayer) {return}
+
     const layerGroupName = options.layerGroup || 'legend'
     const layerGroup = map.getLayerGroups()[layerGroupName]
     
@@ -32,18 +33,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         return L.latLngBounds([[minY, minX], [maxY, maxX]]);
     })() : currentLayer ? getLayerBounds(currentLayer) : null);
     
-
     // Zoom to layer button
     const zoomBtn = bounds ? createDropdownMenuListItem({
         label: `Zoom to ${type}`,
         buttonClass: 'bi bi-zoom-in',
-        buttonClickHandler: () => {
-            if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
-                map.setView(bounds.getNorthEast(), 15)
-            } else {
-                map.fitBounds(bounds)
-            }
-        }
+        buttonClickHandler: () => map.zoomToBounds(bounds)
     }) : null
 
     // Isolate layer button
@@ -83,25 +77,26 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         }
     }) : null
 
-    // // show or hide layer button
-    // if (layerGroupName === 'legend' || !currentCheckbox) {
-    //     const showHideBtn = createDropdownMenuListItem({
-    //         label: `Show/hide ${type}`,
-    //         buttonClass: 'bi bi-eye',
-    //     })
-    //     showHideBtn.addEventListener('click', () => {
-    //         const layer = options.layer
-    //         if (layer) {
-    //             if (layerGroup.hasLayer(layer)) {
-    //                 layerGroup.hiddenLegendLayers.push(layer)
-    //                 layerGroup.removeLayer(layer)
-    //             } else {
-    //                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
-    //                 layerGroup.addLayer(layer)
-    //             }
-    //         }
-    //     })
-    // }
+    // show or hide layer button
+    const showHideBtn = (
+        currentLayer &&
+        (layerGroupName === 'legend' 
+        || !currentCheckbox)
+    ) ? createDropdownMenuListItem({
+        label: `Show/hide ${type}`,
+        buttonClass: 'bi bi-eye',
+        buttonClickHandler: () => {
+            if (layer) {
+                if (layerGroup.hasLayer(layer)) {
+                    layerGroup.hiddenLegendLayers.push(layer)
+                    layerGroup.removeLayer(layer)
+                } else {
+                    layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                    layerGroup.addLayer(layer)
+                }
+            }
+        }
+    }) : null
 
     // if (datasetList && layerGroupName === 'legend') {
 
@@ -126,7 +121,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     Array(
         zoomBtn,
         isolateBtn,
-        // showHideBtn,
+        showHideBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 
     // const divider = document.createElement('li')
@@ -443,10 +438,10 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
             buttonCallback: () => {
                 populateLayerDropdownMenu(menuBtn, {
                     map: map,
-                    layer: layer,
                     layerGroup: layerGroup,
                     geojson: geojson,
-                    type: type
+                    type: type,
+                    layer: layer,
                 })
             }
         })

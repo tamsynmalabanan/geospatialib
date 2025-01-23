@@ -135,6 +135,8 @@ const handleMapLayerGroups = (map) => {
         }
         
         layerGroup.show()
+
+        // layerGroup.
     }
 
     map.getLayerGroups = () => layerGroups
@@ -368,7 +370,7 @@ const handleMapLegend = (map) => {
                         populateLayerDropdownMenu(menuBtn, {
                             map: map,
                             layerGroup: 'legend',
-                            layer: layer,
+                            layer: layer
                         })
                     }
                 })
@@ -960,10 +962,21 @@ const handleMapObservers = (map) => {
 //     }
 // }
 
+const handleMapMethods = (map) => {
+    map.zoomToBounds = (bounds) => {
+        if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
+            map.setView(bounds.getNorthEast(), 15)
+        } else {
+            map.fitBounds(bounds)
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener("map:init", function (event) {
         const map = event.detail.map
 
+        handleMapMethods(map)
         handleMapBasemap(map)
         handleMapLayerGroups(map)
         handleMapContainer(map)
@@ -972,6 +985,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleMapControls(map) // needs to be after handleMapInfoPanels
         handleMapObservers(map)
         handleMapContextMenu(map)
+
 
         map.initComplete = true
         map.fire('mapInitComplete')
