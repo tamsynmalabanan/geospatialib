@@ -197,10 +197,7 @@ const handleMapLayerGroups = (map) => {
 
                     const increment = options.indexIncrement
                     if (increment) {
-                        let newIndex = currentLayerIndex-increment
-                        if (newIndex > currentLayerIndex) {
-                            newIndex +=1
-                        }
+                        const newIndex = currentLayerIndex-increment
                         return newIndex > currentLayerIndex ? newIndex+1 : newIndex >= 0 ? newIndex : 0
                     }
                 }) ()
