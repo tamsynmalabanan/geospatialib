@@ -20,10 +20,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     ) : null
     const type = options.type || (document.querySelector(`[data-layers-toggles="#${datasetList?.id}"]`)?.getAttribute('data-layers-type') ?? 'layer')
 
-    const bounds = options.bounds || (options.bboxCoords ? (() => {
-        const [minX, minY, maxX, maxY] = options.bboxCoords.slice(1, -1).split(',');
-        return L.latLngBounds([[minY, minX], [maxY, maxX]]);
-    })() : getLayerBounds(currentLayer));
+    const bounds = options.bounds || getLayerBounds(currentLayer)
 
     const geojson = options.geojson || currentLayer.cachedGeoJSON || layerToGeoJSON(currentLayer)
     
@@ -32,6 +29,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         label: `Zoom to ${type}`,
         buttonClass: 'bi bi-zoom-in',
         buttonClickHandler: () => map.zoomToBounds(bounds)
+    }) : null
+    
+    const zoomToCenterBtn = bounds ? 
+    createDropdownMenuListItem({
+        label: `Zoom to ${type} centroid`,
+        buttonClass: 'bi bi-crosshair',
+        buttonClickHandler: () => map.setView(bounds.getCenter(), 15)
     }) : null
 
     const isolateBtn = createDropdownMenuListItem({
@@ -109,6 +113,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
     Array(
         zoomBtn,
+        zoomToCenterBtn,
         isolateBtn,
         showHideBtn,
         !currentCheckbox ? createDropdownDivider() : null,
