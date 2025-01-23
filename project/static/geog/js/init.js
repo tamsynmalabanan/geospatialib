@@ -167,11 +167,15 @@ const handleMapLayerGroups = (map) => {
         }
 
         layerGroup.customRemoveLayer = (layer) => {
+            if (layerGroup.hasLayer(layer)) {
+                layerGroup.removeLayer(layer)
+                return
+            }
+
             if (layerGroup.hasHiddenLayer(layer)) {
                 layerGroup.hiddenLayers = layerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
                 map.fire('layerremove', {layer:layer})
-            } else {
-                layerGroup.removeLayer(layer)
+                return
             }
         }
     }
