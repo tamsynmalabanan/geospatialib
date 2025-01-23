@@ -40,63 +40,63 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => map.zoomToBounds(bounds)
     }) : null
 
-    // Isolate layer button
-    const isolateBtn = (datasetList && currentCheckbox) || layerGroupName === 'legend' ? createDropdownMenuListItem({
-        label: `Isolate ${type}`,
-        buttonClass: 'bi bi-subtract',
-        buttonClickHandler: () => {
-            if (layerGroupName === 'legend') {
-                layerGroup.eachLayer(layer => {
-                    if (layer !== currentLayer) {
-                        layerGroup.hiddenLegendLayers.push(layer)
-                        layerGroup.removeLayer(layer)
-                    }
-                })
+    // // Isolate layer button
+    // const isolateBtn = (datasetList && currentCheckbox) || layerGroupName === 'legend' ? createDropdownMenuListItem({
+    //     label: `Isolate ${type}`,
+    //     buttonClass: 'bi bi-subtract',
+    //     buttonClickHandler: () => {
+    //         if (layerGroupName === 'legend') {
+    //             layerGroup.eachLayer(layer => {
+    //                 if (layer !== currentLayer) {
+    //                     layerGroup.hiddenLegendLayers.push(layer)
+    //                     layerGroup.removeLayer(layer)
+    //                 }
+    //             })
 
-                if (!layerGroup.hasLayer(currentLayer)) {
-                    layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== currentLayer)
-                    layerGroup.addLayer(currentLayer)
-                }
+    //             if (!layerGroup.hasLayer(currentLayer)) {
+    //                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== currentLayer)
+    //                 layerGroup.addLayer(currentLayer)
+    //             }
 
-                return
-            }
+    //             return
+    //         }
 
-            if (currentCheckbox && datasetList) {
-                datasetList.querySelectorAll('input.form-check-input').forEach(checkbox => {
-                    if (checkbox.checked && checkbox !== currentCheckbox) {
-                        checkbox.click()
-                    }
-                })
+    //         if (currentCheckbox && datasetList) {
+    //             datasetList.querySelectorAll('input.form-check-input').forEach(checkbox => {
+    //                 if (checkbox.checked && checkbox !== currentCheckbox) {
+    //                     checkbox.click()
+    //                 }
+    //             })
 
-                if (!currentCheckbox.checked) {
-                    currentCheckbox.click()
-                }
+    //             if (!currentCheckbox.checked) {
+    //                 currentCheckbox.click()
+    //             }
 
-                return
-            }
-        }
-    }) : null
+    //             return
+    //         }
+    //     }
+    // }) : null
 
-    // show or hide layer button
-    const showHideBtn = (
-        currentLayer &&
-        (layerGroupName === 'legend' 
-        || !currentCheckbox)
-    ) ? createDropdownMenuListItem({
-        label: `Show/hide ${type}`,
-        buttonClass: 'bi bi-eye',
-        buttonClickHandler: () => {
-            if (layer) {
-                if (layerGroup.hasLayer(layer)) {
-                    layerGroup.hiddenLegendLayers.push(layer)
-                    layerGroup.removeLayer(layer)
-                } else {
-                    layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
-                    layerGroup.addLayer(layer)
-                }
-            }
-        }
-    }) : null
+    // // show or hide layer button
+    // const showHideBtn = (
+    //     currentLayer &&
+    //     (layerGroupName === 'legend' 
+    //     || !currentCheckbox)
+    // ) ? createDropdownMenuListItem({
+    //     label: `Show/hide ${type}`,
+    //     buttonClass: 'bi bi-eye',
+    //     buttonClickHandler: () => {
+    //         if (layer) {
+    //             if (layerGroup.hasLayer(layer)) {
+    //                 layerGroup.hiddenLegendLayers.push(layer)
+    //                 layerGroup.removeLayer(layer)
+    //             } else {
+    //                 layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+    //                 layerGroup.addLayer(layer)
+    //             }
+    //         }
+    //     }
+    // }) : null
 
     // if (datasetList && layerGroupName === 'legend') {
 
@@ -120,8 +120,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
     Array(
         zoomBtn,
-        isolateBtn,
-        showHideBtn,
+        // isolateBtn,
+        // showHideBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 
     // const divider = document.createElement('li')
