@@ -12,188 +12,197 @@ const isHiddenInLegend = (layer, map) => {
 
 const populateLayerDropdownMenu = (toggle, options={}) => {
     const dropdown = toggle.nextElementSibling
-    if (dropdown && dropdown.innerHTML.trim() === '') {
-        const map = options.map || mapQuerySelector(options.mapSelector)
-        if (!map) {return}
+    if (!dropdown || dropdown.innerHTML.trim() !== '') {return}
 
-        const datasetList = toggle.closest('ul.dataset-list')
-        const type = options.type || (() => {
-            if (datasetList) {
-                const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
-                if (toggleAll) {
-                    return toggleAll.getAttribute('data-layers-type')
-                }
-            }
+    const map = options.map || mapQuerySelector(options.mapSelector)
+    if (!map) {return}
+    
+    const layerGroupName = options.layerGroup || 'legend'
+    const layerGroup = map.getLayerGroups()[layerGroupName]
+    const checkbox = findOuterElement('input.form-check-input', toggle)
+    
+    const datasetList = toggle.closest('ul.dataset-list')
+    const datasetListId = datasetList?.id ?? null
+    // const type = options.type || (() => {
+    //     if (datasetList) {
+    //         const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
+    //         if (toggleAll) {
+    //             return toggleAll.getAttribute('data-layers-type')
+    //         }
+    //     }
+    //     return 'layer'
+    // })()
+    const type = options.type || (document.querySelector(`[data-layers-toggles="#${datasetList?.id}"]`)?.getAttribute('data-layers-type') ?? 'layer')
 
-            return 'layer'
-        })()
 
-        let bounds = options.bounds
-        if (!bounds ) {
-            if (options.bboxCoords) {
-                const [minX, minY, maxX, maxY] = options.bboxCoords.slice(1, -1).split(',')
-                bounds = L.latLngBounds([[minY, minX], [maxY, maxX]]);
-            } else if (options.layer) {
-                const layer = options.layer
-                bounds = getLayerBounds(layer)              
-            }
+    const bounds = options.bounds || (() => {
+        if (options.bboxCoords) {
+            const [minX, minY, maxX, maxY] = options.bboxCoords.slice(1, -1).split(',')
+            return L.latLngBounds([[minY, minX], [maxY, maxX]]);
         }
 
-        if (bounds) {
-            const zoomBtn = createDropdownMenuListItem({
-                label: `Zoom to ${type}`,
-                buttonClass: 'bi bi-zoom-in',
-            })
-            dropdown.appendChild(zoomBtn)
-            zoomBtn.addEventListener('click', () => {
-                if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
-                    map.setView(bounds.getNorthEast(), 15)
-                } else {
-                    map.fitBounds(bounds)
-                }
-            })
+        if (options.layer) {
+            const layer = options.layer
+            return getLayerBounds(layer)              
         }
+    })()
 
-        const layerGroupName = options.layerGroup || 'legend'
-        const layerGroup = map.getLayerGroups()[layerGroupName]
-        const checkbox = findOuterElement('input.form-check-input', toggle)
+    // Zoom to layer button
+    if (bounds) {
+        const zoomBtn = createDropdownMenuListItem({
+            label: `Zoom to ${type}`,
+            buttonClass: 'bi bi-zoom-in',
+        })
+        zoomBtn.addEventListener('click', () => {
+            if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
+                map.setView(bounds.getNorthEast(), 15)
+            } else {
+                map.fitBounds(bounds)
+            }
+        })
+    }
 
-        if (datasetList) {
-            const datasetListId = datasetList.id
-            const isolateBtn = createDropdownMenuListItem({
-                label: `Isolate ${type}`,
-                buttonClass: 'bi bi-subtract',
-            })
-            dropdown.appendChild(isolateBtn)
-            isolateBtn.addEventListener('click', () => {
-                if (datasetListId === 'legendLayers') {
-                    layerGroup.eachLayer(layer => {
-                        if (options.layer !== layer) {
-                            layerGroup.hiddenLegendLayers.push(layer)
-                            layerGroup.removeLayer(layer)
+    // Isolayer layer button
+    if (datasetList) {
+        const isolateBtn = createDropdownMenuListItem({
+            label: `Isolate ${type}`,
+            buttonClass: 'bi bi-subtract',
+        })
+        dropdown.appendChild(isolateBtn)
+        isolateBtn.addEventListener('click', () => {
+            if (datasetListId === 'legendLayers') {
+                layerGroup.eachLayer(layer => {
+                    if (options.layer !== layer) {
+                        layerGroup.hiddenLegendLayers.push(layer)
+                        layerGroup.removeLayer(layer)
+                    }
+                })
+                layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== options.layer)
+                layerGroup.addLayer(options.layer)
+            } else {
+                if (checkbox) {
+                    datasetList.querySelectorAll('input.form-check-input').forEach(input => {
+                        if (input.checked && input !== checkbox) {
+                            input.click()
                         }
                     })
-                    layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(layer => layer !== options.layer)
-                    layerGroup.addLayer(options.layer)
-                } else {
-                    if (checkbox) {
-                        datasetList.querySelectorAll('input.form-check-input').forEach(input => {
-                            if (input.checked && input !== checkbox) {
-                                input.click()
-                            }
-                        })
     
-                        if (!checkbox.checked) {
-                            checkbox.click()
-                        }
+                    if (!checkbox.checked) {
+                        checkbox.click()
+                    }
+                }
+            }
+        })
+    }
+
+    if (datasetList) {
+        if (datasetListId === 'legendLayers') {
+            const showHideBtn = createDropdownMenuListItem({
+                label: `Show/hide ${type}`,
+                buttonClass: 'bi bi-eye',
+            })
+            dropdown.appendChild(showHideBtn)
+            showHideBtn.addEventListener('click', () => {
+                const layer = options.layer
+                if (layer) {
+                    if (layerGroup.hasLayer(layer)) {
+                        layerGroup.hiddenLegendLayers.push(layer)
+                        layerGroup.removeLayer(layer)
+                    } else {
+                        layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                        layerGroup.addLayer(layer)
                     }
                 }
             })
 
-            if (datasetListId === 'legendLayers') {
-                const showHideBtn = createDropdownMenuListItem({
-                    label: `Show/hide ${type}`,
-                    buttonClass: 'bi bi-eye',
-                })
-                dropdown.appendChild(showHideBtn)
-                showHideBtn.addEventListener('click', () => {
-                    const layer = options.layer
-                    if (layer) {
-                        if (layerGroup.hasLayer(layer)) {
-                            layerGroup.hiddenLegendLayers.push(layer)
-                            layerGroup.removeLayer(layer)
-                        } else {
-                            layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
-                            layerGroup.addLayer(layer)
-                        }
+            const removeLayerBtn = createDropdownMenuListItem({
+                label: `Remove ${type}`,
+                buttonClass: 'bi bi-trash3',
+            })
+            dropdown.appendChild(removeLayerBtn)
+            removeLayerBtn.addEventListener('click', () => {
+                const layer = options.layer
+                if (layer) {
+                    if (isHiddenInLegend(layer, map)) {
+                        layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                        map.fire('layerremove', {layer:layer})
+                    } else {
+                        layerGroup.removeLayer(layer)
                     }
-                })
-
-                const removeLayerBtn = createDropdownMenuListItem({
-                    label: `Remove ${type}`,
-                    buttonClass: 'bi bi-trash3',
-                })
-                dropdown.appendChild(removeLayerBtn)
-                removeLayerBtn.addEventListener('click', () => {
-                    const layer = options.layer
-                    if (layer) {
-                        if (isHiddenInLegend(layer, map)) {
-                            layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
-                            map.fire('layerremove', {layer:layer})
-                        } else {
-                            layerGroup.removeLayer(layer)
-                        }
-                    }
-                })
-            }
-        }
-
-        const divider = document.createElement('li')
-        divider.className = 'dropdown-divider'
-        dropdown.appendChild(divider)        
-        
-        if (layerGroupName === 'legend' && options.layer) {
-            const duplicateBtn = createDropdownMenuListItem({
-                label: `Duplicate ${type}`,
-                buttonClass: 'bi bi-copy',
-            })
-            const data = options.layer.data
-            for (var key in data) { 
-                if (data.hasOwnProperty(key)) {
-                    duplicateBtn.querySelector('button').setAttribute(
-                        'data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase(),
-                        data[key]
-                    ); 
-                } 
-            }
-            dropdown.appendChild(duplicateBtn)
-            duplicateBtn.addEventListener('click', () => {
-                toggleLayer({target:duplicateBtn.querySelector('button')}, {map:map})
-            })
-
-            const hideLegendBtn = createDropdownMenuListItem({
-                label: `Hide ${type} legend`,
-                buttonClass: 'bi bi-eye-slash',
-            })
-            dropdown.appendChild(hideLegendBtn)
-            hideLegendBtn.addEventListener('click', () => {
-                const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
-                if (legend) {
-                    legend.classList.add('d-none')
                 }
             })
         }
-        
-        const getGeoJSON = () => {
-            let geojson = options.geojson
-            if (!geojson && options.layer) {
-                try {
-                    geojson = options.layer.toGeoJSON()
-                } catch {}
-            }
+    }
 
-            return geojson
-        }
+    Array(
+        zoomBtn
+    ).forEach(btn => dropdown.appendChild(btn))
 
-        if (getGeoJSON()) {
-            let filename = 'geojson'; 
-            if (options.layer) { 
-                filename = options.layer.title || options.layer.data.layerTitle || filename;
-            }
-            const downloadBtn = createDropdownMenuListItem({
-                label: `Download geojson`,
-                buttonClass: 'bi bi-download',
-            })
-            dropdown.appendChild(downloadBtn)
-            downloadBtn.addEventListener('click', () => {
-                let geojson_str = getGeoJSON()
-                if (typeof geojson_str === 'object') {
-                    geojson_str = JSON.stringify(geojson_str)
-                }
+    const divider = document.createElement('li')
+    divider.className = 'dropdown-divider'
+    dropdown.appendChild(divider)        
     
-                downloadGeoJSON(geojson_str, filename)
-            })
+    if (layerGroupName === 'legend' && options.layer) {
+        const duplicateBtn = createDropdownMenuListItem({
+            label: `Duplicate ${type}`,
+            buttonClass: 'bi bi-copy',
+        })
+        const data = options.layer.data
+        for (var key in data) { 
+            if (data.hasOwnProperty(key)) {
+                duplicateBtn.querySelector('button').setAttribute(
+                    'data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase(),
+                    data[key]
+                ); 
+            } 
         }
+        dropdown.appendChild(duplicateBtn)
+        duplicateBtn.addEventListener('click', () => {
+            toggleLayer({target:duplicateBtn.querySelector('button')}, {map:map})
+        })
+
+        const hideLegendBtn = createDropdownMenuListItem({
+            label: `Hide ${type} legend`,
+            buttonClass: 'bi bi-eye-slash',
+        })
+        dropdown.appendChild(hideLegendBtn)
+        hideLegendBtn.addEventListener('click', () => {
+            const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
+            if (legend) {
+                legend.classList.add('d-none')
+            }
+        })
+    }
+    
+    const getGeoJSON = () => {
+        let geojson = options.geojson
+        if (!geojson && options.layer) {
+            try {
+                geojson = options.layer.toGeoJSON()
+            } catch {}
+        }
+
+        return geojson
+    }
+
+    if (getGeoJSON()) {
+        let filename = 'geojson'; 
+        if (options.layer) { 
+            filename = options.layer.title || options.layer.data.layerTitle || filename;
+        }
+        const downloadBtn = createDropdownMenuListItem({
+            label: `Download geojson`,
+            buttonClass: 'bi bi-download',
+        })
+        dropdown.appendChild(downloadBtn)
+        downloadBtn.addEventListener('click', () => {
+            let geojson_str = getGeoJSON()
+            if (typeof geojson_str === 'object') {
+                geojson_str = JSON.stringify(geojson_str)
+            }
+
+            downloadGeoJSON(geojson_str, filename)
+        })
     }
 }
 
