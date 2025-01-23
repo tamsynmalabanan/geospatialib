@@ -34,20 +34,17 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
 
     // Zoom to layer button
-    let zoomBtn
-    if (bounds) {
-        zoomBtn = createDropdownMenuListItem({
-            label: `Zoom to ${type}`,
-            buttonClass: 'bi bi-zoom-in',
-            buttonClickHandler: () => {
-                if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
-                    map.setView(bounds.getNorthEast(), 15)
-                } else {
-                    map.fitBounds(bounds)
-                }
+    const zoomBtn = bounds ? createDropdownMenuListItem({
+        label: `Zoom to ${type}`,
+        buttonClass: 'bi bi-zoom-in',
+        buttonClickHandler: () => {
+            if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
+                map.setView(bounds.getNorthEast(), 15)
+            } else {
+                map.fitBounds(bounds)
             }
-        })
-    }
+        }
+    }) : null
 
     // // Isolate layer button
     // if ((datasetList && currentCheckbox) || layerGroupName === 'legend') {
