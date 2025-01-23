@@ -155,6 +155,16 @@ const handleMapLayerGroups = (map) => {
                 }
             }
         }
+
+        layerGroup.toggleLayerVisibility = (layer) => {
+            if (layerGroup.hasLayer(layer)) {
+                layerGroup.hiddenLegendLayers.push(layer)
+                layerGroup.removeLayer(layer)
+            } else {
+                layerGroup.hiddenLegendLayers = layerGroup.hiddenLegendLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                layerGroup.addLayer(layer)
+            }
+        }
     }
 
     map.getLayerGroups = () => layerGroups
