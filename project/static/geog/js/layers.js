@@ -10,6 +10,14 @@ const isHiddenInLegend = (layer, map) => {
     return false
 }
 
+const layerToGeoJSON = (layer) => {
+    try {
+        return layer.toGeoJSON()
+    } catch {
+        return null
+    }
+}
+
 const populateLayerDropdownMenu = (toggle, options={}) => {
     const dropdown = toggle.nextElementSibling
     if (!dropdown || dropdown.innerHTML.trim() !== '') {return}
@@ -25,6 +33,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     if (!layerGroup) {return}
     
     const datasetList = toggle.closest('ul.dataset-list')
+    const isLegendLayer = datasetList?.id === 'legendLayers'
     const currentCheckbox = datasetList ? findOuterElement(
         'input.form-check-input', 
         toggle, 
@@ -37,13 +46,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         return L.latLngBounds([[minY, minX], [maxY, maxX]]);
     })() : getLayerBounds(currentLayer));
 
-    const geojson = options.geojson || currentLayer.cachedGeoJSON || (() => {
-        try {
-            return currentLayer.toGeoJSON()
-        } catch {
-            return null
-        }
-    })()
+    const geojson = options.geojson || currentLayer.cachedGeoJSON || layerToGeoJSON(currentLayer)
     
     const zoomBtn = bounds ? 
     createDropdownMenuListItem({
@@ -55,11 +58,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const isolateBtn = createDropdownMenuListItem({
         label: `Isolate ${type}`,
         buttonClass: 'bi bi-subtract',
-        buttonClickHandler: () => {
-            return currentCheckbox && datasetList ? 
-            isolateCheckbox(datasetList, currentCheckbox) : 
-            layerGroup.isolateLayer(currentLayer)
-        }
+        buttonClickHandler: () => currentCheckbox && datasetList ? isolateCheckbox(datasetList, currentCheckbox) : layerGroup.isolateLayer(currentLayer)
     })
 
     const showHideBtn = !currentCheckbox ? 
@@ -67,6 +66,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         label: `Show/hide ${type}`,
         buttonClass: 'bi bi-eye',
         buttonClickHandler: () => layerGroup.toggleLayerVisibility(currentLayer)
+    }) : null
+
+    const moveTopBtn = isLegendLayer ? 
+    createDropdownMenuListItem({
+        label: `Move ${type} to top`,
+        buttonClass: 'bi bi-1-circle',
+        buttonClickHandler: () => layerGroup.moveLayerToTop(currentLayer)
     }) : null
 
     const removeLayerBtn = !currentCheckbox && datasetList ? 
@@ -79,23 +85,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const duplicateBtn = !currentCheckbox ? createDropdownMenuListItem({
         label: `Duplicate ${type}`,
         buttonClass: 'bi bi-copy',
-        buttonAttrs: (() => {
-            const attrs = {}
-            const data = currentLayer.data
-            for (var key in data) { 
-                if (data.hasOwnProperty(key)) {
-                    attrs['data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase()] = data[key]
-                }
-            }
-            return attrs    
-        })(),
+        buttonAttrs: datasetToAttrs(currentLayer.data),
         buttonClickHandler: () => toggleLayer(
             {target:duplicateBtn.querySelector('button')}, 
             {map:map}
         )
     }) : null
 
-    const hideLegendBtn = datasetList?.id === 'legendLayers' ? createDropdownMenuListItem({
+    const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
         label: `Hide ${type} legend`,
         buttonClass: 'bi bi-eye-slash',
         buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
@@ -114,6 +111,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         zoomBtn,
         isolateBtn,
         showHideBtn,
+        moveTopBtn,
         removeLayerBtn,
         !currentCheckbox ? createDropdownDivider() : null,
         duplicateBtn,
@@ -329,6 +327,7 @@ const getLayerBounds = (layer) => {
 
 const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
     const geojson = options.geojson
+    const leafletId = layer._leaflet_id
 
     const mapContainer = map.getContainer()
 
@@ -342,12 +341,15 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
     }
 
     const handler = (layer, parent, geojson, label) => {
-        const formCheck = createFormCheck(`${mapContainer.id}_${layer._leaflet_id}`, {
+        const formCheck = createFormCheck(`${mapContainer.id}_${leafletId}`, {
+            forCheckTag: 'li',
             formCheckClass: 'fw-medium',
             checkboxClass: `bg-transparent border border-secondary box-shadow-none`,
             label: label,
             parent: parent,
         })
+
+        formCheck.setAttribute('data-leaflet-id', leafletId)
 
         const buttonContainer = document.createElement('div')
         buttonContainer.classList.add('ms-auto', 'hstack', 'gap-2', 'align-items-start')
@@ -384,7 +386,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
             const properties = layer.feature.properties
             if (Object.keys(properties).length > 0) {
                 const collapse = document.createElement('div')
-                collapse.id = `${mapContainer.id}_${layer._leaflet_id}_properties`
+                collapse.id = `${mapContainer.id}_${leafletId}_properties`
                 collapse.className = 'collapse px-4'
                 parent.appendChild(collapse)
 
@@ -417,7 +419,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
 
     if (layerCount > 0 && layerCount <= 100) {
         const collapse = document.createElement('div')
-        collapse.id = `${mapContainer.id}_${layer._leaflet_id}_group`
+        collapse.id = `${mapContainer.id}_${leafletId}_group`
         collapse.className = 'collapse show ps-3'
         parent.appendChild(collapse)
 

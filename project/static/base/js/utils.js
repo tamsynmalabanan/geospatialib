@@ -335,3 +335,13 @@ const isolateCheckbox = (parent, currentCheckbox, options={}) => {
         currentCheckbox.click()
     }
 }
+
+const datasetToAttrs = (data) => {
+    const attrs = {}
+    for (var key in data) { 
+        if (data.hasOwnProperty(key)) {
+            attrs['data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase()] = data[key]
+        }
+    }
+    return attrs    
+}

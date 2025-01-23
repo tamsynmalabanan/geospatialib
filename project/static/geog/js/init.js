@@ -98,6 +98,7 @@ const handleMapLayerGroups = (map) => {
         layerGroup.hiddenLayers = []
         
         layerGroup.hide = () => map.removeLayer(layerGroup)
+
         layerGroup.show = () => {
             const paneName = `${group}Pane`
             const pane = map.getPane(paneName) || map.createPane(paneName)
@@ -134,8 +135,6 @@ const handleMapLayerGroups = (map) => {
             }
         }
         
-        layerGroup.show()
-
         layerGroup.hasHiddenLayer = (layer) => {
             return layerGroup.hiddenLayers.includes(layer)
         }
@@ -178,6 +177,12 @@ const handleMapLayerGroups = (map) => {
                 return
             }
         }
+
+        layerGroup.moveLayerToTop = (layer) => {
+            
+        }
+
+        layerGroup.show()
     }
 
     map.getLayerGroups = () => layerGroups
