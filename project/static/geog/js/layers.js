@@ -25,7 +25,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
     const currentCheckbox = findOuterElement('input.form-check-input', toggle)
     const datasetList = toggle.closest('ul.dataset-list')
-    const datasetListId = datasetList?.id ?? null
     const type = options.type || (document.querySelector(`[data-layers-toggles="#${datasetList?.id}"]`)?.getAttribute('data-layers-type') ?? 'layer')
 
     const bounds = options.bounds || (options.bboxCoords ? (() => {
@@ -41,8 +40,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     }) : null
 
     // Isolate layer button
-    const isolateBtnPrereqs = (datasetList && currentCheckbox) || layerGroupName === 'legend'
-    const isolateBtn = isolateBtnPrereqs ? createDropdownMenuListItem({
+    const isolateBtn = (datasetList && currentCheckbox) || layerGroupName === 'legend' ? createDropdownMenuListItem({
         label: `Isolate ${type}`,
         buttonClass: 'bi bi-subtract',
         buttonClickHandler: () => {
@@ -51,17 +49,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             }
 
             if (currentCheckbox && datasetList) {
-                datasetList.querySelectorAll('input.form-check-input').forEach(checkbox => {
-                    if (checkbox.checked && checkbox !== currentCheckbox) {
-                        checkbox.click()
-                    }
-                })
-
-                if (!currentCheckbox.checked) {
-                    currentCheckbox.click()
-                }
-
-                return
+                return isolateCheckbox(datasetList, currentCheckbox)
             }
         }
     }) : null

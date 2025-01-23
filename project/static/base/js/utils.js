@@ -322,3 +322,16 @@ const getRandomString = (length) => {
     
     return result; 
 }
+
+const isolateCheckbox = (parent, currentCheckbox, options={}) => {
+    const checkboxSelector = options.checkboxSelector || 'input.form-check-input'
+    parent.querySelectorAll(checkboxSelector).forEach(checkbox => {
+        if (checkbox.checked && checkbox !== currentCheckbox) {
+            checkbox.click()
+        }
+    })
+
+    if (!currentCheckbox.checked) {
+        currentCheckbox.click()
+    }
+}
