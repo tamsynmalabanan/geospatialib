@@ -202,7 +202,6 @@ const handleMapLayerGroups = (map) => {
                     }
                 }) ()
                 if (typeof index !== 'number') {return}
-                console.log(index, layerLegends.length, layerLegends[index], layerLegend)
                 
                 if (index === -1 || index >= layerLegends.length) {
                     legend.appendChild(layerLegend)
@@ -215,13 +214,17 @@ const handleMapLayerGroups = (map) => {
 
                 const layerLegendsReversed = layerLegends.reverse()
                 layerLegendsReversed.forEach(element => {
+                    console.log(element)
                     const leafletId = element.getAttribute('data-leaflet-id')
+                    console.log(leafletId)
                     const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
+                    console.log(layer)
                     if (layer) {
                         const paneName = layer.options.pane
                         const pane = map.getPane(paneName)
                         if (pane) {
                             pane.style.zIndex = layerLegendsReversed.indexOf(element) + 201
+                            console.log(pane.style.zIndex)
                         }
                     }
                 })
