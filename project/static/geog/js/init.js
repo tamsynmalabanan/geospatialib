@@ -190,7 +190,7 @@ const handleMapLayerGroups = (map) => {
                 if (!layerLegend) {return}
                 
                 console.log(options)
-                const index = options.index ?? options.indexIncrement ? (options.indexIncrement - layerLegends.indexOf(layerLegend)) : null
+                const index = options.index ?? (options.indexIncrement ? (options.indexIncrement - layerLegends.indexOf(layerLegend))) : null
                 console.log(index)
                 if (!index) {return}
                 
