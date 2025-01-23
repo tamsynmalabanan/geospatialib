@@ -52,6 +52,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         }
     })
 
+    console.log(currentCheckbox)
+
     // show or hide layer button
     const showHideBtn = !currentCheckbox ? 
     createDropdownMenuListItem({
