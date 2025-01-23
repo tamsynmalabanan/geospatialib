@@ -36,6 +36,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         const [minX, minY, maxX, maxY] = options.bboxCoords.slice(1, -1).split(',');
         return L.latLngBounds([[minY, minX], [maxY, maxX]]);
     })() : getLayerBounds(currentLayer));
+
+    const geojson = options.geojson || (() => {
+        try {
+            return currentLayer.toGeoJSON()
+        } catch {
+            return null
+        }
+    })()
     
     const zoomBtn = bounds ? 
     createDropdownMenuListItem({
@@ -93,6 +101,15 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
     }) : null
 
+    const downloadGeoJSONBtn = geojson ? createDropdownMenuListItem({
+        label: `Download geojson`,
+        buttonClass: 'bi bi-download',
+        buttonClickHandler: () => downloadGeoJSON(
+            typeof geojson === 'string' ? geojson : JSON.stringify(geojson), 
+            currentLayer.title || currentLayer.data.layerTitle || 'untitled'
+        )
+    }) : null
+
     Array(
         zoomBtn,
         isolateBtn,
@@ -101,38 +118,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         !currentCheckbox ? createDropdownDivider() : null,
         duplicateBtn,
         hideLegendBtn,
+        downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
-    
-    // const getGeoJSON = () => {
-    //     let geojson = options.geojson
-    //     if (!geojson && options.layer) {
-    //         try {
-    //             geojson = options.layer.toGeoJSON()
-    //         } catch {}
-    //     }
-
-    //     return geojson
-    // }
-
-    // if (getGeoJSON()) {
-    //     let filename = 'geojson'; 
-    //     if (options.layer) { 
-    //         filename = options.layer.title || options.layer.data.layerTitle || filename;
-    //     }
-    //     const downloadBtn = createDropdownMenuListItem({
-    //         label: `Download geojson`,
-    //         buttonClass: 'bi bi-download',
-    //     })
-    //     dropdown.appendChild(downloadBtn)
-    //     downloadBtn.addEventListener('click', () => {
-    //         let geojson_str = getGeoJSON()
-    //         if (typeof geojson_str === 'object') {
-    //             geojson_str = JSON.stringify(geojson_str)
-    //         }
-
-    //         downloadGeoJSON(geojson_str, filename)
-    //     })
-    // }
 }
 
 const toggleOffAllLayers = (toggle) => {
