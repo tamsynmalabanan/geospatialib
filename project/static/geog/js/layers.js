@@ -76,7 +76,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
     const moveBottomBtn = isLegendLayer ? 
     createDropdownMenuListItem({
-        label: `Move ${type} to top`,
+        label: `Move ${type} to bottom`,
         buttonClass: 'bi bi-chevron-double-down',
         buttonClickHandler: () => layerGroup.moveLayer(currentLayer, -1)
     }) : null
