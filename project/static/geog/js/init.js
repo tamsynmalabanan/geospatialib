@@ -180,11 +180,15 @@ const handleMapLayerGroups = (map) => {
                 const layerLegend = legend.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
                 const layerLegendParent = layerLegend.parentElement
 
-                console.log(legend, layerLegend, layerLegendParent)
-                // if (index === -1) {
-                    
-                // }
-                
+                if (index === -1 || index >= layerLegendParent.children.length) {
+                    layerLegendParent.appendChild(layerLegend)
+                    return
+                }
+
+                const currentIndexElement = layerLegendParent.children[index]
+                if (currentIndexElement !== layerLegend) {
+                    layerLegendParent.insertBefore(layerLegend, currentIndexElement)
+                }
             }
         }
 
