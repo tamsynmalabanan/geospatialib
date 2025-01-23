@@ -177,16 +177,16 @@ const handleMapLayerGroups = (map) => {
         if (group === 'legend') {
             layerGroup.moveLayer = (layer, index) => {
                 const legend = document.querySelector(`#${map.getContainer().id}_legend`)
-                const layerLegend = legend.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
-
-                if (index === -1 || index >= legend.children.length) {
-                    legend.appendChild(layerLegend)
-                    return
-                }
-
-                const currentIndexElement = legend.children[index]
-                if (currentIndexElement !== layerLegend) {
-                    legend.insertBefore(layerLegend, currentIndexElement)
+                const layerLegend = legend?.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
+                if (layerLegend) {
+                    if (index === -1 || index >= legend.children.length) {
+                        legend.appendChild(layerLegend)
+                    } else {
+                        const currentIndexElement = legend.children[index]
+                        if (currentIndexElement !== layerLegend) {
+                            legend.insertBefore(layerLegend, currentIndexElement)
+                        }
+                    }
                 }
             }
         }
