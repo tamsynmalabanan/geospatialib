@@ -31,11 +31,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => map.zoomToBounds(bounds)
     }) : null
     
-    const zoomToCenterBtn = bounds ? 
+    const zoomToCenterBtn = bounds && isLegendLayer ? 
     createDropdownMenuListItem({
         label: `Zoom to ${type} centroid`,
         buttonClass: 'bi bi-crosshair',
-        buttonClickHandler: () => map.setView(bounds.getCenter(), 15)
+        buttonClickHandler: () => map.setView(bounds.getCenter(), 9)
     }) : null
 
     const isolateBtn = createDropdownMenuListItem({
