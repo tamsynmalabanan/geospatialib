@@ -136,9 +136,7 @@ const handleMapLayerGroups = (map) => {
         }
 
         layerGroup.getHiddenLayer = (leafletId) => {
-            console.log(leafletId)
             const matches = layerGroup.hiddenLayers.filter(layer => layer._leaflet_id.toString() === leafletId.toString())
-            console.log(layerGroup.hiddenLayers, matches)
             if (matches.length !== 0) {
                 return matches[0]
             }
