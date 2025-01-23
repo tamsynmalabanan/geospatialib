@@ -189,7 +189,18 @@ const handleMapLayerGroups = (map) => {
                 const layerLegend = legend?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
                 if (!layerLegend) {return}
                 
-                const index = typeof options.index === 'number' ? options.index : options.indexIncrement ? (layerLegends.indexOf(layerLegend) - options.indexIncrement) : null
+                const index = (() => {
+                    if (typeof options.index === 'number') {
+                        return options.index
+                    }
+
+                    const increment = options.indexIncrement
+                    if (increment) {
+                        const newIndex = layerLegends.indexOf(layerLegend)-increment
+                        return newIndex >= 0 ? newIndex : 0
+                    }
+                }) ()
+                console.log(index)
                 if (typeof index !== 'number') {return}
                 
                 if (index === -1 || index >= legend.children.length) {
