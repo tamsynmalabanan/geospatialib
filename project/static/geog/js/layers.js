@@ -19,18 +19,16 @@ const layerToGeoJSON = (layer) => {
 }
 
 const populateLayerDropdownMenu = (toggle, options={}) => {
-    console.log('here')
-
     const dropdown = toggle.nextElementSibling
     if (!dropdown || dropdown.innerHTML !== '') {return}
-
+    
     const map = options.map || mapQuerySelector(options.mapSelector)
     if (!map) {return}
     
     const currentLayer = options.layer
     if (!currentLayer) {return}
-
-    const layerGroup = map.getLayerGroup(currentLayer)
+    
+    const layerGroup = map.getLayerGroups(options.layerGroup || map.getLayerGroup(currentLayer))
     if (!layerGroup) {return}
     
     const datasetList = toggle.closest('ul.dataset-list')
@@ -399,6 +397,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
                     geojson: geojson,
                     type: type,
                     layer: layer,
+                    layerGroup: 'query'
                 })
             }
         })
