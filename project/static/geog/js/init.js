@@ -189,9 +189,9 @@ const handleMapLayerGroups = (map) => {
                 const layerLegend = legend?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
                 if (!layerLegend) {return}
                 
-                const index = typeof options.index === 'number' ? options.index : options.indexIncrement ? (options.indexIncrement - layerLegends.indexOf(layerLegend)) : null
+                const index = options.index ?? options.indexIncrement ? (options.indexIncrement - layerLegends.indexOf(layerLegend)) : null
                 console.log(options, index)
-                if (!index) {return}
+                if (typeof index !== 'number') {return}
                 
                 if (index === -1 || index >= legend.children.length) {
                     legend.appendChild(layerLegend)
