@@ -24,8 +24,12 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const layerGroup = map.getLayerGroups()[layerGroupName]
     if (!layerGroup) {return}
     
-    const currentCheckbox = findOuterElement('input.form-check-input', toggle)
     const datasetList = toggle.closest('ul.dataset-list')
+    const currentCheckbox = datasetList ? findOuterElement(
+        'input.form-check-input', 
+        toggle, 
+        datasetList
+    ) : null
     const type = options.type || (document.querySelector(`[data-layers-toggles="#${datasetList?.id}"]`)?.getAttribute('data-layers-type') ?? 'layer')
 
     const bounds = options.bounds || (options.bboxCoords ? (() => {

@@ -237,13 +237,13 @@ const parseNumberFromString = (string) => {
     return parsedNumber = parseFloat(match[0]);
 }
 
-const findOuterElement = (selector, reference) => {
+const findOuterElement = (selector, reference, container) => {
     let element
     let parent = reference.parentElement
 
     while (!element && parent) {
         element = parent.querySelector(selector)
-        parent = parent.parentElement
+        parent = parent !== container ? parent.parentElement : null
     }
 
     return element
