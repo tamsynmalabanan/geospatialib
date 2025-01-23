@@ -466,7 +466,8 @@ const handleMapLegend = (map) => {
                     buttonCallback: () => {
                         populateLayerDropdownMenu(menuBtn, {
                             map: map,
-                            layer: layer
+                            layer: layer,
+                            layerGroup: 'legend',
                         })
                     }
                 })

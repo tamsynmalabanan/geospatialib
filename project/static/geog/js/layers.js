@@ -397,7 +397,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
                     geojson: geojson,
                     type: type,
                     layer: layer,
-                    layerGroup: 'query'
+                    layerGroup: layerGroup
                 })
             }
         })
