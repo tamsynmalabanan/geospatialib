@@ -19,6 +19,8 @@ const layerToGeoJSON = (layer) => {
 }
 
 const populateLayerDropdownMenu = (toggle, options={}) => {
+    console.log('here')
+
     const dropdown = toggle.nextElementSibling
     if (!dropdown || dropdown.innerHTML !== '') {return}
 
