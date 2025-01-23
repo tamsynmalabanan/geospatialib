@@ -40,13 +40,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             label: `Zoom to ${type}`,
             buttonClass: 'bi bi-zoom-in',
             buttonAttrs: {
-                onclick: (() => {
+                onclick: `(() => {
                     if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
                         map.setView(bounds.getNorthEast(), 15)
                     } else {
                         map.fitBounds(bounds)
                     }
-                })()
+                })()`
             }
         })
     }
@@ -134,9 +134,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         zoomBtn,
         // isolateBtn,
         // showHideBtn,
-    ).forEach(btn => {
-        if (btn) {dropdown.appendChild(btn)}
-    })
+    ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 
     // const divider = document.createElement('li')
     // divider.className = 'dropdown-divider'
