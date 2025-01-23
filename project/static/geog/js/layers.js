@@ -17,35 +17,21 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const map = options.map || mapQuerySelector(options.mapSelector)
     if (!map) {return}
     
+    const layer = options.layer
+
     const layerGroupName = options.layerGroup || 'legend'
     const layerGroup = map.getLayerGroups()[layerGroupName]
     const checkbox = findOuterElement('input.form-check-input', toggle)
     
     const datasetList = toggle.closest('ul.dataset-list')
     const datasetListId = datasetList?.id ?? null
-    // const type = options.type || (() => {
-    //     if (datasetList) {
-    //         const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
-    //         if (toggleAll) {
-    //             return toggleAll.getAttribute('data-layers-type')
-    //         }
-    //     }
-    //     return 'layer'
-    // })()
     const type = options.type || (document.querySelector(`[data-layers-toggles="#${datasetList?.id}"]`)?.getAttribute('data-layers-type') ?? 'layer')
 
-
-    const bounds = options.bounds || (() => {
-        if (options.bboxCoords) {
-            const [minX, minY, maxX, maxY] = options.bboxCoords.slice(1, -1).split(',')
-            return L.latLngBounds([[minY, minX], [maxY, maxX]]);
-        }
-
-        if (options.layer) {
-            const layer = options.layer
-            return getLayerBounds(layer)              
-        }
-    })()
+    const bounds = options.bounds || (options.bboxCoords ? (() => {
+        const [minX, minY, maxX, maxY] = options.bboxCoords.slice(1, -1).split(',');
+        return L.latLngBounds([[minY, minX], [maxY, maxX]]);
+    })() : layer ? getLayerBounds(layer) : null);
+    
 
     // Zoom to layer button
     if (bounds) {
