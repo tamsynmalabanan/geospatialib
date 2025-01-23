@@ -60,7 +60,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.toggleLayerVisibility(currentLayer)
     }) : null
 
-    const removeLayerBtn = datasetList ? 
+    // remove layer button
+    const removeLayerBtn = !currentCheckbox && datasetList ? 
     createDropdownMenuListItem({
         label: `Remove ${type}`,
         buttonClass: 'bi bi-trash3',
