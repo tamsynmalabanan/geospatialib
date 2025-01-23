@@ -60,8 +60,9 @@ window.addEventListener("map:init", (event) => {
                         const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
                         const toggleBtn = searchResults.querySelector(toggleBtnSelector)
                         if (toggleBtn) {
-                            if (!isHiddenInLegend(layer, map)) {
-                                const legendLayers = map.getLayerGroups().legend.getLayers()
+                            const legendLayerGroup = map.getLayerGroups().legend
+                            if (!legendLayerGroup.hasHiddenLayer(layer)) {
+                                const legendLayers = legendLayerGroup.getLayers()
                                 if (!legendLayers.some(libLayer => libLayer !== layer && libLayer.data && libLayer.data.layerId === layerId)) {
                                     updateSearchResultToggleStyle(toggleBtn, false)
                                     enableMapInteractivity(map)
