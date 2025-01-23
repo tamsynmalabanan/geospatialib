@@ -42,17 +42,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     null
 
     // Isolate layer button
-    const isolateBtn = (datasetList && currentCheckbox) || layerGroup ? 
-    createDropdownMenuListItem({
+    const isolateBtn = createDropdownMenuListItem({
         label: `Isolate ${type}`,
         buttonClass: 'bi bi-subtract',
         buttonClickHandler: () => {
             return currentCheckbox && datasetList ? isolateCheckbox(datasetList, currentCheckbox) : 
-            layerGroup ? layerGroup.isolateLayer(currentLayer) : 
-            null
+            layerGroup.isolateLayer(currentLayer)
         }
-    }) : 
-    null
+    })
 
     // // show or hide layer button
     // const showHideBtn = (layerGroupName === 'legend' || !currentCheckbox) ? 
