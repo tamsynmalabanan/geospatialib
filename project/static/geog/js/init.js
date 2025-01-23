@@ -89,7 +89,7 @@ const handleMapBasemap = (map) => {
 
 const handleMapLayerGroups = (map) => {
     const layerGroups = {}
-    Array('legend', 'query').forEach(group => {
+    Array('client', 'legend', 'query').forEach(group => {
         layerGroups[group] = L.layerGroup()
     })
     
