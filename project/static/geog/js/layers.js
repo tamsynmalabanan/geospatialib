@@ -37,7 +37,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         return L.latLngBounds([[minY, minX], [maxY, maxX]]);
     })() : getLayerBounds(currentLayer));
 
-    const geojson = options.geojson || (() => {
+    const geojson = options.geojson || currentLayer.cachedGeoJSON || (() => {
         try {
             return currentLayer.toGeoJSON()
         } catch {
