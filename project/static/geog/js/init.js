@@ -200,13 +200,13 @@ const handleMapLayerGroups = (map) => {
                         return newIndex >= 0 ? newIndex : 0
                     }
                 }) ()
-                console.log(index)
                 if (typeof index !== 'number') {return}
+                console.log(index, layerLegends.length, layerLegends[index], layerLegend)
                 
-                if (index === -1 || index >= legend.children.length) {
+                if (index === -1 || index >= layerLegends.length) {
                     legend.appendChild(layerLegend)
                 } else {
-                    const currentIndexElement = legend.children[index]
+                    const currentIndexElement = layerLegends[index]
                     if (currentIndexElement !== layerLegend) {
                         legend.insertBefore(layerLegend, currentIndexElement)
                     }
