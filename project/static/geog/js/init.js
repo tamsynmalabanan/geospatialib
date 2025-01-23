@@ -174,9 +174,18 @@ const handleMapLayerGroups = (map) => {
             }
         }
 
-        layerGroup.moveLayerToTop = (layer) => {
-            const leafletId = layer._leaflet_id
+        if (group === 'legend') {
+            layerGroup.moveLayer = (layer, index) => {
+                const legend = document.querySelector(`#${map.getContainer().id}_legend`)
+                const layerLegend = legend.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
+                const layerLegendParent = layerLegend.parentElement
 
+                console.log(legend, layerLegend, layerLegendParent)
+                // if (index === -1) {
+                    
+                // }
+                
+            }
         }
 
         layerGroup.show()
@@ -311,7 +320,7 @@ const handleMapLegend = (map) => {
     })
 
     const ul = document.createElement('ul')
-    ul.id = 'legendLayers'
+    ul.id = `${mapId}_legend`
     ul.className = 'dataset-list list-group list-group-flush'
     body.appendChild(ul)
 
@@ -416,7 +425,6 @@ const handleMapLegend = (map) => {
                     buttonCallback: () => {
                         populateLayerDropdownMenu(menuBtn, {
                             map: map,
-                            layerGroup: 'legend',
                             layer: layer
                         })
                     }

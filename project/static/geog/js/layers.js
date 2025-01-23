@@ -32,7 +32,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     if (!layerGroup) {return}
     
     const datasetList = toggle.closest('ul.dataset-list')
-    const isLegendLayer = datasetList?.id === 'legendLayers'
+    const isLegendLayer = datasetList?.id === `${map.getContainer().id}_legendLayers`
     const currentCheckbox = datasetList ? findOuterElement(
         'input.form-check-input', 
         toggle, 
@@ -71,7 +71,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     createDropdownMenuListItem({
         label: `Move ${type} to top`,
         buttonClass: 'bi bi-1-circle',
-        buttonClickHandler: () => layerGroup.moveLayerToTop(currentLayer)
+        buttonClickHandler: () => layerGroup.moveLayer(currentLayer, 0)
     }) : null
 
     const removeLayerBtn = !currentCheckbox && datasetList ? 
@@ -167,7 +167,7 @@ const toggleLayer = async (event, options={}) => {
                 if (layerGroupName === 'legend') {
                     const paneName = `legendLayer${getRandomString(8)}Pane`
                     const pane = map.getPane(paneName) || map.createPane(paneName)
-                    pane.style.zIndex = document.querySelector('#legendLayers').children.length + 201
+                    pane.style.zIndex = document.querySelector(`#${map.getContainer().id}_legend`).children.length + 201
                     layer.options.pane = paneName
                 }
 
@@ -369,7 +369,6 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
             buttonCallback: () => {
                 populateLayerDropdownMenu(menuBtn, {
                     map: map,
-                    layerGroup: layerGroup,
                     geojson: geojson,
                     type: type,
                     layer: layer,
