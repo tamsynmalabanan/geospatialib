@@ -184,11 +184,12 @@ const handleMapLayerGroups = (map) => {
         if (group === 'legend') {
             layerGroup.moveLayer = (currentLayer, options={}) => {
                 const legend = document.querySelector(`#${map.getContainer().id}_legend`)
+                const layerLegends = legend ? Array.from(legend.children) : []
                 
                 const layerLegend = legend?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
                 if (!layerLegend) {return}
                 
-                const index = options.index || options.indexIncrement ? options.indexIncrement - legend.children.indexOf(layerLegend) : null
+                const index = options.index || options.indexIncrement ? options.indexIncrement - layerLegends.indexOf(layerLegend) : null
                 if (!index) {return}
                 
                 if (index === -1 || index >= legend.children.length) {
@@ -200,15 +201,15 @@ const handleMapLayerGroups = (map) => {
                     }
                 }
 
-                const layerLegends = Array.from(legend.children).reverse()
-                layerLegends.forEach(element => {
+                const layerLegendsReversed = layerLegends.reverse()
+                layerLegendsReversed.forEach(element => {
                     const leafletId = element.getAttribute('data-leaflet-id')
                     const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
                     if (layer) {
                         const paneName = layer.options.pane
                         const pane = map.getPane(paneName)
                         if (pane) {
-                            pane.style.zIndex = layerLegends.indexOf(element) + 201
+                            pane.style.zIndex = layerLegendsReversed.indexOf(element) + 201
                         }
                     }
                 })
