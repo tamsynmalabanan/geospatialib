@@ -33,26 +33,26 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     })() : currentLayer ? getLayerBounds(currentLayer) : null);
     
     // Zoom to layer button
-    const zoomBtn = bounds ? createDropdownMenuListItem({
+    const zoomBtn = bounds ? 
+    createDropdownMenuListItem({
         label: `Zoom to ${type}`,
         buttonClass: 'bi bi-zoom-in',
         buttonClickHandler: () => map.zoomToBounds(bounds)
-    }) : null
+    }) : 
+    null
 
     // Isolate layer button
-    const isolateBtn = (datasetList && currentCheckbox) || layerGroupName === 'legend' ? createDropdownMenuListItem({
+    const isolateBtn = (datasetList && currentCheckbox) || layerGroupName === 'legend' ? 
+    createDropdownMenuListItem({
         label: `Isolate ${type}`,
         buttonClass: 'bi bi-subtract',
         buttonClickHandler: () => {
-            if (layerGroupName === 'legend') {
-                return layerGroup.isolateLayer(currentLayer)
-            }
-
-            if (currentCheckbox && datasetList) {
-                return isolateCheckbox(datasetList, currentCheckbox)
-            }
+            return layerGroupName === 'legend' ? layerGroup.isolateLayer(currentLayer) : 
+            currentCheckbox && datasetList ? isolateCheckbox(datasetList, currentCheckbox) : 
+            null
         }
-    }) : null
+    }) : 
+    null
 
     // // show or hide layer button
     // const showHideBtn = (
