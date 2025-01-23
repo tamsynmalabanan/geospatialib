@@ -200,9 +200,7 @@ const handleMapLayerGroups = (map) => {
                     const layerLegends = Array.from(legend.children).reverse()
                     layerLegends.forEach(element => {
                         const leafletId = element.getAttribute('data-leaflet-id')
-                        console.log(leafletId)
                         const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
-                        console.log(layer)
                         if (layer) {
                             const paneName = layer.options.pane
                             const pane = map.getPane(paneName)
