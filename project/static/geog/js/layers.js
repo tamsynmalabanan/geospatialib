@@ -17,7 +17,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         if (!map) {return}
 
         const datasetList = toggle.closest('ul.dataset-list')
-        
         const type = options.type || (() => {
             if (datasetList) {
                 const toggleAll = document.querySelector(`[data-layers-toggles="#${datasetList.id}"]`)
@@ -25,7 +24,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                     return toggleAll.getAttribute('data-layers-type')
                 }
             }
-        })() || 'layer'
+
+            return 'layer'
+        })()
 
         let bounds = options.bounds
         if (!bounds ) {
