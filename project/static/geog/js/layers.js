@@ -37,7 +37,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         return L.latLngBounds([[minY, minX], [maxY, maxX]]);
     })() : getLayerBounds(currentLayer));
     
-    // Zoom to layer button
     const zoomBtn = bounds ? 
     createDropdownMenuListItem({
         label: `Zoom to ${type}`,
@@ -45,7 +44,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => map.zoomToBounds(bounds)
     }) : null
 
-    // Isolate layer button
     const isolateBtn = createDropdownMenuListItem({
         label: `Isolate ${type}`,
         buttonClass: 'bi bi-subtract',
@@ -56,7 +54,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         }
     })
 
-    // Show or hide layer button
     const showHideBtn = !currentCheckbox ? 
     createDropdownMenuListItem({
         label: `Show/hide ${type}`,
@@ -64,7 +61,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.toggleLayerVisibility(currentLayer)
     }) : null
 
-    // Remove layer button
     const removeLayerBtn = !currentCheckbox && datasetList ? 
     createDropdownMenuListItem({
         label: `Remove ${type}`,
@@ -91,31 +87,21 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
+    const hideLegendBtn = datasetList?.id === 'legendLayers' ? createDropdownMenuListItem({
+        label: `Hide ${type} legend`,
+        buttonClass: 'bi bi-eye-slash',
+        buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
+    }) : null
+
     Array(
         zoomBtn,
         isolateBtn,
         showHideBtn,
         removeLayerBtn,
-        createDropdownDivider(),
+        !currentCheckbox ? createDropdownDivider() : null,
         duplicateBtn,
+        hideLegendBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
-
-    
-
-    // if (layerGroupName === 'legend' && options.layer) {
-
-    //     const hideLegendBtn = createDropdownMenuListItem({
-    //         label: `Hide ${type} legend`,
-    //         buttonClass: 'bi bi-eye-slash',
-    //     })
-    //     dropdown.appendChild(hideLegendBtn)
-    //     hideLegendBtn.addEventListener('click', () => {
-    //         const legend = datasetList.querySelector(`[data-leaflet-id="${options.layer._leaflet_id}"]`)
-    //         if (legend) {
-    //             legend.classList.add('d-none')
-    //         }
-    //     })
-    // }
     
     // const getGeoJSON = () => {
     //     let geojson = options.geojson
