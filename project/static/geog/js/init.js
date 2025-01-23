@@ -375,7 +375,6 @@ const handleMapLegend = (map) => {
     }).querySelector('button')
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
-
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer.data) {
@@ -425,84 +424,88 @@ const handleMapLegend = (map) => {
                     const legendCollapse = legendContainer.querySelector('.collapse')
 
                     layer.on('fetchingData', () => {
-                        legendCollapse.innerHTML = `
-                            <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        `
+                        if (legendLayerGroup.hasLayer(layer)) {
+                            legendCollapse.innerHTML = `
+                                <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            `
+                        }
                     })
     
                     layer.on('legendUpdated', () => {
-                        legendCollapse.innerHTML = ''
-                        const styles = layer.layerLegendStyle
-                        if (typeof styles === 'object') {
-                            Object.keys(styles).forEach(name => {
-                                const style = styles[name]
-        
-                                const container = document.createElement('div')
-                                container.className = 'd-flex gap-2'
-                                legendCollapse.appendChild(container)
-        
-                                const icon = document.createElement('div')
-                                icon.className = 'align-self-center'
-                                icon.style.height = '10px'
-                                container.appendChild(icon)
-        
-                                let labelText = name
-                                if (style.count > 1) {
-                                    labelText = labelText + ` (${formatNumberWithCommas(style.count)})`
-                                }
-        
-                                const label = document.createElement('div')
-                                label.innerText = labelText
-                                container.appendChild(label)
-        
-                                const styleDef = style.style
-                                if (style.type === 'Point') {
-                                    icon.style.width = '10px'
-                                    icon.innerHTML = styleDef.options.html
-                                } else {
-                                    icon.style.width = '15px'
-                                    
-                                    let color = styleDef.color
-                                    if (!color) {
-                                        color = 'hsla(0, 100%, 50%, 1)'
+                        if (legendLayerGroup.hasLayer(layer)) {
+                            legendCollapse.innerHTML = ''
+                            const styles = layer.layerLegendStyle
+                            if (typeof styles === 'object') {
+                                Object.keys(styles).forEach(name => {
+                                    const style = styles[name]
+            
+                                    const container = document.createElement('div')
+                                    container.className = 'd-flex gap-2'
+                                    legendCollapse.appendChild(container)
+            
+                                    const icon = document.createElement('div')
+                                    icon.className = 'align-self-center'
+                                    icon.style.height = '10px'
+                                    container.appendChild(icon)
+            
+                                    let labelText = name
+                                    if (style.count > 1) {
+                                        labelText = labelText + ` (${formatNumberWithCommas(style.count)})`
                                     }
-        
-                                    const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
-                                    
-                                    let opacity = styleDef.opacity
-                                    if (!opacity) {
-                                        opacity = 1
-                                    }
-                                    
-                                    let weight = styleDef.weight
-                                    if (!weight) {
-                                        weight = 1
-                                    }
-                                    
-                                    const box = document.createElement('div')
-                                    icon.appendChild(box)
-                                    box.style.border = `${weight}px solid hsla(${h}, ${s}%, ${l}%, ${opacity})`
-        
-                                    if (Array('LineString').includes(style.type)) {
-                                        icon.style.height = '0px'
-                                        box.className = 'h-0 w-100'
-                                    }
-                                    
-                                    if (Array('Polygon', 'box').includes(style.type)) {
-                                        box.className = 'h-100 w-100'
-        
-                                        const fillColor = styleDef.fillColor
-                                        const fillOpacity = styleDef.fillOpacity
+            
+                                    const label = document.createElement('div')
+                                    label.innerText = labelText
+                                    container.appendChild(label)
+            
+                                    const styleDef = style.style
+                                    if (style.type === 'Point') {
+                                        icon.style.width = '10px'
+                                        icon.innerHTML = styleDef.options.html
+                                    } else {
+                                        icon.style.width = '15px'
                                         
-                                        if (fillColor && fillOpacity) {
-                                            const [fillh,fills,filll,filla] = fillColor.split(',').map(str => parseNumberFromString(str))
-                                            box.style.backgroundColor = `hsla(${fillh}, ${fills}%, ${filll}%, ${fillOpacity})`
+                                        let color = styleDef.color
+                                        if (!color) {
+                                            color = 'hsla(0, 100%, 50%, 1)'
+                                        }
+            
+                                        const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
+                                        
+                                        let opacity = styleDef.opacity
+                                        if (!opacity) {
+                                            opacity = 1
+                                        }
+                                        
+                                        let weight = styleDef.weight
+                                        if (!weight) {
+                                            weight = 1
+                                        }
+                                        
+                                        const box = document.createElement('div')
+                                        icon.appendChild(box)
+                                        box.style.border = `${weight}px solid hsla(${h}, ${s}%, ${l}%, ${opacity})`
+            
+                                        if (Array('LineString').includes(style.type)) {
+                                            icon.style.height = '0px'
+                                            box.className = 'h-0 w-100'
+                                        }
+                                        
+                                        if (Array('Polygon', 'box').includes(style.type)) {
+                                            box.className = 'h-100 w-100'
+            
+                                            const fillColor = styleDef.fillColor
+                                            const fillOpacity = styleDef.fillOpacity
+                                            
+                                            if (fillColor && fillOpacity) {
+                                                const [fillh,fills,filll,filla] = fillColor.split(',').map(str => parseNumberFromString(str))
+                                                box.style.backgroundColor = `hsla(${fillh}, ${fills}%, ${filll}%, ${fillOpacity})`
+                                            }
                                         }
                                     }
-                                }
-                            })
+                                })
+                            }
                         }
                     })
                 }
@@ -523,7 +526,7 @@ const handleMapLegend = (map) => {
             const id = `${mapId}Legend_${layer._leaflet_id}`
             const legend = ul.querySelector(`#${id}`)
             if (legend) {
-                if (!isHiddenInLegend(layer, map)) {
+                if (!legendLayerGroup.hasHiddenLayer(layer)) {
                     legend.remove()
     
                     if (ul.innerHTML === '') {
