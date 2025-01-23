@@ -135,6 +135,13 @@ const handleMapLayerGroups = (map) => {
             return layerGroup.hiddenLayers.includes(layer)
         }
 
+        layerGroup.getHiddenLayer = (leafletId) => {
+            const matches = layerGroup.hiddenLayers.filter(layer => layer._leaflet_id === leafletId)
+            if (matches.length !== 0) {
+                return matches[0]
+            }
+        }
+
         layerGroup.isolateLayer = (currentLayer) => {
             if (layerGroup.hasLayer(currentLayer) || layerGroup.hasHiddenLayer(currentLayer)) {
                 layerGroup.eachLayer(layer => {
@@ -191,7 +198,7 @@ const handleMapLayerGroups = (map) => {
                     const layerLegends = Array.from(legend.children).reverse()
                     layerLegends.forEach(element => {
                         const leafletId = element.getAttribute('data-leaflet-id')
-                        const layer = layerGroup.getLayer(leafletId)
+                        const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
                         if (layer) {
                             const paneName = layer.options.pane
                             const pane = map.getPane(paneName)
