@@ -190,7 +190,6 @@ const handleMapLayerGroups = (map) => {
                 if (!layerLegend) {return}
                 
                 const index = typeof options.index === 'number' ? options.index : options.indexIncrement ? (layerLegends.indexOf(layerLegend) - options.indexIncrement) : null
-                console.log(options, index)
                 if (typeof index !== 'number') {return}
                 
                 if (index === -1 || index >= legend.children.length) {
