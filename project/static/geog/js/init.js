@@ -189,6 +189,7 @@ const handleMapLayerGroups = (map) => {
                 const layerLegend = legend?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
                 if (!layerLegend) {return}
                 
+                console.log(options)
                 const index = options.index || options.indexIncrement ? (options.indexIncrement - layerLegends.indexOf(layerLegend)) : null
                 if (!index) {return}
                 
