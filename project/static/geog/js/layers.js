@@ -32,7 +32,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     if (!layerGroup) {return}
     
     const datasetList = toggle.closest('ul.dataset-list')
-    const isLegendLayer = datasetList?.id === `${map.getContainer().id}_legendLayers`
+    const isLegendLayer = datasetList?.id === `${map.getContainer().id}_legend`
     const currentCheckbox = datasetList ? findOuterElement(
         'input.form-check-input', 
         toggle, 
