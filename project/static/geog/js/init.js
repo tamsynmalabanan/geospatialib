@@ -136,7 +136,9 @@ const handleMapLayerGroups = (map) => {
         }
 
         layerGroup.getHiddenLayer = (leafletId) => {
+            console.log(leafletId)
             const matches = layerGroup.hiddenLayers.filter(layer => layer._leaflet_id === leafletId)
+            console.log(matches)
             if (matches.length !== 0) {
                 return matches[0]
             }
@@ -198,7 +200,9 @@ const handleMapLayerGroups = (map) => {
                     const layerLegends = Array.from(legend.children).reverse()
                     layerLegends.forEach(element => {
                         const leafletId = element.getAttribute('data-leaflet-id')
+                        console.log(leafletId)
                         const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
+                        console.log(layer)
                         if (layer) {
                             const paneName = layer.options.pane
                             const pane = map.getPane(paneName)
