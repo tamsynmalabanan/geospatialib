@@ -70,8 +70,15 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const moveTopBtn = isLegendLayer ? 
     createDropdownMenuListItem({
         label: `Move ${type} to top`,
-        buttonClass: 'bi bi-1-circle',
+        buttonClass: 'bi bi-chevron-double-up',
         buttonClickHandler: () => layerGroup.moveLayer(currentLayer, 0)
+    }) : null
+
+    const moveBottomBtn = isLegendLayer ? 
+    createDropdownMenuListItem({
+        label: `Move ${type} to top`,
+        buttonClass: 'bi bi-chevron-double-down',
+        buttonClickHandler: () => layerGroup.moveLayer(currentLayer, -1)
     }) : null
 
     const removeLayerBtn = !currentCheckbox && datasetList ? 
@@ -111,6 +118,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         isolateBtn,
         showHideBtn,
         moveTopBtn,
+        moveBottomBtn,
         removeLayerBtn,
         !currentCheckbox ? createDropdownDivider() : null,
         duplicateBtn,
