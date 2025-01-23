@@ -34,8 +34,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
 
     // Zoom to layer button
+    let zoomBtn
     if (bounds) {
-        const zoomBtn = createDropdownMenuListItem({
+        zoomBtn = createDropdownMenuListItem({
             label: `Zoom to ${type}`,
             buttonClass: 'bi bi-zoom-in',
             buttonAttrs: {
@@ -133,7 +134,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         zoomBtn,
         // isolateBtn,
         // showHideBtn,
-    ).forEach(btn => dropdown.appendChild(btn))
+    ).forEach(btn => {
+        if (btn) {dropdown.appendChild(btn)}
+    })
 
     // const divider = document.createElement('li')
     // divider.className = 'dropdown-divider'
