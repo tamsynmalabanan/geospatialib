@@ -56,7 +56,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         }
     })
 
-    // show or hide layer button
+    // Show or hide layer button
     const showHideBtn = !currentCheckbox ? 
     createDropdownMenuListItem({
         label: `Show/hide ${type}`,
@@ -64,7 +64,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.toggleLayerVisibility(currentLayer)
     }) : null
 
-    // remove layer button
+    // Remove layer button
     const removeLayerBtn = !currentCheckbox && datasetList ? 
     createDropdownMenuListItem({
         label: `Remove ${type}`,
@@ -72,35 +72,39 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.customRemoveLayer(currentLayer)
     }) : null
 
+    const duplicateBtn = !currentCheckbox ? createDropdownMenuListItem({
+        label: `Duplicate ${type}`,
+        buttonClass: 'bi bi-copy',
+        buttonAttrs: (() => {
+            const attrs = {}
+            const data = currentLayer.data
+            for (var key in data) { 
+                if (data.hasOwnProperty(key)) {
+                    attrs['data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase()] = data[key]
+                }
+            }
+            return attrs    
+        })(),
+        buttonClickHandler: () => {
+            toggleLayer(
+                {target:duplicateBtn.querySelector('button')}, 
+                {map:map}
+            )
+        }
+    }) : null
+
     Array(
         zoomBtn,
         isolateBtn,
         showHideBtn,
         removeLayerBtn,
+        createDropdownDivider(),
+        duplicateBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 
-    // const divider = document.createElement('li')
-    // divider.className = 'dropdown-divider'
-    // dropdown.appendChild(divider)        
     
+
     // if (layerGroupName === 'legend' && options.layer) {
-    //     const duplicateBtn = createDropdownMenuListItem({
-    //         label: `Duplicate ${type}`,
-    //         buttonClass: 'bi bi-copy',
-    //     })
-    //     const data = options.layer.data
-    //     for (var key in data) { 
-    //         if (data.hasOwnProperty(key)) {
-    //             duplicateBtn.querySelector('button').setAttribute(
-    //                 'data-' + key.replace(/([A-Z])/g, '-$1').toLowerCase(),
-    //                 data[key]
-    //             ); 
-    //         } 
-    //     }
-    //     dropdown.appendChild(duplicateBtn)
-    //     duplicateBtn.addEventListener('click', () => {
-    //         toggleLayer({target:duplicateBtn.querySelector('button')}, {map:map})
-    //     })
 
     //     const hideLegendBtn = createDropdownMenuListItem({
     //         label: `Hide ${type} legend`,

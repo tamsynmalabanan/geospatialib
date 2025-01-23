@@ -256,3 +256,9 @@ const createSpanElement = (options={}) => {
 
     return span
 }
+
+const createDropdownDivider = () => {
+    const divider = document.createElement('li')
+    divider.classList.add('dropdown-divider')
+    return divider
+}
