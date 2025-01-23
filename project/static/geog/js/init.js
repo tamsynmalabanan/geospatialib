@@ -184,10 +184,12 @@ const handleMapLayerGroups = (map) => {
         if (group === 'legend') {
             layerGroup.moveLayer = (currentLayer, options={}) => {
                 const legend = document.querySelector(`#${map.getContainer().id}_legend`)
-                const layerLegends = legend ? Array.from(legend.children) : []
-                
-                const layerLegend = legend?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
+                if (!legend) {return}
+
+                const layerLegend = legend.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
                 if (!layerLegend) {return}
+
+                const layerLegends = Array.from(legend.children)
                 const currentLayerIndex = layerLegends.indexOf(layerLegend)
                 
                 const index = (() => {
@@ -198,7 +200,7 @@ const handleMapLayerGroups = (map) => {
                     const increment = options.indexIncrement
                     if (increment) {
                         const newIndex = currentLayerIndex-increment
-                        return newIndex > currentLayerIndex ? newIndex+1 : newIndex >= 0 ? newIndex : 0
+                        return newIndex > currentLayerIndex ? newIndex+1 : newIndex < 0 ? 0 : newIndex
                     }
                 }) ()
                 if (typeof index !== 'number') {return}
@@ -212,19 +214,15 @@ const handleMapLayerGroups = (map) => {
                     }
                 }
 
-                const layerLegendsReversed = layerLegends.reverse()
+                const layerLegendsReversed = Array.from(legend.children).reverse()
                 layerLegendsReversed.forEach(element => {
-                    console.log(element)
                     const leafletId = element.getAttribute('data-leaflet-id')
-                    console.log(leafletId)
                     const layer = layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
-                    console.log(layer)
                     if (layer) {
                         const paneName = layer.options.pane
                         const pane = map.getPane(paneName)
                         if (pane) {
                             pane.style.zIndex = layerLegendsReversed.indexOf(element) + 201
-                            console.log(pane.style.zIndex)
                         }
                     }
                 })
