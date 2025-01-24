@@ -358,10 +358,13 @@ const datasetToAttrs = (data) => {
 }
 
 const removeImageBackground = async (imgSrc, options={}) => {
+    // const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
+
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
     const threshold = 10;
   
     const imageElement = new Image();
+    imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrc;
     await new Promise(function(resolve) { imageElement.addEventListener('load', resolve); });
   
