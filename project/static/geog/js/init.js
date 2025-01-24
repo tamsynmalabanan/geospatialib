@@ -572,7 +572,7 @@ const handleMapLegend = (map) => {
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             if (layer.data.layerLegendUrl) {
-                console.log(removeImageBackground(layer.data.layerLegendUrl))
+                // console.log(removeImageBackground(layer.data.layerLegendUrl))
                 legendCollapse.innerHTML = createImgElement(
                     layer.data.layerLegendUrl, 
                     'Legend not found.',

@@ -151,6 +151,24 @@ const cacheResponse = async (response, cacheKey) => {
     ); 
 }
 
+const fetchViaCorsProxy = async (url, options={}) => {
+    return fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
+        method: 'POST',
+        body: JSON.stringify(options),
+        headers: {
+            'HX-Request': 'true',
+            'X-CSRFToken': getCookie('csrftoken'),
+        }
+    }).then(response => {
+        if (response.ok) {
+            return cacheResponse(response, cacheKey)
+        }
+        return response
+    }).catch(error => {
+        throw error
+    })
+}
+
 const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
     const cacheKey = `${url}_${JSON.stringify(options)}`
@@ -207,6 +225,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
                 }
             }).then(response => {
                 if (response.ok) {
+                    console.log('here')
                     return cacheResponse(response, cacheKey)
                 }
                 return response
