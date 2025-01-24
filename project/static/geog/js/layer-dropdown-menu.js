@@ -133,6 +133,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         !currentCheckbox ? createDropdownDivider() : null,
         removeLayerBtn,
         duplicateBtn,
+        removeLegendBgBtn,
         hideLegendBtn,
         downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
