@@ -573,6 +573,7 @@ const handleMapLegend = (map) => {
             const legendCollapse = legendContainer.querySelector('.collapse')
             if (layer.data.layerLegendUrl) {
                 // console.log(await removeImageBackground(layer.data.layerLegendUrl))
+                console.log(`/htmx/library/cors_proxy/?url=${encodeURIComponent(layer.data.layerLegendUrl)}`)
                 legendCollapse.innerHTML = createImgElement(
                     layer.data.layerLegendUrl, 
                     'Legend not found.',
