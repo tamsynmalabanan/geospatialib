@@ -152,18 +152,20 @@ const cacheResponse = async (response, cacheKey) => {
 }
 
 const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
-    console.log(options)
-    
     const params = {
         method: 'GET',
-        body: JSON.stringify(options),
-        headers: {
-            'HX-Request': 'true',
-            // 'X-CSRFToken': getCookie('csrftoken'),
-        }
+        headers: {'HX-Request': 'true'}
+    }
+
+    if (Object.keys(options).length > 0) {
+        params.method = 'POST'
+        params.body = JSON.stringify(options)
+        params.headers['X-CSRFToken'] = getCookie('csrftoken')
     }
     
-    return fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, params
+    return fetch(
+        `/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, 
+        params
     ).then(response => {
         if (response.ok) {
             return cacheResponse(response, cacheKey)
@@ -221,9 +223,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            const response = await fetchViaCorsProxy(url, cacheKey, options)
-            console.log(response)
-            return response
+            return await fetchViaCorsProxy(url, cacheKey, options)
         } else {
             throw error
         }
