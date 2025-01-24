@@ -394,9 +394,15 @@ const removeImageBackground = async (imgSrc, options={}) => {
     }
   
     ctx.putImageData(imageData, 0, 0);
-    const newImageElement = new Image()
-    newImageElement.src = canvas.toDataURL('image/png')
-    newImageElement.alt = options.alt || 'Image not found.'
-    newImageElement.classList.add(`img-${currentTheme}`)
-    return newImageElement
+    // const newImageElement = new Image()
+    // newImageElement.src = canvas.toDataURL('image/png')
+    // newImageElement.alt = options.alt || 'Image not found.'
+    // newImageElement.classList.add(`img-${currentTheme} img-no-bg`)
+    
+    return createImgElement(
+        canvas.toDataURL('image/png'), 
+        options.alt || 'Image not found.', {
+            className: `img-${currentTheme} img-no-bg`
+        }
+    )
 }
