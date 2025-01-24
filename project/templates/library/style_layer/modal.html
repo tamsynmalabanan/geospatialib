@@ -1,0 +1,22 @@
+{% load static %}
+
+{% with id='styleLegendModal' %}
+    <div class="modal fade" id="{{id}}" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true" >
+        <div class="modal-dialog modal-sm modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered" role="document">
+            <form class='modal-content d-flex flex-column'>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="{{id}}Title">Style layer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+                </div>
+                <div class="modal-body flex-grow-1">
+                    insert accordion here:
+                    layer - categorize, transparency -- update legend
+                    legend - label, data source, white background
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endwith %}

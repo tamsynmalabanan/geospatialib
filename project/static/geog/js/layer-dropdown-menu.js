@@ -96,12 +96,16 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    const removeLegendBgBtn = isLegendLayer && currentLayer.data.layerLegendUrl ? 
+    const styleLayerBtn = isLegendLayer ? 
     createDropdownMenuListItem({
-        label: `Toggle ${type} legend background`,
-        buttonClass: 'bi bi-back',
+        label: `Style ${type}`,
+        buttonClass: 'bi bi-border-style',
+        buttonAttrs: {
+            'data-bs-toggle': 'modal',
+            'data-bs-target': '#styleLegendModal',
+        },
         buttonClickHandler: () => {
-            console.log(datasetList.querySelector(`[data-leadlet-id="${currentLayer._leaflet_id}"]`))
+            
         }
     }) : null
 
@@ -133,7 +137,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         !currentCheckbox ? createDropdownDivider() : null,
         removeLayerBtn,
         duplicateBtn,
-        removeLegendBgBtn,
+        styleLayerBtn,
         hideLegendBtn,
         downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
