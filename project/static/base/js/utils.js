@@ -357,11 +357,12 @@ const datasetToAttrs = (data) => {
     return attrs    
 }
 
+let removeImageBackgroundThreshold = 10
 const removeImageBackground = async (imgSrc, options={}) => {
     const currentTheme = getPreferredTheme()
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
-    const threshold = 10;
+    const threshold = removeImageBackgroundThreshold;
     
     const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
@@ -396,5 +397,6 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const newImageElement = new Image()
     newImageElement.src = canvas.toDataURL('image/png')
     newImageElement.alt = options.alt || 'Image not found.'
+    newImageElement.classList.add(`img-${currentTheme}`)
     return newImageElement
 }
