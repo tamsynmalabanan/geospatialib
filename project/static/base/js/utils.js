@@ -357,12 +357,10 @@ const datasetToAttrs = (data) => {
     return attrs    
 }
 
-let removeImageBackgroundThreshold = 10
 const removeImageBackground = async (imgSrc, options={}) => {
     const currentTheme = getPreferredTheme()
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
-    const threshold = removeImageBackgroundThreshold;
     
     const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
@@ -381,12 +379,12 @@ const removeImageBackground = async (imgSrc, options={}) => {
       const red = imageData.data[i];
       const green = imageData.data[i + 1];
       const blue = imageData.data[i + 2];
-      if (Math.abs(red - bgColor.red) < threshold &&
-        Math.abs(green - bgColor.green) < threshold &&
-        Math.abs(blue - bgColor.blue) < threshold) {
+      if (Math.abs(red - bgColor.red) < 10 &&
+        Math.abs(green - bgColor.green) < 10 &&
+        Math.abs(blue - bgColor.blue) < 10) {
         imageData.data[i + 3] = 0;
       }
-      if (currentTheme === 'dark' && red < threshold && green < threshold && blue < threshold) {
+      if (currentTheme === 'dark' && red < 50 && green < 50 && blue < 50) {
         imageData.data[i] = 255; // Red
         imageData.data[i + 1] = 255; // Green
         imageData.data[i + 2] = 255; // Blue
