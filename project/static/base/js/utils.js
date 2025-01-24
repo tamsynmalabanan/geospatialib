@@ -144,6 +144,8 @@ const cacheResponse = async (response, cacheKey) => {
     const headersString = JSON.stringify(headers)
     cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
 
+    console.log(data, headers)
+
     return new Response(new Blob([data]), {
         status: 200, 
         statusText: 'OK', 
@@ -161,7 +163,6 @@ const fetchViaCorsProxy = async (url, options={}) => {
         }
     }).then(response => {
         if (response.ok) {
-            console.log(response)
             return cacheResponse(response, cacheKey)
         }
         return response
@@ -217,9 +218,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            const response = await fetchViaCorsProxy(url, options)
-            console.log(response.headers.get('Content-Type'))
-            return response
+            return await fetchViaCorsProxy(url, options)
         } else {
             throw error
         }
