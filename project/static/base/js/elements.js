@@ -86,8 +86,9 @@ const labelElement = (element, options={}) => {
     
 }
 
-const createImgElement = (url, alt) => {
+const createImgElement = (url, alt, options={}) => {
     const img = document.createElement('img')
+    img.className = options.className || ''
     img.setAttribute('src', url)
     img.setAttribute('alt', alt)
     return img

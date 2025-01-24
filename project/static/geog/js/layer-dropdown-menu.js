@@ -79,6 +79,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.moveLayer(currentLayer, {indexIncrement:-1})
     }) : null
 
+    const styleLayerBtn = isLegendLayer ? 
+    createDropdownMenuListItem({
+        label: `Style ${type}`,
+        buttonClass: 'bi bi-pencil-square',
+        buttonClickHandler: () => layerGroup.customRemoveLayer(currentLayer)
+    }) : null
+
     const removeLayerBtn = !currentCheckbox && datasetList ? 
     createDropdownMenuListItem({
         label: `Remove ${type}`,

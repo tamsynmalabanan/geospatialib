@@ -566,11 +566,18 @@ const handleMapLegend = (map) => {
                         }
                     })
                 }
+
+                // append data source div to legendContainer
             }
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             if (layer.data.layerLegendUrl) {
-                legendCollapse.innerHTML = createImgElement(layer.data.layerLegendUrl, 'Legend not found.').outerHTML
+                legendCollapse.innerHTML = createImgElement(
+                    layer.data.layerLegendUrl, 
+                    'Legend not found.', {
+                        className: 'remove-white-bg'
+                    }
+                ).outerHTML
             } else if (!layer.layerLegendStyle) {
                 legendCollapse.innerHTML = ''
             }

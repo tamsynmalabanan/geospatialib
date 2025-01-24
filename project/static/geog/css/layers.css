@@ -1,3 +1,7 @@
 path.leaflet-interactive:focus {
     outline: none;
 }
+
+.remove-white-bg {
+    mix-blend-mode: multiply;
+}
