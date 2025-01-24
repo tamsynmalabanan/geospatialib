@@ -79,13 +79,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => layerGroup.moveLayer(currentLayer, {indexIncrement:-1})
     }) : null
 
-    const styleLayerBtn = isLegendLayer ? 
-    createDropdownMenuListItem({
-        label: `Style ${type}`,
-        buttonClass: 'bi bi-pencil-square',
-        buttonClickHandler: () => layerGroup.customRemoveLayer(currentLayer)
-    }) : null
-
     const removeLayerBtn = !currentCheckbox && datasetList ? 
     createDropdownMenuListItem({
         label: `Remove ${type}`,
@@ -101,6 +94,15 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             {target:duplicateBtn.querySelector('button')}, 
             {map:map}
         )
+    }) : null
+
+    const removeLegendBgBtn = isLegendLayer && currentLayer.data.layerLegendUrl ? 
+    createDropdownMenuListItem({
+        label: `Toggle ${type} legend background`,
+        buttonClass: 'bi bi-back',
+        buttonClickHandler: () => {
+            console.log(datasetList.querySelector(`[data-leadlet-id="${currentLayer._leaflet_id}"]`))
+        }
     }) : null
 
     const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
