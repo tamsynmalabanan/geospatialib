@@ -296,4 +296,5 @@ def cors_proxy(request):
     except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
         return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
 
-    return JsonResponse(response.json())
+
+    return JsonResponse(response)
