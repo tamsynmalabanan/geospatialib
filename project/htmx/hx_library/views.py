@@ -282,7 +282,9 @@ def add_dataset(request):
 @require_http_methods(['GET'])
 def cors_proxy(request):
     url = request.GET.get('url')
-
+    if not url:
+        return JsonResponse({'error': 'URL parameter is required'}, status=400)
+    
     try:
         data = json.loads(request.body.decode('utf-8'))
         method = str(data.get('method', 'get')).lower()
