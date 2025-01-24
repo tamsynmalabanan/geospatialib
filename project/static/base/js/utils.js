@@ -361,6 +361,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const currentTheme = getPreferredTheme()
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
+    const threshold = 10;
     
     const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
@@ -376,21 +377,19 @@ const removeImageBackground = async (imgSrc, options={}) => {
     ctx.drawImage(imageElement, 0, 0);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < imageData.data.length; i += 4) {
-        const red = imageData.data[i];
-        const green = imageData.data[i + 1];
-        const blue = imageData.data[i + 2];
-        if (currentTheme === 'dark' && red < 50 && green < 50 && blue < 50) {
-            imageData.data[i] = 255; // Red
-            imageData.data[i + 1] = 255; // Green
-            imageData.data[i + 2] = 255; // Blue
-        } else {
-            if (Math.abs(red - bgColor.red) < 10 &&
-                Math.abs(green - bgColor.green) < 10 &&
-                Math.abs(blue - bgColor.blue) < 10
-            ) {
-                imageData.data[i + 3] = 0;
-            }    
-        }
+      const red = imageData.data[i];
+      const green = imageData.data[i + 1];
+      const blue = imageData.data[i + 2];
+      if (Math.abs(red - bgColor.red) < threshold &&
+        Math.abs(green - bgColor.green) < threshold &&
+        Math.abs(blue - bgColor.blue) < threshold) {
+        imageData.data[i + 3] = 0;
+      }
+      if (currentTheme === 'dark' && red < threshold && green < threshold && blue < threshold) {
+        imageData.data[i] = 255; // Red
+        imageData.data[i + 1] = 255; // Green
+        imageData.data[i + 2] = 255; // Blue
+      }
     }
   
     ctx.putImageData(imageData, 0, 0);
