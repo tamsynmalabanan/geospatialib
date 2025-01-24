@@ -217,7 +217,9 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            return await fetchViaCorsProxy(url, options)
+            const response = await fetchViaCorsProxy(url, options)
+            console.log(response.headers.get('Content-Type'))
+            return response
         } else {
             throw error
         }
