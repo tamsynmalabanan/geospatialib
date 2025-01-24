@@ -281,16 +281,19 @@ def add_dataset(request):
 
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
+    print('here')
     url = request.GET.get('url')
     if not url:
         return JsonResponse({'error': 'URL parameter is required'}, status=400)
     
     try:
-        data = json.loads(request.body.decode('utf-8'))
-        method = str(data.get('method', 'get'))
+        data = {}
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+        method = str(data.get('method', 'get')).lower()
         headers = data.get('headers', {})
         
-        if method.lower() == 'get':
+        if method == 'get':
            response = requests.get(url, headers=headers)
         elif method == 'post':
             response = requests.post(url, json=data, headers=headers)
@@ -300,8 +303,5 @@ def cors_proxy(request):
         return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
 
     content_type = response.headers.get('Content-Type')
-    # print(content_type, response.json(), response.content)
-    # # if 'json' in content_type:
-    # return JsonResponse(response.json())
     return HttpResponse(response.content, content_type=content_type, status=response.status_code)
     
