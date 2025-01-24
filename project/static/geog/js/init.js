@@ -568,7 +568,7 @@ const handleMapLegend = (map) => {
                 }
 
                 const attribution = document.createElement('span')
-                attribution.className = 'mb-3'
+                attribution.className = 'mx-0 mt-0 mb-3 fs-12 text-wrap font-monospace'
                 attribution.innerHTML = `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.data.layerUrl)}</a>`
                 legendContainer.appendChild(attribution)
             }
