@@ -387,5 +387,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     }
   
     ctx.putImageData(imageData, 0, 0);
-    return canvas.toDataURL(`image/png`);
+    const newImageElement = new Image()
+    newImageElement.src = canvas.toDataURL('image/png')
+    return newImageElement
 }
