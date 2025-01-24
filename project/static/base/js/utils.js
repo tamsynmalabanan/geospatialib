@@ -153,14 +153,18 @@ const cacheResponse = async (response, cacheKey) => {
 
 const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
     console.log(options)
-    return fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
+    
+    const params = {
         method: 'GET',
         body: JSON.stringify(options),
         headers: {
             'HX-Request': 'true',
             // 'X-CSRFToken': getCookie('csrftoken'),
         }
-    }).then(response => {
+    }
+    
+    return fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, params
+    ).then(response => {
         if (response.ok) {
             return cacheResponse(response, cacheKey)
         }
