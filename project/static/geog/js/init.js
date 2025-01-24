@@ -569,7 +569,7 @@ const handleMapLegend = (map) => {
 
                 const attribution = document.createElement('span')
                 attribution.className = 'mb-3'
-                attribution.innerHTML = `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.dataset.layerUrl)}</a>`
+                attribution.innerHTML = `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.data.layerUrl)}</a>`
                 legendContainer.appendChild(attribution)
             }
 
