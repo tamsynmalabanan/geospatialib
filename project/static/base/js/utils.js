@@ -152,6 +152,7 @@ const cacheResponse = async (response, cacheKey) => {
 }
 
 const fetchViaCorsProxy = async (url, options={}) => {
+    console.log('here 2')
     return fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
         method: 'GET',
         body: JSON.stringify(options),
