@@ -358,11 +358,12 @@ const datasetToAttrs = (data) => {
 }
 
 const removeImageBackground = async (imgSrc, options={}) => {
-    const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
-
+    const currentTheme = getPreferredTheme()
+    
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
     const threshold = 10;
-  
+    
+    const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
@@ -383,6 +384,11 @@ const removeImageBackground = async (imgSrc, options={}) => {
         Math.abs(green - bgColor.green) < threshold &&
         Math.abs(blue - bgColor.blue) < threshold) {
         imageData.data[i + 3] = 0;
+      }
+      if (currentTheme === 'dark' && red < threshold && green < threshold && blue < threshold) {
+        imageData.data[i] = 255; // Red
+        imageData.data[i + 1] = 255; // Green
+        imageData.data[i + 2] = 255; // Blue
       }
     }
   
