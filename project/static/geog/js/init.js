@@ -903,7 +903,7 @@ const handleMapQuery = (map) => {
                 layerFooter.className = 'mb-3 '
                 queryResults.appendChild(layerFooter)
 
-                layerFooter.innerHTML = `<pre class='m-0 fs-12 text-wrap ps-1 font-monospace'>${geojson.licence}</pre>`
+                layerFooter.innerHTML = `<pre class='m-0 fs-12 text-wrap font-monospace'>${geojson.licence}</pre>`
                 if (geojson.note) {
                     const span = document.createElement('p')
                     span.className = 'm-0 fs-10 text-wrap ps-1 pt-1 font-monospace text-muted text-justify lh-1'
