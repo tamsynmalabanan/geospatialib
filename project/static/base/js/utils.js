@@ -144,8 +144,6 @@ const cacheResponse = async (response, cacheKey) => {
     const headersString = JSON.stringify(headers)
     cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
 
-    console.log(data, headers)
-
     return new Response(new Blob([data]), {
         status: 200, 
         statusText: 'OK', 
@@ -162,13 +160,11 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
             'X-CSRFToken': getCookie('csrftoken'),
         }
     }).then(response => {
-        console.log(response)
         if (response.ok) {
             return cacheResponse(response, cacheKey)
         }
         return response
     }).catch(error => {
-        console.log(error)
         throw error
     })
 }
@@ -220,9 +216,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            const response = await fetchViaCorsProxy(url, cacheKey, options)
-            console.log(response)
-            return response
+            return await fetchViaCorsProxy(url, cacheKey, options)
         } else {
             throw error
         }
