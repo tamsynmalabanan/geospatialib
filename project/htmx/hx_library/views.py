@@ -279,7 +279,7 @@ def add_dataset(request):
         'dataset':dataset_instance,
     })
 
-@require_http_methods(['POST'])
+@require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
     url = request.GET.get('url')
     if not url:
@@ -300,8 +300,8 @@ def cors_proxy(request):
         return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
 
     content_type = response.headers.get('Content-Type')
-    print(content_type, response.json(), response.content)
-    # if 'json' in content_type:
-    return JsonResponse(response.json())
-    # return HttpResponse(response.content, content_type=content_type, status=response.status_code)
+    # print(content_type, response.json(), response.content)
+    # # if 'json' in content_type:
+    # return JsonResponse(response.json())
+    return HttpResponse(response.content, content_type=content_type, status=response.status_code)
     

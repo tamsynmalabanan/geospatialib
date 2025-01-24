@@ -162,11 +162,13 @@ const fetchViaCorsProxy = async (url, options={}) => {
             'X-CSRFToken': getCookie('csrftoken'),
         }
     }).then(response => {
+        console.log(response)
         if (response.ok) {
             return cacheResponse(response, cacheKey)
         }
         return response
     }).catch(error => {
+        console.log(error)
         throw error
     })
 }
@@ -218,7 +220,9 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            return await fetchViaCorsProxy(url, options)
+            const response = await fetchViaCorsProxy(url, options)
+            console.log(response)
+            return response
         } else {
             throw error
         }
