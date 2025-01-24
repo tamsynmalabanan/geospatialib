@@ -161,8 +161,8 @@ const fetchViaCorsProxy = async (url, options={}) => {
             // 'X-CSRFToken': getCookie('csrftoken'),
         }
     }).then(response => {
+        console.log(response)
         if (response.ok) {
-            console.log(response)
             return cacheResponse(response, cacheKey)
         }
         return response
