@@ -279,15 +279,15 @@ def add_dataset(request):
         'dataset':dataset_instance,
     })
 
-@require_http_methods(['POST'])
+@require_http_methods(['GET'])
 def cors_proxy(request):
     url = request.GET.get('url')
 
     try:
         data = json.loads(request.body.decode('utf-8'))
-        method = str(data.get('method', 'get'))
+        method = str(data.get('method', 'get')).lower()
         
-        if method.lower() == 'get':
+        if method == 'get':
            response = requests.get(url)
         elif method == 'post':
             response = requests.post(url, json=data)

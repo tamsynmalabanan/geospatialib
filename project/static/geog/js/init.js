@@ -432,7 +432,7 @@ const handleMapLegend = (map) => {
     }).querySelector('button')
     collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
 
-    map.on('layeradd', (event) => {
+    map.on('layeradd', async (event) => {
         const layer = event.layer
         if (layer.data) {
             const layerLeafletId = layer._leaflet_id
@@ -572,7 +572,7 @@ const handleMapLegend = (map) => {
 
             const legendCollapse = legendContainer.querySelector('.collapse')
             if (layer.data.layerLegendUrl) {
-                console.log(removeImageBackground(layer.data.layerLegendUrl))
+                // console.log(await removeImageBackground(layer.data.layerLegendUrl))
                 legendCollapse.innerHTML = createImgElement(
                     layer.data.layerLegendUrl, 
                     'Legend not found.',
