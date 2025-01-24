@@ -567,7 +567,10 @@ const handleMapLegend = (map) => {
                     })
                 }
 
-                // append data source div to legendContainer
+                const attribution = document.createElement('span')
+                attribution.className = 'mb-3'
+                attribution.innerHTML = `Data © <a href='${layer.dataset.layerUrl}' target='_blank'>${getDomain(layer.dataset.layerUrl)}</a>`
+                legendContainer.appendChild(attribution)
             }
 
             const legendCollapse = legendContainer.querySelector('.collapse')
