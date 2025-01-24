@@ -152,6 +152,7 @@ const cacheResponse = async (response, cacheKey) => {
 }
 
 const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
+    console.log('here')
     return fetch(`/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, {
         method: 'GET',
         body: JSON.stringify(options),
@@ -216,7 +217,9 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            return await fetchViaCorsProxy(url, cacheKey, options)
+            const response = fetchViaCorsProxy(url, cacheKey, options)
+            console.log(response)
+            return response
         } else {
             throw error
         }
