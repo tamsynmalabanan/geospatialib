@@ -300,7 +300,7 @@ def cors_proxy(request):
         return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
 
     content_type = response.headers.get('Content-Type')
-    print(content_type, response.json())
+    print(content_type, response.json(), response.content)
     # if 'json' in content_type:
     return JsonResponse(response.json())
     # return HttpResponse(response.content, content_type=content_type, status=response.status_code)
