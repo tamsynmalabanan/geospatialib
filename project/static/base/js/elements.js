@@ -62,6 +62,7 @@ const labelElement = (element, options={}) => {
         const span = document.createElement('span')
         span.className = (options.labelClass || '') + (options.iconClass ? 'ms-2' : '')
         span.innerText = options.label
+        return span
     })())
 }
 
