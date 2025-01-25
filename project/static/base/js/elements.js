@@ -125,24 +125,18 @@ const createFormCheck = (id, options={}) => {
     formCheck.appendChild(checkbox)
 
     const label = document.createElement('label')
-    label.className = `w-auto text-truncate ${options.labelClass}`
+    label.className = `w-auto text-truncate ${options.labelClass || ''} ${options.button ? 'me-3' : ''}`
     label.setAttribute('for', id)
     formCheck.appendChild(label)
-    if (options.button) {
-        label.classList.add('me-3')
-    }
 
-    if (options.label) {
+    options.label && label.appendChild((() => {
         const span = document.createElement('span')
         span.classList.add('w-100', 'text-wrap')
         span.innerText = options.label
-        label.appendChild(span)
-    }
+        return span
+    })())
 
-    if (options.parent) {
-        options.parent.appendChild(formCheck)
-    }
-
+    options.parent?.appendChild(formCheck)
     return formCheck
 }
 
