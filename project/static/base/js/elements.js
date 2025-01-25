@@ -1,9 +1,9 @@
 const assignAttrsToElement = (element, attrs) => {
     for (const key in attrs) {
-        if (attrs.hasOwnProperty(key)) {
-            const value = attrs[key];
-            element.setAttribute(key, value)
-        }
+        if (!attrs.hasOwnProperty(key)) {continue}
+        
+        const value = attrs[key];
+        element.setAttribute(key, value)
     }
 }
 
@@ -33,10 +33,13 @@ const createDropdownMenuListItem = (options={}) => {
 const createAccordionCollapse = (id, parentId, collapsed=true) => {
     const collapse = document.createElement('div')
     collapse.id = id
-    collapse.classList.add('accordion-collapse', 'collapse')
-    if (!collapsed) {
-        collapse.classList.add('show')
-    }
+    // collapse.classList.add('accordion-collapse', 'collapse', collapsed ? 'show' : null)
+    collapse.classList.add('accordion-collapse', 'collapse', ...(collapsed ? ['show'] : []));
+
+    // if (!collapsed) {
+    //     collapse.classList.add('show')
+    // }
+    
     collapse.setAttribute('data-bs-parent', `#${parentId}`)
     return collapse
 }
