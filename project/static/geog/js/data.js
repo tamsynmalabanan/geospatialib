@@ -141,10 +141,9 @@ const fetchOSMDataAroundLatLng = async (latlng, options={}) => {
     }
 
     const data = await fetchData(buffer=10, minimum=1, options={abortBtn:options.abortBtn})
-    return {
-        type: "FeatureCollection",
-        features:overpassOSMDataToGeoJSON(data, {maximum:options.maximum})
-    }
+    return turf.featureCollection(
+        overpassOSMDataToGeoJSON(data, {maximum:options.maximum})
+    )
 }
 
 const overpassOSMDataToGeoJSON = (data, options={}) => {
