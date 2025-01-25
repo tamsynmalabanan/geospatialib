@@ -121,13 +121,10 @@ const createGeoJSONLayer = (data) => {
 
                     geojson = await fetchLibraryData(event, geojsonLayer)
                     if (!geojson) {
-                        geojson = {
-                            type: 'FeatureCollection',
-                            features: [turf.polygonToLine(layerBounds)],
-                            tooltip: defaultTooltip,
-                            prefix: 'Bounding',
-                            suffix: 'for all features',
-                        }
+                        geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
+                        geojson.tooltip = defaultTooltip
+                        geojson.prefix = 'Bounding'
+                        // geojson.suffix = 'for all features'
                     } else {
                         geojson.mapBounds = mapBounds
                         if (geojson.features.length > 0) {
