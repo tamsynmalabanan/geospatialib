@@ -1,3 +1,12 @@
+const assignAttrsToElement = (element, attrs) => {
+    for (const key in attrs) {
+        if (attrs.hasOwnProperty(key)) {
+            const value = attrs[key];
+            element.setAttribute(key, value)
+        }
+    }
+}
+
 const createDropdownMenuListItem = (options={}) => {
     const li = document.createElement('li')
 
@@ -6,13 +15,6 @@ const createDropdownMenuListItem = (options={}) => {
 
     options.buttonClickHandler && button.addEventListener('click', options.buttonClickHandler);
 
-    // if (options.label) {
-    //     const span = document.createElement('span')
-    //     span.className = 'ms-2'
-    //     span.innerText = options.label
-    //     button.appendChild(span)
-    // }
-    
     options.label && button.appendChild((() => {
         const span = document.createElement('span')
         span.className = 'ms-2'
@@ -20,11 +22,7 @@ const createDropdownMenuListItem = (options={}) => {
         return span
     })())
 
-    if (options.buttonAttrs) {
-        for (const key in options.buttonAttrs) {
-            button.setAttribute(key, options.buttonAttrs[key])
-        }
-    }
+    options.buttonAttrs && assignAttrsToElement(button, options.buttonAttrs)
 
     li.appendChild(button)
 
