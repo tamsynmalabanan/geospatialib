@@ -25,10 +25,7 @@ const createDropdownMenuListItem = (options={}) => {
     options.buttonAttrs && assignAttrsToElement(button, options.buttonAttrs)
 
     li.appendChild(button)
-
-    if (options.parent) {
-        options.parent.appendChild(li)
-    }
+    options.parent?.appendChild(li)
 
     return li
 }
