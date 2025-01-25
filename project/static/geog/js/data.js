@@ -407,10 +407,7 @@ const fetchWMSData = async (event, layer, options={}) => {
                 }
 
                 if (features.length > 0) {
-                    return {
-                        type: "FeatureCollection",
-                        features: features
-                    }
+                    return turf.featureCollection(features)
                 } else {
                     throw new Error('No features returned.')
                 }

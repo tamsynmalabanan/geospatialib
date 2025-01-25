@@ -181,10 +181,6 @@ const createGeoJSONLayer = (data) => {
                     
                 }
             } else {
-                // geojson = {
-                //     type: 'FeatureCollection',
-                //     features: [],
-                // }
                 geojson = turf.featureCollection([])
             }
 
