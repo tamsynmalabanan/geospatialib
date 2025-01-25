@@ -58,16 +58,11 @@ const labelElement = (element, options={}) => {
         return icon
     })())
 
-    if (!options.label) {return}
-    const span = document.createElement('span')
-    span.className = (options.labelClass || '') + (options.iconClass ? 'ms-2' : '')
-    span.innerText = options.label
-    element.appendChild(span)
-
-    // if (options.iconClass) {
-    //     span.classList.add('ms-2')
-    // }
-
+    options.label && element.appendChild((() => {
+        const span = document.createElement('span')
+        span.className = (options.labelClass || '') + (options.iconClass ? 'ms-2' : '')
+        span.innerText = options.label
+    })())
 }
 
 const createImgElement = (url, alt, options={}) => {
