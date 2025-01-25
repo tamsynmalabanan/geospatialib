@@ -108,11 +108,12 @@ const createGeoJSONLayer = (data) => {
                         let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                         const crs = getGeoJSONCRS(cachedGeoJSON)
                         if (crs && crs !== 4326) {
+                            if (signal.aborted) return
                             filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                         }
                         
-                        if (signal.aborted) return
                         cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                            if (signal.aborted) return
                             return turf.booleanIntersects(filterBounds, feature)
                         })
                         
