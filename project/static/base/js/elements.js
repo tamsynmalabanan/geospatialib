@@ -87,17 +87,13 @@ const createButtonAndCollapse = (id, options={}) => {
     btnContainer.className = 'd-flex gap-2'
 
     const button = document.createElement('button')
-    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName || ''}`
+    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName || ''}, ${options.collapsed ? 'collapsed' : ''}`
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${collapse.id}`)
     button.setAttribute('aria-controls', collapse.id)
-    if (options.collapsed) {
-        button.classList.add('collapsed')
-        button.setAttribute('aria-expanded', 'false')
-    } else {
-        button.setAttribute('aria-expanded', 'true')
-    }
+    button.setAttribute('aria-expanded', options.collapsed ? 'false' : 'true')
+    
     if (options.label) {
         const span = document.createElement('span')
         span.classList.add('me-2', 'fs-14')
