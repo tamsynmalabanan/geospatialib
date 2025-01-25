@@ -153,18 +153,9 @@ const createInlineBtn = (options={}) => {
     })())
     
     options.buttonCallback && button.addEventListener('click', options.buttonCallback)
+    assignAttrsToElement(button, options.buttonAttrs || {})
 
-    if (options.buttonAttrs) {
-        for (const key in options.buttonAttrs) {
-            button.setAttribute(key, options.buttonAttrs[key])
-        }
-    }    
-
-    container = options.container
-    if (container) {
-        container.appendChild(button)
-    }
-
+    options.container?.appendChild(button)
     return button
 }
 
