@@ -58,10 +58,12 @@ const labelElement = (element, options={}) => {
         return icon
     })())
 
+    console.log(options)
     options.label && element.appendChild((() => {
         const span = document.createElement('span')
-        span.className = (options.labelClass || '') + (options.iconClass ? 'ms-2' : '')
         span.innerText = options.label
+        span.className = (options.labelClass || '') + (options.iconClass ? 'ms-2' : '')
+        console.log(span)
         return span
     })())
 }
