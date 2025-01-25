@@ -22,7 +22,7 @@ const createDropdownMenuListItem = (options={}) => {
         return span
     })())
 
-    options.buttonAttrs && assignAttrsToElement(button, options.buttonAttrs)
+    assignAttrsToElement(button, options.buttonAttrs || {})
 
     li.appendChild(button)
     options.parent?.appendChild(li)
@@ -115,22 +115,13 @@ const createButtonAndCollapse = (id, options={}) => {
 
 const createFormCheck = (id, options={}) => {
     const formCheck = document.createElement(options.formCheckTag || 'div')
-    formCheck.className = `d-flex gap-2 flex-grow-1 ${options.formCheckClass}`
-
-    let checkboxClass = options.checkboxClass
-    if (!checkboxClass) {
-        checkboxClass = ''
-    }
+    formCheck.className = `d-flex gap-2 flex-grow-1 ${options.formCheckClass || ''}`
 
     const checkbox = document.createElement('input')
     checkbox.id = id
-    checkbox.className = `form-check-input ${checkboxClass}`
+    checkbox.className = `form-check-input ${options.checkboxClass || ''}`
     checkbox.setAttribute('type', 'checkbox')
-    if (options.checkboxAttrs) {
-        for (const key in options.checkboxAttrs) {
-            checkbox.setAttribute(key, options.checkboxAttrs[key])
-        }
-    }
+    assignAttrsToElement(checkbox, options.checkboxAttrs || {})
     formCheck.appendChild(checkbox)
 
     const label = document.createElement('label')
