@@ -75,27 +75,19 @@ const createImgElement = (url, alt, options={}) => {
 }
 
 const createButtonAndCollapse = (id, options={}) => {
-    let containerTag = options.containerTag
-    if (!containerTag) {
-        containerTag = 'div'
-    }
-
-    const container = document.createElement(containerTag)
+    const container = document.createElement(options.containerTag || 'div')
     container.id = id
-    container.className = `d-flex flex-column gap-2 ${options.containerClass}`
+    container.className = `d-flex flex-column gap-2 ${options.containerClass || ''}`
 
     const collapse = document.createElement('div')
     collapse.id = `${id}_collapse`
-    collapse.classList.add('collapse')
-    if (!options.collapsed) {
-        collapse.classList.add('show')
-    }
+    collapse.classList.add('collapse', ...(!options.collapsed ? ['show'] : []))
 
     const btnContainer = document.createElement('div')
     btnContainer.className = 'd-flex gap-2'
 
     const button = document.createElement('button')
-    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName }`
+    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName || ''}`
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${collapse.id}`)
