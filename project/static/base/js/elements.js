@@ -34,12 +34,12 @@ const createAccordionCollapse = (id, parentId, collapsed=true) => {
     const collapse = document.createElement('div')
     collapse.id = id
     // collapse.classList.add('accordion-collapse', 'collapse', collapsed ? 'show' : null)
-    collapse.classList.add('accordion-collapse', 'collapse', ...(collapsed ? ['show'] : []));
+    collapse.classList.add('accordion-collapse', 'collapse', ...(!collapsed ? ['show'] : []));
 
     // if (!collapsed) {
     //     collapse.classList.add('show')
     // }
-    
+
     collapse.setAttribute('data-bs-parent', `#${parentId}`)
     return collapse
 }
