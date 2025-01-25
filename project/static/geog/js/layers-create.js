@@ -68,9 +68,11 @@ const createGeoJSONLayer = (data) => {
     
     geojsonLayer.on('add', (event) => {
         const map = event.target._map
+        let abortController = new AbortController()
     
-        const handler = async () => {
-            if (isHiddenInLegend(geojsonLayer, map)) {return}
+        const handler = async (signal) => {
+            if (signal.aborted) return
+            if (isHiddenInLegend(geojsonLayer, map)) return
             
             geojsonLayer.fire('fetchingData')
             
@@ -81,13 +83,16 @@ const createGeoJSONLayer = (data) => {
             let geojson
 
             if (queryBounds) {
+                if (signal.aborted) return
                 geojson = await (async () => {
                     const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
-                    .map(layer => layer.cachedGeoJSON)
-                    .filter(cachedGeoJSONString => cachedGeoJSONString)                    
-                    if (cachedGeoJSONStrings.length === 0) {return}
+                        .map(layer => layer.cachedGeoJSON)
+                        .filter(cachedGeoJSONString => cachedGeoJSONString)                    
+                    if (cachedGeoJSONStrings.length === 0) return
                     
                     for (const cachedGeoJSONString of cachedGeoJSONStrings) {
+                        if (signal.aborted) return
+
                         const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                         if (!cachedGeoJSON) {continue}
                         if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
@@ -106,6 +111,7 @@ const createGeoJSONLayer = (data) => {
                             filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                         }
                         
+                        if (signal.aborted) return
                         cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                             return turf.booleanIntersects(filterBounds, feature)
                         })
@@ -117,6 +123,8 @@ const createGeoJSONLayer = (data) => {
                 })()
 
                 if (!geojson) {
+                    if (signal.aborted) return
+
                     delete geojsonLayer.cachedGeoJSON
 
                     geojson = await fetchLibraryData(event, geojsonLayer)
@@ -124,7 +132,6 @@ const createGeoJSONLayer = (data) => {
                         geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
                         geojson.tooltip = defaultTooltip
                         geojson.prefix = 'Bounding'
-                        // geojson.suffix = 'for all features'
                     } else {
                         geojson.mapBounds = mapBounds
                         if (geojson.features.length > 0) {
@@ -141,7 +148,7 @@ const createGeoJSONLayer = (data) => {
                     const featureCount = geojson.features.length
                     
                     if (featureCount > 1000 && ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10))) {
-                        if (featureCount > 2000 || ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6))) {
+                        if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
                             const feature = turf.polygonToLine(boundsGeoJSON)
                             geojson.features = [feature]
@@ -158,6 +165,7 @@ const createGeoJSONLayer = (data) => {
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
                         } else {
                             try {
+                                if (signal.aborted) return
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {
@@ -166,6 +174,7 @@ const createGeoJSONLayer = (data) => {
                         }
                     }                
     
+                    if (signal.aborted) return
                     await handleGeoJSON(geojson)
                 }
     
@@ -181,6 +190,7 @@ const createGeoJSONLayer = (data) => {
                 geojson = turf.featureCollection([])
             }
 
+            if (signal.aborted) return
             geojsonLayer.clearLayers()
             geojsonLayer.addData(geojson)
 
@@ -191,6 +201,8 @@ const createGeoJSONLayer = (data) => {
 
             let legend = {}
             geojsonLayer.eachLayer(feature => {
+                if (signal.aborted) return
+
                 feature.popupHeader = data.layerTitle
 
                 if (geojson.tooltip) {
@@ -225,21 +237,30 @@ const createGeoJSONLayer = (data) => {
                 }
             })
 
+            if (signal.aborted) return
             geojsonLayer.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
         }
     
         let fetchWFSDataTimeout
         const handlerOnTimeout = () => {
-            clearTimeout(fetchWFSDataTimeout)
-            fetchWFSDataTimeout = setTimeout(handler, 1000)
-        }
+            clearTimeout(fetchWFSDataTimeout);
+            fetchWFSDataTimeout = setTimeout(() => handler(abortController.signal), 1000);
+        };
     
-        handlerOnTimeout()
+        const abortHandler = () => {
+            abortController.abort();
+            abortController = new AbortController();
+        };
+        
         map.on('moveend zoomend', handlerOnTimeout)
+        map.on('movestart zoomstart', abortHandler);
         geojsonLayer.on('remove', () => {
             map.off('moveend zoomend', handlerOnTimeout)
-        })
+            map.off('movestart zoomstart', abortHandler);
+        });
+
+        handlerOnTimeout()
     })
 
     return geojsonLayer

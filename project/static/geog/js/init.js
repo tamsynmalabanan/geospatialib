@@ -184,10 +184,10 @@ const handleMapLayerGroups = (map) => {
         if (group === 'legend') {
             layerGroup.moveLayer = (currentLayer, options={}) => {
                 const legend = document.querySelector(`#${map.getContainer().id}_legend`)
-                if (!legend) {return}
+                if (!legend) return
 
                 const layerLegend = legend.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
-                if (!layerLegend) {return}
+                if (!layerLegend) return
 
                 const layerLegends = Array.from(legend.children)
                 const currentLayerIndex = layerLegends.indexOf(layerLegend)
@@ -203,7 +203,7 @@ const handleMapLayerGroups = (map) => {
                         return newIndex > currentLayerIndex ? newIndex+1 : newIndex < 0 ? 0 : newIndex
                     }
                 }) ()
-                if (typeof index !== 'number') {return}
+                if (typeof index !== 'number') return
                 
                 if (index === -1 || index >= layerLegends.length) {
                     legend.appendChild(layerLegend)

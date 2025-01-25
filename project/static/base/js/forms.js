@@ -24,7 +24,7 @@ const resizeCaptcha = (reCAPTCHA) => {
   
 const handleCAPTCHAFields = (parent) => {
     const captchaFields = parent.querySelectorAll('.g-recaptcha')
-    if (captchaFields.length === 0) {return} 
+    if (captchaFields.length === 0) return 
 
     const currentTheme = getPreferredTheme()
     captchaFields.forEach(field => {

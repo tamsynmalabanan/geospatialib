@@ -29,9 +29,9 @@ const enableMapInteractivity = (map) => {
 
 const clearAllLayers = (map) => {
     map.eachLayer(layer => {
-        if (layer._url === "//tile.openstreetmap.org/{z}/{x}/{y}.png") {return}
+        if (layer._url === "//tile.openstreetmap.org/{z}/{x}/{y}.png") return
 
-        if (Object.values(map.getLayerGroups()).includes(layer)) {return}
+        if (Object.values(map.getLayerGroups()).includes(layer)) return
 
         map.removeLayer(layer);
     });        

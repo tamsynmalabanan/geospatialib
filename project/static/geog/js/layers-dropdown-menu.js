@@ -1,15 +1,15 @@
 const populateLayerDropdownMenu = (toggle, options={}) => {
     const dropdown = toggle.nextElementSibling
-    if (!dropdown || dropdown.innerHTML !== '') {return}
+    if (!dropdown || dropdown.innerHTML !== '') return
     
     const map = options.map || mapQuerySelector(options.mapSelector)
-    if (!map) {return}
+    if (!map) return
     
     const currentLayer = options.layer
-    if (!currentLayer) {return}
+    if (!currentLayer) return
     
     const layerGroup = map.getLayerGroups(options.layerGroup || map.getLayerGroup(currentLayer))
-    if (!layerGroup) {return}
+    if (!layerGroup) return
     
     const datasetList = toggle.closest('ul.dataset-list')
     const isLegendLayer = datasetList?.id === `${map.getContainer().id}_legend`
