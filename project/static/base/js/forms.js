@@ -24,29 +24,28 @@ const resizeCaptcha = (reCAPTCHA) => {
   
 const handleCAPTCHAFields = (parent) => {
     const captchaFields = parent.querySelectorAll('.g-recaptcha')
- 
-    if (captchaFields.length !== 0) {
-        const currentTheme = getPreferredTheme()
-        captchaFields.forEach(field => {
-            field.setAttribute('data-theme', currentTheme)
-            
-            field.style.transformOrigin = 'center center'
-            observeInnerHTML(field, () => {
-                resizeCaptcha(field)
+    if (captchaFields.length === 0) {return} 
 
-                const iframes = field.querySelectorAll('iframe[title="reCAPTCHA"]')
-                if (iframes.length !== 0) {
-                    iframes.forEach(frame => {
-                        frame.setAttribute('class', 'rounded border')
-                    })
-                }
-            })
-            
-            window.addEventListener('resize', () => {
-                resizeCaptcha(field)
-            })
+    const currentTheme = getPreferredTheme()
+    captchaFields.forEach(field => {
+        field.setAttribute('data-theme', currentTheme)
+        
+        field.style.transformOrigin = 'center center'
+        observeInnerHTML(field, () => {
+            resizeCaptcha(field)
+
+            const iframes = field.querySelectorAll('iframe[title="reCAPTCHA"]')
+            if (iframes.length !== 0) {
+                iframes.forEach(frame => {
+                    frame.setAttribute('class', 'rounded border')
+                })
+            }
         })
-    } 
+        
+        window.addEventListener('resize', () => {
+            resizeCaptcha(field)
+        })
+    })
 }
 
 document.addEventListener('DOMContentLoaded', () => {

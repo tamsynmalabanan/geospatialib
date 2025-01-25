@@ -161,41 +161,27 @@ const createInlineBtn = (options={}) => {
 
 const createButton = (options={}) => {
     const button = document.createElement('button')
-    button.className = `btn ${options.buttonClass}`
+    button.className = `btn ${options.buttonClass || ''}`
+    assignAttrsToElement(button, options.buttonAttrs || {})
     setAsThemedControl(button)
 
-    if (options.label) {
+    options.label && button.appendChild((() => {
         const span = document.createElement('span')
-        span.className = `ms-2 ${options.labelClass}`
+        span.className = `ms-2 ${options.labelClass || ''}`
         span.innerText = options.label
-        button.appendChild(span)
-    }
+        return span
+    })())
 
-    if (options.buttonAttrs) {
-        for (const key in options.buttonAttrs) {
-            button.setAttribute(key, options.buttonAttrs[key])
-        }
-    }
-
-    if (options.parent) {
-        options.parent.appendChild(button)
-    }
-
+    options.parent?.appendChild(button)
     return button
 }
 
 const createSpanElement = (options={}) => {
     const span = document.createElement('span')
-    span.className = `${options.className}`
-    
-    if (options.label) {
-        span.innerText = options.label
-    }
+    span.className = options.className || ''
+    span.innerText = options.label || ''
 
-    if (options.parent) {
-        options.parent.appendChild(span)
-    }
-
+    options.parent?.appendChild(span)
     return span
 }
 
