@@ -143,18 +143,16 @@ const createFormCheck = (id, options={}) => {
 const createInlineBtn = (options={}) => {
     const button = document.createElement('button')
     button.setAttribute('type', 'button')
-    button.className = `ms-5 bg-transparent border-0 p-0 ${options.buttonClass}`
+    button.className = `ms-5 bg-transparent border-0 p-0 ${options.buttonClass || ''}`
     
-    if (options.buttonInnerText) {
+    options.buttonInnerText && button.appendChild((() => {
         const span = document.createElement('span')
         span.className = 'ms-2 d-none d-lg-inline'
         span.innerText = options.buttonInnerText
-        button.appendChild(span)
-    }
+        return span
+    })())
     
-    if (options.buttonCallback) {
-        button.addEventListener('click', options.buttonCallback)
-    }
+    options.buttonCallback && button.addEventListener('click', options.buttonCallback)
 
     if (options.buttonAttrs) {
         for (const key in options.buttonAttrs) {
