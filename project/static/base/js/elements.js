@@ -4,10 +4,12 @@ const createDropdownMenuListItem = (options={}) => {
     const button = document.createElement('button')
     button.className = `dropdown-item ${options.buttonClass}`
 
-    let buttonClickHandler = options.buttonClickHandler
-    if (buttonClickHandler) {
-        button.addEventListener('click', buttonClickHandler)
-    }
+    // let buttonClickHandler = options.buttonClickHandler
+    // if (buttonClickHandler) {
+    //     button.addEventListener('click', buttonClickHandler)
+    // }
+
+    options.buttonClickHandler && button.addEventListener('click', options.buttonClickHandler);
 
     if (options.label) {
         const span = document.createElement('span')
