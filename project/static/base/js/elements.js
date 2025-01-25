@@ -87,25 +87,24 @@ const createButtonAndCollapse = (id, options={}) => {
     btnContainer.className = 'd-flex gap-2'
 
     const button = document.createElement('button')
-    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName || ''}, ${options.collapsed ? 'collapsed' : ''}`
+    button.className = `bg-transparent border-0 px-0 ${options.buttonClassName || ''} ${options.collapsed ? 'collapsed' : ''}`
     button.setAttribute('type', 'button')
     button.setAttribute('data-bs-toggle', 'collapse')
     button.setAttribute('data-bs-target', `#${collapse.id}`)
     button.setAttribute('aria-controls', collapse.id)
     button.setAttribute('aria-expanded', options.collapsed ? 'false' : 'true')
+    setAsThemedControl(button)
     
-    if (options.label) {
+    options.label && button.appendChild((() => {
         const span = document.createElement('span')
         span.classList.add('me-2', 'fs-14')
         span.innerText = options.label
-        button.appendChild(span)
-    }
+        return span
+    })())
 
     const dropdownIcon = document.createElement('i')
     dropdownIcon.className = 'dropdown-toggle ms-auto'
     button.appendChild(dropdownIcon)
-
-    setAsThemedControl(button)
 
     btnContainer.appendChild(button)
     container.appendChild(btnContainer)
