@@ -164,15 +164,13 @@ const createGeoJSONLayer = (data) => {
                             }
         
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-                        } else {
-                            if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
-                                try {
-                                    if (signal.aborted) return
-                                    geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                                    geojson.prefix = 'Simplified'
-                                } catch {
-                                
-                                }
+                        } else ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
+                            try {
+                                if (signal.aborted) return
+                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                                geojson.prefix = 'Simplified'
+                            } catch {
+                                console.log('failed to simplify')
                             }
                         }
                     }
