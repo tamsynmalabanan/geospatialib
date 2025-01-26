@@ -164,7 +164,7 @@ const createGeoJSONLayer = (data) => {
                             }
         
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-                        } else ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
+                        } else if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
                             try {
                                 if (signal.aborted) return
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
