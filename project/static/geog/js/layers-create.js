@@ -170,7 +170,7 @@ const createGeoJSONLayer = (data) => {
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {
-                                console.log('failed to simplify')
+                                // console.log('failed to simplify')
                             }
                         }
                     }
