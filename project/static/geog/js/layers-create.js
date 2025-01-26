@@ -77,8 +77,8 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.fire('fetchingData')
             
             const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-            const layerBounds = turf.bboxPolygon(data.layerBbox.slice(1, -1).split(','))
-            const queryBounds = turf.intersect(mapBounds, layerBounds)
+            const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
+            const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
 
             let geojson
 
