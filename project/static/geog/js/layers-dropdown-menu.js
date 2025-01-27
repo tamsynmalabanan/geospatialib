@@ -111,8 +111,17 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
     const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
         label: `Hide ${type} legend`,
-        buttonClass: 'bi bi-eye-slash',
+        buttonClass: 'bi bi-info-circle',
         buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
+    }) : null
+
+    const toggleAttributionBtn = isLegendLayer ? createDropdownMenuListItem({
+        label: `Hide ${type} attribution`,
+        buttonClass: 'bi bi-c-circle',
+        buttonClickHandler: () => {
+            const attribution = datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.lastChild
+            attribution && (attribution.classList.includes('d-none') ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
+        }
     }) : null
 
     const downloadGeoJSONBtn = geojson ? createDropdownMenuListItem({
@@ -139,6 +148,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         duplicateBtn,
         styleLayerBtn,
         hideLegendBtn,
+        toggleAttributionBtn,
         downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 }
