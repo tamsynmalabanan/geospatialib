@@ -370,15 +370,15 @@ const handleMapLegend = (map) => {
     const dropdownToggle = dropdownContainer.querySelector('button')
     const dropdownMenu = dropdownContainer.querySelector('.dropdown-menu')
 
-    const zoomBtn = createDropdownMenuListItem({
+    createDropdownMenuListItem({
         label: 'Zoom to layers', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-zoom-in fs-12',
-    }).querySelector('button')
-    zoomBtn.addEventListener('click', () => {
-        const bounds = legendLayerGroup.getBounds()
-        if (bounds) {
-            map.fitBounds(bounds)
+        buttonClickHandler: () => {
+            const bounds = legendLayerGroup.getBounds()
+            if (bounds) {
+                map.fitBounds(bounds)
+            }
         }
     })
 
