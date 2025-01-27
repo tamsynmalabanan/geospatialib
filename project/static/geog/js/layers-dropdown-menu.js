@@ -116,7 +116,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     }) : null
 
     const toggleAttributionBtn = isLegendLayer ? createDropdownMenuListItem({
-        label: `Hide ${type} attribution`,
+        label: `Toggle ${type} attribution`,
         buttonClass: 'bi bi-c-circle',
         buttonClickHandler: () => {
             const attribution = datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.lastChild
