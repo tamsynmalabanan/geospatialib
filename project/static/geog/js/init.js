@@ -382,55 +382,70 @@ const handleMapLegend = (map) => {
         }
     })
 
-    const showHideBtn = createDropdownMenuListItem({
+    createDropdownMenuListItem({
         label: 'Show/hide layers', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-eye fs-12',
-    }).querySelector('button')
-    showHideBtn.addEventListener('click', () => {
-        if (legendLayerGroup.getLayers().length > 0) {
-            legendLayerGroup.eachLayer(layer => {
-                legendLayerGroup.hiddenLayers.push(layer)
-                legendLayerGroup.removeLayer(layer)
-            })
-        } else if (legendLayerGroup.hiddenLayers.length > 0) {
-            legendLayerGroup.hiddenLayers.forEach(layer => {
-                legendLayerGroup.hiddenLayers = legendLayerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
-                legendLayerGroup.addLayer(layer)
+        buttonClickHandler: () => {
+            if (legendLayerGroup.getLayers().length > 0) {
+                legendLayerGroup.eachLayer(layer => {
+                    legendLayerGroup.hiddenLayers.push(layer)
+                    legendLayerGroup.removeLayer(layer)
+                })
+                return
+            }
+
+            if (legendLayerGroup.hiddenLayers.length > 0) {
+                legendLayerGroup.hiddenLayers.forEach(layer => {
+                    legendLayerGroup.hiddenLayers = legendLayerGroup.hiddenLayers.filter(hiddenLayer => hiddenLayer !== layer)
+                    legendLayerGroup.addLayer(layer)
+                })
+                return
+            }
+        }
+    })
+
+    createDropdownMenuListItem({
+        label: 'Remove layers', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-trash3 fs-12',
+        buttonClickHandler: () => {
+            legendLayerGroup.clearLayers()
+            legendLayerGroup.hiddenLayers = []
+            ul.innerHTML = ''
+        }
+    })
+
+    dropdownMenu.appendChild(createDropdownDivider())
+
+    createDropdownMenuListItem({
+        label: 'Show hidden layer legends', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-info-circle fs-12',
+        buttonClickHandler: () => {
+            ul.querySelectorAll('li.d-none').forEach(li => li.classList.remove('d-none'))
+        }
+    })
+
+    createDropdownMenuListItem({
+        label: 'Show hidden layer attributes', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-c-circle fs-12',
+        buttonClickHandler: () => {
+            ul.querySelectorAll('li').forEach(li => {
+                li.lastChild && li.lastChild.classList.contains('d-none')
+                ? li.lastChild.classList.remove('d-none')
+                : null
             })
         }
     })
 
-    const removeLayersBtn = createDropdownMenuListItem({
-        label: 'Remove layers', 
-        parent: dropdownMenu,
-        buttonClass: 'bi bi-trash3 fs-12',
-    }).querySelector('button')
-    removeLayersBtn.addEventListener('click', () => {
-        legendLayerGroup.clearLayers()
-        legendLayerGroup.hiddenLayers = []
-        ul.innerHTML = ''
-    })
-
-    const divider = document.createElement('li')
-    divider.className = 'dropdown-divider'
-    dropdownMenu.appendChild(divider)
-
-    const showHiddenLegendsBtn = createDropdownMenuListItem({
-        label: 'Show hidden layer legends', 
-        parent: dropdownMenu,
-        buttonClass: 'bi bi-eye-slash fs-12',
-    }).querySelector('button')
-    showHiddenLegendsBtn.addEventListener('click', () => {
-        ul.querySelectorAll('li.d-none').forEach(li => li.classList.remove('d-none'))
-    })
-
-    const collapseExpandBtn = createDropdownMenuListItem({
+    createDropdownMenuListItem({
         label: 'Expand/collapse legend', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-chevron-expand fs-12',
-    }).querySelector('button')
-    collapseExpandBtn.addEventListener('click', () => toggleAllSubCollapse(collapse))
+        buttonClickHandler: () => toggleAllSubCollapse(collapse)
+    })
 
     map.on('layeradd', async (event) => {
         const layer = event.layer
