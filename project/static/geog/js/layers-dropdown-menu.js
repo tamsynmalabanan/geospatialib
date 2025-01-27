@@ -120,7 +120,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClass: 'bi bi-c-circle',
         buttonClickHandler: () => {
             const attribution = datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.lastChild
-            attribution && (attribution.classList.includes('d-none') ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
+            attribution && (attribution.classList.contains('d-none') ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
         }
     }) : null
 
