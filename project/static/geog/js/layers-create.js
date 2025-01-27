@@ -149,7 +149,7 @@ const createGeoJSONLayer = (data) => {
                     const featureCount = geojson.features.length
                     
                     if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10)) {
-                        if (featureCount > 1000) {
+                        if (featureCount > 100) {
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
                             const feature = turf.polygonToLine(boundsGeoJSON)
                             geojson.features = [feature]
@@ -170,7 +170,7 @@ const createGeoJSONLayer = (data) => {
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {
-                                // console.log('failed to simplify')
+                                console.log('failed to simplify')
                             }
                         }
                     }
