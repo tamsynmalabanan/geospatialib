@@ -205,20 +205,20 @@ const fetchDataWithTimeout = async (url, options={}) => {
         timeoutMs = 10000
     }
 
-    const controller = new AbortController()
+    const controller = options.controller || new AbortController()
     const abortController = () => {
-        console.log('controller.abort()')
+        console.log('fetchDataWithTimeout', 'controller.abort()')
         controller.abort('Timeout/manually aborted')
     }
-    const timeoutId = setTimeout(abortController, timeoutMs);
     
     options.abortBtn?.addEventListener('click', abortController)
     delete options.abortBtn
-
+    
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
     console.log('fetchDataWithTimeout', 'before fetch', params)
+    const timeoutId = setTimeout(abortController, timeoutMs);
     const fetchPromise = fetch(url, params)
     .then(async response => {
         console.log('fetchDataWithTimeout', 'done fetching', response)

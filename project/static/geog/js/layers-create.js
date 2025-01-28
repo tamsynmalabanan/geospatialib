@@ -128,7 +128,7 @@ const createGeoJSONLayer = (data) => {
 
                     delete geojsonLayer.cachedGeoJSON
                     
-                    geojson = await fetchLibraryData(event, geojsonLayer)
+                    geojson = await fetchLibraryData(event, geojsonLayer, options={controller:abortController})
                     if (!geojson) {
                         if (!layerBounds) return
                         geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
@@ -249,7 +249,7 @@ const createGeoJSONLayer = (data) => {
         };
     
         const abortHandler = () => {
-            abortController.abort();
+            abortController.abort('Map moved');
             abortController = new AbortController();
         };
         
