@@ -76,6 +76,7 @@ const createGeoJSONLayer = (data) => {
             
             geojsonLayer.fire('fetchingData')
             
+            console.log('createGeoJSONLayer', geojsonLayer)
             const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
             const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
@@ -83,28 +84,31 @@ const createGeoJSONLayer = (data) => {
             let geojson
 
             if (queryBounds) {
+                console.log('createGeoJSONLayer', queryBounds)
                 if (signal.aborted) return
                 geojson = await (async () => {
+                    console.log('createGeoJSONLayer')
                     const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
-                        .map(layer => layer.cachedGeoJSON)
-                        .filter(cachedGeoJSONString => cachedGeoJSONString)                    
+                    .map(layer => layer.cachedGeoJSON)
+                    .filter(cachedGeoJSONString => cachedGeoJSONString)                    
                     if (cachedGeoJSONStrings.length === 0) return
                     
                     for (const cachedGeoJSONString of cachedGeoJSONStrings) {
+                        console.log('createGeoJSONLayer', cachedGeoJSONString)
                         if (signal.aborted) return
-
+                        
                         const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                         if (!cachedGeoJSON) {continue}
                         if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
-
+                        
                         const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                         const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
                         if (!equalBounds && !withinBounds) {continue}
-
+                        
                         if (!geojsonLayer.cachedGeoJSON) {
                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
                         }
-
+                        
                         let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
                         const crs = getGeoJSONCRS(cachedGeoJSON)
                         if (crs && crs !== 4326) {
@@ -112,6 +116,7 @@ const createGeoJSONLayer = (data) => {
                             filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                         }
                         
+                        console.log('createGeoJSONLayer', cachedGeoJSON)
                         cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                             if (signal.aborted) return
                             return turf.booleanIntersects(filterBounds, feature)
@@ -139,87 +144,97 @@ const createGeoJSONLayer = (data) => {
                             geojson.cachedGeoJSON = JSON.stringify(geojson)
                         }
                     }
+                    console.log('createGeoJSONLayer', geojson)
                 }
-
+                
                 if (!geojson.processed) {
                     geojson.processed = true
-    
+                    
                     const mapScale = getMeterScale(map)
                     const mapZoom = map.getZoom()    
                     const featureCount = geojson.features.length
                     
                     if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10)) {
                         if (featureCount > 100) {
+                            console.log('createGeoJSONLayer', geojson)
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
                             const feature = turf.polygonToLine(boundsGeoJSON)
                             geojson.features = [feature]
                             geojson.tooltip = defaultTooltip
                             geojson.prefix = 'Bounding'
-        
+                            
                             let totalMatched = 'features'
                             const numberMatched = geojson.numberMatched
                             const numberReturned = geojson.numberReturned
                             if (numberMatched && numberReturned && numberMatched !== numberReturned) {
                                 totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
                             }
-        
+                            
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
                         } else if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
                             try {
+                                console.log('createGeoJSONLayer', geojson)
                                 if (signal.aborted) return
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {
+                                console.log('createGeoJSONLayer', geojson)
                                 console.log('failed to simplify')
                             }
                         }
                     }
-    
+                    
                     if (signal.aborted) return
                     await handleGeoJSON(geojson)
+                    console.log('createGeoJSONLayer', geojson)
                 }
-    
+                
                 if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
+                    console.log('createGeoJSONLayer', geojson)
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     } else {
                         geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                     }
+                    console.log('createGeoJSONLayer', geojson)
                     
                 }
             } else {
                 geojson = turf.featureCollection([])
+                console.log('createGeoJSONLayer', geojson)
             }
-
+            
             if (signal.aborted) return
             geojsonLayer.clearLayers()
             geojsonLayer.addData(geojson)
-
+            console.log('createGeoJSONLayer', geojson)
+            
             if (geojsonLayer._openPopups.length > 0) {
                 geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
                 geojsonLayer._openPopups = []
             }
-
+            
             let legend = {}
+            console.log('createGeoJSONLayer', geojson)
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
-
+                
                 feature.popupHeader = data.layerTitle
-
+                
                 if (geojson.tooltip) {
                     feature.bindTooltip(geojson.tooltip, {sticky:true})
                 } 
-
+                
                 let type = feature.feature.geometry.type.replace('Multi', '')
                 if (geojson.prefix === 'Bounding') {
                     type = 'box'
                 }
-
+                
                 let label = type
                 if (type !== 'Point') {
                     label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
                 }
-
+                
                 if (!Object.keys(legend).includes(label)) {
                     let style
                     if (type === 'Point') {
@@ -227,7 +242,7 @@ const createGeoJSONLayer = (data) => {
                     } else {
                         style = geojsonLayer.options.style()
                     }
-
+                    
                     legend[label] = {
                         type: type,
                         style: style,
@@ -237,7 +252,8 @@ const createGeoJSONLayer = (data) => {
                     legend[label].count += 1 
                 }
             })
-
+            
+            console.log('createGeoJSONLayer', geojson)
             if (signal.aborted) return
             geojsonLayer.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
