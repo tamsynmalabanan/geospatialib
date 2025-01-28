@@ -144,6 +144,7 @@ const cacheResponse = async (response, cacheKey) => {
     const headersString = JSON.stringify(headers)
     cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
 
+    console.log('done caching')
     return new Response(new Blob([data]), {
         status: 200, 
         statusText: 'OK', 
