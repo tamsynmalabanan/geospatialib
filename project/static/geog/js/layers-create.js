@@ -125,9 +125,12 @@ const createGeoJSONLayer = (data) => {
                 })()
 
                 if (!geojson) {
+                    
                     if (signal.aborted) return
-
+                    
                     delete geojsonLayer.cachedGeoJSON
+                    
+                    console.log('createGeoJSONLayer', 'fetching new data')
                     
                     geojson = await fetchLibraryData(event, geojsonLayer, options={controller:abortController})
                     if (!geojson) {
