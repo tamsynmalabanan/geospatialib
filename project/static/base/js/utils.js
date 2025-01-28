@@ -203,7 +203,10 @@ const fetchDataWithTimeout = async (url, options={}) => {
     }
 
     const controller = new AbortController()
-    const abortController = () => controller.abort()
+    const abortController = () => {
+        console.log('controller.abort()')
+        controller.abort()
+    }
     const timeoutId = setTimeout(abortController, timeoutMs);
     
     if (options.abortBtn) {
