@@ -212,9 +212,11 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
+    console.log('fetching...')
     const timeoutId = setTimeout(abortController, timeoutMs);
     const fetchPromise = fetch(url, params)
     .then(async response => {
+        console.log('response')
         clearTimeout(timeoutId)
         if (response.ok) {
             return await cacheResponse(response, cacheKey)
