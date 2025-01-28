@@ -86,6 +86,7 @@ const createGeoJSONLayer = (data) => {
                 if (signal.aborted) return
                 console.log('createGeoJSONLayer', 'fetching cached data')
                 geojson = await (async () => {
+                    console.log('createGeoJSONLayer', 'fetching')
                     const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
                     .map(layer => layer.cachedGeoJSON)
                     .filter(cachedGeoJSONString => cachedGeoJSONString)                    
@@ -94,10 +95,12 @@ const createGeoJSONLayer = (data) => {
                     for (const cachedGeoJSONString of cachedGeoJSONStrings) {
                         if (signal.aborted) return
                         
+                        console.log('createGeoJSONLayer', 'cached geojson string')
                         const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
                         if (!cachedGeoJSON) {continue}
                         if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
                         
+                        console.log('createGeoJSONLayer', 'cached geojson')
                         const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                         const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
                         if (!equalBounds && !withinBounds) {continue}
@@ -113,6 +116,7 @@ const createGeoJSONLayer = (data) => {
                             filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
                         }
                         
+                        console.log('createGeoJSONLayer', 'filtering')
                         cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                             if (signal.aborted) return
                             return turf.booleanIntersects(filterBounds, feature)
