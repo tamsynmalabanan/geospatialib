@@ -128,7 +128,6 @@ const createGeoJSONLayer = (data) => {
 
                     delete geojsonLayer.cachedGeoJSON
                     
-                    console.log('createGeoJSONLayer', 'no cached geojson, fetching new data')
                     geojson = await fetchLibraryData(event, geojsonLayer)
                     if (!geojson) {
                         if (!layerBounds) return

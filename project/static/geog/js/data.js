@@ -430,7 +430,6 @@ const fetchWMSData = async (event, layer, options={}) => {
 }
 
 const fetchWFSData = async (event, layer, options={}) => {
-    console.log('fetchWFSData', 'init')
     const cleanURL = removeQueryParams(layer.data.layerUrl)
     const params = {
         service: 'WFS',
@@ -477,7 +476,6 @@ const fetchWFSData = async (event, layer, options={}) => {
     params.bbox = bbox
 
     const url = pushQueryParamsToURLString(cleanURL, params)
-    console.log('fetchWFSData', 'before fetch', cleanURL, params)
     const geojson = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
         if (response.ok || response.status === 200) {
             return response
