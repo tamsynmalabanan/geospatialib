@@ -84,6 +84,7 @@ const createGeoJSONLayer = (data) => {
 
             if (queryBounds) {
                 if (signal.aborted) return
+                console.log('createGeoJSONLayer', 'fetching cached data')
                 geojson = await (async () => {
                     const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
                     .map(layer => layer.cachedGeoJSON)
@@ -141,10 +142,14 @@ const createGeoJSONLayer = (data) => {
                         }
                     }
                 }
+
+                console.log('createGeoJSONLayer', 'data fetched', geojson)
                 
                 if (!geojson.processed) {
                     geojson.processed = true
                     
+                    console.log('createGeoJSONLayer', 'processing data')
+
                     const mapScale = getMeterScale(map)
                     const mapZoom = map.getZoom()    
                     const featureCount = geojson.features.length
@@ -179,6 +184,8 @@ const createGeoJSONLayer = (data) => {
                     await handleGeoJSON(geojson)
                 }
                 
+                console.log('createGeoJSONLayer', 'caching data')
+
                 if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
@@ -190,6 +197,8 @@ const createGeoJSONLayer = (data) => {
                 geojson = turf.featureCollection([])
             }
             
+            console.log('createGeoJSONLayer', 'updating geojsonlayer')
+
             if (signal.aborted) return
             geojsonLayer.clearLayers()
             geojsonLayer.addData(geojson)
@@ -200,6 +209,9 @@ const createGeoJSONLayer = (data) => {
             }
             
             let legend = {}
+            
+            console.log('createGeoJSONLayer', 'updating legend')
+
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
                 
@@ -239,6 +251,8 @@ const createGeoJSONLayer = (data) => {
             
             if (signal.aborted) return
             geojsonLayer.layerLegendStyle = legend
+            console.log('createGeoJSONLayer', 'done')
+
             geojsonLayer.fire('legendUpdated')
         }
     

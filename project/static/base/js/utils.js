@@ -203,9 +203,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     }
 
     const controller = options.controller || new AbortController()
-    const abortController = () => {
-        controller.abort('Timeout/manually aborted')
-    }
+    const abortController = () => controller.abort('Timeout/manually aborted')
     delete options.controller
     
     options.abortBtn?.addEventListener('click', abortController)
