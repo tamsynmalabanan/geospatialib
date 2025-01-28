@@ -516,6 +516,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         }
         return data
     }).catch(error => {
+        console.log(error)
         return
     })
 

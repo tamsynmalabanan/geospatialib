@@ -221,6 +221,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
         if (response.ok) {
             return await cacheResponse(response, cacheKey)
         }
+        console.log('response cached')
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
