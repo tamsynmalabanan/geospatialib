@@ -491,6 +491,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         abortBtn:options.abortBtn,
         controller:options.controller,
     }).then(response => {
+        console.log('response')
         if (response.ok || response.status === 200) {
             return response
         } else {
@@ -509,6 +510,7 @@ const fetchWFSData = async (event, layer, options={}) => {
             throw new Error('Unsupported format')
         }
     }).then(data => {
+        console.log('data')
         if (data && !data.licence) {
             data.licence = `Data © <a href='${cleanURL}' target='_blank'>${getDomain(cleanURL)}</a>`
         }
