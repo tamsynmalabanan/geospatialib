@@ -235,6 +235,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     })
 
     fetchDataWithTimeoutMap.set(cacheKey, fetchPromise)
+    console.log('returning')
     return fetchPromise
 }
 
