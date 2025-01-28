@@ -178,13 +178,11 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
 
 const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
-    console.log('fetchDataWithTimeout', 'init')
     const cacheKey = `${url}_${JSON.stringify(options)}`
     
     const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
     const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
     if (cachedData && cachedHeaders) {
-        console.log('fetchDataWithTimeout', 'has cached data')
         const headers = new Headers(JSON.parse(cachedHeaders))
         return Promise.resolve(new Response(new Blob([cachedData]), {
             status: 200, 
@@ -194,7 +192,6 @@ const fetchDataWithTimeout = async (url, options={}) => {
     }
     
     if (fetchDataWithTimeoutMap.has(cacheKey)) {
-        console.log('fetchDataWithTimeout', 'mapped')
         return await fetchDataWithTimeoutMap.get(cacheKey)
     }
 
@@ -207,9 +204,9 @@ const fetchDataWithTimeout = async (url, options={}) => {
 
     const controller = options.controller || new AbortController()
     const abortController = () => {
-        console.log('fetchDataWithTimeout', 'controller.abort()')
         controller.abort('Timeout/manually aborted')
     }
+    delete options.controller
     
     options.abortBtn?.addEventListener('click', abortController)
     delete options.abortBtn
@@ -217,18 +214,15 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
-    console.log('fetchDataWithTimeout', 'before fetch', params)
     const timeoutId = setTimeout(abortController, timeoutMs);
     const fetchPromise = fetch(url, params)
     .then(async response => {
-        console.log('fetchDataWithTimeout', 'done fetching', response)
         clearTimeout(timeoutId)
         if (response.ok) {
             return await cacheResponse(response, cacheKey)
         }
         return response
     }).catch(async error => {
-        console.log('fetchDataWithTimeout', 'error', error)
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
             return await fetchViaCorsProxy(url, cacheKey, options)
         } else {

@@ -8,7 +8,10 @@ const getOSMGeoJSON = (features) => {
 
 const fetchProj4Def = async (crs, options={}) => {
     const url = `https://spatialreference.org/ref/epsg/${crs}/ogcwkt`
-    return fetchDataWithTimeout(url, {abortBtn:options.abortBtn})
+    return fetchDataWithTimeout(url, {
+        abortBtn:options.abortBtn,
+        controller:options.controller,
+    })
     .then(response => {
         if (response.ok || response.status === 200) {
             return response.text()
@@ -43,6 +46,7 @@ const fetchOSMData = async (event, options={}) => {
 const fetchOSMDataInBbox = async (bbox, options={}) => {
     return fetchDataWithTimeout("https://overpass-api.de/api/interpreter", {
         abortBtn:options.abortBtn,
+        controller:options.controller,
         method: "POST",
         body: "data="+ encodeURIComponent(`
             [bbox:${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]}]
@@ -103,6 +107,7 @@ const fetchOSMDataAroundLatLng = async (latlng, options={}) => {
         const params = `around:${buffer},${latlng.lat},${latlng.lng}`
         return fetchDataWithTimeout("https://overpass-api.de/api/interpreter", {
             abortBtn:options.abortBtn,
+            controller:options.controller,
             method: "POST",
             body: "data="+ encodeURIComponent(`
                 [out:json][timeout:180];
@@ -298,13 +303,16 @@ const fetchOSMDataFromNominatim = async (event, options={}) => {
 
     const url = 'https://nominatim.openstreetmap.org/reverse?'
     return fetchDataWithTimeout(pushQueryParamsToURLString(url, {
-            lat: event.latlng.lat,
-            lon: event.latlng.lng,
-            zoom: getZoom(),
-            format: 'geojson',
-            polygon_geojson: 1,
-            polygon_threshold: 0,
-    }), {abortBtn:options.abortBtn}).then(response => {
+        lat: event.latlng.lat,
+        lon: event.latlng.lng,
+        zoom: getZoom(),
+        format: 'geojson',
+        polygon_geojson: 1,
+        polygon_threshold: 0,
+    }), {
+        abortBtn:options.abortBtn,
+        controller:options.controller,
+    }).then(response => {
         if (response.ok || response.status === 200) {
             try {
                 return parseChunkedResponseToJSON(response)
@@ -367,7 +375,10 @@ const fetchWMSData = async (event, layer, options={}) => {
     }
 
     const url = pushQueryParamsToURLString(cleanURL, params)
-    return fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
+    return fetchDataWithTimeout(url, {
+        abortBtn:options.abortBtn,
+        controller:options.controller,
+    }).then(response => {
         if (response.ok || response.status === 200) {
             return response
         } else {
@@ -476,7 +487,10 @@ const fetchWFSData = async (event, layer, options={}) => {
     params.bbox = bbox
 
     const url = pushQueryParamsToURLString(cleanURL, params)
-    const geojson = await fetchDataWithTimeout(url, {abortBtn:options.abortBtn,}).then(response => {
+    const geojson = await fetchDataWithTimeout(url, {
+        abortBtn:options.abortBtn,
+        controller:options.controller,
+    }).then(response => {
         if (response.ok || response.status === 200) {
             return response
         } else {
