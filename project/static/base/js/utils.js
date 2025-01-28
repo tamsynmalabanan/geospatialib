@@ -178,6 +178,7 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
 
 const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
+    console.log('fetchDataWithTimeout', 'init')
     const cacheKey = `${url}_${JSON.stringify(options)}`
     
     const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
@@ -217,6 +218,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
+    console.log('fetchDataWithTimeout', 'before fetch', params)
     const fetchPromise = fetch(url, params)
     .then(async response => {
         clearTimeout(timeoutId)
