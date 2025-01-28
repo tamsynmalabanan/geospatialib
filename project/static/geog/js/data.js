@@ -500,6 +500,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         const contentType = response.headers.get('Content-Type')
         if (contentType.includes('json')) {
             try {
+                console.log('parsing...')
                 return parseChunkedResponseToJSON(response)
             } catch {
                 throw new Error('Failed to parse JSON.')
