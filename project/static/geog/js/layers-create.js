@@ -141,8 +141,6 @@ const createGeoJSONLayer = (data) => {
                         }
                     }
                 }
-
-                console.log('createGeoJSONLayer', 'data fetched', geojson)
                 
                 if (!geojson.processed) {
                     geojson.processed = true
@@ -152,7 +150,7 @@ const createGeoJSONLayer = (data) => {
                     const featureCount = geojson.features.length
                     
                     if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10)) {
-                        if (featureCount > 100) {
+                        if (featureCount > 1000) {
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
                             const feature = turf.polygonToLine(boundsGeoJSON)
                             geojson.features = [feature]

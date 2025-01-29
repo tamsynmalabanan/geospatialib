@@ -513,7 +513,6 @@ const fetchWFSData = async (event, layer, options={}) => {
         }
         return data
     }).catch(error => {
-        console.error(error)
         return
     })
 
