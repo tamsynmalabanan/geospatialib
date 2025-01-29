@@ -97,7 +97,7 @@ const createGeoJSONLayer = (data) => {
                         if (!cachedGeoJSON) {continue}
                         if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
                         
-                        console.log(queryBounds, cachedGeoJSON.mapBounds)
+                        console.log(turf.booleanValid(queryBounds), turf.booleanValid(cachedGeoJSON.mapBounds))
                         const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                         const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
                         if (!equalBounds && !withinBounds) {continue}
