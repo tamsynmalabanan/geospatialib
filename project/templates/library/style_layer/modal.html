@@ -4,13 +4,13 @@
     <div class="modal fade" id="{{id}}" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true" >
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered" role="document">
             <form class='modal-content d-flex flex-column'>
-                <div class="modal-header">
+                <div class="modal-header border-bottom-0">
                     <h5 class="modal-title" id="{{id}}Title">Style layer</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
                 </div>
 
                 <div class="accordion accordion-flush px-0 flex-grow-1 d-flex flex-column" id="styleLayerAccordion">
-                    <ul class="nav nav-tabs card-header-tabs ps-3">
+                    <ul class="nav nav-tabs card-header-tabs ps-3 pt-3">
                         <li class="nav-item">
                             <button
                                 class="accordion-button no-icon me-2 px-2 ps-3 py-1 text-bg-dark rounded-top z-3 "
@@ -21,6 +21,16 @@
                                 aria-expanded="true"
                                 {% comment %} aria-expanded="false" {% endcomment %}
                                 aria-controls="layerStyleLayerAccordion"
+                            >Layer</button>
+                        </li>
+                        <li class="nav-item">
+                            <button
+                                class="accordion-button no-icon me-2 px-2 ps-3 py-1 text-bg-dark rounded-top z-3 collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#legendStyleLayerAccordion"
+                                aria-expanded="false"
+                                aria-controls="legendStyleLayerAccordion"
                             >Layer</button>
                         </li>
                     </ul>
@@ -36,12 +46,17 @@
                                 layer - categorize, transparency -- update legend
                             </div>
                         </div>
+                        <div
+                            id="legendStyleLayerAccordion"
+                            class="accordion-collapse collapse flex-grow-1 fade"
+                            data-bs-parent="#styleLayerAccordion"
+                        >
+                            <div class="accordion-body h-100 pt-4">
+                                legend - label, data source, white background
+                            </div>
+                        </div>
                     </div>
                 </div>                
-                {% comment %} <div class="modal-body flex-grow-1">
-                    insert accordion here:
-                    legend - label, data source, white background
-                </div> {% endcomment %}
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
