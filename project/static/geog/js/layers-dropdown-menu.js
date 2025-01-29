@@ -159,6 +159,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         removeLayerBtn,
         duplicateBtn,
         styleLayerBtn,
+        toggleFeatureCountBtn,
         hideLegendBtn,
         toggleAttributionBtn,
         downloadGeoJSONBtn,
