@@ -102,7 +102,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClass: 'bi bi-border-style',
         buttonAttrs: {
             'data-bs-toggle': 'modal',
-            'data-bs-target': '#styleLegendModal',
+            'data-bs-target': '#styleLayerModal',
         },
         buttonClickHandler: () => {
             
