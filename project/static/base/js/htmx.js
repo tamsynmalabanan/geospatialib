@@ -1,3 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => {
-    htmx.logAll = false
-})
+// document.addEventListener('DOMContentLoaded', () => {
+//     htmx.logAll = false
+// })
