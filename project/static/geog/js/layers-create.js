@@ -133,6 +133,7 @@ const createGeoJSONLayer = (data) => {
                     delete geojsonLayer.cachedGeoJSON
                     
                     geojson = await fetchLibraryData(event, geojsonLayer, options={controller:abortController})
+                    console.log(geojson)
                     if (!geojson) {
                         if (!layerBounds) return
                         geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])

@@ -26,7 +26,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
     const zoomBtn = bounds ? 
     createDropdownMenuListItem({
-        label: `Zoom to ${type}`,
+        label: `Zoom to ${type} extent`,
         buttonClass: 'bi bi-zoom-in',
         buttonClickHandler: () => map.zoomToBounds(bounds)
     }) : null

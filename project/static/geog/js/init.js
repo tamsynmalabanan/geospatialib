@@ -73,7 +73,7 @@ const handleMapControls = (map) => {
 }
 
 const handleMapContextMenu = (map) => {
-    map.on('click', (event) => {
+    map.on('contextmenu', (event) => {
         if (event.originalEvent.target.id === map.getContainer().id) {
             console.log(event.latlng)
         }
