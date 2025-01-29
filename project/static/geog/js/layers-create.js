@@ -165,7 +165,7 @@ const createGeoJSONLayer = (data) => {
                             }
                             
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-                        } else if (geojson.prefix !== 'Bounding' && (mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
+                        } else if (geojson.prefix !== 'Bounding') {
                             try {
                                 if (signal.aborted) return
                                 console.log('simplifying')
