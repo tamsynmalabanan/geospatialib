@@ -198,7 +198,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     if (timeoutMs) {
         delete options.timeoutMs
     } else {
-        timeoutMs = 10000
+        timeoutMs = 20000
     }
 
     const controller = options.controller || new AbortController()
