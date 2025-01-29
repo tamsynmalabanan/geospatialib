@@ -24,7 +24,7 @@ const fetchProj4Def = async (crs, options={}) => {
         proj4.defs(crs_text, def)
         return proj4.defs(crs_text)
     })
-    .catch(error => console.log(error))
+    .catch(error => console.error(error))
 }
 
 const fetchOSMData = async (event, options={}) => {
@@ -513,7 +513,6 @@ const fetchWFSData = async (event, layer, options={}) => {
         }
         return data
     }).catch(error => {
-        console.log(error)
         return
     })
 

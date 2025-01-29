@@ -174,13 +174,12 @@ const createGeoJSONLayer = (data) => {
                             }
                             
                             geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-                        } else if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
+                        } else if (geojson.prefix !== 'Bounding' && (mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
                             try {
                                 if (signal.aborted) return
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
-                            } catch {
-                            }
+                            } catch {}
                         }
                     }
                     
