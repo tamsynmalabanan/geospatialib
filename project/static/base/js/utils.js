@@ -273,7 +273,7 @@ const formatNumberWithCommas = (number) => {
 }
 
 const parseChunkedResponseToJSONMap = new Map()
-const parseChunkedResponseToJSON = async (response, timeout=10000) => {
+const parseChunkedResponseToJSON = async (response, timeout=20000) => {
     if (parseChunkedResponseToJSONMap.has(response)) {
         return await parseChunkedResponseToJSONMap.get(response)
     }
