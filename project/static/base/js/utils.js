@@ -194,7 +194,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return await fetchDataWithTimeoutMap.get(cacheKey)
     }
 
-    const timeoutMs = options.timeoutMs || 10000
+    const timeoutMs = options.timeoutMs || 20000
     delete options.timeoutMs
 
     const controller = options.controller || new AbortController()
