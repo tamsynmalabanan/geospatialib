@@ -168,9 +168,9 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
         `/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
-        if (response.ok) {
-            return cacheResponse(response, cacheKey)
-        }
+        // if (response.ok) {
+        //     return cacheResponse(response, cacheKey)
+        // }
         return response
     }).catch(error => {
         throw error
@@ -219,11 +219,12 @@ const fetchDataWithTimeout = async (url, options={}) => {
     .then(async response => {
         console.log('response')
         clearTimeout(timeoutId)
-        if (response.ok) {
-            console.log('caching response')
-            return await cacheResponse(response, cacheKey)
-        }
-        console.log('response not ok')
+        // if (response.ok) {
+        //     console.log('caching response')
+        //     // remove caching, it causes a bottleneck
+        //     return await cacheResponse(response, cacheKey)
+        // }
+        // console.log('response not ok')
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
