@@ -137,7 +137,6 @@ const createGeoJSONLayer = (data) => {
                     } else {
                         geojson.mapBounds = mapBounds
                         if (geojson.features.length > 0) {
-                            console.log('caching')
                             geojson.cachedGeoJSON = JSON.stringify(geojson)
                         }
                     }
@@ -169,7 +168,6 @@ const createGeoJSONLayer = (data) => {
                         } else if (geojson.prefix !== 'Bounding') {
                             try {
                                 if (signal.aborted) return
-                                console.log('simplifying')
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {}
@@ -184,7 +182,6 @@ const createGeoJSONLayer = (data) => {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     } else {
-                        console.log('caching')
                         geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                     }
                 }
@@ -240,7 +237,6 @@ const createGeoJSONLayer = (data) => {
             })
             if (signal.aborted) return
             geojsonLayer.layerLegendStyle = legend
-            console.log('legendUpdated')
             geojsonLayer.fire('legendUpdated')
         }
     
