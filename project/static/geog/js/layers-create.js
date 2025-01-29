@@ -97,9 +97,13 @@ const createGeoJSONLayer = (data) => {
                         if (!cachedGeoJSON) {continue}
                         if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
                         
-                        const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
-                        const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
-                        if (!equalBounds && !withinBounds) {continue}
+                        try {
+                            const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
+                            const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
+                            if (!equalBounds && !withinBounds) {continue}
+                        } catch {
+                            return
+                        }
                         
                         if (!geojsonLayer.cachedGeoJSON) {
                             geojsonLayer.cachedGeoJSON = cachedGeoJSONString
