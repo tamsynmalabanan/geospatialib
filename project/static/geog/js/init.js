@@ -240,7 +240,7 @@ const handleMapLayerGroups = (map) => {
     }
 }
 
-const constructInfoPanel = (map, name, options={}) => {
+const createInfoPanel = (map, name, options={}) => {
     const mapContainer = map.getContainer()
     const mapId = mapContainer.id
 
@@ -354,7 +354,7 @@ const handleMapLegend = (map) => {
     const mapId = mapContainer.id
     const legendLayerGroup = map.getLayerGroups().legend
 
-    const body = constructInfoPanel(map, 'Legend', {
+    const body = createInfoPanel(map, 'Legend', {
         toggleTitle: 'Toggle legend panel',
         iconClass: 'bi bi-stack',
         collapsed: false,
@@ -497,6 +497,7 @@ const handleMapLegend = (map) => {
 
                     layer.on('fetchingData', () => {
                         if (legendLayerGroup.hasLayer(layer)) {
+                            console.log('here')
                             legendCollapse.innerHTML = `
                                 <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">
                                     <span class="visually-hidden">Loading...</span>
@@ -640,7 +641,7 @@ const handleMapLegend = (map) => {
 const handleMapQuery = (map) => {
     const mapContainer = map.getContainer()
 
-    const body = constructInfoPanel(map, 'Query', {
+    const body = createInfoPanel(map, 'Query', {
         toggleTitle: 'Toggle query panel',
         iconClass: 'bi bi-question-circle-fill',
         collapsed: true,

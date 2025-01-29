@@ -168,7 +168,6 @@ const createGeoJSONLayer = (data) => {
                         } else if (geojson.prefix !== 'Bounding') {
                             try {
                                 if (signal.aborted) return
-                                console.log('simplifying')
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {}
