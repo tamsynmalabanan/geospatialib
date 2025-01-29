@@ -132,7 +132,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.querySelectorAll('.layer-feature-count')?.forEach(span => {
                 currentLayer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
             })
-            attribution && (attribution.classList.contains('d-none') ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
         }
     }) : null
 
