@@ -118,39 +118,51 @@ const getCookie = (name) => {
     return cookieValue
 }
 
-const cacheDataToSessionStorage = (key, data) => {
-    try {
-        sessionStorage.setItem(key, data)
-        return data
-    } catch (error) {
-        sessionStorage.clear()
-        try {
-            sessionStorage.setItem(key, data)
-            return data
-        } catch {
-            sessionStorage.removeItem(key)
-        }
-    }
-}
+// const cacheDataToSessionStorage = (key, data) => {
+//     try {
+//         sessionStorage.setItem(key, data)
+//         return data
+//     } catch (error) {
+//         sessionStorage.clear()
+//         try {
+//             sessionStorage.setItem(key, data)
+//             return data
+//         } catch {
+//             sessionStorage.removeItem(key)
+//         }
+//     }
+// }
 
-const cacheResponse = async (response, cacheKey) => {
-    const data = await response.clone().text();
-    cacheDataToSessionStorage(`${cacheKey}_data`, data)
+// const cacheResponse = async (response, cacheKey) => {
+//     const data = await response.clone().text();
+//     cacheDataToSessionStorage(`${cacheKey}_data`, data)
     
-    const headers = {}
-    for (const [key, value] of response.headers.entries()) {
-        headers[key] = value; 
-    }
-    const headersString = JSON.stringify(headers)
-    cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
+//     const headers = {}
+//     for (const [key, value] of response.headers.entries()) {
+//         headers[key] = value; 
+//     }
+//     const headersString = JSON.stringify(headers)
+//     cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
 
-    console.log('done caching')
-    return new Response(new Blob([data]), {
-        status: 200, 
-        statusText: 'OK', 
-        headers: new Headers(headers) }
-    ); 
-}
+//     return new Response(new Blob([data]), {
+//         status: 200, 
+//         statusText: 'OK', 
+//         headers: new Headers(headers) }
+//     ); 
+// }
+
+// const fetchCachedResponse = (cacheKey) => {
+//     const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
+//     const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
+//     if (cachedData && cachedHeaders) {
+//         const headers = new Headers(JSON.parse(cachedHeaders))
+//         return new Response(new Blob([cachedData]), {
+//             status: 200, 
+//             statusText: 'OK', 
+//             headers 
+//         }) 
+//     }
+// }
 
 const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
     const params = {
@@ -168,9 +180,6 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
         `/htmx/library/cors_proxy/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
-        // if (response.ok) {
-        //     return cacheResponse(response, cacheKey)
-        // }
         return response
     }).catch(error => {
         throw error
@@ -180,18 +189,7 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
 const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
     const cacheKey = `${url}_${JSON.stringify(options)}`
-    
-    const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
-    const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
-    if (cachedData && cachedHeaders) {
-        const headers = new Headers(JSON.parse(cachedHeaders))
-        return Promise.resolve(new Response(new Blob([cachedData]), {
-            status: 200, 
-            statusText: 'OK', 
-            headers 
-        })); 
-    }
-    
+        
     if (fetchDataWithTimeoutMap.has(cacheKey)) {
         return await fetchDataWithTimeoutMap.get(cacheKey)
     }
@@ -213,18 +211,10 @@ const fetchDataWithTimeout = async (url, options={}) => {
     const params = Object.assign({}, options)
     params.signal = controller.signal
     
-    console.log('fetching...')
     const timeoutId = setTimeout(abortController, timeoutMs);
     const fetchPromise = fetch(url, params)
     .then(async response => {
-        console.log('response')
         clearTimeout(timeoutId)
-        // if (response.ok) {
-        //     console.log('caching response')
-        //     // remove caching, it causes a bottleneck
-        //     return await cacheResponse(response, cacheKey)
-        // }
-        // console.log('response not ok')
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
@@ -237,7 +227,6 @@ const fetchDataWithTimeout = async (url, options={}) => {
     })
 
     fetchDataWithTimeoutMap.set(cacheKey, fetchPromise)
-    console.log('returning')
     return fetchPromise
 }
 

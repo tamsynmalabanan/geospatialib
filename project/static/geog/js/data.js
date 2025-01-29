@@ -491,7 +491,6 @@ const fetchWFSData = async (event, layer, options={}) => {
         abortBtn:options.abortBtn,
         controller:options.controller,
     }).then(response => {
-        console.log('response')
         if (response.ok || response.status === 200) {
             return response
         } else {
@@ -501,7 +500,6 @@ const fetchWFSData = async (event, layer, options={}) => {
         const contentType = response.headers.get('Content-Type')
         if (contentType.includes('json')) {
             try {
-                console.log('parsing...')
                 return parseChunkedResponseToJSON(response)
             } catch {
                 throw new Error('Failed to parse JSON.')
@@ -510,7 +508,6 @@ const fetchWFSData = async (event, layer, options={}) => {
             throw new Error('Unsupported format')
         }
     }).then(data => {
-        console.log('data')
         if (data && !data.licence) {
             data.licence = `Data © <a href='${cleanURL}' target='_blank'>${getDomain(cleanURL)}</a>`
         }
