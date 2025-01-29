@@ -522,14 +522,18 @@ const handleMapLegend = (map) => {
                                     icon.style.height = '10px'
                                     container.appendChild(icon)
             
-                                    let labelText = name
-                                    if (style.count > 1) {
-                                        labelText = labelText + ` (${formatNumberWithCommas(style.count)})`
-                                    }
-            
                                     const label = document.createElement('div')
-                                    label.innerText = labelText
+                                    label.className = 'd-flex flex-wrap gap-1'
                                     container.appendChild(label)
+
+                                    const nameSpan = document.createElement('span')
+                                    label.appendChild(nameSpan)
+                                    nameSpan.innerText = name
+
+                                    const countSpan = document.createElement('span')
+                                    countSpan.className = `${!layer.showFeatureCount ? 'd-none' : ''}`
+                                    label.appendChild(countSpan)
+                                    countSpan.innerText = `(${formatNumberWithCommas(style.count)})`
             
                                     const styleDef = style.style
                                     if (style.type === 'Point') {
