@@ -238,10 +238,10 @@ const createGeoJSONLayer = (data) => {
                     legend[label].count += 1 
                 }
             })
-            geojsonLayer.layerLegendStyle = legend
-            geojsonLayer.fire('legendUpdated')
-            
             if (signal.aborted) return
+            geojsonLayer.layerLegendStyle = legend
+            console.log('legendUpdated')
+            geojsonLayer.fire('legendUpdated')
         }
     
         let fetchWFSDataTimeout
