@@ -137,6 +137,7 @@ const createGeoJSONLayer = (data) => {
                     } else {
                         geojson.mapBounds = mapBounds
                         if (geojson.features.length > 0) {
+                            console.log('caching')
                             geojson.cachedGeoJSON = JSON.stringify(geojson)
                         }
                     }
@@ -168,6 +169,7 @@ const createGeoJSONLayer = (data) => {
                         } else if (geojson.prefix !== 'Bounding') {
                             try {
                                 if (signal.aborted) return
+                                console.log('simplifying')
                                 geojson = turf.simplify(geojson, { tolerance: 0.01 })
                                 geojson.prefix = 'Simplified'
                             } catch {}
@@ -182,6 +184,7 @@ const createGeoJSONLayer = (data) => {
                     if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
                         geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
                     } else {
+                        console.log('caching')
                         geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
                     }
                 }
@@ -199,7 +202,6 @@ const createGeoJSONLayer = (data) => {
             }
             
             let legend = {}
-
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
                 
@@ -236,10 +238,10 @@ const createGeoJSONLayer = (data) => {
                     legend[label].count += 1 
                 }
             })
-            
-            if (signal.aborted) return
             geojsonLayer.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
+            
+            if (signal.aborted) return
         }
     
         let fetchWFSDataTimeout
