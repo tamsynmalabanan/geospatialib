@@ -25,7 +25,8 @@ class AddDatasetForm(forms.Form):
         widget=forms.URLInput(attrs={
             'type':'search',
             'hx-post':reverse_lazy('hx_library:add_dataset'),
-            'hx-trigger':'input changed delay:1000ms',
+            'hx-trigger':'change',
+            # 'hx-trigger':'input changed delay:1000ms',
             'hx-target':'#addDatasetFormFields',
             'hx-swap': 'innerHTML',
         })
