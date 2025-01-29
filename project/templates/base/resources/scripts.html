@@ -13,8 +13,12 @@
     <script>
         htmx.logAll = false;
         htmx.logger = function(elt, event, data) {
-            return;
-        };
+            if (console) {
+                if (event === 'htmx:afterRequest') {
+                    console.log('HTMX Request Completed', elt, data);
+                }
+            }
+        }
     </script>
 
     {% comment %} tagsinput {% endcomment %}
