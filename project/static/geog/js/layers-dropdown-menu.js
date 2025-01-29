@@ -124,6 +124,18 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         }
     }) : null
 
+    const toggleFeatureCountBtn = isLegendLayer && currentLayer instanceof L.GeoJSON ? createDropdownMenuListItem({
+        label: `Toggle feature count`,
+        buttonClass: 'bi bi-123',
+        buttonClickHandler: () => {
+            currentLayer.showFeatureCount = currentLayer.showFeatureCount ? false : true 
+            datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.querySelectorAll('.layer-feature-count')?.forEach(span => {
+                currentLayer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
+            })
+            attribution && (attribution.classList.contains('d-none') ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
+        }
+    }) : null
+
     const downloadGeoJSONBtn = geojson ? createDropdownMenuListItem({
         label: `Download geojson`,
         buttonClass: 'bi bi-download',
