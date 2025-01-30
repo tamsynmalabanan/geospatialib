@@ -8,8 +8,8 @@
                     <h5 class="modal-title" id="{{id}}Title">Layer properties</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
                 </div>
-
                 <div class="accordion accordion-flush px-0 flex-grow-1 d-flex flex-column" id="styleLayerAccordion">
+                
                     <ul class="nav nav-tabs card-header-tabs ps-3 pt-3">
                         <li class="nav-item">
                             <button
@@ -37,11 +37,10 @@
                         <div
                             id="styleLayerPropertiesAccordion"
                             class="accordion-collapse collapse flex-grow-1 fade show"
-                            {% comment %} class="accordion-collapse collapse flex-grow-1 fade" {% endcomment %}
                             data-bs-parent="#styleLayerAccordion"
                         >
                             <div class="accordion-body h-100 pt-4">
-                                {% include "library/layer_properties/style_form.html" %}
+                                {% include "library/layer_properties/style_fields.html" %}
                             </div>
                         </div>
                         <div
@@ -50,13 +49,10 @@
                             data-bs-parent="#styleLayerAccordion"
                         >
                             <div class="accordion-body h-100 pt-4">
-                                {% include "library/layer_properties/legend_form.html" %}
+                                {% include "library/layer_properties/legend_fields.html" %}
                             </div>
                         </div>
                     </div>
-                </div>                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </form>
         </div>
