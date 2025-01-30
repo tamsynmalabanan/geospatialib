@@ -122,10 +122,12 @@ const createFormCheck = (id, options={}) => {
     checkbox.className = `form-check-input ${options.checkboxClass || ''}`
     checkbox.setAttribute('type', 'checkbox')
     assignAttrsToElement(checkbox, options.checkboxAttrs || {})
+    !checkbox.getAttribute('name') && checkbox.setAttribute('name', options.name || id)
+    checkbox.checked = options.checked ? true : false
     formCheck.appendChild(checkbox)
 
     const label = document.createElement('label')
-    label.className = `w-auto text-truncate ${options.labelClass || ''} ${options.button ? 'me-3' : ''}`
+    label.className = `form-check-label w-auto text-truncate ${options.labelClass || ''} ${options.button ? 'me-3' : ''}`
     label.setAttribute('for', id)
     formCheck.appendChild(label)
 
