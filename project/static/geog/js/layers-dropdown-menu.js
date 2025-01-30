@@ -142,7 +142,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 name: 'showLegend',
                 checked: true,
                 label: 'Show layer legend',
-
+                parent: fieldContainers.legend
             })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
