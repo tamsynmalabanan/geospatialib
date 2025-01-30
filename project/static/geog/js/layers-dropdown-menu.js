@@ -133,8 +133,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const fieldContainers = (() => {
                 const containers = {}
                 form.querySelectorAll('.accordion-collapse').forEach(collapse => {
-                    console.log(collapse.firstChild)
-                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = collapse.firstChild
+                    console.log(collapse.querySelector('.accordion-body'))
+                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = collapse.querySelector('.accordion-body')
                 })
                 return containers
             })()
