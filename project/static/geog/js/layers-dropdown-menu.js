@@ -128,6 +128,19 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClass: 'bi bi-border-style',
         buttonClickHandler: () => {
             const modal = document.querySelector('#layerPropertiesModal')
+
+            const form = modal.querySelector('form')
+            const fieldContainers = (() => {
+                const containers = {}
+                form.querySelectorAll('.accordion-collapse').forEach(collapse => {
+                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = collapse.firstChild
+                })
+                return containers
+            })()
+
+            console.log(fieldContainers)
+
+
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
         }
