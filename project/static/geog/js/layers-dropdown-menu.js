@@ -33,7 +33,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
     const zoomToCenterBtn = bounds && isLegendLayer ? 
     createDropdownMenuListItem({
-        label: `Zoom-in to ${type}`,
+        label: `Zoom to ${type} centroid`,
         buttonClass: 'bi bi-crosshair',
         buttonClickHandler: () => map.setView(bounds.getCenter(), 9)
     }) : null
@@ -96,21 +96,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    // const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
-    //     label: `Hide ${type} legend`,
-    //     buttonClass: 'bi bi-info-circle',
-    //     buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
-    // }) : null
-
-    const toggleAttributionBtn = isLegendLayer ? createDropdownMenuListItem({
-        label: `Toggle ${type} attribution`,
-        buttonClass: 'bi bi-c-circle',
-        buttonClickHandler: () => {
-            const attribution = datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.lastChild
-            attribution && (attribution.classList.contains('d-none') ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
-        }
-    }) : null
-
     const toggleFeatureCountBtn = isLegendLayer && currentLayer instanceof L.GeoJSON ? createDropdownMenuListItem({
         label: `Toggle feature count`,
         buttonClass: 'bi bi-123',
@@ -142,17 +127,24 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 return containers
             })()
 
-            const showLegendField = createFormCheck('layerPropertiesShowLegend', {
-                name: 'showLegend',
+            const toggleLegendField = createFormCheck('layerPropertiesToggleLegend', {
+                name: 'toggleLegend',
                 checked: !legend.classList.contains('d-none'),
                 label: 'Show layer legend',
                 parent: fieldContainers.legend,
                 clickHandler: (event) => {
-                    if (event.target.checked) {
-                        legend.classList.remove('d-none')
-                    } else {
-                        legend.classList.add('d-none')
-                    }
+                    event.target.checked ? legend.classList.remove('d-none') : legend.classList.add('d-none')
+                }
+            })
+
+            const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
+                name: 'toggleAttribution',
+                checked: !legend.classList.contains('d-none'),
+                label: 'Show layer legend',
+                parent: fieldContainers.legend,
+                clickHandler: (event) => {
+                    const attribution = legend.lastChild
+                    attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
                 }
             })
 
@@ -184,8 +176,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         removeLayerBtn,
         duplicateBtn,
         toggleFeatureCountBtn,
-        // hideLegendBtn,
-        toggleAttributionBtn,
         layerPropertiesBtn,
         downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
