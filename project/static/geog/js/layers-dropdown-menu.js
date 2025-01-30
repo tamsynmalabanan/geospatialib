@@ -133,6 +133,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const fieldContainers = (() => {
                 const containers = {}
                 form.querySelectorAll('.accordion-collapse').forEach(collapse => {
+                    console.log(collapse.firstChild)
                     containers[collapse.id.split('LayerPropertiesAccordion')[0]] = collapse.firstChild
                 })
                 return containers
@@ -142,7 +143,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 name: 'showLegend',
                 checked: true,
                 label: 'Show layer legend',
-                parent: fieldContainers.legend
+                // parent: fieldContainers.legend
             })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
