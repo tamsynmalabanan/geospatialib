@@ -138,8 +138,12 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 return containers
             })()
 
-            console.log(fieldContainers)
+            const showLegendField = createFormCheck('layerPropertiesShowLegend', {
+                name: 'showLegend',
+                checked: true,
+                label: 'Show layer legend',
 
+            })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
