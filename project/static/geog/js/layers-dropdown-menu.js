@@ -128,7 +128,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClass: 'bi bi-border-style',
         buttonClickHandler: () => {
             const modal = document.querySelector('#layerPropertiesModal')
-            const modalBs = bootstrap.Modal.getInstance(modal)
+            const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
         }
     }) : null
