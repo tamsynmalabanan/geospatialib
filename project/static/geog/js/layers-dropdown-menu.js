@@ -155,6 +155,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 const value = layerLabelField.value
                 currentLayer.data.layerTitle = value
                 legend.firstChild.firstChild.innerText = value
+                duplicateBtn.querySelector('button').setAttribute('data-layer-title', value)
             })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
