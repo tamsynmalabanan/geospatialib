@@ -96,11 +96,11 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
-        label: `Hide ${type} legend`,
-        buttonClass: 'bi bi-info-circle',
-        buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
-    }) : null
+    // const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
+    //     label: `Hide ${type} legend`,
+    //     buttonClass: 'bi bi-info-circle',
+    //     buttonClickHandler: () => datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.classList.add('d-none')
+    // }) : null
 
     const toggleAttributionBtn = isLegendLayer ? createDropdownMenuListItem({
         label: `Toggle ${type} attribution`,
@@ -127,22 +127,33 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         label: `${toTitleCase(type)} properties`,
         buttonClass: 'bi bi-border-style',
         buttonClickHandler: () => {
-            const modal = document.querySelector('#layerPropertiesModal')
+            const legend = datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)
+            if (!legend) return
 
+            const modal = document.querySelector('#layerPropertiesModal')
             const form = modal.querySelector('form')
             const fieldContainers = (() => {
                 const containers = {}
                 form.querySelectorAll('.accordion-collapse').forEach(collapse => {
-                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = collapse.querySelector('.accordion-body')
+                    const accordionBody = collapse.querySelector('.accordion-body')
+                    accordionBody.innerHTML = ''
+                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
                 })
                 return containers
             })()
 
             const showLegendField = createFormCheck('layerPropertiesShowLegend', {
                 name: 'showLegend',
-                checked: true,
+                checked: !legend.classList.contains('d-none'),
                 label: 'Show layer legend',
-                parent: fieldContainers.legend
+                parent: fieldContainers.legend,
+                clickHandler: (event) => {
+                    if (event.target.checked) {
+                        legend.classList.remove('d-none')
+                    } else {
+                        legend.classList.add('d-none')
+                    }
+                }
             })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
@@ -173,7 +184,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         removeLayerBtn,
         duplicateBtn,
         toggleFeatureCountBtn,
-        hideLegendBtn,
+        // hideLegendBtn,
         toggleAttributionBtn,
         layerPropertiesBtn,
         downloadGeoJSONBtn,

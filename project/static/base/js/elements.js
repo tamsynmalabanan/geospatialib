@@ -138,6 +138,8 @@ const createFormCheck = (id, options={}) => {
         return span
     })())
 
+    options.clickHandler && checkbox.addEventListener('click', options.clickHandler)
+
     options.parent?.appendChild(formCheck)
     return formCheck
 }
