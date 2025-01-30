@@ -33,7 +33,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
     const zoomToCenterBtn = bounds && isLegendLayer ? 
     createDropdownMenuListItem({
-        label: `Zoom to ${type} center`,
+        label: `Zoom-in to ${type}`,
         buttonClass: 'bi bi-crosshair',
         buttonClickHandler: () => map.setView(bounds.getCenter(), 9)
     }) : null
@@ -96,13 +96,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    const styleLayerBtn = isLegendLayer ? 
+    const layerPropertiesBtn = isLegendLayer ? 
     createDropdownMenuListItem({
-        label: `Style ${type}`,
+        label: `${toTitleCase(type)} properties`,
         buttonClass: 'bi bi-border-style',
         buttonAttrs: {
             'data-bs-toggle': 'modal',
-            'data-bs-target': '#styleLayerModal',
+            'data-bs-target': '#layerPropertiesModal',
         },
         buttonClickHandler: () => {
             
@@ -157,10 +157,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         !currentCheckbox ? createDropdownDivider() : null,
         removeLayerBtn,
         duplicateBtn,
-        styleLayerBtn,
         toggleFeatureCountBtn,
         hideLegendBtn,
         toggleAttributionBtn,
+        layerPropertiesBtn,
         downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 }

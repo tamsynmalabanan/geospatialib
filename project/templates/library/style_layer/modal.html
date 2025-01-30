@@ -1,6 +1,6 @@
 {% load static %}
 
-{% with id='styleLayerModal' %}
+{% with id='layerPropertiesModal' %}
     <div class="modal fade" id="{{id}}" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true" >
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered" role="document">
             <form class='modal-content d-flex flex-column'>
@@ -16,9 +16,9 @@
                                 class="accordion-button no-icon me-2 px-2 ps-3 py-1 text-bg-dark rounded-top z-3 "
                                 type="button"
                                 data-bs-toggle="collapse"
-                                data-bs-target="#layerStyleLayerAccordion"
+                                data-bs-target="#styleLayerPropertiesAccordion"
                                 aria-expanded="true"
-                                aria-controls="layerStyleLayerAccordion"
+                                aria-controls="styleLayerPropertiesAccordion"
                             >Layer</button>
                         </li>
                         <li class="nav-item">
@@ -26,16 +26,16 @@
                                 class="accordion-button no-icon me-2 px-2 ps-3 py-1 text-bg-dark rounded-top z-3 collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
-                                data-bs-target="#legendStyleLayerAccordion"
+                                data-bs-target="#legendLayerPropertiesAccordion"
                                 aria-expanded="false"
-                                aria-controls="legendStyleLayerAccordion"
+                                aria-controls="legendLayerPropertiesAccordion"
                             >Legend</button>
                         </li>
                     </ul>
                 
                     <div class="modal-body p-0 border-top text-bg-dark z-2 flex-grow-1 d-flex flex-column" style='margin-top:-1px;'>
                         <div
-                            id="layerStyleLayerAccordion"
+                            id="styleLayerPropertiesAccordion"
                             class="accordion-collapse collapse flex-grow-1 fade show"
                             {% comment %} class="accordion-collapse collapse flex-grow-1 fade" {% endcomment %}
                             data-bs-parent="#styleLayerAccordion"
@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div
-                            id="legendStyleLayerAccordion"
+                            id="legendLayerPropertiesAccordion"
                             class="accordion-collapse collapse flex-grow-1 fade"
                             data-bs-parent="#styleLayerAccordion"
                         >
