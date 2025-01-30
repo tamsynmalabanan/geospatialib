@@ -140,12 +140,21 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
                 name: 'toggleAttribution',
                 checked: !legend.classList.contains('d-none'),
-                label: 'Show layer legend',
+                label: 'Show layer attibution',
                 parent: fieldContainers.legend,
                 clickHandler: (event) => {
                     const attribution = legend.lastChild
                     attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
                 }
+            })
+
+            const layerLabelField = document.createElement('input')
+            fieldContainers.legend.appendChild(layerLabelField)
+            layerLabelField.value = currentLayer.data.layerTitle
+            layerLabelField.addEventListener('change', () => {
+                const value = layerLabelField.value
+                currentLayer.data.layerTitle = value
+                legend.firstChild.firstChild.innerText = value
             })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
