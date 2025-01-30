@@ -194,8 +194,9 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return await fetchDataWithTimeoutMap.get(cacheKey)
     }
 
-    const timeoutMs = options.timeoutMs || 60000
+    const timeoutMs = options.timeoutMs || 30000
     delete options.timeoutMs
+    console.log(timeoutMs)
 
     const controller = options.controller || new AbortController()
     const abortController = () => controller.abort('Timeout/manually aborted')
@@ -273,7 +274,7 @@ const formatNumberWithCommas = (number) => {
 }
 
 const parseChunkedResponseToJSONMap = new Map()
-const parseChunkedResponseToJSON = async (response, timeout=60000) => {
+const parseChunkedResponseToJSON = async (response, options={}) => {
     if (parseChunkedResponseToJSONMap.has(response)) {
         return await parseChunkedResponseToJSONMap.get(response)
     }
@@ -282,10 +283,11 @@ const parseChunkedResponseToJSON = async (response, timeout=60000) => {
     const decoder = new TextDecoder('utf-8');
     let result = '';
   
+    console.log(options.timeoutMs)
     const timeoutPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
             reject(new Error('Timeout'));
-        }, timeout);
+        }, options.timeoutMs || 30000);
     });
   
     const parsePromise = (async () => {

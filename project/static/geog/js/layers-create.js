@@ -244,10 +244,10 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.fire('legendUpdated')
         }
     
-        let fetchWFSDataTimeout
+        let handlerTimeout
         const handlerOnTimeout = () => {
-            clearTimeout(fetchWFSDataTimeout);
-            fetchWFSDataTimeout = setTimeout(() => handler(abortController.signal), 1000);
+            clearTimeout(handlerTimeout);
+            handlerTimeout = setTimeout(() => handler(abortController.signal), 1000);
         };
     
         const abortHandler = () => {

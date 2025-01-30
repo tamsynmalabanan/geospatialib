@@ -486,8 +486,11 @@ const fetchWFSData = async (event, layer, options={}) => {
     const bbox = [s,w,n,e,crs]
     params.bbox = bbox
 
+    const timeoutMs = 120000
+
     const url = pushQueryParamsToURLString(cleanURL, params)
     const geojson = await fetchDataWithTimeout(url, {
+        timeoutMs:timeoutMs,
         abortBtn:options.abortBtn,
         controller:options.controller,
     }).then(response => {
@@ -500,7 +503,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         const contentType = response.headers.get('Content-Type')
         if (contentType.includes('json')) {
             try {
-                return parseChunkedResponseToJSON(response)
+                return parseChunkedResponseToJSON(response, options={timeoutMs:timeoutMs})
             } catch {
                 throw new Error('Failed to parse JSON.')
             }
