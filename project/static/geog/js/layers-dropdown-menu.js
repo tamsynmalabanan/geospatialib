@@ -96,19 +96,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    const layerPropertiesBtn = isLegendLayer ? 
-    createDropdownMenuListItem({
-        label: `${toTitleCase(type)} properties`,
-        buttonClass: 'bi bi-border-style',
-        buttonAttrs: {
-            'data-bs-toggle': 'modal',
-            'data-bs-target': '#layerPropertiesModal',
-        },
-        buttonClickHandler: () => {
-            
-        }
-    }) : null
-
     const hideLegendBtn = isLegendLayer ? createDropdownMenuListItem({
         label: `Hide ${type} legend`,
         buttonClass: 'bi bi-info-circle',
@@ -132,6 +119,17 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.querySelectorAll('.layer-feature-count')?.forEach(span => {
                 currentLayer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
             })
+        }
+    }) : null
+
+    const layerPropertiesBtn = isLegendLayer ? 
+    createDropdownMenuListItem({
+        label: `${toTitleCase(type)} properties`,
+        buttonClass: 'bi bi-border-style',
+        buttonClickHandler: () => {
+            const modal = document.querySelector('#layerPropertiesModal')
+            const modalBs = bootstrap.Modal.getInstance(modal)
+            modalBs.show()
         }
     }) : null
 
