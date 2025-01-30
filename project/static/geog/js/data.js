@@ -486,7 +486,7 @@ const fetchWFSData = async (event, layer, options={}) => {
     const bbox = [s,w,n,e,crs]
     params.bbox = bbox
 
-    const timeoutMs = 120000
+    const timeoutMs = 300000
 
     const url = pushQueryParamsToURLString(cleanURL, params)
     const geojson = await fetchDataWithTimeout(url, {

@@ -196,7 +196,6 @@ const fetchDataWithTimeout = async (url, options={}) => {
 
     const timeoutMs = options.timeoutMs || 30000
     delete options.timeoutMs
-    console.log(timeoutMs)
 
     const controller = options.controller || new AbortController()
     const abortController = () => controller.abort('Timeout/manually aborted')
@@ -283,7 +282,6 @@ const parseChunkedResponseToJSON = async (response, options={}) => {
     const decoder = new TextDecoder('utf-8');
     let result = '';
   
-    console.log(options.timeoutMs)
     const timeoutPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
             reject(new Error('Timeout'));
