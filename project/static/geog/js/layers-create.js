@@ -7,7 +7,7 @@ const createLayerFromURL = (data) => {
     }
     
     if (layer) {
-        layer.data = data        
+        layer.data = Object.assign({}, data)        
         if (data.layerBbox) {
             const [minX, minY, maxX, maxY] = data.layerBbox.slice(1, -1).split(',')
             const bounds = L.latLngBounds([[minY, minX], [maxY, maxX]]);
