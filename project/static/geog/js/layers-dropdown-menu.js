@@ -125,16 +125,16 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             toggleLegendField.checked = !legend.classList.contains('d-none')
 
 
-            const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
-                name: 'toggleAttribution',
-                checked: !legend.classList.contains('d-none'),
-                label: 'Show layer attibution',
-                parent: fieldContainers.legend,
-                changeHandler: (event) => {
-                    const attribution = legend.lastChild
-                    attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
-                }
-            })
+            // const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
+            //     name: 'toggleAttribution',
+            //     checked: !legend.classList.contains('d-none'),
+            //     label: 'Show layer attibution',
+            //     parent: fieldContainers.legend,
+            //     changeHandler: (event) => {
+            //         const attribution = legend.lastChild
+            //         attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
+            //     }
+            // })
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
