@@ -98,17 +98,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    const toggleFeatureCountBtn = isLegendLayer && isGeoJSONLayer ? createDropdownMenuListItem({
-        label: `Toggle feature count`,
-        buttonClass: 'bi bi-123',
-        buttonClickHandler: () => {
-            currentLayer.showFeatureCount = currentLayer.showFeatureCount ? false : true 
-            datasetList?.querySelector(`[data-leaflet-id="${currentLayer._leaflet_id}"]`)?.querySelectorAll('.layer-feature-count')?.forEach(span => {
-                currentLayer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
-            })
-        }
-    }) : null
-
     const layerPropertiesBtn = isLegendLayer ? 
     createDropdownMenuListItem({
         label: `${toTitleCase(type)} properties`,
@@ -128,6 +117,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const featureCountField = form.elements.toggleFeatureCount
             isGeoJSONLayer ? featureCountField.parentElement.classList.remove('d-none') : featureCountField.parentElement.classList.add('d-none')
             featureCountField.checked = currentLayer.showFeatureCount
+
+            const toggleWhiteBgField = form.elements.toggleWhiteBg
+            !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
+            toggleWhiteBgField.checked = currentLayer.removeWhiteBg
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
@@ -220,6 +213,22 @@ const layerPropertiesFormHandler = () => {
         data.layerLegend.querySelectorAll('.layer-feature-count')?.forEach(span => {
             data.layer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
         })
+    })
+
+    form.elements.toggleWhiteBg.addEventListener('change', async (event) => {
+        const data = handler()
+        if (!data) return
+    
+        data.layer.removeWhiteBg = data.layer.removeWhiteBg ? false : true 
+        data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`).innerHTML = layer.removeWhiteBg ? 
+            await removeImageBackground(
+                data.layer.data.layerLegendUrl, {
+                    alt: 'Legend not found.'
+                }
+            ).outerHTML : createImgElement(
+                data.layer.data.layerLegendUrl, 
+                'Legend not found.',
+            ).outerHTML
     })
 }
 
