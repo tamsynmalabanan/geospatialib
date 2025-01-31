@@ -349,6 +349,7 @@ const datasetToAttrs = (data) => {
 }
 
 const removeImageBackground = async (imgSrc, options={}) => {
+    console.log(imgSrc, options)
     const currentTheme = getPreferredTheme()
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
@@ -384,6 +385,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     }
   
     ctx.putImageData(imageData, 0, 0);
+
     return createImgElement(
         canvas.toDataURL('image/png'), 
         options.alt || 'Image not found.', {
