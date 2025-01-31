@@ -350,10 +350,10 @@ const datasetToAttrs = (data) => {
 
 const removeImageBackground = async (imgSrc, options={}) => {
     const currentTheme = getPreferredTheme()
-    console.log(currentTheme)
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
-    const threshold = 10;
+    const threshold = options.threshold || 10;
+    console.log(bgColor, threshold)
     
     const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
