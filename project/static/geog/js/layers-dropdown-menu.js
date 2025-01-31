@@ -204,6 +204,14 @@ const layerPropertiesFormHandler = () => {
         event.target.checked ? data.layerLegend.classList.remove('d-none') : data.layerLegend.classList.add('d-none')
     })
     
+    form.elements.toggleAttribution.addEventListener('change', (event) => {
+        const data = handler()
+        if (!data) return
+
+        const attribution = data.layerLegend.lastChild
+        attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
+    })
+
     form.elements.toggleFeatureCount.addEventListener('change', (event) => {
         const data = handler()
         if (!data) return
@@ -214,7 +222,6 @@ const layerPropertiesFormHandler = () => {
         })
     })
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     layerPropertiesFormHandler()
