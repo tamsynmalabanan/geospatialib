@@ -121,20 +121,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
             form.setAttribute('data-map-id', mapId)
 
-            const toggleLegendField = form.elements.toggleLegend
-            toggleLegendField.checked = !legend.classList.contains('d-none')
-
-
-            // const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
-            //     name: 'toggleAttribution',
-            //     checked: !legend.classList.contains('d-none'),
-            //     label: 'Show layer attibution',
-            //     parent: fieldContainers.legend,
-            //     changeHandler: (event) => {
-            //         const attribution = legend.lastChild
-            //         attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
-            //     }
-            // })
+            form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
+            form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
@@ -197,12 +185,26 @@ const layerPropertiesFormHandler = () => {
         const layerLegend = legend.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
 
-        return [map, layer, legend, layerLegend]
+        return {
+            map:map,
+            layer:layer,
+            legend:legend,
+            layerLegend:layerLegend,
+        }
     }
 
     form.elements.toggleLegend.addEventListener('change', (event) => {
-        const [map, layer, legend, layerLegend] = handler()
-        event.target.checked ? layerLegend.classList.remove('d-none') : layerLegend.classList.add('d-none')
+        const data = handler()
+        if (!data) return
+        event.target.checked ? data.layerLegend.classList.remove('d-none') : data.layerLegend.classList.add('d-none')
+    })
+
+    form.elements.toggleAttribution.addEventListener('change', (event) => {
+        const data = handler()
+        if (!data) return
+
+        const attibution = data.layerLegend.lastChild
+        attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
     })
 }
 
