@@ -120,15 +120,15 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             
             
 
-            // const fieldContainers = (() => {
-            //     const containers = {}
-            //     form.querySelectorAll('.accordion-collapse').forEach(collapse => {
-            //         const accordionBody = collapse.querySelector('.accordion-body')
-            //         accordionBody.innerHTML = ''
-            //         containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
-            //     })
-            //     return containers
-            // })()
+            const fieldContainers = (() => {
+                const containers = {}
+                form.querySelectorAll('.accordion-collapse').forEach(collapse => {
+                    const accordionBody = collapse.querySelector('.accordion-body')
+                    accordionBody.innerHTML = ''
+                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
+                })
+                return containers
+            })()
 
             const toggleLegendField = createFormCheck('layerPropertiesToggleLegend', {
                 name: 'toggleLegend',
