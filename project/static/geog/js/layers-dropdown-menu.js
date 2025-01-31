@@ -203,7 +203,7 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
 
-        const attibution = data.layerLegend.lastChild
+        const attribution = data.layerLegend.lastChild
         attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
     })
 }
