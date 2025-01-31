@@ -359,6 +359,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
 
+    console.log(imageElement)
     return imageElement
 
     await new Promise((resolve) => {
