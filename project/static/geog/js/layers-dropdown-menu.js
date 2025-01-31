@@ -227,7 +227,7 @@ const layerPropertiesFormHandler = () => {
             }
         )) : createImgElement(
             data.layer.data.layerLegendUrl, 
-            'Legend not found.',
+            {alt:'Legend not found.'},
         ))
     })
 }

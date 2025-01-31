@@ -66,11 +66,11 @@ const labelElement = (element, options={}) => {
     })())
 }
 
-const createImgElement = (url, alt, options={}) => {
+const createImgElement = (url, options={}) => {
     const img = document.createElement('img')
     img.className = options.className || ''
     img.setAttribute('src', url)
-    img.setAttribute('alt', alt)
+    img.setAttribute('alt', options.alt || 'Image not found.')
     assignAttrsToElement(img, options.attrs || {})
     return img
 }

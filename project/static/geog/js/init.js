@@ -602,7 +602,7 @@ const handleMapLegend = (map) => {
                         }
                     )) : createImgElement(
                         layer.data.layerLegendUrl, 
-                        'Legend not found.',
+                        {alt:'Legend not found.'},
                     ))
                 }
             }
