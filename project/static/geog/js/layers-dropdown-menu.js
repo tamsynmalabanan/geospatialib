@@ -203,17 +203,18 @@ const layerPropertiesFormHandler = () => {
         if (!data) return
         event.target.checked ? data.layerLegend.classList.remove('d-none') : data.layerLegend.classList.add('d-none')
     })
-}
-
+    
     form.elements.toggleFeatureCount.addEventListener('change', (event) => {
         const data = handler()
         if (!data) return
-
+    
         data.layer.showFeatureCount = data.layer.showFeatureCount ? false : true 
         data.layerLegend.querySelectorAll('.layer-feature-count')?.forEach(span => {
             data.layer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
         })
     })
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     layerPropertiesFormHandler()
