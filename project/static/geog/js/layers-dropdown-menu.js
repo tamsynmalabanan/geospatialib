@@ -225,11 +225,12 @@ const layerPropertiesFormHandler = () => {
             }
         )
         console.log(img)
-        data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`).innerHTML = data.layer.removeWhiteBg ? 
-            img.outerHTML : createImgElement(
-                data.layer.data.layerLegendUrl, 
-                'Legend not found.',
-            ).outerHTML
+        const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
+        container.innerHTML = ''
+        container.appendChild(data.layer.removeWhiteBg ? img : createImgElement(
+            data.layer.data.layerLegendUrl, 
+            'Legend not found.',
+        ))
     })
 }
 
