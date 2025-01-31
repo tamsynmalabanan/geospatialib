@@ -397,7 +397,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     )
     
     img.addEventListener('setTheme', async () => {
-        img.outerHTML = (await removeImageBackground(imgSrc, options)).outerHTML
+        img.src = (await removeImageBackground(imgSrc, options)).src
     })
     
     return img
