@@ -358,9 +358,10 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const imageElement = new Image();
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
-    // await new Promise((resolve) => {
-    //     imageElement.addEventListener('load', resolve); 
-    // });
+    
+    await new Promise((resolve) => {
+        imageElement.addEventListener('load', resolve); 
+    });
     
     var canvas = document.createElement('canvas');
     canvas.width = imageElement.naturalWidth;

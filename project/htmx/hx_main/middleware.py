@@ -7,11 +7,11 @@ class HTMXDomainRestriction:
         self.get_response = get_response
 
     def __call__(self, request):
-        if resolve(request.path).app_name.startswith('hx_') and not request.htmx:
-            return redirect('library:index')
+        # if resolve(request.path).app_name.startswith('hx_') and not request.htmx:
+        #     return redirect('library:index')
         
-        if request.META.get('HTTP_HOST') not in settings.ALLOWED_HOSTS:
-            return redirect('library:index')
+        # if request.META.get('HTTP_HOST') not in settings.ALLOWED_HOSTS:
+        #     return redirect('library:index')
 
         response = self.get_response(request)
         return response
