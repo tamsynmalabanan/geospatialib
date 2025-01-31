@@ -353,9 +353,9 @@ const removeImageBackground = async (imgSrc, options={}) => {
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
     const threshold = options.threshold || 10;
-    console.log(bgColor, threshold)
     
     const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
+    console.log(imgSrcViaCorsProxy)
     const imageElement = new Image();
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
