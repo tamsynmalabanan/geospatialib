@@ -219,12 +219,14 @@ const layerPropertiesFormHandler = () => {
         if (!data) return
     
         data.layer.removeWhiteBg = data.layer.removeWhiteBg ? false : true 
+        const img = await removeImageBackground(
+            data.layer.data.layerLegendUrl, {
+                alt: 'Legend not found.'
+            }
+        )
+        console.log(img)
         data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`).innerHTML = data.layer.removeWhiteBg ? 
-            await removeImageBackground(
-                data.layer.data.layerLegendUrl, {
-                    alt: 'Legend not found.'
-                }
-            ).outerHTML : createImgElement(
+            img.outerHTML : createImgElement(
                 data.layer.data.layerLegendUrl, 
                 'Legend not found.',
             ).outerHTML

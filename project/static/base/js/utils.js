@@ -354,9 +354,9 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
     const threshold = options.threshold || 10;
     
-    const imgSrcViaCorsProxy = `https://www.geospatialib.com/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
+    const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
-    // imageElement.crossOrigin = 'Anonymous';
+    imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
 
     console.log(imageElement)
