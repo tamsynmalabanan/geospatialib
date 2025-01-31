@@ -124,26 +124,17 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const toggleLegendField = form.elements.toggleLegend
             toggleLegendField.checked = !legend.classList.contains('d-none')
 
-            // const toggleLegendField = createFormCheck('layerPropertiesToggleLegend', {
-            //     name: 'toggleLegend',
-            //     checked: !legend.classList.contains('d-none'),
-            //     label: 'Show layer legend',
-            //     parent: fieldContainers.legend,
-            //     changeHandler: (event) => {
-            //         event.target.checked ? legend.classList.remove('d-none') : legend.classList.add('d-none')
-            //     }
-            // })
 
-            // const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
-            //     name: 'toggleAttribution',
-            //     checked: !legend.classList.contains('d-none'),
-            //     label: 'Show layer attibution',
-            //     parent: fieldContainers.legend,
-            //     changeHandler: (event) => {
-            //         const attribution = legend.lastChild
-            //         attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
-            //     }
-            // })
+            const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
+                name: 'toggleAttribution',
+                checked: !legend.classList.contains('d-none'),
+                label: 'Show layer attibution',
+                parent: fieldContainers.legend,
+                changeHandler: (event) => {
+                    const attribution = legend.lastChild
+                    attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
+                }
+            })
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
@@ -192,7 +183,7 @@ const layerPropertiesFormHandler = () => {
     const form = document.querySelector('#layerPropertiesModal form')
     if (!form) return
 
-    form.elements.toggleLegend.addEventListener('change', (event) => {
+    const handler = () => {
         const map = mapQuerySelector(`#${form.dataset.mapId}`)
         if (!map) return
         
@@ -206,6 +197,11 @@ const layerPropertiesFormHandler = () => {
         const layerLegend = legend.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
 
+        return [map, layer, legend, layerLegend]
+    }
+
+    form.elements.toggleLegend.addEventListener('change', (event) => {
+        const [map, layer, legend, layerLegend] = handler()
         event.target.checked ? layerLegend.classList.remove('d-none') : layerLegend.classList.add('d-none')
     })
 }
