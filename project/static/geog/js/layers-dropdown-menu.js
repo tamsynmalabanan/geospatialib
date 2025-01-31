@@ -120,16 +120,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const form = modal.querySelector('form')
             form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
             form.setAttribute('data-map-id', mapId)
-            
-            // const fieldContainers = (() => {
-            //     const containers = {}
-            //     form.querySelectorAll('.accordion-collapse').forEach(collapse => {
-            //         const accordionBody = collapse.querySelector('.accordion-body')
-            //         accordionBody.innerHTML = ''
-            //         containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
-            //     })
-            //     return containers
-            // })()
 
             const toggleLegendField = form.elements.toggleLegend
             toggleLegendField.checked = !legend.classList.contains('d-none')
@@ -202,15 +192,22 @@ const layerPropertiesFormHandler = () => {
     const form = document.querySelector('#layerPropertiesModal form')
     if (!form) return
 
-    form.elements.toggleLegend.addEventListener('change', () => {
+    form.elements.toggleLegend.addEventListener('change', (event) => {
         const map = mapQuerySelector(`#${form.dataset.mapId}`)
         if (!map) return
-
+        
         const layer = map.getLayerGroups('legend').getLayer(form.dataset.leafletId)
-        console.log(layer)
+        if (!layer) return
+
+        const mapContainer = map.getContainer()
+        const legend = mapContainer.querySelector(`#${mapContainer.id}_legend`)
+        if (!legend) return
+
+        const layerLegend = legend.querySelector(`[data-leaflet-id="${layer._leaflet_id}"]`)
+        if (!layerLegend) return
+
+        event.target.checked ? layerLegend.classList.remove('d-none') : layerLegend.classList.add('d-none')
     })
-
-
 }
 
 document.addEventListener('DOMContentLoaded', () => {
