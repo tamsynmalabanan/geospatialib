@@ -71,6 +71,7 @@ const createImgElement = (url, alt, options={}) => {
     img.className = options.className || ''
     img.setAttribute('src', url)
     img.setAttribute('alt', alt)
+    assignAttrsToElement(img, options.attrs || {})
     return img
 }
 
