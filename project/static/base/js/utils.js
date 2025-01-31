@@ -350,6 +350,7 @@ const datasetToAttrs = (data) => {
 
 const removeImageBackground = async (imgSrc, options={}) => {
     const currentTheme = getPreferredTheme()
+    console.log(currentTheme)
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
     const threshold = 10;
@@ -391,8 +392,6 @@ const removeImageBackground = async (imgSrc, options={}) => {
             className: `img-${currentTheme} img-no-bg`
         }
     )
-
-    console.log(img)
 
     return img
 }
