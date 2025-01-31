@@ -4,7 +4,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
     const map = options.map || mapQuerySelector(options.mapSelector)
     if (!map) return
-    
+    const mapId = map.getContainer().id
+
     const currentLayer = options.layer
     if (!currentLayer) return
     
@@ -12,7 +13,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     if (!layerGroup) return
     
     const datasetList = toggle.closest('ul.dataset-list')
-    const isLegendLayer = datasetList?.id === `${map.getContainer().id}_legend`
+    const isLegendLayer = datasetList?.id === `${mapId}_legend`
     const currentCheckbox = datasetList ? findOuterElement(
         'input.form-check-input', 
         toggle, 
@@ -117,28 +118,31 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             const modal = document.querySelector('#layerPropertiesModal')
             const form = modal.querySelector('form')
+            form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
+            form.setAttribute('data-map-id', mapId)
             
-            
+            // const fieldContainers = (() => {
+            //     const containers = {}
+            //     form.querySelectorAll('.accordion-collapse').forEach(collapse => {
+            //         const accordionBody = collapse.querySelector('.accordion-body')
+            //         accordionBody.innerHTML = ''
+            //         containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
+            //     })
+            //     return containers
+            // })()
 
-            const fieldContainers = (() => {
-                const containers = {}
-                form.querySelectorAll('.accordion-collapse').forEach(collapse => {
-                    const accordionBody = collapse.querySelector('.accordion-body')
-                    accordionBody.innerHTML = ''
-                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
-                })
-                return containers
-            })()
+            const toggleLegendField = form.elements.toggleLegend
+            toggleLegendField.checked = !legend.classList.contains('d-none')
 
-            const toggleLegendField = createFormCheck('layerPropertiesToggleLegend', {
-                name: 'toggleLegend',
-                checked: !legend.classList.contains('d-none'),
-                label: 'Show layer legend',
-                parent: fieldContainers.legend,
-                changeHandler: (event) => {
-                    event.target.checked ? legend.classList.remove('d-none') : legend.classList.add('d-none')
-                }
-            })
+            // const toggleLegendField = createFormCheck('layerPropertiesToggleLegend', {
+            //     name: 'toggleLegend',
+            //     checked: !legend.classList.contains('d-none'),
+            //     label: 'Show layer legend',
+            //     parent: fieldContainers.legend,
+            //     changeHandler: (event) => {
+            //         event.target.checked ? legend.classList.remove('d-none') : legend.classList.add('d-none')
+            //     }
+            // })
 
             // const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
             //     name: 'toggleAttribution',
@@ -193,3 +197,22 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         downloadGeoJSONBtn,
     ).forEach(btn => {if (btn) {dropdown.appendChild(btn)}})
 }
+
+const layerPropertiesFormHandler = () => {
+    const form = document.querySelector('#layerPropertiesModal form')
+    if (!form) return
+
+    form.elements.toggleLegend.addEventListener('change', () => {
+        const map = mapQuerySelector(`#${form.dataset.mapId}`)
+        if (!map) return
+
+        const layer = map.getLayerGroups('legend').getLayer(form.dataset.leafletId)
+        console.log(layer)
+    })
+
+
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    layerPropertiesFormHandler()
+})
