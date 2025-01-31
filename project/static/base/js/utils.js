@@ -358,8 +358,9 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const imageElement = new Image();
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
-    await new Promise(function(resolve) { imageElement.addEventListener('load', resolve); });
-    console.log(imageElement)
+    // await new Promise((resolve) => {
+    //     imageElement.addEventListener('load', resolve); 
+    // });
     
     var canvas = document.createElement('canvas');
     canvas.width = imageElement.naturalWidth;
@@ -385,15 +386,12 @@ const removeImageBackground = async (imgSrc, options={}) => {
     }
     
     ctx.putImageData(imageData, 0, 0);
-    
-    const img = createImgElement(
+    return createImgElement(
         canvas.toDataURL('image/png'), 
         options.alt || 'Image not found.', {
             className: `img-${currentTheme} img-no-bg`
         }
     )
-
-    return img
 }
 
 const toTitleCase = (str) => {
