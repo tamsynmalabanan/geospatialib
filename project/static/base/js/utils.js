@@ -392,11 +392,11 @@ const removeImageBackground = async (imgSrc, options={}) => {
         canvas.toDataURL('image/png'), 
         options.alt || 'Image not found.', {
             className: `img-${currentTheme} img-no-bg`,
-            attrs: {'data-alt-url':imgSrc}
+            attrs: {'data-raw-url':imgSrc}
         }
     )
     img.addEventListener('setTheme', () => {
-        console.log(img)
+        removeImageBackground(imgSrc, options)
     })
     return img
 }
