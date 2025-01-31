@@ -219,7 +219,6 @@ const layerPropertiesFormHandler = () => {
         if (!data) return
     
         data.layer.removeWhiteBg = data.layer.removeWhiteBg ? false : true
-        
         // let img
         // if (data.layer.removeWhiteBg) {
         //     img = await removeImageBackground(
@@ -233,17 +232,16 @@ const layerPropertiesFormHandler = () => {
         //         'Legend not found.',
         //     )
         // }
-
-        // const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
-        data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`).innerHTML = data.layer.removeWhiteBg ? (await removeImageBackground(
+        const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
+        container.innerHTML = ''
+        container.appendChild(data.layer.removeWhiteBg ? (await removeImageBackground(
             data.layer.data.layerLegendUrl, {
                 alt: 'Legend not found.'
             }
-        )).outerHTML : createImgElement(
+        )) : createImgElement(
             data.layer.data.layerLegendUrl, 
             'Legend not found.',
-        ).outerHTML
-        // container.appendChild(img)
+        ))
     })
 }
 
