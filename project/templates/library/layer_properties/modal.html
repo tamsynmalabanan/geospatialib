@@ -39,14 +39,18 @@
                             class="accordion-collapse collapse flex-grow-1 fade show"
                             data-bs-parent="#styleLayerAccordion"
                         >
-                            <div class="accordion-body h-100 pt-4"></div>
+                            <div class="accordion-body h-100 pt-4">
+                                {% include "library/layer_properties/style_fields.html" %}
+                            </div>
                         </div>
                         <div
                             id="legendLayerPropertiesAccordion"
                             class="accordion-collapse collapse flex-grow-1 fade"
                             data-bs-parent="#styleLayerAccordion"
                         >
-                            <div class="accordion-body h-100 pt-4"></div>
+                            <div class="accordion-body h-100 pt-4">
+                                {% include "library/layer_properties/legend_fields.html" %}
+                            </div>
                         </div>
                     </div>
                 </div>

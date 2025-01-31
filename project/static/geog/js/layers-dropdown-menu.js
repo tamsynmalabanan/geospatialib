@@ -117,46 +117,49 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             const modal = document.querySelector('#layerPropertiesModal')
             const form = modal.querySelector('form')
-            const fieldContainers = (() => {
-                const containers = {}
-                form.querySelectorAll('.accordion-collapse').forEach(collapse => {
-                    const accordionBody = collapse.querySelector('.accordion-body')
-                    accordionBody.innerHTML = ''
-                    containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
-                })
-                return containers
-            })()
+            
+            
+
+            // const fieldContainers = (() => {
+            //     const containers = {}
+            //     form.querySelectorAll('.accordion-collapse').forEach(collapse => {
+            //         const accordionBody = collapse.querySelector('.accordion-body')
+            //         accordionBody.innerHTML = ''
+            //         containers[collapse.id.split('LayerPropertiesAccordion')[0]] = accordionBody
+            //     })
+            //     return containers
+            // })()
 
             const toggleLegendField = createFormCheck('layerPropertiesToggleLegend', {
                 name: 'toggleLegend',
                 checked: !legend.classList.contains('d-none'),
                 label: 'Show layer legend',
                 parent: fieldContainers.legend,
-                clickHandler: (event) => {
+                changeHandler: (event) => {
                     event.target.checked ? legend.classList.remove('d-none') : legend.classList.add('d-none')
                 }
             })
 
-            const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
-                name: 'toggleAttribution',
-                checked: !legend.classList.contains('d-none'),
-                label: 'Show layer attibution',
-                parent: fieldContainers.legend,
-                clickHandler: (event) => {
-                    const attribution = legend.lastChild
-                    attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
-                }
-            })
+            // const toggleAttributionField = createFormCheck('layerPropertiesToggleAttribution', {
+            //     name: 'toggleAttribution',
+            //     checked: !legend.classList.contains('d-none'),
+            //     label: 'Show layer attibution',
+            //     parent: fieldContainers.legend,
+            //     changeHandler: (event) => {
+            //         const attribution = legend.lastChild
+            //         attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))
+            //     }
+            // })
 
-            const layerLabelField = document.createElement('input')
-            fieldContainers.legend.appendChild(layerLabelField)
-            layerLabelField.value = currentLayer.data.layerTitle
-            layerLabelField.addEventListener('change', () => {
-                const value = layerLabelField.value
-                currentLayer.data.layerTitle = value
-                legend.firstChild.firstChild.innerText = value
-                duplicateBtn.querySelector('button').setAttribute('data-layer-title', value)
-            })
+            // const layerLabelField = document.createElement('input')
+            // fieldContainers.legend.appendChild(layerLabelField)
+            // layerLabelField.value = currentLayer.data.layerTitle
+            // layerLabelField.addEventListener('change', () => {
+            //     const value = layerLabelField.value
+            //     currentLayer.data.layerTitle = value
+            //     legend.firstChild.firstChild.innerText = value
+            //     duplicateBtn.querySelector('button').setAttribute('data-layer-title', value)
+            // })
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
