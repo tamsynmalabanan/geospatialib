@@ -357,6 +357,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const imgSrcViaCorsProxy = `https://www.geospatialib.com/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
     const imageElement = new Image();
     imageElement.crossOrigin = 'Anonymous';
+    imageElement.alt = options.alt
     imageElement.src = imgSrcViaCorsProxy;
 
     console.log(imageElement)
