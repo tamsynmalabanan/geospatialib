@@ -528,7 +528,7 @@ const handleMapLegend = (map) => {
                             container.appendChild(label)
 
                             const labelSpan = document.createElement('span')
-                            labelSpan.className = `layer-feature-label ${Object.keys(styles).length === 1 ? 'd-none' : ''}`
+                            // labelSpan.className = `layer-feature-label ${Object.keys(styles).length === 1 ? 'd-none' : ''}`
                             label.appendChild(labelSpan)
                             labelSpan.innerText = name
 
