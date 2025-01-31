@@ -218,19 +218,25 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
     
-        data.layer.removeWhiteBg = data.layer.removeWhiteBg ? false : true 
-        const img = await removeImageBackground(
-            data.layer.data.layerLegendUrl, {
-                alt: 'Legend not found.'
-            }
-        )
-        console.log(img)
+        data.layer.removeWhiteBg = data.layer.removeWhiteBg ? false : true
+        
+        let img
+        if (data.layer.removeWhiteBg) {
+            img = await removeImageBackground(
+                data.layer.data.layerLegendUrl, {
+                    alt: 'Legend not found.'
+                }
+            )
+        } else {
+            img = createImgElement(
+                data.layer.data.layerLegendUrl, 
+                'Legend not found.',
+            )
+        }
+
         const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
         container.innerHTML = ''
-        container.appendChild(data.layer.removeWhiteBg ? img : createImgElement(
-            data.layer.data.layerLegendUrl, 
-            'Legend not found.',
-        ))
+        container.appendChild(img)
     })
 }
 
