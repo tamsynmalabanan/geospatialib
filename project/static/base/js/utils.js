@@ -395,8 +395,8 @@ const removeImageBackground = async (imgSrc, options={}) => {
             attrs: {'data-raw-url':imgSrc}
         }
     )
-    img.addEventListener('setTheme', () => {
-        removeImageBackground(imgSrc, options)
+    img.addEventListener('setTheme', async () => {
+        img.outerHTML = (await removeImageBackground(imgSrc, options)).outerHTML
     })
     return img
 }
