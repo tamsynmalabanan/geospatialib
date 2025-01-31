@@ -114,7 +114,22 @@ const getThemedControls = (parent=document) => {
                 dark: ['text-dark'],
             }
         },
+        {
+            elements: Array().concat(
+                Array.from(parent.querySelectorAll(`.img-light`)),
+                Array.from(parent.querySelectorAll(`.img-dark`))
+            ),
+            classes: {
+                light: ['img-light'],
+                dark: ['img-dark'],
+            }
+        },
     ]
+}
+
+const dispatchSetTheme = (target) => {
+    const setThemeEvent = new Event('setTheme');
+    target.dispatchEvent(setThemeEvent);
 }
 
 const toggleControlsTheme = async (theme, parent=document) => {
@@ -139,10 +154,11 @@ const toggleControlsTheme = async (theme, parent=document) => {
                 }
             }
 
+            dispatchSetTheme(element)
+
             clearTimeout(toggleControlsThemeTimeout);
             toggleControlsThemeTimeout = setTimeout(() => {
-                const setThemeEvent = new Event('setTheme');
-                document.dispatchEvent(setThemeEvent);
+                dispatchSetTheme(document)
             }, 250)
         });
     

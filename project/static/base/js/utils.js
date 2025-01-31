@@ -388,13 +388,17 @@ const removeImageBackground = async (imgSrc, options={}) => {
     }
     
     ctx.putImageData(imageData, 0, 0);
-    return createImgElement(
+    const img = createImgElement(
         canvas.toDataURL('image/png'), 
         options.alt || 'Image not found.', {
             className: `img-${currentTheme} img-no-bg`,
-            attrs: {'data-raw-url':imgSrc}
+            attrs: {'data-alt-url':imgSrc}
         }
     )
+    img.addEventListener('setTheme', () => {
+        console.log(img)
+    })
+    return img
 }
 
 const toTitleCase = (str) => {
