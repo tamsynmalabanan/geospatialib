@@ -593,25 +593,18 @@ const handleMapLegend = (map) => {
             }
 
             const legendCollapse = legendContainer.querySelector('.collapse')
-            if (layer.data.layerLegendUrl) {
-                let img
-                if (layer.removeWhiteBg) {
-                    img = await removeImageBackground(
+            if (!layer.layerLegendStyle) {
+                legendCollapse.innerHTML = ''
+                if (layer.data.layerLegendUrl) {
+                    legendCollapse.appendChild(layer.removeWhiteBg ? (await removeImageBackground(
                         layer.data.layerLegendUrl, {
                             alt: 'Legend not found.'
                         }
-                    )
-                } else {
-                    img = createImgElement(
+                    )) : createImgElement(
                         layer.data.layerLegendUrl, 
                         'Legend not found.',
-                    )
+                    ))
                 }
-
-                legendCollapse.innerHTML = ''
-                legendCollapse.appendChild(img)
-            } else if (!layer.layerLegendStyle) {
-                legendCollapse.innerHTML = ''
             }
         }
     })
