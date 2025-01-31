@@ -172,7 +172,8 @@ const layerPropertiesFormHandler = () => {
         const map = mapQuerySelector(`#${form.dataset.mapId}`)
         if (!map) return
         
-        const layer = map.getLayerGroups('legend').getLayer(form.dataset.leafletId)
+        const legendLayerGroup = map.getLayerGroups('legend')
+        const layer = legendLayerGroup.getLayer(form.dataset.leafletId) || legendLayerGroup.getHiddenLayer(form.dataset.leafletId)
         if (!layer) return
 
         const mapContainer = map.getContainer()
