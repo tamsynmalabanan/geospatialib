@@ -14,6 +14,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     
     const datasetList = toggle.closest('ul.dataset-list')
     const isLegendLayer = datasetList?.id === `${mapId}_legend`
+    const isGeoJSONLayer = currentLayer instanceof L.GeoJSON
     const currentCheckbox = datasetList ? findOuterElement(
         'input.form-check-input', 
         toggle, 
@@ -97,7 +98,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         )
     }) : null
 
-    const toggleFeatureCountBtn = isLegendLayer && currentLayer instanceof L.GeoJSON ? createDropdownMenuListItem({
+    const toggleFeatureCountBtn = isLegendLayer && isGeoJSONLayer ? createDropdownMenuListItem({
         label: `Toggle feature count`,
         buttonClass: 'bi bi-123',
         buttonClickHandler: () => {
@@ -123,6 +124,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
             form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
+
+            const featureCountField = form.elements.toggleFeatureCount
+            isGeoJSONLayer ? featureCountField.parentElement.classList.remove('d-none') : featureCountField.parentElement.classList.add('d-none')
+            featureCountField.checked = currentLayer.showFeatureCount
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
@@ -198,15 +203,17 @@ const layerPropertiesFormHandler = () => {
         if (!data) return
         event.target.checked ? data.layerLegend.classList.remove('d-none') : data.layerLegend.classList.add('d-none')
     })
+}
 
-    form.elements.toggleAttribution.addEventListener('change', (event) => {
+    form.elements.toggleFeatureCount.addEventListener('change', (event) => {
         const data = handler()
         if (!data) return
 
-        const attribution = data.layerLegend.lastChild
-        attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
+        data.layer.showFeatureCount = data.layer.showFeatureCount ? false : true 
+        data.layerLegend.querySelectorAll('.layer-feature-count')?.forEach(span => {
+            data.layer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
+        })
     })
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     layerPropertiesFormHandler()
