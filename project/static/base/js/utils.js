@@ -349,7 +349,6 @@ const datasetToAttrs = (data) => {
 }
 
 const removeImageBackground = async (imgSrc, options={}) => {
-    console.log(imgSrc, options)
     const currentTheme = getPreferredTheme()
     
     const bgColor = options.bgColor || { red: 255, green: 255, blue: 255 };
@@ -360,38 +359,42 @@ const removeImageBackground = async (imgSrc, options={}) => {
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
     await new Promise(function(resolve) { imageElement.addEventListener('load', resolve); });
-  
+    
     var canvas = document.createElement('canvas');
     canvas.width = imageElement.naturalWidth;
     canvas.height = imageElement.naturalHeight;
-  
+    
     var ctx = canvas.getContext('2d');
     ctx.drawImage(imageElement, 0, 0);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < imageData.data.length; i += 4) {
-      const red = imageData.data[i];
+        const red = imageData.data[i];
       const green = imageData.data[i + 1];
       const blue = imageData.data[i + 2];
       if (Math.abs(red - bgColor.red) < threshold &&
-        Math.abs(green - bgColor.green) < threshold &&
-        Math.abs(blue - bgColor.blue) < threshold) {
-        imageData.data[i + 3] = 0;
-      }
-      if (currentTheme === 'dark' && red < threshold && green < threshold && blue < threshold) {
-        imageData.data[i] = 255; // Red
-        imageData.data[i + 1] = 255; // Green
-        imageData.data[i + 2] = 255; // Blue
-      }
+      Math.abs(green - bgColor.green) < threshold &&
+      Math.abs(blue - bgColor.blue) < threshold) {
+          imageData.data[i + 3] = 0;
+        }
+        if (currentTheme === 'dark' && red < threshold && green < threshold && blue < threshold) {
+            imageData.data[i] = 255; // Red
+            imageData.data[i + 1] = 255; // Green
+            imageData.data[i + 2] = 255; // Blue
+        }
     }
-  
+    
     ctx.putImageData(imageData, 0, 0);
-
-    return createImgElement(
+    
+    const img = createImgElement(
         canvas.toDataURL('image/png'), 
         options.alt || 'Image not found.', {
             className: `img-${currentTheme} img-no-bg`
         }
     )
+
+    console.log(img)
+
+    return img
 }
 
 const toTitleCase = (str) => {
