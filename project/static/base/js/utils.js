@@ -355,11 +355,11 @@ const removeImageBackground = async (imgSrc, options={}) => {
     const threshold = options.threshold || 10;
     
     const imgSrcViaCorsProxy = `/htmx/library/cors_proxy/?url=${encodeURIComponent(imgSrc)}`
-    console.log(imgSrcViaCorsProxy)
     const imageElement = new Image();
     imageElement.crossOrigin = 'Anonymous';
     imageElement.src = imgSrcViaCorsProxy;
     await new Promise(function(resolve) { imageElement.addEventListener('load', resolve); });
+    console.log(imageElement)
     
     var canvas = document.createElement('canvas');
     canvas.width = imageElement.naturalWidth;
