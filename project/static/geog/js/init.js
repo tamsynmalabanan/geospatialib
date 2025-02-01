@@ -181,6 +181,10 @@ const handleMapLayerGroups = (map) => {
             }
         }
 
+        layerGroup.customGetLayer = (leafletId) => {
+            return layerGroup.getLayer(leafletId) || layerGroup.getHiddenLayer(leafletId)
+        }
+
         if (group === 'legend') {
             layerGroup.moveLayer = (currentLayer, options={}) => {
                 const legend = document.querySelector(`#${map.getContainer().id}_legend`)
@@ -445,9 +449,17 @@ const handleMapLegend = (map) => {
         parent: dropdownMenu,
         buttonClass: 'bi bi-arrow-counterclockwise fs-12',
         buttonClickHandler: () => {
-            ul.querySelectorAll('.layer-legend-img.img-bg-removed').forEach(img => {
+            ul.querySelectorAll('li').forEach(li => {
+                const img = li.querySelector('.layer-legend-img.img-bg-removed')
+                if (!img) return
+
+                const layer = legendLayerGroup.customGetLayer(li.dataset.leafletId)
+                if (!layer) return
+
+                layer.removeWhiteBg = false
+
                 img.outerHTML = createImgElement(
-                    img.dataset.rawUrl, 
+                    layer.data.layerLegendUrl, 
                     {alt:'Legend not found.', className:'layer-legend-img'},
                 ).outerHTML
             })
