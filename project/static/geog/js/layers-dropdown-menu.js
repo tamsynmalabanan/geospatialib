@@ -120,7 +120,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             const toggleWhiteBgField = form.elements.toggleWhiteBg
             !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
-            toggleWhiteBgField.checked = currentLayer.removeWhiteBg
+            toggleWhiteBgField.checked = currentLayer.removeWhiteBg || legend.querySelector(`#${legend.id}_collapse`).firstChild?.classList.contains('img-bg-removed')
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
@@ -219,9 +219,9 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
     
-        data.layer.removeWhiteBg = data.layer.removeWhiteBg ? false : true
+        const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
+        data.layer.removeWhiteBg = data.layer.removeWhiteBg || container.firstChild?.classList.contains('img-bg-removed') ? false : true
         if (data.map.getLayerGroups('legend').hasLayer(data.layer)) {
-            const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
             container.innerHTML = ''
             container.appendChild(data.layer.removeWhiteBg ? (await removeImageBackground(
                 data.layer.data.layerLegendUrl, {
