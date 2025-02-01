@@ -199,7 +199,7 @@ const layerPropertiesFormHandler = () => {
         if (!data) return
         
         const value = event.target.value
-        data.layerLegend.querySelector('legend-layer-label').innerText = value
+        data.layerLegend.querySelector('.legend-layer-label').innerText = value
         data.layer.data.legendLabel = value
     })
 
