@@ -133,6 +133,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             //     currentLayer.data.layerTitle = value
             //     legend.firstChild.firstChild.innerText = value
             // })
+            // data-legend-label
+            // data-legend-attribution
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
