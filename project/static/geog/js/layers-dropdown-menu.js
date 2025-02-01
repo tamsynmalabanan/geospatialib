@@ -92,8 +92,9 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         label: `Duplicate ${type}`,
         buttonClass: 'bi bi-copy',
         buttonClickHandler: () => {
-            const button = this.querySelector('button')
+            const button = duplicateBtn.querySelector('button')
             assignAttrsToElement(button, currentLayer.data)
+            console.log(button)
             toggleLayer(
                 {target:button}, 
                 {map:map}
