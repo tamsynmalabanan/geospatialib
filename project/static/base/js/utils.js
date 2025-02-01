@@ -391,7 +391,7 @@ const removeImageBackground = async (imgSrc, options={}) => {
     
     const img = createImgElement(
         canvas.toDataURL('image/png'), {
-            className: `img-${currentTheme} img-no-bg`,
+            className: `${options.className || ''} img-${currentTheme} img-bg-removed`,
             alt: options.alt || 'Image not found.',
         }
     )

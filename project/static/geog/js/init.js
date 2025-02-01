@@ -445,7 +445,9 @@ const handleMapLegend = (map) => {
         parent: dropdownMenu,
         buttonClass: 'bi bi-arrow-counterclockwise fs-12',
         buttonClickHandler: () => {
-            
+            ul.querySelectorAll('.layer-legend-img.img-bg-removed').forEach(img => {
+                console.log(img)
+            })
         }
     })
 
@@ -607,11 +609,12 @@ const handleMapLegend = (map) => {
                 if (layer.data.layerLegendUrl) {
                     legendCollapse.appendChild(layer.removeWhiteBg ? (await removeImageBackground(
                         layer.data.layerLegendUrl, {
-                            alt: 'Legend not found.'
+                            alt: 'Legend not found.',
+                            className: 'layer-legend-img'
                         }
                     )) : createImgElement(
                         layer.data.layerLegendUrl, 
-                        {alt:'Legend not found.'},
+                        {alt:'Legend not found.', className:'layer-legend-img'},
                     ))
                 }
             }

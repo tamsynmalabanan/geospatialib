@@ -225,11 +225,12 @@ const layerPropertiesFormHandler = () => {
             container.innerHTML = ''
             container.appendChild(data.layer.removeWhiteBg ? (await removeImageBackground(
                 data.layer.data.layerLegendUrl, {
-                    alt: 'Legend not found.'
+                    alt: 'Legend not found.',
+                    className: 'layer-legend-img'
                 }
             )) : createImgElement(
                 data.layer.data.layerLegendUrl, 
-                {alt:'Legend not found.'},
+                {alt:'Legend not found.', className:'layer-legend-img'},
             ))
         }
     })
