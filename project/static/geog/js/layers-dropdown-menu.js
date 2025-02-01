@@ -98,6 +98,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
                 {target:button}, 
                 {map:map}
             )
+            console.log('here')
         } 
     }) : null
 
