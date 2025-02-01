@@ -528,6 +528,11 @@ const handleMapLegend = (map) => {
                 dropdown.className = 'dropdown-menu fs-12'
                 legendHeader.insertBefore(dropdown, legendHeader.lastChild)
 
+                const attribution = document.createElement('span')
+                attribution.className = 'm-0 fs-12 text-wrap font-monospace'
+                attribution.innerHTML = layer.data.legendAttribution || `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.data.layerUrl)}</a>`
+                legendContainer.appendChild(attribution)
+
                 if (layer.layerLegendStyle) {
                     const legendCollapse = legendContainer.querySelector('.collapse')
 
@@ -621,11 +626,6 @@ const handleMapLegend = (map) => {
                         })
                     })
                 }
-
-                const attribution = document.createElement('span')
-                attribution.className = 'm-0 fs-12 text-wrap font-monospace'
-                attribution.innerHTML = `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.data.layerUrl)}</a>`
-                legendContainer.appendChild(attribution)
             }
 
             const legendCollapse = legendContainer.querySelector('.collapse')

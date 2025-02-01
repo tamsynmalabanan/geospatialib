@@ -115,6 +115,10 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             form.setAttribute('data-map-id', mapId)
 
             form.elements.layerLabel.value = legend.querySelector('.legend-layer-label').innerText
+            
+            const attribution = legend.lastChild.querySelector('a')
+            form.elements.attributionName.value = attribution.innerText
+            form.elements.attributionLink.value = attribution.getAttribute('href')
 
             form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
             form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
@@ -126,14 +130,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             const toggleWhiteBgField = form.elements.toggleWhiteBg
             !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
             toggleWhiteBgField.checked = currentLayer.removeWhiteBg
-
-            // layerLabelField.addEventListener('change', () => {
-            //     const value = layerLabelField.value
-            //     currentLayer.data.layerTitle = value
-            //     legend.firstChild.firstChild.innerText = value
-            // })
-            // data-legend-label
-            // data-legend-attribution
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
@@ -201,6 +197,17 @@ const layerPropertiesFormHandler = () => {
         const value = event.target.value
         data.layerLegend.querySelector('.legend-layer-label').innerText = value
         data.layer.data.legendLabel = value
+    })
+    
+    Array('attributionName', 'attributionLink').forEach(field => {
+        form.elements[field].addEventListener('change', (event) => {
+            const data = handler()
+            if (!data) return
+            
+            const value = `Data © <a href='${form.elements.attributionLink.value}' target='_blank'>${form.elements.attributionName.value}</a>`
+            data.layerLegend.lastChild.innerHTML = value
+            data.layer.data.legendAttribution = value
+        })
     })
 
     form.elements.toggleLegend.addEventListener('change', (event) => {
