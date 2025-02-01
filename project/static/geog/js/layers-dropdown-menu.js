@@ -91,14 +91,13 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
     const duplicateBtn = !currentCheckbox ? createDropdownMenuListItem({
         label: `Duplicate ${type}`,
         buttonClass: 'bi bi-copy',
-        buttonClickHandler: () => () => {
+        buttonClickHandler: () => {
             const button = duplicateBtn.querySelector('button')
             assignAttrsToElement(button, currentLayer.data)
             toggleLayer(
                 {target:button}, 
                 {map:map}
             )
-            console.log('here')
         } 
     }) : null
 
