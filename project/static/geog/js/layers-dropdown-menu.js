@@ -94,7 +94,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => {
             const button = duplicateBtn.querySelector('button')
             assignAttrsToElement(button, datasetToAttrs(currentLayer.data))
-            console.log(currentLayer.data, button)
             toggleLayer(
                 {target:button}, 
                 {map:map}
@@ -126,7 +125,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             const featureCountField = form.elements.toggleFeatureCount
             isGeoJSONLayer ? featureCountField.parentElement.classList.remove('d-none') : featureCountField.parentElement.classList.add('d-none')
-            featureCountField.checked = currentLayer.showFeatureCount
+            featureCountField.checked = currentLayer.data.showFeatureCount === 'true'
 
             const toggleWhiteBgField = form.elements.toggleWhiteBg
             !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
@@ -229,9 +228,9 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
     
-        data.layer.showFeatureCount = data.layer.showFeatureCount ? false : true 
+        data.layer.data.showFeatureCount = data.layer.data.showFeatureCount === 'true' ? 'false' : 'true' 
         data.layerLegend.querySelectorAll('.layer-feature-count')?.forEach(span => {
-            data.layer.showFeatureCount ? span.classList.remove('d-none') : span.classList.add('d-none')
+            data.layer.data.showFeatureCount === 'true' ? span.classList.remove('d-none') : span.classList.add('d-none')
         })
     })
 

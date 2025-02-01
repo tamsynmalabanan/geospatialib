@@ -569,12 +569,11 @@ const handleMapLegend = (map) => {
                             container.appendChild(label)
 
                             const labelSpan = document.createElement('span')
-                            // labelSpan.className = `layer-feature-label ${Object.keys(styles).length === 1 ? 'd-none' : ''}`
                             label.appendChild(labelSpan)
                             labelSpan.innerText = name
 
                             const countSpan = document.createElement('span')
-                            countSpan.className = `layer-feature-count ${!layer.showFeatureCount ? 'd-none' : ''}`
+                            countSpan.className = `layer-feature-count ${layer.data.showFeatureCount === 'false' ? 'd-none' : ''}`
                             label.appendChild(countSpan)
                             countSpan.innerText = `(${formatNumberWithCommas(style.count)})`
     
@@ -632,7 +631,6 @@ const handleMapLegend = (map) => {
             if (!layer.layerLegendStyle) {
                 legendCollapse.innerHTML = ''
                 if (layer.data.layerLegendUrl) {
-                    console.log(layer)
                     legendCollapse.appendChild(layer.data.removeWhiteBg === 'true' ? (await removeImageBackground(
                         layer.data.layerLegendUrl, {
                             alt: 'Legend not found.',
