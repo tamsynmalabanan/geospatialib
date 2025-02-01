@@ -129,7 +129,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             const toggleWhiteBgField = form.elements.toggleWhiteBg
             !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
-            toggleWhiteBgField.checked = currentLayer.removeWhiteBg
+            toggleWhiteBgField.checked = currentLayer.data.removeWhiteBg
 
             const modalBs = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)
             modalBs.show()
@@ -238,11 +238,11 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
     
-        data.layer.removeWhiteBg = !data.layer.removeWhiteBg
+        data.layer.data.removeWhiteBg = !data.layer.data.removeWhiteBg
         if (data.map.getLayerGroups('legend').hasLayer(data.layer)) {
             const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
             container.innerHTML = ''
-            container.appendChild(data.layer.removeWhiteBg ? (await removeImageBackground(
+            container.appendChild(data.layer.data.removeWhiteBg ? (await removeImageBackground(
                 data.layer.data.layerLegendUrl, {
                     alt: 'Legend not found.',
                     className: 'layer-legend-img'

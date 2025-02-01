@@ -461,9 +461,9 @@ const handleMapLegend = (map) => {
         buttonClass: 'bi bi-arrow-counterclockwise fs-12',
         buttonClickHandler: () => {
             legendLayerGroup.customEachLayer(layer => {
-                if (!layer.removeWhiteBg) return 
+                if (!layer.data.removeWhiteBg) return 
                 
-                layer.removeWhiteBg = false
+                layer.data.removeWhiteBg = false
                 
                 const img = ul.querySelector(`[data-leaflet-id="${layer._leaflet_id}"] .layer-legend-img.img-bg-removed`)
                 if (!img) return
@@ -632,7 +632,7 @@ const handleMapLegend = (map) => {
             if (!layer.layerLegendStyle) {
                 legendCollapse.innerHTML = ''
                 if (layer.data.layerLegendUrl) {
-                    legendCollapse.appendChild(layer.removeWhiteBg ? (await removeImageBackground(
+                    legendCollapse.appendChild(layer.data.removeWhiteBg ? (await removeImageBackground(
                         layer.data.layerLegendUrl, {
                             alt: 'Legend not found.',
                             className: 'layer-legend-img'
