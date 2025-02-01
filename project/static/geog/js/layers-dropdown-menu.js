@@ -94,6 +94,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClickHandler: () => {
             const button = duplicateBtn.querySelector('button')
             assignAttrsToElement(button, datasetToAttrs(currentLayer.data))
+            console.log(currentLayer.data, button)
             toggleLayer(
                 {target:button}, 
                 {map:map}
