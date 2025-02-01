@@ -633,7 +633,7 @@ const handleMapLegend = (map) => {
                 legendCollapse.innerHTML = ''
                 if (layer.data.layerLegendUrl) {
                     console.log(layer)
-                    legendCollapse.appendChild(layer.data.removeWhiteBg ? (await removeImageBackground(
+                    legendCollapse.appendChild(layer.data.removeWhiteBg === true ? (await removeImageBackground(
                         layer.data.layerLegendUrl, {
                             alt: 'Legend not found.',
                             className: 'layer-legend-img'
