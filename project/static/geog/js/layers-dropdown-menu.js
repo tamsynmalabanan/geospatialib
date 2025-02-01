@@ -114,6 +114,8 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
             form.setAttribute('data-map-id', mapId)
 
+            form.elements.layerLabel.value = currentLayer.data.layerLabel || currentLayer.data.layerTitle 
+
             form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
             form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
 

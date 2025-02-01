@@ -95,3 +95,4 @@ class AddDatasetForm(forms.Form):
                     raise forms.ValidationError('No layers retrived in this format.')
         
         return format
+    
