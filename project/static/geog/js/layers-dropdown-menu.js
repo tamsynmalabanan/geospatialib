@@ -120,7 +120,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
             const toggleWhiteBgField = form.elements.toggleWhiteBg
             !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
-            toggleWhiteBgField.checked = currentLayer.removeWhiteBg || legend.querySelector(`#${legend.id}_collapse`).firstChild?.classList.contains('img-bg-removed')
+            toggleWhiteBgField.checked = currentLayer.removeWhiteBg && legend.querySelector(`#${legend.id}_collapse`).firstChild?.classList.contains('img-bg-removed')
 
             // const layerLabelField = document.createElement('input')
             // fieldContainers.legend.appendChild(layerLabelField)
