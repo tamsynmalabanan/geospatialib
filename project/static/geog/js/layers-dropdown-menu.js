@@ -239,7 +239,7 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
     
-        data.layer.data.removeWhiteBg = data.layer.data.removeWhiteBg === 'false'
+        data.layer.data.removeWhiteBg = data.layer.data.removeWhiteBg === 'true' ? 'false' : 'true'
         if (data.map.getLayerGroups('legend').hasLayer(data.layer)) {
             const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
             container.innerHTML = ''
