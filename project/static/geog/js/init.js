@@ -446,7 +446,10 @@ const handleMapLegend = (map) => {
         buttonClass: 'bi bi-arrow-counterclockwise fs-12',
         buttonClickHandler: () => {
             ul.querySelectorAll('.layer-legend-img.img-bg-removed').forEach(img => {
-                console.log(img)
+                img.outerHTML = createImgElement(
+                    img.dataset.rawUrl, 
+                    {alt:'Legend not found.', className:'layer-legend-img'},
+                ).outerHTML
             })
         }
     })
