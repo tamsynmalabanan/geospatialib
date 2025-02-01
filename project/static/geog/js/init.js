@@ -441,6 +441,15 @@ const handleMapLegend = (map) => {
     })
 
     createDropdownMenuListItem({
+        label: 'Reset legend images', 
+        parent: dropdownMenu,
+        buttonClass: 'bi bi-arrow-counterclockwise fs-12',
+        buttonClickHandler: () => {
+            
+        }
+    })
+
+    createDropdownMenuListItem({
         label: 'Expand/collapse legend', 
         parent: dropdownMenu,
         buttonClass: 'bi bi-chevron-expand fs-12',

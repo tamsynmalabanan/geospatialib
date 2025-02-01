@@ -208,7 +208,7 @@ const fetchDataWithTimeout = async (url, options={}) => {
     params.signal = controller.signal
     
     const timeoutId = setTimeout(abortController, timeoutMs);
-    const fetchPromise = fetch(url, params)
+    const fetchPromise = fetch(url.replace('http:', 'https:'), params)
     .then(async response => {
         clearTimeout(timeoutId)
         return response
