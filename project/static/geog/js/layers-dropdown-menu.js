@@ -114,7 +114,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
             form.setAttribute('data-map-id', mapId)
 
-            form.elements.layerLabel.value = currentLayer.data.legendLabel || currentLayer.data.layerTitle 
+            form.elements.layerLabel.value = legend.querySelector('legend-layer-label').innerText
 
             form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
             form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
@@ -193,6 +193,15 @@ const layerPropertiesFormHandler = () => {
             layerLegend:layerLegend,
         }
     }
+
+    form.elements.layerLabel.addEventListener('change', (event) => {
+        const data = handler()
+        if (!data) return
+        
+        const value = event.target.value
+        data.layerLegend.querySelector('legend-layer-label').innerText = value
+        data.layer.data.legendLabel = value
+    })
 
     form.elements.toggleLegend.addEventListener('change', (event) => {
         const data = handler()

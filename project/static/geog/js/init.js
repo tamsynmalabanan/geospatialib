@@ -504,8 +504,8 @@ const handleMapLegend = (map) => {
                 const legendHeader = legendContainer.firstChild
     
                 const label= document.createElement('span')
-                label.classList.add('me-2', 'fs-14', 'flex-grow-1')
-                label.innerText = layer.data.layerTitle
+                label.classList.add('legend-layer-label', 'me-2', 'fs-14', 'flex-grow-1')
+                label.innerText = layer.data.legendLabel || layer.data.layerTitle
                 legendHeader.insertBefore(label, legendHeader.firstChild)
                 
                 const menuBtn = createInlineBtn({
