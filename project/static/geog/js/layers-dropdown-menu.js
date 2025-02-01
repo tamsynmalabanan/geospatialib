@@ -220,7 +220,7 @@ const layerPropertiesFormHandler = () => {
         if (!data) return
     
         const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
-        data.layer.removeWhiteBg = (data.layer.removeWhiteBg || container.firstChild?.classList.contains('img-bg-removed')) ? false : true
+        data.layer.removeWhiteBg = !data.layer.removeWhiteBg && !container.firstChild?.classList.contains('img-bg-removed')
         if (data.map.getLayerGroups('legend').hasLayer(data.layer)) {
             container.innerHTML = ''
             container.appendChild(data.layer.removeWhiteBg ? (await removeImageBackground(
