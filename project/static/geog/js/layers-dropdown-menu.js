@@ -114,7 +114,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
             form.setAttribute('data-map-id', mapId)
 
-            form.elements.layerLabel.value = currentLayer.data.layerLabel || currentLayer.data.layerTitle 
+            form.elements.layerLabel.value = currentLayer.data.legendLabel || currentLayer.data.layerTitle 
 
             form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
             form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
@@ -127,9 +127,6 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             !isGeoJSONLayer ? toggleWhiteBgField.parentElement.classList.remove('d-none') : toggleWhiteBgField.parentElement.classList.add('d-none')
             toggleWhiteBgField.checked = currentLayer.removeWhiteBg
 
-            // const layerLabelField = document.createElement('input')
-            // fieldContainers.legend.appendChild(layerLabelField)
-            // layerLabelField.value = currentLayer.data.layerTitle
             // layerLabelField.addEventListener('change', () => {
             //     const value = layerLabelField.value
             //     currentLayer.data.layerTitle = value
