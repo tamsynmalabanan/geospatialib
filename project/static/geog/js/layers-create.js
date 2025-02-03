@@ -54,9 +54,7 @@ const createGeoJSONLayer = (data) => {
     // geojsonLayer.data.layerLegendStyle = true
     data.layerLegendStyle = true
     geojsonLayer.cacheKey = cacheKey
-    
-    const defaultTooltip = `Zoom in to load ${getLayerTitle()} features.`
-    
+        
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
         geojsonLayer._openPopups.push(event.popup)
@@ -136,7 +134,6 @@ const createGeoJSONLayer = (data) => {
                     if (!geojson) {
                         if (!layerBounds) return
                         geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
-                        geojson.tooltip = defaultTooltip
                         geojson.prefix = 'Bounding'
                     } else {
                         geojson.mapBounds = mapBounds
@@ -158,7 +155,6 @@ const createGeoJSONLayer = (data) => {
                             const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
                             const feature = turf.polygonToLine(boundsGeoJSON)
                             geojson.features = [feature]
-                            geojson.tooltip = defaultTooltip
                             geojson.prefix = 'Bounding'
                             
                             let totalMatched = 'features'
