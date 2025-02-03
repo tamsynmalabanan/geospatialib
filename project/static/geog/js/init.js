@@ -552,8 +552,8 @@ const handleMapLegend = (map) => {
                         const styles = layer.data.layerLegendStyle
                         if (typeof styles !== 'object') return
                         
-                        Object.keys(styles).forEach(name => {
-                            const style = styles[name]
+                        Object.keys(styles).forEach(group => {
+                            const style = styles[group]
     
                             const container = document.createElement('div')
                             container.className = 'd-flex gap-2'
@@ -570,7 +570,7 @@ const handleMapLegend = (map) => {
 
                             const labelSpan = document.createElement('span')
                             label.appendChild(labelSpan)
-                            labelSpan.innerText = name
+                            labelSpan.innerText = styles.label
 
                             const countSpan = document.createElement('span')
                             countSpan.className = `layer-feature-count ${layer.data.showFeatureCount === 'true' ? '' : 'd-none'}`
