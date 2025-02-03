@@ -45,6 +45,7 @@ const createWFSLayer = (data) => {
 }
 
 const createGeoJSONLayer = (data) => {
+    console.log(data)
     data.layerLegendStyle = true
 
     const geojsonLayer = getDefaultGeoJSONLayer()
@@ -215,7 +216,6 @@ const createGeoJSONLayer = (data) => {
             })
 
             if (signal.aborted) return
-            console.log(legend)
             geojsonLayer.data.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
         }
