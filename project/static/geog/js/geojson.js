@@ -1,6 +1,4 @@
 const getDefaultGeoJSONLayer = (options={}) => {
-    const geojson = options.geojson
-
     let color = options.color
     if (!color) {
         color = `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
@@ -65,9 +63,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
         }
     }
 
-    if (geojson) {
-        geojsonLayer.addData(geojson)
-    }
+    options.geojson && geojsonLayer.addData(options.geojson)
 
     return geojsonLayer
 }

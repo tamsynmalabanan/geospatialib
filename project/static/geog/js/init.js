@@ -533,7 +533,7 @@ const handleMapLegend = (map) => {
                 attribution.innerHTML = layer.data.legendAttribution || `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.data.layerUrl)}</a>`
                 legendContainer.appendChild(attribution)
 
-                if (layer.layerLegendStyle) {
+                if (layer.data.layerLegendStyle) {
                     const legendCollapse = legendContainer.querySelector('.collapse')
 
                     layer.on('fetchingData', () => {
@@ -549,7 +549,7 @@ const handleMapLegend = (map) => {
                         if (!legendLayerGroup.hasLayer(layer)) return
                         
                         legendCollapse.innerHTML = ''
-                        const styles = layer.layerLegendStyle
+                        const styles = layer.data.layerLegendStyle
                         if (typeof styles !== 'object') return
                         
                         Object.keys(styles).forEach(name => {
@@ -627,8 +627,8 @@ const handleMapLegend = (map) => {
                 }
             }
 
-            const legendCollapse = legendContainer.querySelector('.collapse')
-            if (!layer.layerLegendStyle) {
+            if (!layer.data.layerLegendStyle) {
+                const legendCollapse = legendContainer.querySelector('.collapse')
                 legendCollapse.innerHTML = ''
                 if (layer.data.layerLegendUrl) {
                     legendCollapse.appendChild(layer.data.removeWhiteBg === 'true' ? (await removeImageBackground(

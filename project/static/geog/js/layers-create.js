@@ -51,7 +51,7 @@ const createGeoJSONLayer = (data) => {
 
     const layerTitle = data.layerTitle
     geojsonLayer.data = data
-    geojsonLayer.layerLegendStyle = true
+    geojsonLayer.data.layerLegendStyle = true
     geojsonLayer.popupHeader = layerTitle
     geojsonLayer.cacheKey = cacheKey
     
@@ -239,8 +239,10 @@ const createGeoJSONLayer = (data) => {
                     legend[label].count += 1 
                 }
             })
+
             if (signal.aborted) return
-            geojsonLayer.layerLegendStyle = legend
+            console.log(legend)
+            geojsonLayer.data.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
         }
     
