@@ -54,7 +54,7 @@ const toggleLayer = async (event, options={}) => {
         const layerGroupName = options.layerGroup || 'legend'
         const layerGroup = map.getLayerGroups()[layerGroupName]
         
-        const data = toggle.dataset
+        const data = options.data || toggle.dataset
         const tagName = toggle.tagName.toLowerCase()
         if ((tagName === 'input' && toggle.checked) || tagName === 'button') {
             let layer = options.layer
