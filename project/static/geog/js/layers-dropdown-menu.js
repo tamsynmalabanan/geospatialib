@@ -141,7 +141,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
         buttonClass: 'bi bi-download',
         buttonClickHandler: () => downloadGeoJSON(
             typeof geojson === 'string' ? geojson : JSON.stringify(geojson), 
-            currentLayer.title || currentLayer.data.layerTitle || 'untitled'
+            currentLayer.title || currentLayer.data.legendLabel || currentLayer.data.layerTitle || 'untitled'
         )
     }) : null
 

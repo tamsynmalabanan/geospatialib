@@ -49,7 +49,7 @@ const createGeoJSONLayer = (data) => {
 
     const geojsonLayer = getDefaultGeoJSONLayer()
 
-    const layerTitle = data.layerTitle
+    const layerTitle = data.legendLabel || data.layerTitle
     geojsonLayer.data = data
     geojsonLayer.data.layerLegendStyle = true
     geojsonLayer.popupHeader = layerTitle
@@ -202,16 +202,16 @@ const createGeoJSONLayer = (data) => {
                 geojsonLayer._openPopups = []
             }
             
+            geojsonLayer.eachLayer(feature => {
+                if (signal.aborted) return
+                feature.popupHeader = layerTitle
+                geojson.tooltip && feature.bindTooltip(geojson.tooltip, {sticky:true})
+            })
+            
             let legend = {}
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
-                
-                feature.popupHeader = data.layerTitle
-                
-                if (geojson.tooltip) {
-                    feature.bindTooltip(geojson.tooltip, {sticky:true})
-                } 
-                
+
                 let type = feature.feature.geometry.type.replace('Multi', '')
                 if (geojson.prefix === 'Bounding') {
                     type = 'box'
@@ -241,7 +241,6 @@ const createGeoJSONLayer = (data) => {
             })
 
             if (signal.aborted) return
-            console.log(legend)
             geojsonLayer.data.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
         }
