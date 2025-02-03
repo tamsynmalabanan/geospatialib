@@ -198,35 +198,24 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
 
-                let type = feature.feature.geometry.type.replace('Multi', '')
-                if (geojson.prefix === 'Bounding') {
-                    type = 'box'
-                }
+                const type = geojson.prefix === 'Bounding' ? 'Box' : feature.feature.geometry.type.replace('Multi', '')
+                const group = type === 'Point' ? type : Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
                 
-                let label = type
-                if (type !== 'Point') {
-                    label = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
-                }
-                
-                if (!Object.keys(legend).includes(label)) {
-                    let style
-                    if (type === 'Point') {
-                        style = geojsonLayer.options.pointToLayer().options.icon
-                    } else {
-                        style = geojsonLayer.options.style()
-                    }
-                    
-                    legend[label] = {
+                if (!Object.keys(legend).includes(group)) {
+                    const style = type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style()
+                    legend[group] = {
+                        label: group,
                         type: type,
                         style: style,
                         count: 1,
                     }
                 } else {
-                    legend[label].count += 1 
+                    legend[group].count += 1 
                 }
             })
 
             if (signal.aborted) return
+            console.log(legend)
             geojsonLayer.data.layerLegendStyle = legend
             geojsonLayer.fire('legendUpdated')
         }
