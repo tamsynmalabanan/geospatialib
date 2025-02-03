@@ -571,7 +571,7 @@ const handleMapLegend = (map) => {
 
                             const labelSpan = document.createElement('span')
                             label.appendChild(labelSpan)
-                            labelSpan.innerText = styles.label
+                            labelSpan.innerText = group.label
 
                             const countSpan = document.createElement('span')
                             countSpan.className = `layer-feature-count ${layer.data.showFeatureCount === 'true' ? '' : 'd-none'}`
