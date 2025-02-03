@@ -49,10 +49,7 @@ const createGeoJSONLayer = (data) => {
 
     const geojsonLayer = getDefaultGeoJSONLayer()
 
-    const getLayerTitle = () => {
-        console.log(data.legendLabel, data.layerTitle)
-        return data.legendLabel || data.layerTitle
-    }
+    const getLayerTitle = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle
     geojsonLayer.data = data
     geojsonLayer.data.layerLegendStyle = true
     geojsonLayer.cacheKey = cacheKey
