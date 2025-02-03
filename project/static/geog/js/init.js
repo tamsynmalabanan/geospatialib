@@ -534,6 +534,7 @@ const handleMapLegend = (map) => {
                 legendContainer.appendChild(attribution)
 
                 if (layer.data.layerLegendStyle) {
+                    console.log(layer.data.layerLegendStyle)
                     const legendCollapse = legendContainer.querySelector('.collapse')
 
                     layer.on('fetchingData', () => {
