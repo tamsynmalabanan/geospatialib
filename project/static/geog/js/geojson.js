@@ -49,18 +49,17 @@ const getDefaultGeoJSONLayer = (options={}) => {
                         header: typeof popupHeader === 'function' ? popupHeader() : popupHeader
                 })
                 
-                if (typeof popupHeader === 'function') {
-                    layer.on('click', () => {
-                        propertiesTable.querySelector('th').innerText = popupHeader()
-                        console.log(propertiesTable.querySelector('th').innerText)
-                    })
-                }
-
                 const popup = layer.bindPopup(propertiesTable.outerHTML, {
                     autoPan: false,
                 })
+                
+                if (typeof popupHeader === 'function') {
+                    layer.on('popupopen', () => {
+                        layer._popup._contentNode.querySelector('th').innerText = popupHeader()
+                    })
+                }
 
-                console.log(popup)
+                console.log(layer._popu)
                 
                 if (popup){
                     popup.openPopup()
