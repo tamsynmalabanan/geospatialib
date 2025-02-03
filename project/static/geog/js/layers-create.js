@@ -143,33 +143,33 @@ const createGeoJSONLayer = (data) => {
                 if (!geojson.processed) {
                     geojson.processed = true
 
-                    // const mapScale = getMeterScale(map)
-                    // const mapZoom = map.getZoom()    
-                    // const featureCount = geojson.features.length
+                    const mapScale = getMeterScale(map)
+                    const mapZoom = map.getZoom()    
+                    const featureCount = geojson.features.length
                     
-                    // if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10)) {
-                    //     if (featureCount > 1000) {
-                    //         const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
-                    //         const feature = turf.polygonToLine(boundsGeoJSON)
-                    //         geojson.features = [feature]
-                    //         geojson.prefix = 'Bounding'
+                    if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
+                        if (featureCount > 10000) {
+                            const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
+                            const feature = turf.polygonToLine(boundsGeoJSON)
+                            geojson.features = [feature]
+                            geojson.prefix = 'Bounding'
                             
-                    //         let totalMatched = 'features'
-                    //         const numberMatched = geojson.numberMatched
-                    //         const numberReturned = geojson.numberReturned
-                    //         if (numberMatched && numberReturned && numberMatched !== numberReturned) {
-                    //             totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
-                    //         }
+                            let totalMatched = 'features'
+                            const numberMatched = geojson.numberMatched
+                            const numberReturned = geojson.numberReturned
+                            if (numberMatched && numberReturned && numberMatched !== numberReturned) {
+                                totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
+                            }
                             
-                    //         geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-                    //     } else if (geojson.prefix !== 'Bounding') {
-                    //         try {
-                    //             if (signal.aborted) return
-                    //             geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                    //             geojson.prefix = 'Simplified'
-                    //         } catch {}
-                    //     }
-                    // }
+                            geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
+                        } else if (geojson.prefix !== 'Bounding') {
+                            try {
+                                if (signal.aborted) return
+                                geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                                geojson.prefix = 'Simplified'
+                            } catch {}
+                        }
+                    }
                     
                     if (signal.aborted) return
                     await handleGeoJSON(geojson)
