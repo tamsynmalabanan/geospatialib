@@ -241,11 +241,12 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
     
-        data.layer.data.removeWhiteBg = data.layer.data.removeWhiteBg === 'true' ? 'false' : 'true'
+        const checked = event.target.checked
+        data.layer.data.removeWhiteBg = checked ? 'true' : 'false'
         if (data.map.getLayerGroups('legend').hasLayer(data.layer)) {
             const container = data.layerLegend.querySelector(`#${data.layerLegend.id}_collapse`)
             container.innerHTML = ''
-            container.appendChild(data.layer.data.removeWhiteBg === 'true' ? (await removeImageBackground(
+            container.appendChild(checked ? (await removeImageBackground(
                 data.layer.data.layerLegendUrl, {
                     alt: 'Legend not found.',
                     className: 'layer-legend-img'

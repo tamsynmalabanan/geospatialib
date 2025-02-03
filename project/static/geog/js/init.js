@@ -574,7 +574,6 @@ const handleMapLegend = (map) => {
 
                             const countSpan = document.createElement('span')
                             countSpan.className = `layer-feature-count ${layer.data.showFeatureCount === 'true' ? '' : 'd-none'}`
-                            console.log(countSpan.className, layer.data.showFeatureCount)
                             label.appendChild(countSpan)
                             countSpan.innerText = `(${formatNumberWithCommas(style.count)})`
     
