@@ -448,6 +448,7 @@ const fetchWFSData = async (event, layer, options={}) => {
         request: 'GetFeature',
         typeNames: layer.data.layerName,
         outputFormat: 'json',
+        count: 10000,
     }
 
     let crs = layer.data.layerCrs

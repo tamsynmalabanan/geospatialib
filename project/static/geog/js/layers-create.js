@@ -143,9 +143,9 @@ const createGeoJSONLayer = (data) => {
                 if (!geojson.processed) {
                     geojson.processed = true
 
-                    const mapScale = getMeterScale(map)
-                    const mapZoom = map.getZoom()    
-                    const featureCount = geojson.features.length
+                    // const mapScale = getMeterScale(map)
+                    // const mapZoom = map.getZoom()    
+                    // const featureCount = geojson.features.length
                     
                     // if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 10)) {
                     //     if (featureCount > 1000) {
