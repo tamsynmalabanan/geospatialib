@@ -52,13 +52,9 @@ const getDefaultGeoJSONLayer = (options={}) => {
                         })() : popupHeader
                 })
                 
-                const popup = layer.bindPopup(propertiesTable.outerHTML, {
+                layer.bindPopup(propertiesTable.outerHTML, {
                     autoPan: false,
-                })
-                
-                if (popup){
-                    popup.openPopup()
-                }
+                }).openPopup()
                 
                 layer.off('click', createPopup)
             }
