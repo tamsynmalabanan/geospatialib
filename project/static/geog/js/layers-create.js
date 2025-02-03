@@ -50,8 +50,7 @@ const createGeoJSONLayer = (data) => {
     const geojsonLayer = getDefaultGeoJSONLayer()
 
     const getLayerTitle = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle
-    // geojsonLayer.data = data
-    // geojsonLayer.data.layerLegendStyle = true
+    geojsonLayer.popupHeader = getLayerTitle    
     data.layerLegendStyle = true
     geojsonLayer.cacheKey = cacheKey
         
@@ -198,10 +197,10 @@ const createGeoJSONLayer = (data) => {
                 geojsonLayer._openPopups = []
             }
             
-            geojsonLayer.eachLayer(feature => {
-                if (signal.aborted) return
-                feature.popupHeader = getLayerTitle
-            })
+            // geojsonLayer.eachLayer(feature => {
+            //     if (signal.aborted) return
+            //     feature.popupHeader = getLayerTitle
+            // })
             
             let legend = {}
             geojsonLayer.eachLayer(feature => {
