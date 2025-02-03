@@ -45,7 +45,6 @@ const createWFSLayer = (data) => {
 }
 
 const createGeoJSONLayer = (data) => {
-    console.log(data)
     data.layerLegendStyle = !data.layerLegendStyle ? "true" : data.layerLegendStyle
 
     const geojsonLayer = getDefaultGeoJSONLayer()
