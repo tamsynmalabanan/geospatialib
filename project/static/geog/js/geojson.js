@@ -52,6 +52,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
                 if (typeof popupHeader === 'function') {
                     layer.on('click', () => {
                         propertiesTable.querySelector('th').innerText = popupHeader()
+                        console.log(propertiesTable.querySelector('th').innerText)
                     })
                 }
 
