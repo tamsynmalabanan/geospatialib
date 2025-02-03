@@ -201,7 +201,6 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
                 feature.popupHeader = getLayerTitle
-                geojson.tooltip && feature.bindTooltip(geojson.tooltip, {sticky:true})
             })
             
             let legend = {}
