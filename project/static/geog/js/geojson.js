@@ -5,6 +5,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
     }
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
+        renderer: L.canvas(),
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },

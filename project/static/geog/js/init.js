@@ -584,10 +584,7 @@ const handleMapLegend = (map) => {
                             } else {
                                 icon.style.width = '15px'
                                 
-                                let color = styleDef.color
-                                if (!color) {
-                                    color = 'hsla(0, 100%, 50%, 1)'
-                                }
+                                const color = styleDef.color || 'hsla(0, 100%, 50%, 1)'
     
                                 const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
                                 
