@@ -52,7 +52,7 @@ const createGeoJSONLayer = (data) => {
     const getLayerTitle = () => data.legendLabel || data.layerTitle
     geojsonLayer.data = data
     geojsonLayer.data.layerLegendStyle = true
-    // geojsonLayer.data.popupHeader = getLayerTitle()
+    // geojsonLayer.popupHeader = getLayerTitle()
     geojsonLayer.cacheKey = cacheKey
     
     const defaultTooltip = `Zoom in to load ${getLayerTitle()} features.`
@@ -204,7 +204,7 @@ const createGeoJSONLayer = (data) => {
             
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
-                feature.data.popupHeader = getLayerTitle()
+                feature.popupHeader = getLayerTitle()
                 geojson.tooltip && feature.bindTooltip(geojson.tooltip, {sticky:true})
             })
             

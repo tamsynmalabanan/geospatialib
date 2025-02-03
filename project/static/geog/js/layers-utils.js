@@ -362,7 +362,7 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
         })
 
         layer.eachLayer(feature => {
-            feature.data.popupHeader = `${layer.title}: ${feature.title}`
+            feature.popupHeader = `${layer.title}: ${feature.title}`
             const layerToggle = handler(feature, collapse, feature.feature, feature.title)
             const layerCheckbox = layerToggle.querySelector('input')
             layerCheckbox.addEventListener('click', (event) => {
