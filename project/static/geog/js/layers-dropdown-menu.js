@@ -114,14 +114,14 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
             form.setAttribute('data-leaflet-id', currentLayer._leaflet_id)
             form.setAttribute('data-map-id', mapId)
 
+            form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
             form.elements.layerLabel.value = legend.querySelector('.legend-layer-label').innerText
             
+            form.elements.toggleAttribution.checked = currentLayer.data.showAttribution !== 'false' //!legend.lastChild.classList.contains('d-none')
             const attribution = legend.lastChild.querySelector('a')
             form.elements.attributionName.value = attribution.innerText
             form.elements.attributionLink.value = attribution.getAttribute('href')
 
-            form.elements.toggleLegend.checked = !legend.classList.contains('d-none')
-            form.elements.toggleAttribution.checked = !legend.lastChild.classList.contains('d-none')
 
             const featureCountField = form.elements.toggleFeatureCount
             isGeoJSONLayer ? featureCountField.parentElement.classList.remove('d-none') : featureCountField.parentElement.classList.add('d-none')
@@ -220,6 +220,7 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
 
+        data.layer.data.showAttribution = event.target.checked ? 'true' : 'false'
         const attribution = data.layerLegend.lastChild
         attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
     })

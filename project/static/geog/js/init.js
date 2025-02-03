@@ -529,7 +529,7 @@ const handleMapLegend = (map) => {
                 legendHeader.insertBefore(dropdown, legendHeader.lastChild)
 
                 const attribution = document.createElement('span')
-                attribution.className = 'm-0 fs-12 text-wrap font-monospace'
+                attribution.className = `m-0 fs-12 text-wrap font-monospace ${layer.data.showAttribution === 'false' ? 'd-none' : ''}`
                 attribution.innerHTML = layer.data.legendAttribution || `Data © <a href='${layer.data.layerUrl}' target='_blank'>${getDomain(layer.data.layerUrl)}</a>`
                 legendContainer.appendChild(attribution)
 
@@ -574,6 +574,7 @@ const handleMapLegend = (map) => {
 
                             const countSpan = document.createElement('span')
                             countSpan.className = `layer-feature-count ${layer.data.showFeatureCount === 'true' ? '' : 'd-none'}`
+                            console.log(countSpan.className, layer.data.showFeatureCount)
                             label.appendChild(countSpan)
                             countSpan.innerText = `(${formatNumberWithCommas(style.count)})`
     
