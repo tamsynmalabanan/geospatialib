@@ -534,7 +534,6 @@ const handleMapLegend = (map) => {
                 legendContainer.appendChild(attribution)
 
                 if (layer.data.layerLegendStyle) {
-                    console.log(layer.data.layerLegendStyle)
                     const legendCollapse = legendContainer.querySelector('.collapse')
 
                     layer.on('fetchingData', () => {
@@ -554,7 +553,6 @@ const handleMapLegend = (map) => {
                         if (typeof styles !== 'object') return
                         
                         Object.keys(styles).forEach(group => {
-                            console.log(group)
                             const style = styles[group]
     
                             const container = document.createElement('div')
@@ -572,7 +570,7 @@ const handleMapLegend = (map) => {
 
                             const labelSpan = document.createElement('span')
                             label.appendChild(labelSpan)
-                            labelSpan.innerText = group.label
+                            labelSpan.innerText = style.label
 
                             const countSpan = document.createElement('span')
                             countSpan.className = `layer-feature-count ${layer.data.showFeatureCount === 'true' ? '' : 'd-none'}`
