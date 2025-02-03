@@ -45,14 +45,11 @@ const createWFSLayer = (data) => {
 }
 
 const createGeoJSONLayer = (data) => {
-    const cacheKey = `${data.layerUrl}_${data.layerFormat}_${data.layerName}`
+    data.layerLegendStyle = true
 
     const geojsonLayer = getDefaultGeoJSONLayer()
-
-    const getLayerTitle = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle
-    geojsonLayer.popupHeader = getLayerTitle    
-    data.layerLegendStyle = true
-    geojsonLayer.cacheKey = cacheKey
+    geojsonLayer.popupHeader = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle    
+    geojsonLayer.cacheKey = `${data.layerUrl}_${data.layerFormat}_${data.layerName}`
         
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
@@ -82,7 +79,7 @@ const createGeoJSONLayer = (data) => {
             if (queryBounds) {
                 if (signal.aborted) return
                 geojson = await (async () => {
-                    const cachedGeoJSONStrings = getLayersViaCacheKey(map, cacheKey)
+                    const cachedGeoJSONStrings = getLayersViaCacheKey(map, geojsonLayer.cacheKey)
                     .map(layer => layer.cachedGeoJSON)
                     .filter(cachedGeoJSONString => cachedGeoJSONString)                    
                     if (cachedGeoJSONStrings.length === 0) return
@@ -196,11 +193,6 @@ const createGeoJSONLayer = (data) => {
                 geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
                 geojsonLayer._openPopups = []
             }
-            
-            // geojsonLayer.eachLayer(feature => {
-            //     if (signal.aborted) return
-            //     feature.popupHeader = getLayerTitle
-            // })
             
             let legend = {}
             geojsonLayer.eachLayer(feature => {
