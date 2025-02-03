@@ -220,18 +220,20 @@ const layerPropertiesFormHandler = () => {
         const data = handler()
         if (!data) return
 
-        data.layer.data.showAttribution = event.target.checked ? 'true' : 'false'
+        const checked = event.target.checked
+        data.layer.data.showAttribution = checked ? 'true' : 'false'
         const attribution = data.layerLegend.lastChild
-        attribution && (event.target.checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
+        attribution && (checked ? attribution.classList.remove('d-none') : attribution.classList.add('d-none'))    
     })
 
     form.elements.toggleFeatureCount.addEventListener('change', (event) => {
         const data = handler()
         if (!data) return
     
-        data.layer.data.showFeatureCount = data.layer.data.showFeatureCount === 'true' ? 'false' : 'true' 
+        const checked = event.target.checked
+        data.layer.data.showFeatureCount = checked ? 'true' : 'false' 
         data.layerLegend.querySelectorAll('.layer-feature-count')?.forEach(span => {
-            data.layer.data.showFeatureCount === 'true' ? span.classList.remove('d-none') : span.classList.add('d-none')
+            checked ? span.classList.remove('d-none') : span.classList.add('d-none')
         })
     })
 
