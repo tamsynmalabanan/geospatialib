@@ -46,7 +46,7 @@ const createWFSLayer = (data) => {
 
 const createGeoJSONLayer = (data) => {
     console.log(data)
-    data.layerLegendStyle = true
+    data.layerLegendStyle = !data.layerLegendStyle ? true : data.layerLegendStyle
 
     const geojsonLayer = getDefaultGeoJSONLayer()
     geojsonLayer.popupHeader = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle    
