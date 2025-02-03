@@ -554,6 +554,7 @@ const handleMapLegend = (map) => {
                         if (typeof styles !== 'object') return
                         
                         Object.keys(styles).forEach(group => {
+                            console.log(group)
                             const style = styles[group]
     
                             const container = document.createElement('div')
