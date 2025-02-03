@@ -58,8 +58,6 @@ const getDefaultGeoJSONLayer = (options={}) => {
                         layer._popup._contentNode.querySelector('th').innerText = popupHeader()
                     })
                 }
-
-                console.log(layer._popu)
                 
                 if (popup){
                     popup.openPopup()

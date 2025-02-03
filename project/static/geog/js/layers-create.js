@@ -50,8 +50,9 @@ const createGeoJSONLayer = (data) => {
     const geojsonLayer = getDefaultGeoJSONLayer()
 
     const getLayerTitle = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle
-    geojsonLayer.data = data
-    geojsonLayer.data.layerLegendStyle = true
+    // geojsonLayer.data = data
+    // geojsonLayer.data.layerLegendStyle = true
+    data.layerLegendStyle = true
     geojsonLayer.cacheKey = cacheKey
     
     const defaultTooltip = `Zoom in to load ${getLayerTitle()} features.`
