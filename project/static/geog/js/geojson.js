@@ -46,18 +46,15 @@ const getDefaultGeoJSONLayer = (options={}) => {
             const createPopup = () => {
                 const popupHeader = layer.popupHeader || geojsonLayer.popupHeader
                 const propertiesTable = createFeaturePropertiesTable(feature.properties, {
-                        header: typeof popupHeader === 'function' ? popupHeader() : popupHeader
+                        header: typeof popupHeader === 'function' ? (() => {
+                            layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                            return popupHeader()
+                        })() : popupHeader
                 })
                 
                 const popup = layer.bindPopup(propertiesTable.outerHTML, {
                     autoPan: false,
                 })
-                
-                if (typeof popupHeader === 'function') {
-                    layer.on('popupopen', () => {
-                        layer._popup._contentNode.querySelector('th').innerText = popupHeader()
-                    })
-                }
                 
                 if (popup){
                     popup.openPopup()
