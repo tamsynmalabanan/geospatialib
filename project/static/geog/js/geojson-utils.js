@@ -239,11 +239,15 @@ const simplifyPointGeoJSON = async (geojson, maxDistance) => {
         minPoints: 2
     })
 
-    const test = turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-        console.log(cluster, clusterValue, currentIndex)
+    const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
+    turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
+        features.push(turf.centroid(cluster, {
+            properties: {
+                cluster: clusterValue,
+                count: cluster.features.length
+            }
+        }))
     })
-
-    console.log(test)
 }
 
 const simplifyPathGeoJSON = async (geojson) => {
