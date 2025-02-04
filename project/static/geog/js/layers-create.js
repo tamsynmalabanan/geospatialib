@@ -88,7 +88,7 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.eachLayer(feature => {
                 if (signal.aborted) return
 
-                const type = geojson.prefix === 'Bounding' ? 'Box' : feature.feature.geometry.type.replace('Multi', '')
+                const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
                 const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
                 
                 if (!Object.keys(legend).includes(group)) {
