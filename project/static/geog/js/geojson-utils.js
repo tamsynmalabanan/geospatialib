@@ -189,7 +189,10 @@ const getGeoJSON = async (event) => {
         //     } else {
         //         try {
         //             if (signal.aborted) return
-        //             geojson = turf.simplify(geojson, { tolerance: 0.01 })
+        //             geojson = turf.simplify(geojson, {
+        //                  tolerance: 0.01,
+        //                  mutate: true,
+        //             })
         //             geojson.prefix = 'Simplified'
         //         } catch {}
         //     }
@@ -224,19 +227,19 @@ const simplifyGeoJSON = async (geojson, map) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, map)
-    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON, map)
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, getMeterScale(map)/1000/10)
+    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
 }
 
-const simplifyPointGeoJSON = async (geojson, map) => {
-    const maxDistance = getMeterScale(map)/1000/10
-    const clustered = turf.clustersDbscan(geojson, maxDistance)
-    console.log(clustered, maxDistance)
-    
+const simplifyPointGeoJSON = async (geojson, maxDistance) => {
+    turf.clustersDbscan(geojson, maxDistance, {
+        mutate: true,
+        minPoints: 2
+    })
 }
 
-const simplifyPathGeoJSON = async (geojson, map) => {
+const simplifyPathGeoJSON = async (geojson) => {
     console.log(simplifyPathGeoJSON)
 }
