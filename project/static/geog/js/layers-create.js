@@ -90,7 +90,6 @@ const createGeoJSONLayer = (data) => {
 
                 const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
                 const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
-                console.log(geojson, group)
                 
                 if (!Object.keys(legend).includes(group)) {
                     legend[group] = {
