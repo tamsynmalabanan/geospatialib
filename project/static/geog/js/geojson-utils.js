@@ -230,11 +230,12 @@ const simplifyGeoJSON = async (geojson, map) => {
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
 }
 
-const simplifyPointGeoJSON = async (geojson) => {
-    console.log(simplifyPointGeoJSON)
+const simplifyPointGeoJSON = async (geojson, map) => {
+    const clustered = turf.clustersDbscan(geojson, getMeterScale(map)/1000/10)
+    console.log(geojson, clustered)
     
 }
 
-const simplifyPathGeoJSON = async (geojson) => {
+const simplifyPathGeoJSON = async (geojson, map) => {
     console.log(simplifyPathGeoJSON)
 }
