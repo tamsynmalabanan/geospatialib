@@ -62,6 +62,7 @@ const createGeoJSONLayer = (data) => {
     })
     
     geojsonLayer.on('add', (event) => {
+        console.log(event)
         const map = event.target._map
         let abortController = new AbortController()
     
