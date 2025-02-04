@@ -89,14 +89,13 @@ const createGeoJSONLayer = (data) => {
                 if (signal.aborted) return
 
                 const type = geojson.prefix === 'Bounding' ? 'Box' : feature.feature.geometry.type.replace('Multi', '')
-                const group = type === 'Point' ? type : Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
+                const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
                 
                 if (!Object.keys(legend).includes(group)) {
-                    const style = type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style()
                     legend[group] = {
                         label: group,
                         type: type,
-                        style: style,
+                        style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
                         count: geojson.prefix === 'Aggregate' && feature.properties.dbscan !== 'noise' ? feature.properties.count : 1,
                     }
                 } else {
