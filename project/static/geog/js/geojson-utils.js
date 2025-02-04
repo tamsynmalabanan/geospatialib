@@ -87,9 +87,10 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
-// const getGeoJSON = async (event) => {
-//     const geojsonLayer = event.target
-//     const map = event.target._map
+// const getGeoJSON = async (geojsonLayer, signal) => {
+//     const map = geojsonLayer._map
+//     const data = geojsonLayer.data
+
 //     const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
 //     const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
 //     const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds

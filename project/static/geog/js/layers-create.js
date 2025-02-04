@@ -62,9 +62,9 @@ const createGeoJSONLayer = (data) => {
     })
     
     geojsonLayer.on('add', (event) => {
-        console.log(event)
         const map = event.target._map
-        let abortController = new AbortController()
+        // let abortController = new AbortController()
+        geojsonLayer.abortController = new AbortController()
     
         const handler = async (signal) => {
             if (signal.aborted) return
@@ -72,6 +72,8 @@ const createGeoJSONLayer = (data) => {
             
             geojsonLayer.fire('fetchingData')
             
+            // const geojson = await getGeoJSON(geojsonLayer, signal)
+
             const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
             const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
@@ -128,7 +130,7 @@ const createGeoJSONLayer = (data) => {
 
                     delete geojsonLayer.cachedGeoJSON
                     
-                    geojson = await fetchLibraryData(event, geojsonLayer, options={controller:abortController})
+                    geojson = await fetchLibraryData(event, geojsonLayer, options={controller:geojsonLayer.abortController})
                     if (!geojson) {
                         if (!layerBounds) return
                         geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
@@ -224,12 +226,12 @@ const createGeoJSONLayer = (data) => {
         let handlerTimeout
         const handlerOnTimeout = () => {
             clearTimeout(handlerTimeout);
-            handlerTimeout = setTimeout(() => handler(abortController.signal), 1000);
+            handlerTimeout = setTimeout(() => handler(geojsonLayer.abortController.signal), 1000);
         };
     
         const abortHandler = () => {
-            abortController.abort('Map moved or layer removed');
-            abortController = new AbortController();
+            geojsonLayer.abortController.abort('Map moved or layer removed');
+            geojsonLayer.abortController = new AbortController();
         };
         
         map.on('moveend zoomend', handlerOnTimeout)
