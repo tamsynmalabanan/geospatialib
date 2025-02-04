@@ -166,13 +166,12 @@ const getGeoJSON = async (event) => {
     
     if (signal.aborted) return
     if (!geojson.processed && geojson.prefix !== 'Bounding') {
-        simplifyGeoJSON(geojson, map)
-        geojson.processed = true
-
         const mapScale = getMeterScale(map)
         const mapZoom = map.getZoom()    
         const featureCount = geojson.features.length
         
+        featureCount > 1000 && (mapScale > 10000 || mapZoom < 9) && simplifyGeoJSON(geojson, map)
+
         if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 6)) {
             if (featureCount > 1000) {
                 const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
@@ -199,6 +198,7 @@ const getGeoJSON = async (event) => {
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
+        geojson.processed = true
     }
 
     if (signal.aborted) return
@@ -214,13 +214,13 @@ const simplifyGeoJSON = async (geojson, map) => {
     const mapZoom = map.getZoom()    
     const featureCount = geojson.features.length
 
-    const pointFeatures = []
-    const otherFeatures = []
+    const pointsGeoJSON = turf.featureCollection([])
+    const othersGeoJSON = turf.featureCollection([])
 
     geojson.features.forEach(feature => {
         const type = feature.geometry.type.toLowerCase()
-        type.includes('point') ? pointFeatures.push(feature) : otherFeatures.push(feature)
+        type.includes('point') ? pointsGeoJSON.features.push(feature) : othersGeoJSON.features.push(feature)
     })
 
-    console.log(otherFeatures, pointFeatures)
+    console.log(pointsGeoJSON, othersGeoJSON)
 }
