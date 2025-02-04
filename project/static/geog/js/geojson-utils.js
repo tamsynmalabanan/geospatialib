@@ -224,8 +224,8 @@ const simplifyGeoJSON = async (geojson, map) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON)
-    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, map)
+    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON, map)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
 }
