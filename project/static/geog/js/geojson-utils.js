@@ -234,8 +234,6 @@ const simplifyGeoJSON = async (geojson, map) => {
 }
 
 const simplifyPointGeoJSON = async (geojson, maxDistance) => {
-    geojson.prefix = 'Aggregate'
-
     turf.clustersDbscan(geojson, maxDistance, {
         mutate: true,
         minPoints: 2
@@ -252,6 +250,7 @@ const simplifyPointGeoJSON = async (geojson, maxDistance) => {
     })
 
     geojson.features = features
+    geojson.prefix = 'Aggregate'
 }
 
 const simplifyPathGeoJSON = async (geojson) => {
