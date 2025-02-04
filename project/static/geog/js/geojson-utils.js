@@ -238,6 +238,12 @@ const simplifyPointGeoJSON = async (geojson, maxDistance) => {
         mutate: true,
         minPoints: 2
     })
+
+    const test = turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
+        console.log(cluster, clusterValue, currentIndex)
+    })
+
+    console.log(test)
 }
 
 const simplifyPathGeoJSON = async (geojson) => {
