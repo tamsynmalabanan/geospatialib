@@ -166,6 +166,7 @@ const getGeoJSON = async (event) => {
     
     if (signal.aborted) return
     if (!geojson.processed && geojson.prefix !== 'Bounding') {
+        simplifyGeoJSON(geojson, map)
         geojson.processed = true
 
         const mapScale = getMeterScale(map)
@@ -209,4 +210,23 @@ const getGeoJSON = async (event) => {
     }
 
     return geojson
+}
+
+const simplifyGeoJSON = async (geojson, map) => {
+    const mapScale = getMeterScale(map)
+    const mapZoom = map.getZoom()    
+    const featureCount = geojson.features.length
+
+    const polygonFeatures = []
+    const lineFeatures = []
+    const pointFeatures = []
+
+    geojson.features.forEach(feature => {
+        const type = feature.geometry.type.toLowerCase()
+        if (type.includes('polygon')) polygonFeatures.push(feature)
+        if (type.includes('line')) lineFeatures.push(feature)
+        if (type.includes('point')) pointFeatures.push(feature)
+    })
+
+    console.log(polygonFeatures, lineFeatures, pointFeatures)
 }
