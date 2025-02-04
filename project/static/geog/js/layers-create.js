@@ -74,6 +74,7 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.fire('fetchingData')
             
             const geojson = await getGeoJSON(event)
+            console.log(geojson)
 
             // const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
             // const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
