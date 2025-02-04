@@ -166,35 +166,36 @@ const getGeoJSON = async (event) => {
     
     if (signal.aborted) return
     if (!geojson.processed && !geojson.prefix) {
-        const mapScale = getMeterScale(map)
-        const mapZoom = map.getZoom()    
-        const featureCount = geojson.features.length
+        // const mapScale = getMeterScale(map)
+        // const mapZoom = map.getZoom()    
+        // const featureCount = geojson.features.length
         
-        featureCount > 1000 && (mapScale > 10000 || mapZoom < 9) && simplifyGeoJSON(geojson, map)
 
-        if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 6)) {
-            if (featureCount > 1000) {
-                const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
-                const feature = turf.polygonToLine(boundsGeoJSON)
-                geojson.features = [feature]
-                geojson.prefix = 'Bounding'
+        // if ((mapScale && mapScale > 10000) || (!mapScale && mapZoom < 6)) {
+        //     if (featureCount > 1000) {
+        //         const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
+        //         const feature = turf.polygonToLine(boundsGeoJSON)
+        //         geojson.features = [feature]
+        //         geojson.prefix = 'Bounding'
                 
-                let totalMatched = 'features'
-                const numberMatched = geojson.numberMatched
-                const numberReturned = geojson.numberReturned
-                if (numberMatched && numberReturned && numberMatched !== numberReturned) {
-                    totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
-                }
+        //         let totalMatched = 'features'
+        //         const numberMatched = geojson.numberMatched
+        //         const numberReturned = geojson.numberReturned
+        //         if (numberMatched && numberReturned && numberMatched !== numberReturned) {
+        //             totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
+        //         }
                 
-                geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-            } else {
-                try {
-                    if (signal.aborted) return
-                    geojson = turf.simplify(geojson, { tolerance: 0.01 })
-                    geojson.prefix = 'Simplified'
-                } catch {}
-            }
-        }
+        //         geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
+        //     } else {
+        //         try {
+        //             if (signal.aborted) return
+        //             geojson = turf.simplify(geojson, { tolerance: 0.01 })
+        //             geojson.prefix = 'Simplified'
+        //         } catch {}
+        //     }
+        // }
+
+        geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
@@ -231,6 +232,7 @@ const simplifyGeoJSON = async (geojson, map) => {
 
 const simplifyPointGeoJSON = async (geojson) => {
     console.log(simplifyPointGeoJSON)
+    
 }
 
 const simplifyPathGeoJSON = async (geojson) => {
