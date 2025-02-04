@@ -90,16 +90,17 @@ const createGeoJSONLayer = (data) => {
 
                 const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
                 const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
+                const properties = feature.feature.properties
                 
                 if (!Object.keys(legend).includes(group)) {
                     legend[group] = {
                         label: group,
                         type: type,
                         style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
-                        count: geojson.prefix === 'Aggregate' && feature.feature.properties.dbscan !== 'noise' ? feature.properties.count : 1,
+                        count: geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1,
                     }
                 } else {
-                    legend[group].count += geojson.prefix === 'Aggregate' && feature.feature.properties.dbscan !== 'noise' ? feature.properties.count : 1
+                    legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
                 }
             })
 
