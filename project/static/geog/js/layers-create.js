@@ -96,7 +96,7 @@ const createGeoJSONLayer = (data) => {
                         label: group,
                         type: type,
                         style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
-                        count: geojson.prefix === 'Aggregate' && feature.properties.dbscan !== 'noise' ? feature.properties.count : 1,
+                        count: geojson.prefix === 'Aggregate' && feature.feature.properties.dbscan !== 'noise' ? feature.properties.count : 1,
                     }
                 } else {
                     legend[group].count += geojson.prefix === 'Aggregate' && feature.properties.dbscan !== 'noise' ? feature.properties.count : 1
