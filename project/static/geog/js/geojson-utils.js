@@ -167,7 +167,6 @@ const getGeoJSON = async (event) => {
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
         geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
-        console.log(geojson)
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
@@ -182,11 +181,7 @@ const getGeoJSON = async (event) => {
     return geojson
 }
 
-const simplifyGeoJSON = async (geojson, map) => {
-    const mapScale = getMeterScale(map)
-    const mapZoom = map.getZoom()    
-    const featureCount = geojson.features.length
-
+const simplifyGeoJSON = (geojson, map) => {
     const pointsGeoJSON = turf.featureCollection([])
     const pathsGeoJSON = turf.featureCollection([])
 
@@ -203,7 +198,7 @@ const simplifyGeoJSON = async (geojson, map) => {
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
 }
 
-const simplifyPointGeoJSON = async (geojson, maxDistance) => {
+const simplifyPointGeoJSON = (geojson, maxDistance) => {
     turf.clustersDbscan(geojson, maxDistance, {
         mutate: true,
         minPoints: 2
@@ -223,11 +218,10 @@ const simplifyPointGeoJSON = async (geojson, maxDistance) => {
     geojson.prefix = 'Aggregate'
 }
 
-const simplifyPathGeoJSON = async (geojson) => {
-    console.log(simplifyPathGeoJSON)
-    //             geojson = turf.simplify(geojson, {
-    //                  tolerance: 0.01,
-    //                  mutate: true,
-    //             })
-    //             geojson.prefix = 'Simplified'
+const simplifyPathGeoJSON = (geojson) => {
+    turf.simplify(geojson, {
+        tolerance: 0.01,
+        mutate: true,
+    })
+    geojson.prefix = 'Simplified'
 }
