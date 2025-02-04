@@ -200,7 +200,7 @@ const simplifyGeoJSON = async (geojson, map) => {
     pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
-    geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix || '').join('')
+    geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
 }
 
 const simplifyPointGeoJSON = async (geojson, maxDistance) => {
