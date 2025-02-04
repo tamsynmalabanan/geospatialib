@@ -116,7 +116,7 @@ const getGeoJSON = async (event) => {
             const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
             if (!cachedGeoJSON) {continue}
             
-            if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
+            if (cachedGeoJSON.prefix) {continue}
             
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
@@ -203,10 +203,7 @@ const getGeoJSON = async (event) => {
 
     if (signal.aborted) return
     if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
-        geojsonLayer.cachedGeoJSON 
-        = Array('Bounding', 'Simplified').includes(geojson.prefix)
-        ? geojson.cachedGeoJSON
-        : JSON.stringify(geojson)
+        geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
     }
 
     return geojson
@@ -217,16 +214,13 @@ const simplifyGeoJSON = async (geojson, map) => {
     const mapZoom = map.getZoom()    
     const featureCount = geojson.features.length
 
-    const polygonFeatures = []
-    const lineFeatures = []
     const pointFeatures = []
+    const otherFeatures = []
 
     geojson.features.forEach(feature => {
         const type = feature.geometry.type.toLowerCase()
-        if (type.includes('polygon')) polygonFeatures.push(feature)
-        if (type.includes('line')) lineFeatures.push(feature)
-        if (type.includes('point')) pointFeatures.push(feature)
+        type.includes('point') ? pointFeatures.push(feature) : otherFeatures.push(feature)
     })
 
-    console.log(polygonFeatures, lineFeatures, pointFeatures)
+    console.log(otherFeatures, pointFeatures)
 }
