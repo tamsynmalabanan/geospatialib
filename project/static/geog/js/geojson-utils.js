@@ -87,122 +87,126 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
-// const getGeoJSON = async (geojsonLayer, signal) => {
-//     const map = geojsonLayer._map
-//     const data = geojsonLayer.data
+const getGeoJSON = async (event) => {
+    const geojsonLayer = event.target
+    const controller = geojsonLayer.abortController
+    const signal = controller.signal
+    const map = geojsonLayer._map
+    const data = geojsonLayer.data
 
-//     const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-//     const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
-//     const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
+    const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
+    const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
+    const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
 
-//     let geojson
+    let geojson
 
-//     if (queryBounds) {
-//         if (signal.aborted) return
-//         geojson = await (async () => {
-//             const cachedGeoJSONStrings = getLayersViaCacheKey(map, geojsonLayer.cacheKey)
-//             .map(layer => layer.cachedGeoJSON)
-//             .filter(cachedGeoJSONString => cachedGeoJSONString)                    
-//             if (cachedGeoJSONStrings.length === 0) return
+    if (queryBounds) {
+        if (signal.aborted) return
+        geojson = await (async () => {
+            const cachedGeoJSONStrings = getLayersViaCacheKey(map, geojsonLayer.cacheKey)
+            .map(layer => layer.cachedGeoJSON)
+            .filter(cachedGeoJSONString => cachedGeoJSONString)                    
+            if (cachedGeoJSONStrings.length === 0) return
             
-//             for (const cachedGeoJSONString of cachedGeoJSONStrings) {
-//                 if (signal.aborted) return
+            for (const cachedGeoJSONString of cachedGeoJSONStrings) {
+                if (signal.aborted) return
                 
-//                 const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-//                 if (!cachedGeoJSON) {continue}
-//                 if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
+                const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                if (!cachedGeoJSON) {continue}
                 
-//                 try {
-//                     const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
-//                     const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
-//                     if (!equalBounds && !withinBounds) {continue}
-//                 } catch {
-//                     return
-//                 }
+                if (Array('Bounding', 'Simplified').includes(cachedGeoJSON.prefix)) {continue}
                 
-//                 if (!geojsonLayer.cachedGeoJSON) {
-//                     geojsonLayer.cachedGeoJSON = cachedGeoJSONString
-//                 }
+                try {
+                    const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
+                    const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
+                    if (!equalBounds && !withinBounds) {continue}
+                } catch {
+                    return
+                }
                 
-//                 let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-//                 const crs = getGeoJSONCRS(cachedGeoJSON)
-//                 if (crs && crs !== 4326) {
-//                     if (signal.aborted) return
-//                     filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-//                 }
+                if (!geojsonLayer.cachedGeoJSON) {
+                    geojsonLayer.cachedGeoJSON = cachedGeoJSONString
+                }
                 
-//                 cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-//                     if (signal.aborted) return
-//                     return turf.booleanIntersects(filterBounds, feature)
-//                 })
+                let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                const crs = getGeoJSONCRS(cachedGeoJSON)
+                if (crs && crs !== 4326) {
+                    if (signal.aborted) return
+                    filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                }
                 
-//                 return cachedGeoJSON
-//             }
+                cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                    if (signal.aborted) return
+                    return turf.booleanIntersects(filterBounds, feature)
+                })
+                
+                return cachedGeoJSON
+            }
 
-//             return
-//         })()
+            return
+        })()
 
-//         if (!geojson) {
-//             if (signal.aborted) return
+        if (!geojson) {
+            if (signal.aborted) return
 
-//             delete geojsonLayer.cachedGeoJSON
+            delete geojsonLayer.cachedGeoJSON
             
-//             geojson = await fetchLibraryData(event, geojsonLayer, options={controller:abortController})
-//             if (!geojson) {
-//                 if (!layerBounds) return
-//                 geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
-//                 geojson.prefix = 'Bounding'
-//             } else {
-//                 geojson.mapBounds = mapBounds
-//                 if (geojson.features.length > 0) {
-//                     geojson.cachedGeoJSON = JSON.stringify(geojson)
-//                 }
-//             }
-//         }
+            geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
+            if (!geojson) {
+                if (!layerBounds) return
+                geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
+                geojson.prefix = 'Bounding'
+            } else {
+                geojson.mapBounds = mapBounds
+                if (geojson.features.length > 0) {
+                    geojson.cachedGeoJSON = JSON.stringify(geojson)
+                }
+            }
+        }
         
-//         if (!geojson.processed) {
-//             geojson.processed = true
+        if (!geojson.processed) {
+            geojson.processed = true
 
-//             const mapScale = getMeterScale(map)
-//             const mapZoom = map.getZoom()    
-//             const featureCount = geojson.features.length
+            const mapScale = getMeterScale(map)
+            const mapZoom = map.getZoom()    
+            const featureCount = geojson.features.length
             
-//             if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
-//                 if (featureCount > 10000) {
-//                     const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
-//                     const feature = turf.polygonToLine(boundsGeoJSON)
-//                     geojson.features = [feature]
-//                     geojson.prefix = 'Bounding'
+            if ((mapScale && mapScale > 100000) || (!mapScale && mapZoom < 6)) {
+                if (featureCount > 10000) {
+                    const boundsGeoJSON = L.rectangle(L.geoJSON(geojson).getBounds()).toGeoJSON()
+                    const feature = turf.polygonToLine(boundsGeoJSON)
+                    geojson.features = [feature]
+                    geojson.prefix = 'Bounding'
                     
-//                     let totalMatched = 'features'
-//                     const numberMatched = geojson.numberMatched
-//                     const numberReturned = geojson.numberReturned
-//                     if (numberMatched && numberReturned && numberMatched !== numberReturned) {
-//                         totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
-//                     }
+                    let totalMatched = 'features'
+                    const numberMatched = geojson.numberMatched
+                    const numberReturned = geojson.numberReturned
+                    if (numberMatched && numberReturned && numberMatched !== numberReturned) {
+                        totalMatched = `returned of ${formatNumberWithCommas(numberMatched)} matched features`
+                    }
                     
-//                     geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
-//                 } else if (geojson.prefix !== 'Bounding') {
-//                     try {
-//                         if (signal.aborted) return
-//                         geojson = turf.simplify(geojson, { tolerance: 0.01 })
-//                         geojson.prefix = 'Simplified'
-//                     } catch {}
-//                 }
-//             }
+                    geojson.suffix = `for ${formatNumberWithCommas(featureCount)} ${totalMatched}`
+                } else if (geojson.prefix !== 'Bounding') {
+                    try {
+                        if (signal.aborted) return
+                        geojson = turf.simplify(geojson, { tolerance: 0.01 })
+                        geojson.prefix = 'Simplified'
+                    } catch {}
+                }
+            }
             
-//             if (signal.aborted) return
-//             await handleGeoJSON(geojson)
-//         }
+            if (signal.aborted) return
+            await handleGeoJSON(geojson)
+        }
 
-//         if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
-//             if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
-//                 geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
-//             } else {
-//                 geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
-//             }
-//         }
-//     } else {
-//         geojson = turf.featureCollection([])
-//     }
-// }
+        if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
+            if (Array('Bounding', 'Simplified').includes(geojson.prefix)) {
+                geojsonLayer.cachedGeoJSON = geojson.cachedGeoJSON
+            } else {
+                geojsonLayer.cachedGeoJSON = JSON.stringify(geojson)
+            }
+        }
+    } else {
+        geojson = turf.featureCollection([])
+    }
+}
