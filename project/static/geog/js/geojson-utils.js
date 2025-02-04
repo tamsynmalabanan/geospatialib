@@ -209,4 +209,6 @@ const getGeoJSON = async (event) => {
     } else {
         geojson = turf.featureCollection([])
     }
+
+    return geojson
 }
