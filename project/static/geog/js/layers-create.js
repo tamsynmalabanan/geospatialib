@@ -97,10 +97,10 @@ const createGeoJSONLayer = (data) => {
                         label: group,
                         type: type,
                         style: style,
-                        count: 1,
+                        count: geojson.prefix === 'Aggregate' && feature.properties.dbscan !== 'noise' ? feature.properties.count : 1,
                     }
                 } else {
-                    legend[group].count += 1 
+                    legend[group].count += geojson.prefix === 'Aggregate' && feature.properties.dbscan !== 'noise' ? feature.properties.count : 1
                 }
             })
 
