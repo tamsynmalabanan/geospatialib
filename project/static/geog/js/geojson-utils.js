@@ -234,22 +234,25 @@ const simplifyGeoJSON = async (geojson, map) => {
 }
 
 const simplifyPointGeoJSON = async (geojson, maxDistance) => {
-    turf.clustersDbscan(geojson, maxDistance, {
-        mutate: true,
-        minPoints: 2
-    })
+    // geojson.prefix = 'Aggregate'
+    // geojson.count = geojson.features.length
 
-    const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
-    turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-        features.push(turf.centroid(cluster, {
-            properties: {
-                cluster: clusterValue,
-                count: cluster.features.length
-            }
-        }))
-    })
+    // turf.clustersDbscan(geojson, maxDistance, {
+    //     mutate: true,
+    //     minPoints: 2
+    // })
 
-    geojson.features = features
+    // const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
+    // turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
+    //     features.push(turf.centroid(cluster, {
+    //         properties: {
+    //             cluster: clusterValue,
+    //             count: cluster.features.length
+    //         }
+    //     }))
+    // })
+
+    // geojson.features = features
 }
 
 const simplifyPathGeoJSON = async (geojson) => {
