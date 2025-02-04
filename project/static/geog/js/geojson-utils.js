@@ -218,12 +218,13 @@ const simplifyGeoJSON = async (geojson, map) => {
     const pathsGeoJSON = turf.featureCollection([])
 
     geojson.features.forEach(feature => {
-        const type = feature.geometry.type.toLowerCase()
-        type.includes('point') ? pointsGeoJSON.features.push(feature) : pathsGeoJSON.features.push(feature)
+        feature.geometry.type.toLowerCase().includes('point') 
+        ? pointsGeoJSON.features.push(feature) 
+        : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON()
-    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON()
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON)
+    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
 }
