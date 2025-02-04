@@ -231,8 +231,9 @@ const simplifyGeoJSON = async (geojson, map) => {
 }
 
 const simplifyPointGeoJSON = async (geojson, map) => {
-    const clustered = turf.clustersDbscan(geojson, getMeterScale(map)/1000/10)
-    console.log(geojson, clustered)
+    const maxDistance = getMeterScale(map)/1000/10
+    const clustered = turf.clustersDbscan(geojson, maxDistance)
+    console.log(clustered, maxDistance)
     
 }
 
