@@ -165,7 +165,7 @@ const getGeoJSON = async (event) => {
     }
     
     if (signal.aborted) return
-    if (!geojson.processed && geojson.prefix !== 'Bounding') {
+    if (!geojson.processed && !geojson.prefix) {
         const mapScale = getMeterScale(map)
         const mapZoom = map.getZoom()    
         const featureCount = geojson.features.length
@@ -215,12 +215,23 @@ const simplifyGeoJSON = async (geojson, map) => {
     const featureCount = geojson.features.length
 
     const pointsGeoJSON = turf.featureCollection([])
-    const othersGeoJSON = turf.featureCollection([])
+    const pathsGeoJSON = turf.featureCollection([])
 
     geojson.features.forEach(feature => {
         const type = feature.geometry.type.toLowerCase()
-        type.includes('point') ? pointsGeoJSON.features.push(feature) : othersGeoJSON.features.push(feature)
+        type.includes('point') ? pointsGeoJSON.features.push(feature) : pathsGeoJSON.features.push(feature)
     })
 
-    console.log(pointsGeoJSON, othersGeoJSON)
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON()
+    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON()
+
+    geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
+}
+
+const simplifyPointGeoJSON = async (geojson) => {
+    console.log(simplifyPointGeoJSON)
+}
+
+const simplifyPathGeoJSON = async (geojson) => {
+    console.log(simplifyPathGeoJSON)
 }
