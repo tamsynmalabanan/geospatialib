@@ -248,6 +248,8 @@ const simplifyPointGeoJSON = async (geojson, maxDistance) => {
             }
         }))
     })
+
+    geojson.features = features
 }
 
 const simplifyPathGeoJSON = async (geojson) => {
