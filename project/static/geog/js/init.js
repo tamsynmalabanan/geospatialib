@@ -607,7 +607,7 @@ const handleMapLegend = (map) => {
                                     box.className = 'h-0 w-100'
                                 }
                                 
-                                if (Array('Polygon', 'Box').includes(style.type)) {
+                                if (Array('Polygon').includes(style.type)) {
                                     box.className = 'h-100 w-100'
     
                                     const fillColor = styleDef.fillColor
