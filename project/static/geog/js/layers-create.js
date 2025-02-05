@@ -60,10 +60,6 @@ const createGeoJSONLayer = (data) => {
         geojsonLayer._openPopups = geojsonLayer._openPopups.filter(popup => popup !== event.popup)
     })
     
-    geojsonLayer.on('dataUpdated', (event) => {
-        console.log(event)
-    })
-
     geojsonLayer.on('add', (event) => {
         const map = event.target._map
         geojsonLayer.abortController = new AbortController()
@@ -77,40 +73,36 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.fire('fetchingData')
            
             if (signal.aborted) return
-            // const geojson = await updateGeoJSONData(event)
-            updateGeoJSONDataWorker.postMessage({
-                mapId: map.getContainer().id,
-                leafletId: geojsonLayer._leaflet_id
-            });
+            const geojson = await updateGeoJSONData(event)
             
-            // if (geojsonLayer._openPopups.length > 0) {
-            //     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
-            //     geojsonLayer._openPopups = []
-            // }
+            if (geojsonLayer._openPopups.length > 0) {
+                geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
+                geojsonLayer._openPopups = []
+            }
             
-            // let legend = {}
-            // geojsonLayer.eachLayer(feature => {
-            //     if (signal.aborted) return
+            let legend = {}
+            geojsonLayer.eachLayer(feature => {
+                if (signal.aborted) return
 
-            //     const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
-            //     const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
-            //     const properties = feature.feature.properties
+                const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
+                const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
+                const properties = feature.feature.properties
                 
-            //     if (!Object.keys(legend).includes(group)) {
-            //         legend[group] = {
-            //             label: group,
-            //             type: type,
-            //             style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
-            //             count: geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1,
-            //         }
-            //     } else {
-            //         legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
-            //     }
-            // })
+                if (!Object.keys(legend).includes(group)) {
+                    legend[group] = {
+                        label: group,
+                        type: type,
+                        style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
+                        count: geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1,
+                    }
+                } else {
+                    legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
+                }
+            })
 
-            // if (signal.aborted) return
-            // geojsonLayer.data.layerLegendStyle = legend
-            // geojsonLayer.fire('legendUpdated')
+            if (signal.aborted) return
+            geojsonLayer.data.layerLegendStyle = legend
+            geojsonLayer.fire('legendUpdated')
         }
         
         let handlerTimeout
