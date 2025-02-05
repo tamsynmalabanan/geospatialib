@@ -104,6 +104,8 @@ const updateGeoJSONData = async (event) => {
     const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
     if (!queryBounds) return turf.featureCollection([])
 
+    console.log('fetching...')
+
     let geojson
 
     if (signal.aborted) return
@@ -166,6 +168,9 @@ const updateGeoJSONData = async (event) => {
         }
     }
     
+    console.log('fetch', geojson.features.length)
+    console.log('processing...')
+
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
         geojson.features = geojson.features.length > 100 ? geojson.features.slice(0,100) : geojson.features
@@ -176,10 +181,15 @@ const updateGeoJSONData = async (event) => {
         geojson.processed = true
     }
 
+    console.log('done processing')
+    console.log('caching...')
+
     if (signal.aborted) return
     if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
         geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
     }
+
+    console.log('done caching')
 
     if (signal.aborted) return
     geojsonLayer.clearLayers()
