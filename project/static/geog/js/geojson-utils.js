@@ -1,3 +1,8 @@
+const updateGeoJSONDataWorker = new Worker('worker/geojson-update-data.js');
+// updateGeoJSONDataWorker.onmessage = function (e) {
+//     console.log(e);
+// };
+
 const getDefaultGeoJSONLayer = (options={}) => {
     let color = options.color
     if (!color) {
@@ -86,13 +91,8 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
-const updateGeoJSONDataWorker = new Worker('geojson-update-data.js');
-updateGeoJSONDataWorker.onmessage = function (e) {
-    console.log(e);
-};
-
 const updateGeoJSONData = async (event) => {
-    updateGeoJSONDataWorker.postMessage(event);
+    updateGeoJSONDataWorker.postMessage();
     
     const geojsonLayer = event.target
     const data = geojsonLayer.data
