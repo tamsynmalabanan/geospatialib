@@ -173,7 +173,11 @@ const updateGeoJSONData = async (event) => {
 
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
-        geojson.features = geojson.features.length > 100 ? geojson.features.slice(0,100) : geojson.features
+
+        if (geojson.features.length > 100) {
+            geojson.features = geojson.features.slice(0,100)
+            geojson.prefix = 'Sliced'
+        }
         // geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
         
         if (signal.aborted) return
