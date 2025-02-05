@@ -183,6 +183,8 @@ const updateGeoJSONData = async (event) => {
     return geojson
 }
 
+const worker = new Worker('geojson-simplify-worker.js');
+
 const simplifyGeoJSON = (geojson, map) => {
     const pointsGeoJSON = turf.featureCollection([])
     const pathsGeoJSON = turf.featureCollection([])
@@ -200,11 +202,8 @@ const simplifyGeoJSON = (geojson, map) => {
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
 }
 
-const worker = new Worker('geojson-simplify-worker.js');
-
 // try using web workers
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
-    console.log('start')
     // turf.clustersDbscan(geojson, maxDistance, {
     //     mutate: true,
     //     minPoints: 2
@@ -224,21 +223,13 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
     // geojson.prefix = 'Aggregate'
     
     
-    // worker.onmessage = function (e) {
-        //     const geojson = e.data;
-        //     // Handle the processed geojson here
-        //     console.log('Processed GeoJSON:', geojson);
-        // };
+    worker.onmessage = function (e) {
+        const geojson = e.data;
+        // Handle the processed geojson here
+        console.log('Processed GeoJSON:', geojson);
+    };
         
     worker.postMessage({ geojson, maxDistance });
-    console.log('end')
-    // function simplifyPointGeoJSON(geojson, maxDistance) {
-    // }
-
-    // Example usage
-    // const geojson = /* your large GeoJSON object */;
-    // const maxDistance = /* your max distance */;
-    // simplifyPointGeoJSON(geojson, maxDistance);
 }
 
 const simplifyPathGeoJSON = (geojson) => {
