@@ -1,4 +1,4 @@
-const updateGeoJSONDataWorker = new Worker('worker/geojson-update-data.js');
+const updateGeoJSONDataWorker = new Worker('geojson-update-data-worker.js');
 // updateGeoJSONDataWorker.onmessage = function (e) {
 //     console.log(e);
 // };
