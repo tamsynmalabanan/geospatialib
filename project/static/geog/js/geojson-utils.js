@@ -209,8 +209,8 @@ const simplifyGeoJSON = (geojson, map) => {
 
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
     console.log('start')
-    turf.clustersDbscan(geojson, maxDistance, {
-        mutate: true,
+    geojson = turf.clustersDbscan(geojson, maxDistance, {
+        // mutate: true,
         minPoints: 2
     })
     
