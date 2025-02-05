@@ -148,7 +148,6 @@ const updateGeoJSONData = async (event) => {
     if (signal.aborted) return
     if (!geojson) {
         delete geojsonLayer.cachedGeoJSON
-        
         geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
         if (!geojson) {
             if (!layerBounds) return
@@ -201,27 +200,45 @@ const simplifyGeoJSON = (geojson, map) => {
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
 }
 
+const worker = new Worker('geojson-simplify-worker.js');
+
 // try using web workers
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
-    console.log('start')
-    turf.clustersDbscan(geojson, maxDistance, {
-        mutate: true,
-        minPoints: 2
-    })
+    // console.log('start')
+    // turf.clustersDbscan(geojson, maxDistance, {
+    //     mutate: true,
+    //     minPoints: 2
+    // })
     
-    const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
-    turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-        features.push(turf.centroid(cluster, {
-            properties: {
-                cluster: clusterValue,
-                count: cluster.features.length
-            }
-        }))
-    })
+    // const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
+    // turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
+    //     features.push(turf.centroid(cluster, {
+    //         properties: {
+    //             cluster: clusterValue,
+    //             count: cluster.features.length
+    //         }
+    //     }))
+    // })
     
-    geojson.features = features
-    geojson.prefix = 'Aggregate'
-    console.log('end')
+    // geojson.features = features
+    // geojson.prefix = 'Aggregate'
+    // console.log('end')
+
+
+    // worker.onmessage = function (e) {
+    //     const geojson = e.data;
+    //     // Handle the processed geojson here
+    //     console.log('Processed GeoJSON:', geojson);
+    // };
+
+    worker.postMessage({ geojson, maxDistance });
+    // function simplifyPointGeoJSON(geojson, maxDistance) {
+    // }
+
+    // Example usage
+    // const geojson = /* your large GeoJSON object */;
+    // const maxDistance = /* your max distance */;
+    // simplifyPointGeoJSON(geojson, maxDistance);
 }
 
 const simplifyPathGeoJSON = (geojson) => {
