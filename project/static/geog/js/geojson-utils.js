@@ -230,7 +230,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
     
     geojson.features = features
     geojson.prefix = 'Aggregate'
-    console.log('end')
+    console.log('end', geojson)
 }
 
 const simplifyPathGeoJSON = (geojson) => {
