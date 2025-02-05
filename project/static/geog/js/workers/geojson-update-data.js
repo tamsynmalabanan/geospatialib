@@ -1,4 +1,3 @@
-self.onmessage = async function (e) {
-    console.log(e)
-    self.postMessage(e);
+self.onmessage = (message) => {
+    console.log(message)
 };
