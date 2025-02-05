@@ -86,8 +86,7 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
-const getGeoJSON = async (event) => {
-    const geojsonLayer = event.target
+const updateGeoJSONData = async (geojsonLayer) => {
     const data = geojsonLayer.data
 
     const controller = geojsonLayer.abortController
@@ -162,8 +161,6 @@ const getGeoJSON = async (event) => {
             }
         }
     }
-
-    console.log(geojson)
     
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
@@ -178,6 +175,10 @@ const getGeoJSON = async (event) => {
     if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
         geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
     }
+
+    if (signal.aborted) return
+    geojsonLayer.clearLayers()
+    geojsonLayer.addData(geojson)
 
     return geojson
 }
