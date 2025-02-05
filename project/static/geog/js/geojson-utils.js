@@ -1,4 +1,7 @@
 const updateGeoJSONDataWorker = new Worker('geojson-update-data-worker.js');
+updateGeoJSONDataWorker.onmessage = (message) => {
+    console.log(message)
+}
 
 const getDefaultGeoJSONLayer = (options={}) => {
     let color = options.color
@@ -174,11 +177,7 @@ const updateGeoJSONData = async (event) => {
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
 
-        if (geojson.features.length > 100) {
-            geojson.features = geojson.features.slice(0,100)
-            geojson.prefix = 'Sliced'
-        }
-        // geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
+        geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
