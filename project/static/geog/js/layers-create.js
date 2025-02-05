@@ -78,6 +78,7 @@ const createGeoJSONLayer = (data) => {
            
             if (signal.aborted) return
             // const geojson = await updateGeoJSONData(event)
+            console.log(event)
             updateGeoJSONDataWorker.postMessage(event);
             
             // if (geojsonLayer._openPopups.length > 0) {
