@@ -78,8 +78,10 @@ const createGeoJSONLayer = (data) => {
            
             if (signal.aborted) return
             // const geojson = await updateGeoJSONData(event)
-            console.log(event)
-            updateGeoJSONDataWorker.postMessage(event);
+            updateGeoJSONDataWorker.postMessage({
+                mapId: map.getContainer().id,
+                leafletId: geojsonLayer._leaflet_id
+            });
             
             // if (geojsonLayer._openPopups.length > 0) {
             //     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))

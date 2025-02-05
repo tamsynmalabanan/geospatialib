@@ -1,14 +1,13 @@
 onmessage = async (message) => {
     console.log(message)
 
-    const event = message.data
-    const geojsonLayer = event.target
+    const map = mapQuerySelector(`#${message.data.mapId}`)
+    const geojsonLayer = map.getLayerGroups('legend').getLayer(message.data.leafletId)
     const data = geojsonLayer.data
 
     const controller = geojsonLayer.abortController
     const signal = controller.signal
     
-    const map = geojsonLayer._map
     const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
     const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
     
@@ -65,7 +64,10 @@ onmessage = async (message) => {
     if (signal.aborted) return
     if (!geojson) {
         delete geojsonLayer.cachedGeoJSON
-        geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
+        geojson = await fetchLibraryData({
+            type: 'add',
+            target: geojsonLayer
+        }, geojsonLayer, options={controller:controller})
         if (!geojson) {
             if (!layerBounds) return
             geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
