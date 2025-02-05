@@ -1,4 +1,5 @@
 self.onmessage = async function (e) {
+    console.log(e)
     const { geojson, maxDistance } = e.data;
 
     turf.clustersDbscan(geojson, maxDistance, {
