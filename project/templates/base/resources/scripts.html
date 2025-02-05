@@ -48,6 +48,7 @@
     <script>
         if ('Worker' in window) {
             const worker = new Worker("{% static 'geog/js/geojson-update-data-worker.js' %}");
+            console.log(worker)
             worker.onmessage = (event) => {
               console.log('Message received from worker:', event.data);
             };
