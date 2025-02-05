@@ -225,6 +225,8 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
     })
         
     const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
+    if (features.length === geojson.features.length) return
+
     turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
         features.push(turf.centroid(cluster, {
             properties: {
