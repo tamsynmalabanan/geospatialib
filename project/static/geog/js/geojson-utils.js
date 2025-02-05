@@ -5,7 +5,7 @@ const getDefaultGeoJSONLayer = (options={}) => {
     }
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        renderer: L.canvas(),
+        // renderer: L.canvas(),
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
@@ -198,6 +198,7 @@ const simplifyGeoJSON = (geojson, map) => {
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
 }
 
+// try using web workers
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
     console.log('start')
     turf.clustersDbscan(geojson, maxDistance, {
@@ -221,9 +222,11 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
 }
 
 const simplifyPathGeoJSON = (geojson) => {
+    console.log('start')
     turf.simplify(geojson, {
         tolerance: 0.01,
         mutate: true,
     })
     geojson.prefix = 'Simplified'
+    console.log('end')
 }
