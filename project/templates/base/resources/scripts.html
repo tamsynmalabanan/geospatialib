@@ -44,5 +44,17 @@
     <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>
     
     <script type="text/javascript" src="{% static 'library/js/add_dataset.js' %}"></script>
+
+    <script>
+        if ('Worker' in window) {
+            console.log("{% static 'geog/js/geojson-update-data-worker.js' %}")
+            const worker = new Worker("{% static 'geog/js/geojson-update-data-worker.js' %}");
+            worker.onmessage = (event) => {
+              console.log('Message received from worker:', event.data);
+            };
+        } else {
+            console.log('Your browser does not support Web Workers');
+        }
+    </script>
 {% endwith %}
 
