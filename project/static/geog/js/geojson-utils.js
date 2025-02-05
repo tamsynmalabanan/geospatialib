@@ -183,13 +183,6 @@ const updateGeoJSONData = async (event) => {
     return geojson
 }
 
-const worker = new Worker('geojson-simplify-worker.js');
-worker.onmessage = function (e) {
-    const geojson = e.data;
-    // Handle the processed geojson here
-    console.log('Processed GeoJSON:', geojson);
-};
-
 const simplifyGeoJSON = (geojson, map) => {
     const pointsGeoJSON = turf.featureCollection([])
     const pathsGeoJSON = turf.featureCollection([])
@@ -207,37 +200,30 @@ const simplifyGeoJSON = (geojson, map) => {
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
 }
 
-// try using web workers
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
-    // turf.clustersDbscan(geojson, maxDistance, {
-    //     mutate: true,
-    //     minPoints: 2
-    // })
+    turf.clustersDbscan(geojson, maxDistance, {
+        mutate: true,
+        minPoints: 2
+    })
     
-    // const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
-    // turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-    //     features.push(turf.centroid(cluster, {
-    //         properties: {
-    //             cluster: clusterValue,
-    //             count: cluster.features.length
-    //         }
-    //     }))
-    // })
+    const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
+    turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
+        features.push(turf.centroid(cluster, {
+            properties: {
+                cluster: clusterValue,
+                count: cluster.features.length
+            }
+        }))
+    })
     
-    // geojson.features = features
-    // geojson.prefix = 'Aggregate'
-    
-    
-        
-    worker.postMessage({ geojson, maxDistance });
+    geojson.features = features
+    geojson.prefix = 'Aggregate'
 }
 
 const simplifyPathGeoJSON = (geojson) => {
-    console.log('start')
     turf.simplify(geojson, {
         tolerance: 0.01,
         mutate: true,
     })
     geojson.prefix = 'Simplified'
-    console.log('end')
 }
