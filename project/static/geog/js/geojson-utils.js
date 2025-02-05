@@ -184,6 +184,11 @@ const updateGeoJSONData = async (event) => {
 }
 
 const worker = new Worker('geojson-simplify-worker.js');
+worker.onmessage = function (e) {
+    const geojson = e.data;
+    // Handle the processed geojson here
+    console.log('Processed GeoJSON:', geojson);
+};
 
 const simplifyGeoJSON = (geojson, map) => {
     const pointsGeoJSON = turf.featureCollection([])
@@ -223,11 +228,6 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
     // geojson.prefix = 'Aggregate'
     
     
-    worker.onmessage = function (e) {
-        const geojson = e.data;
-        // Handle the processed geojson here
-        console.log('Processed GeoJSON:', geojson);
-    };
         
     worker.postMessage({ geojson, maxDistance });
 }
