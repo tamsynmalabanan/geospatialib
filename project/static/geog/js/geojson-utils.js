@@ -1,7 +1,9 @@
-// const updateGeoJSONDataWorker = new Worker('geojson-update-data-worker.js');
-// updateGeoJSONDataWorker.onmessage = (message) => {
-//     console.log(message)
-// }
+const worker = new Worker("/static/geog/js/geojson-update-data-worker.js");
+worker.onmessage = (event) => {
+  console.log('Message received from worker:', event.data);
+};
+worker.postMessage('Hello, worker!');
+
 
 const getDefaultGeoJSONLayer = (options={}) => {
     let color = options.color

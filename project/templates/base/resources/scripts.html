@@ -45,12 +45,5 @@
     
     <script type="text/javascript" src="{% static 'library/js/add_dataset.js' %}"></script>
 
-    <script>
-        const worker = new Worker("/static/geog/js/geojson-update-data-worker.js");
-        worker.onmessage = (event) => {
-          console.log('Message received from worker:', event.data);
-        };
-        worker.postMessage('Hello, worker!');
-    </script>
 {% endwith %}
 
