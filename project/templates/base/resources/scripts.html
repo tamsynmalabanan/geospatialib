@@ -47,11 +47,11 @@
 
     <script>
         if ('Worker' in window) {
-            console.log("{% static 'geog/js/geojson-update-data-worker.js' %}")
             const worker = new Worker("{% static 'geog/js/geojson-update-data-worker.js' %}");
             worker.onmessage = (event) => {
               console.log('Message received from worker:', event.data);
             };
+            worker.postMessage('Hello, worker!');
         } else {
             console.log('Your browser does not support Web Workers');
         }
