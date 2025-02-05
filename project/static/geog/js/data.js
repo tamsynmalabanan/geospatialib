@@ -1,9 +1,7 @@
-const getOSMGeoJSON = (features) => {
-    return (() => {
-        const geojson = turf.featureCollection(features)
-        geojson.licence = "Data © <a href='http://osm.org/copyright' target='_blank'>OpenStreetMap contributors, ODbL 1.0.</a>"
-        return geojson
-    })()
+const defaultOSMGeoJSON = (features) => {
+    const geojson = turf.featureCollection(features)
+    geojson.licence = "Data © <a href='http://osm.org/copyright' target='_blank'>OpenStreetMap contributors, ODbL 1.0.</a>"
+    return geojson
 }
 
 const fetchProj4Def = async (crs, options={}) => {
@@ -40,7 +38,7 @@ const fetchOSMData = async (event, options={}) => {
         }
     })
 
-    return getOSMGeoJSON(features)
+    return defaultOSMGeoJSON(features)
 }
 
 const fetchOSMDataInBbox = async (bbox, options={}) => {
@@ -93,7 +91,7 @@ const fetchOSMDataInBbox = async (bbox, options={}) => {
         if (data) {
             const filteredElements = data.elements.filter(element => Object.keys(element).includes('tags'))
             data.elements = filteredElements
-            return getOSMGeoJSON(overpassOSMDataToGeoJSON(data))
+            return defaultOSMGeoJSON(overpassOSMDataToGeoJSON(data))
         }
     })
     .catch(error => {
