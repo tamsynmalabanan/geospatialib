@@ -5,7 +5,6 @@ const getDefaultGeoJSONLayer = (options={}) => {
     }
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        // renderer: L.canvas(),
         pointToLayer: (geoJsonPoint, latlng) => {
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
         },
@@ -163,6 +162,8 @@ const getGeoJSON = async (event) => {
             }
         }
     }
+
+    console.log(geojson)
     
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
