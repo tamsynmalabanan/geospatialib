@@ -73,7 +73,7 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.fire('fetchingData')
            
             if (signal.aborted) return
-            const geojson = await updateGeoJSONData(geojsonLayer)
+            const geojson = await updateGeoJSONData(event)
 
             // if (signal.aborted) return
             // geojsonLayer.clearLayers()

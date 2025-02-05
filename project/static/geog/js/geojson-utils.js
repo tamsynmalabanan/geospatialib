@@ -86,7 +86,8 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
-const updateGeoJSONData = async (geojsonLayer) => {
+const updateGeoJSONData = async (event) => {
+    const geojsonLayer = event.target
     const data = geojsonLayer.data
 
     const controller = geojsonLayer.abortController
