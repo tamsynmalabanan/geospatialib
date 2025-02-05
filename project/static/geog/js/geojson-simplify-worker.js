@@ -1,7 +1,6 @@
 self.onmessage = async function (e) {
     const { geojson, maxDistance } = e.data;
 
-    console.log('start');
     turf.clustersDbscan(geojson, maxDistance, {
         mutate: true,
         minPoints: 2
@@ -19,7 +18,6 @@ self.onmessage = async function (e) {
 
     geojson.features = features;
     geojson.prefix = 'Aggregate';
-    console.log('end');
 
     self.postMessage(geojson);
 };

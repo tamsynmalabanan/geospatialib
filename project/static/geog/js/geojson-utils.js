@@ -204,7 +204,7 @@ const worker = new Worker('geojson-simplify-worker.js');
 
 // try using web workers
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
-    // console.log('start')
+    console.log('start')
     // turf.clustersDbscan(geojson, maxDistance, {
     //     mutate: true,
     //     minPoints: 2
@@ -222,16 +222,16 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
     
     // geojson.features = features
     // geojson.prefix = 'Aggregate'
-    // console.log('end')
-
-
+    
+    
     // worker.onmessage = function (e) {
-    //     const geojson = e.data;
-    //     // Handle the processed geojson here
-    //     console.log('Processed GeoJSON:', geojson);
-    // };
-
+        //     const geojson = e.data;
+        //     // Handle the processed geojson here
+        //     console.log('Processed GeoJSON:', geojson);
+        // };
+        
     worker.postMessage({ geojson, maxDistance });
+    console.log('end')
     // function simplifyPointGeoJSON(geojson, maxDistance) {
     // }
 
