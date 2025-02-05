@@ -1,3 +1,5 @@
+importScripts("/static/geog/js/maps.js")
+
 onmessage = async (message) => {
     console.log(message)
 
