@@ -1,5 +1,5 @@
-const worker = new Worker("/static/geog/js/geojson-update-data-worker.js");
-worker.onmessage = (event) => {
+const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-worker.js");
+updateGeoJSONDataWorker.onmessage = (event) => {
   console.log('Message received from worker:', event.data);
 };
 
@@ -92,7 +92,7 @@ const downloadGeoJSON = (geojson, file_name) => {
 }
 
 const updateGeoJSONData = async (event) => {
-    worker.postMessage('Hello, worker!');
+    updateGeoJSONDataWorker.postMessage('Hello, worker!');
 
     const geojsonLayer = event.target
     const data = geojsonLayer.data
