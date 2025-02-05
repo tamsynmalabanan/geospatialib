@@ -92,7 +92,7 @@ const downloadGeoJSON = (geojson, file_name) => {
 }
 
 const updateGeoJSONData = async (event) => {
-    updateGeoJSONDataWorker.postMessage();
+    updateGeoJSONDataWorker.postMessage(event);
     
     const geojsonLayer = event.target
     const data = geojsonLayer.data
