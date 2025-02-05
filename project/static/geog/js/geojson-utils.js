@@ -184,7 +184,7 @@ const updateGeoJSONData = async (event) => {
         geojson.processed = true
     }
 
-    console.log('done processing')
+    console.log('done processing', geojson.features.length)
     console.log('caching...')
 
     if (signal.aborted) return
