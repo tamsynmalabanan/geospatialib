@@ -86,7 +86,14 @@ const downloadGeoJSON = (geojson, file_name) => {
     URL.revokeObjectURL(url)
 }
 
+const updateGeoJSONDataWorker = new Worker('geojson-update-data.js');
+updateGeoJSONDataWorker.onmessage = function (e) {
+    console.log(e);
+};
+
 const updateGeoJSONData = async (event) => {
+    updateGeoJSONDataWorker.postMessage(event);
+    
     const geojsonLayer = event.target
     const data = geojsonLayer.data
 
