@@ -3,8 +3,6 @@ worker.onmessage = (event) => {
   console.log('Message received from worker:', event.data);
 };
 
-
-
 const getDefaultGeoJSONLayer = (options={}) => {
     let color = options.color
     if (!color) {
@@ -95,7 +93,7 @@ const downloadGeoJSON = (geojson, file_name) => {
 
 const updateGeoJSONData = async (event) => {
     worker.postMessage('Hello, worker!');
-    
+
     const geojsonLayer = event.target
     const data = geojsonLayer.data
 
