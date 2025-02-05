@@ -1,3 +1,8 @@
+// const updateGeoJSONDataWorker = new Worker('geojson-update-data-worker.js');
+// updateGeoJSONDataWorker.onmessage = (message) => {
+//     console.log(message)
+// }
+
 const getDefaultGeoJSONLayer = (options={}) => {
     let color = options.color
     if (!color) {
