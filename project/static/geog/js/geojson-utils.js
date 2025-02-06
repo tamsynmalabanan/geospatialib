@@ -115,25 +115,20 @@ const updateGeoJSONData = async (event) => {
         if (signal.aborted) return
         geojson = await (async () => {
             const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
-            console.log(cachedGeoJSON)
             if (!cachedGeoJSON) return
             
-            console.log(cachedGeoJSON.prefix)
             if (cachedGeoJSON.prefix) return
             
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                 const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
-                console.log(equalBounds, withinBounds)
                 if (!equalBounds && !withinBounds) return
             } catch (error) {
-                console.log(error)
                 return
             }
             
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
-            console.log(filterBounds, crs)
             if (crs && crs !== 4326) {
                 if (signal.aborted) return
                 filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
