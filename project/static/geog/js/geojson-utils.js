@@ -203,7 +203,7 @@ const simplifyGeoJSON = (geojson, map) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, getMeterScale(map)/1000/20)
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, getMeterScale(map)/1000/10)
     pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
