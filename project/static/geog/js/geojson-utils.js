@@ -96,7 +96,6 @@ const updateGeoJSONData = async (event) => {
     if (!geojsonLayer || !data || !map) return
 
     const mapKey = getLayerMapKey(geojsonLayer)
-    console.log(mapKey)
     if (updateGeoJSONDataMap.has(mapKey)) {
         return await updateGeoJSONDataMap.get(mapKey)
     }
@@ -116,10 +115,10 @@ const updateGeoJSONData = async (event) => {
         if (signal.aborted) return
         geojson = await (async () => {
             const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
+            console.log(cachedGeoJSON)
             if (!cachedGeoJSON) return
             
             if (cachedGeoJSON.prefix) return
-            console.log(cachedGeoJSON)
             
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
