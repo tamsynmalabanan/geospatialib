@@ -118,53 +118,7 @@ const getCookie = (name) => {
     return cookieValue
 }
 
-// const cacheDataToSessionStorage = (key, data) => {
-//     try {
-//         sessionStorage.setItem(key, data)
-//         return data
-//     } catch (error) {
-//         sessionStorage.clear()
-//         try {
-//             sessionStorage.setItem(key, data)
-//             return data
-//         } catch {
-//             sessionStorage.removeItem(key)
-//         }
-//     }
-// }
-
-// const cacheResponse = async (response, cacheKey) => {
-//     const data = await response.clone().text();
-//     cacheDataToSessionStorage(`${cacheKey}_data`, data)
-    
-//     const headers = {}
-//     for (const [key, value] of response.headers.entries()) {
-//         headers[key] = value; 
-//     }
-//     const headersString = JSON.stringify(headers)
-//     cacheDataToSessionStorage(`${cacheKey}_headers`, headersString)
-
-//     return new Response(new Blob([data]), {
-//         status: 200, 
-//         statusText: 'OK', 
-//         headers: new Headers(headers) }
-//     ); 
-// }
-
-// const fetchCachedResponse = (cacheKey) => {
-//     const cachedData = sessionStorage.getItem(`${cacheKey}_data`); 
-//     const cachedHeaders = sessionStorage.getItem(`${cacheKey}_headers`); 
-//     if (cachedData && cachedHeaders) {
-//         const headers = new Headers(JSON.parse(cachedHeaders))
-//         return new Response(new Blob([cachedData]), {
-//             status: 200, 
-//             statusText: 'OK', 
-//             headers 
-//         }) 
-//     }
-// }
-
-const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
+const fetchViaCorsProxy = async (url, options={}) => {
     const params = {
         method: 'GET',
         headers: {'HX-Request': 'true'}
@@ -188,10 +142,10 @@ const fetchViaCorsProxy = async (url, cacheKey, options={}) => {
 
 const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
-    const cacheKey = `${url}_${JSON.stringify(options)}`
+    const mapKey = `${url}_${JSON.stringify(options)}`
         
-    if (fetchDataWithTimeoutMap.has(cacheKey)) {
-        return await fetchDataWithTimeoutMap.get(cacheKey)
+    if (fetchDataWithTimeoutMap.has(mapKey)) {
+        return await fetchDataWithTimeoutMap.get(mapKey)
     }
 
     const timeoutMs = options.timeoutMs || 30000
@@ -214,15 +168,15 @@ const fetchDataWithTimeout = async (url, options={}) => {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            return await fetchViaCorsProxy(url, cacheKey, options)
+            return await fetchViaCorsProxy(url, options)
         } else {
             throw error
         }
     }).finally(() => {
-        fetchDataWithTimeoutMap.delete(cacheKey)
+        fetchDataWithTimeoutMap.delete(mapKey)
     })
 
-    fetchDataWithTimeoutMap.set(cacheKey, fetchPromise)
+    fetchDataWithTimeoutMap.set(mapKey, fetchPromise)
     return fetchPromise
 }
 

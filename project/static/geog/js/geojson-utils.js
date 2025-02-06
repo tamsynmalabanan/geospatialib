@@ -216,7 +216,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
     if (features.length === geojson.features.length) return
 
     turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-        features.push(turf.centroid(cluster, {
+        features.push(turf.centerMean(cluster, {
             properties: {
                 cluster: clusterValue,
                 count: cluster.features.length
