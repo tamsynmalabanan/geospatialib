@@ -66,7 +66,7 @@ const createGeoJSONLayer = (data) => {
         const signal = geojsonLayer.abortController.signal
 
         if (geojsonLayer._openPopups.length > 0) {
-            geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
+            geojsonLayer._openPopups.forEach(popup => popup.openOn(geojsonLayer._map))
             geojsonLayer._openPopups = []
         }
         
@@ -102,7 +102,7 @@ const createGeoJSONLayer = (data) => {
             clearTimeout(handlerTimeout)
             handlerTimeout = setTimeout(async () => {
                 if (isHiddenInLegend(geojsonLayer, map)) return
-                
+
                 geojsonLayer.fire('fetchingData')
                 const geojson = await updateGeoJSONData(event)
                 if (!geojson) return
