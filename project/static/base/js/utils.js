@@ -142,8 +142,7 @@ const fetchViaCorsProxy = async (url, options={}) => {
 
 const fetchDataWithTimeoutMap = new Map()
 const fetchDataWithTimeout = async (url, options={}) => {
-    const mapKey = `${url}_${JSON.stringify(options)}`
-        
+    const mapKey = `${url}_${JSON.stringify(options)}` 
     if (fetchDataWithTimeoutMap.has(mapKey)) {
         return await fetchDataWithTimeoutMap.get(mapKey)
     }

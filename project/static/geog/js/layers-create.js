@@ -102,9 +102,18 @@ const createGeoJSONLayer = (data) => {
             clearTimeout(handlerTimeout)
             handlerTimeout = setTimeout(async () => {
                 if (isHiddenInLegend(geojsonLayer, map)) return
+                
                 geojsonLayer.fire('fetchingData')
                 const geojson = await updateGeoJSONData(event)
-                geojson && geojsonLayer.fire('dataUpdated', {geojson})         
+                if (!geojson) return
+
+                if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
+                    geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
+                }
+            
+                geojsonLayer.clearLayers()
+                geojsonLayer.addData(geojson)
+                geojsonLayer.fire('dataUpdated', {geojson})         
             }, 100)
         }
 

@@ -91,105 +91,108 @@ const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-
 //   console.log('Message received from worker:', event.data);
 // };
 
+const updateGeoJSONDataMap = new Map()
 const updateGeoJSONData = async (event) => {
     const geojsonLayer = event.target
     const data = geojsonLayer.data
-
-    const controller = geojsonLayer.abortController
-    const signal = controller.signal
-    
     const map = geojsonLayer._map
-    const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
-    const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
-    
-    const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
-    if (!queryBounds) return turf.featureCollection([])
+    if (!geojsonLayer || !data || !map) return
 
-    let geojson
-
-    if (signal.aborted) return
-    geojson = await (async () => {
-        const cachedGeoJSONStrings = getLayersViaCacheKey(map, geojsonLayer.cacheKey)
-        .map(layer => layer.cachedGeoJSON)
-        .filter(cachedGeoJSONString => cachedGeoJSONString)                    
-        if (cachedGeoJSONStrings.length === 0) return
-        
-        for (const cachedGeoJSONString of cachedGeoJSONStrings) {
-            if (signal.aborted) return
-            
-            const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-            if (!cachedGeoJSON) {continue}
-            
-            if (cachedGeoJSON.prefix) {continue}
-            
-            try {
-                const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
-                const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
-                if (!equalBounds && !withinBounds) {continue}
-            } catch {
-                return
-            }
-            
-            if (!geojsonLayer.cachedGeoJSON) {
-                geojsonLayer.cachedGeoJSON = cachedGeoJSONString
-            }
-            
-            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-            const crs = getGeoJSONCRS(cachedGeoJSON)
-            if (crs && crs !== 4326) {
-                if (signal.aborted) return
-                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-            }
-            
-            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                if (signal.aborted) return
-                return turf.booleanIntersects(filterBounds, feature)
-            })
-            
-            return cachedGeoJSON
-        }
-    })()
-
-    if (signal.aborted) return
-    if (!geojson) {
-        delete geojsonLayer.cachedGeoJSON
-        geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
-        if (!geojson) {
-            if (!layerBounds) return
-            geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
-            geojson.prefix = 'Bounding'
-        } else {
-            geojson.mapBounds = mapBounds
-            if (geojson.features.length > 0) {
-                if (signal.aborted) return
-                geojson.cachedGeoJSON = JSON.stringify(geojson)
-            }
-        }
+    const mapKey = `${map.getContainer().id}:${data.layerUrl}:${data.layerFormat}:${data.layerName}`
+    if (updateGeoJSONDataMap.has(mapKey)) {
+        return await updateGeoJSONDataMap.get(mapKey)
     }
-    
+
     console.log(geojsonLayer._leaflet_id)
 
-    if (!geojson.processed && !geojson.prefix) {
-        if (signal.aborted) return
+    const geojsonPromise = (async () => {
+        const controller = geojsonLayer.abortController
+        const signal = controller.signal
         
-        const mapScale = getMeterScale(map) || mapZoomToMeter(map)
-        geojson.features.length > 100 && mapScale > 10000 && simplifyGeoJSON(geojson, mapScale)
+        const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
+        const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
         
+        const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
+        if (!queryBounds) return turf.featureCollection([])
+    
+        let geojson
+    
         if (signal.aborted) return
-        await handleGeoJSON(geojson)
-        geojson.processed = true
-    }
+        geojson = await (async () => {
+            const cachedGeoJSONStrings = getLayersViaCacheKey(map, geojsonLayer.cacheKey)
+            .map(layer => layer.cachedGeoJSON)
+            .filter(cachedGeoJSONString => cachedGeoJSONString)                    
+            if (cachedGeoJSONStrings.length === 0) return
+            
+            for (const cachedGeoJSONString of cachedGeoJSONStrings) {
+                if (signal.aborted) return
+                
+                const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
+                if (!cachedGeoJSON) {continue}
+                
+                if (cachedGeoJSON.prefix) {continue}
+                
+                try {
+                    const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
+                    const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
+                    if (!equalBounds && !withinBounds) {continue}
+                } catch {
+                    return
+                }
+                
+                if (!geojsonLayer.cachedGeoJSON) {
+                    geojsonLayer.cachedGeoJSON = cachedGeoJSONString
+                }
+                
+                let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+                const crs = getGeoJSONCRS(cachedGeoJSON)
+                if (crs && crs !== 4326) {
+                    if (signal.aborted) return
+                    filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+                }
+                
+                cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                    if (signal.aborted) return
+                    return turf.booleanIntersects(filterBounds, feature)
+                })
+                
+                return cachedGeoJSON
+            }
+        })()
+    
+        if (signal.aborted) return
+        if (!geojson) {
+            delete geojsonLayer.cachedGeoJSON
+            geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
+            if (!geojson) {
+                if (!layerBounds) return
+                geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
+                geojson.prefix = 'Bounding'
+            } else {
+                geojson.mapBounds = mapBounds
+                if (geojson.features.length > 0) {
+                    if (signal.aborted) return
+                    geojson.cachedGeoJSON = JSON.stringify(geojson)
+                }
+            }
+        }
+        
+        if (!geojson.processed && !geojson.prefix) {
+            if (signal.aborted) return
+            
+            const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+            geojson.features.length > 100 && mapScale > 10000 && simplifyGeoJSON(geojson, mapScale)
+            
+            if (signal.aborted) return
+            await handleGeoJSON(geojson)
+            geojson.processed = true
+        }     
 
-    if (signal.aborted) return
-    if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
-        geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
-    }
-
-    if (signal.aborted) return
-    geojsonLayer.clearLayers()
-    geojsonLayer.addData(geojson)
-
-    return geojson
+        return geojson
+    })().finally(() => updateGeoJSONDataMap.delete(mapKey))
+    
+    updateGeoJSONDataMap.set(mapKey, geojsonPromise)
+    return geojsonPromise
 }
 
 const simplifyGeoJSON = (geojson, mapScale) => {
