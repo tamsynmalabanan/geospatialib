@@ -13,13 +13,18 @@ const requestGeoJSONDB = () => {
 
 const saveToGeoJSONDB = async (id, geojson) => {
     const currentGeoJSON = await getFromGeoJSONDB(id)
+    
     const request = requestGeoJSONDB()
-  
     request.onsuccess = (event) => {
         const db = event.target.result
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
-        console.log(objectStore.get(id))
+
+        if (currentGeoJSON) {
+            console.log(currentGeoJSON)
+            console.log(geojson)
+        }
+
         objectStore.put({ id, geojson })
     }
 }
