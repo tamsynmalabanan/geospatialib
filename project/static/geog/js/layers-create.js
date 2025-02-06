@@ -97,20 +97,15 @@ const createGeoJSONLayer = (data) => {
     geojsonLayer.on('add', (event) => {
         const map = event.target._map
     
-        const handler = async () => {
-            if (isHiddenInLegend(geojsonLayer, map)) return
-            const signal = geojsonLayer.abortController.signal
-            
-            if (signal.aborted) return
-            geojsonLayer.fire('fetchingData')
-            const geojson = await updateGeoJSONData(event)
-            geojson && geojsonLayer.fire('dataUpdated', {geojson})         
-        }
-        
         let handlerTimeout
-        const handlerOnTimeout = () => {
+        const handler = () => {
             clearTimeout(handlerTimeout)
-            handlerTimeout = setTimeout(handler, 100)
+            handlerTimeout = setTimeout(async () => {
+                if (isHiddenInLegend(geojsonLayer, map)) return
+                geojsonLayer.fire('fetchingData')
+                const geojson = await updateGeoJSONData(event)
+                geojson && geojsonLayer.fire('dataUpdated', {geojson})         
+            }, 100)
         }
 
         const abortHandler = () => {
@@ -118,15 +113,15 @@ const createGeoJSONLayer = (data) => {
             geojsonLayer.abortController = new AbortController();
         };
         
-        map.on('moveend zoomend', handlerOnTimeout)
+        map.on('moveend zoomend', handler)
         map.on('movestart zoomstart', abortHandler);
         geojsonLayer.on('remove', () => {
             abortHandler()
-            map.off('moveend zoomend', handlerOnTimeout)
+            map.off('moveend zoomend', handler)
             map.off('movestart zoomstart', abortHandler);
         });
 
-        handlerOnTimeout()
+        handler()
     })
 
     return geojsonLayer

@@ -87,9 +87,9 @@ const downloadGeoJSON = (geojson, file_name) => {
 }
 
 const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-worker.js");
-updateGeoJSONDataWorker.onmessage = (event) => {
-  console.log('Message received from worker:', event.data);
-};
+// updateGeoJSONDataWorker.onmessage = (event) => {
+//   console.log('Message received from worker:', event.data);
+// };
 
 const updateGeoJSONData = async (event) => {
     const geojsonLayer = event.target
@@ -104,8 +104,6 @@ const updateGeoJSONData = async (event) => {
     
     const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
     if (!queryBounds) return turf.featureCollection([])
-
-    console.log('fetching...', geojsonLayer._leaflet_id)
 
     let geojson
 
@@ -169,30 +167,20 @@ const updateGeoJSONData = async (event) => {
         }
     }
     
-    console.log('fetch', geojson.features.length)
-    console.log('processing...')
-    
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
         
-        console.log('simplifying...')
         geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
-        console.log('done simplifying')
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
         geojson.processed = true
     }
 
-    console.log('done processing', geojson.features.length)
-    console.log('caching...')
-
     if (signal.aborted) return
     if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
         geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
     }
-
-    console.log('done caching')
 
     if (signal.aborted) return
     geojsonLayer.clearLayers()
