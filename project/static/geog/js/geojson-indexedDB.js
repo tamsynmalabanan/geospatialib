@@ -13,11 +13,14 @@ const requestGeoJSONDB = () => {
 
 const saveToGeoJSONDB = async (id, geojson) => {
     const currentGeoJSON = await getFromGeoJSONDB(id)
+    console.log(id, geojson, currentGeoJSON)
     
     return new Promise((resolve, reject) => {
         const worker = new Worker('/static/geog/js/geojson-saveToGeoJSONDB-worker.js');
+        console.log(worker)
 
         worker.onmessage = (event) => {
+            console.log(event)
             if (event.data.success) {
                 resolve();
             } else {
@@ -27,6 +30,7 @@ const saveToGeoJSONDB = async (id, geojson) => {
         };
 
         worker.onerror = (error) => {
+            console.log(error)
             reject(error);
             worker.terminate();
         };

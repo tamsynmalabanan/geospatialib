@@ -1,6 +1,7 @@
 self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
 
 self.onmessage = async (event) => {
+    console.log(event)
     const { id, geojson, currentGeoJSON } = event.data
 
     const requestGeoJSONDB = async () => {

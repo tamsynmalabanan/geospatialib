@@ -153,7 +153,7 @@ const updateGeoJSONData = async (event) => {
                     await handleGeoJSON(geojson)
                     
                     const geojsonClone = Object.assign({}, geojson)
-                    saveToGeoJSONDB(mapKey, {
+                    await saveToGeoJSONDB(mapKey, {
                         type: geojsonClone.type,
                         features: geojsonClone.features,
                         mapBounds: geojsonClone.mapBounds,
