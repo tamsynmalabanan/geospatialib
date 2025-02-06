@@ -160,7 +160,7 @@ const updateGeoJSONData = async (event) => {
                 geojson.mapBounds = mapBounds
                 if (geojson.features.length > 0) {
                     if (signal.aborted) return
-                    saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
+                    saveToGeoJSONDB(mapKey, geojson)
                 }
             }
         }
