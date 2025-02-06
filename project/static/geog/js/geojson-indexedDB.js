@@ -40,8 +40,6 @@ const saveToGeoJSONDB = async (id, geojson) => {
 
                 console.log('new total', geojson.features.length)
             }
-
-
         }
 
         objectStore.put({ id, geojson })
