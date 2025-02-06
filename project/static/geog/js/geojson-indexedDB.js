@@ -21,15 +21,27 @@ const saveToGeoJSONDB = async (id, geojson) => {
         const objectStore = transaction.objectStore('geojsons')
 
         if (currentGeoJSON) {
-            console.log(geojson.features.length)
-            const newArea = turf.difference(turf.featureCollection([geojson.mapBounds, currentGeoJSON.mapBounds]))
-            if (newArea) {
-                geojson.features = geojson.features.filter(feature => {
-                    return turf.booleanIntersects(newArea, feature)
+            console.log('current', currentGeoJSON.features.length)
+            console.log('new', geojson.features.length)
+
+            const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, geojson.mapBounds]))
+            if (filterArea) {
+                const filteredFeatures = currentGeoJSON.features.filter(feature => {
+                    if (!turf.booleanIntersects(filterArea, feature)) return false
+                    if (hasSimilarFeature(geojson.features, feature)) return false
+                    return true
                 })
 
-                console.log(geojson.features)
+                console.log('filtered features', filteredFeatures.length)
+
+                if (filteredFeatures.length > 0) {
+                    geojson.features = geojson.features.concat(filteredFeatures)
+                }
+
+                console.log('new total', geojson.features.length)
             }
+
+
         }
 
         objectStore.put({ id, geojson })
