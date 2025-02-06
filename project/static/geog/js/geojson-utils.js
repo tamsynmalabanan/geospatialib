@@ -116,7 +116,6 @@ const updateGeoJSONData = async (event) => {
         if (signal.aborted) return
         geojson = await (async () => {
             const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
-            console.log(cachedGeoJSON)
             if (!cachedGeoJSON) return
             
             if (cachedGeoJSON.prefix) return
@@ -128,6 +127,8 @@ const updateGeoJSONData = async (event) => {
             } catch {
                 return
             }
+            
+            console.log(cachedGeoJSON)
             
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
