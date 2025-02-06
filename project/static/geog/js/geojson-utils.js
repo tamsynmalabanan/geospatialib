@@ -107,7 +107,7 @@ const updateGeoJSONData = async (event) => {
         const mapBounds = L.rectangle(map.getBounds()).toGeoJSON()
         const layerBounds = data.layerBbox ? turf.bboxPolygon(data.layerBbox.slice(1, -1).split(',')) : null
         
-        const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
+        const queryBounds = layerBounds ? turf.intersect(turf.featureCollection([mapBounds, layerBounds])) : mapBounds
         if (!queryBounds) return turf.featureCollection([])
     
         let geojson
