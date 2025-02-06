@@ -104,7 +104,7 @@ const createGeoJSONLayer = (data) => {
             if (signal.aborted) return
             geojsonLayer.fire('fetchingData')
             const geojson = await updateGeoJSONData(event)
-            geojsonLayer.fire('dataUpdated', {geojson})         
+            geojson && geojsonLayer.fire('dataUpdated', {geojson})         
         }
         
         // let handlerTimeout
