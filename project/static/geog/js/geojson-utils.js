@@ -105,7 +105,7 @@ const updateGeoJSONData = async (event) => {
     const queryBounds = layerBounds ? turf.intersect(mapBounds, layerBounds) : mapBounds
     if (!queryBounds) return turf.featureCollection([])
 
-    console.log('fetching...')
+    console.log('fetching...', geojsonLayer._leaflet_id)
 
     let geojson
 
