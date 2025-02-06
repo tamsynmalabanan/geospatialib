@@ -21,14 +21,15 @@ const saveToGeoJSONDB = async (id, geojson) => {
         const objectStore = transaction.objectStore('geojsons')
 
         if (currentGeoJSON) {
-            console.log(currentGeoJSON.mapBounds)
-            console.log(geojson.mapBounds)
+            console.log(geojson.features.length)
+            const newArea = turf.difference(turf.featureCollection([geojson.mapBounds, currentGeoJSON.mapBounds]))
+            if (newArea) {
+                geojson.features = geojson.features.filter(feature => {
+                    return turf.booleanIntersects(newArea, feature)
+                })
 
-            const newArea = turf.difference(turf.featureCollection([
-                geojson.mapBounds,
-                currentGeoJSON.mapBounds,
-            ]))
-            console.log(newArea)
+                console.log(geojson.features)
+            }
         }
 
         objectStore.put({ id, geojson })

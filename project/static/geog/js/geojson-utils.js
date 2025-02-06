@@ -83,10 +83,10 @@ const downloadGeoJSON = (geojson, fileName) => {
     URL.revokeObjectURL(url)
 }
 
-// const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-worker.js");
+// const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-worker.js")
 // updateGeoJSONDataWorker.onmessage = (event) => {
-//   console.log('Message received from worker:', event.data);
-// };
+//   console.log('Message received from worker:', event.data)
+// }
 
 const updateGeoJSONDataMap = new Map()
 const updateGeoJSONData = async (event) => {
@@ -225,4 +225,19 @@ const simplifyPathGeoJSON = (geojson) => {
         mutate: true,
     })
     geojson.prefix = 'Simplified'
+}
+
+const featuresAreSimilar = (feature1, feature2) => {
+    const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
+    const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
+    return propertiesEqual && geometriesEqual
+}
+
+const hasSimilarFeature = (featureList, targetFeature) => {
+    for (const feature of featureList) {
+        if (featuresAreSimilar(feature, targetFeature)) {
+            return true
+        }
+    }
+    return false
 }
