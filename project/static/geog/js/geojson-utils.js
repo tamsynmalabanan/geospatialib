@@ -118,13 +118,14 @@ const updateGeoJSONData = async (event) => {
             if (!cachedGeoJSON) return
             
             if (cachedGeoJSON.prefix) return
-            console.log(cachedGeoJSON)
             
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                 const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
+                console.log(equalBounds, withinBounds)
                 if (!equalBounds && !withinBounds) return
-            } catch {
+            } catch (error) {
+                console.log(error)
                 return
             }
             
