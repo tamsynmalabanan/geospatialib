@@ -147,12 +147,12 @@ const updateGeoJSONData = async (event) => {
             
             if (geojson) {
                 if (geojson.features.length > 0) {
-                    if (signal.aborted) return
-                    handleGeoJSON(geojson).then(geojson => {
-                        geojson.mapBounds = mapBounds
-                        saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
-                    })
+                    geojson.mapBounds = mapBounds
                     
+                    if (signal.aborted) return
+                    await handleGeoJSON(geojson)
+                    
+                    saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
                 }
             } else {
                 if (!layerBounds) return
@@ -166,7 +166,7 @@ const updateGeoJSONData = async (event) => {
         const mapScale = getMeterScale(map) || mapZoomToMeter(map)
         console.log('simplifying')
         geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
-        console.log('done simplifying')
+        console.log('simplifying')
 
         return geojson
     })().finally(() => updateGeoJSONDataMap.delete(mapKey))
