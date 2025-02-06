@@ -1,4 +1,5 @@
 const handleGeoJSON = async (geojson, options={}) => {
+    console.log('handling')
     const crs = getGeoJSONCRS(geojson)
     delete geojson.crs
     
@@ -9,7 +10,8 @@ const handleGeoJSON = async (geojson, options={}) => {
     })
     
     options.sort && sortGeoJSONFeatures(geojson)
-
+    
+    console.log('done handling')
     return geojson
 }
 
