@@ -1,7 +1,5 @@
 const handleGeoJSON = async (geojson, options={}) => {
-    console.log('handling')
     const crs = getGeoJSONCRS(geojson)
-    delete geojson.crs
     
     geojson.features.forEach(async feature => {
         const geomAssigned = options.defaultGeom ? handleFeatureGeom(feature, options.defaultGeom) : false
@@ -10,9 +8,6 @@ const handleGeoJSON = async (geojson, options={}) => {
     })
     
     options.sort && sortGeoJSONFeatures(geojson)
-    
-    console.log('done handling')
-    return geojson
 }
 
 const getGeoJSONCRS = (geojson) => {

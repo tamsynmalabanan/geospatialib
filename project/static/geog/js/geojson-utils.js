@@ -71,19 +71,19 @@ const transformFeatureGeometry = async (feature, source, target) => {
     return feature
 }
 
-const downloadGeoJSON = (geojson, file_name) => {
+const downloadGeoJSON = (geojson, fileName) => {
     const blob = new Blob([geojson], {type:'application/json'})
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${file_name}.geojson`
+    a.download = `${fileName}.geojson`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 }
 
-const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-worker.js");
+// const updateGeoJSONDataWorker = new Worker("/static/geog/js/geojson-update-data-worker.js");
 // updateGeoJSONDataWorker.onmessage = (event) => {
 //   console.log('Message received from worker:', event.data);
 // };
@@ -164,9 +164,7 @@ const updateGeoJSONData = async (event) => {
 
         if (signal.aborted) return
         const mapScale = getMeterScale(map) || mapZoomToMeter(map)
-        console.log('simplifying')
         geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
-        console.log('simplifying')
 
         return geojson
     })().finally(() => updateGeoJSONDataMap.delete(mapKey))

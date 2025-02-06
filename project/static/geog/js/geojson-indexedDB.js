@@ -18,6 +18,9 @@ const saveToGeoJSONDB = (id, geojson) => {
         const db = event.target.result
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
+
+        console.log(objectStore.get(id))
+
         objectStore.put({ id, geojson })
     }
 }
