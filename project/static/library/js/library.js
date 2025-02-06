@@ -49,31 +49,31 @@ const updateSearchResultToggleStyle = (toggle, added=true) => {
 
 window.addEventListener("map:init", (event) => {
     const map = event.detail.map
-    if (map.getContainer().id === 'geospatialibMap') {
-        map.on('mapInitComplete', () => {
-            map.on('layerremove', (event) => {
-                const layer = event.layer
-                if (layer.data) {
-                    const layerId = layer.data.layerId
-                    if (layerId) {
-                        const searchResults = document.querySelector('#searchResults')
-                        const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
-                        const toggleBtn = searchResults.querySelector(toggleBtnSelector)
-                        if (toggleBtn) {
-                            const legendLayerGroup = map.getLayerGroups().legend
-                            if (!legendLayerGroup.hasHiddenLayer(layer)) {
-                                const legendLayers = legendLayerGroup.getLayers()
-                                if (!legendLayers.some(libLayer => libLayer !== layer && libLayer.data && libLayer.data.layerId === layerId)) {
-                                    updateSearchResultToggleStyle(toggleBtn, false)
-                                    enableMapInteractivity(map)
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+    if (map.getContainer().id !== 'geospatialibMap') return
+
+    map.on('mapInitComplete', () => {
+        map.on('layerremove', (event) => {
+            const layer = event.layer
+            if (!layer.data) return
+
+            const layerId = layer.data.layerId
+            if (!layerId) return
+
+            const searchResults = document.querySelector('#searchResults')
+            const toggleBtnSelector = `button.add-layer-button.bi.bi-check-circle.text-primary[data-layer-id="${layerId}"]`
+            const toggleBtn = searchResults.querySelector(toggleBtnSelector)
+            if (!toggleBtn) return
+
+            const legendLayerGroup = map.getLayerGroups().legend
+            if (legendLayerGroup.hasHiddenLayer(layer)) return
+            
+            const legendLayers = legendLayerGroup.customGetLayers().filter(l => l.data)
+            if (legendLayers.some(l => l !== layer && l.data.layerId === layerId)) return
+            
+            updateSearchResultToggleStyle(toggleBtn, false)
+            enableMapInteractivity(map)
         })
-    }
+    })
 })
 
 document.addEventListener('htmx:afterSwap', (event) => {

@@ -197,12 +197,13 @@ const handleMapLayerGroups = (map) => {
 
         layerGroup.customClearLayers = () => {
             layerGroup.clearLayers()
-            
-            layerGroup.hiddenLayers.forEach(layer => {
+
+            const hiddenLayers = [].concat(layerGroup.hiddenLayers)
+            layerGroup.hiddenLayers = []
+
+            hiddenLayers.forEach(layer => {
                 map.fire('layerremove', {layer: layer})
             })
-
-            layerGroup.hiddenLayers = []
         }
 
 
