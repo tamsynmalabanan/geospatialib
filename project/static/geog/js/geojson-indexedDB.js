@@ -23,6 +23,12 @@ const saveToGeoJSONDB = async (id, geojson) => {
         if (currentGeoJSON) {
             console.log(currentGeoJSON)
             console.log(geojson)
+
+            const newArea = turf.difference(turf.featureCollection([
+                geojson.mapBounds,
+                currentGeoJSON.mapBounds,
+            ]))
+            console.log(newArea)
         }
 
         objectStore.put({ id, geojson })
