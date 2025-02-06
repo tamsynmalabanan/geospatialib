@@ -6,9 +6,9 @@ const getDefaultGeoJSONLayer = (options={}) => {
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pointToLayer: (geoJsonPoint, latlng) => {
-            [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
             return L.marker(latlng, {icon:getDefaultLayerStyle('point', {
-                color:`hsla(${h}, ${s}%, ${l}%, 0.5)`,
+                color:color,
+                colorOpacity:0.5,
             })})
         },
         style: (geoJsonFeature) => {

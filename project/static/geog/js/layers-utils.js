@@ -436,24 +436,23 @@ const isPointLayer = (layer) => {
 
 const getDefaultLayerStyle = (type, options={}) => {
     const color = options.color || 'hsla(0, 100%, 50%, 1)'
+    
+    let h,s,l,a
+    if (color.startsWith('hsla')) {
+        [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
+    }
+
     const strokeWidth = options.strokeWidth || options.weight || 1
 
     if (type.toLowerCase() === 'point') {
-        let strokeColor = options.strokeColor
-        if (!strokeColor) {
-            if (color.startsWith('hsla')) {
-                [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
-                l = l / 2
-                strokeColor = `hsla(${h}, ${s}%, ${l}%, ${a})`
-            } else {
-                strokeColor = 'grey'
-            }
-        }
-
         const div = document.createElement('div')
         div.className = 'h-100 w-100 rounded-circle'
-        div.style.backgroundColor = color
+        
+        const strokeColor = options.strokeColor || l ? `hsla(${h}, ${s}%, ${l/2}%, ${a})` : 'grey'
         div.style.border = `${strokeWidth}px solid ${strokeColor}`
+
+        const backgroundColor = options.colorOpacity ? `hsla(${h}, ${s}%, ${l}%, ${options.colorOpacity})` : color
+        div.style.backgroundColor = backgroundColor
 
         return L.divIcon({
             className: 'bg-transparent',
@@ -483,11 +482,7 @@ const getDefaultLayerStyle = (type, options={}) => {
                 }
             }
 
-            let fillOpacity = options.fillOpacity
-            if (!fillOpacity) {
-                fillOpacity = 0.25
-            }
-                
+            const fillOpacity = options.fillOpacity || 0.25
             properties.fillOpacity = fillOpacity
             properties.fillColor = fillColor
         } else {
