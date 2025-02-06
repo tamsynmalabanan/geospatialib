@@ -166,6 +166,8 @@ const updateGeoJSONData = async (event) => {
             }
         }
     }
+
+    console.log('raw geojson', geojson.features.length)
     
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
@@ -176,6 +178,8 @@ const updateGeoJSONData = async (event) => {
         await handleGeoJSON(geojson)
         geojson.processed = true
     }
+
+    console.log('processed geojson', geojson.features.length)
 
     if (signal.aborted) return
     if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
