@@ -117,8 +117,6 @@ const updateGeoJSONData = async (event) => {
             const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
             if (!cachedGeoJSON) return
             
-            if (cachedGeoJSON.prefix) return
-            
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                 const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
@@ -140,37 +138,34 @@ const updateGeoJSONData = async (event) => {
             })
             
             if (cachedGeoJSON.features.length === 0) return
-            cachedGeoJSON.fromIndexedDB = true
             return cachedGeoJSON
         })()
     
-        if (signal.aborted) return
         if (!geojson) {
-            deleteFromGeoJSONDB(mapKey) // instead of deleting and saving a new geojson, update existing geojson
-
+            if (signal.aborted) return
             geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
-            if (!geojson) {
+            
+            if (geojson) {
+                if (geojson.features.length > 0) {
+                    geojson.mapBounds = mapBounds
+                    
+                    if (signal.aborted) return
+                    await handleGeoJSON(geojson)
+                    
+                    saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
+                }
+            } else {
                 if (!layerBounds) return
                 geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
                 geojson.prefix = 'Bounding'
-            } else {
-                if (signal.aborted) return
-                geojson.mapBounds = mapBounds
-                geojson.features.length > 0 && saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
+                return geojson
             }
         }
 
-        if (!geojson.preprocess && !geojson.prefix) {
-            if (signal.aborted) return
-            const mapScale = getMeterScale(map) || mapZoomToMeter(map)
-            geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
-            
-            if (signal.aborted) return
-            await preprocessGeoJSON(geojson)
-
-            !geojson.fromIndexedDB && !geojson.prefix && saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
-        }     
-
+        if (signal.aborted) return
+        const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+        geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
+        
         return geojson
     })().finally(() => updateGeoJSONDataMap.delete(mapKey))
     

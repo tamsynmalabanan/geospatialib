@@ -1,16 +1,14 @@
-const preprocessGeoJSON = async (geojson, options={}) => {
+const handleGeoJSON = async (geojson, options={}) => {
     const crs = getGeoJSONCRS(geojson)
+    delete geojson.crs
     
     geojson.features.forEach(async feature => {
         const geomAssigned = options.defaultGeom ? handleFeatureGeom(feature, options.defaultGeom) : false
-        crs && !geomAssigned && await handleFeatureCRS(feature, crs)
+        crs && crs !== 4326 && !geomAssigned && await handleFeatureCRS(feature, crs)
         options.featureId && handleFeatureId(feature)
     })
     
     options.sort && sortGeoJSONFeatures(geojson)
-    
-    delete geojson.crs
-    geojson.preprocess = true
 }
 
 const getGeoJSONCRS = (geojson) => {
