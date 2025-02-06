@@ -171,11 +171,13 @@ const updateGeoJSONData = async (event) => {
     
     console.log('fetch', geojson.features.length)
     console.log('processing...')
-
+    
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
-
+        
+        console.log('simplifying...')
         geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
+        console.log('done simplifying')
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
