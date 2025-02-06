@@ -9,6 +9,8 @@ const handleGeoJSON = async (geojson, options={}) => {
     })
     
     options.sort && sortGeoJSONFeatures(geojson)
+
+    return geojson
 }
 
 const getGeoJSONCRS = (geojson) => {
