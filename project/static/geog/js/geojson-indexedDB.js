@@ -1,10 +1,14 @@
-const requestGeoJSONDB = () => indexedDB.open('geojsonDB', 1)
+const requestGeoJSONDB = () => {
+    const request = indexedDB.open('geojsonDB', 1)
 
-requestGeoJSONDB().onupgradeneeded = (event) => {
-    const db = event.target.result
+    request.onupgradeneeded = (event) => {
+        const db = event.target.result
+        if (!db.objectStoreNames.contains('geojsons')) {
+            db.createObjectStore('geojsons', { keyPath: 'id' })
+        }
+    }
     
-    if (db.objectStoreNames.contains('geojsons')) return
-    db.createObjectStore('geojsons', {keyPath:'id'})
+    return request
 }
 
 const saveToGeoJSONDB = (id, geojson) => {
