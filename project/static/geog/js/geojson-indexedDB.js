@@ -43,22 +43,22 @@ const getFromGeoJSONDB = async (id) => {
             geojsonRequest.onsuccess = (event) => {
                 const result = event.target.result
                 if (result) {
-                    console.log('GeoJSON retrieved successfully:', result.geojson)
+                    // console.log('GeoJSON retrieved successfully:', result.geojson)
                     resolve(result.geojson)
                 } else {
-                    console.log('No GeoJSON found with ID:', id)
+                    // console.log('No GeoJSON found with ID:', id)
                     resolve(null)
                 }
             }
     
             geojsonRequest.onerror = (event) => {
-                console.error('GeoJSON retrieval error:', event.target.errorCode)
+                // console.error('GeoJSON retrieval error:', event.target.errorCode)
                 reject(event.target.errorCode)
             }
         }
   
         request.onerror = (event) => {
-            console.error('Database error:', event.target.errorCode)
+            // console.error('Database error:', event.target.errorCode)
             reject(event.target.errorCode)
         }
     })
@@ -74,16 +74,15 @@ const deleteFromGeoJSONDB = (id) => {
         const deleteRequest = objectStore.delete(id)
     
         deleteRequest.onsuccess = () => {
-            console.log('GeoJSON deleted successfully!')
+            // console.log('GeoJSON deleted successfully!')
         }
     
         deleteRequest.onerror = (event) => {
-            console.error('GeoJSON deletion error:', event.target.errorCode)
+            // console.error('GeoJSON deletion error:', event.target.errorCode)
         }
     }
   
     request.onerror = (event) => {
-        console.error('Database error:', event.target.errorCode)
+        // console.error('Database error:', event.target.errorCode)
     }
 }
-  

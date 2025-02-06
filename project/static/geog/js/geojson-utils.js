@@ -95,7 +95,7 @@ const updateGeoJSONData = async (event) => {
     const map = geojsonLayer._map
     if (!geojsonLayer || !data || !map) return
 
-    const mapKey = `${map.getContainer().id}:${data.layerUrl}:${data.layerFormat}:${data.layerName}`
+    const mapKey = getLayerMapKey(geojsonLayer)
     if (updateGeoJSONDataMap.has(mapKey)) {
         return await updateGeoJSONDataMap.get(mapKey)
     }
@@ -114,50 +114,38 @@ const updateGeoJSONData = async (event) => {
     
         if (signal.aborted) return
         geojson = await (async () => {
-            const cachedGeoJSONStrings = getLayersViaCacheKey(map, geojsonLayer.cacheKey)
-            .map(layer => layer.cachedGeoJSON)
-            .filter(cachedGeoJSONString => cachedGeoJSONString)                    
-            if (cachedGeoJSONStrings.length === 0) return
+            const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
+            if (!cachedGeoJSON) return
             
-            for (const cachedGeoJSONString of cachedGeoJSONStrings) {
-                if (signal.aborted) return
-                
-                const cachedGeoJSON = JSON.parse(cachedGeoJSONString)
-                if (!cachedGeoJSON) {continue}
-                
-                if (cachedGeoJSON.prefix) {continue}
-                
-                try {
-                    const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
-                    const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
-                    if (!equalBounds && !withinBounds) {continue}
-                } catch {
-                    return
-                }
-                
-                if (!geojsonLayer.cachedGeoJSON) {
-                    geojsonLayer.cachedGeoJSON = cachedGeoJSONString
-                }
-                
-                let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
-                const crs = getGeoJSONCRS(cachedGeoJSON)
-                if (crs && crs !== 4326) {
-                    if (signal.aborted) return
-                    filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
-                }
-                
-                cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                    if (signal.aborted) return
-                    return turf.booleanIntersects(filterBounds, feature)
-                })
-                
-                return cachedGeoJSON
+            if (cachedGeoJSON.prefix) return
+            
+            try {
+                const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
+                const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
+                if (!equalBounds && !withinBounds) return
+            } catch {
+                return
             }
+            
+            let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
+            const crs = getGeoJSONCRS(cachedGeoJSON)
+            if (crs && crs !== 4326) {
+                if (signal.aborted) return
+                filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
+            }
+            
+            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                if (signal.aborted) return
+                turf.booleanIntersects(filterBounds, feature)
+            })
+            
+            if (cachedGeoJSON.features.length === 0) return
+            return cachedGeoJSON
         })()
     
         if (signal.aborted) return
         if (!geojson) {
-            delete geojsonLayer.cachedGeoJSON
+            deleteFromGeoJSONDB(mapKey)
             geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
             if (!geojson) {
                 if (!layerBounds) return
@@ -167,7 +155,7 @@ const updateGeoJSONData = async (event) => {
                 geojson.mapBounds = mapBounds
                 if (geojson.features.length > 0) {
                     if (signal.aborted) return
-                    geojson.cachedGeoJSON = JSON.stringify(geojson)
+                    saveToGeoJSONDB(mapKey, geojson)
                 }
             }
         }
@@ -181,6 +169,8 @@ const updateGeoJSONData = async (event) => {
             if (signal.aborted) return
             await handleGeoJSON(geojson)
             geojson.processed = true
+
+            if (!geojson.prefix) saveToGeoJSONDB(mapKey, geojson)
         }     
 
         return geojson

@@ -1,4 +1,4 @@
-const populateLayerDropdownMenu = (toggle, options={}) => {
+const populateLayerDropdownMenu = async (toggle, options={}) => {
     const dropdown = toggle.nextElementSibling
     if (!dropdown || dropdown.innerHTML !== '') return
     
@@ -24,7 +24,7 @@ const populateLayerDropdownMenu = (toggle, options={}) => {
 
     const bounds = options.bounds || getLayerBounds(currentLayer)
 
-    const geojson = options.geojson || currentLayer.cachedGeoJSON || layerToGeoJSON(currentLayer)
+    const geojson = options.geojson || (await getFromGeoJSONDB(getLayerMapKey(currentLayer))) || layerToGeoJSON(currentLayer)
     
     const zoomBtn = bounds ? 
     createDropdownMenuListItem({

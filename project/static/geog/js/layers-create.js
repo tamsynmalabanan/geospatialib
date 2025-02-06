@@ -49,7 +49,6 @@ const createGeoJSONLayer = (data) => {
 
     const geojsonLayer = getDefaultGeoJSONLayer()
     geojsonLayer.popupHeader = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle    
-    geojsonLayer.cacheKey = `${data.layerUrl}_${data.layerFormat}_${data.layerName}`
     geojsonLayer.abortController = new AbortController()
         
     geojsonLayer._openPopups = []
@@ -107,10 +106,6 @@ const createGeoJSONLayer = (data) => {
                 const geojson = await updateGeoJSONData(event)
                 if (!geojson) return
 
-                if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {
-                    geojsonLayer.cachedGeoJSON = geojson.prefix ? geojson.cachedGeoJSON : JSON.stringify(geojson)
-                }
-            
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
                 geojsonLayer.fire('dataUpdated', {geojson})         
