@@ -167,6 +167,8 @@ const updateGeoJSONData = async (event) => {
         }
     }
     
+    console.log(geojsonLayer._leaflet_id)
+
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
         
