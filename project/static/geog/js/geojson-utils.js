@@ -169,7 +169,7 @@ const updateGeoJSONData = async (event) => {
             if (signal.aborted) return
             
             const mapScale = getMeterScale(map) || mapZoomToMeter(map)
-            geojson.features.length > 100 && mapScale > 10000 && simplifyGeoJSON(geojson, mapScale)
+            geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
             
             if (signal.aborted) return
             await handleGeoJSON(geojson)
@@ -185,7 +185,7 @@ const updateGeoJSONData = async (event) => {
     return geojsonPromise
 }
 
-const simplifyGeoJSON = (geojson, mapScale) => {
+const simplifyGeoJSON = async (geojson, mapScale) => {
     const pointsGeoJSON = turf.featureCollection([])
     const pathsGeoJSON = turf.featureCollection([])
 
@@ -200,6 +200,8 @@ const simplifyGeoJSON = (geojson, mapScale) => {
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
+
+    return geojson
 }
 
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
