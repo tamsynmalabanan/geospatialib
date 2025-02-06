@@ -195,6 +195,16 @@ const handleMapLayerGroups = (map) => {
             })
         }
 
+        layerGroup.customClearLayers = () => {
+            layerGroup.clearLayers()
+            
+            layerGroup.hiddenLayers.forEach(layer => {
+                map.fire('layerremove', {layer: layer})
+            })
+
+            layerGroup.hiddenLayers = []
+        }
+
 
         if (group === 'legend') {
             layerGroup.moveLayer = (currentLayer, options={}) => {
@@ -425,8 +435,7 @@ const handleMapLegend = (map) => {
         parent: dropdownMenu,
         buttonClass: 'bi bi-trash3 fs-12',
         buttonClickHandler: () => {
-            legendLayerGroup.clearLayers()
-            legendLayerGroup.hiddenLayers = []
+            legendLayerGroup.customClearLayers()
             ul.innerHTML = ''
         }
     })
