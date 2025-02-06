@@ -6,20 +6,17 @@ const getDefaultGeoJSONLayer = (options={}) => {
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pointToLayer: (geoJsonPoint, latlng) => {
-            return L.marker(latlng, {icon:getDefaultLayerStyle('point', {color:color})})
+            [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
+            return L.marker(latlng, {icon:getDefaultLayerStyle('point', {
+                color:`hsla(${h}, ${s}%, ${l}%, 0.5)`,
+            })})
         },
         style: (geoJsonFeature) => {
-            const params = {color:color}
-
-            if (options.fillColor) {
-                params.fillColor = options.fillColor
-            }
-
-            if (options.weight) {
-                params.weight = options.weight
-            }
-
-            return getDefaultLayerStyle('other', params)
+            return getDefaultLayerStyle('other', {
+                color: color,
+                fillColor: options.fillColor,
+                weight: options.weight,
+            })
         },
     })
 
@@ -102,8 +99,6 @@ const updateGeoJSONData = async (event) => {
     if (updateGeoJSONDataMap.has(mapKey)) {
         return await updateGeoJSONDataMap.get(mapKey)
     }
-
-    console.log(geojsonLayer._leaflet_id)
 
     const geojsonPromise = (async () => {
         const controller = geojsonLayer.abortController

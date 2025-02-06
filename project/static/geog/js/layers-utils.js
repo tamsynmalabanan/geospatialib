@@ -435,25 +435,8 @@ const isPointLayer = (layer) => {
 }
 
 const getDefaultLayerStyle = (type, options={}) => {
-    let color = options.color
-    if (!color) {
-        color = 'hsla(0, 100%, 50%, 1)'
-    }
-
-    let strokeWidth = options.strokeWidth
-    let weight = options.weight
-
-    if (!strokeWidth) {
-        if (weight) {
-            strokeWidth = weight
-        } else {
-            strokeWidth = 1
-        }
-    }
-
-    if (!weight) {
-        weight = strokeWidth
-    }
+    const color = options.color || 'hsla(0, 100%, 50%, 1)'
+    const strokeWidth = options.strokeWidth || options.weight || 1
 
     if (type.toLowerCase() === 'point') {
         let strokeColor = options.strokeColor
@@ -484,7 +467,7 @@ const getDefaultLayerStyle = (type, options={}) => {
 
         const properties = {
             color: color,
-            weight: weight,
+            weight: strokeWidth,
             opacity: opacity
         }
 
