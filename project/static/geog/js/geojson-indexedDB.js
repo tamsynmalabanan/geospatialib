@@ -16,46 +16,52 @@ const saveGeoJSON = (id, geojson) => {
         const objectStore = transaction.objectStore('geojsons')
         objectStore.put({ id, geojson })
 
-        transaction.oncomplete = () => {
-            console.log('GeoJSON saved successfully!')
-        }
+        // transaction.oncomplete = () => {
+        //     console.log('GeoJSON saved successfully!')
+        // }
 
-        transaction.onerror = (event) => {
-            console.error('Transaction error:', event.target.errorCode)
-        }
+        // transaction.onerror = (event) => {
+        //     console.error('Transaction error:', event.target.errorCode)
+        // }
     }
   
-    request.onerror = (event) => {
-        console.error('Database error:', event.target.errorCode)
-    }
+    // request.onerror = (event) => {
+    //     console.error('Database error:', event.target.errorCode)
+    // }
 }
 
 const getGeoJSON = (id) => {
-    const request = requestGeoJSONDB()
+    return new Promise((resolve, reject) => {
+        const request = requestGeoJSONDB()
   
-    request.onsuccess = (event) => {
-        const db = event.target.result
-        const transaction = db.transaction(['geojsons'], 'readonly')
-        const objectStore = transaction.objectStore('geojsons')
-        const geojsonRequest = objectStore.get(id)
+        request.onsuccess = (event) => {
+            const db = event.target.result
+            const transaction = db.transaction(['geojsons'], 'readonly')
+            const objectStore = transaction.objectStore('geojsons')
+            const geojsonRequest = objectStore.get(id)
     
-        geojsonRequest.onsuccess = (event) => {
-            const result = event.target.result
-            if (result) {
-                console.log('GeoJSON retrieved successfully:', result.geojson)
-            } else {
-                console.log('No GeoJSON found with ID:', id)
+            geojsonRequest.onsuccess = (event) => {
+                const result = event.target.result
+                if (result) {
+                    console.log('GeoJSON retrieved successfully:', result.geojson)
+                    resolve(result.geojson)
+                } else {
+                    console.log('No GeoJSON found with ID:', id)
+                    resolve(null)
+                }
+            }
+    
+            geojsonRequest.onerror = (event) => {
+                console.error('GeoJSON retrieval error:', event.target.errorCode)
+                reject(event.target.errorCode)
             }
         }
-    
-        geojsonRequest.onerror = function(event) {
-                console.error('GeoJSON retrieval error:', event.target.errorCode)
-        }
-    }
   
-    request.onerror = (event) => {
-        console.error('Database error:', event.target.errorCode)
-    }
+        request.onerror = (event) => {
+            console.error('Database error:', event.target.errorCode)
+            reject(event.target.errorCode)
+        }
+    })
 }
 
 const deleteGeoJSON = (id) => {
