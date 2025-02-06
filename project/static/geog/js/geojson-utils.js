@@ -96,6 +96,7 @@ const updateGeoJSONData = async (event) => {
     if (!geojsonLayer || !data || !map) return
 
     const mapKey = getLayerMapKey(geojsonLayer)
+    console.log(mapKey)
     if (updateGeoJSONDataMap.has(mapKey)) {
         return await updateGeoJSONDataMap.get(mapKey)
     }
