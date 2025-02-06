@@ -119,6 +119,7 @@ const updateGeoJSONData = async (event) => {
             if (!cachedGeoJSON) return
             
             if (cachedGeoJSON.prefix) return
+            console.log(cachedGeoJSON)
             
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
@@ -128,7 +129,6 @@ const updateGeoJSONData = async (event) => {
                 return
             }
             
-            console.log(cachedGeoJSON)
             
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
