@@ -141,7 +141,7 @@ const updateGeoJSONData = async (event) => {
             
             cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                 if (signal.aborted) return
-                turf.booleanIntersects(filterBounds, feature)
+                return turf.booleanIntersects(filterBounds, feature)
             })
             
             if (cachedGeoJSON.features.length === 0) return
