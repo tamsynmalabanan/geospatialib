@@ -174,8 +174,9 @@ const updateGeoJSONData = async (event) => {
             await handleGeoJSON(geojson)
             geojson.processed = true
 
-            console.log(geojson.prefix)
-            // if (!geojson.prefix) saveToGeoJSONDB(mapKey, geojson)
+            if (!geojson.prefix) {
+                saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
+            }
         }     
 
         return geojson
