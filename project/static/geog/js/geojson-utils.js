@@ -117,6 +117,7 @@ const updateGeoJSONData = async (event) => {
             const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
             if (!cachedGeoJSON) return
             
+            console.log(cachedGeoJSON.prefix)
             if (cachedGeoJSON.prefix) return
             
             try {
