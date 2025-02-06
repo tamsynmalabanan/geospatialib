@@ -167,7 +167,6 @@ const updateGeoJSONData = async (event) => {
         
         if (!geojson.processed && !geojson.prefix) {
             if (signal.aborted) return
-            
             const mapScale = getMeterScale(map) || mapZoomToMeter(map)
             geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
             
@@ -175,6 +174,7 @@ const updateGeoJSONData = async (event) => {
             await handleGeoJSON(geojson)
             geojson.processed = true
 
+            console.log(geojson.prefix)
             // if (!geojson.prefix) saveToGeoJSONDB(mapKey, geojson)
         }     
 
