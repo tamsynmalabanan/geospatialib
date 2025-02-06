@@ -50,6 +50,7 @@ const createGeoJSONLayer = (data) => {
     const geojsonLayer = getDefaultGeoJSONLayer()
     geojsonLayer.popupHeader = () => geojsonLayer.data.legendLabel || geojsonLayer.data.layerTitle    
     geojsonLayer.cacheKey = `${data.layerUrl}_${data.layerFormat}_${data.layerName}`
+    geojsonLayer.abortController = new AbortController()
         
     geojsonLayer._openPopups = []
     geojsonLayer.on('popupopen', (event) => {
@@ -62,19 +63,20 @@ const createGeoJSONLayer = (data) => {
     
     geojsonLayer.on('dataUpdated', (event) => {
         const geojson = event.geojson
-        
+        const signal = geojsonLayer.abortController.signal
+
         if (geojsonLayer._openPopups.length > 0) {
             geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
             geojsonLayer._openPopups = []
         }
         
         let legend = {}
-        geojsonLayer.eachLayer(feature => {
+        geojsonLayer.eachLayer(layer => {
             if (signal.aborted) return
 
-            const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
+            const type = geojson.prefix === 'Bounding' ? 'Polygon' : layer.feature.geometry.type.replace('Multi', '')
             const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
-            const properties = feature.feature.properties
+            const properties = layer.feature.properties
             
             if (!Object.keys(legend).includes(group)) {
                 legend[group] = {
@@ -88,24 +90,19 @@ const createGeoJSONLayer = (data) => {
             }
         })
 
-        if (signal.aborted) return
         geojsonLayer.data.layerLegendStyle = legend
         geojsonLayer.fire('legendUpdated')
     })
 
     geojsonLayer.on('add', (event) => {
         const map = event.target._map
-        geojsonLayer.abortController = new AbortController()
     
         const handler = async () => {
-            const signal = geojsonLayer.abortController.signal
-            
             if (isHiddenInLegend(geojsonLayer, map)) return
+            const signal = geojsonLayer.abortController.signal
             
             if (signal.aborted) return
             geojsonLayer.fire('fetchingData')
-           
-            if (signal.aborted) return
             const geojson = await updateGeoJSONData(event)
             geojsonLayer.fire('dataUpdated', {geojson})         
         }
