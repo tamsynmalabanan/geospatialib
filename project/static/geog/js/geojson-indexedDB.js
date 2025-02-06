@@ -7,7 +7,7 @@ requestGeoJSONDB().onupgradeneeded = (event) => {
     db.createObjectStore('geojsons', {keyPath:'id'})
 }
 
-const saveGeoJSON = (id, geojson) => {
+const saveToGeoJSONDB = (id, geojson) => {
     const request = requestGeoJSONDB()
   
     request.onsuccess = (event) => {
@@ -30,7 +30,7 @@ const saveGeoJSON = (id, geojson) => {
     // }
 }
 
-const getGeoJSON = (id) => {
+const getFromGeoJSONDB = async (id) => {
     return new Promise((resolve, reject) => {
         const request = requestGeoJSONDB()
   
@@ -64,7 +64,7 @@ const getGeoJSON = (id) => {
     })
 }
 
-const deleteGeoJSON = (id) => {
+const deleteFromGeoJSONDB = (id) => {
     const request = requestGeoJSONDB()
     
     request.onsuccess = (event) => {
