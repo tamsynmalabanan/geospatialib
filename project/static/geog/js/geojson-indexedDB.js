@@ -15,19 +15,7 @@ const saveToGeoJSONDB = (id, geojson) => {
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
         objectStore.put({ id, geojson })
-
-        // transaction.oncomplete = () => {
-        //     console.log('GeoJSON saved successfully!')
-        // }
-
-        // transaction.onerror = (event) => {
-        //     console.error('Transaction error:', event.target.errorCode)
-        // }
     }
-  
-    // request.onerror = (event) => {
-    //     console.error('Database error:', event.target.errorCode)
-    // }
 }
 
 const getFromGeoJSONDB = async (id) => {

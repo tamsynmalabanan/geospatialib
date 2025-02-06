@@ -146,33 +146,29 @@ const updateGeoJSONData = async (event) => {
     
         if (signal.aborted) return
         if (!geojson) {
-            deleteFromGeoJSONDB(mapKey)
+            deleteFromGeoJSONDB(mapKey) // instead of deleting and saving a new geojson, update existing geojson
+
             geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
             if (!geojson) {
                 if (!layerBounds) return
                 geojson = turf.featureCollection([turf.polygonToLine(layerBounds)])
                 geojson.prefix = 'Bounding'
             } else {
+                if (signal.aborted) return
                 geojson.mapBounds = mapBounds
-                if (geojson.features.length > 0) {
-                    if (signal.aborted) return
-                    saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
-                }
+                geojson.features.length > 0 && saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
             }
         }
-        
-        if (!geojson.processed && !geojson.prefix) {
+
+        if (!geojson.preprocess && !geojson.prefix) {
             if (signal.aborted) return
             const mapScale = getMeterScale(map) || mapZoomToMeter(map)
             geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
             
             if (signal.aborted) return
-            await handleGeoJSON(geojson)
-            geojson.processed = true
+            await preprocessGeoJSON(geojson)
 
-            if (!geojson.fromIndexedDB && !geojson.prefix) {
-                saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
-            }
+            !geojson.fromIndexedDB && !geojson.prefix && saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
         }     
 
         return geojson

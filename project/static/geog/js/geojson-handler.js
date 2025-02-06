@@ -1,57 +1,38 @@
-const handleGeoJSON = async (geojson, options={}) => {
+const preprocessGeoJSON = async (geojson, options={}) => {
     const crs = getGeoJSONCRS(geojson)
-
+    
     geojson.features.forEach(async feature => {
-        const geomAssigned = handleFeatureGeom(feature, options.defaultGeom)
-        if (crs && !geomAssigned) {
-            await handleFeatureCRS(feature, crs)
-        }
-
-        if (options.featureId) {
-          handleFeatureId(feature)
-        }
+        const geomAssigned = options.defaultGeom ? handleFeatureGeom(feature, options.defaultGeom) : false
+        crs && !geomAssigned && await handleFeatureCRS(feature, crs)
+        options.featureId && handleFeatureId(feature)
     })
-      
-    if (options.sort) {
-        sortGeoJSONFeatures(geojson)
-    }
+    
+    options.sort && sortGeoJSONFeatures(geojson)
+    
+    delete geojson.crs
+    geojson.preprocess = true
 }
 
 const getGeoJSONCRS = (geojson) => {
-    let crs
-    
-    if (geojson.crs) {
-        const name = geojson.crs.properties.name
-        if (name.includes('EPSG::')) {
-            crs = parseInt(name.split('EPSG::')[1])            
-        }
-    }
-
-    return crs
+    if (!geojson.crs) return
+    const name = geojson.crs.properties.name
+    if (!name.includes('EPSG::')) return
+    return parseInt(name.split('EPSG::')[1])            
 }
 
 const handleFeatureGeom = (feature, defaultGeom) => {
-    let geomAssigned = false
-
-    if (!feature.geometry && defaultGeom) {
-        feature.geometry = defaultGeom
-        geomAssigned = true
-    }
-
-    return geomAssigned
+    if (feature.geometry || !defaultGeom) return false
+    feature.geometry = defaultGeom
+    return true
 }
 
 const handleFeatureCRS = async (feature, crs) => {
-    if (crs && crs !== 4326) {
-        feature = transformFeatureGeometry(feature, crs, 4326)
-    }
-    return feature
+    return crs && crs !== 4326 ? transformFeatureGeometry(feature, crs, 4326) : feature
 }
 
 const handleFeatureId = (feature) => {
-    if (feature.id && feature.id !== '') {
-        feature.properties.feature_id = feature.id
-    }
+    if (!feature.id || feature.id === '') return
+    feature.properties.feature_id = feature.id
 }
 
 const sortGeoJSONFeatures = (geojson) => {
