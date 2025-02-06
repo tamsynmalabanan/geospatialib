@@ -61,35 +61,36 @@ const createGeoJSONLayer = (data) => {
     })
     
     geojsonLayer.on('dataUpdated', (event) => {
-        console.log(event)
-        // if (geojsonLayer._openPopups.length > 0) {
-        //     geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
-        //     geojsonLayer._openPopups = []
-        // }
+        const geojson = event.geojson
         
-        // let legend = {}
-        // geojsonLayer.eachLayer(feature => {
-        //     if (signal.aborted) return
+        if (geojsonLayer._openPopups.length > 0) {
+            geojsonLayer._openPopups.forEach(popup => popup.openOn(map))
+            geojsonLayer._openPopups = []
+        }
+        
+        let legend = {}
+        geojsonLayer.eachLayer(feature => {
+            if (signal.aborted) return
 
-        //     const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
-        //     const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
-        //     const properties = feature.feature.properties
+            const type = geojson.prefix === 'Bounding' ? 'Polygon' : feature.feature.geometry.type.replace('Multi', '')
+            const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
+            const properties = feature.feature.properties
             
-        //     if (!Object.keys(legend).includes(group)) {
-        //         legend[group] = {
-        //             label: group,
-        //             type: type,
-        //             style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
-        //             count: geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1,
-        //         }
-        //     } else {
-        //         legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
-        //     }
-        // })
+            if (!Object.keys(legend).includes(group)) {
+                legend[group] = {
+                    label: group,
+                    type: type,
+                    style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
+                    count: geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1,
+                }
+            } else {
+                legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
+            }
+        })
 
-        // if (signal.aborted) return
-        // geojsonLayer.data.layerLegendStyle = legend
-        // geojsonLayer.fire('legendUpdated')
+        if (signal.aborted) return
+        geojsonLayer.data.layerLegendStyle = legend
+        geojsonLayer.fire('legendUpdated')
     })
 
     geojsonLayer.on('add', (event) => {
