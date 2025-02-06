@@ -166,20 +166,17 @@ const updateGeoJSONData = async (event) => {
             }
         }
     }
-
-    console.log('raw geojson', geojson.features.length)
     
     if (!geojson.processed && !geojson.prefix) {
         if (signal.aborted) return
         
-        geojson.features.length > 100 && simplifyGeoJSON(geojson, map)
+        const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+        geojson.features.length > 100 && mapScale > 10000 && simplifyGeoJSON(geojson, map)
         
         if (signal.aborted) return
         await handleGeoJSON(geojson)
         geojson.processed = true
     }
-
-    console.log('processed geojson', geojson.features.length)
 
     if (signal.aborted) return
     if (!geojsonLayer.cachedGeoJSON && geojson.cachedGeoJSON) {

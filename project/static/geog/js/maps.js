@@ -38,7 +38,7 @@ const clearAllLayers = (map) => {
 }
 
 const getMeterScale = (map) => {
-    let scale_value
+    let scaleValue
 
     const scales = map.getContainer().querySelectorAll('.leaflet-control-scale-line')
     scales.forEach(scale => {
@@ -47,15 +47,15 @@ const getMeterScale = (map) => {
         if (lastChar === 'm') {
             const value = parseInt(text)
             if (text.includes('km')) {
-                scale_value = value * 1000
+                scaleValue = value * 1000
             } else {
-                scale_value = value
+                scaleValue = value
             }
             return
         }
     })
 
-    return scale_value
+    return scaleValue
 }
 
 const getMapBbox = (map) => {
@@ -103,4 +103,29 @@ const zoomMapToBbox = (map, bbox) => {
     map.fitBounds(bounds)
 
     return bounds
+}
+
+const mapZoomToMeter = (map) => {
+    return {
+        20: 5,
+        19: 10,
+        18: 30,
+        17: 50,
+        16: 100,
+        15: 200,
+        14: 500,
+        13: 1000,
+        12: 2000,
+        11: 3000,
+        10: 5000,
+        9: 10000,
+        8: 30000,
+        7: 50000,
+        6: 100000,
+        5: 200000,
+        4: 500000,
+        3: 1000000,
+        2: 3000000,
+        1: 5000000,
+    }[map.getZoom()]
 }
