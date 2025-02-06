@@ -145,6 +145,7 @@ const updateGeoJSONData = async (event) => {
             })
             
             if (cachedGeoJSON.features.length === 0) return
+            cachedGeoJSON.fromIndexedDB = true
             return cachedGeoJSON
         })()
     
@@ -174,7 +175,7 @@ const updateGeoJSONData = async (event) => {
             await handleGeoJSON(geojson)
             geojson.processed = true
 
-            if (!geojson.prefix) {
+            if (!geojson.fromIndexedDB && !geojson.prefix) {
                 saveToGeoJSONDB(mapKey, Object.assign({}, geojson))
             }
         }     
