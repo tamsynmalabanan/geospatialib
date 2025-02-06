@@ -131,9 +131,9 @@ const updateGeoJSONData = async (event) => {
                 return
             }
             
-            
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
+            console.log(filterBounds, crs)
             if (crs && crs !== 4326) {
                 if (signal.aborted) return
                 filterBounds = await transformFeatureGeometry(filterBounds, 4326, crs)
