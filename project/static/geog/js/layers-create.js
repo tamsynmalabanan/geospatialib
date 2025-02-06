@@ -107,26 +107,26 @@ const createGeoJSONLayer = (data) => {
             geojson && geojsonLayer.fire('dataUpdated', {geojson})         
         }
         
-        // let handlerTimeout
-        // const handlerOnTimeout = () => {
-        //     clearTimeout(handlerTimeout)
-        //     handlerTimeout = setTimeout(handler, 1000)
-        // }
+        let handlerTimeout
+        const handlerOnTimeout = () => {
+            clearTimeout(handlerTimeout)
+            handlerTimeout = setTimeout(handler, 100)
+        }
 
         const abortHandler = () => {
             geojsonLayer.abortController.abort('Map moved or layer removed');
             geojsonLayer.abortController = new AbortController();
         };
         
-        map.on('moveend zoomend', handler)
+        map.on('moveend zoomend', handlerOnTimeout)
         map.on('movestart zoomstart', abortHandler);
         geojsonLayer.on('remove', () => {
             abortHandler()
-            map.off('moveend zoomend', handler)
+            map.off('moveend zoomend', handlerOnTimeout)
             map.off('movestart zoomstart', abortHandler);
         });
 
-        handler()
+        handlerOnTimeout()
     })
 
     return geojsonLayer
