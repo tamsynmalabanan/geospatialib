@@ -563,7 +563,7 @@ const handleMapLegend = (map) => {
                         if (typeof styles !== 'object') return
                         
                         const table = document.createElement('table')
-                        table.className = 'table table-borderless table-sm align-middle'
+                        table.className = 'table table-borderless table-sm align-middle mb-0'
                         legendCollapse.appendChild(table)
 
                         const tbody = document.createElement('tbody')
@@ -576,6 +576,7 @@ const handleMapLegend = (map) => {
                             tbody.appendChild(row)
     
                             const iconTd = document.createElement('td')
+                            iconTd.style.width = '15px'
                             row.appendChild(iconTd)
 
                             const icon = document.createElement('div')

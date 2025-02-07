@@ -10,6 +10,10 @@ body {
     opacity: 1;
 }
 
+.white-space-nowrap {
+    white-space: nowrap;
+}
+
 .no-icon.accordion-button::after {
     width: 0px !important;
     --bs-accordion-btn-icon: none !important;
