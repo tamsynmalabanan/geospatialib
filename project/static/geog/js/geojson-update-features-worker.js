@@ -3,14 +3,10 @@ self.importScripts('/static/geog/js/geojson-utils.js')
 
 self.onmessage = (event) => {
     const { newGeoJSON, currentGeoJSON } = event.data
-    console.log(newGeoJSON.features)
     
     if (currentGeoJSON) {
-        console.log(currentGeoJSON.features)
         
         const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, newGeoJSON.mapBounds]))
-        console.log(filterArea)
-        
         if (filterArea) {
             const filteredFeatures = currentGeoJSON.features.filter(feature => {
                 if (!turf.booleanIntersects(filterArea, feature)) return false
@@ -18,7 +14,6 @@ self.onmessage = (event) => {
                 return true
             })
             
-            console.log(filteredFeatures)
             if (filteredFeatures.length > 0) {
                 newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
             }
