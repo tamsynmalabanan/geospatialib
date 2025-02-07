@@ -96,38 +96,38 @@ const deleteFromGeoJSONDB = (id) => {
     }
 }
 
-setInterval(async () => {
-    const request = requestGeoJSONDB()
+// setInterval(async () => {
+//     const request = requestGeoJSONDB()
 
-    request.onsuccess = (event) => {
-        const db = event.target.result;
-        const transaction = db.transaction(['geojsons'], 'readwrite');
-        const objectStore = transaction.objectStore('geojsons');
+//     request.onsuccess = (event) => {
+//         const db = event.target.result;
+//         const transaction = db.transaction(['geojsons'], 'readwrite');
+//         const objectStore = transaction.objectStore('geojsons');
         
-        objectStore.openCursor().onsuccess = (event) => {
-            const cursor = event.target.result;
-            if (cursor) {
-                const currentTime = Date.now();
-                if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
-                    objectStore.delete(cursor.key);
-                    console.log(`Deleted expired data with ID: ${cursor.key}`);
-                }
-                cursor.continue();
-            } else {
-                console.log('No more entries.');
-            }
-        };
+//         objectStore.openCursor().onsuccess = (event) => {
+//             const cursor = event.target.result;
+//             if (cursor) {
+//                 const currentTime = Date.now();
+//                 if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
+//                     objectStore.delete(cursor.key);
+//                     console.log(`Deleted expired data with ID: ${cursor.key}`);
+//                 }
+//                 cursor.continue();
+//             } else {
+//                 console.log('No more entries.');
+//             }
+//         };
 
-        transaction.oncomplete = () => {
-            console.log('Expired data check and deletion completed.');
-        };
+//         transaction.oncomplete = () => {
+//             console.log('Expired data check and deletion completed.');
+//         };
 
-        transaction.onerror = (event) => {
-            console.error('Transaction error:', event.target.errorCode);
-        };
-    };
+//         transaction.onerror = (event) => {
+//             console.error('Transaction error:', event.target.errorCode);
+//         };
+//     };
 
-    request.onerror = (event) => {
-        console.error('Database error:', event.target.errorCode);
-    };
-}, 1000*10);
+//     request.onerror = (event) => {
+//         console.error('Database error:', event.target.errorCode);
+//     };
+// }, 1000*10);
