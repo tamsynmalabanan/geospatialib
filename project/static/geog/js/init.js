@@ -573,21 +573,21 @@ const handleMapLegend = (map) => {
                             const style = styles[group]
     
                             const row = document.createElement('tr')
-                            // row.className = 'd-flex gap-2'
                             tbody.appendChild(row)
     
                             const iconTd = document.createElement('td')
-                            // iconTd.className = ''
                             row.appendChild(iconTd)
 
                             const icon = document.createElement('div')
-                            // icon.className = 'align-self-center'
                             icon.style.height = '10px'
                             iconTd.appendChild(icon)
     
-                            const label = document.createElement('td')
+                            const labelTd = document.createElement('td')
+                            row.appendChild(labelTd)
+
+                            const label = document.createElement('div')
                             label.className = 'd-flex flex-wrap gap-1'
-                            row.appendChild(label)
+                            labelTd.appendChild(label)
 
                             const labelSpan = document.createElement('span')
                             label.appendChild(labelSpan)
