@@ -90,7 +90,7 @@ const getGeoJSONData = async (event) => {
     const map = geojsonLayer._map
     if (!geojsonLayer || !data || !map) return
 
-    const mapKey = getLayerMapKey(geojsonLayer)
+    const mapKey = getLayerKey(geojsonLayer)
     if (getGeoJSONDataMap.has(mapKey)) {
         return await getGeoJSONDataMap.get(mapKey)
     }

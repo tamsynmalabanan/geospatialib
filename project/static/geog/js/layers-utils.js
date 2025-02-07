@@ -382,12 +382,10 @@ const createLayerToggles = (layer, parent, map, layerGroup, options={}) => {
     }
 }
 
-const getLayerMapKey = (layer) => {
+const getLayerKey = (layer) => {
     const data = layer.data
     if (!data) return
-
-    const mapId = layer._map?.getContainer().id
-    return Array(mapId, data.layerUrl, data.layerFormat, data.layerName).filter(str => str).join(':')
+    return Array(data.layerUrl, data.layerFormat, data.layerName).filter(str => str).join(':')
 }
 
 const getLayerLoadEvents = (format) => {
