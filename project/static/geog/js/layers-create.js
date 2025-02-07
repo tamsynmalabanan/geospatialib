@@ -109,7 +109,7 @@ const createGeoJSONLayer = (data) => {
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
                 geojsonLayer.fire('dataUpdated', {geojson})         
-            }, 100)
+            }, 1000)
         }
 
         const abortHandler = () => {
