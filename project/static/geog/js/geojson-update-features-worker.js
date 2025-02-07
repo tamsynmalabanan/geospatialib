@@ -25,5 +25,5 @@ self.onmessage = (event) => {
         }
     }
 
-    self.postMessage({ newGeoJSON })
+    self.postMessage({geojson:newGeoJSON})
 }
