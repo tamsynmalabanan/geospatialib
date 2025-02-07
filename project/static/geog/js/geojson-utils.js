@@ -219,12 +219,16 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
 }
 
 const simplifyPathGeoJSON = (geojson) => {
-    turf.simplify(geojson, {
-        tolerance: 0.01,
-        mutate: true,
-    })
-
-    geojson.prefix = 'Simplified'
+    try {
+        turf.simplify(geojson, {
+            tolerance: 0.01,
+            mutate: true,
+        })
+    
+        geojson.prefix = 'Simplified'
+    } catch {
+        return
+    }
 }
 
 const featuresAreSimilar = (feature1, feature2) => {
