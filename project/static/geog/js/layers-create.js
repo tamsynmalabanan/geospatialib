@@ -62,7 +62,10 @@ const createGeoJSONLayer = (data) => {
     
     geojsonLayer.on('dataUpdated', (event) => {
         const geojson = event.geojson
-        const signal = geojsonLayer.abortController.signal
+        if (!geojson) return
+
+        geojsonLayer.clearLayers()
+        geojsonLayer.addData(geojson)
 
         if (geojsonLayer._openPopups.length > 0) {
             geojsonLayer._openPopups.forEach(popup => popup.openOn(geojsonLayer._map))
@@ -71,8 +74,6 @@ const createGeoJSONLayer = (data) => {
         
         let legend = {}
         geojsonLayer.eachLayer(layer => {
-            if (signal.aborted) return
-
             const properties = layer.feature.properties
 
             const type = (() => {
@@ -123,10 +124,6 @@ const createGeoJSONLayer = (data) => {
 
                 geojsonLayer.fire('fetchingData')
                 const geojson = await getGeoJSONData(event)
-                if (!geojson) return
-                
-                geojsonLayer.clearLayers()
-                geojsonLayer.addData(geojson)
                 geojsonLayer.fire('dataUpdated', {geojson})         
             }, 1000)
         }
