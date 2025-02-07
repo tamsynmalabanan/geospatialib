@@ -152,11 +152,11 @@ const updateGeoJSONData = async (event) => {
                     if (signal.aborted) return
                     await handleGeoJSON(geojson)
                     
-                    const geojsonClone = Object.assign({}, geojson)
+                    const clone = Object.assign({}, geojson)
                     await saveToGeoJSONDB(mapKey, {
-                        type: geojsonClone.type,
-                        features: geojsonClone.features,
-                        mapBounds: geojsonClone.mapBounds,
+                        type: clone.type,
+                        features: clone.features,
+                        mapBounds: clone.mapBounds,
                     })
                 }
             } else {
