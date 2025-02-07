@@ -168,7 +168,7 @@ const getGeoJSONData = async (event) => {
         if (signal.aborted) return
         const mapScale = getMeterScale(map) || mapZoomToMeter(map)
         console.log('simplifying')
-        geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
+        geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, map)
         console.log('done simplifying')
 
         return geojson
@@ -178,7 +178,7 @@ const getGeoJSONData = async (event) => {
     return geojsonPromise
 }
 
-const simplifyGeoJSON = async (geojson, mapScale) => {
+const simplifyGeoJSON = async (geojson, map) => {
     const pointsGeoJSON = turf.featureCollection([])
     const pathsGeoJSON = turf.featureCollection([])
 
@@ -188,7 +188,15 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/10, {polygonizeClusters:true})
+    if (pointsGeoJSON.features.length > 0) {
+        const mapZoom = map.getZoom()
+        if (mapZoom < 9) {
+            const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+            const maxDistance = mapScale / 1000 / ((9-mapZoom) * 5)
+            simplifyPointGeoJSON(pointsGeoJSON, mapScale/10, {polygonizeClusters:true})
+        }
+    }
+
     pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
@@ -221,7 +229,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
     try {
         turf.clustersDbscan(geojson, maxDistance, {
             mutate: true,
-            minPoints: 5
+            minPoints: 2
         })
         
         const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
