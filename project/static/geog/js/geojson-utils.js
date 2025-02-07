@@ -225,6 +225,14 @@ const getBoundingCircle = (geojson, options={}) => {
     })
 }
 
+const getConvexHull = (geojson, options={}) => {
+    try {
+        return turf.convex(geojson)
+    } catch {
+        return turf.envelope(geojson)
+    }
+}
+
 const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
     try {
         turf.clustersDbscan(geojson, maxDistance, {
@@ -240,7 +248,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
             console.log(turf.convex(cluster))
             const clusterFeature = options.clustersToCircles ? getBoundingCircle(cluster)
-            : options.clustersToConvexHull ? turf.convex(cluster)
+            : options.clustersToConvexHull ? getConvexHull(cluster)
             : turf.centroid(cluster)
             
             clusterFeature.properties ={
