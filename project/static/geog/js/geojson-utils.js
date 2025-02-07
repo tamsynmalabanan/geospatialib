@@ -164,7 +164,9 @@ const updateGeoJSONData = async (event) => {
 
         if (signal.aborted) return
         const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+        console.log('simplifying')
         geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
+        console.log('done simplifying')
 
         return geojson
     })().finally(() => updateGeoJSONDataMap.delete(mapKey))
