@@ -577,6 +577,7 @@ const handleMapLegend = (map) => {
                             tbody.appendChild(row)
     
                             const iconTd = document.createElement('td')
+                            iconTd.className = 'align-middle text-align-center'
                             row.appendChild(iconTd)
 
                             const icon = document.createElement('div')
