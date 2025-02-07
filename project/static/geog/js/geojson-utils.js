@@ -150,7 +150,7 @@ const getGeoJSONData = async (event) => {
                     if (signal.aborted) return
                     await handleGeoJSON(geojson)
                     
-                    const clone = turf.clone(geojson) // Object.assign({}, geojson)
+                    const clone = turf.clone(geojson)
                     await updateGeoJSONOnDB(layerKey, {
                         type: clone.type,
                         features: clone.features,
@@ -188,7 +188,7 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/20, {polygonizeClusters:true})
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/10, {polygonizeClusters:true})
     pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
