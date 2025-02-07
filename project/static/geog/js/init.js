@@ -546,7 +546,7 @@ const handleMapLegend = (map) => {
                 if (layer.data.layerLegendStyle) {
                     const legendCollapse = legendContainer.querySelector('.collapse')
 
-                    layer.on('fetchingData', () => {
+                    layer.on('updatingData', () => {
                         if (!legendLayerGroup.hasLayer(layer)) return
                         legendCollapse.innerHTML = `
                             <div class="spinner-border spinner-border-sm text-bg-${getPreferredTheme()} m-0 p-0" role="status">

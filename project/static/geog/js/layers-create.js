@@ -122,9 +122,9 @@ const createGeoJSONLayer = (data) => {
             handlerTimeout = setTimeout(async () => {
                 if (map.hasHiddenLayer(geojsonLayer)) return
 
-                geojsonLayer.fire('fetchingData')
-                const geojson = await getGeoJSONData(event)
-                geojsonLayer.fire('dataUpdated', {geojson})         
+                geojsonLayer.fire('updatingData')
+                const geojson = await updateGeoJSONData(event)
+                // geojsonLayer.fire('dataUpdated', {geojson})         
             }, 1000)
         }
 
