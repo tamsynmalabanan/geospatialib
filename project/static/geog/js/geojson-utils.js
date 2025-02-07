@@ -188,7 +188,7 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/10, {polygonizeClusters:true})
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/20, {polygonizeClusters:true})
     pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
@@ -203,17 +203,17 @@ const getBoundingCircle = (geojson, options={}) => {
     const centroid = turf.centroid(bboxPolygon)
 
     const corners = [
-        turf.point([bbox[0], bbox[1]]), // Bottom-left corner
-        turf.point([bbox[0], bbox[3]]), // Top-left corner
-        turf.point([bbox[2], bbox[1]]), // Bottom-right corner
-        turf.point([bbox[2], bbox[3]]), // Top-right corner
+        turf.point([bbox[0], bbox[1]]),
+        turf.point([bbox[0], bbox[3]]),
+        turf.point([bbox[2], bbox[1]]),
+        turf.point([bbox[2], bbox[3]]),
     ]
     
     const distances = corners.map(corner => turf.distance(centroid, corner, { units: 'kilometers' }))
     const maxDistance = Math.max(...distances)
     return turf.circle(centroid.geometry.coordinates, maxDistance, {
         units: 'kilometers',
-        steps: options.steps || 32,
+        steps: options.steps || 64,
     })
 }
 
