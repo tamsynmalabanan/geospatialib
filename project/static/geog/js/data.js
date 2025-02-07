@@ -189,7 +189,7 @@ const overpassOSMDataToGeoJSON = (data, options={}) => {
                 })
 
                 if (points.length !== 0) {
-                    const geojson_mpt = Object.assign({}, geojson);
+                    const geojson_mpt = turf.clone(geojson)
                     geojson_mpt.geometry = {
                         type: 'MultiPoint',
                         coordinates: []
@@ -203,7 +203,7 @@ const overpassOSMDataToGeoJSON = (data, options={}) => {
                 }
 
                 if (linestrings.length !== 0) {
-                    const geojson_mls = Object.assign({}, geojson);
+                    const geojson_mls = turf.clone(geojson)
                     geojson_mls.geometry = {
                         type: 'MultiLineString',
                         coordinates: []
@@ -226,7 +226,7 @@ const overpassOSMDataToGeoJSON = (data, options={}) => {
                 }
 
                 if (polygons.length !== 0) {
-                    const geojson_mp = Object.assign({}, geojson);
+                    const geojson_mp = turf.clone(geojson) // Object.assign({}, geojson);
                     geojson_mp.geometry = {
                         type: 'MultiPolygon',
                         coordinates: []

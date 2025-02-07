@@ -112,7 +112,7 @@ const getGeoJSONData = async (event) => {
         geojson = await (async () => {
             const cachedGeoJSON = await getFromGeoJSONDB(layerKey)
             if (!cachedGeoJSON) return
-            const clone = Object.assign({}, cachedGeoJSON)
+            const clone = turf.clone(cachedGeoJSON) // Object.assign({}, cachedGeoJSON)
 
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
@@ -150,7 +150,7 @@ const getGeoJSONData = async (event) => {
                     if (signal.aborted) return
                     await handleGeoJSON(geojson)
                     
-                    const clone = Object.assign({}, geojson)
+                    const clone = turf.clone(geojson) // Object.assign({}, geojson)
                     await updateGeoJSONOnDB(layerKey, {
                         type: clone.type,
                         features: clone.features,
@@ -197,7 +197,27 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
     return geojson
 }
 
-const simplifyPointGeoJSON = (geojson, maxDistance) => {
+const getBoundingCircle = (geojson, options={}) => {
+    const bbox = turf.bbox(geojson)
+    const bboxPolygon = turf.bboxPolygon(bbox)
+    const centroid = turf.centroid(bboxPolygon)
+
+    const corners = [
+        turf.point([bbox[0], bbox[1]]), // Bottom-left corner
+        turf.point([bbox[0], bbox[3]]), // Top-left corner
+        turf.point([bbox[2], bbox[1]]), // Bottom-right corner
+        turf.point([bbox[2], bbox[3]]), // Top-right corner
+    ]
+    
+    const distances = corners.map(corner => turf.distance(centroid, corner, { units: 'kilometers' }))
+    const maxDistance = Math.max(...distances)
+    return turf.circle(centroid.geometry.coordinates, maxDistance, {
+        units: 'kilometers',
+        steps: options.steps || 32,
+    })
+}
+
+const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
     try {
         turf.clustersDbscan(geojson, maxDistance, {
             mutate: true,
@@ -208,12 +228,12 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
         if (features.length === geojson.features.length) return
         
         turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-            features.push(turf.center(cluster, {
-                properties: {
-                    cluster: clusterValue,
-                    count: cluster.features.length
-                }
-            }))
+            const clusterFeature = options.polygonizeClusters ? getBoundingCircle(cluster) : turf.centroid(cluster)
+            clusterFeature.properties ={
+                cluster: clusterValue,
+                count: cluster.features.length
+            }
+            features.push(clusterFeature)
         })
         
         geojson.features = features
