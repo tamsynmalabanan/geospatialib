@@ -22,7 +22,7 @@ const saveToGeoJSONDB = (id, geojson) => {
 }
 
 const updateGeoJSONOnDB = async (id, newGeoJSON) => {
-    const worker = new Worker('/static/geog/js/geojson-update-features-worker.js')
+    const worker = new Worker('/static/geog/js/workers/geojson-update-features.js')
 
     worker.onmessage = (event) => {
         const geojson = event.data.geojson

@@ -164,9 +164,7 @@ const updateGeoJSONData = async (event) => {
 
         if (signal.aborted) return
         const mapScale = getMeterScale(map) || mapZoomToMeter(map)
-        console.log('simplifying')
         geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, mapScale)
-        console.log('done simplifying')
 
         return geojson
     })().finally(() => updateGeoJSONDataMap.delete(mapKey))
@@ -195,17 +193,14 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
 }
 
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
-    console.log('clustering')
     turf.clustersDbscan(geojson, maxDistance, {
         mutate: true,
         minPoints: 2
     })
     
-    console.log('filtering')
     const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
     if (features.length === geojson.features.length) return
     
-    console.log('center')
     turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
         features.push(turf.center(cluster, {
             properties: {
@@ -214,7 +209,6 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
             }
         }))
     })
-    console.log('done')
     
     geojson.features = features
     geojson.prefix = 'Aggregate'
