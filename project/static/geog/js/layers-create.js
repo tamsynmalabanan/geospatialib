@@ -100,13 +100,12 @@ const createGeoJSONLayer = (data) => {
         const handler = async () => {
             clearTimeout(handlerTimeout)
             handlerTimeout = setTimeout(async () => {
+                if (map.hasHiddenLayer(geojsonLayer)) return
+
                 geojsonLayer.fire('fetchingData')
                 const geojson = await getGeoJSONData(event)
                 if (!geojson) return
-
-
-
-                if (!map.hasLayer(geojsonLayer)) return
+                
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(geojson)
                 geojsonLayer.fire('dataUpdated', {geojson})         
@@ -119,6 +118,7 @@ const createGeoJSONLayer = (data) => {
         };
 
         const clearHandlers = () => {
+            // abortHandler()
             map.off('moveend zoomend', handler)
             map.off('movestart zoomstart', abortHandler);
             geojsonLayer.off('remove', clearHandlers)
