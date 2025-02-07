@@ -1146,6 +1146,14 @@ const handleMapMethods = (map) => {
             map.fitBounds(bounds)
         }
     }
+
+    map.hasHiddenLayer = (layer) => {
+        map.getLayerGroups().forEach(group => {
+            if (group.hasHiddenLayer(layer)) return true
+        })
+
+        return false
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

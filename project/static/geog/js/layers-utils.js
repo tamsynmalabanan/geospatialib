@@ -1,15 +1,3 @@
-const isHiddenInLegend = (layer, map) => {
-    const layerGroups = map.getLayerGroups()
-    for (const layerGroupName in layerGroups) {
-        const layerGroup = layerGroups[layerGroupName]
-        if (layerGroup.hasHiddenLayer(layer)) {
-            return layerGroup
-        }
-    }
-
-    return false
-}
-
 const layerToGeoJSON = (layer) => {
     try {
         return layer.toGeoJSON()
