@@ -13,14 +13,11 @@ const requestGeoJSONDB = () => {
 
 const saveToGeoJSONDB = async (id, geojson) => {
     const currentGeoJSON = await getFromGeoJSONDB(id)
-    console.log(id, geojson, currentGeoJSON)
     
     return new Promise((resolve, reject) => {
         const worker = new Worker('/static/geog/js/geojson-saveToGeoJSONDB-worker.js');
-        console.log(worker)
 
         worker.onmessage = (event) => {
-            console.log(event)
             if (event.data.success) {
                 resolve();
             } else {
@@ -30,37 +27,12 @@ const saveToGeoJSONDB = async (id, geojson) => {
         };
 
         worker.onerror = (error) => {
-            console.log(error)
             reject(error);
             worker.terminate();
         };
 
         worker.postMessage({ id, geojson, currentGeoJSON });
     });
-  
-    // const request = requestGeoJSONDB()
-    // request.onsuccess = (event) => {
-    //     const db = event.target.result
-    //     const transaction = db.transaction(['geojsons'], 'readwrite')
-    //     const objectStore = transaction.objectStore('geojsons')
-
-    //     if (currentGeoJSON) {
-    //         const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, geojson.mapBounds]))
-    //         if (filterArea) {
-    //             const filteredFeatures = currentGeoJSON.features.filter(feature => {
-    //                 if (!turf.booleanIntersects(filterArea, feature)) return false
-    //                 if (hasSimilarFeature(geojson.features, feature)) return false
-    //                 return true
-    //             })
-
-    //             if (filteredFeatures.length > 0) {
-    //                 geojson.features = geojson.features.concat(filteredFeatures)
-    //             }
-    //         }
-    //     }
-
-    //     objectStore.put({ id, geojson })
-    // }
 }
 
 const getFromGeoJSONDB = async (id) => {
