@@ -73,7 +73,12 @@ const createGeoJSONLayer = (data) => {
         geojsonLayer.eachLayer(layer => {
             if (signal.aborted) return
 
-            const type = geojson.prefix === 'Bounding' ? 'Polygon' : layer.feature.geometry.type.replace('Multi', '')
+            const type = (() => {
+                const featureType = layer.feature.geometry.type.replace('Multi', '')
+                if (geojson.prefix === 'Bounding') return 'Box'
+                if (geojson.prefix === 'Cluster' && featureType === 'Polygon') return 'Area'
+                return featureType
+            })()
             const group = Array(geojson.prefix, type, geojson.suffix).filter(part => part).join(' ')
             const properties = layer.feature.properties
             
@@ -82,7 +87,7 @@ const createGeoJSONLayer = (data) => {
                     label: group,
                     type: type,
                     style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
-                    count: geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1,
+                    count: geojson.prefix === 'Cluster' && properties.dbscan !== 'noise' ? properties.count : 1,
                 }
             } else {
                 legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
