@@ -195,14 +195,17 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
 }
 
 const simplifyPointGeoJSON = (geojson, maxDistance) => {
+    console.log('clustering')
     turf.clustersDbscan(geojson, maxDistance, {
         mutate: true,
         minPoints: 2
     })
-        
+    
+    console.log('filtering')
     const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
     if (features.length === geojson.features.length) return
-
+    
+    console.log('center')
     turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
         features.push(turf.center(cluster, {
             properties: {
@@ -211,7 +214,8 @@ const simplifyPointGeoJSON = (geojson, maxDistance) => {
             }
         }))
     })
-        
+    console.log('done')
+    
     geojson.features = features
     geojson.prefix = 'Aggregate'
 }
@@ -221,6 +225,7 @@ const simplifyPathGeoJSON = (geojson) => {
         tolerance: 0.01,
         mutate: true,
     })
+
     geojson.prefix = 'Simplified'
 }
 
