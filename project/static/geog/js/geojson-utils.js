@@ -228,7 +228,8 @@ const getBoundingCircle = (geojson, options={}) => {
 const getConvexHull = (geojson, options={}) => {
     try {
         return turf.convex(geojson)
-    } catch {
+    } catch (error) {
+        console.log(error)
         return turf.envelope(geojson)
     }
 }
