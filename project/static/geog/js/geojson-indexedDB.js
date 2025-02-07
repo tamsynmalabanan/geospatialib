@@ -21,8 +21,9 @@ const saveToGeoJSONDB = (id, geojson) => {
     }
 }
 
-const updateGeoJSONOnDB = (id, newGeoJSON) => {
-    return new Promise(async (resolve, reject) => {
+const updateGeoJSONOnDB = async (id, newGeoJSON) => {
+    const currentGeoJSON = await getFromGeoJSONDB(id)
+    return new Promise((resolve, reject) => {
         const worker = new Worker('/static/geog/js/geojson-update-features-worker.js')
 
         worker.onmessage = (event) => {
@@ -42,7 +43,6 @@ const updateGeoJSONOnDB = (id, newGeoJSON) => {
             worker.terminate()
         }
 
-        const currentGeoJSON = await getFromGeoJSONDB(id)
         worker.postMessage({ newGeoJSON, currentGeoJSON })
     })  
 }
