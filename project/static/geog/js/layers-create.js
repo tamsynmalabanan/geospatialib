@@ -94,18 +94,17 @@ const createGeoJSONLayer = (data) => {
                 return Object.values(parts).filter(part => part).join(' ')
             })()
             
+            const featureCount = geojson.prefix === 'Cluster' && properties.dbscan !== 'noise' ? properties.count : 1
+
             if (!Object.keys(legend).includes(group)) {
                 legend[group] = {
                     label: group,
                     type: type,
-                    style: type === 'Point' ? layer.options.icon : geojsonLayer.options.style(),
-                    count: geojson.prefix === 'Cluster' && properties.dbscan !== 'noise' ? properties.count : 1,
-                }
-                if (type === 'Area') {
-                    console.log(layer, geojsonLayer.options.style())
+                    style: type === 'Point' ? layer.options.icon : layer.options.style(),
+                    count: featureCount,
                 }
             } else {
-                legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
+                legend[group].count += featureCount
             }
         })
 
