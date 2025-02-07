@@ -119,6 +119,8 @@ const getGeoJSONData = async (event) => {
             } catch (error) {
                 return
             }
+
+            saveToGeoJSONDB(mapKey, cachedGeoJSON)
             
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
