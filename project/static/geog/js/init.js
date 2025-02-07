@@ -577,11 +577,11 @@ const handleMapLegend = (map) => {
                             tbody.appendChild(row)
     
                             const iconTd = document.createElement('td')
-                            iconTd.className = 'align-middle text-align-center'
+                            // iconTd.className = ''
                             row.appendChild(iconTd)
 
                             const icon = document.createElement('div')
-                            icon.className = 'align-self-center'
+                            // icon.className = 'align-self-center'
                             icon.style.height = '10px'
                             iconTd.appendChild(icon)
     
