@@ -21,30 +21,29 @@ const saveToGeoJSONDB = (id, geojson) => {
     }
 }
 
-const updateGeoJSONOnDB = async (id, geojson) => {
-    const currentGeoJSON = await getFromGeoJSONDB(id)
-    
-    return new Promise((resolve, reject) => {
-        const worker = new Worker('/static/geog/js/geojson-updateGeoJSONOnDB-worker.js');
+const updateGeoJSONOnDB = (id, newGeoJSON) => {
+    return new Promise(async (resolve, reject) => {
+        const worker = new Worker('/static/geog/js/geojson-update-features-worker.js')
 
         worker.onmessage = (event) => {
             const geojson = event.data.geojson
             if (geojson) {
-                
-                resolve();
+                saveToGeoJSONDB(id, geojson)
+                resolve()
             } else {
-                reject(event.data.error);
+                reject(event.data.error)
             }
-            worker.terminate();
-        };
+            worker.terminate()
+        }
 
         worker.onerror = (error) => {
-            reject(error);
-            worker.terminate();
-        };
+            reject(error)
+            worker.terminate()
+        }
 
-        worker.postMessage({ geojson, currentGeoJSON });
-    });  
+        const currentGeoJSON = await getFromGeoJSONDB(id)
+        worker.postMessage({ newGeoJSON, currentGeoJSON })
+    })  
 }
 
 const getFromGeoJSONDB = async (id) => {
@@ -60,22 +59,18 @@ const getFromGeoJSONDB = async (id) => {
             geojsonRequest.onsuccess = (event) => {
                 const result = event.target.result
                 if (result) {
-                    // console.log('GeoJSON retrieved successfully:', result.geojson)
                     resolve(result.geojson)
                 } else {
-                    // console.log('No GeoJSON found with ID:', id)
                     resolve(null)
                 }
             }
     
             geojsonRequest.onerror = (event) => {
-                // console.error('GeoJSON retrieval error:', event.target.errorCode)
                 reject(event.target.errorCode)
             }
         }
   
         request.onerror = (event) => {
-            // console.error('Database error:', event.target.errorCode)
             reject(event.target.errorCode)
         }
     })
