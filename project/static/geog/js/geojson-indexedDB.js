@@ -11,8 +11,7 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-// const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60*24*7) => {
-const saveToGeoJSONDB = (id, geojson, expiration=1000*10) => {
+const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (event) => {
         const db = event.target.result
@@ -110,24 +109,9 @@ setInterval(async () => {
                 const currentTime = Date.now();
                 if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
                     objectStore.delete(cursor.key);
-                    console.log(`Deleted expired data with ID: ${cursor.key}`);
                 }
                 cursor.continue();
-            } else {
-                console.log('No more entries.');
             }
         };
-
-        transaction.oncomplete = () => {
-            console.log('Expired data check and deletion completed.');
-        };
-
-        transaction.onerror = (event) => {
-            console.error('Transaction error:', event.target.errorCode);
-        };
     };
-
-    request.onerror = (event) => {
-        console.error('Database error:', event.target.errorCode);
-    };
-}, 1000*20);
+}, 1000*60*60);
