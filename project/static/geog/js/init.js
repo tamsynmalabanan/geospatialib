@@ -576,10 +576,11 @@ const handleMapLegend = (map) => {
                             tbody.appendChild(row)
     
                             const iconTd = document.createElement('td')
-                            iconTd.style.width = '15px'
+                            iconTd.style.width = '20px'
                             row.appendChild(iconTd)
 
                             const icon = document.createElement('div')
+                            icon.className = 'mx-auto'
                             icon.style.height = '10px'
                             iconTd.appendChild(icon)
     
