@@ -28,23 +28,16 @@ const updateGeoJSONOnDB = async (id, newGeoJSON) => {
         const geojson = event.data.geojson
         if (geojson) {
             saveToGeoJSONDB(id, geojson)
-            // resolve()
         }
-        // else {
-        //     reject(event.data.error)
-        // }
         worker.terminate()
     }
     
     worker.onerror = (error) => {
-        // reject(error)
         worker.terminate()
     }
     
     const currentGeoJSON = await getFromGeoJSONDB(id)
     worker.postMessage({ newGeoJSON, currentGeoJSON })
-    // return new Promise(async (resolve, reject) => {
-    // })  
 }
 
 const getFromGeoJSONDB = async (id) => {
