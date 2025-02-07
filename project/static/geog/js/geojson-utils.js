@@ -235,7 +235,10 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
         if (features.length === geojson.features.length) return
         
+        console.log(options.clustersToConvexHull)
+
         turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
+            console.log(turf.convex(cluster))
             const clusterFeature = options.clustersToCircles ? getBoundingCircle(cluster)
             : options.clustersToConvexHull ? turf.convex(cluster)
             : turf.centroid(cluster)
@@ -250,8 +253,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         
         geojson.features = features
         geojson.prefix = 'Cluster'
-    } catch (error) {
-        console.log(error)
+    } catch {
         return
     }
 }
