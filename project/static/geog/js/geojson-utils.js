@@ -196,16 +196,19 @@ const simplifyGeoJSON = async (geojson, map) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    if (pointsGeoJSON.features.length > 0) {
+    if (mapZoom < 9) {
         const mapZoom = map.getZoom()
-        if (mapZoom < 9) {
-            const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+        const mapScale = getMeterScale(map) || mapZoomToMeter(map)
+        if (pointsGeoJSON.features.length > 0) {
             const maxDistance = mapScale / 1000 / ((9-mapZoom) * 10)
             simplifyPointGeoJSON(pointsGeoJSON, maxDistance, {clustersToCircles:true})
         }
-    }
 
-    pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
+        if (pathsGeoJSON.features.length > 0) {
+            const tolerance = 1
+            simplifyPathGeoJSON(pathsGeoJSON, tolerance)
+        }
+    }
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
     geojson.prefix = Array(pointsGeoJSON, pathsGeoJSON).map(gj => gj.prefix).filter(prefix => prefix).join('/')
@@ -270,10 +273,10 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
     }
 }
 
-const simplifyPathGeoJSON = (geojson) => {
+const simplifyPathGeoJSON = (geojson, tolerance) => {
     try {
         turf.simplify(geojson, {
-            tolerance: 0.01,
+            tolerance: tolerance || 0.01,
             mutate: true,
         })
     
