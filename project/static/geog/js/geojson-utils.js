@@ -250,7 +250,8 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         
         geojson.features = features
         geojson.prefix = 'Cluster'
-    } catch {
+    } catch (error) {
+        console.log(error)
         return
     }
 }
