@@ -192,7 +192,7 @@ const simplifyGeoJSON = async (geojson, map) => {
         const mapZoom = map.getZoom()
         if (mapZoom < 9) {
             const mapScale = getMeterScale(map) || mapZoomToMeter(map)
-            const maxDistance = mapScale / 1000 / ((9-mapZoom) * 5)
+            const maxDistance = mapScale / 1000 / ((9-mapZoom) * 10)
             simplifyPointGeoJSON(pointsGeoJSON, maxDistance, {polygonizeClusters:true})
         }
     }
