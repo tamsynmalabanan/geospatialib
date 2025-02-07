@@ -227,10 +227,9 @@ const getBoundingCircle = (geojson, options={}) => {
 
 const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
     try {
-        console.log(maxDistance)
         turf.clustersDbscan(geojson, maxDistance, {
             mutate: true,
-            minPoints: Math.ceil(maxDistance)
+            minPoints: 2
         })
         
         const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
