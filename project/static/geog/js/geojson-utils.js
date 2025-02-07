@@ -148,7 +148,7 @@ const updateGeoJSONData = async (event) => {
                     await handleGeoJSON(geojson)
                     
                     const clone = Object.assign({}, geojson)
-                    await updateGeoJSONOnDB(mapKey, {
+                    updateGeoJSONOnDB(mapKey, {
                         type: clone.type,
                         features: clone.features,
                         mapBounds: clone.mapBounds,
