@@ -102,7 +102,7 @@ const createGeoJSONLayer = (data) => {
                     count: geojson.prefix === 'Cluster' && properties.dbscan !== 'noise' ? properties.count : 1,
                 }
                 if (type === 'Polygon') {
-                    console.log(geojsonLayer.options.style())
+                    console.log(layer, geojsonLayer.options.style())
                 }
             } else {
                 legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
