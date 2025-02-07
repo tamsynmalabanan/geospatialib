@@ -446,7 +446,7 @@ const getDefaultLayerStyle = (type, options={}) => {
 
         return L.divIcon({
             className: 'leaflet-div-icon bg-transparent',
-            iconSize: [10,10],
+            iconSize: [20,10],
             html: div.outerHTML,
         });
     } else {
