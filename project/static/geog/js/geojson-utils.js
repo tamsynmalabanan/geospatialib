@@ -90,7 +90,8 @@ const getGeoJSONData = async (event) => {
     const map = geojsonLayer._map
     if (!geojsonLayer || !data || !map) return
 
-    const mapKey = getLayerKey(geojsonLayer)
+    const layerKey = getLayerKey(geojsonLayer)
+    const mapKey = `${map.getContainer().id}:${layerKey}`
     if (getGeoJSONDataMap.has(mapKey)) {
         return await getGeoJSONDataMap.get(mapKey)
     }
@@ -109,7 +110,7 @@ const getGeoJSONData = async (event) => {
     
         if (signal.aborted) return
         geojson = await (async () => {
-            const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
+            const cachedGeoJSON = await getFromGeoJSONDB(layerKey)
             if (!cachedGeoJSON) return
             const clone = Object.assign({}, cachedGeoJSON)
 
@@ -134,7 +135,7 @@ const getGeoJSONData = async (event) => {
             })
             
             if (cachedGeoJSON.features.length === 0) return
-            saveToGeoJSONDB(mapKey, clone)
+            saveToGeoJSONDB(layerKey, clone)
             return cachedGeoJSON
         })()
     
@@ -150,7 +151,7 @@ const getGeoJSONData = async (event) => {
                     await handleGeoJSON(geojson)
                     
                     const clone = Object.assign({}, geojson)
-                    await updateGeoJSONOnDB(mapKey, {
+                    await updateGeoJSONOnDB(layerKey, {
                         type: clone.type,
                         features: clone.features,
                         mapBounds: clone.mapBounds,
