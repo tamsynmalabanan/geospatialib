@@ -28,6 +28,7 @@ const updateGeoJSONOnDB = (id, newGeoJSON) => {
         worker.onmessage = (event) => {
             const geojson = event.data.geojson
             if (geojson) {
+                console.log(geojson)
                 saveToGeoJSONDB(id, geojson)
                 resolve()
             } else {

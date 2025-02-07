@@ -97,7 +97,7 @@ const createGeoJSONLayer = (data) => {
         const map = event.target._map
     
         let handlerTimeout
-        const handler = () => {
+        const handler = async () => {
             clearTimeout(handlerTimeout)
             handlerTimeout = setTimeout(async () => {
                 if (isHiddenInLegend(geojsonLayer, map)) return
