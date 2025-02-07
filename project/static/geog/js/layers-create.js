@@ -124,7 +124,7 @@ const createGeoJSONLayer = (data) => {
             abortHandler()
             map.off('moveend zoomend', handler)
             map.off('movestart zoomstart', abortHandler);
-            geojsonLayer.off('remove', clearHandlers)
+            // geojsonLayer.off('remove', clearHandlers)
         }
         
         handler()
