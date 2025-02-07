@@ -188,7 +188,7 @@ const simplifyGeoJSON = async (geojson, mapScale) => {
         : pathsGeoJSON.features.push(feature)
     })
 
-    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/2, {polygonizeClusters:true})
+    pointsGeoJSON.features.length > 0 && simplifyPointGeoJSON(pointsGeoJSON, mapScale/1000/100, {polygonizeClusters:true})
     pathsGeoJSON.features.length > 0 && simplifyPathGeoJSON(pathsGeoJSON)
 
     geojson.features = pointsGeoJSON.features.concat(pathsGeoJSON.features)
@@ -221,7 +221,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
     try {
         turf.clustersDbscan(geojson, maxDistance, {
             mutate: true,
-            minPoints: 2
+            minPoints: 10
         })
         
         const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
