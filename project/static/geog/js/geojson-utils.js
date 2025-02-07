@@ -168,7 +168,7 @@ const getGeoJSONData = async (event) => {
         if (signal.aborted) return
         const mapScale = getMeterScale(map) || mapZoomToMeter(map)
         console.log('simplifying')
-        // geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, map)
+        geojson.features.length > 100 && mapScale > 10000 && await simplifyGeoJSON(geojson, map)
         console.log('done simplifying')
 
         return geojson
@@ -245,7 +245,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         })
         
         geojson.features = features
-        geojson.prefix = 'Aggregate'
+        geojson.prefix = 'Cluster'
     } catch {
         return
     }
