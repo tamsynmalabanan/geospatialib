@@ -3,9 +3,8 @@ self.importScripts('/static/geog/js/geojson-utils.js')
 
 self.onmessage = (event) => {
     const { newGeoJSON, currentGeoJSON } = event.data
-    
+
     if (currentGeoJSON) {
-        
         const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, newGeoJSON.mapBounds]))
         if (filterArea) {
             const filteredFeatures = currentGeoJSON.features.filter(feature => {
