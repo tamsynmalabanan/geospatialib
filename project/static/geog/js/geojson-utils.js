@@ -193,7 +193,7 @@ const simplifyGeoJSON = async (geojson, map) => {
         if (mapZoom < 9) {
             const mapScale = getMeterScale(map) || mapZoomToMeter(map)
             const maxDistance = mapScale / 1000 / ((9-mapZoom) * 10)
-            simplifyPointGeoJSON(pointsGeoJSON, maxDistance, {polygonizeClusters:true})
+            simplifyPointGeoJSON(pointsGeoJSON, maxDistance, {clustersToCircles:true})
         }
     }
 
@@ -236,11 +236,15 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         if (features.length === geojson.features.length) return
         
         turf.clusterEach(geojson, 'cluster', (cluster, clusterValue, currentIndex) => {
-            const clusterFeature = options.polygonizeClusters ? getBoundingCircle(cluster) : turf.centroid(cluster)
+            const clusterFeature = options.clustersToCircles ? getBoundingCircle(cluster)
+            : options.clustersToConvexHull ? turf.convex(cluster)
+            : turf.centroid(cluster)
+            
             clusterFeature.properties ={
                 cluster: clusterValue,
                 count: cluster.features.length
             }
+            
             features.push(clusterFeature)
         })
         
