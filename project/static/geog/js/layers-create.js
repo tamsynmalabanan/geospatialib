@@ -104,7 +104,7 @@ const createGeoJSONLayer = (data) => {
                 const geojson = await getGeoJSONData(event)
                 if (!geojson) return
 
-                
+
 
                 if (!map.hasLayer(geojsonLayer)) return
                 geojsonLayer.clearLayers()
@@ -119,7 +119,6 @@ const createGeoJSONLayer = (data) => {
         };
 
         const clearHandlers = () => {
-            // abortHandler()
             map.off('moveend zoomend', handler)
             map.off('movestart zoomstart', abortHandler);
             geojsonLayer.off('remove', clearHandlers)
