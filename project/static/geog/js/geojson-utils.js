@@ -83,8 +83,8 @@ const downloadGeoJSON = (geojson, fileName) => {
     URL.revokeObjectURL(url)
 }
 
-const updateGeoJSONDataMap = new Map()
-const updateGeoJSONData = async (event) => {
+const getGeoJSONDataMap = new Map()
+const getGeoJSONData = async (event) => {
     const geojsonLayer = event.target
     const data = geojsonLayer.data
     const map = geojsonLayer._map
@@ -92,10 +92,8 @@ const updateGeoJSONData = async (event) => {
 
     const layerKey = getLayerKey(geojsonLayer)
     const mapKey = `${map.getContainer().id}:${layerKey}`
-    if (updateGeoJSONDataMap.has(mapKey)) {
-        const geojson = await updateGeoJSONDataMap.get(mapKey)
-        geojsonLayer.fire('dataUpdated', {geojson})
-        return
+    if (getGeoJSONDataMap.has(mapKey)) {
+        return await getGeoJSONDataMap.get(mapKey)
     }
 
     const geojsonPromise = (async () => {
@@ -174,10 +172,10 @@ const updateGeoJSONData = async (event) => {
         console.log('done simplifying')
 
         return geojson
-    })().finally(() => updateGeoJSONDataMap.delete(mapKey))
+    })().finally(() => getGeoJSONDataMap.delete(mapKey))
     
-    updateGeoJSONDataMap.set(mapKey, geojsonPromise)
-    geojsonLayer.fire('dataUpdated', {geojson})         
+    getGeoJSONDataMap.set(mapKey, geojsonPromise)
+    return geojsonPromise
 }
 
 const simplifyGeoJSON = async (geojson, map) => {
