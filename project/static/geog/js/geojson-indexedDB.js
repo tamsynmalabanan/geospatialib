@@ -11,16 +11,26 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = async (id, geojson) => {
+const saveToGeoJSONDB = (id, geojson) => {
+    const request = requestGeoJSONDB()
+    request.onsuccess = (event) => {
+        const db = event.target.result
+        const transaction = db.transaction(['geojsons'], 'readwrite')
+        const objectStore = transaction.objectStore('geojsons')
+        objectStore.put({ id, geojson })
+    }
+}
+
+const updateGeoJSONOnDB = async (id, geojson) => {
     const currentGeoJSON = await getFromGeoJSONDB(id)
     
     return new Promise((resolve, reject) => {
-        const worker = new Worker('/static/geog/js/geojson-saveToGeoJSONDB-worker.js');
+        const worker = new Worker('/static/geog/js/geojson-updateGeoJSONOnDB-worker.js');
 
         worker.onmessage = (event) => {
             const geojson = event.data.geojson
             if (geojson) {
-                console.log('success', geojson)
+                
                 resolve();
             } else {
                 reject(event.data.error);
