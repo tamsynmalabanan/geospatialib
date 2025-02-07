@@ -576,6 +576,7 @@ const handleMapLegend = (map) => {
                             tbody.appendChild(row)
     
                             const iconTd = document.createElement('td')
+                            iconTd.className = 'p-0'
                             iconTd.style.width = '20px'
                             row.appendChild(iconTd)
 
@@ -605,7 +606,7 @@ const handleMapLegend = (map) => {
                                 icon.style.width = '10px'
                                 icon.innerHTML = styleDef.options.html
                             } else {
-                                icon.style.width = '15px'
+                                icon.style.width = '16px'
                                 
                                 const color = styleDef.color || 'hsla(0, 100%, 50%, 1)'
     
