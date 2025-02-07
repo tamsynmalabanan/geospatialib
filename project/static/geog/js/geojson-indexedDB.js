@@ -130,4 +130,4 @@ setInterval(async () => {
     request.onerror = (event) => {
         console.error('Database error:', event.target.errorCode);
     };
-}, 1000*20);
+}, 1000*10);
