@@ -110,6 +110,7 @@ const deleteExpiredGeoJSON = async () => {
                 const currentTime = Date.now();
                 if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
                     objectStore.delete(cursor.key);
+                    console.log('delete')
                 }
                 cursor.continue();
             }
