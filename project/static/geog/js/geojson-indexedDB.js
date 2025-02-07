@@ -22,28 +22,29 @@ const saveToGeoJSONDB = (id, geojson) => {
 }
 
 const updateGeoJSONOnDB = async (id, newGeoJSON) => {
-    return new Promise(async (resolve, reject) => {
-        const worker = new Worker('/static/geog/js/geojson-update-features-worker.js')
+    const worker = new Worker('/static/geog/js/geojson-update-features-worker.js')
 
-        worker.onmessage = (event) => {
-            const geojson = event.data.geojson
-            if (geojson) {
-                saveToGeoJSONDB(id, geojson)
-                resolve()
-            } else {
-                reject(event.data.error)
-            }
-            worker.terminate()
+    worker.onmessage = (event) => {
+        const geojson = event.data.geojson
+        if (geojson) {
+            saveToGeoJSONDB(id, geojson)
+            // resolve()
         }
-        
-        worker.onerror = (error) => {
-            reject(error)
-            worker.terminate()
-        }
-        
-        const currentGeoJSON = await getFromGeoJSONDB(id)
-        worker.postMessage({ newGeoJSON, currentGeoJSON })
-    })  
+        // else {
+        //     reject(event.data.error)
+        // }
+        worker.terminate()
+    }
+    
+    worker.onerror = (error) => {
+        // reject(error)
+        worker.terminate()
+    }
+    
+    const currentGeoJSON = await getFromGeoJSONDB(id)
+    worker.postMessage({ newGeoJSON, currentGeoJSON })
+    // return new Promise(async (resolve, reject) => {
+    // })  
 }
 
 const getFromGeoJSONDB = async (id) => {
