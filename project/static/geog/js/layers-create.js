@@ -98,8 +98,11 @@ const createGeoJSONLayer = (data) => {
                 legend[group] = {
                     label: group,
                     type: type,
-                    style: type === 'Point' ? geojsonLayer.options.pointToLayer().options.icon : geojsonLayer.options.style(),
+                    style: type === 'Point' ? layer.options.icon : geojsonLayer.options.style(),
                     count: geojson.prefix === 'Cluster' && properties.dbscan !== 'noise' ? properties.count : 1,
+                }
+                if (type === 'Polygon') {
+                    console.log(geojsonLayer.options.style())
                 }
             } else {
                 legend[group].count += geojson.prefix === 'Aggregate' && properties.dbscan !== 'noise' ? properties.count : 1
