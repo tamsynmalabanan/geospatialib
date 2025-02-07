@@ -1,6 +1,7 @@
-const requestGeoJSONDB = () => {
-    const request = indexedDB.open('geojsonDB', 1)
+const requestGeoJSONDB = async () => {
+    await deleteExpiredGeoJSON()
 
+    const request = indexedDB.open('geojsonDB', 1)
     request.onupgradeneeded = (event) => {
         const db = event.target.result
         if (!db.objectStoreNames.contains('geojsons')) {
@@ -11,7 +12,8 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60) => {
+// const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60) => {
+const saveToGeoJSONDB = (id, geojson, expiration=1000*10) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (event) => {
         const db = event.target.result
@@ -95,9 +97,8 @@ const deleteFromGeoJSONDB = (id) => {
     }
 }
 
-setInterval(async () => {
+const deleteExpiredGeoJSON = async () => {
     const request = requestGeoJSONDB()
-
     request.onsuccess = (event) => {
         const db = event.target.result;
         const transaction = db.transaction(['geojsons'], 'readwrite');
@@ -113,5 +114,5 @@ setInterval(async () => {
                 cursor.continue();
             }
         };
-    };
-}, 1000*60*60);
+    }
+}
