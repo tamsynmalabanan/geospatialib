@@ -5,7 +5,7 @@ self.onmessage = async (event) => {
     const { geojson, currentGeoJSON } = event.data
     console.log(
         geojson.features, 
-        currentGeoJSON.features
+        currentGeoJSON && currentGeoJSON.features
     )
 
     const requestGeoJSONDB = async () => {
