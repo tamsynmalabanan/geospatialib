@@ -111,7 +111,8 @@ const getGeoJSONData = async (event) => {
         geojson = await (async () => {
             const cachedGeoJSON = await getFromGeoJSONDB(mapKey)
             if (!cachedGeoJSON) return
-            
+            const clone = Object.assign({}, cachedGeoJSON)
+
             try {
                 const equalBounds = turf.booleanEqual(queryBounds, cachedGeoJSON.mapBounds)
                 const withinBounds = turf.booleanWithin(queryBounds, cachedGeoJSON.mapBounds)
@@ -119,8 +120,6 @@ const getGeoJSONData = async (event) => {
             } catch (error) {
                 return
             }
-
-            saveToGeoJSONDB(mapKey, Object.assign({}, cachedGeoJSON))
             
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
@@ -135,6 +134,7 @@ const getGeoJSONData = async (event) => {
             })
             
             if (cachedGeoJSON.features.length === 0) return
+            saveToGeoJSONDB(mapKey, clone)
             return cachedGeoJSON
         })()
     
