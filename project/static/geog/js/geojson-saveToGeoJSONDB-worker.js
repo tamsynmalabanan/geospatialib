@@ -3,10 +3,7 @@ self.importScripts('/static/geog/js/geojson-utils.js')
 
 self.onmessage = async (event) => {
     const { geojson, currentGeoJSON } = event.data
-    console.log(
-        geojson.features, 
-        currentGeoJSON && currentGeoJSON.features
-    )
+    console.log(geojson.features)
 
     const requestGeoJSONDB = async () => {
         return new Promise((resolve, reject) => {
@@ -29,6 +26,7 @@ self.onmessage = async (event) => {
     const objectStore = transaction.objectStore('geojsons')
     
     if (currentGeoJSON) {
+        console.log(currentGeoJSON.features)
         const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, geojson.mapBounds]))
         console.log(filterArea)
         if (filterArea) {
