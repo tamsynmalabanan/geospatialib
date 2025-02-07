@@ -563,7 +563,7 @@ const handleMapLegend = (map) => {
                         if (typeof styles !== 'object') return
                         
                         const table = document.createElement('table')
-                        table.className = 'table table-borderless'
+                        table.className = 'table table-borderless table-sm align-middle'
                         legendCollapse.appendChild(table)
 
                         const tbody = document.createElement('tbody')
