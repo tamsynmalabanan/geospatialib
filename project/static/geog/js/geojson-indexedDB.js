@@ -13,7 +13,7 @@ const requestGeoJSONDB = async () => {
 }
 
 // const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60) => {
-const saveToGeoJSONDB = (id, geojson, expiration=1000*10) => {
+const saveToGeoJSONDB = (id, geojson, expiration=1000*5) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (event) => {
         const db = event.target.result
