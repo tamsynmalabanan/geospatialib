@@ -101,7 +101,7 @@ const createGeoJSONLayer = (data) => {
                     style: type === 'Point' ? layer.options.icon : geojsonLayer.options.style(),
                     count: geojson.prefix === 'Cluster' && properties.dbscan !== 'noise' ? properties.count : 1,
                 }
-                if (type === 'Polygon') {
+                if (type === 'Area') {
                     console.log(layer, geojsonLayer.options.style())
                 }
             } else {
