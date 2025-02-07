@@ -2,7 +2,11 @@ self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
 self.importScripts('/static/geog/js/geojson-utils.js')
 
 self.onmessage = async (event) => {
-    const { id, geojson, currentGeoJSON } = event.data
+    const { geojson, currentGeoJSON } = event.data
+    console.log(
+        geojson.features, 
+        currentGeoJSON.features
+    )
 
     const requestGeoJSONDB = async () => {
         return new Promise((resolve, reject) => {
@@ -20,34 +24,30 @@ self.onmessage = async (event) => {
         })
     }
 
-    try {
-        const db = await requestGeoJSONDB()
-        const transaction = db.transaction(['geojsons'], 'readwrite')
-        const objectStore = transaction.objectStore('geojsons')
-        
-        if (currentGeoJSON) {
-            const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, geojson.mapBounds]))
-            console.log(filterArea)
-            if (filterArea) {
-                const filteredFeatures = currentGeoJSON.features.filter(feature => {
-                    if (!turf.booleanIntersects(filterArea, feature)) return false
-                    if (hasSimilarFeature(geojson.features, feature)) return false
-                    return true
-                })
-                
-                console.log(filteredFeatures)
-                if (filteredFeatures.length > 0) {
-                    geojson.features = geojson.features.concat(filteredFeatures)
-                }
+    const db = await requestGeoJSONDB()
+    const transaction = db.transaction(['geojsons'], 'readwrite')
+    const objectStore = transaction.objectStore('geojsons')
+    
+    if (currentGeoJSON) {
+        const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, geojson.mapBounds]))
+        console.log(filterArea)
+        if (filterArea) {
+            const filteredFeatures = currentGeoJSON.features.filter(feature => {
+                if (!turf.booleanIntersects(filterArea, feature)) return false
+                if (hasSimilarFeature(geojson.features, feature)) return false
+                return true
+            })
+            
+            console.log(filteredFeatures)
+            if (filteredFeatures.length > 0) {
+                geojson.features = geojson.features.concat(filteredFeatures)
             }
         }
-    
-        const putRequest = objectStore.put({ id, geojson })
-        putRequest.onsuccess = (event) => console.log('put success', event)
-        putRequest.onerror = (event) => console.log('put failed', event)
-    
-        self.postMessage({ success: true })
-    } catch (error) {
-        console.log(error)
     }
+
+    self.postMessage({ geojson })
+    // const putRequest = objectStore.put({ id, geojson })
+    // putRequest.onsuccess = (event) => console.log('put success', event)
+    // putRequest.onerror = (event) => console.log('put failed', event)
+
 }

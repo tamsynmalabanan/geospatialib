@@ -18,7 +18,9 @@ const saveToGeoJSONDB = async (id, geojson) => {
         const worker = new Worker('/static/geog/js/geojson-saveToGeoJSONDB-worker.js');
 
         worker.onmessage = (event) => {
-            if (event.data.success) {
+            const geojson = event.data.geojson
+            if (geojson) {
+                console.log('success', geojson)
                 resolve();
             } else {
                 reject(event.data.error);
@@ -31,8 +33,8 @@ const saveToGeoJSONDB = async (id, geojson) => {
             worker.terminate();
         };
 
-        worker.postMessage({ id, geojson, currentGeoJSON });
-    });
+        worker.postMessage({ geojson, currentGeoJSON });
+    });  
 }
 
 const getFromGeoJSONDB = async (id) => {
