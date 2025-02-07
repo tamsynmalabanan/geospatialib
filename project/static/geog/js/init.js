@@ -1148,7 +1148,7 @@ const handleMapMethods = (map) => {
     }
 
     map.hasHiddenLayer = (layer) => {
-        map.getLayerGroups().forEach(group => {
+        Object.values(map.getLayerGroups()).forEach(group => {
             if (group.hasHiddenLayer(layer)) return true
         })
 
