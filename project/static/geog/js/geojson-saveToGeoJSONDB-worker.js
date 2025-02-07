@@ -44,7 +44,9 @@ self.onmessage = async (event) => {
     }
 
     console.log(geojson)
-    objectStore.put({ id, geojson })
+    const putRequest = objectStore.put({ id, geojson })
+    putRequest.onsuccess = () => console.log('put success', geojson)
+    putRequest.onerror = (error) => console.log('put failed', error)
 
     self.postMessage({ success: true })
 }
