@@ -20,7 +20,6 @@ const saveToGeoJSONDB = (id, geojson, expiration=1000*10) => {
         const objectStore = transaction.objectStore('geojsons')
 
         const expirationTime = Date.now() + expiration
-        console.log(expirationTime)
         objectStore.put({ id, geojson, expirationTime })
     }
 }
@@ -110,7 +109,6 @@ setInterval(async () => {
             if (cursor) {
                 const currentTime = Date.now();
                 if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
-                    console.log(cursor)
                     objectStore.delete(cursor.key);
                     console.log(`Deleted expired data with ID: ${cursor.key}`);
                 }
