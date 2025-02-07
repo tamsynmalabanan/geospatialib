@@ -97,7 +97,7 @@ const deleteFromGeoJSONDB = (id) => {
 }
 
 setInterval(async () => {
-    const request = indexedDB.open('geojsonDB', 1);
+    const request = requestGeoJSONDB()
 
     request.onsuccess = (event) => {
         const db = event.target.result;
