@@ -248,7 +248,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
             const clusterFeature = options.clustersToCircles ? getBoundingCircle(cluster)
             : options.clustersToConvexHull ? getConvexHull(cluster)
             : turf.centroid(cluster)
-            
+            console.log(clusterFeature)
             clusterFeature.properties ={
                 cluster: clusterValue,
                 count: cluster.features.length
