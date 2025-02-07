@@ -1,4 +1,5 @@
 self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
+self.importScripts('/static/geog/js/geojson-utils.js')
 
 self.onmessage = async (event) => {
     const { id, geojson, currentGeoJSON } = event.data
@@ -23,22 +24,26 @@ self.onmessage = async (event) => {
     const db = await requestGeoJSONDB()
     const transaction = db.transaction(['geojsons'], 'readwrite')
     const objectStore = transaction.objectStore('geojsons')
-
+    console.log(objectStore)
+    
     if (currentGeoJSON) {
         const filterArea = turf.difference(turf.featureCollection([currentGeoJSON.mapBounds, geojson.mapBounds]))
+        console.log(filterArea)
         if (filterArea) {
             const filteredFeatures = currentGeoJSON.features.filter(feature => {
                 if (!turf.booleanIntersects(filterArea, feature)) return false
                 if (hasSimilarFeature(geojson.features, feature)) return false
                 return true
             })
-
+            
+            console.log(filteredFeatures)
             if (filteredFeatures.length > 0) {
                 geojson.features = geojson.features.concat(filteredFeatures)
             }
         }
     }
 
+    console.log(geojson)
     objectStore.put({ id, geojson })
 
     self.postMessage({ success: true })
