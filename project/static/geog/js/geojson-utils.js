@@ -14,13 +14,16 @@ const getDefaultGeoJSONLayer = (options={}) => {
         },
     })
 
-
+    const iconSize = geojsonLayer._map ? (() => {
+        const mapZoom = geojsonLayer._map.getZoom()
+        return mapZoom > 15 ? 15 : mapZoom < 5 ? 5 : mapZoom
+    })() : 10
 
     geojsonLayer.options.pointToLayer = (geoJsonPoint, latlng) => {
         return L.marker(latlng, {icon:getDefaultLayerStyle('point', {
             color:color,
             colorOpacity:0.5,
-            iconSize: [10, 10]
+            iconSize: [iconSize, iconSize]
         })})
     }
 
