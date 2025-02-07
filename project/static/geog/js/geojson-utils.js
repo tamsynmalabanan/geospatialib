@@ -230,7 +230,7 @@ const simplifyPointGeoJSON = (geojson, maxDistance, options={}) => {
         console.log(maxDistance)
         turf.clustersDbscan(geojson, maxDistance, {
             mutate: true,
-            minPoints: 2
+            minPoints: Math.ceil(maxDistance)
         })
         
         const features = geojson.features.filter(feature => feature.properties.dbscan === 'noise')
