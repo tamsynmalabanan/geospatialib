@@ -562,21 +562,28 @@ const handleMapLegend = (map) => {
                         const styles = layer.data.layerLegendStyle
                         if (typeof styles !== 'object') return
                         
+                        const table = document.createElement('table')
+                        table.className = 'table'
+                        legendCollapse.appendChild(table)
+
+                        const tbody = document.createElement('tbody')
+                        table.appendChild(tbody)
+
                         Object.keys(styles).forEach(group => {
                             const style = styles[group]
     
-                            const container = document.createElement('div')
-                            container.className = 'd-flex gap-2'
-                            legendCollapse.appendChild(container)
+                            const row = document.createElement('tr')
+                            // row.className = 'd-flex gap-2'
+                            tbody.appendChild(row)
     
-                            const icon = document.createElement('div')
+                            const icon = document.createElement('td')
                             icon.className = 'align-self-center'
                             icon.style.height = '10px'
-                            container.appendChild(icon)
+                            row.appendChild(icon)
     
-                            const label = document.createElement('div')
+                            const label = document.createElement('td')
                             label.className = 'd-flex flex-wrap gap-1'
-                            container.appendChild(label)
+                            row.appendChild(label)
 
                             const labelSpan = document.createElement('span')
                             label.appendChild(labelSpan)

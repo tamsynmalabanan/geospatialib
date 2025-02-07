@@ -144,7 +144,6 @@ const getGeoJSONData = async (event) => {
             geojson = await fetchLibraryData(event, geojsonLayer, options={controller:controller})
             
             if (geojson) {
-                console.log(geojson)
                 if (geojson.features.length > 0) {
                     geojson.mapBounds = mapBounds
                     
