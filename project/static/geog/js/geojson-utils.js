@@ -120,7 +120,7 @@ const getGeoJSONData = async (event) => {
                 return
             }
 
-            saveToGeoJSONDB(mapKey, cachedGeoJSON)
+            saveToGeoJSONDB(mapKey, Object.assign({}, cachedGeoJSON))
             
             let filterBounds = L.rectangle(map.getBounds()).toGeoJSON()
             const crs = getGeoJSONCRS(cachedGeoJSON)
