@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     # postgres
     'django.contrib.postgres',
 
+    # gis
+    'django.contrib.gis', 
+
     # project apps
     'customuser',
     'main',
