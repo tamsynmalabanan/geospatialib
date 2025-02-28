@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-kvz^2g!8($@jbqf-dyi0#i3h%00d9sij!ixsm@%23+e7xv%nde
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '139.59.35.171',
+    'www.geospatialib.com',
+    'geospatialib.com',
+    '127.0.0.1',
+]
 
 
 # Application definition
