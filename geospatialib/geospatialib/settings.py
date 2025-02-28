@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-zf(u9cev)i$$%-y)2my50nsq-9_q!s(90n6adpu477-3)cm_-v
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
     '139.59.35.171',
     'geospatialib.com',
     'www.geospatialib.com',
