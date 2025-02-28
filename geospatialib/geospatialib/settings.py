@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '139.59.35.171',
     'geospatialib.com',
+    'www.geospatialib.com',
 ]
 
 
