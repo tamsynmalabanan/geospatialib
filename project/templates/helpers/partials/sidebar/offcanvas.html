@@ -12,6 +12,11 @@
             {% with default_class='border-0 bg-transarent fs-20 p-0 text-muted ms-3' %}
                 <button 
                     type="button" 
+                    class="bi bi-moon-fill {{default_class}}"
+                    onclick='toggleTheme()'
+                ></button>
+                <button 
+                    type="button" 
                     class="bi bi-layout-sidebar-inset d-none d-lg-inline {{default_class}}"
                     onclick='toggleSidebar("#{{offcanvas_id}}")'
                 ></button>
