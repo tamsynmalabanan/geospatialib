@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     # project apps
     'customuser',
     'main',
+    'htmx',
 ]
 
 MIDDLEWARE = [
