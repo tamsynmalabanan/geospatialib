@@ -9,7 +9,7 @@ const toggleSidebar = (sidebarSelector) => {
         button.classList.add('bi-window-sidebar')
         
         sidebar.classList.remove('offcanvas-lg')
-        sidebar.classList.includes('show') && toggle.click()
+        sidebar.classList.contains('show') && toggle.click()
         sidebar.classList.add('offcanvas')
         
         toggle.classList.remove('d-lg-none')
