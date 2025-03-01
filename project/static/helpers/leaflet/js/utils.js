@@ -1,3 +1,3 @@
-const getMapDataset = (map) => {
+const getLeafletMapDataset = (map) => {
     return map.getContainer().parentElement.dataset
 }
