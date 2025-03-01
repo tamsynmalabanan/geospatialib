@@ -28,18 +28,13 @@ const toggleSidebar = (sidebarSelector) => {
 
 const resizeSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
-    const currentPosition = {
-        x: event.x,
-        y: event.y,
-    }
+    const currentX = event.x
 
     const handler = (event) => {
-        const newPosition = {
-            x: event.x,
-            y: event.y,
-        }
-        console.log(currentPosition)
-        console.log(newPosition)
+        const currentWdith = sidebar.offsetWidth
+        const newX = event.x
+        const addition = newX-currentX
+        console.log(currentWdith, addition)
         document.removeEventListener('mouseup', handler)
     }
 
