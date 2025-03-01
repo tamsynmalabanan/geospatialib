@@ -9,10 +9,11 @@ const fadeoutElement = (element, options={}) => {
     const handler = () => setTimeout(() => {
         element.classList.add('fadeout')
         element.style.animation = `fadeOut ${fadeoutTimeoutMs}ms ${animation}`
+        
         setTimeout(() => {
-            element.classList.contains('fadeout') && (
+            if (element.classList.contains('fadeout')) {
                 removeElement ? element.remove() : element.classList.add('d-none')
-            )
+            }
         }, fadeoutTimeoutMs-100)
     }, initTimeout)
 
