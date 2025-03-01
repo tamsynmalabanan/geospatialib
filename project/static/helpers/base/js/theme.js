@@ -6,11 +6,20 @@ const getPreferredTheme = () => {
 
 const getThemeControls = (parent=document) => {
     return [
+        
+
         {
             elements: parent.querySelectorAll(`[onclick='toggleTheme()']`),
             classes: {
                 light: ['bi-moon'],
                 dark: ['bi-moon-fill'],
+            }
+        },
+        {
+            elements: Array.from(parent.querySelectorAll(`.btn-light, .btn-dark`)),
+            classes: {
+                light: ['btn-light'],
+                dark: ['btn-dark'],
             }
         },
     ]
