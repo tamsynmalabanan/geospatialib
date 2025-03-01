@@ -4,6 +4,7 @@ const leafletMapHandler = (map) => {
 
     Array(
         () => container.className = `${container.className} z-1 ${dataset.mapClass || ''}`,
+        () => elementResizeObserver(container, map.invalidateSize)
     ).forEach(handler => handler())
     
     map._initComplete = true
