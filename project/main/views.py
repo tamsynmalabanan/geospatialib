@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
 
-def test(request):
-    return HttpResponse('Test successful.')
+def index(request):
+    context = {}
+    return render(request, 'main/index.html', context)
