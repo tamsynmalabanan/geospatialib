@@ -23,7 +23,7 @@
                     {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                     {% include "helpers/partials/offcanvas/body.html" %}
                     <div class="col vh-100 p-0">
-                        <div class="position-fixed bottom-0 z-3">
+                        <div class="position-fixed bottom-0 z-3 m-10">
                             {% include "helpers/partials/offcanvas/toggle.html" %}
                         </div>
                         {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
