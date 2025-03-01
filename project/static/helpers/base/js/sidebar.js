@@ -5,8 +5,10 @@ const toggleSidebar = (sidebarSelector) => {
     const dismiss = document.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="${sidebarSelector}"]`)
 
     if (sidebar.classList.contains('offcanvas-lg')) {
-        button.classList.remove('bi-layout-sidebar-inset')
-        button.classList.add('bi-window-sidebar')
+        if (typeof button === 'button') {
+            button.classList.remove('bi-layout-sidebar-inset')
+            button.classList.add('bi-window-sidebar')
+        }
         
         sidebar.classList.remove('offcanvas-lg')
         sidebar.classList.contains('show') && toggle.click()
@@ -15,8 +17,10 @@ const toggleSidebar = (sidebarSelector) => {
         toggle.classList.remove('d-lg-none')
         dismiss.classList.remove('d-lg-none')
     } else {
-        button.classList.remove('bi-window-sidebar')
-        button.classList.add('bi-layout-sidebar-inset')
+        if (typeof button === 'button') {
+            button.classList.remove('bi-window-sidebar')
+            button.classList.add('bi-layout-sidebar-inset')
+        }
 
         sidebar.classList.remove('offcanvas')
         sidebar.classList.add('offcanvas-lg')
