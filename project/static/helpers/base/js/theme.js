@@ -4,49 +4,37 @@ const getPreferredTheme = () => {
     return storedTheme || colorScheme
 }
 
-const getThemeControls = (parent=document) => {
-    return [
-        
+const themeClasses = [
+    [['bi-moon', 'text-bg-light'], ['bi-moon-fill', 'text-bg-dark']],
 
-        {
-            elements: parent.querySelectorAll(`[onclick='toggleTheme()']`),
-            classes: {
-                light: ['bi-moon'],
-                dark: ['bi-moon-fill'],
-            }
-        },
-        {
-            elements: Array.from(parent.querySelectorAll(`.btn-light, .btn-dark`)),
-            classes: {
-                light: ['btn-light'],
-                dark: ['btn-dark'],
-            }
-        },
-    ]
-}
+    // {
+    //     elements: parent.querySelectorAll(`[onclick='toggleTheme()']`),
+    //     classes: {
+    //         light: ['bi-moon'],
+    //         dark: ['bi-moon-fill'],
+    //     }
+    // },
+    // {
+    //     elements: Array.from(parent.querySelectorAll(`.btn-light, .btn-dark`)),
+    //     classes: {
+    //         light: ['btn-light'],
+    //         dark: ['btn-dark'],
+    //     }
+    // },
+]
 
 const toggleThemedElements = (theme, parent=document) => {
     let setThemeTimeout
-    getThemeControls(parent).forEach(control => {
-        control.elements.forEach(element => {
-            for (let themeName in control.classes) {
-                const themeClasses = control.classes[themeName];
-
-                if (themeName === theme) {  
-                    themeClasses.forEach(className => {
-                        element.classList.add(className);
-                    })
-                } else {
-                    themeClasses.forEach(className => {
-                        element.classList.remove(className);
-                    })
-                }
-            }
-
+    themeClasses.forEach(classes => {
+        const [addClasses, removeClasses] = theme === 'light' ? [classes[0], classes[1]] : [classes[1], classes[0]]
+        parent.querySelectorAll(`.${addClasses.join('.')}, .${removeClasses.join('.')}`).forEach(element => {
+            element.classList.remove(...removeClasses)
+            element.classList.add(...addClasses)
+            
             clearTimeout(setThemeTimeout)
             setThemeTimeout = setTimeout(() => {
                 const setThemeEvent = new Event('setTheme')
-                document.dispatchEvent(setThemeEvent)
+                element.dispatchEvent(setThemeEvent)
             }, 200)
         })
     })
