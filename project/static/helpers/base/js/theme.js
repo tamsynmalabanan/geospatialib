@@ -44,8 +44,3 @@ const toggleTheme = () => {
     const currentTheme = document.documentElement.getAttribute('data-bs-theme')
     setTheme(currentTheme === 'light' ? 'dark' : 'light')
 }
-
-document.addEventListener('htmx:afterSwap', (event) => {
-    const target = event.target.parentElement || event.target
-    toggleThemedElements(getPreferredTheme(), parent=target)
-})
