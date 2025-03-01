@@ -6,7 +6,6 @@ const elementResizeObserver = (element, handler) => {
             if (entry.target === element) {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
-                    console.log(element)
                     handler()
                 }, 100)
             }
