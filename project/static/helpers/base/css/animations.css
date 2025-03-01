@@ -7,7 +7,7 @@
     }
 }
 
-@keyframes shrinkout {
+@keyframes shrinkin {
     from {
         transform: scale(1);
     }
