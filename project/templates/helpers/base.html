@@ -17,7 +17,7 @@
 </head>
 <body>
     {% block body %}
-        {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'_'|add:url_name|add:'_map' %}
+        {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' %}
     {% endblock body %}
     
     {% include "helpers/partials/resources/scripts.html" %}

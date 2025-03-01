@@ -1,0 +1,54 @@
+{% load utility_tags %}
+
+{% random_string as id %}
+
+<div
+    id="{{id}}"
+    role="alert"
+    class="alert d-flex align-items-center fade show
+        {% if dismissible == 1 %}
+            alert-dismissible
+        {% endif %}
+
+        {% if 'success' in message.tags %}
+            alert-success
+        {% elif 'error' in message.tags %}
+            alert-danger
+        {% elif 'info' in message.tags %}
+            alert-primary
+        {% elif 'warning' in message.tags %}
+            alert-warning
+        {% endif %}
+    "
+
+    {% if fadeout == 1 %}
+        x-data="{ show: true }" 
+        x-show="show" 
+        x-init="setTimeout(() => show = false, 3000)" 
+        x-transition:leave="transition-opacity duration-3000"
+    {% endif %}
+>
+    {% if "message-template" in message.tags %}
+        {% include message|safe %}
+    {% else %}
+        {{ message|safe|escape }}
+    {% endif %}
+    
+    {% if dismissible == 1 %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% endif %}
+    
+    {% comment %} {% if fadeout == 1 %}
+        <script>
+            var element = document.querySelector("#{{id}}")
+            if (element) {
+                setTimeout(() => {
+                    element.classList.add('fadeout')
+                    setTimeout(() => {
+                        element.remove()
+                    }, 3000)
+                }, 10000)
+            }
+        </script>
+    {% endif %} {% endcomment %}
+</div>

@@ -1,0 +1,10 @@
+/* .fadeout {
+    animation: fadeoutAnimation 2s forwards;
+}
+
+@keyframes fadeoutAnimation {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+} */
