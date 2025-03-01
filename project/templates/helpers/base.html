@@ -1,3 +1,9 @@
+{% load static %}
+{% load utility_tags %}
+
+{% variable request.resolver_match.app_name as app_name %}
+{% variable request.resolver_match.url_name as url_name %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +12,11 @@
     <title>
         {% block title %}{% endblock title %}
     </title>
+    {% include "helpers/partials/resources/styles.html" %}
 </head>
 <body>
     {% block body %}
     {% endblock body %}
+    {% include "helpers/partials/resources/scripts.html" %}
 </body>
 </html>
