@@ -53,7 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
 
     # gis
-    'django.contrib.gis', 
+    'django.contrib.gis',
+
+    # plugins
+    'leaflet',
+    'django_htmx',
 
     # project apps
     'customuser',
@@ -61,6 +65,40 @@ INSTALLED_APPS = [
     'htmx',
     'helpers',
 ]
+
+LEAFLET_CONFIG = {
+    # 'SPATIAL_EXTENT': (5.0, 44.0, 7.5, 46),
+    'DEFAULT_CENTER': (45, 0),
+    'DEFAULT_ZOOM': 2,
+    'MIN_ZOOM': 1,
+    'MAX_ZOOM': 20,
+    'DEFAULT_PRECISION': 6,
+    
+    # 'TILES': [],
+    # 'OVERLAYS': [('Cadastral', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})],
+    # 'ATTRIBUTION_PREFIX': 'Powered by django-leaflet',
+    
+    # 'SCALE': None,
+    # 'MINIMAP': True,
+    'RESET_VIEW': True,
+
+    'NO_GLOBALS': False,
+    'FORCE_IMAGE_PATH': True,
+
+    'PLUGINS': {
+        'geocoder': {
+            'css': [
+                # '/static/plugins/leaflet-control-geocoder/css/Control.Geocoder.css', 
+                'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css', 
+            ],
+            'js': [
+                # '/static/plugins/leaflet-control-geocoder/js/Control.Geocoder.js', 
+                'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
+            ],
+            'auto_include': True,
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
