@@ -5,22 +5,10 @@ const getPreferredTheme = () => {
 }
 
 const themeClasses = [
-    [['bi-moon', 'text-bg-light'], ['bi-moon-fill', 'text-bg-dark']],
-
-    // {
-    //     elements: parent.querySelectorAll(`[onclick='toggleTheme()']`),
-    //     classes: {
-    //         light: ['bi-moon'],
-    //         dark: ['bi-moon-fill'],
-    //     }
-    // },
-    // {
-    //     elements: Array.from(parent.querySelectorAll(`.btn-light, .btn-dark`)),
-    //     classes: {
-    //         light: ['btn-light'],
-    //         dark: ['btn-dark'],
-    //     }
-    // },
+    [['bi-moon'], ['bi-moon-fill']],
+    [['btn-light'],['btn-dark']],
+    [['text-bg-light'],['text-bg-dark']],
+    [['bg-light'],['bg-dark']],
 ]
 
 const toggleThemedElements = (theme, parent=document) => {
