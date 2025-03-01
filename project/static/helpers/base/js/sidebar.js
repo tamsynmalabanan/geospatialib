@@ -3,6 +3,7 @@ const toggleSidebar = (sidebarSelector) => {
     const button = sidebar.querySelector(`[onclick='toggleSidebar("${sidebarSelector}")']`)
     const toggle = document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="${sidebarSelector}"]`)
     const dismiss = document.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="${sidebarSelector}"]`)
+    const sidebarGutter = sidebar.parentElement.querySelector('.sidebar-gutter')
 
     if (sidebar.classList.contains('offcanvas-lg')) {
         button.classList.remove('bi-layout-sidebar-inset')
@@ -14,15 +15,19 @@ const toggleSidebar = (sidebarSelector) => {
         
         toggle.classList.remove('d-lg-none')
         dismiss.classList.remove('d-lg-none')
+
+        sidebarGutter && sidebarGutter.classList.remove('d-lg-block')
     } else {
         button.classList.remove('bi-window-sidebar')
         button.classList.add('bi-layout-sidebar-inset')
-
+        
         sidebar.classList.remove('offcanvas')
         sidebar.classList.add('offcanvas-lg')
-
+        
         toggle.classList.add('d-lg-none')
         dismiss.classList.add('d-lg-none')
+
+        sidebarGutter && sidebarGutter.classList.add('d-lg-block')
     }
 }
 
@@ -51,7 +56,7 @@ const resizeSidebar = (sidebarSelector) => {
     
     const onMouseUpResizeSidebar = () => {
         document.body.classList.remove('user-select-none')
-        
+
         const rowWidth = sidebar.parentElement.offsetWidth
         const sidebarWidth = sidebar.offsetWidth
 
