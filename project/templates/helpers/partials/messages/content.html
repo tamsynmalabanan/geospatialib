@@ -20,6 +20,10 @@
             alert-warning
         {% endif %}
     "
+    {% if fadeout == 1 %}
+        x-data
+        x-init = "fadeoutElement($el)"
+    {% endif %}
 >
     {% if "message-template" in message.tags %}
         {% include message|safe %}
@@ -34,19 +38,5 @@
             data-bs-dismiss="alert" 
             aria-label="Close"
         ></button>
-    {% endif %}
-    
-    {% if fadeout == 1 %}
-        <script>
-            var element = document.querySelector("#{{id}}")
-            if (element) {
-                setTimeout(() => {
-                    element.classList.add('fadeout')
-                    setTimeout(() => {
-                        element.remove()
-                    }, 3000)
-                }, 10000)
-            }
-        </script>
     {% endif %}
 </div>

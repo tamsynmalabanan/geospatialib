@@ -1,9 +1,9 @@
-// const fadeoutElement = (element, options={}) => {
-//     setTimeout(() => {
-//         element.classList.add('fadeout')
-//         // setTimeout(() => {
-//         //     element.remove()
-//         // }, 3000)
-//     }, options.fnTimeout | 10000);
-//     element.remove()
-// }
+const fadeoutElement = (element, options={}) => {
+    console.log(element)
+    setTimeout(() => {
+        element.classList.add('fadeout')
+        setTimeout(() => {
+            element.remove()
+        }, 3000)
+    }, options.fnTimeout | 10000);
+}
