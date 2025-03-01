@@ -5,21 +5,21 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>
-        {% block title %}{% endblock title %}
-    </title>
-    
-    {% include "helpers/partials/resources/styles.html" %}
-</head>
-<body>
-    {% block body %}
-        {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' %}
-    {% endblock body %}
-    
-    {% include "helpers/partials/resources/scripts.html" %}
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>
+            {% block title %}{% endblock title %}
+        </title>
+        
+        {% include "helpers/partials/resources/styles.html" %}
+    </head>
+    <body>
+        {% block body %}
+            {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' %}
+        {% endblock body %}
+        
+        {% include "helpers/partials/resources/scripts.html" %}
+    </body>
 </html>

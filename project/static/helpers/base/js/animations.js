@@ -3,8 +3,7 @@ const animateElement = (element, animation, options={}) => {
     const timeoutMs = options.timeoutMs || 4000
     const effect = options.effect || 'ease-in-out'
     const resetTrigger = options.resetTrigger === false ? null : !options.resetTrigger || options.resetTrigger === true ? 'mouseover' : options.resetTrigger
-    const removeElement = options.removeElement
-    const hideElement = options.hideElement
+    const callback = options.callback
 
     let handlerTimeout
     const handler = () => setTimeout(() => {
@@ -13,8 +12,8 @@ const animateElement = (element, animation, options={}) => {
         
         setTimeout(() => {
             if (element.classList.contains(animation)) {
-                removeElement ? element.remove() : hideElement ? element.classList.add('d-none') : null
                 element.classList.remove(animation)
+                callback && callback(element)
             }
         }, timeoutMs-100)
     }, initTime)
