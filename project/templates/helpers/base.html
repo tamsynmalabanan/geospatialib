@@ -18,7 +18,7 @@
     </head>
     <body class='vh-100'>
         {% block body %}
-            <div class='row vh-100'>
+            <div class='row vh-100 p-0'>
                 {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                 {% include "helpers/partials/offcanvas/body.html" %}
                 <div class="col vh-100">
