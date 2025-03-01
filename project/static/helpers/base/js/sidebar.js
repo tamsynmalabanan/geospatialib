@@ -28,5 +28,5 @@ const toggleSidebar = (sidebarSelector) => {
 
 const resizeSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
-    console.log(sidebar)
+    console.log(event)
 }
