@@ -13,3 +13,7 @@
 .fs-20 {
     font-size: 20px;
 }
+
+.user-select-none {
+    user-select: none;
+}

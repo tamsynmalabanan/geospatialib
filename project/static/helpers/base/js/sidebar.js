@@ -36,6 +36,7 @@ const resizeSidebar = (sidebarSelector) => {
     }
     
     const onMouseMoveResizeSidebar = (event) => {
+        document.body.classList.add('user-select-none')
         let moveX = event.clientX - startX
         if (event.type === 'touchmove') {
             moveX = event.touches[0].clientX - startX
@@ -49,6 +50,8 @@ const resizeSidebar = (sidebarSelector) => {
     })
     
     const onMouseUpResizeSidebar = () => {
+        document.body.classList.remove('user-select-none')
+        
         const rowWidth = sidebar.parentElement.offsetWidth
         const sidebarWidth = sidebar.offsetWidth
 
@@ -74,7 +77,6 @@ const resizeSidebar = (sidebarSelector) => {
             toggleSidebar(sidebarSelector)
         }
 
-        
         sidebar.style.width = ''
         document.removeEventListener('mousemove', onMouseMoveResizeSidebar);
         document.removeEventListener('mouseup', onMouseUpResizeSidebar)
