@@ -6,4 +6,5 @@
     max-width: 5px !important;
     padding: 0px;
     background-color: var(--bs-border-color);
+    cursor: col-resize;
 }
