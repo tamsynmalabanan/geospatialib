@@ -22,7 +22,7 @@
     "
     {% if fadeout == 1 %}
         x-data
-        x-init = "fadeoutElement($el)"
+        x-init = "animateElement($el, 'fadeOut')"
     {% endif %}
 >
     {% if "message-template" in message.tags %}
