@@ -18,14 +18,16 @@
     </head>
     <body class='vh-100'>
         {% block body %}
-            <div class='row vh-100 p-0'>
-                {% variable page_name|add:'-offcanvas' as offcanvas_id %}
-                {% include "helpers/partials/offcanvas/body.html" %}
-                <div class="col vh-100 p-0">
-                    <div class="position-fixed bottom-0 z-3">
-                        {% include "helpers/partials/offcanvas/toggle.html" %}
+            <div class="container-fluid vh-100">
+                <div class='row vh-100'>
+                    {% variable page_name|add:'-offcanvas' as offcanvas_id %}
+                    {% include "helpers/partials/offcanvas/body.html" %}
+                    <div class="col vh-100 p-0">
+                        <div class="position-fixed bottom-0 z-3">
+                            {% include "helpers/partials/offcanvas/toggle.html" %}
+                        </div>
+                        {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
                     </div>
-                    {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
                 </div>
             </div>
         {% endblock body %}
