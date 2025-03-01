@@ -22,9 +22,9 @@
     "
 
     {% if fadeout == 1 %}
-        x-data="{ fadeout: false }"
-        x-show="fadeout"
-        x-init="setTimeout(() => fadeout = true, 2000)" 
+        {% comment %} x-data="{ show: false }"
+        x-show="show"
+        x-init="setTimeout(() => show = true, 2000)"  {% endcomment %}
         x-transition:leave="transition ease-in duration-2000"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-50"
