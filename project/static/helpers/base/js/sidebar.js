@@ -25,3 +25,8 @@ const toggleSidebar = (sidebarSelector) => {
         dismiss.classList.add('d-lg-none')
     }
 }
+
+const resizeSidebar = (sidebarSelector) => {
+    const sidebar = document.querySelector(sidebarSelector)
+    console.log(sidebar)
+}
