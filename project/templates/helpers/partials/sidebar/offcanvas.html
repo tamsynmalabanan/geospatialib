@@ -27,19 +27,11 @@
     data-bs-scroll="true" 
     data-bs-backdrop="false" 
 >
-    <div class="offcanvas-header d-flex justify-content-between">
-        <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">Geospatialib</h5>
-        <div class='d-flex flex-nowrap'>
-            {% with default_class='border-0 bg-transarent fs-20 p-0 text-muted ms-3' %}
-                <button type="button" class="bi bi-layout-sidebar-inset {{default_class}}"></button>
-                <button type="button" class="bi bi-x-lg d-lg-none {{default_class}}" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            {% endwith %}
-        </div>
-    </div>
-    <div class="offcanvas-nav ">
-        navigation bar
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">Responsive offcanvas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#{{offcanvas_id}}" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <p>Try scrolling the rest of the page to see this option in action.</p>
+        <p class="mb-0">This is content within an <code>.offcanvas-lg</code>.</p>
     </div>
 </div>
