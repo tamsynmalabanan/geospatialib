@@ -2,7 +2,8 @@ const toggleSidebar = (sidebarSelector) => {
     const button = event.target
     const sidebar = document.querySelector(sidebarSelector)
     const toggle = document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="${sidebarSelector}"]`)
-    console.log(toggle)
+    const dismiss = document.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="${sidebarSelector}"]`)
+
     if (sidebar.classList.contains('offcanvas-lg')) {
         button.classList.remove('bi-layout-sidebar-inset')
         button.classList.add('bi-window-sidebar')
