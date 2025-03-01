@@ -18,8 +18,10 @@
     <body>
         {% block body %}
             <div class='row'>
-                {% include "helpers/partials/offcanvas/toggle.html" %}
-                {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' class='col' %}
+                <div class="col">
+                    {% include "helpers/partials/offcanvas/toggle.html" %}
+                    {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' %}
+                </div>
             </div>
         {% endblock body %}
         
