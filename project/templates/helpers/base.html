@@ -17,7 +17,10 @@
     </head>
     <body>
         {% block body %}
-            {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' %}
+            <div class='row'>
+                {% include "helpers/partials/offcanvas/toggle.html" %}
+                {% include "helpers/partials/maps/leaflet_map.html" with map_id=app_name|add:'-'|add:url_name|add:'-map' with class='col' %}
+            </div>
         {% endblock body %}
         
         {% include "helpers/partials/resources/scripts.html" %}
