@@ -8,6 +8,9 @@ from . import choices
 class URL(models.Model):
     path = models.URLField('Path', max_length=512, unique=True)
     
+    class Meta:
+        verbose_name_plural = 'URLs'
+
     def __str__(self) -> str:
         return self.path
 
