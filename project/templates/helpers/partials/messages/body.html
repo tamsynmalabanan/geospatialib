@@ -10,6 +10,8 @@
     {% if hx_swap_oob %}
         hx-swap-oob="{{hx_swap_oob}}"
     {% endif %}
+
+    x-data = "{show:true}"
 >
     {% if messages %}
         {% for message in messages %}

@@ -1,22 +1,23 @@
 const fadeoutElement = (element, options={}) => {
-    const initTimeout = options.initTimeout || 3000
     const fadeoutTimeoutMs = options.fadeoutTimeoutMs || 4000
-    const animation = options.animation || 'ease-in-out'
-    const resetTrigger = options.resetTrigger === false ? null : !options.resetTrigger || options.resetTrigger === true ? 'mouseover' : options.resetTrigger
-    const removeElement = options.removeElement
+    const resetTrigger = (
+        options.resetTrigger === false ? 
+        null : !options.resetTrigger || options.resetTrigger === true ? 
+        'mouseover' : options.resetTrigger
+    )
 
     let handlerTimeout
     const handler = () => setTimeout(() => {
         element.classList.add('fadeout')
-        element.style.animation = `fadeOut ${fadeoutTimeoutMs}ms ${animation}`
+        element.style.animation = `fadeOut ${fadeoutTimeoutMs}ms ${options.animation || 'ease-in-out'}`
         
         setTimeout(() => {
             if (element.classList.contains('fadeout')) {
-                removeElement ? element.remove() : element.classList.add('d-none')
+                options.removeElement ? element.remove() : element.classList.add('d-none')
             }
         }, fadeoutTimeoutMs-100)
-    }, initTimeout)
-
+    }, options.initTimeout || 3000)
+    
     if (resetTrigger) {
         element.addEventListener(resetTrigger, () => {
             clearTimeout(handlerTimeout)
