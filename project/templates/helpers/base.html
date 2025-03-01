@@ -16,12 +16,12 @@
         
         {% include "helpers/partials/resources/styles.html" %}
     </head>
-    <body>
+    <body class='vh-100'>
         {% block body %}
-            <div class='row'>
+            <div class='row vh-100'>
                 {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                 {% include "helpers/partials/offcanvas/body.html" %}
-                <div class="position-relative vh-100">
+                <div class="col position-relative vh-100">
                     <div class="position-absolute top-100 start-0">
                         {% include "helpers/partials/offcanvas/toggle.html" %}
                     </div>
