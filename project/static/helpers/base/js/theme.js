@@ -7,7 +7,7 @@ const getPreferredTheme = () => {
 const getThemeControls = (parent=document) => {
     return [
         {
-            elements: parent.querySelectorAll(`[onclick='toggleDarkMode(event)']`),
+            elements: parent.querySelectorAll(`[onclick='toggleTheme(event)']`),
             classes: {
                 light: ['bi-moon'],
                 dark: ['bi-moon-fill'],
