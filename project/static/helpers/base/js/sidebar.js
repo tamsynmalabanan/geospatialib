@@ -1,7 +1,7 @@
 const toggleSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
     const toggle = document.querySelector(`[data-bs-target="${sidebarSelector}"]`)
-    
+    console.log(toggle)
     if (sidebar.classList.contains('offcanvas-lg')) {
         sidebar.classList.remove('offcanvas-lg')
         sidebar.classList.add('offcanvas')
