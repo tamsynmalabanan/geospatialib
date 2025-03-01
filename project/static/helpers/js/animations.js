@@ -15,6 +15,7 @@ const fadeoutElement = (element, options={}) => {
     element.addEventListener('mouseover', () => {
         console.log(element)
         clearTimeout(handlerTimeout)
+        element.style.animation = ''
         handlerTimeout = handler()
     })
 }
