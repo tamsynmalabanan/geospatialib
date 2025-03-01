@@ -7,8 +7,14 @@ const getPreferredTheme = () => {
 const themeClasses = [
     [['bi-moon'], ['bi-moon-fill']],
     [['btn-light'],['btn-dark']],
+    [['btn-outline-light'],['btn-outline-dark']],
+    [['text-light'],['text-dark']],
     [['text-bg-light'],['text-bg-dark']],
     [['bg-light'],['bg-dark']],
+    [['border-light'],['border-dark']],
+    [['table-light'],['table-dark']],
+    [['img-light'],['img-dark']],
+    [['leaflet-basemap-light'],['leaflet-basemap-dark']],
 ]
 
 const toggleThemedElements = (theme, parent=document) => {
