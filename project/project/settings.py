@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'customuser',
     'main',
     'htmx',
+    'helpers',
 ]
 
 MIDDLEWARE = [
