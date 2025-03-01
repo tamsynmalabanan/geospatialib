@@ -1,5 +1,5 @@
 const leafletMapHandlers = {
-    container: () => {
+    container: (map) => {
         const container = map.getContainer()
         container.className = `${container.className} z-1 ${getLeafletMapDataset(map).mapClass || ''}`
     }
