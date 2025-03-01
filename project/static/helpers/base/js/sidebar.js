@@ -1,4 +1,5 @@
 const toggleSidebar = (sidebarSelector) => {
+    console.log(event)
     const sidebar = document.querySelector(sidebarSelector)
     const toggle = document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="${sidebarSelector}"]`)
     console.log(toggle)
