@@ -78,7 +78,7 @@ LEAFLET_CONFIG = {
     # 'OVERLAYS': [('Cadastral', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})],
     # 'ATTRIBUTION_PREFIX': 'Powered by django-leaflet',
     
-    # 'SCALE': None,
+    'SCALE': None,
     # 'MINIMAP': True,
     'RESET_VIEW': True,
 
