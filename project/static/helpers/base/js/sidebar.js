@@ -71,7 +71,7 @@ const resizeSidebar = (sidebarSelector) => {
 
             sidebar.classList.add(`col-lg-${col}`)
         } else {
-            toggleSidebar()
+            toggleSidebar(sidebarSelector)
         }
 
         
