@@ -21,8 +21,8 @@
         {% endif %}
     "
     {% if fadeout == 1 %}
-        x-data="{ show: true }"
-        x-init="setTimeout(() => { show = false; }, 3000)" :class="{ 'show': show, 'fade': !show }"
+        x-data
+        x-init = "fadeoutElement($el)"
     {% endif %}
 >
     {% if "message-template" in message.tags %}
@@ -39,18 +39,4 @@
             aria-label="Close"
         ></button>
     {% endif %}
-    
-    {% comment %} {% if fadeout == 1 %}
-        <script>
-            var element = document.querySelector("#{{id}}")
-            if (element) {
-                setTimeout(() => {
-                    element.classList.add('fadeout')
-                    setTimeout(() => {
-                        element.remove()
-                    }, 3000)
-                }, 10000)
-            }
-        </script>
-    {% endif %} {% endcomment %}
 </div>

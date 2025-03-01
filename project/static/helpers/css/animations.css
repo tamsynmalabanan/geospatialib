@@ -1,10 +1,11 @@
 /* .fadeout {
     animation: fadeoutAnimation 2s forwards;
-}
+} */
 
 @keyframes fadeoutAnimation {
     to {
         opacity: 0;
+        scale: 50;
         visibility: hidden;
     }
-} */
+}
