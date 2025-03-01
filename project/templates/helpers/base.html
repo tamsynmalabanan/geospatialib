@@ -2,7 +2,7 @@
 
 {% variable request.resolver_match.app_name as app_name %}
 {% variable request.resolver_match.url_name as url_name %}
-{% variables app_name|add:'-'|add:url_name as page_name %}
+{% variable app_name|add:'-'|add:url_name as page_name %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +19,7 @@
     <body>
         {% block body %}
             <div class='row'>
-                {% variables page_name|add:'-offcanvas' as offcanvas_id %}
+                {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                 {% include "helpers/partials/offcanvas/body.html" %}
                 <div class="col">
                     {% include "helpers/partials/offcanvas/toggle.html" %}
