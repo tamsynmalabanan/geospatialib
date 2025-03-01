@@ -33,6 +33,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'customuser.backends.CustomAuthenticationBackend',
+)
+
 AUTH_USER_MODEL = 'customuser.User'
 
 # Application definition
