@@ -5,7 +5,7 @@
 {% variable app_name|add:'-'|add:url_name as page_name %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme='light'>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,10 +21,10 @@
             <div class="container-fluid vh-100">
                 <div class='row vh-100'>
                     {% variable page_name|add:'-offcanvas' as offcanvas_id %}
-                    {% include "helpers/partials/offcanvas/body.html" %}
+                    {% include "helpers/partials/sidebar/offcanvas.html" %}
                     <div class="col vh-100 p-0">
                         <div class="position-fixed bottom-0 z-3 m-10">
-                            {% include "helpers/partials/offcanvas/toggle.html" %}
+                            {% include "helpers/partials/sidebar/toggle.html" %}
                         </div>
                         {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
                     </div>
