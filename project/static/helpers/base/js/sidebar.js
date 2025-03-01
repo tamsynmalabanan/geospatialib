@@ -1,32 +1,21 @@
 const toggleSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
-    const button = sidebar.querySelector(`[onclick='toggleSidebar("${sidebarSelector}")']`)
-    const sidebarGutter = sidebar.parentElement.querySelector('.sidebar-gutter')
-    const dismiss = sidebar.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="${sidebarSelector}"]`)
     const toggle = document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="${sidebarSelector}"]`)
+    
+    const sidebarGutter = sidebar.parentElement.querySelector('.sidebar-gutter')
+    const button = sidebar.querySelector(`[onclick='toggleSidebar("${sidebarSelector}")']`)
+    const dismiss = sidebar.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="${sidebarSelector}"]`)
 
-    if (sidebar.classList.contains('offcanvas-lg')) {
-        sidebar.classList.remove('offcanvas-lg')
-        sidebar.classList.add('offcanvas')
-        sidebar.classList.contains('show') && toggle.click()
-        
-        button.classList.remove('bi-layout-sidebar-inset')
-        button.classList.add('bi-window-sidebar')
-        
-        sidebarGutter && sidebarGutter.classList.remove('d-lg-block')
-        dismiss.classList.remove('d-lg-none')
-        toggle.classList.remove('d-lg-none')
-    } else {
-        sidebar.classList.remove('offcanvas')
-        sidebar.classList.add('offcanvas-lg')
-        
-        button.classList.remove('bi-window-sidebar')
-        button.classList.add('bi-layout-sidebar-inset')
-        
-        sidebarGutter && sidebarGutter.classList.add('d-lg-block')
-        dismiss.classList.add('d-lg-none')
-        toggle.classList.add('d-lg-none')
-    }
+    const isLg = sidebar.classList.toggle('offcanvas-lg')
+    sidebar.classList.toggle('offcanvas', !isLg)
+    if (sidebar.classList.contains('show')) toggle.click()
+
+    button.classList.toggle('bi-layout-sidebar-inset', isLg)
+    button.classList.toggle('bi-window-sidebar', !isLg)
+    
+    if (sidebarGutter) sidebarGutter.classList.toggle('d-lg-block', isLg)
+    dismiss.classList.toggle('d-lg-none', isLg)
+    toggle.classList.toggle('d-lg-none', isLg)
 }
 
 const resizeSidebar = (sidebarSelector) => {
