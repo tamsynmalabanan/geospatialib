@@ -23,8 +23,8 @@
     {% if fadeout == 1 %}
         {% comment %} x-data {% endcomment %}
         {% comment %} x-init = "fadeoutElement($el)" {% endcomment %}
-        x-init = "fade = ! fade"
-        x-show="fade"
+        x-init = "show = ! show"
+        x-show="show"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-90"
         x-transition:enter-end="opacity-100 scale-100"
