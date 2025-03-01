@@ -22,7 +22,7 @@
                 <div class='row vh-100'>
                     {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                     {% include "helpers/partials/sidebar/offcanvas.html" %}
-                    <div class="col sidebar-gutter" title='Resize sidebar' x-data @click="resizeSidebar('#{{offcanvas_id}}')"></div>
+                    <div class="col sidebar-gutter" title='Resize sidebar' x-data @mousedown="resizeSidebar('#{{offcanvas_id}}')"></div>
                     <div class="col vh-100 p-0">
                         <div class="position-fixed bottom-0 z-3 m-10">
                             {% include "helpers/partials/sidebar/toggle.html" %}
