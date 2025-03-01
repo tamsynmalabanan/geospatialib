@@ -21,8 +21,10 @@
             <div class='row'>
                 {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                 {% include "helpers/partials/offcanvas/body.html" %}
-                <div class="col">
-                    {% include "helpers/partials/offcanvas/toggle.html" %}
+                <div class="col position-relative">
+                    <div class="position-absolute top-100 start-0">
+                        {% include "helpers/partials/offcanvas/toggle.html" %}
+                    </div>
                     {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
                 </div>
             </div>
