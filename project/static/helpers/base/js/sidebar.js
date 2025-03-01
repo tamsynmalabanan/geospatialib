@@ -12,6 +12,7 @@ const toggleSidebar = (sidebarSelector) => {
         sidebar.classList.add('offcanvas')
         
         toggle.classList.remove('d-lg-none')
+        dismiss.classList.remove('d-lg-none')
     } else {
         button.classList.remove('bi-window-sidebar')
         button.classList.add('bi-layout-sidebar-inset')
@@ -20,5 +21,6 @@ const toggleSidebar = (sidebarSelector) => {
         sidebar.classList.add('offcanvas-lg')
 
         toggle.classList.add('d-lg-none')
+        dismiss.classList.add('d-lg-none')
     }
 }
