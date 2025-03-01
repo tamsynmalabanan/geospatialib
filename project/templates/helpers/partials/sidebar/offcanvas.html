@@ -6,10 +6,12 @@
     tabindex="-1"
     aria-labelledby="{{offcanvas_id}}Label"
 >
-    <div class="offcanvas-header d-flex">
+    <div class="offcanvas-header d-flex justify-content-between">
         <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">Geospatialib</h5>
-        <button type="button" class="btn-close d-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        <button type="button" class=""></button>
+        <div class='d-flex flex-nowrap gap-3'>
+            <button type="button" class="btn-close d-lg-nones" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class=""></button>
+        </div>
     </div>
     <div class="offcanvas-nav ">
         navigation bar
