@@ -21,14 +21,11 @@ const toggleSidebar = (sidebarSelector) => {
 const resizeSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
     const sidebarWidth = sidebar.offsetWidth
-            
-    let startX = event.clientX
-    if (event.type === 'touchstart') {
-        startX = event.touches[0].clientX
-    }
+    const startX = event.type === 'touchstart' ? event.touches[0].clientX : event.clientX
     
-    const onMouseMoveResizeSidebar = (event) => {
+    const mouseMoveHandler = (event) => {
         document.body.classList.add('user-select-none')
+
         let moveX = event.clientX - startX
         if (event.type === 'touchmove') {
             moveX = event.touches[0].clientX - startX
@@ -37,11 +34,7 @@ const resizeSidebar = (sidebarSelector) => {
         sidebar.style.width =`${sidebarWidth + moveX}px`;
     }
     
-    Array('mousemove', 'touchmove').forEach(moveTrigger => {
-        document.addEventListener(moveTrigger, onMouseMoveResizeSidebar)
-    })
-    
-    const onMouseUpResizeSidebar = () => {
+    const mouseUpHandler = () => {
         document.body.classList.remove('user-select-none')
 
         const rowWidth = sidebar.parentElement.offsetWidth
@@ -50,13 +43,8 @@ const resizeSidebar = (sidebarSelector) => {
         let col = Math.floor(sidebarWidth/(rowWidth/12))
 
         if (col > 0) {
-            if (col < 4) {
-                col = 4
-            }
-
-            if (col > 9) {
-                col = 9
-            }
+            if (col < 4) col = 4
+            if (col > 9) col = 9
 
             sidebar.classList.forEach(className => {
                 if (className.includes('col-lg-')) {
@@ -70,11 +58,23 @@ const resizeSidebar = (sidebarSelector) => {
         }
 
         sidebar.style.width = ''
-        document.removeEventListener('mousemove', onMouseMoveResizeSidebar);
-        document.removeEventListener('mouseup', onMouseUpResizeSidebar)
     }
 
+    Array('mousemove', 'touchmove').forEach(moveTrigger => {
+        document.addEventListener(moveTrigger, mouseMoveHandler)
+    })
+
     Array('mouseup', 'touchend').forEach(endTrigger => {
-        document.addEventListener(endTrigger, onMouseUpResizeSidebar)
+        document.addEventListener(endTrigger, () => {
+            mouseUpHandler()
+            
+            Array('mousemove', 'touchmove').forEach(moveTrigger => {
+                document.removeEventListener(moveTrigger, mouseMoveHandler)
+            })
+            
+            Array('mouseup', 'touchend').forEach(moveTrigger => {
+                document.removeEventListener(moveTrigger, mouseUpHandler)
+            })
+        })
     })
 }
