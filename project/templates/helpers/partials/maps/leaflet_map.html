@@ -1,0 +1,23 @@
+{% load leaflet_tags %}
+
+<div 
+    class='vh-100 position-relative'
+    
+    data-map-title = "{{map_title}}"
+    data-map-class = "{{map_class}}"
+
+    data-map-panes-included = "{{map_panes_included}}"
+    data-map-panes-excluded = "{{map_panes_excluded}}"
+    
+    data-map-controls-included = "{{map_controls_included}}"
+    data-map-controls-excluded = "{{map_controls_excluded}}"
+    
+    data-map-geocoder-fields="{{map_geocoder_fields}}"
+    data-map-bbox-fields="{{map_bbox_fields}}"
+>
+    <div class='position-absolute top-0 start-0 z-2 d-flex w-100 justify-content-center px-5 mt-10'>
+        map messsage test
+        {% comment %} {% include "base/components/messages/body.html" with tag='map-floating-message' dismissible=1 fadeout=1 hx_swap_oob="true" %} {% endcomment %}
+    </div>
+    {% leaflet_map map_id %}
+</div>
