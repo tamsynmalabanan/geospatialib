@@ -1,22 +1,22 @@
-{% load static %}
-{% load utility_tags %}
-
-{% variable request.resolver_match.app_name as app_name %}
-{% variable request.resolver_match.url_name as url_name %}
-
 <!DOCTYPE html>
+
+{% include "helpers/partials/resources/variables.html" %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>
         {% block title %}{% endblock title %}
     </title>
+    
     {% include "helpers/partials/resources/styles.html" %}
 </head>
 <body>
     {% block body %}
     {% endblock body %}
+    
     {% include "helpers/partials/resources/scripts.html" %}
 </body>
 </html>
