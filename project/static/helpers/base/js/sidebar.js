@@ -28,15 +28,59 @@ const toggleSidebar = (sidebarSelector) => {
 
 const resizeSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
-    const currentX = event.x
+    const sidebarWidth = sidebar.offsetWidth
+            
+    let startX = event.clientX
+    if (event.type === 'touchstart') {
+        startX = event.touches[0].clientX
+    }
+    
+    const onMouseMoveResizeSidebar = (event) => {
+        let moveX = event.clientX - startX
+        if (event.type === 'touchmove') {
+            moveX = event.touches[0].clientX - startX
+        }
 
-    const handler = (event) => {
-        const currentWdith = sidebar.offsetWidth
-        const newX = event.x
-        const addition = newX-currentX
-        console.log(currentWdith, addition)
-        document.removeEventListener('mouseup', handler)
+        sidebar.style.width =`${sidebarWidth + moveX}px`;
+    }
+    
+    Array('mousemove', 'touchmove').forEach(moveTrigger => {
+        document.addEventListener(moveTrigger, onMouseMoveResizeSidebar)
+    })
+    
+    const onMouseUpResizeSidebar = () => {
+        const rowWidth = sidebar.parentElement.offsetWidth
+        const sidebarWidth = sidebar.offsetWidth
+
+        let col = Math.floor(sidebarWidth/(rowWidth/12))
+
+        if (col > 0) {
+            if (col < 4) {
+                col = 4
+            }
+
+            if (col > 9) {
+                col = 9
+            }
+
+            offcanvas.classList.forEach(className => {
+                if (className.includes('col-lg-')) {
+                    offcanvas.classList.remove(className)
+                }
+            })
+
+            offcanvas.classList.add(`col-lg-${col}`)
+        } else {
+            toggleSidebar()
+        }
+
+        
+        sidebar.style.width = ''
+        document.removeEventListener('mousemove', onMouseMoveResizeSidebar);
+        document.removeEventListener('mouseup', onMouseUpResizeSidebar)
     }
 
-    document.addEventListener('mouseup', handler)
+    Array('mouseup', 'touchend').forEach(endTrigger => {
+        document.addEventListener(endTrigger, onMouseUpResizeSidebar)
+    })
 }
