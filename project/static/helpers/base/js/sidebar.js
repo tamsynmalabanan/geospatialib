@@ -63,13 +63,13 @@ const resizeSidebar = (sidebarSelector) => {
                 col = 9
             }
 
-            offcanvas.classList.forEach(className => {
+            sidebar.classList.forEach(className => {
                 if (className.includes('col-lg-')) {
-                    offcanvas.classList.remove(className)
+                    sidebar.classList.remove(className)
                 }
             })
 
-            offcanvas.classList.add(`col-lg-${col}`)
+            sidebar.classList.add(`col-lg-${col}`)
         } else {
             toggleSidebar()
         }
