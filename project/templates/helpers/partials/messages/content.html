@@ -22,12 +22,6 @@
     "
 
     {% if fadeout == 1 %}
-        {% comment %} x-data="{ show: false }"
-        x-show="show"
-        x-init="setTimeout(() => show = true, 2000)"  {% endcomment %}
-        x-transition:leave="transition ease-in duration-2000"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-50"
     {% endif %}
 >
     {% if "message-template" in message.tags %}
@@ -37,7 +31,12 @@
     {% endif %}
     
     {% if dismissible == 1 %}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button 
+            type="button" 
+            class="btn-close fade" 
+            data-bs-dismiss="alert" 
+            aria-label="Close"
+        ></button>
     {% endif %}
     
     {% comment %} {% if fadeout == 1 %}
