@@ -1,6 +1,9 @@
 const fadeoutElement = (element, options={}) => {
     setTimeout(() => {
-        element.style.animation = `fadeoutAnimation ${options.fadeoutTimeout | 3000} forwards`
-        element.remove()
+        element.classList.add('fadeout')
+        setTimeout(() => {
+            element.remove()
+        }, 3000)
     }, options.fnTimeout | 10000);
+    element.remove()
 }

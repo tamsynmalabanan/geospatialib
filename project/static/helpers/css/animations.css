@@ -1,11 +1,12 @@
-/* .fadeout {
-    animation: fadeoutAnimation 2s forwards;
-} */
-
-@keyframes fadeoutAnimation {
+.fadeout {
+    animation: fadeOut 4s ease-in-out;
+}
+  
+@keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
     to {
-        opacity: 0;
-        scale: 50;
-        visibility: hidden;
+      opacity: 0;
     }
 }
