@@ -1,6 +1,4 @@
 {% comment %} <div 
-    id="{{offcanvas_id}}" 
-    class="offcanvas-lg col-lg-4 offcanvas-start text-bg-light" 
     data-bs-scroll="true" 
     data-bs-backdrop="false" 
     tabindex="-1"
@@ -23,7 +21,13 @@
     </div>
 </div> {% endcomment %}
 
-<div class="offcanvas-lg offcanvas-end col-lg-4" tabindex="-1" id="{{offcanvas_id}}" aria-labelledby="{{offcanvas_id}}Label">
+<div 
+    class="offcanvas-lg offcanvas-start col-lg-4 text-bg-light" 
+    tabindex="-1" 
+    id="{{offcanvas_id}}" 
+    aria-labelledby="{{offcanvas_id}}Label"
+    data-bs-scroll="true" 
+>
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">Responsive offcanvas</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#{{offcanvas_id}}" aria-label="Close"></button>
