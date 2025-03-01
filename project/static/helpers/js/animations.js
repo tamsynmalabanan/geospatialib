@@ -1,9 +1,10 @@
 const fadeoutElement = (element, options={}) => {
-    const fadeTimeout = options.fadeTimeout || 4000
     const fnTimeout = options.fnTimeout || 5000
-    
+    const fadeTimeout = options.fadeTimeout || 4000
+    const animation = options.animation || 'ease-in-out'
+
     const handler = () => setTimeout(() => {
-        element.style.animation = `fadeOut ${fadeTimeout}ms ease-in-out`
+        element.style.animation = `fadeOut ${fadeTimeout}ms ${animation}`
         setTimeout(() => {
             element.remove()
         }, 3000)
@@ -12,6 +13,7 @@ const fadeoutElement = (element, options={}) => {
     let handlerTimeout
     handlerTimeout = handler()
     element.addEventListener('mouseover', () => {
+        console.log(element)
         clearTimeout(handlerTimeout)
         handlerTimeout = handler()
     })
