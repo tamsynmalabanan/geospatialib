@@ -9,8 +9,10 @@
     <div class="offcanvas-header d-flex justify-content-between">
         <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">Geospatialib</h5>
         <div class='d-flex flex-nowrap gap-3'>
-            <button type="button" class="bi bi-layout-sidebar-inset border-0 bg-transparent fs-30"></button>
-            <button type="button" class="bi bi-x-lg border-0 bg-transarent fs-30 d-lg-nones" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            {% with default_class='border-0 bg-transarent fs-20' %}
+                <button type="button" class="bi bi-layout-sidebar-inset {{default_class}}"></button>
+                <button type="button" class="bi bi-x-lg d-lg-nones {{default_class}}" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            {% endwith %}
         </div>
     </div>
     <div class="offcanvas-nav ">
