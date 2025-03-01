@@ -10,15 +10,17 @@ const fadeoutElement = (element, options={}) => {
         element.classList.add('fadeout')
         element.style.animation = `fadeOut ${fadeoutTimeoutMs}ms ${animation}`
         setTimeout(() => {
-            element.classList.contains('fadeout') && removeElement ? element.remove() : element.classList.add('d-none')
+            element.classList.contains('fadeout') && (
+                removeElement ? element.remove() : element.classList.add('d-none')
+            )
         }, fadeoutTimeoutMs-100)
     }, initTimeout)
 
     if (resetTrigger) {
         element.addEventListener(resetTrigger, () => {
             clearTimeout(handlerTimeout)
-            element.style.animation = ''
             element.classList.remove('fadeout')
+            element.style.animation = ''
             handlerTimeout = handler()
         })
     }
