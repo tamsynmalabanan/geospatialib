@@ -1,3 +1,9 @@
 .offcanvas-nav {
     padding: 16px
 }
+
+.sidebar-gutter {
+    max-width: 5px !important;
+    padding: 0px;
+    background-color: var(--bs-border-color);
+}

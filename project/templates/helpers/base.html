@@ -22,7 +22,7 @@
                 <div class='row vh-100'>
                     {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                     {% include "helpers/partials/sidebar/offcanvas.html" %}
-                    <div class="col p-0 bg-border" style='max-width: 5px !important;'></div>
+                    <div class="col sidebar-gutter"></div>
                     <div class="col vh-100 p-0">
                         <div class="position-fixed bottom-0 z-3 m-10">
                             {% include "helpers/partials/sidebar/toggle.html" %}
