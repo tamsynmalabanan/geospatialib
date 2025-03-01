@@ -2,7 +2,7 @@ const fadeoutElement = (element, options={}) => {
     const initTimeout = options.initTimeout || 5000
     const fadeoutTimeoutMs = options.fadeoutTimeoutMs || 4000
     const animation = options.animation || 'ease-in-out'
-    const resetTrigger = options.resetTrigger ? options.resetTrigger === true ? 'mouseover' : options.resetTrigger : null
+    const resetTrigger = options.resetTrigger === false ? null : !options.resetTrigger || options.resetTrigger === true ? 'mouseover' : options.resetTrigger
 
     let handlerTimeout
     const handler = () => setTimeout(() => {
@@ -13,6 +13,8 @@ const fadeoutElement = (element, options={}) => {
         }, fadeoutTimeoutMs-100)
     }, initTimeout)
     
+    console.log(resetTrigger)
+
     if (resetTrigger) {
         element.addEventListener(resetTrigger, () => {
             clearTimeout(handlerTimeout)
