@@ -21,7 +21,7 @@
         {% endif %}
     "
     {% if fadeout == 1 %}
-        x-data
+        {% comment %} x-data {% endcomment %}
         x-init = "animateElement($el, 'fadeout', {removeElement:true})"
     {% endif %}
 >
