@@ -9,11 +9,13 @@ const toggleSidebar = (sidebarSelector) => {
         button.classList.add('bi-window-sidebar')
         
         sidebar.classList.remove('offcanvas-lg')
-        sidebar.classList.remove('show')
+        // sidebar.classList.remove('show')
         sidebar.classList.add('offcanvas')
         
         toggle.classList.remove('d-lg-none')
         dismiss.classList.remove('d-lg-none')
+
+        toggle.click()
     } else {
         button.classList.remove('bi-window-sidebar')
         button.classList.add('bi-layout-sidebar-inset')
