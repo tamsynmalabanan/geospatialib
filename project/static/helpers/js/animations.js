@@ -12,8 +12,6 @@ const fadeoutElement = (element, options={}) => {
             element.classList.contains('fadeout') && element.remove()
         }, fadeoutTimeoutMs-100)
     }, initTimeout)
-    
-    console.log(resetTrigger)
 
     if (resetTrigger) {
         element.addEventListener(resetTrigger, () => {
