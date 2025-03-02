@@ -6,6 +6,7 @@ const getPreferredTheme = () => {
 
 const toggleThemedElements = (theme, parent=document) => {
     let setThemeTimeout
+    
     Array(
         [['bi-moon'], ['bi-moon-fill']],
         [['btn-light'],['btn-dark']],
@@ -18,7 +19,7 @@ const toggleThemedElements = (theme, parent=document) => {
         [['img-light'],['img-dark']],
         [['leaflet-basemap-light'],['leaflet-basemap-dark']],
     ).forEach(classes => {
-        const [addClasses, removeClasses] = theme === 'light' ? [classes[0], classes[1]] : [classes[1], classes[0]]
+        const [addClasses, removeClasses] = theme === 'light' ? classes : [classes[1], classes[0]]
         parent.querySelectorAll(`.${addClasses.join('.')}, .${removeClasses.join('.')}`).forEach(element => {
             element.classList.remove(...removeClasses)
             element.classList.add(...addClasses)
@@ -26,16 +27,16 @@ const toggleThemedElements = (theme, parent=document) => {
             clearTimeout(setThemeTimeout)
             setThemeTimeout = setTimeout(() => {
                 const setThemeEvent = new Event('setTheme')
-                element.dispatchEvent(setThemeEvent)
+                document.dispatchEvent(setThemeEvent)
             }, 200)
         })
     })
 }
 
 const setTheme = (theme) => {
-    theme = theme ? theme : getPreferredTheme()
+    theme = !theme || theme === 'auto' ? getPreferredTheme() : theme
+    
     document.documentElement.setAttribute('data-bs-theme', theme)
-    theme = theme === 'auto' ? getPreferredTheme() : theme
     localStorage.setItem('theme', theme)
     toggleThemedElements(theme)
 }
