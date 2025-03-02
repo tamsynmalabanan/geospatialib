@@ -9,12 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
             className: `layer-${getPreferredTheme()}`
         }).addTo(map)
         
-        // update container class attribute
         container.className = `${container.className} ${dataset.mapClass || ''}`
-        
-        // apply map resize observer
         elementResizeObserver(container, () => map.invalidateSize())
-        
 
         map._initComplete = true
         map.fire('initComplete')
