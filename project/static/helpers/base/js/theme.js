@@ -1,7 +1,8 @@
 const getPreferredTheme = () => {
+    const cookieTheme = getCookie('theme')
     const storedTheme = localStorage.getItem('theme')
     const colorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    return storedTheme || colorScheme
+    return cookieTheme || storedTheme || colorScheme
 }
 
 const toggleThemedElements = (theme, parent=document) => {
