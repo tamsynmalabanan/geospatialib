@@ -1,5 +1,5 @@
 <div 
-    class="offcanvas-lg offcanvas-start col-lg-4 text-bg-{{theme}} shadow-lg border-0 p-0 text-bg-{{theme}}" 
+    class="offcanvas-lg offcanvas-start col-lg-4 text-bg-{{theme}} shadow-lg border-0 p-0 text-bg-{{theme}} d-flex vh-100" 
     tabindex="-1" 
     id="{{offcanvas_id}}" 
     aria-labelledby="{{offcanvas_id}}Label"
@@ -32,10 +32,10 @@
             {% endwith %}
         </div>
     </div>
-    <div class="offcanvas-nav ">
+    <div class="offcanvas-nav">
         navigation bar
     </div>
-    <div class="offcanvas-body px-3">
+    <div class="offcanvas-body px-3 overflow-auto flex-grow-1">
         <p>{% lorem 10 b random %}</p>
     </div>
 </div>
