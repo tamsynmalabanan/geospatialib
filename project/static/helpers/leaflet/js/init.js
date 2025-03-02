@@ -4,11 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
-        L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            className: `layer-${getPreferredTheme()}`
-        }).addTo(map)
-        
+        createLeafletOSMLayer(themed=true).addTo(map)
         container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
 
