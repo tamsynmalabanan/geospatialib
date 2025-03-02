@@ -49,3 +49,13 @@ const animateElement = (element, animation, options={}) => {
 
     handlerTimeout = handler()
 }
+
+const setCookie = (name, value, days) => {
+    const prefix = document.cookie = name + "=" + value + ";"
+    if (!days) document.cookie = prefix + "path=/"
+
+    const date = new Date()
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
+    const expires = "expires=" + date.toUTCString()
+    document.cookie = prefix + expires + ";path=/"
+}
