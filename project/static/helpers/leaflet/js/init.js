@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataset = container.parentElement.dataset
 
         createLeafletOSMLayer(themed=true).addTo(map)
-        container.querySelectorAll('.leaflet-bar a, .leaflet-control').forEach(el => el.classList.add(`text-bg-${getPreferredTheme()}`))
+        container.querySelectorAll('.leaflet-bar a, .leaflet-control').forEach(el => el.classList.add(`text-bg-${getPreferredTheme()}`, 'text-reset'))
         // container.querySelectorAll('.leaflet-bar a').forEach(el => el.classList.add(`text-bg-${getPreferredTheme()}`))
         container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
