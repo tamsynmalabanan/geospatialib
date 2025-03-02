@@ -4,10 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
-        // add basemap layer
         L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            className: `layer-${getPreferredTheme()}`
+            className: `leaflet-basemap leaflet-basemap-${getPreferredTheme()}`
         }).addTo(map)
         
         // update container class attribute
