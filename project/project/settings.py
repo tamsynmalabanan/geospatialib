@@ -74,7 +74,7 @@ LEAFLET_CONFIG = {
     'MAX_ZOOM': 20,
     'DEFAULT_PRECISION': 6,
     
-    # 'TILES': [],
+    'TILES': [],
     # 'OVERLAYS': [('Cadastral', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})],
     # 'ATTRIBUTION_PREFIX': 'Powered by django-leaflet',
     

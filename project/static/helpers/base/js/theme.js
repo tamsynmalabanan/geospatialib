@@ -17,7 +17,7 @@ const toggleThemedElements = (theme, parent=document) => {
         [['border-light'],['border-dark']],
         [['table-light'],['table-dark']],
         [['img-light'],['img-dark']],
-        [['leaflet-basemap-light'],['leaflet-basemap-dark']],
+        [['layer-light'],['layer-dark']],
     ).forEach(classes => {
         const [addClasses, removeClasses] = theme === 'light' ? classes : [classes[1], classes[0]]
         parent.querySelectorAll(`.${addClasses.join('.')}, .${removeClasses.join('.')}`).forEach(element => {
