@@ -37,7 +37,7 @@ const setTheme = (theme) => {
     theme = !theme || theme === 'auto' ? getPreferredTheme() : theme
     
     document.documentElement.setAttribute('data-bs-theme', theme)
-    
+    setCookie('theme', theme)
     localStorage.setItem('theme', theme)
     toggleThemedElements(theme)
 }
