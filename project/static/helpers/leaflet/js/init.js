@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).addTo(map)
         
         // update container class attribute
-        container.className = `${container.className} z-1 ${dataset.mapClass || ''}`
+        container.className = `${container.className} ${dataset.mapClass || ''}`
         
         // apply map resize observer
         elementResizeObserver(container, () => map.invalidateSize())
