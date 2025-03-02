@@ -12,3 +12,7 @@ def variable(value):
 def random_string():
     chars = string.ascii_letters
     return ''.join(random.choices(chars, k=16))
+
+@register.simple_tag
+def get_theme(request):
+    return request.COOKIES.get('theme', 'light')

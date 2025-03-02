@@ -3,9 +3,10 @@
 {% variable request.resolver_match.app_name as app_name %}
 {% variable request.resolver_match.url_name as url_name %}
 {% variable app_name|add:'-'|add:url_name as page_name %}
+{% get_theme request as theme %}
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme='light' x-init="setTheme()">
+<html lang="en" data-bs-theme="{{theme}}" x-init="setTheme()">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
