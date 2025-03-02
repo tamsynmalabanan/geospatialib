@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            className: `leaflet-basemap leaflet-basemap-${getPreferredTheme()}`
+            className: `leaflet-basemap layer-${getPreferredTheme()}`
         }).addTo(map)
         
         // update container class attribute
