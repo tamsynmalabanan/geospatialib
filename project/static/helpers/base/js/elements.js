@@ -1,14 +1,16 @@
 const createOffcanvas = (id, options={}) => {
     const toggleTag = options.toggleTag || 'button'
     const toggleThemed = options.toggleThemed
-    const toggleIcon = options.toggleIcon
+    const toggleIconClass = options.toggleIcon
     const toggleLabel = options.toggleLabel
 
-    const toggle = document.createElement('button')
+    const toggle = document.createElement(toggleTag)
     toggle.className = removeWhitespace(`
         ${toggleTag === 'button' ?  `btn` : ''}
         ${toggleThemed ? `text-bg-${getPreferredTheme()}` : ''}
-        rounded-circle shadow-lg
+        ${toggleLabel ? 'rounded' : 'rounded-circle'}
+        ${toggleIconClass ? toggleIconClass : ''}
+        shadow-lg
     `)
     if (toggleTag === 'button') toggle.type = 'button' 
     if (toggleTag !== 'button') toggle.role = 'button'
