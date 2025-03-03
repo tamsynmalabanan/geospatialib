@@ -8,4 +8,4 @@ def variable(value, sub=None):
 
 @register.filter
 def equals(value1, value2):
-    return value1 === value2
+    return value1 == value2
