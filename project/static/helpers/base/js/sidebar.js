@@ -7,7 +7,7 @@ const toggleSidebar = (sidebarSelector) => {
     const dismiss = sidebar.querySelector(`[data-bs-dismiss="offcanvas"][data-bs-target="${sidebarSelector}"]`)
 
     const isLg = sidebar.classList.toggle('offcanvas-lg')
-    setCookie('show_sidebar', isLg)
+    setCookie(`show_${sidebarSelector}`, isLg)
 
     sidebar.classList.toggle('offcanvas', !isLg)
     if (sidebar.classList.contains('show')) toggle.click()
