@@ -2,16 +2,16 @@ const createOffcanvas = (id, options={}) => {
     const toggleTag = options.toggleTag || 'button'
     const toggleThemed = options.toggleThemed
     const toggleIconClass = options.toggleIcon
-    const toggleLabel = options.toggleLabel
+    const toggleLabelText = options.toggleLabelText
     const toggleLabelClass = options.toggleLabelClass || ''
-    const toggleTitle = options.toggleTitle || `Toggle ${toggleLabel ? toggleLabel : 'sidebar'}`
+    const toggleTitle = options.toggleTitle || `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`
     const showOffcanvas = options.showOffcanvas
 
     const toggle = document.createElement(toggleTag)
     toggle.className = removeWhitespace(`
         ${toggleTag === 'button' ?  `btn` : ''}
         ${toggleThemed ? `text-bg-${getPreferredTheme()}` : ''}
-        ${toggleLabel ? 'rounded-pill' : 'rounded-circle'}
+        ${toggleLabelText ? 'rounded-pill' : 'rounded-circle'}
         ${showOffcanvas ? 'd-lg-none' : ''}
         shadow-lg d-flex flex-nowrap
     `)
@@ -23,12 +23,14 @@ const createOffcanvas = (id, options={}) => {
     
     const toggleIcon = document.createElement('i')
     toggleIcon.className = `bi ${toggleIconClass}`
-
-    if (toggleLabel) {
+    toggle.appendChild(toggleIcon)
+    
+    if (toggleLabelText) {
         const toggleLabel = document.createElement('span')
         toggleLabel.className = `ms-2 text-nowrap ${toggleLabelClass}`
-        toggleLabel.innerText = toggleLabel
+        toggleLabel.innerText = toggleLabelText
+        toggle.appendChild(toggleLabel)
     }
-    
+
     console.log(toggle)
 }
