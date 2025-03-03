@@ -32,16 +32,26 @@ const createOffcanvasToggle = (id, opt={}) => {
     return toggle
 }
 
-const createOffcanvas = (id, opt={}) => {
-    const themed = opt.themed
-    const show = opt.show
-    const toggleTag = opt.toggleTag || 'button'
-    const toggleClass = opt.toggleClass || ''
-    const toggleLabelText = opt.toggleLabelText
-    const toggleTitle = opt.toggleTitle || `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`
-    const toggleParent = opt.toggleParent
-    const toggleIconClass = opt.toggleIconClass
-    const toggleLabelClass = opt.toggleLabelClass || ''
+const createOffcanvas = (id, {
+    themed,
+    show,
+    toggleTag = 'button',
+    toggleClass = '',
+    toggleLabelText,
+    toggleTitle = `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`,
+    toggleParent,
+    toggleIconClass,
+    toggleLabelClass = ''
+} = {}) => {
+    // const themed = opt.themed
+    // const show = opt.show
+    // const toggleTag = opt.toggleTag || 'button'
+    // const toggleClass = opt.toggleClass || ''
+    // const toggleLabelText = opt.toggleLabelText
+    // const toggleTitle = opt.toggleTitle || `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`
+    // const toggleParent = opt.toggleParent
+    // const toggleIconClass = opt.toggleIconClass
+    // const toggleLabelClass = opt.toggleLabelClass || ''
 
     const toggle = createOffcanvasToggle(id, {
         themed: themed,
