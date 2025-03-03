@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 panel.classList.add('d-flex', 'flex-column', 'flex-grow-1', 'mb-5')
                 
                 const [toggle, body] = createMapPanels(container)
-                console.log(toggle, body)
-                
                 panel.appendChild(toggle)
                 panel.appendChild(body)
                     

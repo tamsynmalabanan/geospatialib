@@ -5,7 +5,7 @@ const createMapPanels = (container, {} = {}) => {
         toggleIconClass: 'bi-layout-sidebar-inset-reverse',
         toggleLabelText: 'GeoPanel',
         toggleLabelClass: 'd-none d-md-block',
-        show: getCookie(`show_#${id}`) === true,
+        show: getCookie(`show_#${id}`) === 'true',
         offcanvasClass: 'offcanvas-end rounded',
         titleClass: 'h6'
     })
