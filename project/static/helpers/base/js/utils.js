@@ -15,13 +15,13 @@ const elementResizeObserver = (element, callback) => {
     resizeObserver.observe(element);
 }
 
-const animateElement = (element, animation, opt={}) => {
-    const initTime = opt.initTime || 3000
-    const timeoutMs = opt.timeoutMs || 4000
-    const effect = opt.effect || 'ease-in-out'
-    const resetTrigger = opt.resetTrigger === false ? null : !opt.resetTrigger || opt.resetTrigger === true ? 'mouseover' : opt.resetTrigger
-    const callback = opt.callback
-
+const animateElement = (element, animation, {
+    initTime = 3000,
+    timeoutMs = 4000,
+    effect = 'ease-in-out',
+    resetTrigger,
+    callback,
+} = {}) => {
     let handlerTimeout
     const handler = () => setTimeout(() => {
         element.classList.add(animation)
@@ -35,8 +35,8 @@ const animateElement = (element, animation, opt={}) => {
         }, timeoutMs-100)
     }, initTime)
 
-    if (resetTrigger) {
-        element.addEventListener(resetTrigger, () => {
+    if (resetTrigger !== false) {
+        element.addEventListener(!resetTrigger || resetTrigger === true ? 'mouseover' : resetTrigger, () => {
             clearTimeout(handlerTimeout)
             element.classList.remove(animation)
             element.style.animation = ''

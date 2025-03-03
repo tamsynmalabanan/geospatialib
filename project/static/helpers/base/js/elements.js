@@ -40,6 +40,10 @@ const createOffcanvasToggle = (id, {
     return toggle
 }
 
+const createOffcanvasElement = ({} = {}) => {
+
+}
+
 const createOffcanvas = (id, {
     themed,
     show,
@@ -64,7 +68,7 @@ const createOffcanvas = (id, {
     if (toggleIconClass) createIcon({className: `bi ${toggleIconClass}`, parent: toggle})
     if (toggleLabelText) createLabel(toggleLabelText, {className: `ms-2 text-nowrap ${toggleLabelClass}`, parent: toggle})
 
-    
+    const offcanvas = createOffcanvasElement()
 
     return [toggle, null]
 }
