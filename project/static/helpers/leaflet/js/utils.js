@@ -1,7 +1,7 @@
-const createLeafletBasemapLayer = () => L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
+const createLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     className: `layer-${getPreferredTheme()}`
-})
+}).addTo(map)
 
 const handleLeafletMapPanels = (map) => {
     const topRightControlCorner = map._controlCorners.topright

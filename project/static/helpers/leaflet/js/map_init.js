@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
-        createLeafletBasemapLayer().addTo(map)
+        addLeafletBasemapLayer(map)
         addClassListToSelection(
             container, 
             '.leaflet-bar a, .leaflet-control, .leaflet-control a', 
