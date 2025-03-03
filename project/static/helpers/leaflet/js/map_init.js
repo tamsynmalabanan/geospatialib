@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addClassListToSelection(
             container, 
             '.leaflet-bar a, .leaflet-control, .leaflet-control a', 
-            `text-bg-${getPreferredTheme()}`, 'text-reset'
+            [`text-bg-${getPreferredTheme()}`, 'text-reset']
         )
         
         container.className = `${container.className} ${dataset.mapClass || ''}`
