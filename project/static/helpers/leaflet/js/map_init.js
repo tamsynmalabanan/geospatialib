@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
 
+        console.log(container.offsetHeight, window.innerHeight)
+
         map._initComplete = true
         map.fire('initComplete')
     })
