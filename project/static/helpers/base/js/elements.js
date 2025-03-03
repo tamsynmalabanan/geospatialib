@@ -40,7 +40,13 @@ const createOffcanvasToggle = (id, {
     return toggle
 }
 
-const createOffcanvasElement = (id, {show, className, themed, titleText} = {}) => {
+const createOffcanvasElement = (id, {
+    show,
+    className, 
+    themed, 
+    titleText, 
+    titleClass
+} = {}) => {
     const offcanvas = document.createElement('div')
     offcanvas.id = id
     offcanvas.className = `
