@@ -1,7 +1,6 @@
 const createMapPanels = (container, {} = {}) => {
     const id = `${container.id}-panels`
     return createOffcanvas(id, {
-        toggleClass: 'm-10',
         themed: true,
         toggleIconClass: 'bi-layout-sidebar-inset-reverse',
         toggleLabelText: 'GeoPanel',
