@@ -16,3 +16,11 @@ const handleLeafletMapPanels = (map) => {
 
     control.addTo(map)
 }
+
+const applyThemeToLeafletControls = (container) => {
+    addClassListToSelection(
+        container, 
+        '.leaflet-bar a, .leaflet-control, .leaflet-control a', 
+        [`text-bg-${getPreferredTheme()}`, 'text-reset']
+    )
+}

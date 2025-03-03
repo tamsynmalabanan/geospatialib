@@ -5,12 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataset = container.parentElement.dataset
 
         addLeafletBasemapLayer(map)
-        addClassListToSelection(
-            container, 
-            '.leaflet-bar a, .leaflet-control, .leaflet-control a', 
-            [`text-bg-${getPreferredTheme()}`, 'text-reset']
-        )
-        
+        applyThemeToLeafletControls(container)
         container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
         if (isViewHeight(container)) handleLeafletMapPanels(map)
