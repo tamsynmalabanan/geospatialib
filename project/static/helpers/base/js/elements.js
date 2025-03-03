@@ -8,8 +8,7 @@ const createOffcanvas = (id, options={}) => {
     toggle.className = removeWhitespace(`
         ${toggleTag === 'button' ?  `btn` : ''}
         ${toggleThemed ? `text-bg-${getPreferredTheme()}` : ''}
-        ${toggleLabel ? 'rounded' : 'rounded-circle'}
-        ${toggleIconClass ? toggleIconClass : ''}
+        ${toggleLabel ? 'rounded-pill' : 'rounded-circle'}
         shadow-lg
     `)
     if (toggleTag === 'button') toggle.type = 'button' 
