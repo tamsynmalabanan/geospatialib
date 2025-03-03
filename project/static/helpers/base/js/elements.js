@@ -89,6 +89,14 @@ const createOffcanvasElement = (id, {
     dismissToggle.setAttribute('aria-label', 'Close')
     toggleContainer.appendChild(dismissToggle)
 
+    const nav = document.createElement('div')
+    nav.className = 'offcanvas-nav'
+    offcanvas.appendChild(nav)
+
+    const body = document.createElement('div')
+    body.className = 'offcanvas-body px-3 overflow-auto flex-grow-1 mb-3'
+    
+
     return offcanvas
 }
 
