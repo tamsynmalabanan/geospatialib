@@ -17,15 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isViewHeight(container)) {
             const control = L.control({position:'topright'})
             control.onAdd = (map) => {
-                const container = L.DomUtil.create('div', 'map-panel')
+                const panel = L.DomUtil.create('div', 'map-panel')
                 
                 const [toggle, body] = createMapPanels(container)
                 console.log(toggle, body)
                 
-                container.appendChild(toggle)
-                container.appendChild(body)
+                panel.appendChild(toggle)
+                panel.appendChild(body)
                     
-                return container
+                return panel
             }
         
             control.addTo(map)    

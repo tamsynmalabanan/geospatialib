@@ -1,5 +1,4 @@
 const createMapPanels = (container, {} = {}) => {
-    console.log(container)
     const id = `${container.id}-panels`
     return createOffcanvas(id, {
         toggleClass: 'm-10',
