@@ -5,7 +5,7 @@
 {% variable app_name|add:'-'|add:url_name as page_name %}
 {% variable request.COOKIES.theme 'light' as theme %}
 {% variable page_name|add:'-offcanvas' as offcanvas_id %}
-{% variable request.COOKIES.show_|add:offcanvas_id|equals:'true' True as show_sidebar %}
+{% variable request.COOKIES|get:'show_'|add:offcanvas_id|equals:'true' True as show_sidebar %}
 
 {% block page_variables %}{% endblock page_variables %}
 
