@@ -69,6 +69,18 @@ const createOffcanvasElement = (id, {
     title.innerText = titleText
     header.appendChild(title)
 
+    const toggleContainer = document.createElement('div')
+    toggleContainer.className = 'd-flex flex-nowrap'
+    header.appendChild(toggleContainer)
+    const toggleClassName = 'border-0 bg-transparent fs-20 p-0 ms-3 text-muted bi'
+
+    const sidebarToggle = document.createElement('button')
+    sidebarToggle.className = `${toggleClassName} ${show ? 'bi-layout-sidebar-inset' : 'bi-window-sidebar'} d-none d-lg-inline`
+    sidebarToggle.setAttribute('type', 'button')
+    sidebarToggle.setAttribute('onclick', `toggleSidebar("#${id}")`)
+    sidebarToggle.setAttribute('title', titleText)\
+    toggleContainer.appendChild(sidebarToggle)
+
     return offcanvas
 }
 

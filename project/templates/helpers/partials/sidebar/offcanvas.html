@@ -9,22 +9,22 @@
     <div class="offcanvas-header d-flex justify-content-between">
         <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">Geospatialib</h5>
         <div class='d-flex flex-nowrap'>
-            {% with default_class='border-0 bg-transparent fs-20 p-0 ms-3 text-muted' %}
+            {% with default_class='bi border-0 bg-transparent fs-20 p-0 ms-3 text-muted' %}
                 <button 
                     type="button" 
-                    class="bi {% if theme == 'light' %}bi-moon{% else %}bi-moon-fill{% endif %} {{default_class}}"
+                    class="{% if theme == 'light' %}bi-moon{% else %}bi-moon-fill{% endif %} {{default_class}}"
                     onclick='toggleTheme()'
                     title='Toggle dark mode'
                 ></button>
                 <button 
                     type="button" 
-                    class="bi {% if show_sidebar %}bi-layout-sidebar-inset{% else %}bi-window-sidebar{% endif %} d-none d-lg-inline {{default_class}}"
+                    class="{% if show_sidebar %}bi-layout-sidebar-inset{% else %}bi-window-sidebar{% endif %} d-none d-lg-inline {{default_class}}"
                     onclick='toggleSidebar("#{{offcanvas_id}}")'
                     title='Toggle sidebar'
                 ></button>
                 <button 
                     type="button" 
-                    class="bi bi-x-lg {% if show_sidebar %}d-lg-none{% endif %} {{default_class}}" 
+                    class="bi-x-lg {% if show_sidebar %}d-lg-none{% endif %} {{default_class}}" 
                     data-bs-dismiss="offcanvas" 
                     data-bs-target="#{{offcanvas_id}}" 
                     aria-label="Close"
