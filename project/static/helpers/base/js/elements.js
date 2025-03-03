@@ -5,6 +5,7 @@ const createOffcanvas = (id, options={}) => {
     const toggleLabelText = options.toggleLabelText
     const toggleLabelClass = options.toggleLabelClass || ''
     const toggleTitle = options.toggleTitle || `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`
+    const toggleParent = options.toggleParent
     const showOffcanvas = options.showOffcanvas
 
     const toggle = document.createElement(toggleTag)
@@ -33,6 +34,8 @@ const createOffcanvas = (id, options={}) => {
         toggleLabel.innerText = toggleLabelText
         toggle.appendChild(toggleLabel)
     }
+
+    if (toggleParent) toggleParent.appendChild(toggle)
 
     return [toggle]
 }
