@@ -15,8 +15,20 @@ document.addEventListener('DOMContentLoaded', () => {
         elementResizeObserver(container, () => map.invalidateSize())
 
         if (isViewHeight(container)) {
-            const [toggle, body] = constructMapPanels(container)
-            console.log(toggle, body)
+            const control = L.control({position:'topright'})
+            control.onAdd = (map) => {
+                const container = L.DomUtil.create('div', 'map-panel')
+                
+                const [toggle, body] = constructMapPanels(container)
+                console.log(toggle, body)
+                
+                container.appendChild(toggle)
+                container.appendChild(body)
+                    
+                return container
+            }
+        
+            control.addTo(map)    
         }
 
         map._initComplete = true
