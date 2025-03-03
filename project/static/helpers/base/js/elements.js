@@ -18,4 +18,5 @@ const createOffcanvas = (id, options={}) => {
     toggle.setAttribute('data-bs-target', `#${id}`) 
     toggle.setAttribute('aria-controls', id) 
     
+    console.log(toggle)
 }
