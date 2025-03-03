@@ -13,7 +13,7 @@ const createOffcanvas = (id, options={}) => {
     toggle.className = removeWhitespace(`
         ${toggleClass}
         ${toggleTag === 'button' ?  `btn` : ''}
-        ${toggleThemed ? `text-bg-${getPreferredTheme()}` : ''}
+        ${toggleThemed ? `${toggleTag === 'button' ? 'btn' : 'text-bg'}-${getPreferredTheme()}` : ''}
         ${toggleLabelText ? 'rounded-pill' : 'rounded-circle'}
         ${showOffcanvas ? 'd-lg-none' : ''}
         shadow-lg d-flex flex-nowrap
