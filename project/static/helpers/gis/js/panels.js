@@ -1,6 +1,6 @@
 const createMapPanels = (container, {} = {}) => {
     const id = `${container.id}-panels`
-    return createOffcanvas(id, {
+    const [toggle, body] = createOffcanvas(id, {
         themed: true,
         toggleIconClass: 'bi-info-circle',
         toggleLabelText: 'GeoPanel',
@@ -9,4 +9,8 @@ const createMapPanels = (container, {} = {}) => {
         offcanvasClass: 'offcanvas-end rounded',
         titleClass: 'h6'
     })
+
+    // create accordion
+
+    return [toggle, body]
 }
