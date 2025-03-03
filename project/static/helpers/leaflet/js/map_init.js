@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const control = L.control({position:'topright'})
             control.onAdd = (map) => {
                 const panel = L.DomUtil.create('div', 'map-panel')
-                panel.classList.add('d-flex', 'flex-column', 'flex-grow-1', 'mb-5', 'ms-5')
+                panel.classList.add('d-flex', 'flex-column', 'flex-grow-1', 'ms-5', 'mb-5')
                 
                 const [toggle, body] = createMapPanels(container)
                 panel.appendChild(toggle)
