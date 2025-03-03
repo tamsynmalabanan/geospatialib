@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
+        container.className = `${container.className} ${dataset.mapClass || ''}`
         addLeafletBasemapLayer(map)
         applyThemeToLeafletControls(container)
-        container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
         if (isViewHeight(container)) handleLeafletMapPanels(map)
 
