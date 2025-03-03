@@ -1,5 +1,6 @@
-const constructMapPanels = (mapContainer, {} = {}) => {
-    const id = `${mapContainer.id}-panels`
+const createMapPanels = (container, {} = {}) => {
+    console.log(container)
+    const id = `${container.id}-panels`
     return createOffcanvas(id, {
         toggleClass: 'm-10',
         themed: true,

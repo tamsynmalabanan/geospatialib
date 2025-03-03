@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             control.onAdd = (map) => {
                 const container = L.DomUtil.create('div', 'map-panel')
                 
-                const [toggle, body] = constructMapPanels(container)
+                const [toggle, body] = createMapPanels(container)
                 console.log(toggle, body)
                 
                 container.appendChild(toggle)
