@@ -36,7 +36,7 @@
                     <div class="col vh-100 p-0">
                         <div class="position-fixed bottom-0 z-3 m-10">
                             {% block sidebar_toggle %}
-                                {% include "helpers/partials/sidebar/toggle.html" with icon='bi-layout-sidebar-inset' %}
+                                {% include "helpers/partials/sidebar/toggle.html" with icon='bi-layout-sidebar-inset' title='Toggle sidebar' %}
                             {% endblock sidebar_toggle %}
                         </div>
                         {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
@@ -44,7 +44,7 @@
                 </div>
             </div>
         {% endblock body %}
-        
+
         {% include "helpers/partials/resources/scripts.html" %}
     </body>
 </html>
