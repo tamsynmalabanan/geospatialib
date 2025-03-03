@@ -1,8 +1,11 @@
 <button 
-    class="btn btn-{{theme}} rounded-pill shadow-lg bi {{icon}} {% if show_sidebar %}d-lg-none{% endif %}" 
+    class="btn btn-{{theme}} rounded-pill shadow-lg {% if show_sidebar %}d-lg-none{% endif %}" 
     type="button" 
     data-bs-toggle="offcanvas" 
     data-bs-target="#{{offcanvas_id}}" 
     aria-controls="{{offcanvas_id}}"
     title='Toggle sidebar'
->{{label}}</button>
+>
+    <i class='bi {{icon}}'></i>
+    <span>{{label}}</span>
+</button>
