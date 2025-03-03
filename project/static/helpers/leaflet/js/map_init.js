@@ -14,9 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
         container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
 
-        if (isViewHeight(container)) constructMapPanels(container, options={
-            panelsContainer: container.querySelector('.leaflet-top.leaflet-right')
-        })
+        if (isViewHeight(container)) {
+            const [toggle, body] = constructMapPanels(container)
+            console.log(toggle, body)
+        }
 
         map._initComplete = true
         map.fire('initComplete')

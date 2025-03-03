@@ -39,5 +39,5 @@ const createOffcanvas = (id, options={}) => {
 
     if (toggleParent) toggleParent.appendChild(toggle)
 
-    return [toggle]
+    return [toggle, null]
 }
