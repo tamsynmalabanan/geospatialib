@@ -27,7 +27,7 @@ const createOffcanvasToggle = (id, opt={}) => {
     toggle.setAttribute('aria-controls', id) 
     toggle.setAttribute('title', opt.title)
 
-    toggleParent?.appendChild(toggle)
+    opt.parent?.appendChild(toggle)
 
     return toggle
 }
