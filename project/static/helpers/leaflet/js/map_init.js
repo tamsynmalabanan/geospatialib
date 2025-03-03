@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataset = container.parentElement.dataset
 
         // apply theme
-        createLeafletOSMLayer(themed=true).addTo(map)
+        createLeafletBasemapLayer().addTo(map)
         addClassListToSelection(
             container, 
             '.leaflet-bar a, .leaflet-control, .leaflet-control a', 

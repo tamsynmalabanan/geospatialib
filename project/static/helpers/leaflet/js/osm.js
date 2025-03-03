@@ -1,6 +1,0 @@
-const createLeafletOSMLayer = (themed=false) => {
-    return L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        className: themed ? `layer-${getPreferredTheme()}` : ''
-    })
-}
