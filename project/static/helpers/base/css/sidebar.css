@@ -15,6 +15,5 @@
 }
 
 .rounded[data-bs-toggle="offcanvas"]::before {
-    margin-right: 2px;
+    margin-right: 0.5rem;
 }
-
