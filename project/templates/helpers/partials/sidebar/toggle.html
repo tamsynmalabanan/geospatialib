@@ -1,5 +1,5 @@
 <button 
-    class="btn btn-{{theme}} rounded-circle shadow-lg d-lg-none" 
+    class="btn btn-{{theme}} rounded-circle shadow-lg {% if show_sidebar %}d-lg-none{% endif %}" 
     type="button" 
     data-bs-toggle="offcanvas" 
     data-bs-target="#{{offcanvas_id}}" 

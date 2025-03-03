@@ -1,9 +1,8 @@
 {% load utility_tags %}
 
-{% variable request.COOKIES.show_sidebar|equals:'true' True as show_sidebar %}
 
 <div 
-    class="offcanvas-lg offcanvas-start col-lg-4 text-bg-{{theme}} shadow-lg border-0 p-0 text-bg-{{theme}} d-flex flex-column vh-100 {{show_sidebar}} {{request.COOKIES.show_sidebar}}" 
+    class="{% if show_sidebar %}offcanvas-lg{% else %}offcanvas{% endif %} offcanvas-start col-lg-4 text-bg-{{theme}} shadow-lg border-0 p-0 text-bg-{{theme}} d-flex flex-column vh-100" 
     tabindex="-1" 
     id="{{offcanvas_id}}" 
     aria-labelledby="{{offcanvas_id}}Label"
@@ -22,13 +21,13 @@
                 ></button>
                 <button 
                     type="button" 
-                    class="bi bi-layout-sidebar-inset d-none d-lg-inline {{default_class}}"
+                    class="bi {% if show_sidebar %}bi-layout-sidebar-inset{% else %}bi-window-sidebar{% endif %} d-none d-lg-inline {{default_class}}"
                     onclick='toggleSidebar("#{{offcanvas_id}}")'
                     title='Toggle sidebar'
                 ></button>
                 <button 
                     type="button" 
-                    class="bi bi-x-lg d-lg-none {{default_class}}" 
+                    class="bi bi-x-lg {% if show_sidebar %}d-lg-none{% endif %} {{default_class}}" 
                     data-bs-dismiss="offcanvas" 
                     data-bs-target="#{{offcanvas_id}}" 
                     aria-label="Close"

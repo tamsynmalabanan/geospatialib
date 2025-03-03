@@ -4,6 +4,7 @@
 {% variable request.resolver_match.url_name as url_name %}
 {% variable app_name|add:'-'|add:url_name as page_name %}
 {% variable request.COOKIES.theme 'light' as theme %}
+{% variable request.COOKIES.show_sidebar|equals:'true' True as show_sidebar %}
 
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="{{theme}}">
@@ -24,7 +25,7 @@
                     {% variable page_name|add:'-offcanvas' as offcanvas_id %}
                     {% include "helpers/partials/sidebar/offcanvas.html" %}
                     <div 
-                        class="col sidebar-gutter d-none d-lg-block" 
+                        class="col sidebar-gutter d-none {% if show_sidebar %}d-lg-block{% endif %}" 
                         title='Resize sidebar' 
                         x-data 
                         @mousedown="resizeSidebar('#{{offcanvas_id}}')"
