@@ -37,10 +37,10 @@ const createOffcanvas = (id, opt={}) => {
     const show = opt.show
     const toggleTag = opt.toggleTag || 'button'
     const toggleClass = opt.toggleClass || ''
+    const toggleLabelText = opt.toggleLabelText
     const toggleTitle = opt.toggleTitle || `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`
     const toggleParent = opt.toggleParent
     const toggleIconClass = opt.toggleIconClass
-    const toggleLabelText = opt.toggleLabelText
     const toggleLabelClass = opt.toggleLabelClass || ''
 
     const toggle = createOffcanvasToggle(id, {
