@@ -21,9 +21,11 @@ const createOffcanvas = (id, options={}) => {
     toggle.setAttribute('aria-controls', id) 
     toggle.setAttribute('title', toggleTitle)
     
-    const toggleIcon = document.createElement('i')
-    toggleIcon.className = `bi ${toggleIconClass}`
-    toggle.appendChild(toggleIcon)
+    if (toggleIconClass) {
+        const toggleIcon = document.createElement('i')
+        toggleIcon.className = `bi ${toggleIconClass}`
+        toggle.appendChild(toggleIcon)
+    }
     
     if (toggleLabelText) {
         const toggleLabel = document.createElement('span')
