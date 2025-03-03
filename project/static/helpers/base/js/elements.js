@@ -32,5 +32,5 @@ const createOffcanvas = (id, options={}) => {
         toggle.appendChild(toggleLabel)
     }
 
-    console.log(toggle)
+    return [toggle]
 }
