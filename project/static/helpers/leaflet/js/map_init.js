@@ -13,25 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         container.className = `${container.className} ${dataset.mapClass || ''}`
         elementResizeObserver(container, () => map.invalidateSize())
-
-        if (isViewHeight(container)) {
-            const topRightControlCorner = map._controlCorners.topright
-            topRightControlCorner.classList.add('d-flex', 'vh-100')
-
-            const control = L.control({position:'topright'})
-            control.onAdd = (map) => {
-                const panel = L.DomUtil.create('div', 'map-panel')
-                panel.classList.add('d-flex', 'flex-column', 'flex-grow-1', 'ms-5', 'mb-5')
-                
-                const [toggle, body] = createMapPanels(container)
-                panel.appendChild(toggle)
-                panel.appendChild(body)
-                    
-                return panel
-            }
-        
-            control.addTo(map)    
-        }
+        if (isViewHeight(container)) handleLeafletMapPanels(map)
 
         map._initComplete = true
         map.fire('initComplete')
