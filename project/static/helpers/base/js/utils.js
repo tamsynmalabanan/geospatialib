@@ -81,3 +81,7 @@ const getCookie = (name) => {
     
     return null;
 }
+
+const addClassListToSelection = (parent, selector, classList) => {
+    parent.querySelectorAll(selector).forEach(el => el.classList.add(...classList))
+}
