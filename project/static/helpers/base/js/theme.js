@@ -1,9 +1,4 @@
-const getPreferredTheme = () => {
-    const cookieTheme = getCookie('theme')
-    const storedTheme = localStorage.getItem('theme')
-    const colorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    return cookieTheme || storedTheme || colorScheme
-}
+const getPreferredTheme = () => getCookie('theme') || 'light'
 
 const toggleThemedElements = (theme, parent=document) => {
     let setThemeTimeout
@@ -36,10 +31,8 @@ const toggleThemedElements = (theme, parent=document) => {
 
 const setTheme = (theme) => {
     theme = !theme || theme === 'auto' ? getPreferredTheme() : theme
-    
     document.documentElement.setAttribute('data-bs-theme', theme)
     setCookie('theme', theme)
-    localStorage.setItem('theme', theme)
     toggleThemedElements(theme)
 }
 
