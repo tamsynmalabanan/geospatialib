@@ -1,8 +1,8 @@
 <button 
-    class="btn btn-{{theme}} rounded shadow-lg bi bi-layout-sidebar-inset {% if show_sidebar %}d-lg-none{% endif %}" 
+    class="btn btn-{{theme}} rounded-pill shadow-lg bi {% block sidebar_toggle_icon %}bi-layout-sidebar-inset{% endblock sidebar_toggle_icon %} {% if show_sidebar %}d-lg-none{% endif %}" 
     type="button" 
     data-bs-toggle="offcanvas" 
     data-bs-target="#{{offcanvas_id}}" 
     aria-controls="{{offcanvas_id}}"
     title='Toggle sidebar'
->Test</button>
+>{% block sidebar_toggle_label %}{% endblock sidebar_toggle_label %}</button>

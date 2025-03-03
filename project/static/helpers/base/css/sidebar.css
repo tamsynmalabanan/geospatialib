@@ -9,10 +9,10 @@
     cursor: col-resize;
 }
 
-.rounded-circle[data-bs-toggle="offcanvas"] {
+/* .rounded-circle[data-bs-toggle="offcanvas"] {
     height: 42px !important;
     width: 42px !important;
-}
+} */
 
 .rounded[data-bs-toggle="offcanvas"]::before {
     margin-right: 0.5rem;
