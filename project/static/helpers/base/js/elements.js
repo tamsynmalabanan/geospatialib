@@ -70,7 +70,7 @@ const createOffcanvasElement = (id, {
     header.appendChild(title)
 
     const toggleContainer = document.createElement('div')
-    toggleContainer.className = 'd-flex flex-nowrap'
+    toggleContainer.className = 'd-flex flex-nowrap ms-5'
     header.appendChild(toggleContainer)
     const toggleClassName = 'border-0 bg-transparent fs-20 p-0 ms-3 text-muted bi'
 
