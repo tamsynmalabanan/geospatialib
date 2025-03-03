@@ -7,5 +7,5 @@
     title='Toggle sidebar'
 >
     <i class='bi {{icon}}'></i>
-    <span>{{label}}</span>
+    {% if label %}<span class='ms-2 d-none d-md-block'>{{label}}</span>{% endif %}
 </button>
