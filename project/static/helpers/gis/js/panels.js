@@ -3,7 +3,7 @@ const createMapPanels = (container, {} = {}) => {
     return createOffcanvas(id, {
         themed: true,
         toggleIconClass: 'bi-layout-sidebar-inset-reverse',
-        toggleLabelText: 'GeoPanel',
+        // toggleLabelText: 'GeoPanel',
         toggleLabelClass: 'd-none d-md-block',
         show: getCookie(`show_#${id}`) === true,
         offcanvasClass: 'offcanvas-end',
