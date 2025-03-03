@@ -42,13 +42,17 @@ const createOffcanvasToggle = (id, {
 
 const createOffcanvasElement = (id, {show, className, themed} = {}) => {
     const offcanvas = document.createElement('div')
+    offcanvas.id = id
     offcanvas.className = `
         ${className || ''}
         ${show ? 'offcanvas-lg' : 'offcanvas'}
         ${themed ? `text-bg-${getPreferredTheme()}` : ''}
         shadow-lg border-0 p-0 d-flex flex-column vh-100
     `
-    
+    offcanvas.setAttribute('aria-labelledby', `${id}Label`)
+    offcanvas.setAttribute('data-bs-scroll', `true`)
+    offcanvas.setAttribute('data-bs-backdrop', `false`)
+
     return offcanvas
 }
 
