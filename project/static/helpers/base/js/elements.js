@@ -78,8 +78,16 @@ const createOffcanvasElement = (id, {
     sidebarToggle.className = `${toggleClassName} ${show ? 'bi-layout-sidebar-inset' : 'bi-window-sidebar'} d-none d-lg-inline`
     sidebarToggle.setAttribute('type', 'button')
     sidebarToggle.setAttribute('onclick', `toggleSidebar("#${id}")`)
-    sidebarToggle.setAttribute('title', titleText)
+    sidebarToggle.setAttribute('title', `Toggle ${titleText}`)
     toggleContainer.appendChild(sidebarToggle)
+
+    const dismissToggle = document.createElement('button')
+    dismissToggle.className = `${toggleClassName} ${show ? 'd-lg-none' : ''} bi-x-lg`
+    dismissToggle.setAttribute('type', 'button')
+    dismissToggle.setAttribute('data-bs-dismiss', 'offcanvas')
+    dismissToggle.setAttribute('data-bs-target', `#${id}`)
+    dismissToggle.setAttribute('aria-label', 'Close')
+    toggleContainer.appendChild(dismissToggle)
 
     return offcanvas
 }
