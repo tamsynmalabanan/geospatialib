@@ -1,6 +1,6 @@
 {% load utility_tags %}
 
-{% variable request.COOKIES.show_sidebar|equals:'true' 'true' as show_sidebar %}
+{% variable request.COOKIES.show_sidebar|equals:'true' True as show_sidebar %}
 
 <div 
     class="offcanvas-lg offcanvas-start col-lg-4 text-bg-{{theme}} shadow-lg border-0 p-0 text-bg-{{theme}} d-flex flex-column vh-100 {{show_sidebar}}" 
