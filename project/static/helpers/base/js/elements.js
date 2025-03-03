@@ -40,7 +40,7 @@ const createOffcanvasToggle = (id, {
     return toggle
 }
 
-const createOffcanvasElement = (id, {show, className, themed} = {}) => {
+const createOffcanvasElement = (id, {show, className, themed, titleText} = {}) => {
     const offcanvas = document.createElement('div')
     offcanvas.id = id
     offcanvas.className = `
@@ -52,6 +52,16 @@ const createOffcanvasElement = (id, {show, className, themed} = {}) => {
     offcanvas.setAttribute('aria-labelledby', `${id}Label`)
     offcanvas.setAttribute('data-bs-scroll', `true`)
     offcanvas.setAttribute('data-bs-backdrop', `false`)
+
+    const header = document.createElement('div')
+    header.className = 'offcanvas-header d-flex justify-content-between'
+    offcanvas.appendChild(header)
+
+    const title = document.createElement('div')
+    title.id = `${id}Label`
+    title.className = 'offcanvas-title'
+    title.innerText = titleText
+    header.appendChild(title)
 
     return offcanvas
 }
@@ -66,7 +76,8 @@ const createOffcanvas = (id, {
     toggleTitle = `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`,
     toggleParent,
     toggleIconClass,
-    toggleLabelClass = ''
+    toggleLabelClass = '',
+    titleText = toggleLabelText
 } = {}) => {
     const toggle = createOffcanvasToggle(id, {
         themed: themed,
@@ -85,6 +96,7 @@ const createOffcanvas = (id, {
         show: show,
         className: offcanvasClass,
         themed: themed,
+        titleText: titleText,
     })
 
     return [toggle, offcanvas]
