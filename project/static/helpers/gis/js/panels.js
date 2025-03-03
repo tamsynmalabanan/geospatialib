@@ -1,10 +1,10 @@
-const constructMapPanels = (mapContainer, options={}) => {
+const constructMapPanels = (mapContainer, opt={}) => {
     return createOffcanvas(`${mapContainer.id}-panels`, options={
         toggleClass: 'm-10',
-        toggleThemed: true,
+        themed: true,
         toggleIconClass: 'bi-layout-sidebar-inset-reverse',
         toggleLabelText: 'GeoPanel',
         toggleLabelClass: 'd-none d-md-block',
-        showOffcanvas: getCookie('show_map_panels')
+        show: getCookie('show_map_panels')
     })
 }

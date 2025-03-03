@@ -1,6 +1,6 @@
 const getPreferredTheme = () => getCookie('theme') || 'light'
 
-const toggleThemedElements = (theme, parent=document) => {
+const themedElements = (theme, parent=document) => {
     let setThemeTimeout
     
     Array(
@@ -33,7 +33,7 @@ const setTheme = (theme) => {
     theme = !theme || theme === 'auto' ? getPreferredTheme() : theme
     document.documentElement.setAttribute('data-bs-theme', theme)
     setCookie('theme', theme)
-    toggleThemedElements(theme)
+    themedElements(theme)
 }
 
 const toggleTheme = () => {

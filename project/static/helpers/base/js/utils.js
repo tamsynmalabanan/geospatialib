@@ -15,12 +15,12 @@ const elementResizeObserver = (element, callback) => {
     resizeObserver.observe(element);
 }
 
-const animateElement = (element, animation, options={}) => {
-    const initTime = options.initTime || 3000
-    const timeoutMs = options.timeoutMs || 4000
-    const effect = options.effect || 'ease-in-out'
-    const resetTrigger = options.resetTrigger === false ? null : !options.resetTrigger || options.resetTrigger === true ? 'mouseover' : options.resetTrigger
-    const callback = options.callback
+const animateElement = (element, animation, opt={}) => {
+    const initTime = opt.initTime || 3000
+    const timeoutMs = opt.timeoutMs || 4000
+    const effect = opt.effect || 'ease-in-out'
+    const resetTrigger = opt.resetTrigger === false ? null : !opt.resetTrigger || opt.resetTrigger === true ? 'mouseover' : opt.resetTrigger
+    const callback = opt.callback
 
     let handlerTimeout
     const handler = () => setTimeout(() => {

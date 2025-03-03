@@ -1,7 +1,7 @@
 // document.addEventListener('htmx:afterSwap', (event) => {
 //     const target = event.target
 
-//     toggleThemedElements(
+//     themedElements(
 //         getPreferredTheme(), 
 //         parent=target.parentElement || target
 //     )
