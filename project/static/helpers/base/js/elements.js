@@ -22,7 +22,7 @@ const createOffcanvasToggle = (id, {
 } = {}) => {
     const toggle = document.createElement(tag)
     toggle.className = removeWhitespace(`
-        ${className}
+        ${className || ''}
         ${tag === 'button' ?  `btn` : ''}
         ${themed ? `${tag === 'button' ? 'btn' : 'text-bg'}-${getPreferredTheme()}` : ''}
         ${label ? 'rounded-pill' : 'rounded-circle'}
@@ -40,13 +40,22 @@ const createOffcanvasToggle = (id, {
     return toggle
 }
 
-const createOffcanvasElement = ({} = {}) => {
-
+const createOffcanvasElement = (id, {show, className, themed} = {}) => {
+    const offcanvas = document.createElement('div')
+    offcanvas.className = `
+        ${className || ''}
+        ${show ? 'offcanvas-lg' : 'offcanvas'}
+        ${themed ? `text-bg-${getPreferredTheme()}` : ''}
+        shadow-lg border-0 p-0 d-flex flex-column vh-100
+    `
+    
+    return offcanvas
 }
 
 const createOffcanvas = (id, {
     themed,
     show,
+    offcanvasClass,
     toggleTag = 'button',
     toggleClass = '',
     toggleLabelText,
@@ -68,7 +77,11 @@ const createOffcanvas = (id, {
     if (toggleIconClass) createIcon({className: `bi ${toggleIconClass}`, parent: toggle})
     if (toggleLabelText) createLabel(toggleLabelText, {className: `ms-2 text-nowrap ${toggleLabelClass}`, parent: toggle})
 
-    const offcanvas = createOffcanvasElement()
+    const offcanvas = createOffcanvasElement(id, {
+        show: show,
+        className: offcanvasClass,
+        themed: themed,
+    })
 
-    return [toggle, null]
+    return [toggle, offcanvas]
 }
