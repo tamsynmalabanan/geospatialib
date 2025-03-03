@@ -56,4 +56,4 @@ const addClassListToSelection = (parent, selector, classList) => {
 
 const isViewHeight = (element) => element.offsetHeight === window.innerHeight
 
-const removeWhitespace = (str) => str.replace(/\s+/g, '')
+const removeWhitespace = (str) => str.replace(/\s{2,}/g, ' ')
