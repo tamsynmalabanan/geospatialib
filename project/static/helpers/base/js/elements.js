@@ -59,7 +59,7 @@ const createOffcanvasElement = (id, {show, className, themed, titleText} = {}) =
 
     const title = document.createElement('h5')
     title.id = `${id}Label`
-    title.className = 'offcanvas-title'
+    title.className = `offcanvas-title ${titleClass || ''}`
     title.innerText = titleText
     header.appendChild(title)
 
@@ -77,7 +77,8 @@ const createOffcanvas = (id, {
     toggleParent,
     toggleIconClass,
     toggleLabelClass = '',
-    titleText = toggleLabelText
+    titleText = toggleLabelText,
+    titleClass,
 } = {}) => {
     const toggle = createOffcanvasToggle(id, {
         themed: themed,
@@ -97,6 +98,7 @@ const createOffcanvas = (id, {
         className: offcanvasClass,
         themed: themed,
         titleText: titleText,
+        titleClass: titleClass
     })
 
     return [toggle, offcanvas]

@@ -7,6 +7,7 @@ const createMapPanels = (container, {} = {}) => {
         toggleLabelText: 'GeoPanel',
         toggleLabelClass: 'd-none d-md-block',
         show: getCookie(`show_#${id}`) === true,
-        offcanvasClass: 'offcanvas-end col-lg'
+        offcanvasClass: 'offcanvas-end col-lg',
+        titleClass: 'h6'
     })
 }
