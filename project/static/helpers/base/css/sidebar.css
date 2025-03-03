@@ -9,7 +9,7 @@
     cursor: col-resize;
 }
 
-[data-bs-toggle="offcanvas"] {
+/* [data-bs-toggle="offcanvas"] {
     height: 42px !important;
     width: 42px !important;
-}
+} */
