@@ -1,10 +1,10 @@
+{% extends "helpers/base.html" %}
 {% load utility_tags %}
 
-{% variable 'bi-search' as sidebar_toggle_icon %}
-{% variable 'Search' as sidebar_toggle_label %}
-
-{% extends "helpers/base.html" %}
-
+{% block page_variables %}
+    {% variable 'bi-search' as sidebar_toggle_icon %}
+    {% variable 'Search' as sidebar_toggle_label %}
+{% endblock page_variables %}
 
 {% block title %}
     Geospatialib
