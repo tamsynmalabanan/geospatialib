@@ -12,7 +12,7 @@
 {% block page_variables %}{% endblock page_variables %}
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{theme}}">
+<html lang="en" data-bs-theme="{{theme}}" x-init="setCookie('theme', '{{theme}}')">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
