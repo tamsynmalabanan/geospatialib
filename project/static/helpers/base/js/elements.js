@@ -57,7 +57,7 @@ const createOffcanvasElement = (id, {show, className, themed, titleText} = {}) =
     header.className = 'offcanvas-header d-flex justify-content-between'
     offcanvas.appendChild(header)
 
-    const title = document.createElement('div')
+    const title = document.createElement('h5')
     title.id = `${id}Label`
     title.className = 'offcanvas-title'
     title.innerText = titleText
