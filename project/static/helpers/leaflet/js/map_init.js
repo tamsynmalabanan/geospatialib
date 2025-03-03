@@ -15,10 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
         elementResizeObserver(container, () => map.invalidateSize())
 
         if (isViewHeight(container)) {
+            const topRightControlCorner = map._controlCorners.topright
+            topRightControlCorner.classList.add('d-flex', 'vh-100')
+
             const control = L.control({position:'topright'})
             control.onAdd = (map) => {
                 const panel = L.DomUtil.create('div', 'map-panel')
-                panel.classList.add('d-flex')
+                panel.classList.add('d-flex', 'flex-grow-1', 'mb-10')
                 
                 const [toggle, body] = createMapPanels(container)
                 console.log(toggle, body)
