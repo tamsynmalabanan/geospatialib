@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
-        // apply theme
         createLeafletBasemapLayer().addTo(map)
         addClassListToSelection(
             container, 
