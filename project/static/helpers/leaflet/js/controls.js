@@ -24,8 +24,15 @@ const handleLeafletZoombar = (map, include=true) => {
     }
 }
 
+const handleLeafletScaleBar = (map, include=true) => {
+    if (!include) return
+
+    L.control.scale({ position: 'bottomright' }).addTo(map)
+}
+
 const leafletControls = {
     zoom: handleLeafletZoombar,
+    scale: handleLeafletScaleBar,
 }
 
 
