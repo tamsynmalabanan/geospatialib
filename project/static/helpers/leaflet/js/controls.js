@@ -8,22 +8,20 @@ const handleLeafletZoombar = (map, include=true) => {
 
     const buttons = {
         _zoomInButton: {
-            innerHTML: createIcon({className:'bi bi-plus'}).outerHTML
+            innerHTML: createIcon({className:'bi bi-plus'}).outerHTML,
+            class: ['bi', 'bi-plus', 'rounded-top', 'pt-1', 'rounded-bottom-0'],
         },
         _zoomOutButton: {
-            innerHTML: createIcon({className:'bi bi-dash'}).outerHTML
+            innerHTML: createIcon({className:'bi bi-dash'}).outerHTML,
+            class: ['bi', 'bi-dash', 'rounded-bottom', 'rounded-top-0'],
         },
     }
-
-    console.log(buttons)
 
     for (const buttonName in buttons) {
         const properties = buttons[buttonName]
         const button = map.zoomControl[buttonName]
         button.innerHTML = properties.innerHTML
-        // buttons[buttonName].forEach(className => {
-        //     button.classList.add(className)
-        // });
+        button.classList.add(...properties.class)
     }
 }
 
