@@ -4,7 +4,3 @@
     background-color: var(--bs-border-color);
     cursor: col-resize;
 }
-
-.offcanvas {
-    z-index: 1000 !important;
-}
