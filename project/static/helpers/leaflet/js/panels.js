@@ -15,6 +15,12 @@ const handleLeafletQueryPanel = (map, parent) => {
     queryLocationBtn.setAttribute('title', 'Query location coordinates')
     toolbar.appendChild(queryLocationBtn)
 
+    const queryOSMPointBtn = document.createElement('button')
+    queryOSMPointBtn.className = defaultBtnClassName
+    createIcon({className:'bi bi-pin-map-fill', parent:queryOSMPointBtn})
+    queryOSMPointBtn.setAttribute('title', 'Query OSM at point')
+    toolbar.appendChild(queryOSMPointBtn)
+
     const results = document.createElement('div')
     container.appendChild(results)
 }
