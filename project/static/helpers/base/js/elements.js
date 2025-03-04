@@ -168,7 +168,7 @@ const createAccordionNavTabs = (id, data, {
 
         const navButton = document.createElement('button')
         navButton.className = removeWhitespace(`
-            accordion-button rounded-top z-3 me-2 pe-2 ps-3 py-1 text-bg-${getPreferredTheme()}
+            accordion-button rounded-top me-2 pe-2 ps-3 py-1 text-bg-${getPreferredTheme()}
             ${properties.active ? '' : 'collapsed'}
             ${properties.active || properties.disabled ? 'disabled' : ''}
         `)

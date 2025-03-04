@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
-        container.className = `z-1 bg-${getPreferredTheme()} ${container.className} ${dataset.mapClass || ''}`
+        container.className = `z-0 bg-${getPreferredTheme()} ${container.className} ${dataset.mapClass || ''}`
         addLeafletBasemapLayer(map)
         applyThemeToLeafletControls(container)
         elementResizeObserver(container, () => map.invalidateSize())
