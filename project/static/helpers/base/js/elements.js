@@ -145,7 +145,7 @@ const createAccordionNavTabs = (id, data, {
     parent
 } = {}) => {
     const navTabs = document.createElement('ul')
-    navTabs.className = `nav nav-tabs card-header-tabs ps-3 pe-2`
+    navTabs.className = `nav nav-tabs card-header-tabs ps-3`
     parent?.appendChild(navTabs)
 
     Object.keys(data).forEach(suffix => {
