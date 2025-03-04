@@ -178,7 +178,7 @@ const createAccordionElement = (id, data, {
 } = {}) => {
     const accordion = document.createElement('div')
     accordion.id = id
-    accordion.className = `accordion accordion-flush px-0 flex-grow-1 d-flex flex-column border-top`
+    accordion.className = `accordion accordion-flush px-0 flex-grow-1 d-flex flex-column`
     parent?.appendChild(accordion)
 
     Object.keys(data).forEach(suffix => {
