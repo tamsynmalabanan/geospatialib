@@ -34,6 +34,6 @@ const handleLeafletMapPanels = (map) => {
         return panel
     }
     
-    const panel = control.addTo(map).getContainer()
-    handleLeafletQueryPanel(map, panel.querySelector(`#${body.id}-accordion-query accordion-body`))
+    const panelContainer = control.addTo(map).getContainer()
+    handleLeafletQueryPanel(map, panelContainer.querySelector(`#${map.getContainer().id}-panels-accordion-query accordion-body`))
 }
