@@ -6,16 +6,19 @@
     border-radius: var(--bs-border-radius);
 }
 
-.leaflet-control.leaflet-bar button,
-.leaflet-control.leaflet-bar a {
-    height: 32px;
-    width: 32px;
-    background-image: none;
-    border-radius: var(--bs-border-radius);
+.leaflet-control.leaflet-bar {
     border: 0px !important;
-    
-    i {
-        height: 23px;
-        width: 30px;
+
+    button, a {
+        height: 32px;
+        width: 32px;
+        background-image: none;
+        border-radius: var(--bs-border-radius);
+        border: 0px !important;
+        
+        i {
+            height: 23px;
+            width: 30px;
+        }
     }
 }
