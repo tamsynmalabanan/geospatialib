@@ -13,3 +13,7 @@
 .accordion-button.collapsed {
     border-bottom: 1px solid var(--bs-border-color) !important;
 }
+
+.nav-tabs .nav-item:first-child .accordion-button:not(.collapsed) {
+    border-top-left-radius: 0 !important;
+}
