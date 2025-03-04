@@ -2,6 +2,8 @@ const createIcon = ({className, parent} = {}) => {
     const icon = document.createElement('i')
     icon.className = className || ''
     parent?.appendChild(icon)
+
+    return createIcon
 }
 
 const createLabel = (innerText, {className, parent} = {}) => {
