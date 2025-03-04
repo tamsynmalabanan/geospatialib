@@ -60,7 +60,10 @@ const createOffcanvasElement = (id, {
     offcanvas.setAttribute('data-bs-backdrop', `false`)
 
     const header = document.createElement('div')
-    header.className = 'offcanvas-header d-flex justify-content-between'
+    header.className = removeWhitespace(`
+        ${themed ? `text-bg-${getPreferredTheme()}` : ''}
+        offcanvas-header d-flex justify-content-between
+    `)
     offcanvas.appendChild(header)
 
     const title = document.createElement('h5')
