@@ -109,21 +109,18 @@ const handleLeafletMapControls = (map) => {
 }
 
 const applyThemeToLeafletControls = (container) => {
-    // addClassListToSelection(
-    //     container, 
-    //     removeWhitespace(`
-    //         .leaflet-bar a, 
-    //         .leaflet-control a, 
-    //         .leaflet-control-attribution,
-    //         .leaflet-control-scale-line,
-    //         .leaflet-control-geocoder,
-    //     `).trim(), 
-    //     [`text-bg-${getPreferredTheme()}`, 'text-reset']
-    // )
-
     container.querySelectorAll('.leaflet-control').forEach(control => {
         Array.from(control.children).forEach(child => child.classList.add(`text-bg-${getPreferredTheme()}`, 'text-reset'))
     })
+
+    addClassListToSelection(
+        container, 
+        removeWhitespace(`
+            .leaflet-control-attribution
+        `).trim(), 
+        [`text-bg-${getPreferredTheme()}`, 'text-reset']
+    )
+
 }
 
 const toggleMapInteractivity = (map) => {
