@@ -32,5 +32,5 @@
 }
 
 .leaflet-control-geocoder-alternatives.text-bg-dark span {
-    color: white;
+    color: white !important;
 }
