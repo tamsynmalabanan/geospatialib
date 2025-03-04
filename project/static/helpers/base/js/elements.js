@@ -48,7 +48,7 @@ const createOffcanvasElement = (id, {
     titleClass,
     toggleIcon = 'bi-layout-sidebar-inset',
 } = {}) => {
-    console.log(toggleIcon)
+    console.log(show, toggleIcon)
     const offcanvas = document.createElement('div')
     offcanvas.id = id
     offcanvas.className = removeWhitespace(`
