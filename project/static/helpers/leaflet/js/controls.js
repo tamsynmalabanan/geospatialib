@@ -26,7 +26,8 @@ const applyThemeToLeafletControls = (container) => {
     )
 }
 
-const toggleMapInteractivity = (container) => {
+const toggleMapInteractivity = (map) => {
+    const container = map.getContainer()
     container.querySelectorAll('.leaflet-control').forEach(control => {
         Array('mouseover', 'touchstart', 'touchmove', 'wheel').forEach(trigger => {
             control.addEventListener(trigger, (e) => {
