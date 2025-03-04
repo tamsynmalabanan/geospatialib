@@ -174,16 +174,34 @@ const createAccordionNavTabs = (id, data, {
 }
 
 const createAccordionElement = (id, data, {
-
+    parent
 } = {}) => {
     const accordion = document.createElement('div')
+    accordion.id = id
     accordion.classname = `accordion accordion-flush px-0 flex-grow-1 d-flex flex-column`
+    parent?.appendChild(accordion)
+
+    Object.keys(data).forEach(suffix => {
+        const properties = data[suffix]
+
+        const accordionCollapse = document.createElement('div')
+        accordionCollapse.id = `${id}-suffix`
+        accordionCollapse.className = `accordion-collapse collapse flex-grow-1 fade ${properties.active ? 'show' : ''}`
+        accordionCollapse.setAttribute('data-bs-parent', `#${id}`)
+        accordion.appendChild(accordionCollapse)
+
+        const accordionBody = document.createElement('div')
+        accordionBody.className = 'accordion-body h-100 pt-4'
+        accordionCollapse.appendChild(accordionBody)
+    })
+
+    return accordion
 }
 
 const createAccordion = (id, data, {
 
 } = {}) => {
     const tabs = createAccordionNavTabs(id, data)
-    const content = createAccordionElement(id, data)
-    return [tabs, content]
+    const accordion = createAccordionElement(id, data)
+    return [tabs, accordion]
 }

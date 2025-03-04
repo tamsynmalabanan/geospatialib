@@ -12,7 +12,7 @@ const createMapPanels = (container, {} = {}) => {
     })
 
     // create accordion, empty, handle each panel in control.js legend, query, tools
-    const [tabs, content] = createAccordion(`${id}-accordion`, {
+    const [tabs, accordion] = createAccordion(`${id}-accordion`, {
         'legend': {
             label: `Legend`,
             active: true
@@ -27,6 +27,7 @@ const createMapPanels = (container, {} = {}) => {
     })
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)
+    offcanvas.querySelector('.offcanvas-body').appendChild(accordion)
 
     return [toggle, offcanvas]
 }
