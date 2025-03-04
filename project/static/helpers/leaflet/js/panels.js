@@ -7,19 +7,26 @@ const handleLeafletQueryPanel = (map, parent) => {
     toolbar.className = 'border rounded'
     container.appendChild(toolbar)
 
-    const defaultBtnClassName = `btn btn-sm btn-${getPreferredTheme()}`
+    const queryTools = {
+        locationCoords: {
+            iconClass: 'bi-geo-alt-fill',
+            title: 'Query location coordinates',
+        },
+        osmPoint: {
+            iconClass: 'bi-pim-map-fill',
+            title: 'Query OSM at point',
+        },
+    }
 
-    const queryLocationBtn = document.createElement('button')
-    queryLocationBtn.className = defaultBtnClassName
-    createIcon({className:'bi bi-geo-alt-fill', parent:queryLocationBtn})
-    queryLocationBtn.setAttribute('title', 'Query location coordinates')
-    toolbar.appendChild(queryLocationBtn)
-
-    const queryOSMPointBtn = document.createElement('button')
-    queryOSMPointBtn.className = defaultBtnClassName
-    createIcon({className:'bi bi-pin-map-fill', parent:queryOSMPointBtn})
-    queryOSMPointBtn.setAttribute('title', 'Query OSM at point')
-    toolbar.appendChild(queryOSMPointBtn)
+    for (const tool in queryTools) {
+        const data = queryTools[tool]
+        
+        const btn = document.createElement('button')
+        btn.className = `btn btn-sm btn-${getPreferredTheme()}`
+        createIcon({className:`bi ${data.iconClass}`, parent:btn})
+        btn.setAttribute('title', data.title)
+        toolbar.appendChild(btn)
+    }
 
     const results = document.createElement('div')
     container.appendChild(results)

@@ -162,7 +162,7 @@ const createAccordionNavTabs = (id, data, {
     parent?.appendChild(navTabs)
 
     Object.keys(data).forEach(suffix => {
-        const properties = data[suffix]
+        const data = data[suffix]
 
         const navItem = createNavItem({
             parent: navTabs,
@@ -171,16 +171,16 @@ const createAccordionNavTabs = (id, data, {
         const navButton = document.createElement('button')
         navButton.className = removeWhitespace(`
             accordion-button rounded-top me-2 pe-2 ps-3 py-1 text-bg-${getPreferredTheme()}
-            ${properties.active ? '' : 'collapsed'}
-            ${properties.active || properties.disabled ? 'disabled' : ''}
+            ${data.active ? '' : 'collapsed'}
+            ${data.active || data.disabled ? 'disabled' : ''}
         `)
-        if (properties.active || properties.disabled) navButton.setAttribute('disabled', 'true')
+        if (data.active || data.disabled) navButton.setAttribute('disabled', 'true')
         navButton.setAttribute('type', 'button')
         navButton.setAttribute('data-bs-toggle', 'collapse')
         navButton.setAttribute('data-bs-target', `#${id}-${suffix}`)
-        navButton.setAttribute('aria-expanded', `${properties.active ? 'true' : 'false'}`)
+        navButton.setAttribute('aria-expanded', `${data.active ? 'true' : 'false'}`)
         navButton.setAttribute('aria-controls', `${id}-${suffix}`)
-        navButton.innerText = properties.label
+        navButton.innerText = data.label
         navItem.appendChild(navButton)
 
         navButton.addEventListener('click', () => {
@@ -210,11 +210,11 @@ const createAccordionElement = (id, data, {
     parent?.appendChild(accordion)
 
     Object.keys(data).forEach(suffix => {
-        const properties = data[suffix]
+        const data = data[suffix]
 
         const accordionCollapse = document.createElement('div')
         accordionCollapse.id = `${id}-${suffix}`
-        accordionCollapse.className = `accordion-collapse collapse flex-grow-1 fade ${properties.active ? 'show' : ''}`
+        accordionCollapse.className = `accordion-collapse collapse flex-grow-1 fade ${data.active ? 'show' : ''}`
         accordionCollapse.setAttribute('data-bs-parent', `#${id}`)
         accordion.appendChild(accordionCollapse)
 

@@ -17,10 +17,10 @@ const handleLeafletZoombar = (map, include=true) => {
     }
 
     for (const buttonName in buttonClass) {
-        const properties = buttonClass[buttonName]
+        const data = buttonClass[buttonName]
         const button = map.zoomControl[buttonName]
-        button.innerHTML = properties.icon.outerHTML
-        button.classList.add(...properties.class)
+        button.innerHTML = data.icon.outerHTML
+        button.classList.add(...data.class)
     }
 }
 
