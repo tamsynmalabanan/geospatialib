@@ -7,7 +7,7 @@ const createMapPanels = (container, {} = {}) => {
         toggleLabelClass: 'd-none d-md-block',
         show: getCookie(`show_#${id}`) === 'true',
         offcanvasClass: 'offcanvas-end rounded',
-        titleClass: 'h6'
+        titleClass: 'h5'
     })
     // create accordion, empty, handle each panel in control.js legend, query, anylists tools
     createAccordionNavTabs({
