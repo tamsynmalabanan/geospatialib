@@ -24,5 +24,13 @@
 }
 
 .leaflet-control-geocoder-alternatives {
-    padding-left: 2px !important;
+    padding-left: 6px !important;
+
+    li {
+
+    }
+}
+
+.leaflet-control-geocoder-alternatives.text-bg-dark li {
+    color: white;
 }
