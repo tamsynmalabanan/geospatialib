@@ -1,3 +1,4 @@
+[data-bs-theme=dark] .accordion-button::after,
 .accordion-button::after {
     width: 0px !important;
     --bs-accordion-btn-icon: none !important;
