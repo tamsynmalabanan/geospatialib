@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = map.getContainer()
         const dataset = container.parentElement.dataset
 
+        if (dataset.mapPanels === 'true') handleLeafletMapPanels(map)
         container.className = `bg-${getPreferredTheme()} ${container.className} ${dataset.mapClass || ''}`
         addLeafletBasemapLayer(map)
         handleLeafletLayerGroups(map)
         handleLeafletMapControls(map)
         elementResizeObserver(container, () => map.invalidateSize())
-        if (dataset.mapPanels === 'true') handleLeafletMapPanels(map)
 
         map._initComplete = true
         map.fire('initComplete')
