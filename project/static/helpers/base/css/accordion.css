@@ -15,6 +15,6 @@
     border-bottom: 1px solid var(--bs-border-color) !important;
 }
 
-#main-index-map-panels > div.offcanvas-nav > ul > li:nth-child(1) > button:not(.collapsed) {
+div.offcanvas-nav > ul > li:nth-child(1) > button:not(.collapsed) {
     border-top-left-radius: 0 !important;
 }
