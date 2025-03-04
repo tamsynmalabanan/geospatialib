@@ -172,9 +172,9 @@ const createAccordionNavTabs = (id, data, {
         navButton.addEventListener('click', () => {
             navTabs.querySelectorAll(`.accordion-button`).forEach(btn => {
                 if (navButton === btn) {
-                    btn.classList.add('disabled')
+                    btn.disabled = true
                 } else {
-                    btn.classList.remove('disabled')
+                    btn.disabled = false
                 }
             })
         })
