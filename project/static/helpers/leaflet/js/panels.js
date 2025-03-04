@@ -30,13 +30,10 @@ const handleLeafletMapPanels = (map) => {
         const [toggle, body] = createMapPanels(map.getContainer())
         panel.appendChild(toggle)
         panel.appendChild(body)
+        handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query .accordion-body`))
         
         return panel
     }
     
-    const panelContainer = control.addTo(map).getContainer()
-    // console.log(panelContainer)
-    // console.log(`#${map.getContainer().id}-panels-accordion-query accordion-body`)
-    // console.log(panelContainer.querySelector(`#${map.getContainer().id}-panels-accordion-query accordion-body`))
-    // handleLeafletQueryPanel(map, panelContainer.querySelector(`#${map.getContainer().id}-panels-accordion-query accordion-body`))
+    control.addTo(map)
 }
