@@ -154,7 +154,7 @@ const createAccordionNavTabs = (tabs, {
 
         const navButton = document.createElement('button')
         navButton.className = `
-            accordion-button rounded-top z-3
+            accordion-button rounded-top z-3 me-2 pe-2 ps-3 py-1
             ${properties.active ? '' : 'collapsed'}
             ${properties.disabled ? 'disabled' : ''}
         `
