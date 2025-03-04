@@ -53,8 +53,7 @@ const createOffcanvasElement = (id, {
     offcanvas.className = `
         ${className || ''}
         ${show ? 'offcanvas-lg' : 'offcanvas'}
-        ${themed ? `text-bg-${getPreferredTheme()}` : ''}
-        shadow-lg border-0 p-0 d-flex flex-column h-100
+        shadow-lg border-0 p-0 d-flex flex-column flex-grow-1 bg-transparent
     `
     offcanvas.setAttribute('aria-labelledby', `${id}Label`)
     offcanvas.setAttribute('data-bs-scroll', `true`)
