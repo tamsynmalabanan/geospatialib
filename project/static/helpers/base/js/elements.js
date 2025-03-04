@@ -141,10 +141,12 @@ const createOffcanvas = (id, {
     return [toggle, offcanvas]
 }
 
-const createNavItem = (parent) => {
+const createNavItem = ({
+    parent
+} = {}) => {
     const navItem = document.createElement('li')
     navItem.className = 'nav-item'
-    parent.appendChild(navItem)
+    parent?.appendChild(navItem)
 
     return navItem
 }
