@@ -7,9 +7,9 @@
 }
 
 .leaflet-control.leaflet-bar a i::before {
-    /* position: absolute; */
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    /* transform: translate(-50%, -50%); */
     pointer-events: none; /* Ensures the pseudo-element does not interfere with clicks */
 }
