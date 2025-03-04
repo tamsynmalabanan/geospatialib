@@ -38,7 +38,7 @@
     }
 }
 
-.leaflet-control-geocoder-icon,
+.leaflet-control-geocoder-icon[title='Reset view'],
 .leaflet-control-zoom-out {
     border-radius: var(--bs-border-radius) !important;
 }
