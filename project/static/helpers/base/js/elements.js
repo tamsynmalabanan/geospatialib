@@ -3,7 +3,7 @@ const createIcon = ({className, parent} = {}) => {
     icon.className = className || ''
     parent?.appendChild(icon)
 
-    return createIcon
+    return icon
 }
 
 const createLabel = (innerText, {className, parent} = {}) => {
