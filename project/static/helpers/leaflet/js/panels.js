@@ -4,7 +4,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(container)
 
     const toolbar = document.createElement('div')
-    toolbar.className = 'border rounded'
+    toolbar.className = 'border rounded d-flex'
     container.appendChild(toolbar)
 
     const queryTools = {
@@ -25,7 +25,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query layers at point',
         },
         layerPoint: {
-            btnClass: 'vertical-line border-0 rounded-0 border-end bg-0 p-0 m-0 h-100'
+            btnClass: 'vertical-line border-0 rounded-0 border-end bg-0 p-0 m-0'
         },
     }
 
@@ -33,6 +33,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         const data = queryTools[tool]
         
         const btn = document.createElement('button')
+        btn.setAttribute('type', 'button')
         btn.className = data.btnClass || `btn btn-sm btn-${getPreferredTheme()}`
         if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
         if (data.title) btn.setAttribute('title', data.title)
