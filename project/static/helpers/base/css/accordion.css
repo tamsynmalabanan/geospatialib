@@ -19,3 +19,8 @@ ul.nav-tabs > li:nth-child(1) > button.accordion-button:not(.collapsed) {
     border-left: 0px !important;
     border-top-left-radius: 0 !important;
 }
+
+ul.nav-tabs > li:last-child > button.accordion-button:not(.collapsed) {
+    border-right: 0px !important;
+    border-top-right-radius: 0 !important;
+}
