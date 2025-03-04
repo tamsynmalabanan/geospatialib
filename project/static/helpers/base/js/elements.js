@@ -200,9 +200,7 @@ const createAccordionElement = (id, data, {
     return accordion
 }
 
-const createAccordion = (id, data, {
-
-} = {}) => {
+const createAccordion = (id, data) => {
     const tabs = createAccordionNavTabs(id, data)
     const accordion = createAccordionElement(id, data)
     return [tabs, accordion]

@@ -11,7 +11,6 @@ const createMapPanels = (container, {} = {}) => {
         titleClass: 'h6'
     })
 
-    // create accordion, empty, handle each panel in control.js legend, query, tools
     const [tabs, accordion] = createAccordion(`${id}-accordion`, {
         'legend': {
             label: `Legend`,
@@ -23,7 +22,6 @@ const createMapPanels = (container, {} = {}) => {
         'toolbox': {
             label: `Toolbox`,
         },
-    }, {
     })
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)

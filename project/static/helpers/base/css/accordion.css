@@ -3,3 +3,7 @@
     --bs-accordion-btn-icon: none !important;
     --bs-accordion-btn-active-icon: none !important;
 } */
+
+.accordion-button:not(.collapsed) {
+    font-weight: bolder;
+}
