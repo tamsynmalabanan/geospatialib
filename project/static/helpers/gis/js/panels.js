@@ -9,7 +9,6 @@ const createMapPanels = (container, {} = {}) => {
         offcanvasClass: 'offcanvas-end rounded',
         titleClass: 'h6'
     })
-    console.log(offcanvas.querySelector('offcanvas-nav'))
     // create accordion, empty, handle each panel in control.js legend, query, anylists tools
     createNavTabs({
         'Legend': {
@@ -22,7 +21,7 @@ const createMapPanels = (container, {} = {}) => {
             active: false
         },
     }, {
-        parent: offcanvas.querySelector('offcanvas-nav'),
+        parent: offcanvas.querySelector('.offcanvas-nav'),
     })
 
     return [toggle, offcanvas]
