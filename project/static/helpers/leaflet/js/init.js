@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.className = `bg-${getPreferredTheme()} ${container.className} ${dataset.mapClass || ''}`
         addLeafletBasemapLayer(map)
         handleLeafletLayerGroups(map)
+        handleLeafletMapControls(map)
         elementResizeObserver(container, () => map.invalidateSize())
         if (dataset.mapPanels === 'true') handleLeafletMapPanels(map)
 
