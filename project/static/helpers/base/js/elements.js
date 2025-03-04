@@ -168,6 +168,16 @@ const createAccordionNavTabs = (id, data, {
         navButton.setAttribute('aria-controls', `${id}-${suffix}`)
         navButton.innerText = properties.label
         navItem.appendChild(navButton)
+
+        navButton.addEventListener('click', () => {
+            navTabs.querySelectorAll(`.accordion-button`).forEach(btn => {
+                if (navButton === btn) {
+                    btn.classList.add('disabled')
+                } else {
+                    btn.classList.remove('disabled')
+                }
+            })
+        })
     })
 
     return navTabs
