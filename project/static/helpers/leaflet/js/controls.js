@@ -105,6 +105,9 @@ const handleLeafletLocateBtn = (map, include=true) => {
         position: 'topleft',
         setView: 'untilPanOrZoom',
         cacheLocation: true,
+        locateOptions: {
+            maxZoom: 18
+        },
     }).addTo(map);
 }
 
