@@ -25,7 +25,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query layers at point',
         },
         layerPoint: {
-            btnClass: 'vertical-line border-0 rounded-0 border-end bg-0 p-0 m-0'
+            btnClass: 'vertical-line border-0 rounded-0 border-end bg-0 p-0 my-0 mx-2'
         },
     }
 
