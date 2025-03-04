@@ -97,6 +97,15 @@ LEAFLET_CONFIG = {
             ],
             'auto_include': True,
         },
+        'locate': {
+            'css': [
+                'https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css', 
+            ],
+            'js': [
+                'https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js',
+            ],
+            'auto_include': True,
+        },
     },
 }
 
