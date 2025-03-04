@@ -145,7 +145,7 @@ const createNavTabs = (tabs, {
     navTabs.className = `nav nav-tabs`
     parent?.appendChild(navTabs)
 
-    for (const label of tabs) {
+    Object.keys(tabs).forEach(label => {
         const properties = tabs[label]
 
         const navItem = document.createElement('li')
@@ -162,7 +162,7 @@ const createNavTabs = (tabs, {
         if (properties.disabled) navLink.setAttribute('aria-disabled', 'true')
         navLink.innerText = label
         navItem.appendChild(navLink)
-    }
+    })
 
     return navTabs
 }
