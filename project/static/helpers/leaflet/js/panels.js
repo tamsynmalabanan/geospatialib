@@ -27,6 +27,14 @@ const handleLeafletQueryPanel = (map, parent) => {
         layerPoint: {
             btnClass: 'vertical-line border-0 rounded-0 border-end bg-0 p-0 my-1 mx-2'
         },
+        cancel: {
+            iconClass: 'bi-arrow-counterclockwise',
+            title: 'Cancel ongoing query',
+        },
+        clear: {
+            iconClass: 'bi-trash-fill',
+            title: 'Clear query results',
+        },
     }
 
     for (const tool in queryTools) {
