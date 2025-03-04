@@ -31,6 +31,6 @@
     }
 }
 
-.leaflet-control-geocoder-alternatives.text-bg-dark li {
+.leaflet-control-geocoder-alternatives.text-bg-dark li span {
     color: white;
 }
