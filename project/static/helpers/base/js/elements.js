@@ -152,7 +152,7 @@ const createAccordionNavTabs = (id, data, {
         const properties = data[suffix]
 
         const navItem = document.createElement('li')
-        navItem.className = 'nav-item flex-grow-1'
+        navItem.className = 'nav-item' // flex-grow-1'
         navTabs.appendChild(navItem)
 
         const navButton = document.createElement('button')

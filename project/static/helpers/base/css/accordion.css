@@ -24,3 +24,7 @@
     border-right: 0px !important;
     border-top-right-radius: 0 !important;
 }
+
+.nav-tabs > .nav-item:last-child {
+    flex-grow: 1;
+}
