@@ -172,3 +172,11 @@ const createAccordionNavTabs = (tabs, {
 
     return navTabs
 }
+
+const createAccordion = (tabs, {
+
+} = {}) => {
+    const tabs = createAccordionNavTabs(tabs)
+
+    return [tabs, null]
+}
