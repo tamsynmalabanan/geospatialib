@@ -50,20 +50,18 @@ const createOffcanvasElement = (id, {
 } = {}) => {
     const offcanvas = document.createElement('div')
     offcanvas.id = id
-    offcanvas.className = `
+    offcanvas.className = removeWhitespace(`
         ${className || ''}
         ${show ? 'offcanvas-lg' : 'offcanvas'}
-        shadow-lg border-0 p-0 d-flex flex-column flex-grow-1 bg-transparent
-    `
+        ${themed ? `text-bg-${getPreferredTheme()}` : ''}
+        shadow-lg border-0 p-0 d-flex flex-column flex-grow-1
+    `)
     offcanvas.setAttribute('aria-labelledby', `${id}Label`)
     offcanvas.setAttribute('data-bs-scroll', `true`)
     offcanvas.setAttribute('data-bs-backdrop', `false`)
 
     const header = document.createElement('div')
-    header.className = removeWhitespace(`
-        ${themed ? `text-bg-${getPreferredTheme()}` : ''}
-        offcanvas-header d-flex justify-content-between
-    `)
+    header.className = 'offcanvas-header d-flex justify-content-between'
     offcanvas.appendChild(header)
 
     const title = document.createElement('h5')
