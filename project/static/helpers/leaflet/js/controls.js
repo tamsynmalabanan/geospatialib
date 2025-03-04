@@ -104,6 +104,7 @@ const handleLeafletLocateBtn = (map, include=true) => {
     const locateControl = L.control.locate({
         position: 'topleft',
         setView: 'untilPanOrZoom',
+        cacheLocation: true,
     }).addTo(map);
 }
 
