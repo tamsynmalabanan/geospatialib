@@ -141,6 +141,14 @@ const createOffcanvas = (id, {
     return [toggle, offcanvas]
 }
 
+const createNavItem = (parent) => {
+    const navItem = document.createElement('li')
+    navItem.className = 'nav-item'
+    parent.appendChild(navItem)
+
+    return navItem
+}
+
 const createAccordionNavTabs = (id, data, {
     parent
 } = {}) => {
@@ -148,12 +156,16 @@ const createAccordionNavTabs = (id, data, {
     navTabs.className = `nav nav-tabs card-header-tabs d-flex`
     parent?.appendChild(navTabs)
 
+    createNavItem({
+        parent: navTabs,
+    })
+
     Object.keys(data).forEach(suffix => {
         const properties = data[suffix]
 
-        const navItem = document.createElement('li')
-        navItem.className = 'nav-item' // flex-grow-1'
-        navTabs.appendChild(navItem)
+        const navItem = createNavItem({
+            parent: navTabs,
+        })
 
         const navButton = document.createElement('button')
         navButton.className = removeWhitespace(`
@@ -179,6 +191,10 @@ const createAccordionNavTabs = (id, data, {
                 }
             })
         })
+    })
+
+    createNavItem({
+        parent: navTabs,
     })
 
     return navTabs
