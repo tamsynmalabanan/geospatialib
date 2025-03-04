@@ -10,6 +10,7 @@
 .leaflet-control.leaflet-bar a {
     height: 32px;
     width: 32px;
+    background-image: none;
     
     i {
         height: 23px;
