@@ -28,11 +28,9 @@ const handleLeafletMapPanels = (map) => {
         panel.style.maxHeight = '100%'
         
         const [toggle, body] = createMapPanels(map.getContainer())
-        // console.log(`#${body.id}-accordion-query accordion-body`)
-        // handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query accordion-body`))
-
         panel.appendChild(toggle)
         panel.appendChild(body)
+        handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query accordion-body`))
             
         return panel
     }
