@@ -159,7 +159,7 @@ const createAccordionNavTabs = (id, data, {
         navButton.className = removeWhitespace(`
             accordion-button rounded-top z-3 me-2 pe-2 ps-3 py-1 text-bg-${getPreferredTheme()}
             ${properties.active ? '' : 'collapsed'}
-            ${properties.disabled ? 'disabled' : ''}
+            ${properties.active || properties.disabled ? 'disabled' : ''}
         `)
         navButton.setAttribute('type', 'button')
         navButton.setAttribute('data-bs-toggle', 'collapse')
