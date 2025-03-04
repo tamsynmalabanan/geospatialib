@@ -6,5 +6,5 @@
 
 .accordion-button:not(.collapsed) {
     font-weight: bolder;
-    border: 1px;
+    border: 1px !important;
 }
