@@ -24,15 +24,18 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-stack',
             title: 'Query layers at point',
         },
+        layerPoint: {
+            btnClass: 'vertical-line border-0 rounded-0 border-end bg-0 p-0 m-0'
+        },
     }
 
     for (const tool in queryTools) {
         const data = queryTools[tool]
         
         const btn = document.createElement('button')
-        btn.className = `btn btn-sm btn-${getPreferredTheme()}`
-        createIcon({className:`bi ${data.iconClass}`, parent:btn})
-        btn.setAttribute('title', data.title)
+        btn.className = data.btnClass || `btn btn-sm btn-${getPreferredTheme()}`
+        if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
+        if (data.title) btn.setAttribute('title', data.title)
         toolbar.appendChild(btn)
     }
 
