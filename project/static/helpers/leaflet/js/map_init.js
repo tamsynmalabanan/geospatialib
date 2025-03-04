@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addLeafletBasemapLayer(map)
         applyThemeToLeafletControls(container)
         elementResizeObserver(container, () => map.invalidateSize())
-        if (isViewHeight(container)) handleLeafletMapPanels(map)
+        if (dataset.mapPanels === 'true') handleLeafletMapPanels(map)
 
         map._initComplete = true
         map.fire('initComplete')

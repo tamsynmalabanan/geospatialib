@@ -41,7 +41,7 @@
                                 {% include "helpers/partials/sidebar/toggle.html" with icon='bi-layout-sidebar-inset' title='Toggle sidebar' %}
                             {% endblock sidebar_toggle %}
                         </div>
-                        {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' %}
+                        {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' map_panels="true" %}
                     </div>
                 </div>
             </div>
