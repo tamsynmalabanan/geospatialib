@@ -59,9 +59,6 @@ const handleLeafletSearchBar = (map, include=true) => {
     button.innerText = ''
     button.innerHTML = createIcon({className: 'bi bi-binoculars-fill'}).outerHTML
 
-    const alternativesList = geocoderContainer.querySelector('.leaflet-control-geocoder-alternatives')
-    alternativesList.classList.add('list-unstyled', 'px-2')
-
     const geocoderFieldsSelector = map.getContainer().parentElement.dataset.mapGeocoderFields
     if (geocoderFieldsSelector) {
         document.addEventListener('change', (event) => {

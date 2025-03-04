@@ -22,3 +22,7 @@
         }
     }
 }
+
+.leaflet-control-geocoder-alternatives {
+    padding-left: 2px !important;
+}
