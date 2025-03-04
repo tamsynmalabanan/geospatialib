@@ -161,6 +161,7 @@ const createAccordionNavTabs = (id, data, {
             ${properties.active ? '' : 'collapsed'}
             ${properties.active || properties.disabled ? 'disabled' : ''}
         `)
+        if (properties.active || properties.disabled) navButton.setAttribute('disabled', 'true')
         navButton.setAttribute('type', 'button')
         navButton.setAttribute('data-bs-toggle', 'collapse')
         navButton.setAttribute('data-bs-target', `#${id}-${suffix}`)
