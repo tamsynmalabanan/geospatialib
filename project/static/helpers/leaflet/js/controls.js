@@ -15,7 +15,7 @@ const handleLeafletMapControls = (map) => {
     })
 
     applyThemeToLeafletControls(container)
-    toggleMapInteractivity(container)
+    toggleMapInteractivity(map)
 }
 
 const applyThemeToLeafletControls = (container) => {
