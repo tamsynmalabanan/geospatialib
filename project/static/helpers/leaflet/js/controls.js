@@ -98,11 +98,33 @@ const handleLeafletRestViewBtn = (map, include=true) => {
     })
 }
 
+const handleLeafletLocateBtn = (map, include=true) => {
+    if (!include) return
+
+    const locateControl = L.control.locate({
+        position: 'topleft',
+        // setView: true,
+        // keepCurrentZoomLevel: true
+      }).addTo(map);
+      
+      map.on('locationfound', (e) => {
+        const radius = e.accuracy / 2
+        L.marker(e.latlng).addTo(map)
+          .bindPopup("You are within " + radius + " meters from this point").openPopup()
+        L.circle(e.latlng, radius).addTo(map)
+      })
+      
+      map.on('locationerror', (e) => {
+        alert(e.message);
+    })
+}
+
 const leafletControls = {
     zoom: handleLeafletZoombar,
     scale: handleLeafletScaleBar,
     search: handleLeafletSearchBar,
     reset: handleLeafletRestViewBtn,
+    locate: handleLeafletLocateBtn,
 }
 
 
