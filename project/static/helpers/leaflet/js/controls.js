@@ -1,7 +1,3 @@
-const leafletControls = {
-    zoom: handleLeafletZoombar,
-}
-
 const handleLeafletZoombar = (map, include=true) => {
     if (!include) return map.removeControl(map.zoomControl)
 
@@ -28,6 +24,11 @@ const handleLeafletZoombar = (map, include=true) => {
         // });
     }
 }
+
+const leafletControls = {
+    zoom: handleLeafletZoombar,
+}
+
 
 const handleLeafletMapControls = (map) => {
     const container = map.getContainer()
