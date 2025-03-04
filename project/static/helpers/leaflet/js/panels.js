@@ -6,7 +6,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const toolbar = document.createElement('div')
     container.appendChild(toolbar)
 
-    const defaultBtnClassName = `btn btn-sm btn-outline-${getPreferredTheme()}`
+    const defaultBtnClassName = `btn btn-sm btn-${getPreferredTheme()}`
 
     const queryLocationBtn = document.createElement('button')
     queryLocationBtn.className = defaultBtnClassName
