@@ -8,6 +8,7 @@
 
 .leaflet-control.leaflet-bar {
     border: 0px !important;
+    box-shadow: var(--bs-box-shadow-lg) !important;
 
     button, a {
         height: 32px;
