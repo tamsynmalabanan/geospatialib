@@ -6,7 +6,7 @@ const themedElements = (theme, parent=document) => {
     Array(
         [['bi-moon'], ['bi-moon-fill']],
         [['btn-light'],['btn-dark']],
-        [['btn-outline-light'],['btn-outline-dark']],
+        [['btn-outline-dark'],['btn-outline-light']],
         [['text-light'],['text-dark']],
         [['text-bg-light'],['text-bg-dark']],
         [['bg-light'],['bg-dark']],
