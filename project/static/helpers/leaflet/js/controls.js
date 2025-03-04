@@ -116,7 +116,8 @@ const applyThemeToLeafletControls = (container) => {
     })
 
     container.querySelectorAll(removeWhitespace(`
-        .leaflet-control-attribution
+        .leaflet-control-attribution,
+        .leaflet-control-geocoder
     `).trim()).forEach(element => element.classList.add(...themeClass))
 }
 
