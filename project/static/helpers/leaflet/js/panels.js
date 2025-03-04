@@ -31,10 +31,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancel: {
             iconClass: 'bi-arrow-counterclockwise',
             title: 'Cancel ongoing query',
+            disabled: true,
         },
         clear: {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
+            disabled: true,
         },
     }
 
@@ -46,6 +48,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (btn.tag === 'button') btn.setAttribute('type', 'button')
         if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
         if (data.title) btn.setAttribute('title', data.title)
+        if (data.disabled) btn.setAttribute('disabled', true)
         toolbar.appendChild(btn)
     })
 
