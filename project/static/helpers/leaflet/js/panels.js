@@ -16,13 +16,13 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
         },
-        layerPoint: {
-            iconClass: 'bi-stack',
-            title: 'Query layers at point',
-        },
         osmBbox: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in bbox',
+        },
+        layerPoint: {
+            iconClass: 'bi-stack',
+            title: 'Query layers at point',
         },
         layerPoint: {
             btnClass: 'border-0 rounded-0 border-end bg-0 p-0 my-1 mx-2 disabled'
@@ -37,7 +37,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
-    for (const tool in queryTools) {
+    Object.keys(queryTools).forEach(tool => {
         const data = queryTools[tool]
         
         const btn = document.createElement('button')
@@ -46,7 +46,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
         if (data.title) btn.setAttribute('title', data.title)
         toolbar.appendChild(btn)
-    }
+    })
 
     const results = document.createElement('div')
     container.appendChild(results)
