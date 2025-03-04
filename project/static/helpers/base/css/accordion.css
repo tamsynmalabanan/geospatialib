@@ -1,8 +1,8 @@
-/* .remove-arrow.accordion-button::after {
+.accordion-button::after {
     width: 0px !important;
     --bs-accordion-btn-icon: none !important;
     --bs-accordion-btn-active-icon: none !important;
-} */
+}
 
 .accordion-button:not(.collapsed) {
     font-weight: bolder;
