@@ -7,11 +7,11 @@ const handleLeafletZoombar = (map, include=true) => {
     const defaultClass = ['border-0', 'd-flex', 'justify-content-center', 'align-items-center']
     const buttonClass = {
         _zoomInButton: {
-            icon: createIcon({className: 'bi bi-plus'}),
+            icon: createIcon({className: 'bi bi-plus-lg'}),
             class: defaultClass.concat(['rounded-top', 'rounded-bottom-0'])
         },
         _zoomOutButton: {
-            icon: createIcon({className: 'bi bi-dash'}),
+            icon: createIcon({className: 'bi bi-dash-lg'}),
             class: defaultClass.concat(['rounded-bottom', 'rounded-top-0'])
         },
     }
