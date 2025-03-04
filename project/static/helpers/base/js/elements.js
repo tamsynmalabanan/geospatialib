@@ -153,11 +153,11 @@ const createAccordionNavTabs = (tabs, {
         navTabs.appendChild(navItem)
 
         const navButton = document.createElement('button')
-        navButton.className = `
+        navButton.className = removeWhitespace(`
             accordion-button rounded-top z-3 me-2 pe-2 ps-3 py-1
             ${properties.active ? '' : 'collapsed'}
             ${properties.disabled ? 'disabled' : ''}
-        `
+        `)
         navButton.setAttribute('type', 'button')
         navButton.setAttribute('data-bs-toggle', 'collapse')
         navButton.setAttribute('data-bs-target', `#${properties.id}`)
