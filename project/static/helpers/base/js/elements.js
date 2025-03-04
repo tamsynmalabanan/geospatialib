@@ -216,7 +216,7 @@ const createAccordionElement = (id, data, {
         accordion.appendChild(accordionCollapse)
 
         const accordionBody = document.createElement('div')
-        accordionBody.className = 'accordion-body h-100 pt-4'
+        accordionBody.className = 'accordion-body h-100'
         accordionBody.innerText = properties.label
         accordionCollapse.appendChild(accordionBody)
 
