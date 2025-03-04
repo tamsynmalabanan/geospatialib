@@ -185,7 +185,7 @@ const createAccordionElement = (id, data, {
         const properties = data[suffix]
 
         const accordionCollapse = document.createElement('div')
-        accordionCollapse.id = `${id}-suffix`
+        accordionCollapse.id = `${id}-${suffix}`
         accordionCollapse.className = `accordion-collapse collapse flex-grow-1 fade ${properties.active ? 'show' : ''}`
         accordionCollapse.setAttribute('data-bs-parent', `#${id}`)
         accordion.appendChild(accordionCollapse)
