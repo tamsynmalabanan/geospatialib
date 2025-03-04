@@ -88,6 +88,7 @@ const handleLeafletSearchBar = (map, include=true) => {
 const leafletControls = {
     zoom: handleLeafletZoombar,
     scale: handleLeafletScaleBar,
+    search: handleLeafletSearchBar,
 }
 
 
