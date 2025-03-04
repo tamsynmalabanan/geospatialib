@@ -4,7 +4,7 @@ const handleLeafletZoombar = (map, include=true) => {
     const container = map.zoomControl.getContainer()
     container.classList.add('border-0', 'shadow-lg')
 
-    const defaultClass = ['border-0']//, 'd-flex', 'justify-content-center', 'align-items-center']
+    const defaultClass = ['border-0', 'd-flex', 'justify-content-center', 'align-items-center']
     const buttonClass = {
         _zoomInButton: {
             icon: createIcon({className: 'bi bi-plus'}),
