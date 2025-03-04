@@ -4,7 +4,7 @@
     --bs-accordion-btn-active-icon: none !important;
 }
 
-.accordion-button:not(.collapsed) {
+/* .accordion-button:not(.collapsed) {
     font-weight: bolder;
     border: 1px solid var(--bs-border-color) !important;
-}
+} */
