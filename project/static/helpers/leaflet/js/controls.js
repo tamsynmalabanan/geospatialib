@@ -8,10 +8,10 @@ const handleLeafletZoombar = (map, include=true) => {
 
     const buttons = {
         _zoomInButton: {
-            innerHTML: createIcon({className:'bi bi-plus'})
+            innerHTML: createIcon({className:'bi bi-plus'}).outerHTML
         },
         _zoomOutButton: {
-            innerHTML: createIcon({className:'bi bi-dash'})
+            innerHTML: createIcon({className:'bi bi-dash'}).outerHTML
         },
     }
 
