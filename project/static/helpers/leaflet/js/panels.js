@@ -26,7 +26,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider: {
             tag: 'div',
-            btnClass: 'border-0 rounded-0 border-end bg-0 p-0 my-1 mx-2 disabled',
+            btnClass: 'border-0 rounded-0 border-end bg-0 p-0 my-1 mx-2',
         },
         cancel: {
             iconClass: 'bi-arrow-counterclockwise',
@@ -45,7 +45,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         const btn = document.createElement(data.tag || 'button')
         btn.className = data.btnClass || `btn btn-sm btn-${getPreferredTheme()}`
-        if (btn.tag === 'button') btn.setAttribute('type', 'button')
+        if (btn.tagName === 'button') btn.setAttribute('type', 'button')
         if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
         if (data.title) btn.setAttribute('title', data.title)
         if (data.disabled) btn.setAttribute('disabled', true)
