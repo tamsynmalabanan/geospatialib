@@ -15,10 +15,10 @@ const createMapPanels = (container, {} = {}) => {
             active: true
         },
         'Query': {
-            active: false
+            // active: false
         },
         'Analysis': {
-            active: false
+            // active: false
         },
     }, {
         parent: offcanvas.querySelector('.offcanvas-nav'),
