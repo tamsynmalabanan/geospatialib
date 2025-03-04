@@ -55,7 +55,12 @@ const handleLeafletMapControls = (map) => {
 const applyThemeToLeafletControls = (container) => {
     addClassListToSelection(
         container, 
-        '.leaflet-bar a, .leaflet-control a, .leaflet-control-attribution', 
+        removeWhitespace(`
+            .leaflet-bar a, 
+            .leaflet-control a, 
+            .leaflet-control-attribution,
+            .leaflet-control-scale-line,
+        `).trim(), 
         [`text-bg-${getPreferredTheme()}`, 'text-reset']
     )
 }
