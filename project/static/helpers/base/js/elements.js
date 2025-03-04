@@ -54,12 +54,12 @@ const createOffcanvasElement = (id, {
         ${className || ''}
         ${show ? 'offcanvas-lg' : 'offcanvas'}
         ${themed ? `text-bg-${getPreferredTheme()}` : ''}
-        shadow-lg border-0 p-0 d-flex flex-column
+        shadow-lg border-0 p-0 d-flex flex-column mw-100
     `)
     offcanvas.setAttribute('aria-labelledby', `${id}Label`)
     offcanvas.setAttribute('data-bs-scroll', `true`)
     offcanvas.setAttribute('data-bs-backdrop', `false`)
-    offcanvas.style.maxHeight = '100%'
+    // offcanvas.style.maxHeight = '100%'
 
     const header = document.createElement('div')
     header.className = 'offcanvas-header d-flex justify-content-between'
