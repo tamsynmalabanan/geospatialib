@@ -14,7 +14,6 @@
         height: 32px;
         width: 32px;
         background-image: none;
-        border-radius: var(--bs-border-radius);
         font-weight: bolder;
         
         i {
@@ -37,4 +36,9 @@
     span {
         color: white !important;
     }
+}
+
+.leaflet-control-geocoder-icon,
+.leaflet-control-zoom-out {
+    border-radius: var(--bs-border-radius) !important;
 }
