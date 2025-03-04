@@ -1,15 +1,15 @@
 const handleLeafletZoombar = (map, include=true) => {
     if (!include) return map.removeControl(map.zoomControl)
 
-    const buttons = {
+    const buttonClass = {
         _zoomInButton: ['bi', 'bi-plus', 'rounded-top', 'pt-1', 'rounded-bottom-0'],
         _zoomOutButton: ['bi', 'bi-dash', 'rounded-bottom', 'rounded-top-0'],
     }
 
-    for (const buttonName in buttons) {
+    for (const buttonName in buttonClass) {
         const button = map.zoomControl[buttonName]
         button.innerHTML = ''
-        button.classList.add(...buttons[buttonName])
+        button.classList.add(...buttonClass[buttonName])
     }
 }
 
