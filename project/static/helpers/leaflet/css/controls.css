@@ -12,6 +12,7 @@
     width: 32px;
     background-image: none;
     border-radius: var(--bs-border-radius);
+    border: 0px;
     
     i {
         height: 23px;
