@@ -13,7 +13,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
         },
         osmPoint: {
-            iconClass: 'bi-pim-map-fill',
+            iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
         },
     }
