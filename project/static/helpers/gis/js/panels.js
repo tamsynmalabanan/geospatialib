@@ -12,16 +12,16 @@ const createMapPanels = (container, {} = {}) => {
     })
 
     // create accordion, empty, handle each panel in control.js legend, query, tools
-    const [tabs, content] = createAccordion({
-        'Legend': {
-            id: `${id}-legend`,
+    const [tabs, content] = createAccordion(`${id}-accordion`, {
+        'legend': {
+            label: `Legend`,
             active: true
         },
-        'Query': {
-            id: `${id}-query`,
+        'query': {
+            label: `Query`,
         },
-        'Toolbox': {
-            id: `${id}-toolbox`,
+        'toolbox': {
+            label: `Toolbox`,
         },
     }, {
     })

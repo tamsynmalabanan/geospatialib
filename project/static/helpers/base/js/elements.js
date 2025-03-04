@@ -141,15 +141,15 @@ const createOffcanvas = (id, {
     return [toggle, offcanvas]
 }
 
-const createAccordionNavTabs = (data, {
+const createAccordionNavTabs = (id, data, {
     parent
 } = {}) => {
     const navTabs = document.createElement('ul')
     navTabs.className = `nav nav-tabs card-header-tabs ps-3`
     parent?.appendChild(navTabs)
 
-    Object.keys(data).forEach(label => {
-        const properties = data[label]
+    Object.keys(data).forEach(suffix => {
+        const properties = data[suffix]
 
         const navItem = document.createElement('li')
         navItem.className - 'nav-item'
@@ -163,27 +163,27 @@ const createAccordionNavTabs = (data, {
         `)
         navButton.setAttribute('type', 'button')
         navButton.setAttribute('data-bs-toggle', 'collapse')
-        navButton.setAttribute('data-bs-target', `#${properties.id}`)
+        navButton.setAttribute('data-bs-target', `#${id}-${suffix}`)
         navButton.setAttribute('aria-expanded', `${properties.active ? 'true' : 'false'}`)
-        navButton.setAttribute('aria-controls', properties.id)
-        navButton.innerText = label
+        navButton.setAttribute('aria-controls', `${id}-${suffix}`)
+        navButton.innerText = properties.label
         navItem.appendChild(navButton)
     })
 
     return navTabs
 }
 
-const createAccordionElement = (data, {
+const createAccordionElement = (id, data, {
 
 } = {}) => {
     const accordion = document.createElement('div')
-    accordion.classname = `accordion accordion-flush px-0 flex-grow-1`
+    accordion.classname = `accordion accordion-flush px-0 flex-grow-1 d-flex flex-column`
 }
 
-const createAccordion = (data, {
+const createAccordion = (id, data, {
 
 } = {}) => {
-    const tabs = createAccordionNavTabs(data)
-    const content = createAccordionElement(data)
+    const tabs = createAccordionNavTabs(id, data)
+    const content = createAccordionElement(id, data)
     return [tabs, content]
 }
