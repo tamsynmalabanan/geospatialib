@@ -95,7 +95,7 @@ const createOffcanvasElement = (id, {
     offcanvas.appendChild(nav)
 
     const body = document.createElement('div')
-    body.className = 'offcanvas-body overflow-auto flex-grow-1 mb-3 d-flex'
+    body.className = 'offcanvas-body overflow-auto flex-grow-1 mb-3 d-flex p-0'
     offcanvas.appendChild(body)
 
     return offcanvas
@@ -216,7 +216,7 @@ const createAccordionElement = (id, data, {
         accordion.appendChild(accordionCollapse)
 
         const accordionBody = document.createElement('div')
-        accordionBody.className = 'accordion-body h-100 p-0'
+        accordionBody.className = 'accordion-body h-100 px-3'
         accordionBody.innerText = properties.label
         accordionCollapse.appendChild(accordionBody)
 
