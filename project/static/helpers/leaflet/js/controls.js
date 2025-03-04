@@ -82,10 +82,27 @@ const handleLeafletSearchBar = (map, include=true) => {
     }
 }
 
+const handleLeafletRestViewBtn = (map, include=true) => {
+    const resetViewControl = map.resetviewControl
+    if (!include) return map.removeControl(resetViewControl)
+    
+    const container = resetViewControl.getContainer()
+    const control = container.querySelector('a')
+    control.innerHTML = createIcon({className: 'bi bi-globe-americas'}).outerHTML
+    
+    resetViewControl._defaultBounds = L.latLngBounds(L.latLng(-80, -220), L.latLng(85, 220))
+    resetViewControl.getBounds = () => resetViewControl._defaultBounds
+
+    control.addEventListener('click', () => {
+        map._viewReset = true
+    })
+}
+
 const leafletControls = {
     zoom: handleLeafletZoombar,
     scale: handleLeafletScaleBar,
     search: handleLeafletSearchBar,
+    reset: handleLeafletRestViewBtn,
 }
 
 
