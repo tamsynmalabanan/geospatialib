@@ -104,22 +104,7 @@ const handleLeafletLocateBtn = (map, include=true) => {
     const locateControl = L.control.locate({
         position: 'topleft',
         setView: 'untilPanOrZoom',
-        // showCompass: true,
-        // drawCircle: true,
-        // drawMarker: true,
-        // keepCurrentZoomLevel: true
     }).addTo(map);
-    
-    // map.on('locationfound', (e) => {
-    //     const radius = e.accuracy / 2
-    //     L.marker(e.latlng).addTo(map)
-    //       .bindPopup("You are within " + radius + " meters from this point").openPopup()
-    //     L.circle(e.latlng, radius).addTo(map)
-    // })
-      
-    // map.on('locationerror', (e) => {
-    //     alert(e.message);
-    // })
 }
 
 const leafletControls = {
