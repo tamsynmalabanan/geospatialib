@@ -121,7 +121,7 @@ const applyThemeToLeafletControls = (container) => {
     //     [`text-bg-${getPreferredTheme()}`, 'text-reset']
     // )
 
-    container.querySelectorAll('leaflet-control').forEach(control => {
+    container.querySelectorAll('.leaflet-control').forEach(control => {
         Array.from(control.children).forEach(child => child.classList.add(`text-bg-${getPreferredTheme()}`, 'text-reset'))
     })
 }
