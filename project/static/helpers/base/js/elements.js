@@ -138,11 +138,11 @@ const createOffcanvas = (id, {
     return [toggle, offcanvas]
 }
 
-const createNavTabs = (tabs, {
+const createAccordionNavTabs = (tabs, {
     parent
 } = {}) => {
     const navTabs = document.createElement('ul')
-    navTabs.className = `nav nav-tabs`
+    navTabs.className = `nav nav-tabs card-header-tabs ps-3`
     parent?.appendChild(navTabs)
 
     Object.keys(tabs).forEach(label => {
@@ -152,16 +152,19 @@ const createNavTabs = (tabs, {
         navItem.className - 'nav-item'
         navTabs.appendChild(navItem)
 
-        const navLink = document.createElement('button')
-        navLink.className = `
-            nav-link
-            ${properties.active ? 'show' : ''}
+        const navButton = document.createElement('button')
+        navButton.className = `
+            accordion-button rounded-top z-3
+            ${properties.active ? '' : 'collapsed'}
             ${properties.disabled ? 'disabled' : ''}
         `
-        if (properties.active) navLink.setAttribute('aria-current', 'true')
-        if (properties.disabled) navLink.setAttribute('aria-disabled', 'true')
-        navLink.innerText = label
-        navItem.appendChild(navLink)
+        navButton.setAttribute('type', 'button')
+        navButton.setAttribute('data-bs-toggle', 'collapse')
+        navButton.setAttribute('data-bs-target', `#${properties.id}`)
+        navButton.setAttribute('aria-expanded', `${properties.active ? 'true' : 'false'}`)
+        navButton.setAttribute('aria-controls', properties.id)
+        navButton.innerText = label
+        navItem.appendChild(navButton)
     })
 
     return navTabs

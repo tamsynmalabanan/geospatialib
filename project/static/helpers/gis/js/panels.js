@@ -10,7 +10,7 @@ const createMapPanels = (container, {} = {}) => {
         titleClass: 'h6'
     })
     // create accordion, empty, handle each panel in control.js legend, query, anylists tools
-    createNavTabs({
+    createAccordionNavTabs({
         'Legend': {
             active: true
         },
