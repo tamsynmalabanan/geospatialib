@@ -6,7 +6,7 @@ const handleLeafletZoombar = (map, include=true) => {
 
     const buttonClass = {
         _zoomInButton: ['bi', 'bi-plus', 'rounded-top', 'pt-1', 'rounded-bottom-0'],
-        _zoomOutButton: ['bi', 'bi-dash', 'rounded-bottom', 'rounded-top-0', 'pb-1'],
+        _zoomOutButton: ['bi', 'bi-dash', 'rounded-bottom', 'rounded-top-0', 'pt-1'],
     }
 
     for (const buttonName in buttonClass) {
