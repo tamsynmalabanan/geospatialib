@@ -45,7 +45,8 @@ const createOffcanvasElement = (id, {
     className, 
     themed, 
     titleText, 
-    titleClass
+    titleClass,
+    toggleIcon = 'bi-layout-sidebar-inset',
 } = {}) => {
     const offcanvas = document.createElement('div')
     offcanvas.id = id
@@ -75,7 +76,7 @@ const createOffcanvasElement = (id, {
     const toggleClassName = 'border-0 bg-transparent fs-20 p-0 ms-3 text-muted bi'
 
     const sidebarToggle = document.createElement('button')
-    sidebarToggle.className = `${toggleClassName} ${show ? 'bi-layout-sidebar-inset' : 'bi-window-sidebar'} d-none d-lg-inline`
+    sidebarToggle.className = `${toggleClassName} ${show ? toggleIcon : 'bi-window-sidebar'} d-none d-lg-inline`
     sidebarToggle.setAttribute('type', 'button')
     sidebarToggle.setAttribute('onclick', `toggleSidebar("#${id}")`)
     sidebarToggle.setAttribute('title', `Toggle ${titleText}`)
@@ -113,6 +114,7 @@ const createOffcanvas = (id, {
     toggleLabelClass = '',
     titleText = toggleLabelText,
     titleClass,
+    offcanvasToggleIcon,
 } = {}) => {
     const toggle = createOffcanvasToggle(id, {
         themed: themed,
@@ -132,7 +134,8 @@ const createOffcanvas = (id, {
         className: offcanvasClass,
         themed: themed,
         titleText: titleText,
-        titleClass: titleClass
+        titleClass: titleClass,
+        toggleIcon: offcanvasToggleIcon,
     })
 
     return [toggle, offcanvas]
