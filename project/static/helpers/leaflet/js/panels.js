@@ -20,6 +20,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in bbox',
         },
+        layerPoint: {
+            iconClass: 'bi-stack',
+            title: 'Query layers at point',
+        },
     }
 
     for (const tool in queryTools) {
