@@ -109,18 +109,15 @@ const handleLeafletMapControls = (map) => {
 }
 
 const applyThemeToLeafletControls = (container) => {
+    const themeClass = [`text-bg-${getPreferredTheme()}`, 'text-reset']
+
     container.querySelectorAll('.leaflet-control').forEach(control => {
-        Array.from(control.children).forEach(child => child.classList.add(`text-bg-${getPreferredTheme()}`, 'text-reset'))
+        Array.from(control.children).forEach(child => child.classList.add(...themeClass))
     })
 
-    addClassListToSelection(
-        container, 
-        removeWhitespace(`
-            .leaflet-control-attribution
-        `).trim(), 
-        [`text-bg-${getPreferredTheme()}`, 'text-reset']
-    )
-
+    container.querySelectorAll(removeWhitespace(`
+        .leaflet-control-attribution
+    `).trim()).forEach(element => element.classList.add(...themeClass))
 }
 
 const toggleMapInteractivity = (map) => {
