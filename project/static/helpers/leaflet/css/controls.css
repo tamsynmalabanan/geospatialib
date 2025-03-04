@@ -5,3 +5,8 @@
 .leaflet-container .offcanvas-lg:not(.offcanvas) {
     border-radius: var(--bs-border-radius);
 }
+
+.leaflet-contol.leaflet-bar a {
+    height: 32px;
+    width: 32px;
+}
