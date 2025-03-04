@@ -1,6 +1,6 @@
 const handleLeafletMapPanels = (map) => {
     const topRightControlCorner = map._controlCorners.topright
-    topRightControlCorner.classList.add('d-flex', 'vh-100')
+    topRightControlCorner.classList.add('vh-100')
 
     const control = L.control({position:'topright'})
     control.onAdd = (map) => {
