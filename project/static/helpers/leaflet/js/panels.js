@@ -4,7 +4,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(container)
 
     const toolbar = document.createElement('div')
-    toolbar.className = 'border px-2'
+    toolbar.className = 'border rounded'
     container.appendChild(toolbar)
 
     const defaultBtnClassName = `btn btn-sm btn-${getPreferredTheme()}`
