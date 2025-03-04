@@ -16,5 +16,6 @@
 }
 
 div.offcanvas-nav > ul > li:nth-child(1) > button:not(.collapsed) {
+    border-left: 0px !important;
     border-top-left-radius: 0 !important;
 }
