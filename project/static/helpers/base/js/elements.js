@@ -141,15 +141,15 @@ const createOffcanvas = (id, {
     return [toggle, offcanvas]
 }
 
-const createAccordionNavTabs = (tabs, {
+const createAccordionNavTabs = (data, {
     parent
 } = {}) => {
     const navTabs = document.createElement('ul')
     navTabs.className = `nav nav-tabs card-header-tabs ps-3`
     parent?.appendChild(navTabs)
 
-    Object.keys(tabs).forEach(label => {
-        const properties = tabs[label]
+    Object.keys(data).forEach(label => {
+        const properties = data[label]
 
         const navItem = document.createElement('li')
         navItem.className - 'nav-item'
@@ -173,10 +173,10 @@ const createAccordionNavTabs = (tabs, {
     return navTabs
 }
 
-const createAccordion = (tabs, {
+const createAccordion = (data, {
 
 } = {}) => {
-    const tabs = createAccordionNavTabs(tabs)
+    const tabs = createAccordionNavTabs(data)
 
     return [tabs, null]
 }
