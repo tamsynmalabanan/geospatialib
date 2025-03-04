@@ -24,9 +24,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-stack',
             title: 'Query layers at point',
         },
-        layerPoint: {
+        divider: {
+            tag: 'div',
             btnClass: 'border-0 rounded-0 border-end bg-0 p-0 my-1 mx-2 disabled',
-            title: 'na'
         },
         cancel: {
             iconClass: 'bi-arrow-counterclockwise',
@@ -41,9 +41,9 @@ const handleLeafletQueryPanel = (map, parent) => {
     Object.keys(queryTools).forEach(tool => {
         const data = queryTools[tool]
         
-        const btn = document.createElement('button')
-        btn.setAttribute('type', 'button')
+        const btn = document.createElement(data.tag || 'button')
         btn.className = data.btnClass || `btn btn-sm btn-${getPreferredTheme()}`
+        if (btn.tag === 'button') btn.setAttribute('type', 'button')
         if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
         if (data.title) btn.setAttribute('title', data.title)
         toolbar.appendChild(btn)
