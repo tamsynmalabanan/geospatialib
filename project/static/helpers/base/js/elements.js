@@ -137,3 +137,32 @@ const createOffcanvas = (id, {
 
     return [toggle, offcanvas]
 }
+
+const createNavTabs = (tabs, {
+    parent
+} = {}) => {
+    const navTabs = document.createElement('ul')
+    navTabs.className = `nav nav-tabs`
+    parent?.appendChild(navTabs)
+
+    for (const label of tabs) {
+        const properties = tabs[label]
+
+        const navItem = document.createElement('li')
+        navItem.className - 'nav-item'
+        navTabs.appendChild(navItem)
+
+        const navLink = document.createElement('button')
+        navLink.className = `
+            nav-link
+            ${properties.active ? 'show' : ''}
+            ${properties.disabled ? 'disabled' : ''}
+        `
+        if (properties.active) navLink.setAttribute('aria-current', 'true')
+        if (properties.disabled) navLink.setAttribute('aria-disabled', 'true')
+        navLink.innerText = label
+        navItem.appendChild(navLink)
+    }
+
+    return navTabs
+}
