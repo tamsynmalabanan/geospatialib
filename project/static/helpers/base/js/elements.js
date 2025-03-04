@@ -154,15 +154,15 @@ const createNavItem = ({
     return navItem
 }
 
-const createAccordionNavTabs = (id, data, {
+const createAccordionNavTabs = (id, tabData, {
     parent
 } = {}) => {
     const navTabs = document.createElement('ul')
     navTabs.className = `nav nav-tabs card-header-tabs d-flex flex-nowrap`
     parent?.appendChild(navTabs)
 
-    Object.keys(data).forEach(suffix => {
-        const data = data[suffix]
+    Object.keys(tabData).forEach(suffix => {
+        const data = tabData[suffix]
 
         const navItem = createNavItem({
             parent: navTabs,
@@ -201,7 +201,7 @@ const createAccordionNavTabs = (id, data, {
     return navTabs
 }
 
-const createAccordionElement = (id, data, {
+const createAccordionElement = (id, tabData, {
     parent
 } = {}) => {
     const accordion = document.createElement('div')
@@ -209,8 +209,8 @@ const createAccordionElement = (id, data, {
     accordion.className = `accordion accordion-flush px-0 flex-grow-1 d-flex flex-column`
     parent?.appendChild(accordion)
 
-    Object.keys(data).forEach(suffix => {
-        const data = data[suffix]
+    Object.keys(tabData).forEach(suffix => {
+        const data = tabData[suffix]
 
         const accordionCollapse = document.createElement('div')
         accordionCollapse.id = `${id}-${suffix}`
@@ -227,8 +227,8 @@ const createAccordionElement = (id, data, {
     return accordion
 }
 
-const createAccordion = (id, data) => {
-    const tabs = createAccordionNavTabs(id, data)
-    const accordion = createAccordionElement(id, data)
+const createAccordion = (id, tabData) => {
+    const tabs = createAccordionNavTabs(id, tabData)
+    const accordion = createAccordionElement(id, tabData)
     return [tabs, accordion]
 }
