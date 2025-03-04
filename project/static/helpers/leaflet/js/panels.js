@@ -11,6 +11,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryLocationBtn = document.createElement('button')
     queryLocationBtn.className = defaultBtnClassName
     createIcon({className:'bi bi-geo-alt-fill', parent:queryLocationBtn})
+    queryLocationBtn.setAttribute('title', 'Query location coordinates')
     toolbar.appendChild(queryLocationBtn)
 
     const results = document.createElement('div')
