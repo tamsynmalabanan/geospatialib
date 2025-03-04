@@ -99,10 +99,10 @@ LEAFLET_CONFIG = {
         },
         'locate': {
             'css': [
-                'https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css', 
+                'https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.83.1/L.Control.Locate.css', 
             ],
             'js': [
-                'https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.83.1/L.Control.Locate.min.js',
             ],
             'auto_include': True,
         },
