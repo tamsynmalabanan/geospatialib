@@ -1,5 +1,32 @@
 const leafletControls = {
+    zoom: handleLeafletZoombar,
+}
 
+const handleLeafletZoombar = (map, include=true) => {
+    if (!include) return map.removeControl(map.zoomControl)
+
+    // const buttons = {
+    //     _zoomInButton: ['bi', 'bi-plus', 'rounded-top', 'pt-1', 'rounded-bottom-0'],
+    //     _zoomOutButton: ['bi', 'bi-dash', 'rounded-bottom', 'rounded-top-0'],
+    // }
+
+    const buttons = {
+        _zoomInButton: {
+            innerHTML: createIcon({className:'bi bi-plus'})
+        },
+        _zoomOutButton: {
+            innerHTML: createIcon({className:'bi bi-dash'})
+        },
+    }
+
+    for (const buttonName in buttons) {
+        const properties = buttons[buttonName]
+        const button = map.zoomControl[buttonName]
+        button.innerHTML = properties.innerHTML
+        // buttons[buttonName].forEach(className => {
+        //     button.classList.add(className)
+        // });
+    }
 }
 
 const handleLeafletMapControls = (map) => {
