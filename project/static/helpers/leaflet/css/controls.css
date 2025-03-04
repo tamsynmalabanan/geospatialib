@@ -15,6 +15,7 @@
         width: 32px;
         background-image: none;
         border-radius: var(--bs-border-radius);
+        font-weight: bolder;
         
         i {
             height: 23px;
