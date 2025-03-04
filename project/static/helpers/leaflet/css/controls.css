@@ -6,7 +6,12 @@
     border-radius: var(--bs-border-radius);
 }
 
-.leaflet-control.leaflet-bar a i {
-    height: 23px;
-    width: 30px;
+.leaflet-control.leaflet-bar a {
+    height: 32px;
+    width: 32px;
+    
+    i {
+        height: 23px;
+        width: 30px;
+    }
 }
