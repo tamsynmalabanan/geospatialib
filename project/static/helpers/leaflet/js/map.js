@@ -1,15 +1,19 @@
 const disableMapInteractivity = (map) => {
-    console.log('disble')
-    map.dragging.disable()
-    map.touchZoom.disable()
-    map.doubleClickZoom.disable()
-    map.scrollWheelZoom.disable()
+    if (!map._enabledInteractivity || map._enabledInteractivity === true) {
+        map.dragging.disable()
+        map.touchZoom.disable()
+        map.doubleClickZoom.disable()
+        map.scrollWheelZoom.disable()
+        map._enabledInteractivity = false
+    }
 }
 
 const enableMapInteractivity = (map) => {
-    console.log('enable')
-    map.dragging.enable()
-    map.touchZoom.enable()
-    map.doubleClickZoom.enable()
-    map.scrollWheelZoom.enable()
+    if (map._enabledInteractivity === false) {
+        map.dragging.enable()
+        map.touchZoom.enable()
+        map.doubleClickZoom.enable()
+        map.scrollWheelZoom.enable()
+        map._enabledInteractivity = true
+    }
 }
