@@ -20,6 +20,7 @@
         i {
             height: 23px;
             width: 30px;
+            font-size: medium !important;
         }
     }
 }
