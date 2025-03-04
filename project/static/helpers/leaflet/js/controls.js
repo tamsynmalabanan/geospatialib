@@ -5,14 +5,21 @@ const handleLeafletZoombar = (map, include=true) => {
     container.classList.add('border-0', 'shadow-lg')
 
     const buttonClass = {
-        _zoomInButton: ['bi', 'bi-plus', 'rounded-top', 'rounded-bottom-0', 'border-0'],
-        _zoomOutButton: ['bi', 'bi-dash', 'rounded-bottom', 'rounded-top-0', 'border-0'],
+        _zoomInButton: {
+            icon: createIcon({className: 'bi bi-plus'}),
+            class: ['rounded-top', 'rounded-bottom-0', 'border-0']
+        },
+        _zoomOutButton: {
+            icon: createIcon({className: 'bi bi-dash'}),
+            class: ['rounded-bottom', 'rounded-top-0', 'border-0']
+        },
     }
 
     for (const buttonName in buttonClass) {
+        const properties = buttonClass[buttonName]
         const button = map.zoomControl[buttonName]
-        button.innerHTML = ''
-        button.classList.add(...buttonClass[buttonName])
+        button.innerHTML = properties.icon.outerHTML
+        button.classList.add(...properties.class)
     }
 }
 
