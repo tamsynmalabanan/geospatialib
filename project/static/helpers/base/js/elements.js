@@ -95,7 +95,7 @@ const createOffcanvasElement = (id, {
     offcanvas.appendChild(nav)
 
     const body = document.createElement('div')
-    body.className = 'offcanvas-body px-3 overflow-auto flex-grow-1 mb-3'
+    body.className = 'offcanvas-body px-3 overflow-auto flex-grow-1 mb-3 d-flex'
     offcanvas.appendChild(body)
 
     return offcanvas
@@ -173,10 +173,17 @@ const createAccordionNavTabs = (data, {
     return navTabs
 }
 
+const createAccordionElement = (data, {
+
+} = {}) => {
+    const accordion = document.createElement('div')
+    accordion.classname = `accordion accordion-flush px-0 flex-grow-1`
+}
+
 const createAccordion = (data, {
 
 } = {}) => {
     const tabs = createAccordionNavTabs(data)
-
-    return [tabs, null]
+    const content = createAccordionElement(data)
+    return [tabs, content]
 }
