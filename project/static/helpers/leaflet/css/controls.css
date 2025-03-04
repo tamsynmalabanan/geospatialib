@@ -1,3 +1,11 @@
 .leaflet-container {
     font-family: var(--bs-body-font-family) !important;
 }
+
+.leaflet-container .offcanvas-lg:not(.offcanvas) {
+    border-radius: var(--bs-border-radius);
+}
+
+.leaflet-container .offcanvas:not(.offcanvas-lg) {
+    border-radius: 0;
+}
