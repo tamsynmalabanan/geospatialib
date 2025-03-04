@@ -15,6 +15,8 @@ const handleLeafletZoombar = (map, include=true) => {
         },
     }
 
+    console.log(buttons)
+
     for (const buttonName in buttons) {
         const properties = buttons[buttonName]
         const button = map.zoomControl[buttonName]
