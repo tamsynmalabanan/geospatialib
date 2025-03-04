@@ -59,7 +59,7 @@ const applyThemeToLeafletControls = (container) => {
             .leaflet-bar a, 
             .leaflet-control a, 
             .leaflet-control-attribution,
-            .leaflet-control-scale-line,
+            .leaflet-control-scale-line
         `).trim(), 
         [`text-bg-${getPreferredTheme()}`, 'text-reset']
     )
