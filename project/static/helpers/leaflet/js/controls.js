@@ -27,17 +27,18 @@ const applyThemeToLeafletControls = (container) => {
 }
 
 const toggleMapInteractivity = (map) => {
-    const container = map.getContainer()
-    container.querySelectorAll('.leaflet-control').forEach(control => {
-        Array('mouseover', 'touchstart', 'touchmove', 'wheel').forEach(trigger => {
-            control.addEventListener(trigger, (e) => {
-                disableMapInteractivity(map)
-            })
-        })    
-
-        Array('mouseout', 'touchend').forEach(trigger => {
-            control.addEventListener(trigger, (e) => {
-                enableMapInteractivity(map)
+    map.getContainer().querySelectorAll('.leaflet-control').forEach(control => {
+        Array.from(control.children).forEach(child => {
+            Array('mouseover', 'touchstart', 'touchmove', 'wheel').forEach(trigger => {
+                child.addEventListener(trigger, (e) => {
+                    disableMapInteractivity(map)
+                })
+            })    
+    
+            Array('mouseout', 'touchend').forEach(trigger => {
+                child.addEventListener(trigger, (e) => {
+                    enableMapInteractivity(map)
+                })
             })
         })
     })
