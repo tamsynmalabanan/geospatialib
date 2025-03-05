@@ -48,7 +48,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
-                clickCallback: (btn) => {
+                clickCallback: () => {
+                    const btn = event.target
                     if (map._queryMode !== tool) {
                         map._queryMode = tool
                         btn.classList.remove(`btn-${getPreferredTheme()}`)
