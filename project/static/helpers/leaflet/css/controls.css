@@ -10,7 +10,7 @@
         }
     }
 
-    .offcanvas-lg:not(.offcanvas) {
+    .offcanvas-lg {
         border-radius: var(--bs-border-radius);
         max-height: 100% !important;
     }
