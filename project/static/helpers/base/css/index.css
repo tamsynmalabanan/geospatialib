@@ -18,7 +18,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 7px;
+    border-radius: 3px;
 }
 
 [data-bs-theme="light"] ::-webkit-scrollbar-thumb {
