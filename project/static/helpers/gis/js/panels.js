@@ -14,10 +14,10 @@ const createMapPanels = (container, {} = {}) => {
     const [tabs, accordion] = createAccordion(`${id}-accordion`, {
         'legend': {
             label: `Legend`,
+            active: true
         },
         'query': {
             label: `Query`,
-            active: true
         },
         'toolbox': {
             label: `Toolbox`,
