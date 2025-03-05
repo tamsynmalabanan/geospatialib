@@ -83,11 +83,11 @@ const handleLeafletQueryPanel = (map, parent) => {
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
-                clichHandler: async (e) => {
-                    L.DomEvent.stopPropagation(e);
-                    L.DomEvent.preDefault(e);        
+                clichHandler: async (event) => {
+                    L.DomEvent.stopPropagation(event);
+                    L.DomEvent.preventDefault(event);        
                     
-                    const btn = e.target
+                    const btn = event.target
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
                     
@@ -106,9 +106,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                         map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     }
 
-                    console.log(data.btnclickHandler)
                     if (activate && data.btnclickHandler) {
-                        await queryHandler(e, data.btnclickHandler)
+                        await queryHandler(event, data.btnclickHandler)
                     }
                 }
             }}) :
