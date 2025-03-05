@@ -78,7 +78,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         } 
                         !toolIsQueryMode ? map.on('click', mapClickCallback) : map.off('click', data.mapClickCallback)
                     }
-                    console.log(map._events)
+                    console.log(map._events.click)
                     if (!toolIsQueryMode && data.btnclickHandler) btnclickHandler()
                 }
             }}) :
