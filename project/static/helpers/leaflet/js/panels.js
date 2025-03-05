@@ -20,7 +20,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
 
                 map.on('click', () => {
-
+                    console.log(event)
                     handler()
                     map.off('click', handler)
                 })
