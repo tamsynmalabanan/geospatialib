@@ -71,12 +71,18 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                     map._queryMode = !toolIsQueryMode ? tool : undefined
                     if (data.mapClickHandler) {
-                        const mapClickCallback = (e) => {
-                            if (e.originalEvent.target !== mapContainer) return
-                            const geojson = data.mapClickHandler(e)
-                            results.appendChild(createGeoJSONChecklist(geojson))
-                        } 
-                        !toolIsQueryMode ? map.on('click', mapClickCallback) : map.off('click', mapClickCallback)
+                        if (!toolIsQueryMode) {
+                            const mapClickQueryCallback = (e) => {
+                                if (e.originalEvent.target !== mapContainer) return
+                                const geojson = data.mapClickHandler(e)
+                                results.appendChild(createGeoJSONChecklist(geojson))
+                            } 
+
+                            map.on('click', mapClickQueryCallback)
+                        } else {
+                            map._events.click = map._events.click.filter(handler => handler.fn.name !== 'mapClickQueryCallback')
+                        }
+                        // !toolIsQueryMode ? map.on('click', mapClickQueryCallback) : map.off('click', mapClickQueryCallback)
                     }
                     console.log(map._events.click)
                     if (!toolIsQueryMode && data.btnclickHandler) btnclickHandler()
