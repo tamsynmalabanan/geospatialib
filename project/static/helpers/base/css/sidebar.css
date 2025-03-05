@@ -12,7 +12,7 @@
 [data-bs-theme="light"] {
     .offcanvas,
     .offcanvas-lg {
-        background-color: hsla(210, 17%, 98%, 1) !important;
+        background-color: hsla(210, 17%, 80%, 1) !important;
     }
 }
 
