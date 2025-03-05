@@ -27,7 +27,9 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnclickHandler: async () => console.log('osmview')
+            btnclickHandler: async () => {
+                event.target.click()
+            }
         },
         layerPoint: {
             iconClass: 'bi-stack',
