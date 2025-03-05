@@ -37,6 +37,7 @@
     .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(210, 17%, 83%, 1) !important;
+        border-radius: var(--bs-border-radius);
     }
 }
 
@@ -44,5 +45,6 @@
     .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(210, 11%, 0%, 1) !important;
+        border-radius: var(--bs-border-radius);
     }    
 }
