@@ -17,11 +17,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            mapClickCallback: (e) => {
-                if (e.originalEvent.target !== mapContainer) return
-                const geojson = [turf.point([e.latlng.lng, e.latlng.lat])]
-                results.appendChild(createGeoJSONChecklist(geojson))
-            }
+            mapClickHandler: (e) => [turf.point([e.latlng.lng, e.latlng.lat])]
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -31,7 +27,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnclickCallback: () => {}
+            btnclickHandler: () => {}
         },
         layerPoint: {
             iconClass: 'bi-stack',
@@ -73,9 +69,17 @@ const handleLeafletQueryPanel = (map, parent) => {
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || '' : ''
 
-                    map._queryMode = toolIsQueryMode ? undefined : tool
-                    if (data.mapClickCallback) toolIsQueryMode ? map.off('click', data.mapClickCallback) : map.on('click', data.mapClickCallback)
-                    if (!toolIsQueryMode && data.btnclickCallback) btnclickCallback()
+                    map._queryMode = !toolIsQueryMode ? tool : undefined
+                    if (data.mapClickHandler) {
+                        const mapClickCallback = (e) => {
+                            if (e.originalEvent.target !== mapContainer) return
+                            const geojson = data.mapClickHandler(e)
+                            results.appendChild(createGeoJSONChecklist(geojson))
+                        } 
+                        !toolIsQueryMode ? map.on('click', mapClickCallback) : map.off('click', data.mapClickCallback)
+                    }
+                    console.log(map._events.click)
+                    if (!toolIsQueryMode && data.btnclickHandler) btnclickHandler()
                 }
             }}) :
             customCreateElement(data.tag, data)
