@@ -17,7 +17,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            mapClickHandler: async (e) => [turf.featureCollection([turf.point([e.latlng.lng, e.latlng.lat])])]
+            mapClickHandler: async (e) => {
+                return {'Point coordinates': turf.featureCollection([turf.point([e.latlng.lng, e.latlng.lat])])}
+            }
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -71,11 +73,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     map.on('newQueryResult', (e) => {
         const geojsons = e.geojsons
         results.innerHTML = ''
-        geojsons.some(g => {
-            console.log(g)
-            return g.features?.length > 0
-        })
-        if (geojsons.some(g => g.features?.length > 0)) {
+        if (Object.values(geojsons).some(g => g.features?.length > 0)) {
             results.appendChild(createGeoJSONChecklist(geojsons))
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
         } else {
