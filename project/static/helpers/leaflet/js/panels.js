@@ -16,7 +16,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             mapCursor: 'pointer',
             callback: () => {
                 const handler = () => {
-                    console.log('handler')
+                    alert('handler')
                 }
 
                 map.on('click', () => {
