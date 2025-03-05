@@ -27,10 +27,11 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         headTr.appendChild(th)
     }
     
-    const formatTh = document.createElement('th')
-    formatTh.setAttribute('scope', 'col')
-    formatTh.appendChild(createIcon({className: 'bi bi-list'}))
-    headTr.appendChild(formatTh)
+    const menuTh = document.createElement('th')
+    menuTh.className = 'text-end'
+    menuTh.setAttribute('scope', 'col')
+    menuTh.appendChild(createIcon({className: 'bi bi-list'}))
+    headTr.appendChild(menuTh)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
