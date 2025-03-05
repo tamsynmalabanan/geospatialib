@@ -8,3 +8,17 @@
 [data-bs-toggle="offcanvas"] {
     font-weight: 600;
 }
+
+[data-bs-theme="light"] {
+    .offcanvas,
+    .offcanvas-lg {
+        background-color: hsla(210, 17%, 78%, 1) !important;
+    }
+}
+
+[data-bs-theme="dark"] {
+    .offcanvas,
+    .offcanvas-lg {
+        background-color: hsla(210, 11%, 35%, 1) !important;
+    }    
+}
