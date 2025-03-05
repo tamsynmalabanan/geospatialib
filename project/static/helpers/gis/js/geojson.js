@@ -30,8 +30,10 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const menuTh = document.createElement('th')
     menuTh.className = 'text-center'
     menuTh.setAttribute('scope', 'col')
-    menuTh.appendChild(createIcon({className: 'bi bi-list'}))
     headTr.appendChild(menuTh)
+
+    const menuBtn = createButton({className: `btn-sm btn-${getPreferredTheme()}`, iconClass: 'bi bi-list', title: 'Menu'})
+    menuTh.appendChild(menuBtn)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
