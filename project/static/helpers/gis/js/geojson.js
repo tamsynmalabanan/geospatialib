@@ -32,7 +32,11 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     menuTh.setAttribute('scope', 'col')
     headTr.appendChild(menuTh)
 
-    const dropdown = createDropdown()
+    const dropdown = createDropdown({
+        btnClassName: 'bg-transparent border-0 p-0',
+        btnIconClass: 'bi bi-list',
+        btnTitle: 'Toggle menu',
+    })
     menuTh.appendChild(dropdown)
     
     const valueTr = document.createElement('tr')
