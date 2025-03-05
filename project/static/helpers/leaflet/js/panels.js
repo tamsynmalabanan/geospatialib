@@ -15,7 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapCursor: 'pointer',
             callback: () => {
-                
+
             }
         },
         osmPoint: {
@@ -78,13 +78,13 @@ const handleLeafletQueryPanel = (map, parent) => {
 
 const handleLeafletMapPanels = (map) => {
     const topRightControlCorner = map._controlCorners.topright
-    topRightControlCorner.classList.add('vh-100', 'd-flex')
 
     const control = L.control({position:'topright'})
     control.onAdd = (map) => {
         const panel = L.DomUtil.create('div', 'map-panel')
-        panel.classList.add('d-flex', 'flex-column', 'ms-60', 'mb-70')
-        panel.style.maxHeight = '100%'
+        panel.classList.add('d-flex', 'flex-column', 'vh-100')
+        panel.style.marginLeft = '60px'
+        panel.style.paddingBottom = '100px'
         
         const [toggle, body] = createMapPanels(map.getContainer())
         panel.appendChild(toggle)
