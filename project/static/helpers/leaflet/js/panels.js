@@ -55,7 +55,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
-    const queryHandler = async (handler) => {
+    const queryHandler = async (e, handler) => {
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
         const geojson = await handler(e)
@@ -96,14 +96,14 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (activate && data.mapClickHandler) {
                         const clickQueryHandler = async (e) => {
                             if (e.originalEvent.target !== mapContainer) return
-                            await queryHandler(data.mapClickHandler)
+                            await queryHandler(e, data.mapClickHandler)
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
                         map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     }
                     if (activate && data.btnclickHandler) {
-                        await queryHandler(data.btnclickHandler)
+                        await queryHandler(event, data.btnclickHandler)
                     }
                 }
             }}) :
