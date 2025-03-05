@@ -25,9 +25,9 @@ const createButton = ({
     return btn
 }
 
-const createIcon = ({className, parent} = {}) => {
+const createIcon = ({className='', parent} = {}) => {
     const icon = document.createElement('i')
-    icon.className = className || ''
+    icon.className = `${className} pe-none`
     parent?.appendChild(icon)
 
     return icon
