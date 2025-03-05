@@ -74,7 +74,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                     if (toolIsQueryMode) return
                     map._queryMode = toolIsQueryMode ? undefined : tool
-                    if (data.callback) callback()
+                    if (data.callback) data.callback()
                 }
             }}) :
             customCreateElement(data.tag, data)
