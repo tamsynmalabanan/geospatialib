@@ -32,7 +32,6 @@
     }
 
     .accordion-button:not(.collapsed) {
-        filter: brightness(50%);
-        color: red
+        background-color: hsla(0, 0%, 0%, 0.5);
     }
 } 
