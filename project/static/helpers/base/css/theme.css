@@ -1,6 +1,20 @@
+:root {
+    --adjusted-bg-light: hsla(210, 17%, 88%, 1);
+    --adjusted-bg-dark: hsla(210, 11%, 5%, 1);
+}
+
 [data-bs-theme="light"] {
     .offcanvas, .offcanvas-lg {
-        background-color: hsla(210, 17%, 88%, 1) !important;
+        background-color: var(--adjusted-bg-light) !important;
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+          
+        ::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            /* border-radius: 10px; */
+        }        
 
         /* .accordion,
         .accordion-button:not(.collapsed) {
@@ -11,7 +25,7 @@
 
 [data-bs-theme="dark"] {
     .offcanvas, .offcanvas-lg {
-        background-color: hsla(210, 11%, 5%, 1) !important;
+        background-color: var(--adjusted-bg-dark) !important;
         
         /* .accordion,
         .accordion-button:not(.collapsed) {
