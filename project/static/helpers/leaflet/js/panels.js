@@ -17,7 +17,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            mapClickHandler: (e) => [turf.point([e.latlng.lng, e.latlng.lat])]
+            mapClickHandler: async (e) => [turf.point([e.latlng.lng, e.latlng.lat])]
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -27,7 +27,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnclickHandler: () => {}
+            btnclickHandler: async () => console.log('osmview')
         },
         layerPoint: {
             iconClass: 'bi-stack',
@@ -50,7 +50,18 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
-    const enableCancenBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = false
+    const enableCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = false
+    const disableCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = true
+    const enableClearBtn = () => toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+    const disableClearBtn = () => toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
+    const dispatchNewQueryResult = (geojson) => {
+        const event = new Event('newQueryResult', {geojson})
+        map.fire(event)
+    }
+
+    map.on('newQueryResult', () => {
+        console.log('newQueryResult',event)
+    })
 
     Object.keys(queryTools).forEach(tool => {
         const data = queryTools[tool]
@@ -59,7 +70,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
-                clickCallback: () => {
+                clichHandler: async () => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
@@ -73,19 +84,22 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                     map._queryMode = activate ? tool : undefined
                     if (activate && data.mapClickHandler) {
-                        const mapClickQueryHandler = (e) => {
+                        const queryHandler = async (e) => {
                             if (e.originalEvent.target !== mapContainer) return
-                            enableCancenBtn()
-                            const geojson = data.mapClickHandler(e)
-                            results.appendChild(createGeoJSONChecklist(geojson))
+                            enableCancelBtn()
+                            const geojson = await data.mapClickHandler(e)
+                            disableCancelBtn()
+                            dispatchNewQueryResult(geojson)
                         } 
-                        map.on('click', mapClickQueryHandler)
+                        map.on('click', queryHandler)
                     } else {
-                        map._events.click = map._events.click.filter(handler => handler.fn.name !== 'mapClickQueryHandler')
+                        map._events.click = map._events.click.filter(handler => handler.fn.name !== 'queryHandler')
                     }
                     if (activate && data.btnclickHandler) {
-                        enableCancenBtn()
-                        btnclickHandler()
+                        enableCancelBtn()
+                        const geojson = await btnclickHandler()
+                        disableCancelBtn()
+                        dispatchNewQueryResult(geojson)
                     }
                 }
             }}) :
