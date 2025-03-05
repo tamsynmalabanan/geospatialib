@@ -19,19 +19,21 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }    
 
     const headTr = document.createElement('tr')
+    tbody.appendChild(headTr)
     for (const coord in coords) {
         const th = document.createElement('th')
         th.setAttribute('scope','col')
         th.innerText = coord
         headTr.appendChild(th)
     }
-
+    
     const menuTh = document.createElement('th')
     menuTh.setAttribute('scope', 'col')
     menuTh.innerText = 'menu'
     headTr.appendChild(menuTh)
-
+    
     const valueTr = document.createElement('tr')
+    tbody.appendChild(valueTr)
     for (const coord in coords) {
         const td = document.createElement('td')
         td.innerText = coords[coord].toFixed(precision)
