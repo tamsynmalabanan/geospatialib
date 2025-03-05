@@ -7,6 +7,10 @@
     .offcanvas, .offcanvas-lg {
         background-color: var(--adjusted-bg-light) !important;
         
+        ::-webkit-scrollbar {
+            background-color: var(--adjusted-bg-light) !important;
+        }
+
         ::-webkit-scrollbar-track {
             background-color: var(--adjusted-bg-light) !important;
         }
