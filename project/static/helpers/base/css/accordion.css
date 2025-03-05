@@ -33,12 +33,15 @@
 
 } 
 
+.accordion {
+    border-bottom-right-radius: var(--bs-border-radius);
+    border-bottom-left-radius: var(--bs-border-radius);
+}
+
 [data-bs-theme="light"] {
     .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(210, 17%, 83%, 1) !important;
-        border-bottom-right-radius: var(--bs-border-radius);
-        border-bottom-left-radius: var(--bs-border-radius);
     }
 }
 
@@ -46,7 +49,5 @@
     .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(210, 11%, 0%, 1) !important;
-        border-bottom-right-radius: var(--bs-border-radius);
-        border-bottom-left-radius: var(--bs-border-radius);
     }    
 }
