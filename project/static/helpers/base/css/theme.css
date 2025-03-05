@@ -12,7 +12,7 @@
         } */
 
         ::-webkit-scrollbar-track {
-            background-color: var(--adjusted-bg-light) !important;
+            background-color: hsla(210, 17%, 88%, 1) !important;
         }
         
         /* ::-webkit-scrollbar-thumb {
