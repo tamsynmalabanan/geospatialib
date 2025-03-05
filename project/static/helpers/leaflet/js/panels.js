@@ -14,6 +14,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
+            callback: () => {
+                
+            }
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -59,7 +62,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     if (queryMode && !toolIsQueryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
-                    mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || mapContainer.style.cursor : ''
+                    mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || '' : ''
                     
                     map._queryMode = toolIsQueryMode ? undefined : tool
                     console.log(map._queryMode)
