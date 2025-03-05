@@ -9,13 +9,17 @@ const handleLeafletQueryPanel = (map, parent) => {
     toolbar.className = 'd-flex px-3 py-2 border-bottom'
     container.appendChild(toolbar)
 
+    const results = document.createElement('div')
+    container.appendChild(results)
+
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            mapClickCallback: (event) => {
-                const geojson = turf.
+            mapClickCallback: (e) => {
+                const geojson = [turf.point([e.latlng.lng, e.latlng.lat])]
+                results.appendChild(createGeoJSONChecklist(geojson))
             }
         },
         osmPoint: {
@@ -77,9 +81,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             customCreateElement(data.tag, data)
         )
     })
-
-    const results = document.createElement('div')
-    container.appendChild(results)
 }
 
 const handleLeafletMapPanels = (map) => {
