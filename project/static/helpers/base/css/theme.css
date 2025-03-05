@@ -6,21 +6,7 @@
 [data-bs-theme="light"] {
     .offcanvas, .offcanvas-lg {
         background-color: var(--adjusted-bg-light) !important;
-        
-        ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-          
-        ::-webkit-scrollbar-thumb {
-            background-color: #ccc;
-            border-radius: 10px;
-        }
-        
+                        
         /* .accordion,
         .accordion-button:not(.collapsed) {
             background-color: hsla(210, 17%, 88%, 1) !important;
