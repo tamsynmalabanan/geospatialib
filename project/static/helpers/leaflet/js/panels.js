@@ -50,6 +50,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
+    const enableCancenBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = false
+
     Object.keys(queryTools).forEach(tool => {
         const data = queryTools[tool]
         toolbar.appendChild(
@@ -73,6 +75,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (activate && data.mapClickHandler) {
                         const mapClickQueryHandler = (e) => {
                             if (e.originalEvent.target !== mapContainer) return
+                            enableCancenBtn()
                             const geojson = data.mapClickHandler(e)
                             results.appendChild(createGeoJSONChecklist(geojson))
                         } 
@@ -80,8 +83,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                     } else {
                         map._events.click = map._events.click.filter(handler => handler.fn.name !== 'mapClickQueryHandler')
                     }
-                    console.log(map._events.click)
-                    if (activate && data.btnclickHandler) btnclickHandler()
+                    if (activate && data.btnclickHandler) {
+                        enableCancenBtn()
+                        btnclickHandler()
+                    }
                 }
             }}) :
             customCreateElement(data.tag, data)
