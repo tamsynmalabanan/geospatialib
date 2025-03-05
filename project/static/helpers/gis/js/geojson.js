@@ -27,10 +27,10 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         headTr.appendChild(th)
     }
     
-    const menuTh = document.createElement('th')
-    menuTh.setAttribute('scope', 'col')
-    menuTh.innerText = 'menu'
-    headTr.appendChild(menuTh)
+    const formatTh = document.createElement('th')
+    formatTh.setAttribute('scope', 'col')
+    formatTh.innerText = 'Format'
+    headTr.appendChild(formatTh)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
