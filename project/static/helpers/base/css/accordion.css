@@ -23,6 +23,7 @@
     .nav-item:nth-child(1) > .accordion-button:not(.collapsed) {
         border-left: 0px !important;
         border-top-left-radius: 0 !important;
+        filter: brightness(100%);
     }
     
     .nav-item:last-child {
