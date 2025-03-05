@@ -20,6 +20,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
 
                 map.on('click', () => {
+
                     handler()
                     map.off('click', handler)
                 })
@@ -70,9 +71,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (queryMode && !toolIsQueryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || '' : ''
-                    
+
+                    if (toolIsQueryMode) return
                     map._queryMode = toolIsQueryMode ? undefined : tool
-                    console.log(map._queryMode)
+                    if (data.callback) callback()
                 }
             }}) :
             customCreateElement(data.tag, data)
