@@ -9,13 +9,18 @@
             display: flex;
             max-height: 100%;
             max-width: 100%;
+
+            div {
+                max-height: 100%;
+                max-width: 100%;
+            }
         }
     }
 
     .offcanvas-lg:not(.offcanvas) {
         border-radius: var(--bs-border-radius);
         max-height: 80% !important;
-        /* max-width: 80% !important; */
+        max-width: 80% !important;
     }
 }
 
