@@ -15,7 +15,6 @@ body {
 
 ::-webkit-scrollbar-track {
     background-color: transparent;
-    padding-right: 1rem;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -27,5 +26,5 @@ body {
 } 
 
 [data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
-    background-color:hsla(210, 14%, 89%, 0.3) !important;
+    background-color:hsla(210, 14%, 89%, 0.5) !important;
 } 
