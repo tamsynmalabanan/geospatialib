@@ -45,7 +45,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         const btn = document.createElement(data.tag || 'button')
         btn.className = data.btnClass || `btn btn-sm btn-${getPreferredTheme()}`
-        if (btn.tagName === 'button') btn.setAttribute('type', 'button')
+        if (btn.tagName === 'BUTTON') btn.setAttribute('type', 'button')
         if (data.iconClass) createIcon({className:`bi ${data.iconClass}`, parent:btn})
         if (data.title) btn.setAttribute('title', data.title)
         if (data.disabled) btn.setAttribute('disabled', true)
