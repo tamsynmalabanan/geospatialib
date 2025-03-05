@@ -15,7 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapCursor: 'pointer',
             mapClickCallback: () => {
-                alert('handler')
+                console.log(event)
             }
         },
         osmPoint: {
@@ -70,7 +70,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                     if (data.mapClickCallback) toolIsQueryMode ? map.off('click', data.mapClickCallback) : map.on('click', data.mapClickCallback)
                     map._queryMode = toolIsQueryMode ? undefined : tool
-                
+
                     if (data.btnclickCallback) btnclickCallback()
                 }
             }}) :
