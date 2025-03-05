@@ -12,7 +12,9 @@
 
     .offcanvas-lg {
         border-radius: var(--bs-border-radius);
-        max-height: 80% !important;
+        max-height: 100% !important;
+        margin-bottom: 100px;
+        margin-left: 100px;
     }
 }
 
