@@ -31,4 +31,18 @@
         min-width: 16px;
     }
 
+} 
+
+[data-bs-theme="light"] {
+    .accordion,
+    .accordion-button:not(.collapsed) {
+        background-color: hsla(0, 0%, 0%, 0.1) !important;
+    }
+}
+
+[data-bs-theme="dark"] {
+    .accordion,
+    .accordion-button:not(.collapsed) {
+        background-color: hsla(0, 0%, 0%, 0.5) !important;
+    }    
 }
