@@ -82,7 +82,8 @@ const handleLeafletMapPanels = (map) => {
     const control = L.control({position:'topright'})
     control.onAdd = (map) => {
         const panel = L.DomUtil.create('div', 'map-panel')
-        panel.classList.add('d-flex', 'flex-column', 'vh-100')
+        panel.classList.add('d-flex', 'flex-column')
+        panel.maxHeight = '100vh'
         panel.style.marginLeft = '60px'
         panel.style.paddingBottom = '100px'
         
