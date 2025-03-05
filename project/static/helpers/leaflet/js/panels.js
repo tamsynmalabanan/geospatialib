@@ -3,7 +3,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-query-toolbar`
-    toolbar.className = 'd-flex px-3 py-2 border-bottom'
+    toolbar.className = 'd-flex px-3 py-2 border-bottom gap-2'
     parent.appendChild(toolbar)
 
     const results = document.createElement('div')
@@ -15,7 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                
+
             },
         },
         osmPoint: {
@@ -35,7 +35,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider: {
             tag: 'div',
-            className: 'vr m-2',
+            className: 'vr',
         },
         cancel: {
             iconClass: 'bi-arrow-counterclockwise',
