@@ -1,10 +1,11 @@
 const handleLeafletQueryPanel = (map, parent) => {
+    const mapContainer = map.getContainer()
     const container = document.createElement('div')
     container.className = 'd-flex flex-column'
     parent.appendChild(container)
 
     const toolbar = document.createElement('div')
-    toolbar.id = `${map.getContainer().id}-panels-query-toolbar`
+    toolbar.id = `${mapContainer.id}-panels-query-toolbar`
     toolbar.className = 'd-flex px-3 py-2 border-bottom'
     container.appendChild(toolbar)
 
@@ -12,10 +13,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
+            mapCursor: 'pointer',
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
+            mapCursor: 'pointer',
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
@@ -24,6 +27,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         layerPoint: {
             iconClass: 'bi-stack',
             title: 'Query layers at point',
+            mapCursor: 'pointer',
         },
         divider: {
             tag: 'div',
@@ -56,6 +60,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (queryMode && !toolIsQueryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     map._queryMode = toolIsQueryMode ? undefined : tool
+                    mapContainer.style.cursor = data.mapCursor || mapContainer.style.cursor
+
                     console.log(map._queryMode)
                 }
             }}) :
