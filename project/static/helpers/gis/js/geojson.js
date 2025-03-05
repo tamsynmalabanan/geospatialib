@@ -27,8 +27,8 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }
 
     const menuTh = document.createElement('th')
-    th.setAttribute('scope', 'col')
-    th.innerText = 'menu'
+    menuTh.setAttribute('scope', 'col')
+    menuTh.innerText = 'menu'
     headTr.appendChild(menuTh)
 
     const valueTr = document.createElement('tr')
