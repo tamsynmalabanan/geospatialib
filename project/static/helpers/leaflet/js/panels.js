@@ -80,7 +80,7 @@ const handleLeafletMapPanels = (map) => {
 
     const topRightControlCorner = map._controlCorners.topright
     topRightControlCorner.classList.add('d-flex')
-    // topRightControlCorner.style.maxHeight = '100%'
+    topRightControlCorner.style.maxHeight = '100%'
 
     const control = L.control({position:'topright'})
     control.onAdd = (map) => {
