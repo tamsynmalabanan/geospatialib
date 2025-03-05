@@ -66,6 +66,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     map.on('newQueryResult', (event) => {
         const geojson = event.geojson
         if (! geojson) return
+        console.log(geojson)
         enableClearBtn()
     })
 
