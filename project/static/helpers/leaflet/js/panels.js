@@ -12,17 +12,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
-            clickCallback: () => {
-                const btn = event.target
-                const idParts = btn.id.split('-')
-                const queryMode = idParts[idParts.length-1]
-                if (map._queryMode !== queryMode) {
-                    map._queryMode = queryMode
-                } else {
-                    delete map._queryMode
-                }
-                console.log(map._queryMode)
-            }
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -58,7 +47,20 @@ const handleLeafletQueryPanel = (map, parent) => {
             !data.tag || data.tag === 'button' ? 
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
-                className:`btn-sm btn-${getPreferredTheme()}`
+                className:`btn-sm btn-${getPreferredTheme()}`,
+                clickCallback: () => {
+                    const btn = event.target
+                    if (map._queryMode !== tool) {
+                        map._queryMode = tool
+                        btn.classList.remove(`btn-${getPreferredTheme()}`)
+                        btn.classList.add('btn-primary')
+                    } else {
+                        delete map._queryMode
+                        btn.classList.remove('btn-primary')
+                        btn.classList.add(`btn-${getPreferredTheme()}`)
+                    }
+                    console.log(map._queryMode)
+                }
             }}) :
             customCreateElement(data.tag, data)
         )
