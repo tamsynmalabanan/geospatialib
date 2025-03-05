@@ -50,16 +50,12 @@ const handleLeafletQueryPanel = (map, parent) => {
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clickCallback: () => {
                     const btn = event.target
-                    if (map._queryMode !== tool) {
-                        if (map._queryMode) toolbar.querySelector(`#${toolbar.id}-${map._queryMode}`).click()
-                        map._queryMode = tool
-                        btn.classList.remove(`btn-${getPreferredTheme()}`)
-                        btn.classList.add('btn-primary')
-                    } else {
-                        delete map._queryMode
-                        btn.classList.remove('btn-primary')
-                        btn.classList.add(`btn-${getPreferredTheme()}`)
-                    }
+                    const queryMode = map._queryMode
+                    const toolIsQueryMode = queryMode === tool
+                    if (queryMode && !toolIsQueryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    map._queryMode = toolIsQueryMode ? undefined : tool
+                    btn.classList.toggle(`btn-${getPreferredTheme()}`)
+                    btn.classList.toggle('btn-primary')
                     console.log(map._queryMode)
                 }
             }}) :
