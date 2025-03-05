@@ -4,6 +4,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(container)
 
     const toolbar = document.createElement('div')
+    toolbar.id = `${map.getContainer().id}-panels-query-toolbar`
     toolbar.className = 'd-flex px-3 py-2 border-bottom'
     container.appendChild(toolbar)
 
@@ -11,6 +12,17 @@ const handleLeafletQueryPanel = (map, parent) => {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
+            clickCallback: () => {
+                const btn = event.target
+                const idParts = btn.id.split('-')
+                const queryMode = idParts[idParts.length-1]
+                if (map._queryMode !== queryMode) {
+                    map._queryMode = queryMode
+                } else {
+                    delete map._queryMode
+                }
+                console.log(map._queryMode)
+            }
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -45,6 +57,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         toolbar.appendChild(
             !data.tag || data.tag === 'button' ? 
             createButton({...data, ...{
+                id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`
             }}) :
             customCreateElement(data.tag, data)
