@@ -12,7 +12,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const resetResults = (show=false) => {
         results.innerHTML = ''
-        results.classList.toggle('d-none', show)
+        results.classList.toggle('d-none', !show)
     }
 
     const queryTools = {
