@@ -19,5 +19,12 @@ body {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 7px;
+} 
+
+[data-bs-theme="light"] ::-webkit-scrollbar-thumb {
     background-color:hsla(210, 11%, 15%, 0.3) !important;
+} 
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+    background-color:hsla(210, 14%, 89%, 0.3) !important;
 } 
