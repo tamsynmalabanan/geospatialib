@@ -65,8 +65,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancelBtn.disabled = true
 
         if (!geojsons) return
-        // const customEvent = new CustomEvent('newQueryResult', {detail: {geojsons}})
-        // map.fire(customEvent.type, customEvent.detail)
         results.innerHTML = ''
         if (Object.values(geojsons).some(g => g.features?.length)) {
             results.appendChild(createGeoJSONChecklist(geojsons))
@@ -75,10 +73,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             alert('No features queried.')
         }
     }
-    
-    // map.on('newQueryResult', (e) => {
-    //     const geojsons = e.geojsons
-    // })
 
     Object.keys(queryTools).forEach(tool => {
         const data = queryTools[tool]
@@ -92,27 +86,25 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    const btn = event.target
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
-                    
                     if (activate && queryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    
+                    const btn = event.target
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     mapContainer.style.cursor = activate ? data.mapCursor || '' : ''
                     map._queryMode = activate ? tool : undefined
-                    if (map._events.click) map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     
-                    if (activate) {
-                        if (data.mapClickHandler) {
-                            const clickQueryHandler = async (e) => {
-                                if (e.originalEvent.target !== mapContainer) return
-                                await queryHandler(e, data.mapClickHandler)
-                            } 
-                            map.on('click', clickQueryHandler)
-                        }
-
-                        if (data.btnclickHandler) await queryHandler(event, data.btnclickHandler)
+                    if (activate && data.mapClickHandler) {
+                        const clickQueryHandler = async (e) => {
+                            if (e.originalEvent.target === mapContainer) await queryHandler(e, data.mapClickHandler)
+                        } 
+                        map.on('click', clickQueryHandler)
+                    } else {
+                        map._events.click = map._events.click?.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     }
+                 
+                    if (activate && data.btnclickHandler) await queryHandler(event, data.btnclickHandler)
                 }
             }})
         )
