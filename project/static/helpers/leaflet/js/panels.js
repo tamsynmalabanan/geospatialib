@@ -9,21 +9,17 @@ const handleLeafletQueryPanel = (map, parent) => {
     const results = document.createElement('div')
     parent.appendChild(results)
 
-    const mapCursor = 'pointer'
-
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
-            mapCursor,
             mapClickHandler: async (e) => {
                 return {'Clicked location': turf.featureCollection([turf.point([e.latlng.lng, e.latlng.lat])])}
-            }
+            },
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
-            mapCursor,
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
@@ -35,7 +31,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         layerPoint: {
             iconClass: 'bi-stack',
             title: 'Query layers at point',
-            mapCursor,
         },
         divider: {
             tag: 'div',
@@ -51,8 +46,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Clear query results',
             disabled: true,
             btnclickHandler: async (e) => {
-                results.innerHTML = ''
                 e.target.click()
+                results.innerHTML = ''
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
             }
         },
@@ -64,13 +59,15 @@ const handleLeafletQueryPanel = (map, parent) => {
         const geojsons = await handler(e)
         cancelBtn.disabled = true
 
-        if (!geojsons) return
-        results.innerHTML = ''
-        if (Object.values(geojsons).some(g => g.features?.length)) {
-            results.appendChild(createGeoJSONChecklist(geojsons))
+        if (geojsons) {
+            results.innerHTML = ''
+            if (Object.values(geojsons).some(g => g.features?.length)) {
+                results.appendChild(createGeoJSONChecklist(geojsons))
+            }
+        }
+        
+        if (results.innerHTML !== '') {
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-        } else {
-            alert('No features queried.')
         }
     }
 
@@ -88,23 +85,32 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
-                    if (activate && queryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    if (activate && queryMode) {
+                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    }
                     
                     const btn = event.target
-                    Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
-                    mapContainer.style.cursor = activate ? data.mapCursor || '' : ''
+                    Array(`btn-${getPreferredTheme()}`, 'btn-primary')
+                    .forEach(className => btn.classList.toggle(className))
+                    mapContainer.style.cursor = activate ? 'pointer' : ''
                     map._queryMode = activate ? tool : undefined
                     
                     if (activate && data.mapClickHandler) {
                         const clickQueryHandler = async (e) => {
-                            if (e.originalEvent.target === mapContainer) await queryHandler(e, data.mapClickHandler)
+                            if (e.originalEvent.target === mapContainer) {
+                                await queryHandler(e, data.mapClickHandler)
+                            }
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
-                        map._events.click = map._events.click?.filter(handler => handler.fn.name !== 'clickQueryHandler')
+                        map._events.click = map._events.click?.filter(handler => {
+                            return handler.fn.name !== 'clickQueryHandler'
+                        })
                     }
                  
-                    if (activate && data.btnclickHandler) await queryHandler(event, data.btnclickHandler)
+                    if (activate && data.btnclickHandler) {
+                        await queryHandler(event, data.btnclickHandler)
+                    }
                 }
             }})
         )
