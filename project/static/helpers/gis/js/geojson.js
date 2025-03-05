@@ -29,7 +29,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     
     const formatTh = document.createElement('th')
     formatTh.setAttribute('scope', 'col')
-    formatTh.innerText = 'Format'
+    formatTh.appendChild(createIcon({className: 'bi bi-list'}))
     headTr.appendChild(formatTh)
     
     const valueTr = document.createElement('tr')
