@@ -27,7 +27,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider: {
             tag: 'div',
-            className: 'border rounded-0 bg-0 p-0 my-1 mx-2',
+            className: 'border rounded-0 bg-0 p-0 m-2',
         },
         cancel: {
             iconClass: 'bi-arrow-counterclockwise',
