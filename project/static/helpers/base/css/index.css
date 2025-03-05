@@ -11,11 +11,11 @@ body {
 ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
-    padding-right: 1rem;
 }
 
 ::-webkit-scrollbar-track {
     background-color: transparent;
+    padding-right: 1rem;
 }
 
 ::-webkit-scrollbar-thumb {
