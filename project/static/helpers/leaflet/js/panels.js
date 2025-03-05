@@ -18,7 +18,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapCursor: 'pointer',
             mapClickHandler: async (e) => {
-                return {'Point coordinates': turf.featureCollection([turf.point([e.latlng.lng, e.latlng.lat])])}
+                return {'Clicked location': turf.featureCollection([turf.point([e.latlng.lng, e.latlng.lat])])}
             }
         },
         osmPoint: {
