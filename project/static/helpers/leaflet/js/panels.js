@@ -70,7 +70,8 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     map.on('newQueryResult', (e) => {
         const geojson = e.geojson
-        results.innerHTML = geojson.features?.length ? createGeoJSONChecklist(geojson) : ''
+        results.innerHTML = ''
+        geojson.features?.length > 0 ? results.appendChild(createGeoJSONChecklist(geojson)) : alert('No features queried.')
         toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
     })
 
