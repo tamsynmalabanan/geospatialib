@@ -4,7 +4,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(container)
 
     const toolbar = document.createElement('div')
-    toolbar.className = 'border rounded d-flex'
+    toolbar.className = 'd-flex'
     container.appendChild(toolbar)
 
     const queryTools = {
