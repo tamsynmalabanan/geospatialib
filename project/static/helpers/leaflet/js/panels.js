@@ -7,8 +7,13 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(toolbar)
 
     const results = document.createElement('div')
-    results.className = 'px-3'
+    results.className = 'px-3 d-none border-top'
     parent.appendChild(results)
+
+    const resetResults = (show=false) => {
+        results.innerHTML = ''
+        results.classList.toggle('d-none', show)
+    }
 
     const queryTools = {
         locationCoords: {
@@ -16,7 +21,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                results.innerHTML = ''
+                resetResults(true)
                 results.appendChild(createPointCoordinatesTable(feature))
             },
         },
@@ -50,7 +55,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnclickHandler: async (e) => {
                 e.target.click()
-                results.innerHTML = ''
+                resetResults()
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
             }
         },
@@ -63,7 +68,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancelBtn.disabled = true
 
         if (geojsons) {
-            results.innerHTML = ''
+            resetResults(true)
             if (Object.values(geojsons).some(g => g.features?.length)) {
                 results.appendChild(createGeoJSONChecklist(geojsons))
             }
