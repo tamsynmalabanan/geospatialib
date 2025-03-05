@@ -27,7 +27,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnclickHandler: async () => {
+            btnclickHandler: async (event) => {
                 event.target.click()
             }
         },
@@ -82,7 +82,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
-                clichHandler: async () => {
+                clichHandler: async (event) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
@@ -104,6 +104,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     } else {
                         map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     }
+
                     if (activate && data.btnclickHandler) {
                         await queryHandler(event, data.btnclickHandler)
                     }
