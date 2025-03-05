@@ -1,23 +1,27 @@
 [data-bs-theme="light"] {
-    /* .accordion,
+    .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(210, 17%, 83%, 1) !important;
-    } */
-    
-    .offcanvas,
-    .offcanvas-lg {
-        background-color: hsla(210, 17%, 78%, 1) !important;
     }
 }
 
 [data-bs-theme="dark"] {
-    /* .accordion,
+    .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(210, 11%, 0%, 1) !important;
-    }     */
-    
-    .offcanvas,
-    .offcanvas-lg {
-        background-color: hsla(210, 11%, 35%, 1) !important;
     }    
 }
+
+/* [data-bs-theme="light"] {
+    .offcanvas,
+    .offcanvas-lg {
+        background-color: hsla(210, 17%, 98%, 1) !important;
+    }
+}
+
+[data-bs-theme="dark"] {
+    .offcanvas,
+    .offcanvas-lg {
+        background-color: hsla(210, 11%, 15%, 1) !important;
+    }    
+} */
