@@ -47,6 +47,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
+            btnclickHandler: async () => {
+                results.innerHTML = ''
+                disableClearBtn()
+            }
         },
     }
 
@@ -60,7 +64,9 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     map.on('newQueryResult', (event) => {
-        console.log('newQueryResult', event)
+        const geojson = event.geojson
+        if (! geojson) return
+        enableClearBtn()
     })
 
     Object.keys(queryTools).forEach(tool => {
