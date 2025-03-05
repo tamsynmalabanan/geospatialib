@@ -14,7 +14,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            mapClickCallback: () => {
+            mapClickCallback: (event) => {
                 console.log(event)
             }
         },
