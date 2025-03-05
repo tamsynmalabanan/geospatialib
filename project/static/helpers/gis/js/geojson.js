@@ -22,13 +22,14 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     tbody.appendChild(headTr)
     for (const coord in coords) {
         const th = document.createElement('th')
+        th.className = 'text-center'
         th.setAttribute('scope','col')
         th.innerText = coord
         headTr.appendChild(th)
     }
     
     const menuTh = document.createElement('th')
-    menuTh.className = 'text-end'
+    menuTh.className = 'text-center'
     menuTh.setAttribute('scope', 'col')
     menuTh.appendChild(createIcon({className: 'bi bi-list'}))
     headTr.appendChild(menuTh)
@@ -37,11 +38,13 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     tbody.appendChild(valueTr)
     for (const coord in coords) {
         const td = document.createElement('td')
+        td.className = 'text-center'
         td.innerText = coords[coord].toFixed(precision)
         valueTr.appendChild(td)
     }
     
     const formatTd = document.createElement('td')
+    formatTd.className = 'text-center'
     formatTd.innerText = 'DD'
     valueTr.appendChild(formatTd)
 
