@@ -14,6 +14,10 @@
         .accordion-button:not(.collapsed),
         .btn.btn-dark {
             background-color: hsla(210, 11%, 25%, 1) !important;
-        }    
+
+            .btn.btn-dark {
+                border-color: hsla(210, 11%, 25%, 1) !important;
+            }
+        }
     }
 }
