@@ -42,7 +42,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }
     
     const formatTd = document.createElement('td')
-    formatTd.innerText = 'decimal degrees'
+    formatTd.innerText = 'DD'
     valueTr.appendChild(formatTd)
 
     return table
