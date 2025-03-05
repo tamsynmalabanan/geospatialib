@@ -28,7 +28,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             btnclickHandler: async (e) => {
-                console.log(e)
                 e.target.click()
             }
         },
@@ -63,13 +62,14 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancelBtn.disabled = false
         const geojson = await handler(e)
         cancelBtn.disabled = true
+        
+        if (! geojson) return
         const customEvent = new CustomEvent('newQueryResult', {detail: {geojson}})
         map.fire(customEvent.type, customEvent.detail)
     }
     
     map.on('newQueryResult', (e) => {
         const geojson = e.geojson
-        if (! geojson) return
         results.innerHTML = ''
         results.appendChild(createGeoJSONChecklist(geojson))
         toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
