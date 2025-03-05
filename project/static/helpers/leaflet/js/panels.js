@@ -17,9 +17,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
         },
-        osmBbox: {
+        osmView: {
             iconClass: 'bi-bounding-box-circles',
-            title: 'Query OSM in bbox',
+            title: 'Query OSM in map view',
         },
         layerPoint: {
             iconClass: 'bi-stack',
