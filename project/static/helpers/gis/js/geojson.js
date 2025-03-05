@@ -13,6 +13,29 @@ const createPointCoordinatesTable = (ptFeature) => {
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
 
-    
+    const [lng, lat] = ptFeature.geometry.coordinates
+    const coords = {
+        'Longitude': lng,
+        'Latitude': lat,
+    }    
 
+    for (const coord in coords) {
+        const tr = document.createElement('tr')
+        tbody.appendChild(tr)
+
+        const th = document.createElement('th')
+        th.setAttribute('scope', 'row')
+        th.innerText = coord
+        tr.appendChild(th)
+
+        const coordTd = document.createElement('td')
+        coordTd.innerText = coords[coord]
+        tr.appendChild(coordTd)
+
+        const menuTd = document.createElement('td')
+        menuTd.innerText = 'menu'
+        tr.appendChild(menuTd)
+    }
+    
+    return table
 }
