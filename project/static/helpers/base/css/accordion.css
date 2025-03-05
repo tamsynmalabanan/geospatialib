@@ -33,7 +33,7 @@
 
 } 
 
-[data-bs-theme="light"] {
+/* [data-bs-theme="light"] {
     .accordion,
     .accordion-button:not(.collapsed) {
         background-color: hsla(0, 0%, 0%, 0.1) !important;
@@ -45,4 +45,4 @@
     .accordion-button:not(.collapsed) {
         background-color: hsla(0, 0%, 0%, 0.5) !important;
     }    
-}
+} */
