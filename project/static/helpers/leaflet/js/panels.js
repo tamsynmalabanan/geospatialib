@@ -105,7 +105,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     }
                     if (activate && data.btnclickHandler) {
                         enableCancelBtn()
-                        const geojson = await btnclickHandler()
+                        const geojson = await data.btnclickHandler()
                         disableCancelBtn()
                         dispatchNewQueryResult(geojson)
                     }
