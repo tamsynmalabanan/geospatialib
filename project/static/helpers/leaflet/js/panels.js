@@ -14,7 +14,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapClickHandler: async (e) => {
-                return {'Clicked location': turf.featureCollection([turf.point([e.latlng.lng, e.latlng.lat])])}
+                const feature = turf.point([e.latlng.lng, e.latlng.lat])
+                
             },
         },
         osmPoint: {
