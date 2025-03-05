@@ -11,13 +11,12 @@
 [data-bs-theme="dark"] {
     .offcanvas, .offcanvas-lg {
         .accordion,
-        .accordion-button:not(.collapsed),
-        .btn.btn-dark {
+        .accordion-button:not(.collapsed) {
             background-color: hsla(210, 11%, 25%, 1) !important;
 
-            .btn.btn-dark {
+            /* .btn.btn-dark {
                 border-color: hsla(210, 11%, 25%, 1) !important;
-            }
+            } */
         }
     }
 }
