@@ -72,10 +72,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || '' : ''
 
-                    if (data.mapClickCallback) toolIsQueryMode ? map.off('click', data.mapClickCallback) : map.on('click', data.mapClickCallback)
                     map._queryMode = toolIsQueryMode ? undefined : tool
-
-                    if (data.btnclickCallback) btnclickCallback()
+                    if (data.mapClickCallback) toolIsQueryMode ? map.off('click', data.mapClickCallback) : map.on('click', data.mapClickCallback)
+                    if (!toolIsQueryMode && data.btnclickCallback) btnclickCallback()
                 }
             }}) :
             customCreateElement(data.tag, data)

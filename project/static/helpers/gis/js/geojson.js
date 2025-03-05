@@ -1,6 +1,6 @@
-const createGeoJSONChecklist = (geojson) => {
+const createGeoJSONChecklist = (geojsonList) => {
     const container = document.createElement('div')
-    console.log(geojson)
+    console.log(geojsonList)
 
     return container
 }
