@@ -31,7 +31,7 @@
         min-width: 16px;
     }
 
-    .accordion-button:not(.collapsed) {
+    .nav-item:has(.accordion-button:not(.collapsed)) {
         filter: brightness(100%);
     }
 } 
