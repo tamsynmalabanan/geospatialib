@@ -75,9 +75,6 @@ const handleLeafletQueryPanel = (map, parent) => {
 }
 
 const handleLeafletMapPanels = (map) => {
-    const controlContainer = map._controlContainer
-    controlContainer.style.maxHeight = '100%'
-
     const topRightControlCorner = map._controlCorners.topright
     topRightControlCorner.classList.add('d-flex')
     topRightControlCorner.style.maxHeight = '100%'

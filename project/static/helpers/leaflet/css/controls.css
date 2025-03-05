@@ -1,9 +1,22 @@
 .leaflet-container {
     font-family: var(--bs-body-font-family) !important;
-}
 
-.leaflet-container .offcanvas-lg:not(.offcanvas) {
-    border-radius: var(--bs-border-radius);
+    .leaflet-control-container {
+        max-height: 100%;
+        max-width: 100%;
+
+        .leaflet-top.leaflet-right {
+            display: flex;
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .offcanvas-lg:not(.offcanvas) {
+        border-radius: var(--bs-border-radius);
+        max-height: 80%;
+        max-width: 80%;
+    }
 }
 
 .leaflet-control.leaflet-bar {
