@@ -33,16 +33,16 @@
 
 } 
 
-/* [data-bs-theme="light"] {
+[data-bs-theme="light"] {
     .accordion,
     .accordion-button:not(.collapsed) {
-        background-color: hsla(210, 17%, 98%, 1) !important;
+        background-color: hsla(210, 17%, 83%, 1) !important;
     }
 }
 
 [data-bs-theme="dark"] {
     .accordion,
     .accordion-button:not(.collapsed) {
-        background-color: hsla(210, 11%, 15%, 1) !important;
+        background-color: hsla(210, 11%, 0%, 1) !important;
     }    
-} */
+}
