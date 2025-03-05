@@ -34,7 +34,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider: {
             tag: 'div',
-            className: 'vr',
+            className: 'vr m-2',
         },
         cancel: {
             iconClass: 'bi-arrow-counterclockwise',
