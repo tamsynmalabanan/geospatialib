@@ -1,7 +1,8 @@
 [data-bs-theme="light"] {
     .offcanvas, .offcanvas-lg {
         .accordion,
-        .accordion-button:not(.collapsed) {
+        .accordion-button:not(.collapsed),
+        .btn.btn-light {
             background-color: hsla(210, 17%, 88%, 1) !important;
         }
     }
@@ -10,7 +11,8 @@
 [data-bs-theme="dark"] {
     .offcanvas, .offcanvas-lg {
         .accordion,
-        .accordion-button:not(.collapsed) {
+        .accordion-button:not(.collapsed),
+        .btn.btn-dark {
             background-color: hsla(210, 11%, 25%, 1) !important;
         }    
     }
