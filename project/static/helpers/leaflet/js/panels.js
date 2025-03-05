@@ -14,9 +14,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            callback: () => {
-                
-            }
+            callback: () => {}
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
@@ -77,11 +75,15 @@ const handleLeafletQueryPanel = (map, parent) => {
 }
 
 const handleLeafletMapPanels = (map) => {
+    const topRightControlCorner = map._controlCorners.topright
+    topRightControlCorner.classList.add('d-flex')
+    topRightControlCorner.style.maxHeight = '100vh'
+
     const control = L.control({position:'topright'})
     control.onAdd = (map) => {
         const panel = L.DomUtil.create('div', 'map-panel')
-        panel.classList.add('d-flex', 'flex-column')
-        panel.style.maxHeight = '75vh'
+        panel.classList.add('d-flex', 'flex-column', 'ms-60', 'mb-70')
+        panel.style.maxHeight = '100%'
         
         const [toggle, body] = createMapPanels(map.getContainer())
         panel.appendChild(toggle)
