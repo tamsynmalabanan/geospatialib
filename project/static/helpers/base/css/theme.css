@@ -7,18 +7,20 @@
     .offcanvas, .offcanvas-lg {
         background-color: var(--adjusted-bg-light) !important;
         
-        /* ::-webkit-scrollbar {
-            background-color: var(--adjusted-bg-light) !important;
-        } */
-
-        ::-webkit-scrollbar-track {
-            background-color: transparent !important;
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
         }
         
-        /* ::-webkit-scrollbar-thumb {
-            background-color: var(--adjusted-bg-light) !important;
-        }         */
-
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+          
+        ::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+        
         /* .accordion,
         .accordion-button:not(.collapsed) {
             background-color: hsla(210, 17%, 88%, 1) !important;
