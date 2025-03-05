@@ -62,7 +62,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancelBtn.disabled = false
         const geojson = await handler(e)
         cancelBtn.disabled = true
-        
+
         if (! geojson) return
         const customEvent = new CustomEvent('newQueryResult', {detail: {geojson}})
         map.fire(customEvent.type, customEvent.detail)
@@ -70,10 +70,8 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     map.on('newQueryResult', (e) => {
         const geojson = e.geojson
-        results.innerHTML = ''
-        results.appendChild(createGeoJSONChecklist(geojson))
+        results.innerHTML = geojson.features?.length ? createGeoJSONChecklist(geojson) : ''
         toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-    
     })
 
     Object.keys(queryTools).forEach(tool => {
