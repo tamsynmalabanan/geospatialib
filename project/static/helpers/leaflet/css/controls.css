@@ -10,6 +10,7 @@
 
             .leaflet-control {
                 margin-bottom: 100px !important;
+                margin-left: 100px !important;
             }
         }
     }
@@ -17,7 +18,6 @@
     .offcanvas-lg {
         border-radius: var(--bs-border-radius);
         max-height: 100% !important;
-        margin-left: 100px;
     }
 }
 
