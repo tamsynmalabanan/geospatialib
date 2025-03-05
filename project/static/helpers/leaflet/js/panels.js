@@ -52,10 +52,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                     const btn = event.target
                     const queryMode = map._queryMode
                     const toolIsQueryMode = queryMode === tool
+                    
                     if (queryMode && !toolIsQueryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     map._queryMode = toolIsQueryMode ? undefined : tool
-                    btn.classList.toggle(`btn-${getPreferredTheme()}`)
-                    btn.classList.toggle('btn-primary')
                     console.log(map._queryMode)
                 }
             }}) :
