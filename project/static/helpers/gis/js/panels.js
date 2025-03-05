@@ -22,7 +22,7 @@ const createMapPanels = (container, {} = {}) => {
         'toolbox': {
             label: `Toolbox`,
         },
-    })
+    }, {themed:true})
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)
     offcanvas.querySelector('.offcanvas-body').appendChild(accordion)

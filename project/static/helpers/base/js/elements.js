@@ -181,6 +181,7 @@ const createNavItem = ({
 }
 
 const createAccordionNavTabs = (id, tabData, {
+    themed,
     parent
 } = {}) => {
     const navTabs = document.createElement('ul')
@@ -196,7 +197,8 @@ const createAccordionNavTabs = (id, tabData, {
 
         const navButton = document.createElement('button')
         navButton.className = removeWhitespace(`
-            accordion-button rounded-top me-2 pe-2 ps-3 py-1 text-bg-${getPreferredTheme()}
+            accordion-button rounded-top me-2 pe-2 ps-3 py-1
+            ${themed ? `text-bg-${getPreferredTheme()}` : ''}
             ${data.active ? '' : 'collapsed'}
             ${data.active || data.disabled ? 'disabled' : ''}
         `)
@@ -228,11 +230,15 @@ const createAccordionNavTabs = (id, tabData, {
 }
 
 const createAccordionElement = (id, tabData, {
+    themed,
     parent
 } = {}) => {
     const accordion = document.createElement('div')
     accordion.id = id
-    accordion.className = `accordion accordion-flush px-0 flex-grow-1 d-flex flex-column`
+    accordion.className = removeWhitespace(`
+        accordion accordion-flush px-0 flex-grow-1 d-flex flex-column
+        ${themed ? `text-bg-${getPreferredTheme()}` : ''}
+    `)
     parent?.appendChild(accordion)
 
     Object.keys(tabData).forEach(suffix => {
@@ -253,8 +259,8 @@ const createAccordionElement = (id, tabData, {
     return accordion
 }
 
-const createAccordion = (id, tabData) => {
-    const tabs = createAccordionNavTabs(id, tabData)
-    const accordion = createAccordionElement(id, tabData)
+const createAccordion = (id, tabData, {themed = false} = {}) => {
+    const tabs = createAccordionNavTabs(id, tabData, {themed})
+    const accordion = createAccordionElement(id, tabData, {themed})
     return [tabs, accordion]
 }
