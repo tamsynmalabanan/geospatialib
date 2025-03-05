@@ -1,16 +1,13 @@
 const handleLeafletQueryPanel = (map, parent) => {
     const mapContainer = map.getContainer()
-    const container = document.createElement('div')
-    container.className = 'd-flex flex-column'
-    parent.appendChild(container)
-
+    
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-query-toolbar`
     toolbar.className = 'd-flex px-3 py-2 border-bottom'
-    container.appendChild(toolbar)
+    parent.appendChild(toolbar)
 
     const results = document.createElement('div')
-    container.appendChild(results)
+    parent.appendChild(results)
 
     const queryTools = {
         locationCoords: {
