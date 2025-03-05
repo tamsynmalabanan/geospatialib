@@ -264,3 +264,38 @@ const createAccordion = (id, tabData, {themed = false} = {}) => {
     const accordion = createAccordionElement(id, tabData, {themed})
     return [tabs, accordion]
 }
+
+const createDrodownMenuLi = ({innerText}={}) => {
+    const li = document.createElement('li')
+    const a = document.createElement('a')
+    a.className = 'dropdown-item'
+    a.setAttribute('href', '#')
+    a.innerText = innerText
+
+    return li
+}
+
+const createDropdown = ({
+    btnClassName = '',
+    btnIconClass,
+    btnTitle, 
+    menuClassName,
+} = {}) => {
+    const dropdown = document.createElement('div')
+    dropdown.className = 'dropdown'
+
+    const toggle = createButton({
+        className: `dropdown-toggle ${btnClassName}`,
+        iconClass: btnIconClass,
+        title: btnTitle,
+    })
+    toggle.setAttribute('data-bs-toggle', 'dropdown')
+    toggle.setAttribute('aria-expanded', 'false')
+    dropdown.appendChild(toggle)
+
+    const menu = document.createElement('ul')
+    menu.className = `dropdown-menu ${menuClassName}`
+    dropdown.appendChild(menu)
+    
+    return dropdown
+}
