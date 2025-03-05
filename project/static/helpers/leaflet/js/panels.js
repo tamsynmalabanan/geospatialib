@@ -100,7 +100,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     mapContainer.style.cursor = activate ? data.mapCursor || '' : ''
                     map._queryMode = activate ? tool : undefined
-                    map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
+                    if (map._events.click) map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     
                     if (activate) {
                         if (data.mapClickHandler) {
@@ -110,7 +110,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                             } 
                             map.on('click', clickQueryHandler)
                         }
-                        
+
                         if (data.btnclickHandler) await queryHandler(event, data.btnclickHandler)
                     }
                 }
