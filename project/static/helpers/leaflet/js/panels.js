@@ -14,7 +14,16 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            callback: () => {}
+            callback: () => {
+                const handler = () => {
+                    console.log('handler')
+                }
+
+                map.on('click', () => {
+                    handler()
+                    map.off('click', handler)
+                })
+            }
         },
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
