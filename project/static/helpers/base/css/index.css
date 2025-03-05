@@ -15,11 +15,11 @@ body {
 
 ::-webkit-scrollbar-track {
     background-color: transparent;
-    margin: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 7px;
+    margin: 5px;
 } 
 
 [data-bs-theme="light"] ::-webkit-scrollbar-thumb {
