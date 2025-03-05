@@ -1,3 +1,7 @@
+:root {
+    --bs-offcanvas-width: 500px;
+}
+
 .mt-10 {
     margin-top: 10px;
 }
