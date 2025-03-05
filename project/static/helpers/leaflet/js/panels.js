@@ -76,7 +76,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                             const geojson = data.mapClickHandler(e)
                             results.appendChild(createGeoJSONChecklist(geojson))
                         } 
-                        !toolIsQueryMode ? map.on('click', mapClickCallback) : map.off('click', data.mapClickCallback)
+                        !toolIsQueryMode ? map.on('click', mapClickCallback) : map.off('click', mapClickCallback)
                     }
                     console.log(map._events.click)
                     if (!toolIsQueryMode && data.btnclickHandler) btnclickHandler()
