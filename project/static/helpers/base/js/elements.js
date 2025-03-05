@@ -187,10 +187,6 @@ const createAccordionNavTabs = (id, tabData, {
     navTabs.className = `nav nav-tabs card-header-tabs d-flex flex-nowrap`
     parent?.appendChild(navTabs)
 
-    createNavItem({
-        parent: navTabs,
-    })
-
     Object.keys(tabData).forEach(suffix => {
         const data = tabData[suffix]
 
