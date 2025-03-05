@@ -6,7 +6,6 @@ const createGeoJSONChecklist = (geojsonList) => {
 }
 
 const createPointCoordinatesTable = (ptFeature) => {
-    console.log(ptFeature)
     const table = document.createElement('table')
     table.className = 'table table-borderless table-dark table-sm'
 
