@@ -1,13 +1,17 @@
 [data-bs-theme="light"] {
-    .accordion,
-    .accordion-button:not(.collapsed) {
-        background-color: hsla(210, 17%, 88%, 1) !important;
+    .offcanvas, .offcanvas-lg {
+        .accordion,
+        .accordion-button:not(.collapsed) {
+            background-color: hsla(210, 17%, 88%, 1) !important;
+        }
     }
 }
 
 [data-bs-theme="dark"] {
-    .accordion,
-    .accordion-button:not(.collapsed) {
-        background-color: hsla(210, 11%, 25%, 1) !important;
-    }    
+    .offcanvas, .offcanvas-lg {
+        .accordion,
+        .accordion-button:not(.collapsed) {
+            background-color: hsla(210, 11%, 25%, 1) !important;
+        }    
+    }
 }
