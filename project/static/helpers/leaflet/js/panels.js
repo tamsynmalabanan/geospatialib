@@ -70,6 +70,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                     if (data.mapClickCallback) toolIsQueryMode ? map.off('click', data.mapClickCallback) : map.on('click', data.mapClickCallback)
                     map._queryMode = toolIsQueryMode ? undefined : tool
+                
                     if (data.btnclickCallback) btnclickCallback()
                 }
             }}) :
