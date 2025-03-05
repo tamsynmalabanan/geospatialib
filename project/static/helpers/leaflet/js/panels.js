@@ -58,34 +58,30 @@ const handleLeafletQueryPanel = (map, parent) => {
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clickCallback: () => {
-                    const btn = event.target
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
+                    const btn = event.target
                     const queryMode = map._queryMode
-                    const toolIsQueryMode = queryMode === tool
+                    const activate = queryMode !== tool
                     
-                    if (queryMode && !toolIsQueryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    if (activate && queryMode) toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
-                    mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || '' : ''
+                    mapContainer.style.cursor = activate ? data.mapCursor || '' : ''
 
-                    map._queryMode = !toolIsQueryMode ? tool : undefined
-                    if (data.mapClickHandler) {
-                        if (!toolIsQueryMode) {
-                            const mapClickQueryCallback = (e) => {
-                                if (e.originalEvent.target !== mapContainer) return
-                                const geojson = data.mapClickHandler(e)
-                                results.appendChild(createGeoJSONChecklist(geojson))
-                            } 
-
-                            map.on('click', mapClickQueryCallback)
-                        } else {
-                            map._events.click = map._events.click.filter(handler => handler.fn.name !== 'mapClickQueryCallback')
-                        }
-                        // !toolIsQueryMode ? map.on('click', mapClickQueryCallback) : map.off('click', mapClickQueryCallback)
+                    map._queryMode = activate ? tool : undefined
+                    if (activate && data.mapClickHandler) {
+                        const mapClickQueryHandler = (e) => {
+                            if (e.originalEvent.target !== mapContainer) return
+                            const geojson = data.mapClickHandler(e)
+                            results.appendChild(createGeoJSONChecklist(geojson))
+                        } 
+                        map.on('click', mapClickQueryHandler)
+                    } else {
+                        map._events.click = map._events.click.filter(handler => handler.fn.name !== 'mapClickQueryHandler')
                     }
                     console.log(map._events.click)
-                    if (!toolIsQueryMode && data.btnclickHandler) btnclickHandler()
+                    if (activate && data.btnclickHandler) btnclickHandler()
                 }
             }}) :
             customCreateElement(data.tag, data)
