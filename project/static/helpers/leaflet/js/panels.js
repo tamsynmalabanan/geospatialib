@@ -22,7 +22,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
                 resetResults()
-                results.appendChild(createPointCoordinatesTable(feature))
+                results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
             },
         },
         osmPoint: {

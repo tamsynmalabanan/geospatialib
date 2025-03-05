@@ -5,7 +5,7 @@ const createGeoJSONChecklist = (geojsonList) => {
     return container
 }
 
-const createPointCoordinatesTable = (ptFeature) => {
+const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const table = document.createElement('table')
     table.className = 'table table-borderless table-dark table-sm'
 
@@ -28,7 +28,7 @@ const createPointCoordinatesTable = (ptFeature) => {
         tr.appendChild(th)
 
         const coordTd = document.createElement('td')
-        coordTd.innerText = coords[coord]
+        coordTd.innerText = coords[coord].toFixed(precision)
         tr.appendChild(coordTd)
 
         const menuTd = document.createElement('td')
