@@ -55,7 +55,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const enableClearBtn = () => toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
     const disableClearBtn = () => toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
     const dispatchNewQueryResult = (geojson) => {
-        const event = new Event('newQueryResult', {detail:geojson})
+        const event = new Event('newQueryResult')
         map.fire(event)
     }
 
