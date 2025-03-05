@@ -9,8 +9,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
 }
 
 ::-webkit-scrollbar-track {
@@ -18,7 +18,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 [data-bs-theme="light"] ::-webkit-scrollbar-thumb {
