@@ -27,9 +27,9 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnclickHandler: async (event) => {
-                console.log(event)
-                event.target.click()
+            btnclickHandler: async (e) => {
+                console.log(e)
+                e.target.click()
             }
         },
         layerPoint: {
@@ -50,9 +50,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
-            btnclickHandler: async () => {
+            btnclickHandler: async (e) => {
                 results.innerHTML = ''
-                event.target.click()
+                e.target.click()
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
             }
         },
@@ -67,8 +67,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         map.fire(customEvent.type, customEvent.detail)
     }
     
-    map.on('newQueryResult', (event) => {
-        const geojson = event.geojson
+    map.on('newQueryResult', (e) => {
+        const geojson = e.geojson
         if (! geojson) return
         results.innerHTML = ''
         results.appendChild(createGeoJSONChecklist(geojson))
@@ -83,11 +83,11 @@ const handleLeafletQueryPanel = (map, parent) => {
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
-                clichHandler: async (event) => {
-                    L.DomEvent.stopPropagation(event);
-                    L.DomEvent.preventDefault(event);        
+                clichHandler: async (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preDefault(e);        
                     
-                    const btn = event.target
+                    const btn = e.target
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
                     
@@ -106,8 +106,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                         map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     }
 
+                    console.log(data.btnclickHandler)
                     if (activate && data.btnclickHandler) {
-                        await queryHandler(event, data.btnclickHandler)
+                        await queryHandler(e, data.btnclickHandler)
                     }
                 }
             }}) :
