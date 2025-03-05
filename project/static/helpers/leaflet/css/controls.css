@@ -6,10 +6,6 @@
 
         .leaflet-top.leaflet-right {
             max-height: 100%;
-
-            .leaflet-control {
-                max-height: 75% !important;
-            }
         }
     }
 
