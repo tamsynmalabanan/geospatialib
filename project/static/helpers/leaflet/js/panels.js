@@ -15,6 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
+                results.appendChild(createPointCoordinatesTable(feature))
             },
         },
         osmPoint: {
