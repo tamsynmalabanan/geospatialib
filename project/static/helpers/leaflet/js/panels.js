@@ -65,8 +65,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clickCallback: () => {
                     const btn = event.target
-                    L.DomEvent.stopPropagation(e);
-                    L.DomEvent.preventDefault(e);        
+                    L.DomEvent.stopPropagation(event);
+                    L.DomEvent.preventDefault(event);        
                     
                     const queryMode = map._queryMode
                     const toolIsQueryMode = queryMode === tool
