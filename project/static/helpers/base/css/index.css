@@ -19,12 +19,5 @@ body {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 7px;
-}
-  
-[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-}
-
-[data-bs-theme="light"] ::-webkit-scrollbar-thumb {
-    background-color: hsl(0, 0%, 20%);
-}
+    background-color: var(--bs-socondary-color) !important;
+} 
