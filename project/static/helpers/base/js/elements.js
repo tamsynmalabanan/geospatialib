@@ -88,7 +88,6 @@ const createOffcanvasElement = (id, {
     offcanvas.setAttribute('aria-labelledby', `${id}Label`)
     offcanvas.setAttribute('data-bs-scroll', `true`)
     offcanvas.setAttribute('data-bs-backdrop', `false`)
-    offcanvas.style.maxHeight = '100%'
 
     const header = document.createElement('div')
     header.className = 'offcanvas-header d-flex justify-content-between'
