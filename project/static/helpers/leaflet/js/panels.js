@@ -15,7 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapCursor: 'pointer',
             mapClickCallback: (event) => {
-                console.log(event)
+                const geojson = turf.
             }
         },
         osmPoint: {

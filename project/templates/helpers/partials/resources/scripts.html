@@ -13,6 +13,9 @@
 {% comment %} leaflet {% endcomment %}
 {% leaflet_js plugins="forms, geocoder, locate" %}
 
+{% comment %} turf {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/0.0.124/turf.min.js" integrity="sha512-jpnZ8xGKbS7L9S6d5fk/zDVgF6OoVKLMoEliLxf24BRX+orWhxqJuUcoM+vGmOaozS9dD9ABjQZKAgjjcwTndA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 {% comment %} project {% endcomment %}
 <script type="text/javascript" src="{% static 'helpers/base/js/utils.js' %}"></script>
 <script type="text/javascript" src="{% static 'helpers/base/js/elements.js' %}"></script>
