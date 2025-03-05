@@ -50,26 +50,27 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnclickHandler: async () => {
                 results.innerHTML = ''
                 event.target.click()
-                disableClearBtn()
+                toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
             }
         },
     }
 
-    const enableCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = false
-    const disableCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = true
-    const enableClearBtn = () => toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-    const disableClearBtn = () => toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
-    const dispatchNewQueryResult = (geojson) => {
-        const customEvent = new CustomEvent('newQueryResult', {detail: {geojson}});
-        map.fire(customEvent.type, customEvent.detail);
+    const queryHandler = async (handler) => {
+        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
+        cancelBtn.disabled = false
+        const geojson = await handler(e)
+        cancelBtn.disabled = true
+        const customEvent = new CustomEvent('newQueryResult', {detail: {geojson}})
+        map.fire(customEvent.type, customEvent.detail)
     }
-
+    
     map.on('newQueryResult', (event) => {
         const geojson = event.geojson
         if (! geojson) return
         results.innerHTML = ''
         results.appendChild(createGeoJSONChecklist(geojson))
-        enableClearBtn()
+        toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+    
     })
 
     Object.keys(queryTools).forEach(tool => {
@@ -95,20 +96,14 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (activate && data.mapClickHandler) {
                         const clickQueryHandler = async (e) => {
                             if (e.originalEvent.target !== mapContainer) return
-                            enableCancelBtn()
-                            const geojson = await data.mapClickHandler(e)
-                            disableCancelBtn()
-                            dispatchNewQueryResult(geojson)
+                            await queryHandler(data.mapClickHandler)
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
                         map._events.click = map._events.click.filter(handler => handler.fn.name !== 'clickQueryHandler')
                     }
                     if (activate && data.btnclickHandler) {
-                        enableCancelBtn()
-                        const geojson = await data.btnclickHandler()
-                        disableCancelBtn()
-                        dispatchNewQueryResult(geojson)
+                        await queryHandler(data.btnclickHandler)
                     }
                 }
             }}) :
