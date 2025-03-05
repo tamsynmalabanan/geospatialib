@@ -18,23 +18,25 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         'Latitude': lat,
     }    
 
+    const headTr = document.createElement('tr')
     for (const coord in coords) {
-        const tr = document.createElement('tr')
-        tbody.appendChild(tr)
-
         const th = document.createElement('th')
-        th.setAttribute('scope', 'row')
+        th.setAttribute('scope','col')
         th.innerText = coord
-        tr.appendChild(th)
-
-        const coordTd = document.createElement('td')
-        coordTd.innerText = coords[coord].toFixed(precision)
-        tr.appendChild(coordTd)
-
-        const menuTd = document.createElement('td')
-        menuTd.innerText = 'menu'
-        tr.appendChild(menuTd)
+        headTr.appendChild(th)
     }
-    
+
+    const menuTh = document.createElement('th')
+    th.setAttribute('scope', 'col')
+    th.innerText = 'menu'
+    headTr.appendChild(menuTh)
+
+    const valueTr = document.createElement('tr')
+    for (const coord in coords) {
+        const td = document.createElement('td')
+        td.innerText = coords[coord].toFixed(precision)
+        valueTr.appendChild(td)
+    }
+
     return table
 }
