@@ -49,6 +49,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnclickHandler: async () => {
                 results.innerHTML = ''
+                event.target.click()
                 disableClearBtn()
             }
         },
