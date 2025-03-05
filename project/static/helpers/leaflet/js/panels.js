@@ -60,20 +60,19 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryHandler = async (e, handler) => {
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
-        const geojson = await handler(e)
+        const geojsons = await handler(e)
         cancelBtn.disabled = true
 
-        if (! geojson) return
-        const customEvent = new CustomEvent('newQueryResult', {detail: {geojson}})
+        if (!geojsons) return
+        const customEvent = new CustomEvent('newQueryResult', {detail: {geojsons}})
         map.fire(customEvent.type, customEvent.detail)
     }
     
     map.on('newQueryResult', (e) => {
-        const geojson = e.geojson
+        const geojsons = e.geojsons
         results.innerHTML = ''
-        console.log(geojson)
-        if (geojson.features?.length > 0) {
-            results.appendChild(createGeoJSONChecklist(geojson))
+        if (geojsons.some(g => g.features?.length > 0)) {
+            results.appendChild(createGeoJSONChecklist(geojsons))
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
         } else {
             alert('No features queried.')
