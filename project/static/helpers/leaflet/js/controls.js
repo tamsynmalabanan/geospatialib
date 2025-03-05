@@ -146,7 +146,7 @@ const applyThemeToLeafletControls = (container) => {
     container.querySelectorAll(removeWhitespace(`
         .leaflet-control-attribution,
         .leaflet-control-geocoder
-    `).trim()).forEach(element => element.classList.add(...themeClass))
+    `)).forEach(element => element.classList.add(...themeClass))
 }
 
 const toggleMapInteractivity = (map) => {

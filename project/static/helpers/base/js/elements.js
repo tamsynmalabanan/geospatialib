@@ -1,3 +1,26 @@
+const customCreateElement = (tag, {
+    className = ''
+} = {}) => {
+    const element = document.createElement(tag)
+    element.className = className
+    return element
+}
+
+const createButton = ({
+    className = '',
+    iconClass,
+    title,
+    disabled,
+} = {}) => {
+    const btn = document.createElement('button')
+    btn.className = `btn ${className}`
+    btn.setAttribute('type', 'button')
+    if (title) btn.setAttribute('title', title)
+    if (disabled) btn.setAttribute('disabled', true)
+    if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
+    return btn
+}
+
 const createIcon = ({className, parent} = {}) => {
     const icon = document.createElement('i')
     icon.className = className || ''
