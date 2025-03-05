@@ -14,16 +14,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapCursor: 'pointer',
-            callback: () => {
-                const handler = () => {
-                    alert('handler')
-                }
-
-                map.on('click', () => {
-                    console.log(event)
-                    handler()
-                    map.off('click', handler)
-                })
+            mapClickCallback: () => {
+                alert('handler')
             }
         },
         osmPoint: {
@@ -34,6 +26,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
+            btnclickCallback: () => {}
         },
         layerPoint: {
             iconClass: 'bi-stack',
@@ -75,9 +68,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary').forEach(className => btn.classList.toggle(className))
                     mapContainer.style.cursor = !toolIsQueryMode ? data.mapCursor || '' : ''
 
-                    if (toolIsQueryMode) return
+                    if (data.mapClickCallback) toolIsQueryMode ? map.off('click', data.mapClickCallback) : map.on('click', data.mapClickCallback)
                     map._queryMode = toolIsQueryMode ? undefined : tool
-                    if (data.callback) data.callback()
+                    if (data.btnclickCallback) btnclickCallback()
                 }
             }}) :
             customCreateElement(data.tag, data)
