@@ -81,7 +81,7 @@ const handleLeafletMapPanels = (map) => {
     control.onAdd = (map) => {
         const panel = L.DomUtil.create('div', 'map-panel')
         panel.classList.add('d-flex', 'flex-column', 'ms-60', 'mb-70')
-        panel.style.maxHeight = '100vh'
+        panel.style.maxHeight = '75vh'
         
         const [toggle, body] = createMapPanels(map.getContainer())
         panel.appendChild(toggle)
