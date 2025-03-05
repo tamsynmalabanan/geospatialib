@@ -18,7 +18,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query location coordinates',
             mapCursor: 'pointer',
             mapClickCallback: (e) => {
-                console.log(e.originalEvent.target !== mapContainer)
+                if (e.originalEvent.target !== mapContainer) return
                 const geojson = [turf.point([e.latlng.lng, e.latlng.lat])]
                 results.appendChild(createGeoJSONChecklist(geojson))
             }
