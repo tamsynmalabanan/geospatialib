@@ -38,7 +38,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         btnTitle: 'Toggle menu',
     })
     dropdownToggle.classList.remove('dropdown-toggle')
-    menuTh.parentElement.appendChild(dropdownToggle)
+    menuTh.appendChild(dropdownToggle.parentElement)
 
     const formatDMS = createDropdownMenuLi({
         innerText: 'Coordinates in DDMMSS format',
