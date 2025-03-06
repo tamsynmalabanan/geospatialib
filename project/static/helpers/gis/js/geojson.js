@@ -27,24 +27,6 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         headTr.appendChild(th)
     }
     
-    const menuTh = document.createElement('th')
-    menuTh.className = 'text-center'
-    menuTh.setAttribute('scope', 'col')
-    headTr.appendChild(menuTh)
-
-    const [dropdownToggle, dropdownMenu] = createDropdown({
-        btnClassName: 'bg-transparent border-0 p-0',
-        btnIconClass: 'bi bi-list',
-        btnTitle: 'Toggle menu',
-    })
-    dropdownToggle.classList.remove('dropdown-toggle')
-    menuTh.appendChild(dropdownToggle.parentElement)
-
-    const formatDMS = createDropdownMenuLi({
-        innerText: 'Coordinates in DDMMSS format',
-        parent: dropdownMenu
-    })
-
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
     for (const coord in coords) {
