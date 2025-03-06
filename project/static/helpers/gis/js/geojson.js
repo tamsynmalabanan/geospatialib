@@ -34,11 +34,6 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         td.innerText = coords[coord].toFixed(precision)
         valueTr.appendChild(td)
     }
-    
-    const formatTd = document.createElement('td')
-    formatTd.className = 'text-center'
-    formatTd.innerText = 'DD'
-    valueTr.appendChild(formatTd)
 
     return table
 }
