@@ -271,7 +271,6 @@ const createDropdownMenuLi = ({innerText, parent}={}) => {
     a.className = 'dropdown-item'
     a.setAttribute('href', '#')
     a.innerText = innerText
-
     parent?.appendChild(li)
 
     return a
