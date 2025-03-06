@@ -32,20 +32,17 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     menuTh.setAttribute('scope', 'col')
     headTr.appendChild(menuTh)
 
-    const dropdown = createDropdown({
+    const [dropdownToggle, dropdownMenu] = createDropdown({
         btnClassName: 'bg-transparent border-0 p-0',
         btnIconClass: 'bi bi-list',
         btnTitle: 'Toggle menu',
     })
-    menuTh.appendChild(dropdown)
-    
-    const dropdownToggle = dropdown.querySelector('.dropdown-toggle')
     dropdownToggle.classList.remove('dropdown-toggle')
+    menuTh.parentElement.appendChild(dropdownToggle)
 
-    const menu = dropdown.querySelector('.dropdown-menu')
     const formatDMS = createDropdownMenuLi({
         innerText: 'Coordinates in DDMMSS format',
-        parent: menu
+        parent: dropdownMenu
     })
 
     const valueTr = document.createElement('tr')
