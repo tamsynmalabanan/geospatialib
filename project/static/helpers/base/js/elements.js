@@ -269,13 +269,14 @@ const createDropdownMenuLi = ({innerText, parent}={}) => {
     const li = document.createElement('li')
     parent?.appendChild(li)
     
-    const a = document.createElement('a')
-    a.className = 'dropdown-item'
-    a.setAttribute('href', '#')
-    a.innerText = innerText
-    li.appendChild(a)
+    const btn = document.createElement('button')
+    btn.className = 'dropdown-item bg-transparent border-0'
+    li.appendChild(btn)
 
-    return a
+    const label = createLabel({innerText: innerText})
+    btn.appendChild(label)
+
+    return li
 }
 
 const createDropdown = ({
