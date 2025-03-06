@@ -10,18 +10,12 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
-    const resetResults = (hide=false) => {
-        results.innerHTML = ''
-        results.classList.toggle('d-none', hide)
-    }
-
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query location coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                resetResults()
                 results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
             },
         },
@@ -55,23 +49,25 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnclickHandler: async (e) => {
                 e.target.click()
-                resetResults(true)
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
             }
         },
     }
 
     const queryHandler = async (e, handler) => {
+        const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
+        results.innerHTML = ''
+        results.classList.toggle('d-none', clearBtn === e.target)
+
+        // create indicator layer point for map click and bbox for btn click
+
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
 
-        if (geojsons) {
-            resetResults()
-            if (Object.values(geojsons).some(g => g.features?.length)) {
-                results.appendChild(createGeoJSONChecklist(geojsons))
-            }
+        if (geojsons && Object.values(geojsons).some(g => g.features?.length)) {
+            results.appendChild(createGeoJSONChecklist(geojsons))
         }
         
         if (results.innerHTML !== '') {
