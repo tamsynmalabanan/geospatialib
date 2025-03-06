@@ -275,7 +275,7 @@ const createDropdownMenuLi = ({innerText, parent}={}) => {
     btn.className = 'dropdown-item bg-transparent border-0'
     li.appendChild(btn)
 
-    const label = createLabel({innerText: innerText})
+    const label = createLabel(innerText)
     btn.appendChild(label)
 
     return li
