@@ -267,11 +267,13 @@ const createAccordion = (id, tabData, {themed = false} = {}) => {
 
 const createDropdownMenuLi = ({innerText, parent}={}) => {
     const li = document.createElement('li')
+    parent?.appendChild(li)
+    
     const a = document.createElement('a')
     a.className = 'dropdown-item'
     a.setAttribute('href', '#')
     a.innerText = innerText
-    parent?.appendChild(li)
+    li.appendChild(a)
 
     return a
 }
