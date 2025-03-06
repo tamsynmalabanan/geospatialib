@@ -265,14 +265,16 @@ const createAccordion = (id, tabData, {themed = false} = {}) => {
     return [tabs, accordion]
 }
 
-const createDrodownMenuLi = ({innerText}={}) => {
+const createDrodownMenuLi = ({innerText, parent}={}) => {
     const li = document.createElement('li')
     const a = document.createElement('a')
     a.className = 'dropdown-item'
     a.setAttribute('href', '#')
     a.innerText = innerText
 
-    return li
+    parent?.appendChild(li)
+
+    return a
 }
 
 const createDropdown = ({
@@ -296,6 +298,6 @@ const createDropdown = ({
     const menu = document.createElement('ul')
     menu.className = `dropdown-menu ${menuClassName}`
     dropdown.appendChild(menu)
-    
+
     return dropdown
 }

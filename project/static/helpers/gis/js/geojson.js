@@ -39,6 +39,11 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     })
     menuTh.appendChild(dropdown)
     
+    const formatDMS = createDropdownMenuLi({
+        innerText: 'Coordinates in DDMMSS format',
+        parent: dropdown.querySelector('.dropdown-menu')
+    })
+
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
     for (const coord in coords) {
