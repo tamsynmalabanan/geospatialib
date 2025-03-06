@@ -38,6 +38,8 @@ const createLabel = (innerText, {className, parent} = {}) => {
     label.innerText = innerText
     label.className = className || ''
     parent?.appendChild(label)
+
+    return label
 }
 
 const createOffcanvasToggle = (id, {
