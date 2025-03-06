@@ -265,7 +265,7 @@ const createAccordion = (id, tabData, {themed = false} = {}) => {
     return [tabs, accordion]
 }
 
-const createDrodownMenuLi = ({innerText, parent}={}) => {
+const createDropdownMenuLi = ({innerText, parent}={}) => {
     const li = document.createElement('li')
     const a = document.createElement('a')
     a.className = 'dropdown-item'
