@@ -22,6 +22,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     tbody.appendChild(headTr)
     for (const coord in coords) {
         const th = document.createElement('th')
+        th.className = 'text-center'
         th.setAttribute('scope','col')
         th.innerText = coord
         headTr.appendChild(th)
@@ -31,6 +32,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     tbody.appendChild(valueTr)
     for (const coord in coords) {
         const td = document.createElement('td')
+        td.className = 'text-center'
         td.innerText = coords[coord].toFixed(precision)
         valueTr.appendChild(td)
     }
