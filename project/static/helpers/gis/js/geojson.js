@@ -44,6 +44,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const [dropdown, toggle, menu] = createDropdown({
 
     })
+    container.appendChild(dropdown)
 
     return container
 }
