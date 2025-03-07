@@ -13,7 +13,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
-            title: 'Query location coordinates',
+            title: 'Query click coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
                 results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
