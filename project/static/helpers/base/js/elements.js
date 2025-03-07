@@ -307,9 +307,11 @@ const createDropdown = ({
 }
 
 const createRadios = (radios, {
-    name
+    name,
+    containerClassName = ''
 } = {}) => {
     const container = document.createElement('div')
+    container.className = `${containerClassName}`
 
     name = name || generateRandomString()
 

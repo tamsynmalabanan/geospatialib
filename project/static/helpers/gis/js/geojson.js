@@ -57,6 +57,8 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         'DMS': {
             tooltip: 'Degrees, minutes, seconds',
         },
+    }, {
+        containerClassName: 'd-flex flex-nowrap'
     })
     formatTd.appendChild(formatRadios)
 
