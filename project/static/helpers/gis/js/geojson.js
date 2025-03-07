@@ -27,11 +27,16 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         th.innerText = coord
         headTr.appendChild(th)
     }
-
+    
+    const menuTh = document.createElement('th')
+    menuTh.className = 'text-center'
+    menuTh.setAttribute('scope','col')
+    headTr.appendChild(menuTh)
+    
     const [dropdown, toggle, menu] = createDropdown({
         btnClassName: 'bg-transparent p-0 border-0'
     })
-    headTr.appendChild(dropdown)
+    menuTh.appendChild(dropdown)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
