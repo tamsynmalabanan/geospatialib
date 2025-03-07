@@ -29,6 +29,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }
 
     const [dropdown, toggle, menu] = createDropdown({
+        btnClassName: 'bg-transparent p-0 border-0'
     })
     headTr.appendChild(dropdown)
     
