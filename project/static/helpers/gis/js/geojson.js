@@ -28,12 +28,12 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }
     
     const menuTh = document.createElement('th')
-    menuTh.className = 'text-center fs-12'
+    menuTh.className = 'text-center'
     menuTh.setAttribute('scope','col')
     headTr.appendChild(menuTh)
 
     const [dropdown, toggle, menu] = createDropdown({
-        btnClassName: 'bg-transparent p-0 border-0'
+        btnClassName: 'bg-transparent p-0 border-0 btn-sm'
     })
     menuTh.appendChild(dropdown)
     
@@ -46,8 +46,14 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }
     
     const formatTd = document.createElement('td')
-    formatTd.innerText = 'format'
+    formatTd.className = 'text-center'
     valueTr.appendChild(formatTd)
+
+    const formatRadios = createRadios({
+        'Decimal Degrees': {},
+        'Degrees, Minutes, Seconds': {},
+    })
+    formatTd.appendChild(formatRadios)
 
     return table
 }

@@ -305,3 +305,36 @@ const createDropdown = ({
 
     return [dropdown, toggle, menu]
 }
+
+const createRadios = (radios, {
+    name
+} = {}) => {
+    const container = document.createElement('div')
+
+    const name = name || generateRandomString()
+
+    for (const option in radios) {
+        const data = radios[option]
+
+        const formCheck = document.createElement('div')
+        formCheck.className = 'form-check'
+        container.appendChild(formCheck)
+
+        const id = data.id || generateRandomString()
+
+        const input = document.createElement('input')
+        input.id = id
+        input.className = 'form-check-input'
+        input.setAttribute('type', 'radio')
+        input.setAttribute('name', name)
+        formCheck.appendChild(input)
+        
+        const label = document.createElement('label')
+        label.className = 'form-check-label'
+        label.setAttribute('for', id)
+        label.innerText = option
+        formCheck.appendChild(label)
+    } 
+
+    return container
+}
