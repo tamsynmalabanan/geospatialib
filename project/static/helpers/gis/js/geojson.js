@@ -11,12 +11,17 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
     const [lng, lat] = ptFeature.geometry.coordinates
     
+    const latDir = lat >= 0 ? 'N' : 'S'
+    const lngDir = lng >= 0 ? 'E' : 'W'
+    const latDD = `${Math.abs(lat).toFixed(precision)} ${latDir}`
+    const lngDD = `${Math.abs(lng).toFixed(precision)} ${lngDir}`
+
     const latSpan = document.createElement('span')
-    latSpan.innerText = `${Math.abs(lat).toFixed(precision)} ${lat >= 0 ? 'N' : 'S'}`
+    latSpan.innerText = latDD
     container.appendChild(latSpan)
     
     const lngSpan = document.createElement('span')
-    lngSpan.innerText = `${Math.abs(lng).toFixed(precision)} ${lng >= 0 ? 'E' : 'W'}`
+    lngSpan.innerText = lngDD
     container.appendChild(lngSpan)
 
     const formatRadios = createRadios({
@@ -24,12 +29,24 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
             checked:true,
             labelAttrs: {
                 'data-bs-title':'Decimal Degrees',
-            }
+            },
+            inputAttrs: {
+                onclick: () => {
+                    latSpan.innerText = latDD
+                    lngSpan.innerText = lngDD
+                },
+            },
         },
         'DMS': {
             labelAttrs: {
                 'data-bs-title':'Degrees, minutes, seconds',
-            }
+            },
+            inputAttrs: {
+                onclick: () => {
+                    latSpan.innerText = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
+                    lngSpan.innerText = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
+                },
+            },
         },
     }, {
         containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
