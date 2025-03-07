@@ -12,11 +12,11 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const [lng, lat] = ptFeature.geometry.coordinates
     
     const latSpan = document.createElement('span')
-    latSpan.innerText = `${lat.toFixed(precision)} ${lat >= 0 ? 'N' : 'S'}`
+    latSpan.innerText = `${Math.abs(lat).toFixed(precision)} ${lat >= 0 ? 'N' : 'S'}`
     container.appendChild(latSpan)
     
     const lngSpan = document.createElement('span')
-    lngSpan.innerText = `${lng.toFixed(precision)} ${lng >= 0 ? 'E' : 'W'}`
+    lngSpan.innerText = `${Math.abs(lng).toFixed(precision)} ${lng >= 0 ? 'E' : 'W'}`
     container.appendChild(lngSpan)
 
     const formatRadios = createRadios({
