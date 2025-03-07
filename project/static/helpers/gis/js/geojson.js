@@ -6,12 +6,8 @@ const createGeoJSONChecklist = (geojsonList) => {
 }
 
 const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
-    const container = document.createElement('div')
-    container.className = 'd-flex'
-
     const table = document.createElement('table')
     table.className = `table table-borderless table-${getPreferredTheme()} table-sm m-0 p-0`
-    container.appendChild(table)
 
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
@@ -31,6 +27,10 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         th.innerText = coord
         headTr.appendChild(th)
     }
+
+    const [dropdown, toggle, menu] = createDropdown({
+    })
+    headTr.appendChild(dropdown)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
@@ -41,10 +41,5 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         valueTr.appendChild(td)
     }
 
-    const [dropdown, toggle, menu] = createDropdown({
-
-    })
-    container.appendChild(dropdown)
-
-    return container
+    return table
 }
