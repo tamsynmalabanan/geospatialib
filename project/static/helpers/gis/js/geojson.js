@@ -24,9 +24,14 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
             tooltip: 'Degrees, minutes, seconds',
         },
     }, {
-        containerClassName: 'd-flex flex-nowrap gap-2'
+        containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
     })
     container.appendChild(formatRadios)
+
+    const dropdown = createDropdown({
+        btnClassName: 'btn-sm bg-transparent border-0 p-0'
+    })
+    container.appendChild(dropdown)
 
     return container
 }
