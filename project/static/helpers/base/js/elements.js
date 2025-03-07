@@ -303,5 +303,5 @@ const createDropdown = ({
     menu.className = `dropdown-menu ${menuClassName}`
     dropdown.appendChild(menu)
 
-    return [toggle, menu]
+    return [dropdown, toggle, menu]
 }
