@@ -77,9 +77,10 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     Object.keys(queryTools).forEach(tool => {
         const data = queryTools[tool]
+        const tag = data.tag || 'button'
         toolbar.appendChild(
-            data.tag && data.tag !== 'button' ?
-            customCreateElement(data.tag, data) :
+            tag !== 'button' ?
+            customCreateElement(tag, data) :
             createButton({...data, ...{
                 id: `${toolbar.id}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
@@ -118,6 +119,15 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
             }})
         )
+        
+        if (tag === 'button' && data.title) {
+            const btn = toolbar.lastChild
+            btn.removeAttribute('title')
+            btn.setAttribute('data-bs-toggle', 'tooltip')
+            btn.setAttribute('data-bs-title', data.title)
+            new bootstrap.Tooltip(btn)
+        }
+        
     })
 }
 

@@ -23,20 +23,21 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         'DD': {
             checked:true,
             labelAttrs: {
-                'data-bs-toggle':'tooltip',
                 'data-bs-title':'Decimal Degrees',
             }
         },
         'DMS': {
             labelAttrs: {
-                'data-bs-toggle':'tooltip',
                 'data-bs-title':'Degrees, minutes, seconds',
             }
         },
     }, {
         containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
     })
-    formatRadios.querySelectorAll('label').forEach(label => new bootstrap.Tooltip(label))
+    formatRadios.querySelectorAll('label').forEach(label => {
+        label.setAttribute('data-bs-toggle', 'tooltip')
+        new bootstrap.Tooltip(label)
+    })
     container.appendChild(formatRadios)
 
     const [dropdown, toggle, menu] = createDropdown({
