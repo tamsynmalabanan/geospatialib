@@ -18,7 +18,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
    
     const th = document.createElement('th')
     th.setAttribute('scope','col')
-    th.setAttribute('colspan','2')
+    th.setAttribute('colspan','3')
     th.innerText = 'Longitude & latitude'
     headTr.appendChild(th)
     
