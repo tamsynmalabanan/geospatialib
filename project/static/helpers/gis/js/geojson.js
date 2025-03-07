@@ -12,36 +12,21 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
 
-    const [lng, lat] = ptFeature.geometry.coordinates
-    const coords = {
-        'Longitude': lng,
-        'Latitude': lat,
-    }    
 
     const headTr = document.createElement('tr')
     tbody.appendChild(headTr)
-    for (const coord in coords) {
-        const th = document.createElement('th')
-        th.setAttribute('scope','col')
-        th.innerText = coord
-        headTr.appendChild(th)
-    }
-    
-    // const menuTh = document.createElement('th')
-    // menuTh.className = 'text-center'
-    // menuTh.setAttribute('scope','col')
-    // headTr.appendChild(menuTh)
-
-    // const [dropdown, toggle, menu] = createDropdown({
-    //     btnClassName: 'bg-transparent p-0 border-0 btn-sm'
-    // })
-    // menuTh.appendChild(dropdown)
+   
+    const th = document.createElement('th')
+    th.setAttribute('scope','col')
+    th.setAttribute('colspan','2')
+    th.innerText = 'Longitude & latitude'
+    headTr.appendChild(th)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
-    for (const coord in coords) {
+    for (const coord of ptFeature.geometry.coordinates) {
         const td = document.createElement('td')
-        td.innerText = coords[coord].toFixed(precision)
+        td.innerText = coord.toFixed(precision)
         valueTr.appendChild(td)
     }
     
