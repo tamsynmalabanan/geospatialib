@@ -22,14 +22,21 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const formatRadios = createRadios({
         'DD': {
             checked:true,
-            tooltip: 'Decimal degrees',
+            labelAttrs: {
+                'data-bs-toggle':'tooltip',
+                'data-bs-title':'Decimal Degrees',
+            }
         },
         'DMS': {
-            tooltip: 'Degrees, minutes, seconds',
+            labelAttrs: {
+                'data-bs-toggle':'tooltip',
+                'data-bs-title':'Degrees, minutes, seconds',
+            }
         },
     }, {
         containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
     })
+    formatRadios.querySelectorAll('label').forEach(label => new bootstrap.Tooltip(label))
     container.appendChild(formatRadios)
 
     const [dropdown, toggle, menu] = createDropdown({
@@ -42,48 +49,3 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
     return container
 }
-
-// const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
-//     const table = document.createElement('table')
-//     table.className = `table table-borderless table-${getPreferredTheme()} table-sm m-0 p-0`
-
-//     const tbody = document.createElement('tbody')
-//     table.appendChild(tbody)
-
-
-//     const headTr = document.createElement('tr')
-//     tbody.appendChild(headTr)
-   
-//     const th = document.createElement('th')
-//     th.setAttribute('scope','col')
-//     th.setAttribute('colspan','3')
-//     th.innerText = 'Longitude & latitude'
-//     headTr.appendChild(th)
-    
-//     const valueTr = document.createElement('tr')
-//     tbody.appendChild(valueTr)
-//     for (const coord of ptFeature.geometry.coordinates) {
-//         const td = document.createElement('td')
-//         td.innerText = coord.toFixed(precision)
-//         valueTr.appendChild(td)
-//     }
-    
-//     const formatTd = document.createElement('td')
-//     formatTd.className = 'text-center'
-//     valueTr.appendChild(formatTd)
-
-//     const formatRadios = createRadios({
-//         'DD': {
-//             checked:true,
-//             tooltip: 'Decimal degrees',
-//         },
-//         'DMS': {
-//             tooltip: 'Degrees, minutes, seconds',
-//         },
-//     }, {
-//         containerClassName: 'd-flex flex-nowrap gap-2'
-//     })
-//     formatTd.appendChild(formatRadios)
-
-//     return table
-// }

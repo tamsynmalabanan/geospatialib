@@ -336,6 +336,7 @@ const createRadios = (radios, {
         label.className = 'form-check-label'
         label.setAttribute('for', id)
         label.innerText = option
+        if (data.labelAttrs) Object.keys(data.labelAttrs).forEach(attr => label.setAttribute(attr, data.labelAttrs[attr]))
         formCheck.appendChild(label)
     } 
 
