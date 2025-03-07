@@ -311,7 +311,7 @@ const createRadios = (radios, {
 } = {}) => {
     const container = document.createElement('div')
 
-    const name = name || generateRandomString()
+    name = name || generateRandomString()
 
     for (const option in radios) {
         const data = radios[option]
