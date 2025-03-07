@@ -18,10 +18,19 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
     const latSpan = document.createElement('span')
     latSpan.innerText = latDD
-    container.appendChild(latSpan)
     
     const lngSpan = document.createElement('span')
     lngSpan.innerText = lngDD
+    
+    const copyBtn = createButton({
+        iconClass:'bi bi-clipboard', 
+        clickHandler: () => {
+            navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)    
+        }
+    })
+
+    container.appendChild(copyBtn)
+    container.appendChild(latSpan)
     container.appendChild(lngSpan)
 
     const formatRadios = createRadios({
