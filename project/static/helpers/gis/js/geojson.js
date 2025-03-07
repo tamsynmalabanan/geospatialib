@@ -22,17 +22,16 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     tbody.appendChild(headTr)
     for (const coord in coords) {
         const th = document.createElement('th')
-        // th.className = 'text-center'
         th.setAttribute('scope','col')
         th.innerText = coord
         headTr.appendChild(th)
     }
     
     const menuTh = document.createElement('th')
-    menuTh.className = 'text-center'
+    menuTh.className = 'text-center fs-12'
     menuTh.setAttribute('scope','col')
     headTr.appendChild(menuTh)
-    
+
     const [dropdown, toggle, menu] = createDropdown({
         btnClassName: 'bg-transparent p-0 border-0'
     })
@@ -42,10 +41,13 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     tbody.appendChild(valueTr)
     for (const coord in coords) {
         const td = document.createElement('td')
-        // td.className = 'text-center'
         td.innerText = coords[coord].toFixed(precision)
         valueTr.appendChild(td)
     }
+    
+    const formatTd = document.createElement('td')
+    formatTd.innerText = 'format'
+    valueTr.appendChild(formatTd)
 
     return table
 }
