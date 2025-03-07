@@ -120,14 +120,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             }})
         )
         
-        if (tag === 'button' && data.title) {
-            const btn = toolbar.lastChild
-            btn.removeAttribute('title')
-            btn.setAttribute('data-bs-toggle', 'tooltip')
-            btn.setAttribute('data-bs-title', data.title)
-            new bootstrap.Tooltip(btn)
-        }
-        
+        if (tag === 'button' && data.title) titleToTooltip(toolbar.lastChild)
     })
 }
 
