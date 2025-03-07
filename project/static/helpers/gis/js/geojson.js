@@ -30,22 +30,10 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
             labelAttrs: {
                 'data-bs-title':'Decimal Degrees',
             },
-            inputAttrs: {
-                onclick: () => {
-                    latSpan.innerText = latDD
-                    lngSpan.innerText = lngDD
-                },
-            },
         },
         'DMS': {
             labelAttrs: {
                 'data-bs-title':'Degrees, minutes, seconds',
-            },
-            inputAttrs: {
-                onclick: () => {
-                    latSpan.innerText = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
-                    lngSpan.innerText = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
-                },
             },
         },
     }, {
@@ -54,6 +42,19 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     formatRadios.querySelectorAll('label').forEach(label => {
         label.setAttribute('data-bs-toggle', 'tooltip')
         new bootstrap.Tooltip(label)
+
+        const input = formatRadios.querySelector(`#${label.getAttribute('for')}`)
+        input.addEventListener('click', () => {
+            if (label.innerText === 'DD') {
+                latSpan.innerText = latDD
+                lngSpan.innerText = lngDD
+            }
+
+            if (label.innerText === 'DMS') {
+                latSpan.innerText = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
+                lngSpan.innerText = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
+            }
+        })
     })
     container.appendChild(formatRadios)
 
