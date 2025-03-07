@@ -9,12 +9,16 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const container = document.createElement('div')
     container.className = `d-flex flex-nowrap gap-2`
 
-    for (const coord of ptFeature.geometry.coordinates) {
-        const span = document.createElement('span')
-        span.innerText = coord.toFixed(precision)
-        container.appendChild(span)
-    }
+    const [lng, lat] = ptFeature.geometry.coordinates
     
+    const latSpan = document.createElement('span')
+    latSpan.innerText = `${lat.toFixed(precision)} ${lat >= 0 ? 'N' : 'S'}`
+    container.appendChild(latSpan)
+    
+    const lngSpan = document.createElement('span')
+    lngSpan.innerText = `${lng.toFixed(precision)} ${lng >= 0 ? 'E' : 'W'}`
+    container.appendChild(lngSpan)
+
     const formatRadios = createRadios({
         'DD': {
             checked:true,
