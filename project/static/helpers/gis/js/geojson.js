@@ -28,6 +28,8 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)    
     })
 
+    document.addEventListener('click', () => console.log(event.target))
+
     container.appendChild(copyBtn)
     container.appendChild(latSpan)
     container.appendChild(lngSpan)
