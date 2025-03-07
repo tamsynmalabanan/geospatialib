@@ -7,7 +7,7 @@ const createGeoJSONChecklist = (geojsonList) => {
 
 const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const container = document.createElement('div')
-    table.className = `d-flex flex-nowrap gap-2`
+    container.className = `d-flex flex-nowrap gap-2`
 
     for (const coord of ptFeature.geometry.coordinates) {
         const span = document.createElement('span')
