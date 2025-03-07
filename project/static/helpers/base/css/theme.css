@@ -1,6 +1,6 @@
 :root {
-    --adjusted-bg-light: hsl(62, 36%, 86%);
-    --adjusted-bg-dark: hsl(62, 11%, 15%);
+    --adjusted-bg-light: #E3C4A8;
+    --adjusted-bg-dark: #E43A19;
     /* --adjusted-bg-light: hsl(210, 17%, 98%);
     --adjusted-bg-dark: hsl(210, 11%, 15%); */
 }
