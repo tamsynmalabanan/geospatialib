@@ -27,15 +27,15 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         headTr.appendChild(th)
     }
     
-    const menuTh = document.createElement('th')
-    menuTh.className = 'text-center'
-    menuTh.setAttribute('scope','col')
-    headTr.appendChild(menuTh)
+    // const menuTh = document.createElement('th')
+    // menuTh.className = 'text-center'
+    // menuTh.setAttribute('scope','col')
+    // headTr.appendChild(menuTh)
 
-    const [dropdown, toggle, menu] = createDropdown({
-        btnClassName: 'bg-transparent p-0 border-0 btn-sm'
-    })
-    menuTh.appendChild(dropdown)
+    // const [dropdown, toggle, menu] = createDropdown({
+    //     btnClassName: 'bg-transparent p-0 border-0 btn-sm'
+    // })
+    // menuTh.appendChild(dropdown)
     
     const valueTr = document.createElement('tr')
     tbody.appendChild(valueTr)
@@ -58,7 +58,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
             tooltip: 'Degrees, minutes, seconds',
         },
     }, {
-        containerClassName: 'd-flex flex-nowrap'
+        containerClassName: 'd-flex flex-nowrap gap-2'
     })
     formatTd.appendChild(formatRadios)
 
