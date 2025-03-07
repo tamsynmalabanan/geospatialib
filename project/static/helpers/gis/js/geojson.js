@@ -36,6 +36,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         btnClassName: 'btn-sm bg-transparent border-0 p-0',
         btnIconClass: 'bi bi-three-dots'
     })
+    menu.style.minHeight = '100px'
     toggle.classList.remove('dropdown-toggle')
     container.appendChild(dropdown)
 
