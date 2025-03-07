@@ -327,6 +327,7 @@ const createRadios = (radios, {
         input.className = 'form-check-input'
         input.setAttribute('type', 'radio')
         input.setAttribute('name', name)
+        input.checked = data.checked || false
         formCheck.appendChild(input)
         
         const label = document.createElement('label')

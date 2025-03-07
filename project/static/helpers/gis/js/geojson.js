@@ -50,7 +50,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     valueTr.appendChild(formatTd)
 
     const formatRadios = createRadios({
-        'Decimal Degrees': {},
+        'Decimal Degrees': {checked:true},
         'Degrees, Minutes, Seconds': {},
     })
     formatTd.appendChild(formatRadios)
