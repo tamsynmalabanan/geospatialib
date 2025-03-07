@@ -119,8 +119,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
             }})
         )
-        
-        if (tag === 'button' && data.title) titleToTooltip(toolbar.lastChild)
     })
 }
 
