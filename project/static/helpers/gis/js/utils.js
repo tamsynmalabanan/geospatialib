@@ -10,6 +10,6 @@ const ddToDMS = (decimalDegrees, precision=2) => {
         degrees: degrees,
         minutes: minutes,
         seconds: seconds,
-        toString: () => `${degrees}° ${minutes}' ${seconds}"`
+        toString: () => `${degrees}°${minutes}'${seconds}"`
     }
 }
