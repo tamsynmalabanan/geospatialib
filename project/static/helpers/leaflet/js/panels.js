@@ -1,5 +1,6 @@
 const handleLeafletQueryPanel = (map, parent) => {
     const mapContainer = map.getContainer()
+    const queryGroup = map.getLayerGroups().query
     
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-query-toolbar`
@@ -16,7 +17,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query click coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                map.getLayerGroups().query.addLayer(L.geoJSON(feature))
+                queryGroup.addLayer(L.geoJSON(feature))
                 results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
             },
         },
@@ -60,7 +61,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         results.innerHTML = ''
         results.classList.toggle('d-none', clearBtn === e.target)
 
-        // create indicator layer point for map click and bbox for btn click
+        queryGroup.clearLayers()
 
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
