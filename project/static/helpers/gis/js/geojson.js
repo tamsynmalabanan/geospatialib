@@ -23,8 +23,8 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     lngSpan.innerText = lngDD
     
     const copyBtn = createIcon({className:'bi bi-clipboard'})
+    copyBtn.classList.remove('pe-none')
     copyBtn.addEventListener('click', () => {
-        console.log('here')
         navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)    
     })
 
