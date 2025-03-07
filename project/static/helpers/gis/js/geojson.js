@@ -28,7 +28,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     })
     container.appendChild(formatRadios)
 
-    const dropdown = createDropdown({
+    const [dropdown, toggle, menu] = createDropdown({
         btnClassName: 'btn-sm bg-transparent border-0 p-0'
     })
     container.appendChild(dropdown)
