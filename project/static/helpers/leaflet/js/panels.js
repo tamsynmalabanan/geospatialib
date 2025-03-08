@@ -12,8 +12,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(results)
 
     const defaultStyle = {
-        color: 'red',
-        // color: 'hsla(111, 100%, 54%, 1)',
+        color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
         iconGlow: true,
     }
