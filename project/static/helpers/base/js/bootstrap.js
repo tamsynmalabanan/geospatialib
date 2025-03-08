@@ -15,7 +15,7 @@ const titleToTooltip = (element, altTitle) => {
  
     if (tooltip._isShown()) {
         const tooltipElement = document.querySelector('.bs-tooltip-auto')
-        console.log(tooltipElement)
+        console.log(tooltipElement.outerHTML)
     }
 }
 
