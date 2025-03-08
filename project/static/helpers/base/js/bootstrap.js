@@ -8,6 +8,7 @@ const titleToTooltip = (element, altTitle) => {
     
     const existingTooltip = bootstrap.Tooltip.getInstance(element)
     if (existingTooltip) {
+        console.log(existingTooltip)
         existingTooltip.title(title)
     } else {
         new bootstrap.Tooltip(element)
