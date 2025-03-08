@@ -6,10 +6,11 @@ const titleToTooltip = (element, altTitle) => {
     element.setAttribute('data-bs-toggle', 'tooltip')
     element.setAttribute('data-bs-title', title)
     
-    const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
-    tooltip.setContent({'.tooltip-inner':title})
+    new bootstrap.Tooltip(element)
+    // const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
+    // tooltip.setContent({'.tooltip-inner':title})
 
-    console.log(tooltip._config.container.lastChild.children)
+    // console.log(tooltip._config.container.lastChild.children)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
