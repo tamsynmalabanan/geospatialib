@@ -25,7 +25,7 @@
     } 
 
     .bs-tooltip-auto {
-        .tooltip-arrow {
+        .tooltip-arrow::before {
             color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
             background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
             border-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
