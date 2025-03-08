@@ -26,10 +26,8 @@
 
     .bs-tooltip-auto {
         .tooltip-arrow::before {
-            border-top-color: var(--adjusted-bg-dark) !important;
-            /* border-bottom-color: var(--adjusted-bg-dark) !important; */
-            border-left-color: var(--adjusted-bg-dark) !important;
-            border-right-color: var(--adjusted-bg-dark) !important;
+            border-color: var(--adjusted-bg-dark) !important;
+            border-bottom-color: 'transparent' !important;
         }
         
         .tooltip-inner {
