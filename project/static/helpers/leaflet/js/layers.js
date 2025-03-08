@@ -17,7 +17,7 @@ const getLeafletStyleParams = ({
     iconOpacity=1,
     iconShadow=false,
     iconGlow=false,
-    iconSize=[20, 20],
+    iconSize=[12, 12],
 } = {}) => {
     return  {
         color,
