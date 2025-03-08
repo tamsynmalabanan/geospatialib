@@ -1,5 +1,6 @@
 const fetchNominatim = async (latlng, zoom, {
     abortBtn,
+    controller,
 } = {}) => {
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
         lat: latlng.lat,
