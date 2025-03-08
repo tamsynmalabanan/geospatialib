@@ -76,19 +76,17 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
-        const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
-
-        results.innerHTML = ''
-        results.classList.toggle('d-none', Array(clearBtn, cancelBtn).includes(e.target))
-
         queryGroup.clearLayers()
-
+        results.innerHTML = ''
+        results.classList.add('d-none')
+        
+        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
-
+        
         if (geojsons && Object.values(geojsons).some(g => g.features?.length)) {
+            results.classList.remove('d-none')
             results.appendChild(createGeoJSONChecklist(geojsons))
         }
         
