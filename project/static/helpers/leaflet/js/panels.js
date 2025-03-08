@@ -80,7 +80,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
 
         results.innerHTML = ''
-        results.classList.toggle('d-none', Array(clearBtn, cancelBtn).contains(e.target))
+        results.classList.toggle('d-none', Array(clearBtn, cancelBtn).includes(e.target))
 
         queryGroup.clearLayers()
 
