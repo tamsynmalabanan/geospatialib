@@ -41,12 +41,13 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
     const formatRadios = createRadios({
         'DD': {
-            checked:true,
+            checked:coordsFormat === 'DD' ? true : false,
             labelAttrs: {
                 'data-bs-title':'Decimal Degrees',
             },
         },
         'DMS': {
+            checked:coordsFormat === 'DMS' ? true : false,
             labelAttrs: {
                 'data-bs-title':'Degrees, minutes, seconds',
             },
