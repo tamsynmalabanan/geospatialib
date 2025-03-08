@@ -26,13 +26,12 @@
 
     .bs-tooltip-auto {
         .tooltip-arrow::before {
-            /* background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important; */
-            border-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+            border-color: var(--adjusted-bg-light) !important;
         }
         
         .tooltip-inner {
             color:  #fff !important;
-            background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+            background-color: var(--adjusted-bg-light) !important;
             border-radius: var(--bs-border-radius);
         }
     }
