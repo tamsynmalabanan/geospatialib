@@ -1,8 +1,9 @@
 const getLeafletGeoJSONLayer = ({
     pane,
     geojson,
+    altStyleParams,
 } = {}) => {
-    const styleParams = getLeafletStyleParams()
+    const styleParams = getLeafletStyleParams(altStyleParams)
     
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         style: (feature) => getLeafletLayerStyle(feature.geometry.type, styleParams),
