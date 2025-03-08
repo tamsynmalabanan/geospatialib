@@ -59,6 +59,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-arrow-counterclockwise',
             title: 'Cancel ongoing query',
             disabled: true,
+            btnclickHandler: async (e) => {
+                e.target.click()
+                toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = true
+            }
         },
         clear: {
             iconClass: 'bi-trash-fill',
