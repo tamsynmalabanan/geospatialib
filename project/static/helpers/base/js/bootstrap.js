@@ -1,5 +1,5 @@
 const titleToTooltip = (element, altTitle) => {
-    const title = element.getAttribute('title') || altTitle
+    const title = altTitle || element.getAttribute('title')
     if (!title) return
 
     element.removeAttribute('title')
@@ -14,8 +14,8 @@ const titleToTooltip = (element, altTitle) => {
     }
  
     if (tooltip._isShown()) {
-        const tooltipElement = document.querySelector('.bs-tooltip-auto')
-        console.log(tooltipElement.outerHTML)
+        const tooltipElement = document.querySelector('.bs-tooltip-auto .tooltip-inner')
+        tooltipElement.innerText = title
     }
 }
 
