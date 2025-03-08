@@ -3,20 +3,37 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
     className: `layer-${getPreferredTheme()}`
 }).addTo(map)
 
-const getDefaultLeafletLayerStyle = (featureType, {
-    color = generateRandomColor(),
-    
-    strokeWidth = 1,
-    strokePattern = 'solid',
-    strokeColor = true,
-    strokeOpacity = 1,
-    
-    fillColor = true,
-    fillOpacity = 0.25,
-    
-    pointClass = 'rounded-circle',
-    iconSize = [12, 12],
-} = {}) => {
+const getLeafletStyleParams = (color=generateRandomColor()) => {
+    return  {
+        color,
+
+        strokeWidth: 1,
+        strokePattern: 'solid',
+        strokeColor: true,
+        strokeOpacity: 1,
+        
+        fillColor: true,
+        fillOpacity: 0.25,
+        
+        pointClass: 'rounded-circle',
+        iconSize: [12, 12],
+    }    
+}
+
+const getLeafletLayerStyle = (featureType, options={}) => {
+    const d = getLeafletStyleParams()
+    const {
+        color = d.color,
+        strokeWidth = d.strokeWidth,
+        strokePattern = d.strokePattern,
+        strokeColor = d.strokeColor,
+        strokeOpacity = d.strokeOpacity,
+        fillColor = d.fillColor,
+        fillOpacity = d.fillOpacity,
+        pointClass = d.pointClass,
+        iconSize = d.iconSize,
+    } = options
+
     const hslaColor = manageHSLAColor(color)
 
     if (featureType?.toLowerCase() === 'point') {

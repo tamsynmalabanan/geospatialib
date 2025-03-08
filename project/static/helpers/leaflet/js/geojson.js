@@ -1,11 +1,21 @@
-const getDefaultLeafletGeoJSONLayer = ({
-    color,
+const getLeafletGeoJSONLayer = ({
+    styleParams = {
+        color: generateRandomColor(),
+        strokeWidth: 1,
+        strokePattern: 'solid',
+        strokeColor: true,
+        strokeOpacity: 1,
+        
+        fillColor: true,
+        fillOpacity: 0.25,
+        
+        pointClass: 'rounded-circle',
+        iconSize: [12, 12],
+    },
 } = {}) => {
-    color = color || generateRandomColor()
-
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         style: (feature) => {
-            return getDefaultLayerStyle('other', {
+            return getLeafletLayerStyle('other', {
                 color: color,
                 fillColor: options.fillColor,
                 weight: options.weight,
