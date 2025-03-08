@@ -1,80 +1,18 @@
 const getLeafletGeoJSONLayer = ({
-    styleParams = {
-        color: generateRandomColor(),
-        strokeWidth: 1,
-        strokePattern: 'solid',
-        strokeColor: true,
-        strokeOpacity: 1,
-        
-        fillColor: true,
-        fillOpacity: 0.25,
-        
-        pointClass: 'rounded-circle',
-        iconSize: [12, 12],
-    },
+    pane,
 } = {}) => {
+    const styleParams = getLeafletStyleParams()
+    
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        style: (feature) => {
-            return getLeafletLayerStyle('other', {
-                color: color,
-                fillColor: options.fillColor,
-                weight: options.weight,
-            })
-        },
+        style: (feature) => getLeafletLayerStyle(feature.geometry.type, styleParams),
+        pointToLayer: (feature, latlng) => L.marker(latlng, {
+            icon: getLeafletLayerStyle('point', styleParams)
+        })
     })
 
-    const getIconSize = () => geojsonLayer._map ? (() => {
-        const mapZoom = geojsonLayer._map.getZoom()
-        return mapZoom > 15 ? 15 : mapZoom < 5 ? 5 : mapZoom
-    })() : 10
-
-    geojsonLayer.options.pointToLayer = (geoJsonPoint, latlng) => {
-        const iconSize = getIconSize()
-        return L.marker(latlng, {icon:getDefaultLayerStyle('point', {
-            color:color,
-            colorOpacity:0.5,
-            iconSize: [iconSize, iconSize]
-        })})
-    }
-
-    const pane = options.pane
-    if (pane) {
-        geojsonLayer.options.pane = pane
-    }
-
+    geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     geojsonLayer.options.onEachFeature = (feature, layer) => {
-        const pane = geojsonLayer.options.pane
-        if (pane) {
-            layer.options.pane = pane
-        }
-
-        if (options.getTitleFromLayer) {
-            layer.title = getLayerTitle(layer)
-        }
-
-        if (options.bindTitleAsTooltip) {
-            layer.bindTooltip(layer.title, {sticky:true})
-        }
-
-        if (Object.keys(feature.properties).length > 0) {
-            const createPopup = () => {
-                const popupHeader = layer.popupHeader || geojsonLayer.popupHeader
-                const propertiesTable = createFeaturePropertiesTable(feature.properties, {
-                        header: typeof popupHeader === 'function' ? (() => {
-                            layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                            return popupHeader()
-                        })() : popupHeader
-                })
-                
-                layer.bindPopup(propertiesTable.outerHTML, {
-                    autoPan: false,
-                }).openPopup()
-                
-                layer.off('click', createPopup)
-            }
-
-            layer.on('click', createPopup)
-        }
+        layer.options.pane = geojsonLayer.options.pane || layer.options.pane
     }
 
     options.geojson && geojsonLayer.addData(options.geojson)
