@@ -71,7 +71,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         //   }
 
         div.style.textShadow = iconEffect === 'shadow' ?
-        `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/2})}` || 'black' : iconEffect === 'glow' ?
+        `2px 2px 4px ${'black'}` : iconEffect === 'glow' ?
         `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''
 
         return L.divIcon({
