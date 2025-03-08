@@ -14,7 +14,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
-            title: 'Query click coordinates',
+            title: 'Query point coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
                 queryGroup.addLayer(L.geoJSON(feature))

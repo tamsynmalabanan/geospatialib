@@ -3,30 +3,29 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
     className: `layer-${getPreferredTheme()}`
 }).addTo(map)
 
-const getDefaultLeafletLayerStyle = (type, {
-    color
+const getDefaultLeafletLayerStyle = (featureType, {
+    color = generateRandomColor(),
+    strokeWidth = weight || 1,
+    weight = strokeWidth || 1,
+    pointClass = 'rounded-circle',
+    strokeColor,
+    strokePattern = 'solid',
+    bodyColor = color,
+    bodyOpacity = 0.5,
+    iconSize = [12, 12]
 } = {}) => {
-    if (!color) color = generateRandomColor()
-    const colorIsHSLA = color.startsWith('hsla')
-    
-    let h,s,l,a
-    if (colorIsHSLA) [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
+    const hslaColor = manageHSLAColor(color)
+    const hslaBodyColor = manageHSLAColor(bodyColor)
 
-    const strokeWidth = options.strokeWidth || options.weight || 1
-
-    if (type.toLowerCase() === 'point') {
+    if (featureType.toLowerCase() === 'point') {
         const div = document.createElement('div')
-        div.className = 'h-100 w-100 rounded-circle'
-        
-        const strokeColor = options.strokeColor || l ? `hsla(${h}, ${s}%, ${l/2}%, ${a})` : 'grey'
-        div.style.border = `${strokeWidth}px solid ${strokeColor}`
-
-        const backgroundColor = options.colorOpacity ? `hsla(${h}, ${s}%, ${l}%, ${options.colorOpacity})` : color
-        div.style.backgroundColor = backgroundColor
+        div.className = `h-100 w-100 ${pointClass}`
+        div.style.border = `${strokeWidth}px ${strokePattern} ${strokeColor || hslaColor?.toString({l:hslaColor.l/2}) || 'grey'}`
+        div.style.backgroundColor = hslaBodyColor?.toString({a:bodyOpacity}) || bodyColor
 
         return L.divIcon({
             className: 'bg-transparent',
-            iconSize: options.iconSize || [12, 12],
+            iconSize: iconSize,
             html: div.outerHTML,
         });
     } else {

@@ -77,3 +77,19 @@ const parseNumberFromString = (string) => {
     const match = string.match(regex);
     return parsedNumber = parseFloat(match[0]);
 }
+
+const manageHSLAColor = (color) => {
+    if (!color.startsWith('hsla')) return
+    
+    const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
+    const obj = {
+        h,
+        s,
+        l,
+        a,
+    }
+    obj.toString = (up) => {
+        return `hsla(${up.h || obj.h}, ${up.s || obj.s}%, ${up.l || obj.l}%, ${up.a || obj.a})`
+    }
+    return obj
+}
