@@ -17,27 +17,17 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const lngDD = `${Math.abs(lng).toFixed(precision)} ${lngDir}`
     const latDMS = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
     const lngDMS = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
-
     const coordsFormat = getCookie('coordsFormat') || 'DD'
+
 
     const latSpan = document.createElement('span')
     latSpan.innerText = coordsFormat === 'DD' ? latDD : latDMS
+    container.appendChild(latSpan)
     
     const lngSpan = document.createElement('span')
     lngSpan.innerText = coordsFormat === 'DD' ? lngDD : lngDMS
-    
-    const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
-    copyBtn.style.cursor = 'pointer'
-    titleToTooltip(copyBtn, 'Copy to clipboard')
-    copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)
-        titleToTooltip(copyBtn, 'Copied to clipboard')
-    })
-    copyBtn.addEventListener('mouseout', () => titleToTooltip(copyBtn, 'Copy to clipboard'))
-
-    container.appendChild(copyBtn)
-    container.appendChild(latSpan)
     container.appendChild(lngSpan)
+    
 
     const formatRadios = createRadios({
         'DD': {
@@ -78,6 +68,16 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         })
     })
     container.appendChild(formatRadios)
+
+    const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
+    copyBtn.style.cursor = 'pointer'
+    titleToTooltip(copyBtn, 'Copy to clipboard')
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)
+        titleToTooltip(copyBtn, 'Copied to clipboard')
+    })
+    copyBtn.addEventListener('mouseout', () => titleToTooltip(copyBtn, 'Copy to clipboard'))
+    container.appendChild(copyBtn)
 
     return container
 }
