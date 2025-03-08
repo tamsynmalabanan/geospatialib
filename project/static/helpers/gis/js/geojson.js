@@ -50,11 +50,12 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     }, {
         containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
     })
-    formatRadios.querySelectorAll('label').forEach(label => {
+    formatRadios.querySelectorAll('.form-check').forEach(formCheck => {
+        const label = formCheck.querySelector('label')
         label.setAttribute('data-bs-toggle', 'tooltip')
         new bootstrap.Tooltip(label)
 
-        const input = formatRadios.querySelector(`#${label.getAttribute('for')}`)
+        const input = formCheck.querySelector('input')
         input.addEventListener('click', () => {
             if (label.innerText === 'DD') {
                 latSpan.innerText = latDD
