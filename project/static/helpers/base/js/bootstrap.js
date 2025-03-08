@@ -8,13 +8,6 @@ const titleToTooltip = (element, altTitle) => {
     
     const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
     tooltip.setContent({'.tooltip-inner':title})
-
-    console.log(tooltip)
- 
-    // if (tooltip._isShown()) {
-    //     const tooltipElement = document.querySelector('.bs-tooltip-auto .tooltip-inner')
-    //     tooltipElement.innerText = title
-    // }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

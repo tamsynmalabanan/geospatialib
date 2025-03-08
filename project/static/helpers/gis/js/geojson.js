@@ -29,6 +29,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
         navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)
         titleToTooltip(copyBtn, 'Copied')
     })
+    copyBtn.addEventListener('mouseout', () => titleToTooltip(copyBtn, 'Copy'))
 
     container.appendChild(copyBtn)
     container.appendChild(latSpan)
