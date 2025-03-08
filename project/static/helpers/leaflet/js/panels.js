@@ -16,6 +16,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         iconClass: 'bi bi-circle-fill',
         iconStroke: false,
         iconEffect: 'glow',
+        iconSize: '10px'
     }
 
     const queryTools = {
