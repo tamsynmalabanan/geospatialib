@@ -15,7 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         color: 'hsla(111, 100%, 54%, 1)',
         iconClass: 'bi bi-circle-fill',
         iconStroke: false,
-        iconEffect: 'glow',
+        // iconEffect: 'glow',
         iconSize: '10px'
     }
 
