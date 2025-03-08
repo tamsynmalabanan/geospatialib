@@ -68,8 +68,8 @@ const getLeafletLayerStyle = (featureType, options={}) => {
             ${iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : ''}
             ${iconGlow ? `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''}
         `)
-        console.lof(div.style.textShadow)
-        console.lof(removeWhitespace(`
+        console.log(div.style.textShadow)
+        console.log(removeWhitespace(`
             ${iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : ''}
             ${iconGlow ? `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''}
         `))
