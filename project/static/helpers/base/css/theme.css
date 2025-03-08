@@ -25,7 +25,10 @@
     } 
 
     .bs-tooltip-auto {
-        .tooltip-arrow,
+        .tooltip-arrow {
+            background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+        }
+        
         .tooltip-inner {
             color:  #fff !important;
             background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
