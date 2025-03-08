@@ -7,14 +7,11 @@ const getLeafletGeoJSONLayer = ({
     
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         style: (feature) => {
-            const pathStyleParams = Object.assign({}, styleParams)
-            return getLeafletLayerStyle(feature.geometry.type, pathStyleParams)
+            return getLeafletLayerStyle(feature.geometry.type, styleParams)
         },
         pointToLayer: (feature, latlng) => {
-            const ptStyleParams = Object.assign({}, styleParams)
-            ptStyleParams.fillOpacity = 1
             return L.marker(latlng, {
-                icon: getLeafletLayerStyle('point', ptStyleParams)
+                icon: getLeafletLayerStyle('point', styleParams)
             })
         }
     })
