@@ -6,17 +6,15 @@ const titleToTooltip = (element, altTitle) => {
     element.setAttribute('data-bs-toggle', 'tooltip')
     element.setAttribute('data-bs-title', title)
     
-    let tooltip = bootstrap.Tooltip.getInstance(element)
-    if (tooltip) {
-        tooltip._config.title = title
-    } else {
-        tooltip = new bootstrap.Tooltip(element)
-    }
+    const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
+    tooltip.setContent({'.tooltip-inner':title})
+
+    console.log(tooltip)
  
-    if (tooltip._isShown()) {
-        const tooltipElement = document.querySelector('.bs-tooltip-auto .tooltip-inner')
-        tooltipElement.innerText = title
-    }
+    // if (tooltip._isShown()) {
+    //     const tooltipElement = document.querySelector('.bs-tooltip-auto .tooltip-inner')
+    //     tooltipElement.innerText = title
+    // }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
