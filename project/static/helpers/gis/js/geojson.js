@@ -15,12 +15,16 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const lngDir = lng >= 0 ? 'E' : 'W'
     const latDD = `${Math.abs(lat).toFixed(precision)} ${latDir}`
     const lngDD = `${Math.abs(lng).toFixed(precision)} ${lngDir}`
+    const latDMS = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
+    const lngDMS = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
+
+    const coordsFormat = getCookie('coordsFormat') || 'DD'
 
     const latSpan = document.createElement('span')
-    latSpan.innerText = latDD
+    latSpan.innerText = coordsFormat === 'DD' ? latDD : latDMS
     
     const lngSpan = document.createElement('span')
-    lngSpan.innerText = lngDD
+    lngSpan.innerText = coordsFormat === 'DD' ? lngDD : lngDMS
     
     const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
     copyBtn.style.cursor = 'pointer'
@@ -57,14 +61,18 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
         const input = formCheck.querySelector('input')
         input.addEventListener('click', () => {
-            if (label.innerText === 'DD') {
+            const innerText = label.innerText 
+
+            setCookie('coordsFormat', innerText)
+
+            if (innerText === 'DD') {
                 latSpan.innerText = latDD
                 lngSpan.innerText = lngDD
             }
 
-            if (label.innerText === 'DMS') {
-                latSpan.innerText = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
-                lngSpan.innerText = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
+            if (innerText === 'DMS') {
+                latSpan.innerText = latDMS
+                lngSpan.innerText = lngDMS
             }
         })
     })
