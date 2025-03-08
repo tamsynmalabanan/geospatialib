@@ -14,7 +14,6 @@ const getLeafletStyleParams = ({
     fillOpacity=0.25,
     
     iconClass='bi bi-geo-alt-fill',
-    iconTop='-5px',
     iconOpacity=1,
     iconShadow=false,
     iconGlow=false,
@@ -31,7 +30,8 @@ const getLeafletStyleParams = ({
         iconClass,
         iconSize,
         iconOpacity,
-        iconTop,
+        iconGlow,
+        iconShadow,
     }    
 }
 
@@ -48,7 +48,8 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         iconClass,
         iconSize,
         iconOpacity,
-        iconTop,
+        iconGlow,
+        iconShadow,
     } = styleParams
 
     const hslaColor = manageHSLAColor(color)
@@ -57,8 +58,6 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.fontSize = iconSize
-        div.style.top = iconTop
-        div.style.position = 'relative'
         div.style.color = fillColor === true ? hslaColor?.toString({a:iconOpacity}) || color : fillColor || 'transparent'
         div.style.WebkitTextStroke = `${strokeWidth}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
         
