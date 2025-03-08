@@ -58,7 +58,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         
         return L.divIcon({
             className: 'bg-transparent',
-            iconSize: iconSize,
+            // iconSize: iconSize,
             html: div.outerHTML,
         });
     } else {
