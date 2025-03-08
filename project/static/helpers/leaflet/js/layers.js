@@ -17,7 +17,7 @@ const getLeafletStyleParams = ({
     iconOpacity=1,
     iconShadow=false,
     iconGlow=false,
-    iconSize=[12, 12],
+    iconSize=20,
 } = {}) => {
     return  {
         color,
@@ -53,12 +53,12 @@ const getLeafletLayerStyle = (featureType, options={}) => {
     if (featureType?.toLowerCase() === 'point') {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
+        div.style.fontSize = `${iconSize}px`
         div.style.color = fillColor === true ? hslaColor?.toString({a:iconOpacity}) || color : fillColor || 'transparent'
         div.style.WebkitTextStroke = `${strokeWidth}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
         
         return L.divIcon({
             className: 'bg-transparent',
-            // iconSize: iconSize,
             html: div.outerHTML,
         });
     } else {
