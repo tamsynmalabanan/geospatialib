@@ -13,8 +13,10 @@ const titleToTooltip = (element, altTitle) => {
         tooltip = new bootstrap.Tooltip(element)
     }
  
-    console.log(tooltip)
-    console.log(tooltip._isShown())
+    if (tooltip._isShown()) {
+        const tooltipElement = document.querySelector('.bs-tooltip-auto')
+        console.log(tooltipElement)
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
