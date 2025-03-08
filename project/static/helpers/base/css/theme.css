@@ -26,7 +26,8 @@
 
     .bs-tooltip-auto {
         .tooltip-arrow::before {
-            border-color: var(--adjusted-bg-dark) !important;
+            background-color: var(--adjusted-bg-dark) !important;
+            /* border-color: var(--adjusted-bg-dark) !important; */
         }
         
         .tooltip-inner {
