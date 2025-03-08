@@ -61,15 +61,6 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         div.style.fontSize = `${iconSize}px`
         div.style.color = fillColor === true ? hslaColor?.toString({a:iconOpacity}) || color : fillColor || 'transparent'
         div.style.WebkitTextStroke = `${iconStroke}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
-
-        // .text-shadow {
-        //     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* horizontal offset, vertical offset, blur radius, color */
-        //   }
-          
-        //   .neon-text {
-        //        text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff;
-        //   }
-
         div.style.textShadow = iconEffect === 'shadow' ?
         `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : iconEffect === 'glow' ?
         `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''
