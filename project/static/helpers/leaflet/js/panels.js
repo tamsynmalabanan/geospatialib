@@ -17,7 +17,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query point coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                queryGroup.addLayer(L.geoJSON(feature))
+                queryGroup.addLayer(getLeafletGeoJSONLayer({feature}))
                 results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
             },
         },
