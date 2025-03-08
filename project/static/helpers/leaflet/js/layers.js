@@ -67,11 +67,12 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         //   }
           
         //   .neon-text {
-        //        color: #00ffff;
         //        text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff;
         //   }
 
-        // div.style.textShadow
+        div.style.textShadow = iconEffect === 'shadow' ?
+        `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/3})}` || 'black' :
+        `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}`
 
         return L.divIcon({
             className: 'bg-transparent',
