@@ -16,7 +16,7 @@ const getDefaultLeafletLayerStyle = (featureType, {
 } = {}) => {
     const hslaColor = manageHSLAColor(color)
 
-    if (featureType.toLowerCase() === 'point') {
+    if (featureType?.toLowerCase() === 'point') {
         const div = document.createElement('div')
         div.className = `h-100 w-100 ${pointClass}`
         div.style.border = `${strokeWidth}px ${strokePattern} ${strokeColor || hslaColor?.toString({l:hslaColor.l/2}) || 'grey'}`
