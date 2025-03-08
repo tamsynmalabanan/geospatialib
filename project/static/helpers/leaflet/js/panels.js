@@ -15,6 +15,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
         iconShadow: true,
+        iconGlow: true,
     }
 
     const queryTools = {
