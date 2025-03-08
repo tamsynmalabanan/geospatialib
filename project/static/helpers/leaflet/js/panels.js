@@ -33,6 +33,9 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
+            mapClickHandler: async (e) => {
+                
+            }
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
