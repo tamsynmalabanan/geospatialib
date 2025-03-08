@@ -5,22 +5,25 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 
 const getDefaultLeafletLayerStyle = (featureType, {
     color = generateRandomColor(),
-    opacity = 1,
+    
     strokeWidth = 1,
     strokePattern = 'solid',
-    strokeColor,
-    pointClass = 'rounded-circle',
-    iconSize = [12, 12],
+    strokeColor = true,
+    strokeOpacity = 1,
+    
     fillColor = true,
     fillOpacity = 0.25,
+    
+    pointClass = 'rounded-circle',
+    iconSize = [12, 12],
 } = {}) => {
     const hslaColor = manageHSLAColor(color)
 
     if (featureType?.toLowerCase() === 'point') {
         const div = document.createElement('div')
         div.className = `h-100 w-100 ${pointClass}`
-        div.style.border = `${strokeWidth}px ${strokePattern} ${strokeColor || hslaColor?.toString({l:hslaColor.l/2}) || 'grey'}`
-        div.style.backgroundColor = hslaColor?.toString({a:fillOpacity}) || color
+        div.style.border = `${strokeWidth}px ${strokePattern} ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
+        div.style.backgroundColor = fillColor === true ? hslaColor?.toString({a:fillOpacity}) || color : fillColor || 'transparent'
         return L.divIcon({
             className: 'bg-transparent',
             iconSize: iconSize,
@@ -28,22 +31,12 @@ const getDefaultLeafletLayerStyle = (featureType, {
         });
     } else {
         const properties = {
-            color: color,
+            color: strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2}) || color : strokeColor || 'transparent',
             weight: strokeWidth,
-            opacity: opacity
+            opacity: strokeOpacity,
         }
-
-        fillColor = fillColor === true ? hslaColor ? hslaColor.toString({
-            l:(hslaColor.l/2*3) > 100 ? 100 : (hslaColor.l/2*3),
-        }) : 'white' : fillColor ? fillColor : null
-        
-        if (fillColor) {
-            properties.fillOpacity = fillOpacity
-            properties.fillColor = fillColor
-        } else {
-            properties.fillOpacity = 0
-        }
-
+        properties.fillOpacity = fillColor ? fillOpacity : 0
+        properties.fillColor = fillColor === true ? color : fillColor || 'transparent'
         return properties
     }
 }
