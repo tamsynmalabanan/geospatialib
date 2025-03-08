@@ -14,6 +14,7 @@ const titleToTooltip = (element, altTitle) => {
     }
  
     console.log(tooltip)
+    console.log(tooltip._isShown())
 }
 
 document.addEventListener('DOMContentLoaded', () => {
