@@ -15,7 +15,8 @@ const getLeafletStyleParams = ({
     
     iconClass='bi bi-circle-fill',
     iconOpacity=1,
-    iconEffect=false, // 'shadow', 'glow'
+    iconShadow=false,
+    iconGlow=false,
     iconSize=10,
     iconStroke=1,
 } = {}) => {
@@ -30,7 +31,8 @@ const getLeafletStyleParams = ({
         iconClass,
         iconSize,
         iconOpacity,
-        iconEffect,
+        iconShadow,
+        iconGlow,
         iconStroke,
     }    
 }
@@ -48,7 +50,8 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         iconClass,
         iconSize,
         iconOpacity,
-        iconEffect,
+        iconShadow,
+        iconGlow,
         iconStroke,
 
     } = styleParams
@@ -61,9 +64,10 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         div.style.fontSize = `${iconSize}px`
         div.style.color = fillColor === true ? hslaColor?.toString({a:iconOpacity}) || color : fillColor || 'transparent'
         div.style.WebkitTextStroke = `${iconStroke}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
-        div.style.textShadow = iconEffect === 'shadow' ?
-        `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : iconEffect === 'glow' ?
-        `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''
+        div.style.textShadow = removeWhitespace(`
+            ${iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : ''}
+            ${iconGlow ? `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''}
+        `)
 
         return L.divIcon({
             className: 'bg-transparent',
