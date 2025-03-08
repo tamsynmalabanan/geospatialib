@@ -13,7 +13,7 @@ const getLeafletStyleParams = ({
     fillColor=true,
     fillOpacity=0.25,
     
-    pointIcon='bi bi-geo-alt-fill',
+    iconClass='bi bi-geo-alt-fill',
     iconSize=[12, 12],
 } = {}) => {
     return  {
@@ -24,7 +24,7 @@ const getLeafletStyleParams = ({
         strokeOpacity,
         fillColor,
         fillOpacity,
-        pointIcon,
+        iconClass,
         iconSize,
     }    
 }
@@ -39,7 +39,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         strokeOpacity,
         fillColor,
         fillOpacity,
-        pointIcon,
+        iconClass,
         iconSize,
     } = styleParams
 
@@ -47,9 +47,9 @@ const getLeafletLayerStyle = (featureType, options={}) => {
 
     if (featureType?.toLowerCase() === 'point') {
         const div = document.createElement('div')
-        div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${pointIcon}`
-        div.style.border = `${strokeWidth}px ${strokePattern} ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
+        div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.color = fillColor === true ? hslaColor?.toString({a:fillOpacity}) || color : fillColor || 'transparent'
+        // div.style.border = `${strokeWidth}px ${strokePattern} ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
         // div.style.backgroundColor = fillColor === true ? hslaColor?.toString({a:fillOpacity}) || color : fillColor || 'transparent'
         return L.divIcon({
             className: 'bg-transparent',
