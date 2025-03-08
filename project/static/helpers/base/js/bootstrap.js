@@ -5,7 +5,13 @@ const titleToTooltip = (element, altTitle) => {
     element.removeAttribute('title')
     element.setAttribute('data-bs-toggle', 'tooltip')
     element.setAttribute('data-bs-title', title)
-    new bootstrap.Tooltip(element)
+    
+    const existingTooltip = bootstrap.Tooltip.getInstance(element)
+    if (existingTooltip) {
+        console.log(existingTooltip)
+    } else {
+        new bootstrap.Tooltip(element)
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
