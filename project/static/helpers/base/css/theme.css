@@ -24,10 +24,12 @@
         background-color:hsla(210, 14%, 89%, 0.5) !important;
     } 
 
-    .bs-tooltip-auto,
-    .bs-tooltip-auto .tooltip-inner {
-        color:  #fff !important;
-        background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
-        border-radius: var(--bs-border-radius);
+    .bs-tooltip-auto {
+        .tooltip-arrow,
+        .tooltip-inner {
+            color:  #fff !important;
+            background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+            border-radius: var(--bs-border-radius);
+        }
     }
 }
