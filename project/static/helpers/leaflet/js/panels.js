@@ -14,8 +14,6 @@ const handleLeafletQueryPanel = (map, parent) => {
     const defaultStyle = {
         color: 'hsla(111, 100%, 54%, 1)',
         fillOpacity: 0.5,
-        pointClass: 'bi bi-geo-alt-fill',
-        iconSize: [20, 20]
     }
 
     const queryTools = {
