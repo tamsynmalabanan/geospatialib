@@ -15,8 +15,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         color: 'hsla(111, 100%, 54%, 1)',
         iconClass: 'bi bi-circle-fill',
         iconStroke: false,
-        // iconEffect: 'glow',
-        // iconSize: '10px'
+        iconEffect: 'glow',
+        iconSize: '10px'
     }
 
     const queryTools = {
@@ -25,10 +25,11 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query point coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                queryGroup.addLayer(getLeafletGeoJSONLayer({
-                    geojson:feature, 
-                    altStyleParams: defaultStyle,
-                }))
+                queryGroup.addLayer(L.geoJSON(feature))
+                // queryGroup.addLayer(getLeafletGeoJSONLayer({
+                //     geojson:feature, 
+                //     altStyleParams: defaultStyle,
+                // }))
                 results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
             },
         },
