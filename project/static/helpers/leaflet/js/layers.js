@@ -5,8 +5,7 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 
 const getDefaultLeafletLayerStyle = (featureType, {
     color = generateRandomColor(),
-    strokeWidth = weight || 1,
-    weight = strokeWidth || 1,
+    strokeWidth = 1,
     pointClass = 'rounded-circle',
     strokeColor,
     strokePattern = 'solid',
