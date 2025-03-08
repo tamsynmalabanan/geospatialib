@@ -1,38 +1,32 @@
 const fetchNominatim = async (latlng, zoom, {
-
+    abortBtn,
 } = {}) => {
-    const url = 'https://nominatim.openstreetmap.org/reverse?'
-    return fetchDataWithTimeout(pushQueryParamsToURLString(url, {
-        lat: event.latlng.lat,
-        lon: event.latlng.lng,
-        zoom: getZoom(),
+    const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
+        lat: latlng.lat,
+        lon: latlng.lng,
+        zoom: zoom,
         format: 'geojson',
         polygon_geojson: 1,
         polygon_threshold: 0,
-    }), {
-        abortBtn:options.abortBtn,
-        controller:options.controller,
+    })
+
+    return fetchTimeout(url, {
+        abortBtn,
+        controller,
     }).then(response => {
-        if (response.ok || response.status === 200) {
-            try {
-                return parseChunkedResponseToJSON(response)
-            } catch {
-                throw new Error('Failed to parse JSON.')
-            }
-        } else {
-            throw new Error('Response not ok')
+        if (!response.ok && (response.status < 200 || response.status > 300)) {
+            throw new Error('Response not ok.')
+        }
+
+        try {
+            return parseJSONResponse(response)
+        } catch {
+            throw new Error('Failed to parse JSON.')
         }
     }).then(data => {
-        if (data && data.features && data.features.length > 0) {
-            const features = data.features
-            features.forEach(feature => {
-                feature.properties.osm_api = url
-            })
-            return data
-        } else {
-            throw new Error('No features returned.')
-        }
+        if (data) data.source = url
+        return data
     }).catch(error => {
-        return
+        console.log(error)
     });
 }

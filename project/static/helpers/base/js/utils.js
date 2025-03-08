@@ -93,3 +93,11 @@ const manageHSLAColor = (color) => {
     }
     return obj
 }
+
+const pushURLParams = (url, params) => {
+    const urlObj = new URL(url)
+    for (const key in params) {
+        urlObj.searchParams.set(key, params[key])
+    }
+    return urlObj.toString()
+}

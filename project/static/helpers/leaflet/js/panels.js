@@ -34,7 +34,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
             mapClickHandler: async (e) => {
-                
+                const geojsons = await fetchNominatim(e.latlng, map.getZoom(), {
+                    abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
+                })
+                console.log(geojsons)
             }
         },
         osmView: {

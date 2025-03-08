@@ -51,3 +51,45 @@ const fetchTimeout = async (url, {
     fetchTimeoutMap.set(mapKey, fetchPromise)
     return fetchPromise
 }
+
+const parseJSONResponseMap = new Map()
+const parseJSONResponse = async (response, {
+    timeoutMs = 30000,
+} = {}) => {
+    if (parseJSONResponseMap.has(response)) {
+        return await parseJSONResponseMap.get(response)
+    }
+
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder('utf-8')
+    let result = ''
+  
+    const timeoutPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error('Parsing timed out.'))
+        }, timeoutMs)
+    });
+  
+    const parsePromise = (async () => {
+        try {
+            while (true) {
+                const { done, value } = await Promise.race([reader.read(), timeoutPromise])
+                if (done) break
+                result += decoder.decode(value, { stream: true })
+            }
+            return JSON.parse(result)
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                return
+            } else {
+                throw error
+            }
+        } finally {
+            reader.releaseLock()
+            setTimeout(() => parseJSONResponseMap.delete(response), 1000)
+        }
+    })()
+
+    parseJSONResponseMap.set(response, parsePromise)
+    return parsePromise
+}
