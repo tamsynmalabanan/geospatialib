@@ -69,3 +69,11 @@ const generateRandomString = (length=16) => {
 
     return result
 }
+
+const generateRandomColor = () => `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
+
+const parseNumberFromString = (string) => {
+    const regex = /\d+(\.\d+)?/;
+    const match = string.match(regex);
+    return parsedNumber = parseFloat(match[0]);
+}

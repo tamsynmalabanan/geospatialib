@@ -24,8 +24,9 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     
     const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
     copyBtn.style.cursor = 'pointer'
+    titleToTooltip(copyBtn, 'Copy')
     copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)    
+        navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)
     })
 
     container.appendChild(copyBtn)
