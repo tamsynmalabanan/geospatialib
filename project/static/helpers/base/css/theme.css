@@ -28,6 +28,18 @@
         border-top-color: var(--adjusted-bg-dark) !important;
     }
 
+    .bs-tooltip-auto[data-popper-placement="bottom"] .tooltip-arrow::before {
+        border-bottom-color: var(--adjusted-bg-dark) !important;
+    }
+
+    .bs-tooltip-auto[data-popper-placement="left"] .tooltip-arrow::before {
+        border-left-color: var(--adjusted-bg-dark) !important;
+    }
+
+    .bs-tooltip-auto[data-popper-placement="right"] .tooltip-arrow::before {
+        border-right-color: var(--adjusted-bg-dark) !important;
+    }
+
     .bs-tooltip-auto .tooltip-inner {
         color:  #fff !important;
         background-color: var(--adjusted-bg-dark) !important;
