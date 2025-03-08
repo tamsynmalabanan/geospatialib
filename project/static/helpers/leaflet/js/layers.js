@@ -16,7 +16,7 @@ const getLeafletStyleParams = ({
     iconClass='bi bi-geo-alt-fill',
     iconOpacity=1,
     iconEffect=false, // 'shadow', 'glow'
-    iconSize='20px',
+    iconSize='10px',
     iconStroke=1,
 } = {}) => {
     return  {
