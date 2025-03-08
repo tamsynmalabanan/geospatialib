@@ -15,9 +15,9 @@ const getLeafletStyleParams = ({
     
     iconClass='bi bi-geo-alt-fill',
     iconOpacity=1,
-    iconShadow=false,
-    iconGlow=false,
+    iconEffect=false, // 'shadow', 'glow'
     iconSize='20px',
+    iconStroke=1,
 } = {}) => {
     return  {
         color,
@@ -30,8 +30,8 @@ const getLeafletStyleParams = ({
         iconClass,
         iconSize,
         iconOpacity,
-        iconGlow,
-        iconShadow,
+        iconEffect,
+        iconStroke,
     }    
 }
 
@@ -48,8 +48,9 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         iconClass,
         iconSize,
         iconOpacity,
-        iconGlow,
-        iconShadow,
+        iconEffect,
+        iconStroke,
+
     } = styleParams
 
     const hslaColor = manageHSLAColor(color)
@@ -59,8 +60,19 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.fontSize = iconSize
         div.style.color = fillColor === true ? hslaColor?.toString({a:iconOpacity}) || color : fillColor || 'transparent'
-        div.style.WebkitTextStroke = `${strokeWidth}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
-        
+        div.style.WebkitTextStroke = iconStroke ? `${iconStroke}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}` : ''
+
+        // .text-shadow {
+        //     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* horizontal offset, vertical offset, blur radius, color */
+        //   }
+          
+        //   .neon-text {
+        //        color: #00ffff;
+        //        text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff;
+        //   }
+
+        // div.style.textShadow
+
         return L.divIcon({
             className: 'bg-transparent',
             html: div.outerHTML,
