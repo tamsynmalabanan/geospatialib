@@ -26,7 +26,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const lngSpan = document.createElement('span')
     lngSpan.innerText = coordsFormat === 'DD' ? lngDD : lngDMS
     
-    const copyBtn = createIcon({className:'bi bi-clipboard me-1', peNone: false})
+    const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
     copyBtn.style.cursor = 'pointer'
     titleToTooltip(copyBtn, 'Copy to clipboard')
     copyBtn.addEventListener('click', () => {
