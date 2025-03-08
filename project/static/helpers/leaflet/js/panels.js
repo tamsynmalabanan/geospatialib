@@ -11,10 +11,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
-    const defaultStyle = {
-        color: 'hsla(111, 100%, 54%, 1)',
-        fillOpacity: 0.5,
-    }
+    const color = 'hsla(111, 100%, 54%, 1)'
 
     const queryTools = {
         locationCoords: {
@@ -24,7 +21,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
                 queryGroup.addLayer(getLeafletGeoJSONLayer({
                     geojson:feature, 
-                    altStyleParams: defaultStyle,
+                    altStyleParams: {color},
                 }))
                 results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
             },

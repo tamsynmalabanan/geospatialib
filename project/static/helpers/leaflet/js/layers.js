@@ -52,7 +52,6 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.color = fillColor === true ? hslaColor?.toString({a:fillOpacity}) || color : fillColor || 'transparent'
         div.style.WebkitTextStroke = `${strokeWidth}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
-        // div.style.backgroundColor = fillColor === true ? hslaColor?.toString({a:fillOpacity}) || color : fillColor || 'transparent'
         
         return L.divIcon({
             className: 'bg-transparent',
