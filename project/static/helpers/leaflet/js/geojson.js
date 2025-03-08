@@ -1,5 +1,6 @@
 const getLeafletGeoJSONLayer = ({
     pane,
+    geojson,
 } = {}) => {
     const styleParams = getLeafletStyleParams()
     
@@ -15,7 +16,7 @@ const getLeafletGeoJSONLayer = ({
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
     }
 
-    options.geojson && geojsonLayer.addData(options.geojson)
+    if (geojson) geojsonLayer.addData(geojson)
 
     return geojsonLayer
 }
