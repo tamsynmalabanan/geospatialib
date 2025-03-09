@@ -1,17 +1,17 @@
 const getLeafletGeoJSONLayer = ({
     pane,
     geojson,
-    altStyleParams,
+    styleParams,
 } = {}) => {
-    const styleParams = getLeafletStyleParams(altStyleParams)
+    const options = getLeafletStyleParams(styleParams)
     
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         style: (feature) => {
-            return getLeafletLayerStyle(feature.geometry.type, styleParams)
+            return getLeafletLayerStyle(feature.geometry.type, options)
         },
         pointToLayer: (feature, latlng) => {
             return L.marker(latlng, {
-                icon: getLeafletLayerStyle('point', styleParams)
+                icon: getLeafletLayerStyle('point', options)
             })
         }
     })

@@ -11,7 +11,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
-    const defaultStyle = {
+    const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
         iconGlow: true,
@@ -25,9 +25,11 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
                 queryGroup.addLayer(getLeafletGeoJSONLayer({
                     geojson: feature, 
-                    altStyleParams: defaultStyle,
+                    styleParams: queryStyleParams,
                 }))
-                results.appendChild(createPointCoordinatesTable(feature, {precision:6}))
+
+                const content = createPointCoordinatesTable(feature, {precision:6})
+                results.appendChild(content)
             },
         },
         osmPoint: {
@@ -37,7 +39,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const geojsons = await fetchNominatim(e.latlng, map.getZoom(), {
                     abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
                 })
-                console.log(geojsons)
+                return [geojsons]
             }
         },
         osmView: {
