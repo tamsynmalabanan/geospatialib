@@ -18,12 +18,17 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const fetchGeoJSONs = async (fetchers) => {
-        const geojsons = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
+        const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
             ...fetcher.params, {
-            abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
-        })))
+                abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
+            }
+        )))
 
-        console.log(geojsons)
+        const geojsons = {}
+        for (let i = 0; i < fetchedGeoJSONs.length; i++) {
+            geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+        }
+
         return geojsons
     }
     
