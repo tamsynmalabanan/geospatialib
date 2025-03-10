@@ -29,6 +29,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }))
 
                 const content = createPointCoordinatesTable(feature, {precision:6})
+                results.classList.remove('d-none')
                 results.appendChild(content)
             },
         },
@@ -78,11 +79,13 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        queryGroup.clearLayers()
-        results.innerHTML = ''
-        results.classList.add('d-none')
-        
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
+        const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
+        
+        results.classList.add('d-none')
+        results.innerHTML = ''
+        queryGroup.clearLayers()
+        
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
@@ -93,7 +96,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
-            toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+            clearBtn.disabled = false
         }
     }
 
