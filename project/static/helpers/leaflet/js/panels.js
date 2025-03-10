@@ -18,15 +18,14 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const fetchGeoJSONs = async (fetchers) => {
-        const fetchedGeoJSONs = fetchers
-        // const geojsons = {
-        //     'OpenStreetMap via Nominatim': await fetchNominatim(e.latlng, map.getZoom(), {
-        //         abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
-        //     })
-        // }
+        const geojsons = await Promise.all(Object.values(fetchers).map(fetcher => {
+            fetcher.handler(...fetcher.params, {
+                abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
+            })
+        }))
 
-        console.log(fetchedGeoJSONs)
-        return fetchedGeoJSONs
+        console.log(geojsons)
+        return geojsons
     }
     
     const queryTools = {
