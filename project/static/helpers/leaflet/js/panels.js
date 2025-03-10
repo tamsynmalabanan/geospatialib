@@ -90,7 +90,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
-        clearBtn.disabled = true
         
         cancelBtn.disabled = false
         const geojsons = await handler(e)
@@ -104,6 +103,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+        } else {
+            clearBtn.disabled = true
         }
     }
 
