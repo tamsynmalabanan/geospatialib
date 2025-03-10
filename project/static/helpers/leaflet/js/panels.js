@@ -11,6 +11,17 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
+    const resetResults = () => {
+        results.classList.add('d-none')
+        results.innerHTML = ''
+        queryGroup.clearLayers()
+    }
+
+    const updateResults = (content) => {
+        results.classList.remove('d-none')
+        results.appendChild(content)
+    }
+
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
@@ -23,14 +34,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query point coordinates',
             mapClickHandler: async (e) => {
                 const feature = turf.point([e.latlng.lng, e.latlng.lat])
-                queryGroup.addLayer(getLeafletGeoJSONLayer({
+                
+                const layer = getLeafletGeoJSONLayer({
                     geojson: feature, 
                     styleParams: queryStyleParams,
-                }))
+                })
+                queryGroup.addLayer(layer)
 
                 const content = createPointCoordinatesTable(feature, {precision:6})
-                results.classList.remove('d-none')
-                results.appendChild(content)
+                updateResults(content)
             },
         },
         osmPoint: {
@@ -63,8 +75,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Cancel ongoing query',
             disabled: true,
             btnclickHandler: async (e) => {
-                e.target.click()
-                toolbar.querySelector(`#${toolbar.id}-cancel`).disabled = true
+                const cancelBtn = e.target
+                cancelBtn.click()
+                cancelBtn.disabled = true
             }
         },
         clear: {
@@ -72,31 +85,28 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Clear query results',
             disabled: true,
             btnclickHandler: async (e) => {
-                e.target.click()
-                toolbar.querySelector(`#${toolbar.id}-clear`).disabled = true
+                const clearBtn = e.target
+                clearBtn.click()
+                clearBtn.disabled = true
             }
         },
     }
 
     const queryHandler = async (e, handler) => {
-        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
-        const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
+        resetResults()
         
-        results.classList.add('d-none')
-        results.innerHTML = ''
-        queryGroup.clearLayers()
-
+        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g.features?.length)) {
-            results.classList.remove('d-none')
-            results.appendChild(createGeoJSONChecklist(geojsons))
+            const content = createGeoJSONChecklist(geojsons)
+            updateResults(content)
         }
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
-            clearBtn.disabled = false
+            toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
         }
     }
 
