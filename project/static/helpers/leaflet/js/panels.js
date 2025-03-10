@@ -118,7 +118,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
-            console.log('here')
             toolbar.querySelector(`#${toolbarId}-clear`).disabled = false
         }
     }
@@ -144,9 +143,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     const btn = event.target
                     if (Array('clear', 'cancel').includes(tool)) {
-                        btn.disabled = true
-                        resetResults()
-                        return
+                        return resetResults()
                     } else {
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => btn.classList.toggle(className))
