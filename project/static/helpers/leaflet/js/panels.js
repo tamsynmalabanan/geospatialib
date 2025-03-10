@@ -91,6 +91,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnclickHandler: async (e) => {
                 const clearBtn = e.target
+                console.log('here')
                 clearBtn.click()
                 clearBtn.disabled = true
             }
