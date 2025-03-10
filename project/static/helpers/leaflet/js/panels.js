@@ -108,6 +108,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         const tools = Object.keys(queryTools)
         // cancelBtn.disabled = false
         tools.forEach(tool => {
+            console.log(toolbar.querySelector(`#${toolbarId}-${tool}`))
             toolbar.querySelector(`#${toolbarId}-${tool}`).disabled = tool === 'cancel' ? false : true
         })
         const geojsons = await handler(e)
