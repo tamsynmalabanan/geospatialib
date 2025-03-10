@@ -101,7 +101,9 @@ const handleLeafletQueryPanel = (map, parent) => {
         queryGroup.clearLayers()
         
         cancelBtn.disabled = false
+        console.log('here1')
         const geojsons = await handler(e)
+        console.log('here2')
         cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
