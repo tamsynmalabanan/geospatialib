@@ -74,7 +74,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             btnclickHandler: async (e) => {
-                console.log(e.target)
                 e.target.click()
             }
         },
@@ -100,7 +99,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const handleBtns = (ongoingQuery) => {
         Object.keys(queryTools).forEach(tool => {
-            const btn = tool !== 'clear' ? toolbar.querySelector(`#${toolbarId}-${tool}`) : null
+            const btn = !Array('clear', map._queryMode).includes(tool) ? toolbar.querySelector(`#${toolbarId}-${tool}`) : null
             if (btn) btn.disabled = tool === 'cancel' ? ongoingQuery ? false : true : ongoingQuery ? true : false
         })
     }
@@ -133,7 +132,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                 id: `${toolbarId}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clichHandler: async (event) => {
-                    console.log(event)
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
@@ -147,7 +145,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (Array('clear', 'cancel').includes(tool)) {
                         return resetResults()
                     } else {
-                        console.log(btn)
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => btn.classList.toggle(className))
                     }
