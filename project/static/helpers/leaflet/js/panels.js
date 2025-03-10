@@ -99,7 +99,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const handleBtns = (ongoingQuery) => {
         Object.keys(queryTools).forEach(tool => {
-            const btn = toolbar.querySelector(`#${toolbarId}-${tool}`)
+            const btn = tool !== 'clear' ? toolbar.querySelector(`#${toolbarId}-${tool}`) : null
             if (btn) btn.disabled = tool === 'cancel' ? ongoingQuery ? false : true : ongoingQuery ? true : false
         })
     }
@@ -118,7 +118,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
-            // toolbar.querySelector(`#${toolbarId}-clear`).disabled = false
+            toolbar.querySelector(`#${toolbarId}-clear`).disabled = false
         }
     }
 
