@@ -145,7 +145,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (Array('clear', 'cancel').includes(tool)) {
                         return resetResults()
                     } else {
-                        console.log('here')
+                        console.log(tool)
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => btn.classList.toggle(className))
                     }
