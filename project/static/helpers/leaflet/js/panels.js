@@ -12,6 +12,16 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
+    const resetResults = () => {
+        Array('clear', 'cancel').forEach(tool => {
+            toolbar.querySelector(`#${toolbarId}-${tool}`).disabled = true
+        })
+
+        results.classList.add('d-none')
+        results.innerHTML = ''
+        queryGroup.clearLayers()
+    }
+
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
@@ -79,31 +89,19 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-arrow-counterclockwise',
             title: 'Cancel ongoing query',
             disabled: true,
-            btnclickHandler: async (e) => {
-                const cancelBtn = e.target
-                cancelBtn.click()
-                cancelBtn.disabled = true
-            }
         },
         clear: {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
-            btnclickHandler: async (e) => {
-                const clearBtn = e.target
-                clearBtn.click()
-                clearBtn.disabled = true
-            }
         },
     }
 
     const queryHandler = async (e, handler) => {
-        const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
+        resetResults()
+
         const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
-        
-        results.classList.add('d-none')
-        results.innerHTML = ''
-        queryGroup.clearLayers()
+        const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
         
         cancelBtn.disabled = false
         const geojsons = await handler(e)
@@ -117,8 +115,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
             clearBtn.disabled = false
-        } else {
-            clearBtn.disabled = true
         }
     }
 
@@ -142,8 +138,15 @@ const handleLeafletQueryPanel = (map, parent) => {
                     }
                     
                     const btn = event.target
-                    Array(`btn-${getPreferredTheme()}`, 'btn-primary')
-                    .forEach(className => btn.classList.toggle(className))
+                    if (Array('clear', 'cancel').includes(tool)) {
+                        btn.disabled = true
+                        resetResults()
+                        return
+                    } else {
+                        Array(`btn-${getPreferredTheme()}`, 'btn-primary')
+                        .forEach(className => btn.classList.toggle(className))
+                    }
+
                     mapContainer.style.cursor = activate ? 'pointer' : ''
                     map._queryMode = activate ? tool : undefined
                     
