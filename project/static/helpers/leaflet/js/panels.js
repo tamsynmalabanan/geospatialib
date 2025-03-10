@@ -2,8 +2,9 @@ const handleLeafletQueryPanel = (map, parent) => {
     const mapContainer = map.getContainer()
     const queryGroup = map.getLayerGroups().query
     
+    const toolbarId = `${mapContainer.id}-panels-query-toolbar`
     const toolbar = document.createElement('div')
-    toolbar.id = `${mapContainer.id}-panels-query-toolbar`
+    toolbar.id = toolbarId
     toolbar.className = 'd-flex px-3 py-2'
     parent.appendChild(toolbar)
 
@@ -20,7 +21,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const fetchGeoJSONs = async (fetchers) => {
         const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
             ...fetcher.params, {
-                abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
+                abortBtn: toolbar.querySelector(`#${toolbarId}-cancel`)
             }
         )))
 
@@ -97,16 +98,23 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
-        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
+        const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
+        const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
         
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
         
-        cancelBtn.disabled = false
+        const tools = Object.keys(queryTools)
+        // cancelBtn.disabled = false
+        tools.forEach(tool => {
+            toolbar.querySelector(`#${toolbarId}-${tool}`).disabled = tool === 'cancel' ? false : true
+        })
         const geojsons = await handler(e)
-        cancelBtn.disabled = true
+        tools.forEach(tool => {
+            toolbar.querySelector(`#${toolbarId}-${tool}`).disabled = tool === 'cancel' ? false : true
+        })
+        // cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)
@@ -115,7 +123,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
-            toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+            clearBtn.disabled = false
         } else {
             clearBtn.disabled = true
         }
@@ -128,7 +136,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             tag !== 'button' ?
             customCreateElement(tag, data) :
             createButton({...data, ...{
-                id: `${toolbar.id}-${tool}`,
+                id: `${toolbarId}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clichHandler: async (event) => {
                     L.DomEvent.stopPropagation(event);
@@ -137,7 +145,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
                     if (activate && queryMode) {
-                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                        toolbar.querySelector(`#${toolbarId}-${queryMode}`).click()
                     }
                     
                     const btn = event.target
