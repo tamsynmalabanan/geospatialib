@@ -146,6 +146,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         toolbar.querySelector(`#${toolbarId}-${queryMode}`).click()
                     }
                     
+                    console.log(tool)
                     const btn = event.target
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                     .forEach(className => btn.classList.toggle(className))
