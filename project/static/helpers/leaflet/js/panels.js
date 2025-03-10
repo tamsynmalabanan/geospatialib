@@ -110,9 +110,9 @@ const handleLeafletQueryPanel = (map, parent) => {
         const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
         const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
         
-        handleBtns(true)
+        handleBtns(ongoingQuery=true)
         const geojsons = await handler(e)
-        handleBtns(false)
+        handleBtns(ongoingQuery=false)
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)
