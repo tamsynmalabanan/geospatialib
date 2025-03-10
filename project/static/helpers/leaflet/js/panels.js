@@ -97,7 +97,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
-    const disableBtns = (disable=true) => Object.keys(queryTools).forEach(tool => {
+    const disableBtns = (disable) => Object.keys(queryTools).forEach(tool => {
         const btn = toolbar.querySelector(`#${toolbarId}-${tool}`)
         if (btn) btn.disabled = tool === 'cancel' ? disable ? false : true : disable ? true : false
     })
@@ -109,11 +109,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         results.innerHTML = ''
         queryGroup.clearLayers()
         
-        Object.keys(queryTools).forEach(tool => {
-            const btn = toolbar.querySelector(`#${toolbarId}-${tool}`)
-            if (btn) btn.disabled = tool === 'cancel' ? false : true
-        })
-        disableBtns()
+        disableBtns(true)
         const geojsons = await handler(e)
         disableBtns(false)
         
