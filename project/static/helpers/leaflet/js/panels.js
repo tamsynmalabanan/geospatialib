@@ -74,6 +74,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             btnclickHandler: async (e) => {
+                console.log(e.target)
                 e.target.click()
             }
         },
@@ -145,7 +146,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (Array('clear', 'cancel').includes(tool)) {
                         return resetResults()
                     } else {
-                        console.log(tool)
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => btn.classList.toggle(className))
                     }
