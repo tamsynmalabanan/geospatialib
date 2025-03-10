@@ -12,10 +12,11 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const [lng, lat] = ptFeature.geometry.coordinates
     
     const latDir = lat >= 0 ? 'N' : 'S'
-    const lngDir = lng >= 0 ? 'E' : 'W'
     const latDD = `${Math.abs(lat).toFixed(precision)} ${latDir}`
-    const lngDD = `${Math.abs(lng).toFixed(precision)} ${lngDir}`
     const latDMS = `${ddToDMS(Math.abs(lat)).toString()} ${latDir}`
+    
+    const lngDir = lng >= 0 ? 'E' : 'W'
+    const lngDD = `${Math.abs(lng).toFixed(precision)} ${lngDir}`
     const lngDMS = `${ddToDMS(Math.abs(lng)).toString()} ${lngDir}`
 
     const coordsFormat = getCookie('coordsFormat') || 'DD'
@@ -26,14 +27,17 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     const lngSpan = document.createElement('span')
     lngSpan.innerText = coordsFormat === 'DD' ? lngDD : lngDMS
     
+    
     const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
     copyBtn.style.cursor = 'pointer'
-    titleToTooltip(copyBtn, 'Copy to clipboard')
+
+    const setCopyBtnTooltip = (copied=false) => titleToTooltip(copyBtn, `${copied ? 'Copied' : 'Copy'} to clipboard`)
     copyBtn.addEventListener('click', () => {
+        setCopyBtnTooltip(true)
         navigator.clipboard.writeText(`${latSpan.innerText} ${lngSpan.innerText}`)
-        titleToTooltip(copyBtn, 'Copied to clipboard')
     })
-    copyBtn.addEventListener('mouseout', () => titleToTooltip(copyBtn, 'Copy to clipboard'))
+    copyBtn.addEventListener('mouseout', setCopyBtnTooltip)
+    setCopyBtnTooltip()
 
     container.appendChild(copyBtn)
     container.appendChild(latSpan)

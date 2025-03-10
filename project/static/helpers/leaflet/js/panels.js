@@ -85,7 +85,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
-        
+
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
