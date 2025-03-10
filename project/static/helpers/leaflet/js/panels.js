@@ -91,28 +91,23 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnclickHandler: async (e) => {
                 const clearBtn = e.target
-                console.log('here')
                 clearBtn.click()
                 clearBtn.disabled = true
             }
         },
     }
 
-    const disableBtns = (disable) => Object.keys(queryTools).forEach(tool => {
-        const btn = toolbar.querySelector(`#${toolbarId}-${tool}`)
-        if (btn) btn.disabled = tool === 'cancel' ? disable ? false : true : disable ? true : false
-    })
-
     const queryHandler = async (e, handler) => {
         const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
+        const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
         
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
         
-        disableBtns(true)
+        cancelBtn.disabled = false
         const geojsons = await handler(e)
-        disableBtns(false)
+        cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)
@@ -122,7 +117,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
             clearBtn.disabled = false
-        } else if (e.target !== clearBtn) {
+        } else {
             clearBtn.disabled = true
         }
     }
@@ -146,7 +141,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                         toolbar.querySelector(`#${toolbarId}-${queryMode}`).click()
                     }
                     
-                    console.log(tool)
                     const btn = event.target
                     Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                     .forEach(className => btn.classList.toggle(className))
