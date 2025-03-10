@@ -133,6 +133,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 id: `${toolbarId}-${tool}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clichHandler: async (event) => {
+                    console.log(event)
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
