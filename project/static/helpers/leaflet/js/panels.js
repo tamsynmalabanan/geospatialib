@@ -104,7 +104,6 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const queryHandler = async (e, handler) => {
         const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
-        const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
         
         results.classList.add('d-none')
         results.innerHTML = ''
@@ -126,7 +125,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
             clearBtn.disabled = false
-        } else {
+        } else if (e.target !== clearBtn) {
             clearBtn.disabled = true
         }
     }
