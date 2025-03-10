@@ -118,7 +118,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
-            toolbar.querySelector(`#${toolbarId}-clear`).disabled = false
+            // toolbar.querySelector(`#${toolbarId}-clear`).disabled = false
         }
     }
 
