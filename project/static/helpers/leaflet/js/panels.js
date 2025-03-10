@@ -18,11 +18,10 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const fetchGeoJSONs = async (fetchers) => {
-        const geojsons = await Promise.all(Object.values(fetchers).map(fetcher => {
-            fetcher.handler(...fetcher.params, {
-                abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
-            })
-        }))
+        const geojsons = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
+            ...fetcher.params, {
+            abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
+        })))
 
         console.log(geojsons)
         return geojsons
@@ -101,9 +100,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         queryGroup.clearLayers()
         
         cancelBtn.disabled = false
-        console.log('here1')
         const geojsons = await handler(e)
-        console.log('here2')
         cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
