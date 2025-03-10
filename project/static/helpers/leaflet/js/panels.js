@@ -16,6 +16,18 @@ const handleLeafletQueryPanel = (map, parent) => {
         iconStroke: 0,
         iconGlow: true,
     }
+
+    const fetchGeoJSONs = async (fetchers) => {
+        const fetchedGeoJSONs = fetchers
+        // const geojsons = {
+        //     'OpenStreetMap via Nominatim': await fetchNominatim(e.latlng, map.getZoom(), {
+        //         abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
+        //     })
+        // }
+
+        console.log(fetchedGeoJSONs)
+        return fetchedGeoJSONs
+    }
     
     const queryTools = {
         locationCoords: {
@@ -37,14 +49,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
-            mapClickHandler: async (e) => {
-                const geojsons = {
-                    'OpenStreetMap via Nominatim': await fetchNominatim(e.latlng, map.getZoom(), {
-                        abortBtn: toolbar.querySelector(`#${toolbar.id}-cancel`)
-                    })
+            mapClickHandler: async (e) => await fetchGeoJSONs({
+                'OpenStreetMap via Nominatim': {
+                    handler: fetchNominatim,
+                    params: [e.latlng, map.getZoom()],
                 }
-                return geojsons
-            }
+            })
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
