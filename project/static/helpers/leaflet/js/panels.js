@@ -22,8 +22,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query point coordinates',
             mapClickHandler: async (e) => {
-                console.log(e.latlng)
-                const feature = turf.point([e.latlng.lng, e.latlng.lat])
+                const feature = turf.point(Object.values(e.latlng).reverse())
                 
                 const layer = getLeafletGeoJSONLayer({
                     geojson: feature, 
