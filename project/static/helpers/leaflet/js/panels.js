@@ -107,9 +107,6 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryHandler = async (e, handler) => {
         resetResults()
 
-        const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
-        const clearBtn = toolbar.querySelector(`#${toolbarId}-clear`)
-        
         handleBtns(ongoingQuery=true)
         const geojsons = await handler(e)
         handleBtns(ongoingQuery=false)
@@ -121,7 +118,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
-            clearBtn.disabled = false
+            console.log('here')
+            toolbar.querySelector(`#${toolbarId}-clear`).disabled = false
         }
     }
 
