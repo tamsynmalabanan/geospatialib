@@ -11,23 +11,12 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
-    const resetResults = () => {
-        results.classList.add('d-none')
-        results.innerHTML = ''
-        queryGroup.clearLayers()
-    }
-
-    const updateResults = (content) => {
-        results.classList.remove('d-none')
-        results.appendChild(content)
-    }
-
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
         iconGlow: true,
     }
-
+    
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
@@ -40,9 +29,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     styleParams: queryStyleParams,
                 })
                 queryGroup.addLayer(layer)
-
+                
                 const content = createPointCoordinatesTable(feature, {precision:6})
-                updateResults(content)
+                results.appendChild(content)
             },
         },
         osmPoint: {
@@ -95,19 +84,25 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        resetResults()
-        
+        const clearBtn = toolbar.querySelector(`#${toolbar.id}-clear`)
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
+        
+        results.classList.add('d-none')
+        results.innerHTML = ''
+        queryGroup.clearLayers()
+        clearBtn.disabled = true
+        
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)
-            updateResults(content)
+            results.appendChild(content)
         }
         
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
+            results.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
         }
     }
