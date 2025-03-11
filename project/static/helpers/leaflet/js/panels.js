@@ -78,7 +78,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     handler: fetchOverpassAroundPt,
                     params: [
                         e.latlng,
-                        getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
+                        (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
                     ],
                 },
             }, {abortBtns: getAbortBtns()})
