@@ -86,6 +86,11 @@ const overpassToGeoJSON = (data, {
         const id = element.id
         const type = element.type
         const tags = element.tags || {}
+        console.log(tags)
+        console.log({...tags, ...{
+            osm_id: id,
+            osm_type: type,
+        }})
 
         const feature = turf.feature(properties={...tags, ...{
             osm_id: id,
