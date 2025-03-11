@@ -67,9 +67,9 @@ const fetchOverpassAroundPt = async (latlng, buffer, {
     }).then(data => {
         if (data) data.source = url
         return data
-        return turf.featureCollection(
-            overpassOSMDataToGeoJSON(data, {maximum:options.maximum})
-        )
+        // return turf.featureCollection(
+        //     overpassOSMDataToGeoJSON(data, {maximum:options.maximum})
+        // )
     }).catch(error => {
         console.log(error)
     })

@@ -73,7 +73,14 @@ const handleLeafletQueryPanel = (map, parent) => {
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
                     params: [e.latlng, map.getZoom()],
-                }
+                },
+                'OpenStreetMap via Overpass': {
+                    handler: fetchOverpassAroundPt,
+                    params: [
+                        e.latlng,
+                        getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
+                    ],
+                },
             }, {abortBtns: getAbortBtns()})
         },
         osmView: {
