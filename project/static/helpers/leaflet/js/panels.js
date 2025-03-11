@@ -115,7 +115,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     results.innerHTML = ''
                     queryGroup.clearLayers()
             
-                    for (const btnName in Array('clear', 'cancel')) {
+                    for (const btnName of Array('clear', 'cancel')) {
                         toolbar.querySelector(`#${toolbar.id}-${btnName}`).disabled = true
                         if (btnName === tool) return
                     }
