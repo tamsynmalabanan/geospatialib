@@ -31,8 +31,6 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        resetResults()
-
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
         const geojsons = await handler(e)
@@ -123,6 +121,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
+                    resetResults()
+
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
                     if (activate && queryMode) {
@@ -131,7 +131,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     const btn = event.target
                     if (Array('clear', 'cancel').includes(tool)) {
-                        return resetResults()
+                        return
                     } else {
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => btn.classList.toggle(className))
