@@ -64,8 +64,8 @@ const fetchOverpassAroundPt = async (latlng, buffer, {
         } catch {
             throw new Error('Failed to parse JSON.')
         }    
-    }).then(data => {
-        if (data) return overpassToGeoJSON(
+    }).then(async data => {
+        if (data) return await overpassToGeoJSON(
             data.elements.filter(element => element.tags), {
             properties: {
                 source: url
@@ -76,7 +76,7 @@ const fetchOverpassAroundPt = async (latlng, buffer, {
     })
 }
 
-const overpassToGeoJSON = (data, {
+const overpassToGeoJSON = async (data, {
     properties = {},
 } = {}) => {
     const geojson = turf.featureCollection([])
