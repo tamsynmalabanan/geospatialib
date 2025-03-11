@@ -94,7 +94,6 @@ const overpassToGeoJSON = (data, {
                 osm_type: type,
             }
         })
-        console.log(feature)
 
         if (type === 'relation') {
             const points = []
