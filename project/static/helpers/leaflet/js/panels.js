@@ -55,7 +55,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     styleParams: queryStyleParams,
                 })
                 queryGroup.addLayer(layer)
-                
+
                 const content = createPointCoordinatesTable(feature, {precision:6})
                 results.appendChild(content)
             },
@@ -99,7 +99,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const handleBtns = (ongoingQuery) => {
         Object.keys(queryTools).forEach(tool => {
-            const btn = !Array('clear', map._queryMode).includes(tool) ? toolbar.querySelector(`#${toolbarId}-${tool}`) : null
+            const btn = tool !== 'clear' ? toolbar.querySelector(`#${toolbarId}-${tool}`) : null
             if (btn) btn.disabled = tool === 'cancel' ? ongoingQuery ? false : true : ongoingQuery ? true : false
         })
     }
