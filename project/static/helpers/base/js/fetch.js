@@ -34,7 +34,6 @@ const fetchTimeout = async (url, {
     abortBtns?.forEach(btn => btn.addEventListener('click', abortController))
     
     const timeoutId = setTimeout(abortController, timeoutMs)
-    console.log({...fetchParams, ...{signal: controller.signal}})
     const fetchPromise = fetch(url.replace('http:', 'https:'), {...fetchParams, ...{signal: controller.signal}})
     .then(async response => {
         clearTimeout(timeoutId)
