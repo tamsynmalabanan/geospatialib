@@ -115,7 +115,7 @@ const overpassToGeoJSON = (data, {
             })
 
             if (points.length) {
-                const featureMpt = turf.clone(feature)
+                const featureMpt = Object.assign({}, feature)
                 featureMpt.geometry = {
                     type: 'MultiPoint',
                     coordinates: points.map(point => [parseFloat(point.lon), parseFloat(point.lat)])
@@ -124,7 +124,7 @@ const overpassToGeoJSON = (data, {
             }
 
             if (linestrings.length) {
-                const featureMls = turf.clone(feature)
+                const featureMls = Object.assign({}, feature)
                 featureMls.geometry = {
                     type: 'MultiLineString',
                     coordinates: linestrings.map(line => line.geometry.map(coords => [parseFloat(coords.lon), parseFloat(coords.lat)]))
@@ -146,7 +146,7 @@ const overpassToGeoJSON = (data, {
                     }
                 })
 
-                const featureMp = turf.clone(feature)
+                const featureMp = Object.assign({}, feature)
                 featureMp.geometry = {
                     type: 'MultiPolygon',
                     coordinates: [outerGeoms, innerGeoms]
