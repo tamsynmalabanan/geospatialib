@@ -85,3 +85,20 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
     return container
 }
+
+const fetchGeoJSONs = async (fetchers, {
+    abortBtns,
+} = {}) => {
+    const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
+        ...fetcher.params, {
+            abortBtns
+        }
+    )))
+
+    const geojsons = {}
+    for (let i = 0; i < fetchedGeoJSONs.length; i++) {
+        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+    }
+
+    return geojsons
+}
