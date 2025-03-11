@@ -17,3 +17,15 @@ const enableMapInteractivity = (map) => {
         map._enabledInteractivity = true
     }
 }
+
+const getLeafletMeterScale = (map) => {
+    const scales = map.getContainer().querySelectorAll('.leaflet-control-scale-line')
+    for (const scale of scales) {
+        const text = scale.innerText
+        const lastChar = text?.charAt(text.length - 1)
+        if (lastChar === 'm') {
+            const value = parseInt(text)
+            return text.includes('km') ? (value * 1000) : value
+        }
+    }
+}
