@@ -92,6 +92,8 @@ const overpassToGeoJSON = (data, {
             osm_type: type,
         }})
         
+        console.log(feature)
+
         if (type === 'relation') {
             const points = []
             const polygons = []
@@ -136,7 +138,7 @@ const overpassToGeoJSON = (data, {
             if (polygons.length) {
                 const outerGeoms = []
                 const innerGeoms = []
-                
+
                 polygons.forEach(polygon => {
                     const polygonGeom = polygon.geometry.map(coords => [parseFloat(coords.lon), parseFloat(coords.lat)])
                     if (polygon.role === 'inner') {
