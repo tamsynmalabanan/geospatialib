@@ -12,37 +12,12 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
 
-    const resetResults = () => {
-        Array('clear', 'cancel').forEach(tool => {
-            toolbar.querySelector(`#${toolbarId}-${tool}`).disabled = true
-        })
-
-        results.classList.add('d-none')
-        results.innerHTML = ''
-        queryGroup.clearLayers()
-    }
-
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
         iconStroke: 0,
         iconGlow: true,
     }
 
-    const fetchGeoJSONs = async (fetchers) => {
-        const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
-            ...fetcher.params, {
-                abortBtn: toolbar.querySelector(`#${toolbarId}-cancel`)
-            }
-        )))
-
-        const geojsons = {}
-        for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-            geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
-        }
-
-        return geojsons
-    }
-    
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
@@ -97,19 +72,38 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
-    const handleBtns = (ongoingQuery) => {
-        Object.keys(queryTools).forEach(tool => {
-            const btn = tool !== 'clear' ? toolbar.querySelector(`#${toolbarId}-${tool}`) : null
-            if (btn) btn.disabled = tool === 'cancel' ? ongoingQuery ? false : true : ongoingQuery ? true : false
+    const resetResults = () => {
+        Array('clear', 'cancel').forEach(tool => {
+            toolbar.querySelector(`#${toolbarId}-${tool}`).disabled = true
         })
+
+        results.classList.add('d-none')
+        results.innerHTML = ''
+        queryGroup.clearLayers()
+    }
+
+    const fetchGeoJSONs = async (fetchers) => {
+        const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
+            ...fetcher.params, {
+                abortBtns: toolbar.querySelectorAll(`button`)
+            }
+        )))
+
+        const geojsons = {}
+        for (let i = 0; i < fetchedGeoJSONs.length; i++) {
+            geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+        }
+
+        return geojsons
     }
 
     const queryHandler = async (e, handler) => {
         resetResults()
 
-        handleBtns(ongoingQuery=true)
+        const cancelBtn = toolbar.querySelector(`#${toolbarId}-cancel`)
+        cancelBtn.disabled = false
         const geojsons = await handler(e)
-        handleBtns(ongoingQuery=false)
+        cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)

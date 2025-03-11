@@ -1,5 +1,5 @@
 const fetchNominatim = async (latlng, zoom, {
-    abortBtn,
+    abortBtns,
     controller,
 } = {}) => {
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
@@ -12,7 +12,7 @@ const fetchNominatim = async (latlng, zoom, {
     })
 
     return fetchTimeout(url, {
-        abortBtn,
+        abortBtns,
         controller,
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {

@@ -25,13 +25,13 @@ const fetchTimeout = async (url, {
     fetchParams,
     timeoutMs = 30000,
     controller = new AbortController(),
-    abortBtn,
+    abortBtns,
 } = {}) => {
     const mapKey = `${url}_${JSON.stringify(fetchParams)}` 
     if (fetchTimeoutMap.has(mapKey)) return await fetchTimeoutMap.get(mapKey)
 
     const abortController = () => controller.abort('Fetch timed out or manually aborted.')
-    abortBtn?.addEventListener('click', abortController)
+    abortBtns?.forEach(btn => btn.addEventListener('click', abortController))
     
     const timeoutId = setTimeout(abortController, timeoutMs)
     const fetchPromise = fetch(url.replace('http:', 'https:'), {...fetchParams, ...{signal: controller.signal}})
