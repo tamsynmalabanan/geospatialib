@@ -20,16 +20,6 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const getAbortBtns = () => toolbar.querySelectorAll('button')
 
-    const resetResults = () => {
-        Array('clear', 'cancel').forEach(tool => {
-            toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
-        })
-
-        results.classList.add('d-none')
-        results.innerHTML = ''
-        queryGroup.clearLayers()
-    }
-
     const queryHandler = async (e, handler) => {
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
@@ -121,8 +111,15 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    resetResults()
-
+                    results.classList.add('d-none')
+                    results.innerHTML = ''
+                    queryGroup.clearLayers()
+            
+                    for (const btnName in Array('clear', 'cancel')) {
+                        toolbar.querySelector(`#${toolbar.id}-${btnName}`).disabled = true
+                        if (btnName === tool) return
+                    }
+            
                     const queryMode = map._queryMode
                     const activate = queryMode !== tool
                     if (activate && queryMode) {
@@ -130,12 +127,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     }
                     
                     const btn = event.target
-                    if (Array('clear', 'cancel').includes(tool)) {
-                        return
-                    } else {
-                        Array(`btn-${getPreferredTheme()}`, 'btn-primary')
-                        .forEach(className => btn.classList.toggle(className))
-                    }
+                    Array(`btn-${getPreferredTheme()}`, 'btn-primary')
+                    .forEach(className => btn.classList.toggle(className))
 
                     mapContainer.style.cursor = activate ? 'pointer' : ''
                     map._queryMode = activate ? tool : undefined
