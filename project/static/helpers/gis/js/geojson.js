@@ -87,10 +87,12 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 }
 
 const fetchGeoJSONs = async (fetchers, {
+    controller,
     abortBtns,
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
         ...fetcher.params, {
+            controller,
             abortBtns
         }
     )))

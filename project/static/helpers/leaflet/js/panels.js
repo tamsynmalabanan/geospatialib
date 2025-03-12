@@ -18,20 +18,22 @@ const handleLeafletQueryPanel = (map, parent) => {
         iconGlow: true,
     }
 
+    let controller = new AbortController()
+
     const getAbortBtns = () => toolbar.querySelectorAll('button')
 
-    const resetResults = () => {
-        Array('clear', 'cancel').forEach(tool => {
-            toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
-        })
-
+    const queryHandler = async (e, handler) => {
+        controller.abort()
+        controller = new AbortController()
+    
+        toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
+        .forEach(btn => btn.disabled = true)
+    
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
-    }
 
-    const queryHandler = async (e, handler) => {
-        resetResults()
+        if (!handler) return
 
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
@@ -81,12 +83,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                         (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
                     ],
                 },
-            }, {abortBtns: getAbortBtns()})
+            }, {abortBtns: getAbortBtns(), controller})
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             btnclickHandler: async (e) => {
+                console.log('osm in bbox')
                 e.target.click()
             }
         },
@@ -123,39 +126,27 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    const queryMode = map._queryMode
-                    const activate = queryMode !== tool
-                    if (activate && queryMode) {
-                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
-                    }
-                    
-                    const btn = event.target
-                    if (Array('clear', 'cancel').includes(tool)) {
-                        return resetResults()
-                    } else {
+                    map._events.click = map._events.click?.filter(handler => {
+                        return handler.fn.name !== 'clickQueryHandler'
+                    })
+
+                    if (!Array('clear', 'cancel').includes(tool)) {
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
-                        .forEach(className => btn.classList.toggle(className))
+                        .forEach(className => event.target.classList.toggle(className))
+    
+                        mapContainer.style.cursor = 'pointer'
+                        
+                        if (data.mapClickHandler) {
+                            const clickQueryHandler = async (e) => {
+                                if (e.originalEvent.target === mapContainer) {
+                                    await queryHandler(e, data.mapClickHandler)
+                                }
+                            } 
+                            map.on('click', clickQueryHandler)
+                        }
                     }
 
-                    mapContainer.style.cursor = activate ? 'pointer' : ''
-                    map._queryMode = activate ? tool : undefined
-                    
-                    if (activate && data.mapClickHandler) {
-                        const clickQueryHandler = async (e) => {
-                            if (e.originalEvent.target === mapContainer) {
-                                await queryHandler(e, data.mapClickHandler)
-                            }
-                        } 
-                        map.on('click', clickQueryHandler)
-                    } else {
-                        map._events.click = map._events.click?.filter(handler => {
-                            return handler.fn.name !== 'clickQueryHandler'
-                        })
-                    }
-                 
-                    if (activate && data.btnclickHandler) {
-                        await queryHandler(event, data.btnclickHandler)
-                    }
+                    await queryHandler(event, data.btnclickHandler)
                 }
             }})
         )
