@@ -134,7 +134,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                     const queryMode = map._queryMode
                     const newMode = queryMode !== tool
 
-                    if (!newMode) {
+                    if (newMode) {
+                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`)?.click()
+                        map._queryMode = tool
+                    } else {
                         btn.classList.remove(`btn-primary`)
                         btn.classList.add(`btn-${getPreferredTheme()}`)
                         mapContainer.style.cursor = ''
@@ -144,8 +147,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                         })
                         
                         return
-                    } else {
-                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`)?.click() 
                     }
 
                     if (data.mapClickHandler) {
