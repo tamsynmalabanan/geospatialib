@@ -158,7 +158,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         })
                     }
                  
-                    await queryHandler(event, data.btnclickHandler)
+                    if (activate) await queryHandler(event, data.btnclickHandler)
                 }
             }})
         )
