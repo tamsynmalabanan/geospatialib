@@ -132,27 +132,24 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    const queryMode = map._queryMode
-                    const activate = queryMode !== newMode
-                    if (activate && queryMode) {
-                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    const btn = event.target
+                    const currentMode = map._queryMode
+                    const activate = currentMode !== newMode
+                    const mapClickHandler = activate ? data.mapClickHandler : null 
+                    
+                    if (activate && currentMode) {
+                        toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
                     }
                     
-                    const btn = event.target
-                    if (Array('clear', 'cancel').includes(newMode)) {
-                        return resetResults()
-                    } else {
-                        Array(`btn-${getPreferredTheme()}`, 'btn-primary')
-                        .forEach(className => btn.classList.toggle(className))
-                    }
-
-                    mapContainer.style.cursor = activate ? 'pointer' : ''
+                    btn.classList.toggle('btn-primary', mapClickHandler)
+                    btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
+                    mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
                     map._queryMode = activate ? newMode : undefined
                     
-                    if (activate && data.mapClickHandler) {
+                    if (mapClickHandler) {
                         const clickQueryHandler = async (e) => {
                             if (e.originalEvent.target === mapContainer) {
-                                await queryHandler(e, data.mapClickHandler)
+                                await queryHandler(e, mapClickHandler)
                             }
                         } 
                         map.on('click', clickQueryHandler)
@@ -162,9 +159,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         })
                     }
                  
-                    if (activate && data.btnclickHandler) {
-                        await queryHandler(event, data.btnclickHandler)
-                    }
+                    await queryHandler(event, data.btnclickHandler)
                 }
             }})
         )
