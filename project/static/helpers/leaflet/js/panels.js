@@ -132,6 +132,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     const queryMode = map._queryMode
                     const newMode = queryMode !== tool
+                    console.log(queryMode, tool)
                     if (queryMode && newMode) toolbar.querySelector(`#${toolbar.id}-${tool}`).click()
                         
                     map._events.click = map._events.click?.filter(handler => {
