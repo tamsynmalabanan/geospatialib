@@ -22,16 +22,20 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const getAbortBtns = () => toolbar.querySelectorAll('button')
 
-    const queryHandler = async (e, handler) => {
+    const resetResults = () => {
         controller.abort()
         controller = new AbortController()
-    
+
         toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
         .forEach(btn => btn.disabled = true)
-    
+
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
+    }
+
+    const queryHandler = async (e, handler) => {
+        resetResults()
 
         if (!handler) return
 
@@ -126,24 +130,22 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    map._events.click = map._events.click?.filter(handler => {
-                        return handler.fn.name !== 'clickQueryHandler'
-                    })
-
-                    if (!Array('clear', 'cancel').includes(tool)) {
+                    if (data.mapClickHandler) {
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => event.target.classList.toggle(className))
     
                         mapContainer.style.cursor = 'pointer'
                         
-                        if (data.mapClickHandler) {
-                            const clickQueryHandler = async (e) => {
-                                if (e.originalEvent.target === mapContainer) {
-                                    await queryHandler(e, data.mapClickHandler)
-                                }
-                            } 
-                            map.on('click', clickQueryHandler)
-                        }
+                        const clickQueryHandler = async (e) => {
+                            if (e.originalEvent.target === mapContainer) {
+                                await queryHandler(e, data.mapClickHandler)
+                            }
+                        } 
+                        map.on('click', clickQueryHandler)
+                    } else {
+                        map._events.click = map._events.click?.filter(handler => {
+                            return handler.fn.name !== 'clickQueryHandler'
+                        })
                     }
 
                     await queryHandler(event, data.btnclickHandler)
