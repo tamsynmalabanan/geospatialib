@@ -19,23 +19,25 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     let controller = new AbortController()
+    const resetController = () => {
+        controller.abort()
+        controller = new AbortController()
+    }
 
     const getAbortBtns = () => toolbar.querySelectorAll('button')
 
     const resetResults = () => {
-        controller.abort()
-        controller = new AbortController()
-
         toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
         .forEach(btn => btn.disabled = true)
-
+        
         results.classList.add('d-none')
         results.innerHTML = ''
         queryGroup.clearLayers()
     }
-
+    
     const queryHandler = async (e, handler) => {
         resetResults()
+        resetController()
 
         if (!handler) return
 
@@ -117,52 +119,52 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
     }
 
-    Object.keys(queryTools).forEach(tool => {
-        const data = queryTools[tool]
+    Object.keys(queryTools).forEach(newMode => {
+        const data = queryTools[newMode]
         const tag = data.tag || 'button'
         toolbar.appendChild(
             tag !== 'button' ?
             customCreateElement(tag, data) :
             createButton({...data, ...{
-                id: `${toolbar.id}-${tool}`,
+                id: `${toolbar.id}-${newMode}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clichHandler: async (event) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
                     const btn = event.target
-                    const queryMode = map._queryMode
-                    const newMode = queryMode !== tool
-
-                    if (newMode) {
-                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`)?.click()
-                        map._queryMode = tool
+                    const currentMode = map._queryMode
+                    const activate = currentMode !== newMode
+                    
+                    if (activate) {
+                        toolbar.querySelector(`#${toolbar.id}-${currentMode}`)?.click()
+                        
+                        if (data.mapClickHandler) {
+                            btn.classList.remove(`btn-${getPreferredTheme()}`)
+                            btn.classList.add(`btn-primary`)
+                            mapContainer.style.cursor = 'pointer'
+                            
+                            const clickQueryHandler = async (e) => {
+                                if (e.originalEvent.target === mapContainer) {
+                                    await queryHandler(e, data.mapClickHandler)
+                                }
+                            } 
+                            map.on('click', clickQueryHandler)
+                        }
+                        
+                        map._queryMode = newMode
+                        await queryHandler(event, data.btnclickHandler)
                     } else {
-                        btn.classList.remove(`btn-primary`)
-                        btn.classList.add(`btn-${getPreferredTheme()}`)
+                        btn.classList.add(`btn-primary`)
+                        btn.classList.remove(`btn-${getPreferredTheme()}`)
                         mapContainer.style.cursor = ''
-
+                        
                         map._events.click = map._events.click?.filter(handler => {
                             return handler.fn.name !== 'clickQueryHandler'
                         })
-                        
-                        return
-                    }
 
-                    if (data.mapClickHandler) {
-                        btn.classList.remove(`btn-${getPreferredTheme()}`)
-                        btn.classList.add(`btn-primary`)
-                        mapContainer.style.cursor = 'pointer'
-                        
-                        const clickQueryHandler = async (e) => {
-                            if (e.originalEvent.target === mapContainer) {
-                                await queryHandler(e, data.mapClickHandler)
-                            }
-                        } 
-                        map.on('click', clickQueryHandler)
+                        map._queryMode = undefined
                     }
-                    
-                    await queryHandler(event, data.btnclickHandler)
                 }
             }})
         )
