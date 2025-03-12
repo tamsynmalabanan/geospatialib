@@ -133,13 +133,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.preventDefault(event);        
                     
                     const queryMode = map._queryMode
-                    const activate = queryMode !== tool
+                    const activate = queryMode !== newMode
                     if (activate && queryMode) {
                         toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
                     }
                     
                     const btn = event.target
-                    if (Array('clear', 'cancel').includes(tool)) {
+                    if (Array('clear', 'cancel').includes(newMode)) {
                         return resetResults()
                     } else {
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
@@ -147,7 +147,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     }
 
                     mapContainer.style.cursor = activate ? 'pointer' : ''
-                    map._queryMode = activate ? tool : undefined
+                    map._queryMode = activate ? newMode : undefined
                     
                     if (activate && data.mapClickHandler) {
                         const clickQueryHandler = async (e) => {
