@@ -17,7 +17,7 @@ const handleLeafletLayerGroups = (map) => {
         return groups.length ? groups[0] : null
     }
 
-    map.on('click', () => {
+    map.on('click', (e) => {
         if (e.originalEvent.target === mapContainer) map.getLayerGroups().indicators.clearLayers()
     })
 }
