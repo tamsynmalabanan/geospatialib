@@ -96,7 +96,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             btnclickHandler: async (e) => {
                 console.log('osm in bbox')
-                e.target.click()
             }
         },
         layerPoint: {
