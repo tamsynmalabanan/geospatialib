@@ -8,7 +8,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     parent.appendChild(toolbar)
     
     const results = document.createElement('div')
-    toolbar.id = `${mapContainer.id}-panels-query-results`
+    results.id = `${mapContainer.id}-panels-query-results`
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
     
