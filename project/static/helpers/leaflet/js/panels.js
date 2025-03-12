@@ -139,6 +139,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
 
                     if (data.mapClickHandler) {
+                        console.log('here')
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => event.target.classList.toggle(className))
     
