@@ -130,25 +130,32 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
+                    const queryMode = map._queryMode
+                    const newMode = queryMode !== tool
+                    if (queryMode && newMode) tool.querySelector(`#${toolbar.id}-${tool}`).click()
+                        
+                    map._events.click = map._events.click?.filter(handler => {
+                        return handler.fn.name !== 'clickQueryHandler'
+                    })
+
                     if (data.mapClickHandler) {
                         Array(`btn-${getPreferredTheme()}`, 'btn-primary')
                         .forEach(className => event.target.classList.toggle(className))
     
-                        mapContainer.style.cursor = 'pointer'
+                        mapContainer.style.cursor = newMode ? 'pointer' : ''
                         
-                        const clickQueryHandler = async (e) => {
-                            if (e.originalEvent.target === mapContainer) {
-                                await queryHandler(e, data.mapClickHandler)
-                            }
-                        } 
-                        map.on('click', clickQueryHandler)
-                    } else {
-                        map._events.click = map._events.click?.filter(handler => {
-                            return handler.fn.name !== 'clickQueryHandler'
-                        })
+                        if (newMode) {
+                            map._queryMode = tool
+                            const clickQueryHandler = async (e) => {
+                                if (e.originalEvent.target === mapContainer) {
+                                    await queryHandler(e, data.mapClickHandler)
+                                }
+                            } 
+                            map.on('click', clickQueryHandler)
+                        }
                     }
 
-                    await queryHandler(event, data.btnclickHandler)
+                    if (newMode) await queryHandler(event, data.btnclickHandler)
                 }
             }})
         )
