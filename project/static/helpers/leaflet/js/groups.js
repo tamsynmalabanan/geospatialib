@@ -18,6 +18,6 @@ const handleLeafletLayerGroups = (map) => {
     }
 
     map.on('click', (e) => {
-        if (e.originalEvent.target === mapContainer) map.getLayerGroups().indicators.clearLayers()
+        if (e.originalEvent.target === map.getContainer()) map.getLayerGroups().indicators.clearLayers()
     })
 }
