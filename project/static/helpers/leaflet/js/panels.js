@@ -20,7 +20,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     let controller = new AbortController()
     const resetController = () => {
-        controller.abort()
+        controller.abort('Query reset.')
         controller = new AbortController()
     }
 
