@@ -156,10 +156,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                         map._events.click = map._events.click?.filter(handler => {
                             return handler.fn.name !== 'clickQueryHandler'
                         })
-                        
+
                         if (activate) await queryHandler(event, data.btnclickHandler)
                     }
-                 
                 }
             }})
         )
