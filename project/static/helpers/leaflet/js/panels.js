@@ -16,7 +16,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     spinner.id = `${mapContainer.id}-panels-query-spinner`
     spinner.className = 'spinner-border spinner-border-sm'
     spinner.setAttribute('role', 'status')
-    parent.appendChild(results)
+    parent.appendChild(spinner)
 
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
