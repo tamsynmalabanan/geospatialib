@@ -132,38 +132,38 @@ const handleLeafletQueryPanel = (map, parent) => {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    const btn = event.target
-                    const currentMode = map._queryMode
-                    const activate = currentMode !== newMode
+                    const queryMode = map._queryMode
+                    const activate = queryMode !== tool
+                    if (activate && queryMode) {
+                        toolbar.querySelector(`#${toolbar.id}-${queryMode}`).click()
+                    }
                     
-                    if (activate) {
-                        toolbar.querySelector(`#${toolbar.id}-${currentMode}`)?.click()
-                        
-                        if (data.mapClickHandler) {
-                            btn.classList.remove(`btn-${getPreferredTheme()}`)
-                            btn.classList.add(`btn-primary`)
-                            mapContainer.style.cursor = 'pointer'
-                            
-                            const clickQueryHandler = async (e) => {
-                                if (e.originalEvent.target === mapContainer) {
-                                    await queryHandler(e, data.mapClickHandler)
-                                }
-                            } 
-                            map.on('click', clickQueryHandler)
-                        }
-                        
-                        map._queryMode = newMode
-                        await queryHandler(event, data.btnclickHandler)
+                    const btn = event.target
+                    if (Array('clear', 'cancel').includes(tool)) {
+                        return resetResults()
                     } else {
-                        btn.classList.add(`btn-primary`)
-                        btn.classList.remove(`btn-${getPreferredTheme()}`)
-                        mapContainer.style.cursor = ''
-                        
+                        Array(`btn-${getPreferredTheme()}`, 'btn-primary')
+                        .forEach(className => btn.classList.toggle(className))
+                    }
+
+                    mapContainer.style.cursor = activate ? 'pointer' : ''
+                    map._queryMode = activate ? tool : undefined
+                    
+                    if (activate && data.mapClickHandler) {
+                        const clickQueryHandler = async (e) => {
+                            if (e.originalEvent.target === mapContainer) {
+                                await queryHandler(e, data.mapClickHandler)
+                            }
+                        } 
+                        map.on('click', clickQueryHandler)
+                    } else {
                         map._events.click = map._events.click?.filter(handler => {
                             return handler.fn.name !== 'clickQueryHandler'
                         })
-
-                        map._queryMode = undefined
+                    }
+                 
+                    if (activate && data.btnclickHandler) {
+                        await queryHandler(event, data.btnclickHandler)
                     }
                 }
             }})
