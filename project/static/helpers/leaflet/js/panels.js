@@ -35,7 +35,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     let controller
     const resetController = () => {
-        if (controller) controller.abort()
+        if (controller) controller.abort('New query started.')
         controller = new AbortController()
         controller.id = generateRandomString()
         return controller
