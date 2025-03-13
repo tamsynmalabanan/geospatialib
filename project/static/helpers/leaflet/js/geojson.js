@@ -6,6 +6,7 @@ const getLeafletGeoJSONLayer = ({
     const options = getLeafletStyleParams(styleParams)
     
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
+        riseOnHover: true,
         style: (feature) => {
             return getLeafletLayerStyle(feature.geometry.type, options)
         },

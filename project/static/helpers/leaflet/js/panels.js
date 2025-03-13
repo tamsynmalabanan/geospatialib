@@ -1,9 +1,40 @@
 const handleLeafletLegendPanel = (map, parent) => {
+    const toolbar = document.createElement('div')
+    toolbar.id = `${mapContainer.id}-panels-legend-toolbar`
+    toolbar.className = 'd-flex px-3 py-2'
+    parent.appendChild(toolbar)
+
+    const layers = document.createElement('div')
+    layers.id = `${mapContainer.id}-panels-legend-layers`
+    layers.className = 'p-3 d-none border-top'
+    parent.appendChild(layers)
+
     map.on('layeradd', (event) => {
-        console.log(event.layer)
-        console.log(event.layer instanceof L.GeoJSON)
+        const layer = event.layer
+        if (layer instanceof L.GeoJSON) {
+            const container = document.createElement('div')
+            parent.appendChild(container)
+        
+            const styles = {}
+            layer.eachLayer(subLayer => {
+                const type = subLayer.feature.geometry.type
+                if (type === 'point') {
+                    const style = subLayer.options.icon.options.html
+                    if (styles['Point']) {
+                        styles['Point'].count +=1
+                    } else {
+                        styles['Point'] = {
+                            style,
+                            count: 1,
+                        }
+                    }
+                }
+            })
+            console.log(styles)
+        }
     })
 }
+
 
 const handleLeafletQueryPanel = (map, parent) => {
     const mapContainer = map.getContainer()
