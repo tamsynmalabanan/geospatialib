@@ -39,7 +39,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 container.appendChild(icon)
 
                 const label = document.createElement('div')
-                label.innerText = `${label} (${styles[title].count})`
+                label.innerText = `${title} (${styles[title].count})`
                 container.appendChild(label)
             }
         }
