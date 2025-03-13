@@ -25,7 +25,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const remark = document.createElement('span')
     remark.innerText = 'Running query...'
-    spinner.appendChild(remark)
+    status.appendChild(remark)
 
     // <div class="spinner-border spinner-border-sm" role="status">
     //     <span class="visually-hidden">Loading...</span>
