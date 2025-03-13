@@ -1,7 +1,7 @@
 const handleLeafletLegendPanel = (map, parent) => {
     map.on('layeradd', (event) => {
         console.log(event.layer)
-        console.log(event.layer instanceof L.geoJSON)
+        console.log(event.layer instanceof L.GeoJSON)
     })
 }
 
