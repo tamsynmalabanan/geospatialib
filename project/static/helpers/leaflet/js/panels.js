@@ -33,7 +33,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         iconGlow: true,
     }
 
-    let queryId
     let controller = new AbortController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
@@ -53,7 +52,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (typeof handler !== 'function') return
 
         queryId = generateRandomString()
-        console.log(queryId)
+        map._queryId = queryId
+        console.log(queryId, map._queryId)
         
         status.classList.remove('d-none')
         
@@ -63,7 +63,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-            console.log(queryId)
+            console.log(queryId, map._queryId)
+            // if (queryId)
             const content = createGeoJSONChecklist(geojsons)
             results.appendChild(content)
         }
