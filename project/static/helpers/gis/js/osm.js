@@ -65,13 +65,17 @@ const fetchOverpassAroundPt = async (latlng, buffer, {
             throw new Error('Failed to parse JSON.')
         }    
     }).then(async data => {
-        console.log(data)
-        if (data) return await overpassToGeoJSON(
+        if (!data) return
+        
+        const properties = {source:url}
+        Object.keys(data).forEach(prop => {
+            if (prop !== 'elements') properties[prop] = data[prop]
+        })
+
+        return await overpassToGeoJSON(
             data.elements.filter(element => element.tags), {
                 controller,            
-                properties: {
-                    source: url
-                }
+                properties,
             }
         )
     }).catch(error => {
