@@ -128,7 +128,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
-            btnClickHandler: async () => clearResults()
+            btnClickHandler: clearResults
         },
     }
 
