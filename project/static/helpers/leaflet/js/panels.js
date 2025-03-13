@@ -14,7 +14,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const status = document.createElement('div')
     status.id = `${mapContainer.id}-panels-query-status`
-    status.className = 'p-3 border-top'
+    status.className = 'p-3 border-top d-flex gapr-2'
     parent.appendChild(status)
     
     const spinner = document.createElement('div')
@@ -23,7 +23,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     spinner.setAttribute('role', 'status')
     status.appendChild(spinner)
 
-    const remark = document.createElement('span')
+    const remark = document.createElement('div')
     remark.innerText = 'Running query...'
     status.appendChild(remark)
 
