@@ -31,7 +31,7 @@ const createGeoJSONChecklist = async (geojsonList, {
             geojsonContainer.appendChild(infoTable)
     
             const infoTBody = document.createElement('tbody')
-            createObjectTRs(info, infoTBody)
+            createObjectTRs(info, infoTBody, {format:'list'})
             infoTable.appendChild(infoTBody)
         }
     }

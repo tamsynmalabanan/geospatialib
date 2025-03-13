@@ -370,7 +370,9 @@ const createFormCheck = ({
     return formCheck
 }
 
-const createObjectTRs = (object, parent) => {
+const createObjectTRs = (object, parent, {
+    format = 'row' // 'list', 'column'
+} = {}) => {
     const handler = (key, value, {prefixes = []} = {}) => {
         if (typeof value === 'object') {
             prefixes.push(key)
@@ -382,14 +384,32 @@ const createObjectTRs = (object, parent) => {
             const tr = document.createElement('tr')
             parent.appendChild(tr)
 
-            const th = document.createElement('th')
-            th.setAttribute('scope', 'row')
-            th.innerText = [...new Set([...prefixes, ...[key]])].join(' ')
-            tr.appendChild(th)
+            const label = innerText = [...new Set([...prefixes, ...[key]])].join(' ')
+            
+            if (format === 'row') {
+                const th = document.createElement('th')
+                th.setAttribute('scope', 'row')
+                th.innerText = label
+                tr.appendChild(th)
+                
+                const td = document.createElement('td')
+                td.innerText = value.toString()
+                tr.appendChild(td)
+            }
+            
+            if (format === 'list') {
+                const td = document.createElement('td')
+                td.className = 'd-flex flex-column'
+                tr.appendChild(td)
 
-            const td = document.createElement('td')
-            td.innerText = value.toString()
-            tr.appendChild(td)
+                const valueDiv = document.createElement('div')
+                valueDiv.innerText = value.toString()
+                tr.appendChild(valueDiv)
+
+                const labelDiv = document.createElement('div')
+                labelDiv.innerText = label
+                tr.appendChild(labelDiv)
+            }
         }
     }
 
