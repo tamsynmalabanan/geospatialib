@@ -1,3 +1,9 @@
+const handleLeafletLegendPanel = (map, parent) => {
+    map.on('layeradd', () => {
+        console.log(event)
+    })
+}
+
 const handleLeafletQueryPanel = (map, parent) => {
     const mapContainer = map.getContainer()
     const queryGroup = map.getLayerGroups().query
@@ -205,6 +211,7 @@ const handleLeafletMapPanels = (map) => {
         panel.appendChild(toggle)
         panel.appendChild(body)
         handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query .accordion-body`))
+        handleLeafletLegendPanel(map, body.querySelector(`#${body.id}-accordion-legend .accordion-body`))
         
         return panel
     }
