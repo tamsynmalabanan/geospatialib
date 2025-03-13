@@ -101,6 +101,8 @@ const fetchGeoJSONs = async (fetchers, {
         }
     )))
 
+    if (controller.signal.aborted) return
+
     const geojsons = {}
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
         geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]

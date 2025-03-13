@@ -65,28 +65,34 @@ const fetchOverpassAroundPt = async (latlng, buffer, {
             throw new Error('Failed to parse JSON.')
         }    
     }).then(async data => {
+        console.log(data)
         if (data) return await overpassToGeoJSON(
             data.elements.filter(element => element.tags), {
-            properties: {
-                source: url
+                controller,            
+                properties: {
+                    source: url
+                }
             }
-        })
+        )
     }).catch(error => {
         console.log(error)
     })
 }
 
 const overpassToGeoJSON = async (data, {
+    controller,
     properties = {},
 } = {}) => {
     const geojson = turf.featureCollection([])
     for (const key in properties) geojson[key] = properties[key]
 
-    data.forEach(element => {
+    for (const element of data) {
+        if (controller.signal.aborted) return
+
         const id = element.id
         const type = element.type
         const tags = element.tags || {}
-
+    
         const feature = turf.feature(
             geom=null,
             properties={...tags, ...{
@@ -94,21 +100,21 @@ const overpassToGeoJSON = async (data, {
                 osm_type: type,
             }
         })
-
+    
         if (type === 'relation') {
             const points = []
             const polygons = []
             const linestrings = []
-
+    
             element.members.forEach(member => {
                 const memberType = member.type
-
+    
                 if (memberType === 'node') {
                     points.push(member)
                 } else if (member.geometry) {
                     const firstCoords = member.geometry[0]
                     const lastCoords = member.geometry[member.geometry.length-1]
-
+    
                     if (firstCoords.lat === lastCoords.lat && firstCoords.lon === lastCoords.lon) {
                         polygons.push(member)
                     } else {
@@ -116,7 +122,7 @@ const overpassToGeoJSON = async (data, {
                     }
                 }
             })
-
+    
             if (points.length) {
                 const featureMpt = turf.clone(feature)
                 featureMpt.geometry = {
@@ -125,7 +131,7 @@ const overpassToGeoJSON = async (data, {
                 }
                 geojson.features.push(featureMpt)
             }
-
+    
             if (linestrings.length) {
                 const featureMls = turf.clone(feature)
                 featureMls.geometry = {
@@ -133,13 +139,13 @@ const overpassToGeoJSON = async (data, {
                     coordinates: linestrings.map(line => line.geometry.map(coords => [parseFloat(coords.lon), parseFloat(coords.lat)]))
                 }
                 geojson.features.push(featureMls)
-
+    
             }
-
+    
             if (polygons.length) {
                 const outerGeoms = []
                 const innerGeoms = []
-
+    
                 polygons.forEach(polygon => {
                     const polygonGeom = polygon.geometry.map(coords => [parseFloat(coords.lon), parseFloat(coords.lat)])
                     if (polygon.role === 'inner') {
@@ -148,7 +154,7 @@ const overpassToGeoJSON = async (data, {
                         outerGeoms.push(polygonGeom)
                     }
                 })
-
+    
                 const featureMp = turf.clone(feature)
                 featureMp.geometry = {
                     type: 'MultiPolygon',
@@ -156,7 +162,7 @@ const overpassToGeoJSON = async (data, {
                 }
                 geojson.features.push(featureMp)
             }
-
+    
         } else {
             if (type === 'node') {
                 feature.geometry = {
@@ -164,7 +170,7 @@ const overpassToGeoJSON = async (data, {
                     coordinates: [parseFloat(element.lon), parseFloat(element.lat)]
                 }
             }
-
+    
             if (type === 'way') {
                 const firstCoords = element.geometry[0]
                 const lastCoords = element.geometry[element.geometry.length-1]
@@ -177,10 +183,10 @@ const overpassToGeoJSON = async (data, {
                     coordinates: featureType === 'Polygon' ? [coordinates] : coordinates
                 }
             }
-
+    
             geojson.features.push(feature)
         }
-    })
+    }
 
     return geojson
 }
