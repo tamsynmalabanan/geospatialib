@@ -49,7 +49,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryHandler = async (e, handler) => {
         clearResults()
         
-        if(typeof handler !== 'function') return
+        if (typeof handler !== 'function') return
 
         status.classList.remove('d-none')
         
@@ -70,7 +70,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
         status.classList.add('d-none')
 
-        console.log(controller.signal)
+        if (controller.signal.aborted) controller = new AbortController()
     }
 
     const queryTools = {
