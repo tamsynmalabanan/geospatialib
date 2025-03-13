@@ -12,11 +12,24 @@ const handleLeafletQueryPanel = (map, parent) => {
     results.className = 'p-3 d-none border-top'
     parent.appendChild(results)
     
+    const status = document.createElement('div')
+    status.id = `${mapContainer.id}-panels-query-status`
+    status.className = 'p-3 border-top'
+    parent.appendChild(status)
+    
     const spinner = document.createElement('div')
     spinner.id = `${mapContainer.id}-panels-query-spinner`
-    spinner.className = 'spinner-border spinner-border-sm p-3 border-top'
+    spinner.className = 'spinner-border spinner-border-sm'
     spinner.setAttribute('role', 'status')
-    parent.appendChild(spinner)
+    status.appendChild(spinner)
+
+    const remark = document.createElement('span')
+    remark.innerText = 'Running query...'
+    spinner.appendChild(remark)
+
+    // <div class="spinner-border spinner-border-sm" role="status">
+    //     <span class="visually-hidden">Loading...</span>
+    // </div>
 
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
