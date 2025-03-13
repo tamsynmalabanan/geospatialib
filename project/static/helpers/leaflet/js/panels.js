@@ -14,7 +14,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const status = document.createElement('div')
     status.id = `${mapContainer.id}-panels-query-status`
-    status.className = 'p-3 border-top d-flex gapr-2'
+    status.className = 'p-3 border-top d-flex gap-2 flex-nowrap'
     parent.appendChild(status)
     
     const spinner = document.createElement('div')
