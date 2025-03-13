@@ -408,7 +408,7 @@ const createObjectTRs = (object, parent, {
                 tr.appendChild(valueDiv)
 
                 const labelSmall = document.createElement('small')
-                labelSmall.className = 'p-0'
+                labelSmall.className = 'p-0 text-muted fw-medium'
                 labelSmall.innerText = label
                 tr.appendChild(labelSmall)
             }
