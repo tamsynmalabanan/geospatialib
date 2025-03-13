@@ -27,19 +27,25 @@ const createGeoJSONChecklist = async (geojsonList, {
             const infoTBody = document.createElement('tbody')
             infoTable.appendChild(infoTBody)
 
-            const handler = (key, value) => {
+            const handler = (key, value, {
+                parent,
+                prefix,
+            } = {}) => {
                 if (typeof value === 'object') {
                     Object.keys(value).forEach(key => {
                         const subValue = value[key]
-                        handler(key, subValue)
+                        handler(key, subValue, {
+                            parent,
+                            prefix: prefix ? `${prefix} ${key}` : key 
+                        })
                     })
                 } else {
                     const tr = document.createElement('tr')
-                    infoTBody.appendChild(tr)
+                    parent.appendChild(tr)
 
                     const th = document.createElement('th')
                     th.setAttribute('scope', 'row')
-                    th.innerText = key
+                    th.innerText = prefix ? `${prefix} ${key}` : key
                     tr.appendChild(th)
 
                     const td = document.createElement('td')
