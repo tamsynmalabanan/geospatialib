@@ -54,7 +54,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        console.log(typeof e.target, e.target)
+        console.log(e.target instanceof Element, e.target)
 
         clearResults()
         
