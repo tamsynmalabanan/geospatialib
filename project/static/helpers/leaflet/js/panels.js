@@ -1,6 +1,6 @@
 const handleLeafletLegendPanel = (map, parent) => {
     map.on('layeradd', (event) => {
-        console.log(event)
+        console.log(event.layer)
     })
 }
 
