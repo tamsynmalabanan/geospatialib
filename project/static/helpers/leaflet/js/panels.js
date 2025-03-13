@@ -69,6 +69,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
 
         status.classList.add('d-none')
+
+        console.log(controller.signal)
     }
 
     const queryTools = {
