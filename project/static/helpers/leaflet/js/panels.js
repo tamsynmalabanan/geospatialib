@@ -33,7 +33,14 @@ const handleLeafletQueryPanel = (map, parent) => {
         iconGlow: true,
     }
 
-    let controller = new AbortController()
+    let controller
+    const resetController = () => {
+        if (controller) controller.abort()
+        controller = new AbortController()
+        controller.id = generateRandomString()
+        return controller
+    }
+    resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
  
@@ -51,9 +58,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (typeof handler !== 'function') return
 
-        const queryId = generateRandomString()
-        map._queryId = queryId
-        
+        const controllerId = resetController().id
+
         status.classList.remove('d-none')
         
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
@@ -61,7 +67,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         const geojsons = await handler(e)
         cancelBtn.disabled = true
         
-        if (queryId !== map._queryId) return
+        if (controllerId !== controller.id) return
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)
@@ -74,8 +80,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
 
         status.classList.add('d-none')
-
-        if (controller.signal.aborted) controller = new AbortController()
     }
 
     const queryTools = {
@@ -136,7 +140,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
-            btnClickHandler: clearResults
+            btnClickHandler: true
         },
     }
 
