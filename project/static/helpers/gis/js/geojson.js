@@ -1,7 +1,12 @@
-const createGeoJSONChecklist = (geojsonList) => {
+const createGeoJSONChecklist = async (geojsonList, {
+    controller,
+} = {}) => {
     const container = document.createElement('div')
+
     for (const title in geojsonList) {
-        if (geojsonList[title]) {
+        const geojson = geojsonList[title]
+        if (geojson?.features?.length) {
+            console.log(geojson)
             container.appendChild(createLabel(title))
         }
     }

@@ -70,7 +70,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (controllerId !== controller.id) return
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-            const content = createGeoJSONChecklist(geojsons)
+            const content = await createGeoJSONChecklist(geojsons, {controller})
             results.appendChild(content)
         }
         
