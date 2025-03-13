@@ -371,7 +371,6 @@ const createFormCheck = ({
 }
 
 const createObjectTRs = (object, parent, {
-    format = 'row' // 'list', 'column'
 } = {}) => {
     const handler = (key, value, {prefixes = []} = {}) => {
         if (typeof value === 'object') {
@@ -386,28 +385,14 @@ const createObjectTRs = (object, parent, {
 
             const label = innerText = [...new Set([...prefixes, ...[key]])].join(' ')
             
-            if (format === 'row') {
-                const th = document.createElement('th')
-                th.setAttribute('scope', 'row')
-                th.innerText = label
-                tr.appendChild(th)
-                
-                const td = document.createElement('td')
-                td.innerText = value.toString()
-                tr.appendChild(td)
-            }
+            const th = document.createElement('th')
+            th.setAttribute('scope', 'row')
+            th.innerText = label
+            tr.appendChild(th)
             
-            if (format === 'list') {
-                const valueDiv = document.createElement('div')
-                valueDiv.className = 'p-0'
-                valueDiv.innerText = value.toString()
-                tr.appendChild(valueDiv)
-
-                const labelSmall = document.createElement('small')
-                labelSmall.className = 'p-0 pb-3 text-muted font-monospace'
-                labelSmall.innerText = label
-                tr.appendChild(labelSmall)
-            }
+            const td = document.createElement('td')
+            td.innerText = value.toString()
+            tr.appendChild(td)
         }
     }
 
