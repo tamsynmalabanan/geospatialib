@@ -51,7 +51,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (typeof handler !== 'function') return
 
-        queryId = generateRandomString()
+        const queryId = generateRandomString()
         map._queryId = queryId
         console.log(queryId, map._queryId)
         
