@@ -47,7 +47,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
-        console.log(handler)
+        console.log(typeof handler)
         clearResults()
 
         status.classList.remove('d-none')
