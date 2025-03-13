@@ -14,7 +14,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const status = document.createElement('div')
     status.id = `${mapContainer.id}-panels-query-status`
-    status.className = 'p-3 border-top d-flex gap-2 flex-nowrap'
+    status.className = 'p-3 border-top d-flex gap-2 flex-nowrap d-none'
     parent.appendChild(status)
     
     const spinner = document.createElement('div')
@@ -26,10 +26,6 @@ const handleLeafletQueryPanel = (map, parent) => {
     const remark = document.createElement('div')
     remark.innerText = 'Running query...'
     status.appendChild(remark)
-
-    // <div class="spinner-border spinner-border-sm" role="status">
-    //     <span class="visually-hidden">Loading...</span>
-    // </div>
 
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
@@ -60,11 +56,13 @@ const handleLeafletQueryPanel = (map, parent) => {
 
         if (!handler) return
 
+        status.classList.remove('d-none')
+        
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
         cancelBtn.disabled = false
         const geojsons = await handler(e)
         cancelBtn.disabled = true
-
+        
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const content = createGeoJSONChecklist(geojsons)
             results.appendChild(content)
@@ -74,6 +72,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             results.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
         }
+
+        status.classList.add('d-none')
     }
 
     const queryTools = {
