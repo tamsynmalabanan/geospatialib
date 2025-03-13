@@ -343,3 +343,28 @@ const createRadios = (radios, {
 
     return container
 }
+
+const createFormCheck = ({
+    parent,
+    inputValue = '',
+    inputId =  generateRandomString(),
+    labelInnerText = '',
+} = {}) => {
+    const formCheck = document.createElement('div')
+    formCheck.className = 'form-check'
+    parent?.appendChild(formCheck)
+    
+    const input = document.createElement('input')
+    input.id = inputId
+    input.className = 'form-check-input'
+    input.setAttribute('type', 'checkbox')
+    input.value = inputValue
+    formCheck.appendChild(input)
+
+    const label = document.createElement('label')
+    label.className = 'form-check-label'
+    label.setAttribute('for', input.id)
+    label.innerText = labelInnerText
+
+    return formCheck
+}
