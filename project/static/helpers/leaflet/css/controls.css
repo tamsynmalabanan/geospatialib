@@ -6,11 +6,12 @@
 
         .leaflet-top.leaflet-right {
             display: flex;
-            max-height: 100%;
+            max-height: 80% !important;
             width: 50% !important;
 
             .leaflet-control {
-                margin-bottom: 100px !important;
+                /* margin-bottom: 100px !important; */
+                max-height: 100% !important;
                 max-width: 100% !important;
                 margin-left: auto !important;
             }
