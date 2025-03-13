@@ -20,7 +20,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const styles = {}
             layer.eachLayer(subLayer => {
                 const type = subLayer.feature.geometry.type
-                if (type === 'point') {
+                if (type.toLowerCase().endsWith('point')) {
                     const style = subLayer.options.icon.options.html
                     if (styles['Point']) {
                         styles['Point'].count +=1
