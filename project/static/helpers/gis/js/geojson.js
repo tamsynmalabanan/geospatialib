@@ -5,7 +5,7 @@ const createGeoJSONChecklist = async (geojsonList, {
 
     for (const title in geojsonList) {
         const geojson = geojsonList[title]
-        
+
         if (!geojson?.features?.length) return
 
         console.log(title, geojson)
@@ -19,6 +19,7 @@ const createGeoJSONChecklist = async (geojsonList, {
         })
     }
 
+    console.log(container)
     return container
 }
 
