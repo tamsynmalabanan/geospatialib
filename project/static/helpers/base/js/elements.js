@@ -398,17 +398,13 @@ const createObjectTRs = (object, parent, {
             }
             
             if (format === 'list') {
-                const td = document.createElement('td')
-                td.className = 'd-flex flex-column'
-                tr.appendChild(td)
-
                 const valueDiv = document.createElement('div')
                 valueDiv.className = 'p-0'
                 valueDiv.innerText = value.toString()
                 tr.appendChild(valueDiv)
 
                 const labelSmall = document.createElement('small')
-                labelSmall.className = 'p-0 text-muted fw-medium'
+                labelSmall.className = 'p-0 text-muted font-monospace'
                 labelSmall.innerText = label
                 tr.appendChild(labelSmall)
             }
