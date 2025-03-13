@@ -27,7 +27,7 @@ const createGeoJSONChecklist = async (geojsonList, {
 
         if (Object.keys(info).length) {
             const infoTable = document.createElement('table')
-            infoTable.className = `table table-${getPreferredTheme()} table-borderless table-sm`
+            infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm`
             geojsonContainer.appendChild(infoTable)
     
             const infoTBody = document.createElement('tbody')
