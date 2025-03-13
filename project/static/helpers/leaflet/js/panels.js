@@ -34,28 +34,10 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     let controller = new AbortController()
-    const resetController = () => {
-        controller.abort('Query reset.')
-        controller = new AbortController()
-    }
 
     const getAbortBtns = () => toolbar.querySelectorAll('button')
-
-    const resetResults = () => {
-        toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
-        .forEach(btn => btn.disabled = true)
-        
-        results.classList.add('d-none')
-        results.innerHTML = ''
-        queryGroup.clearLayers()
-    }
     
     const queryHandler = async (e, handler) => {
-        resetResults()
-        resetController()
-
-        if (!handler) return
-
         status.classList.remove('d-none')
         
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
@@ -113,7 +95,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnclickHandler: async (e) => {
+            btnClickHandler: async (e) => {
                 console.log('osm in bbox')
             }
         },
@@ -134,6 +116,14 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
+            btnClickHandler: async () => {
+                toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
+                .forEach(btn => btn.disabled = true)
+                
+                results.classList.add('d-none')
+                results.innerHTML = ''
+                queryGroup.clearLayers()        
+            }
         },
     }
 
@@ -154,6 +144,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     const currentMode = map._queryMode
                     const activate = currentMode !== newMode
                     const mapClickHandler = activate ? data.mapClickHandler : null 
+                    const btnClickHandler = activate ? data.btnClickHandler : null 
                     
                     if (activate && currentMode) {
                         toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
@@ -166,9 +157,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     if (mapClickHandler) {
                         const clickQueryHandler = async (e) => {
-                            if (e.originalEvent.target === mapContainer) {
-                                await queryHandler(e, mapClickHandler)
-                            }
+                            const mapClick = e.originalEvent.target === mapContainer
+                            if (mapClick) await queryHandler(e, mapClickHandler)
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
@@ -176,8 +166,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                             return handler.fn.name !== 'clickQueryHandler'
                         })
 
-                        if (activate) await queryHandler(event, data.btnclickHandler)
                     }
+                    
+                    if (btnClickHandler) await queryHandler(event, btnClickHandler)
                 }
             }})
         )
