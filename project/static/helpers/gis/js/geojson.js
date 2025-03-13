@@ -1,6 +1,8 @@
 const createGeoJSONChecklist = (geojsonList) => {
     const container = document.createElement('div')
-    console.log(geojsonList)
+    for (const title in geojsonList) {
+        container.appendChild(createLabel(title))
+    }
 
     return container
 }
