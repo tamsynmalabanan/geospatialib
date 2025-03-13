@@ -56,7 +56,7 @@ const createGeoJSONChecklist = async (geojsonList, {
 
             for (const key of infoKeys) {
                 const value = geojson[key]
-                handler(key, value)
+                handler(key, value, {parent:infoTBody})
             }
         }
     }
