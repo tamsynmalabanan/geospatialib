@@ -403,12 +403,12 @@ const createObjectTRs = (object, parent, {
                 tr.appendChild(td)
 
                 const valueDiv = document.createElement('div')
-                valueDiv.className = ''
+                valueDiv.className = 'p-0'
                 valueDiv.innerText = value.toString()
                 tr.appendChild(valueDiv)
 
                 const labelSmall = document.createElement('small')
-                labelSmall.className = ''
+                labelSmall.className = 'p-0'
                 labelSmall.innerText = label
                 tr.appendChild(labelSmall)
             }
