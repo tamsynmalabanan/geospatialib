@@ -40,6 +40,7 @@ const createGeoJSONChecklist = async (geojsonList, {
                         })
                     })
                 } else {
+                    console.log(prefixes)
                     const tr = document.createElement('tr')
                     parent.appendChild(tr)
 
