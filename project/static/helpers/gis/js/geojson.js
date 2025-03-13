@@ -29,14 +29,14 @@ const createGeoJSONChecklist = async (geojsonList, {
 
             const handler = (key, value, {
                 parent,
-                prefix,
+                prefixes = [],
             } = {}) => {
                 if (typeof value === 'object') {
                     Object.keys(value).forEach(key => {
                         const subValue = value[key]
                         handler(key, subValue, {
                             parent,
-                            prefix: prefix ? `${prefix} ${key}` : key 
+                            prefixes: prefixes.push(key) 
                         })
                     })
                 } else {
@@ -45,7 +45,7 @@ const createGeoJSONChecklist = async (geojsonList, {
 
                     const th = document.createElement('th')
                     th.setAttribute('scope', 'row')
-                    th.innerText = prefix ? `${prefix} ${key}` : key
+                    th.innerText = [...new Set([...prefixes, ...[key]])].join(' ')
                     tr.appendChild(th)
 
                     const td = document.createElement('td')
