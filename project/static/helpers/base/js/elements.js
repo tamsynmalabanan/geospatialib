@@ -365,6 +365,7 @@ const createFormCheck = ({
     label.className = 'form-check-label'
     label.setAttribute('for', input.id)
     label.innerText = labelInnerText
+    formCheck.appendChild(label)
 
     return formCheck
 }
