@@ -35,7 +35,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     let controller = new AbortController()
 
-    const getCancelBtn = () => toolbar.querySelectorAll(`3${toolbar.id}-cancel`)
+    const getCancelBtn = () => toolbar.querySelectorAll(`#${toolbar.id}-cancel`)
  
     const clearResults = () => {
         toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
