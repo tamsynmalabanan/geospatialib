@@ -23,7 +23,7 @@ const fetchCORSProxy = async (url, fetchParams) => {
 const fetchTimeoutMap = new Map()
 const fetchTimeout = async (url, {
     fetchParams,
-    timeoutMs = 30000,
+    timeoutMs = 60000,
     controller = new AbortController(),
     abortBtns,
 } = {}) => {
@@ -56,7 +56,7 @@ const fetchTimeout = async (url, {
 
 const parseJSONResponseMap = new Map()
 const parseJSONResponse = async (response, {
-    timeoutMs = 30000,
+    timeoutMs = 60000,
 } = {}) => {
     if (parseJSONResponseMap.has(response)) {
         return await parseJSONResponseMap.get(response)
