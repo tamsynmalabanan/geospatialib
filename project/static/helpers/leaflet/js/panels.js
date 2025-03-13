@@ -36,8 +36,20 @@ const handleLeafletQueryPanel = (map, parent) => {
     let controller = new AbortController()
 
     const getAbortBtns = () => toolbar.querySelectorAll('button')
-    
+ 
+    const clearResults = () => {
+        toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
+        .forEach(btn => btn.disabled = true)
+        
+        results.classList.add('d-none')
+        results.innerHTML = ''
+        queryGroup.clearLayers()        
+    }
+
     const queryHandler = async (e, handler) => {
+        console.log(handler)
+        clearResults()
+
         status.classList.remove('d-none')
         
         const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
@@ -116,14 +128,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
-            btnClickHandler: async () => {
-                toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
-                .forEach(btn => btn.disabled = true)
-                
-                results.classList.add('d-none')
-                results.innerHTML = ''
-                queryGroup.clearLayers()        
-            }
+            btnClickHandler: async () => clearResults()
         },
     }
 
