@@ -21,18 +21,27 @@ const handleLeafletLegendPanel = (map, parent) => {
             layer.eachLayer(subLayer => {
                 const type = subLayer.feature.geometry.type
                 if (type.toLowerCase().endsWith('point')) {
-                    const style = subLayer.options.icon.options.html
+                    const html = subLayer.options.icon.options.html
                     if (styles['Point']) {
                         styles['Point'].count +=1
                     } else {
                         styles['Point'] = {
-                            style,
+                            html,
                             count: 1,
                         }
                     }
                 }
             })
-            console.log(styles)
+            
+            for (const title in styles) {
+                const icon = document.createElement('div')
+                icon.innerHTML = styles[title].html
+                container.appendChild(icon)
+
+                const label = document.createElement('div')
+                label.innerText = `${label} (${styles[title].count})`
+                container.appendChild(label)
+            }
         }
     })
 }
