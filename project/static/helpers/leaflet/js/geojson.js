@@ -6,7 +6,6 @@ const getLeafletGeoJSONLayer = ({
     const options = getLeafletStyleParams(styleParams)
     
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        riseOnHover: true,
         style: (feature) => {
             return getLeafletLayerStyle(feature.geometry.type, options)
         },
@@ -14,13 +13,22 @@ const getLeafletGeoJSONLayer = ({
             return L.marker(latlng, {
                 icon: getLeafletLayerStyle('point', options)
             })
-        }
+        },
+        markersInheritOptions: true,
     })
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
     }
+
+    geojsonLayer.on('layeradd', (e) => {
+        console.log(e)
+    })
+
+    geojsonLayer.on('layerremove', (e) => {
+        console.log(e)
+    })
 
     if (geojson) geojsonLayer.addData(geojson)
 

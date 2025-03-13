@@ -15,7 +15,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layer = event.layer
         if (layer instanceof L.GeoJSON) {
             const container = document.createElement('div')
-            container.className = 'd-flex flex-nowrap gap-2 px-3 mb-3'
+            container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
             parent.appendChild(container)
         
             const styles = {}
