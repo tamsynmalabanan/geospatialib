@@ -35,7 +35,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     let controller = new AbortController()
 
-    const getAbortBtns = () => toolbar.querySelectorAll('button')
+    const getCancelBtn = () => toolbar.querySelectorAll(`3${toolbar.id}-cancel`)
  
     const clearResults = () => {
         toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
@@ -105,7 +105,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
                     ],
                 },
-            }, {abortBtns: getAbortBtns(), controller})
+            }, {abortBtns: [getCancelBtn()], controller})
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
