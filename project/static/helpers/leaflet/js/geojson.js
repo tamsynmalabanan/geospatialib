@@ -23,11 +23,11 @@ const getLeafletGeoJSONLayer = ({
     }
 
     geojsonLayer.on('layeradd', (e) => {
-        console.log(e)
+        console.log(e.layer.options.icon)
     })
-
+    
     geojsonLayer.on('layerremove', (e) => {
-        console.log(e)
+        console.log(e.layer.options.icon)
     })
 
     if (geojson) geojsonLayer.addData(geojson)
