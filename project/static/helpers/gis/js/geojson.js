@@ -32,13 +32,12 @@ const createGeoJSONChecklist = async (geojsonList, {
                 prefixes = [],
             } = {}) => {
                 if (typeof value === 'object') {
+                    prefixes.push(key)
                     Object.keys(value).forEach(key => {
-                        console.log(key)
-                        const subValue = value[key, [...prefixes, ...[key]]]
-                        console.log(prefixes)
+                        const subValue = value[key]
                         handler(key, subValue, {
                             parent,
-                            prefixes: [...prefixes, ...[key]]
+                            prefixes
                         })
                     })
                 } else {
