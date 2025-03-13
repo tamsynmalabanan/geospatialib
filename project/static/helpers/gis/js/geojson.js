@@ -18,47 +18,21 @@ const createGeoJSONChecklist = async (geojsonList, {
             labelInnerText: title,
         })
 
-        const infoKeys = Object.keys(geojson).filter(key => !Array('features', 'type').includes(key))
-        if (infoKeys.length) {
+        const info = {}
+        Object.keys(geojson).forEach(key => {
+            if (!Array('features', 'type').includes(key)) {
+                info[key] = geojson[key]
+            }
+        })
+
+        if (Object.keys(info).length) {
             const infoTable = document.createElement('table')
             infoTable.className = `table table-${getPreferredTheme()} table-borderless table-sm`
             geojsonContainer.appendChild(infoTable)
     
             const infoTBody = document.createElement('tbody')
+            createObjectTRs(info, infoTBody)
             infoTable.appendChild(infoTBody)
-
-            const handler = (key, value, {
-                parent,
-                prefixes = [],
-            } = {}) => {
-                if (typeof value === 'object') {
-                    prefixes.push(key)
-                    Object.keys(value).forEach(key => {
-                        const subValue = value[key]
-                        handler(key, subValue, {
-                            parent,
-                            prefixes
-                        })
-                    })
-                } else {
-                    const tr = document.createElement('tr')
-                    parent.appendChild(tr)
-
-                    const th = document.createElement('th')
-                    th.setAttribute('scope', 'row')
-                    th.innerText = [...new Set([...prefixes, ...[key]])].join(' ')
-                    tr.appendChild(th)
-
-                    const td = document.createElement('td')
-                    td.innerText = value.toString()
-                    tr.appendChild(td)
-                }
-            }
-
-            for (const key of infoKeys) {
-                const value = geojson[key]
-                handler(key, value, {parent:infoTBody})
-            }
         }
     }
 

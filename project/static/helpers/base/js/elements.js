@@ -369,3 +369,29 @@ const createFormCheck = ({
 
     return formCheck
 }
+
+const createObjectTRs = (object, parent) => {
+    const handler = (key, value, {prefixes = []} = {}) => {
+        if (typeof value === 'object') {
+            prefixes.push(key)
+            Object.keys(value).forEach(subKey => {
+                const subValue = value[subKey]
+                handler(subKey, subValue, {prefixes})
+            })
+        } else {
+            const tr = document.createElement('tr')
+            parent.appendChild(tr)
+
+            const th = document.createElement('th')
+            th.setAttribute('scope', 'row')
+            th.innerText = [...new Set([...prefixes, ...[key]])].join(' ')
+            tr.appendChild(th)
+
+            const td = document.createElement('td')
+            td.innerText = value.toString()
+            tr.appendChild(td)
+        }
+    }
+
+    for (const key in object) handler(key, object[key])
+}
