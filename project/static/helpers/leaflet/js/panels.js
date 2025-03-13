@@ -33,7 +33,13 @@ const handleLeafletQueryPanel = (map, parent) => {
         iconGlow: true,
     }
 
-    let controller = new AbortController()
+    let controller
+    const resetController = () => {
+        controller = new AbortController()
+        controller.signal.onabort = () => {
+            console.log(event)
+        }
+    }
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
  
@@ -47,6 +53,8 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const queryHandler = async (e, handler) => {
+        console.log(e)
+
         clearResults()
         
         if (typeof handler !== 'function') return
@@ -70,7 +78,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
         status.classList.add('d-none')
 
-        if (controller.signal.aborted) controller = new AbortController()
+        if (controller.signal.aborted) resetController()
     }
 
     const queryTools = {
