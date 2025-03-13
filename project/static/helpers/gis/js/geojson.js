@@ -1,5 +1,6 @@
 const createGeoJSONChecklist = async (geojsonList, {
     controller,
+    styleParams
 } = {}) => {
     const container = document.createElement('div')
 
@@ -8,10 +9,15 @@ const createGeoJSONChecklist = async (geojsonList, {
 
         if (!geojson?.features?.length) continue
 
-        console.log(title, geojson)
-
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
+
+        const layer = getLeafletGeoJSONLayer({
+            geojson,
+            styleParams
+        })
+
+        console.log(layer)
 
         const titleCheck = createFormCheck({
             parent: geojsonContainer,
