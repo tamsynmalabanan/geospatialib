@@ -7,11 +7,11 @@
         .leaflet-top.leaflet-right {
             display: flex;
             max-height: 100%;
+            width: 50% !important;
 
             .leaflet-control {
-                /* margin-bottom: 100px !important; */
-                max-height: 80% !important;
-                max-width: 50% !important;
+                margin-bottom: 100px !important;
+                max-width: 100% !important;
                 margin-left: auto !important;
             }
         }
