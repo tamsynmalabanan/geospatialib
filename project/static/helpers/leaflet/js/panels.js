@@ -40,6 +40,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             console.log(event)
         }
     }
+    resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
  
