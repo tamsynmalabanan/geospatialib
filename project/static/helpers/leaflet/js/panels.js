@@ -1,4 +1,6 @@
 const handleLeafletLegendPanel = (map, parent) => {
+    const mapContainer = map.getContainer()
+    
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-legend-toolbar`
     toolbar.className = 'd-flex px-3 py-2'
