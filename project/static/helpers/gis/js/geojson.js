@@ -17,6 +17,26 @@ const createGeoJSONChecklist = async (geojsonList, {
             parent: geojsonContainer,
             labelInnerText: title,
         })
+
+        const infoKeys = Object.keys(geojson).filter(key => !Array('features', 'type').includes(key))
+        if (infoKeys.length) {
+            const infoTable = document.createElement('table')
+            infoTable.className = `table table-${getPreferredTheme()} table-borderless table-sm`
+            geojsonContainer.appendChild(infoTable)
+    
+            const infoTBody = document.createElement('tbody')
+            infoTable.appendChild(infoTBody)
+
+            const handler = (key, value) => {
+                console.log(value)
+                console.log(value.toString())
+                console.log(typeof value)
+            }
+
+            for (const key of infoKeys) {
+                const value = geojson[key]
+            }
+        }
     }
 
     return container
