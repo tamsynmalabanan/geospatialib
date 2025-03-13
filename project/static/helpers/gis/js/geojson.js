@@ -36,7 +36,7 @@ const createGeoJSONChecklist = async (geojsonList, {
                         const subValue = value[key]
                         handler(key, subValue, {
                             parent,
-                            prefixes: prefixes.push(key) 
+                            prefixes: prefixes.concat([key])
                         })
                     })
                 } else {
