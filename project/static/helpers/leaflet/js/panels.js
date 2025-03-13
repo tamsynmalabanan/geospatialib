@@ -53,7 +53,6 @@ const handleLeafletQueryPanel = (map, parent) => {
 
         const queryId = generateRandomString()
         map._queryId = queryId
-        console.log(queryId, map._queryId)
         
         status.classList.remove('d-none')
         
@@ -63,8 +62,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         cancelBtn.disabled = true
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-            console.log(queryId, map._queryId)
-            // if (queryId)
+            if (queryId !== map._queryId) return
             const content = createGeoJSONChecklist(geojsons)
             results.appendChild(content)
         }
