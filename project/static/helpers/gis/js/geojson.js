@@ -5,13 +5,18 @@ const createGeoJSONChecklist = async (geojsonList, {
 
     for (const title in geojsonList) {
         const geojson = geojsonList[title]
+        
+        if (!geojson?.features?.length) return
+
         console.log(title, geojson)
-        if (geojson?.features?.length) {
-            const titleCheck = createFormCheck({
-                parent: container,
-                labelInnerText: title,
-            })
-        }
+
+        const geojsonContainer = document.createElement('div')
+        container.appendChild(geojsonContainer)
+
+        const titleCheck = createFormCheck({
+            parent: geojsonContainer,
+            labelInnerText: title,
+        })
     }
 
     return container
