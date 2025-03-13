@@ -25,7 +25,6 @@ const fetchNominatim = async (latlng, zoom, {
             throw new Error('Failed to parse JSON.')
         }
     }).then(data => {
-        if (data) data.source = url
         return data
     }).catch(error => {
         console.log(error)
@@ -64,16 +63,14 @@ const fetchOverpassAroundPt = async (latlng, buffer, {
         } catch {
             throw new Error('Failed to parse JSON.')
         }    
-    }).then(async data => {
-        if (!data) return
+    }).then(async properties => {
+        if (!properties) return
         
-        const properties = {source:url}
-        Object.keys(data).forEach(prop => {
-            if (prop !== 'elements') properties[prop] = data[prop]
-        })
+        const elements = properties.elements?.filter(element => element.tags)
+        delete properties.elements
 
         return await overpassToGeoJSON(
-            data.elements.filter(element => element.tags), {
+            elements, {
                 controller,            
                 properties,
             }
