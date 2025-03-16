@@ -92,7 +92,7 @@ const createOffcanvasElement = (id, {
     offcanvas.setAttribute('data-bs-backdrop', `false`)
 
     const header = document.createElement('div')
-    header.className = 'offcanvas-header d-flex justify-content-between'
+    header.className = 'offcanvas-header d-flex justify-content-between py-0 px-2'
     offcanvas.appendChild(header)
 
     const title = document.createElement('h5')
@@ -126,7 +126,7 @@ const createOffcanvasElement = (id, {
     offcanvas.appendChild(nav)
 
     const body = document.createElement('div')
-    body.className = 'offcanvas-body overflow-auto flex-grow-1 d-flex p-0'
+    body.className = 'offcanvas-body overflow-auto flex-grow-1 d-flex p-0 border border-top-0 rounded-bottom'
     offcanvas.appendChild(body)
 
     return offcanvas
@@ -250,7 +250,7 @@ const createAccordionElement = (id, tabData, {
         const accordionCollapse = document.createElement('div')
         accordionCollapse.id = `${id}-${suffix}`
         accordionCollapse.className = removeWhitespace(`
-            accordion-collapse collapse flex-grow-1 fade 
+            accordion-collapse collapse flex-grow-1 fade
             ${accordionCollapseClass}
             ${data.active ? 'show' : ''}
             ${themed ? `text-bg-${getPreferredTheme()}` : ''}
