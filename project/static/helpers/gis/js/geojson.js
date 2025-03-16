@@ -46,7 +46,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 
                 if (!checkParent) {
                     const parentLayer = group.getLayer(parent.dataset.leafletId)
-                    console.log(parentLayer)
+                    console.log(parentLayer, parent.dataset.leafletId)
                 }
             }
         }
