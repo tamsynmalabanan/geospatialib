@@ -29,3 +29,35 @@ const getLeafletMeterScale = (map) => {
         }
     }
 }
+
+// const disableLayerClick = (map) => {
+//     map.eachLayer(layer => {
+//         const clickFns = layer._events.click
+//         if (!layer.off || !clickFns) return
+//         layer._disabledClickFns = clickFns
+//         layer.off('click')
+//     })
+// }
+
+// const enableLayerClick = (map) => {
+//     map.eachLayer(layer => {
+//         const clickFns = layer.disabledClickFns
+//         if (layer.on && clickFns) {
+//             layer._events.click = clickFns
+//             delete layer.disabledClickFns
+//         }
+//     });
+// }
+
+const disableLeafletLayersInteractivity = (map) => {
+    map.eachLayer(layer => layer.options.interactive = false)
+    const disableLeafletLayersInteractivityHandler = (e) => e.layer.options.interactive = false
+    map.on('layeradd', disableLeafletLayersInteractivityHandler)
+}
+
+const enableLeafletLayersInteractivity = (map) => {
+    map.eachLayer(layer => layer.options.interactive = true)
+    map._events.layeradd = map._events.layeradd?.filter(handler => {
+        return handler.fn.name !== 'disableLeafletLayersInteractivityHandler'
+    })
+}
