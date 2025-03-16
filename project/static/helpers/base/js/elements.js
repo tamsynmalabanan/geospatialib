@@ -73,7 +73,7 @@ const createOffcanvasToggle = (id, {
 
 const createOffcanvasElement = (id, {
     show,
-    className, 
+    className = '', 
     themed, 
     titleText, 
     titleClass,
@@ -82,7 +82,7 @@ const createOffcanvasElement = (id, {
     const offcanvas = document.createElement('div')
     offcanvas.id = id
     offcanvas.className = removeWhitespace(`
-        ${className || ''}
+        ${className}
         ${show ? 'offcanvas-lg' : 'offcanvas'}
         ${themed ? `text-bg-${getPreferredTheme()}` : ''}
         shadow-lg border-0 p-0 d-flex flex-column

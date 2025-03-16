@@ -6,7 +6,7 @@ const createMapPanels = (container, {} = {}) => {
         toggleLabelText: 'Geopanel',
         toggleLabelClass: 'd-none d-md-block',
         show: getCookie(`show_#${id}`) === 'true',
-        offcanvasClass: 'offcanvas-end',
+        offcanvasClass: 'offcanvas-end pb-1',
         offcanvasToggleIcon: 'bi-layout-sidebar-inset-reverse',
         titleClass: 'h6'
     })
@@ -22,10 +22,7 @@ const createMapPanels = (container, {} = {}) => {
         'toolbox': {
             label: `Toolbox`,
         },
-    }, {
-        themed: true,
-        accordionCollapseClass: 'rounded-bottom'
-    })
+    }, {themed:true})
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)
     offcanvas.querySelector('.offcanvas-body').appendChild(accordion)
