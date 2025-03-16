@@ -21,10 +21,10 @@
 }
 
 .nav-tabs {
-    /* .nav-item:nth-child(1) > .accordion-button:not(.collapsed) {
+    .nav-item:nth-child(1) > .accordion-button:not(.collapsed) {
         border-left: 0px !important;
         border-top-left-radius: 0 !important;
-    } */
+    }
     
     .nav-item:last-child {
         flex-grow: 1;
