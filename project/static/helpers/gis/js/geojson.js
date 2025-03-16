@@ -21,23 +21,31 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         })
         
         const clickHandler = (e, layer) => {
-            const check = e.target
-            const type = check.dataset.geojsonType
-            const parentId = check.dataset.geojsonParent
-            const isChecked = check.checked
-            const isParent = type === 'FeatureCollection'
-            const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${check.id}"]`)
             const map = group._map
+            
+            const check = e.target
+            const isChecked = check.checked
+
+            const type = check.dataset.geojsonType
+            const isParent = type === 'FeatureCollection'
+            const parentId = check.dataset.geojsonParent
+            
+            const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${check.id}"]`)
 
             check.title = isChecked ? 'Remove from map' : 'Add to map'
-            console.log(isChecked)
             isChecked ? group.addLayer(layer) : map.removeLayer(layer)
+            
             if (isParent && featureChecks) {
                 featureChecks.forEach(featureCheck => featureCheck.checked = isChecked)
-                if (!isChecked) layer.eachLayer(featureLayer => map.removeLayer(featureLayer))
+                if (isChecked) {
+                    layer.eachLayer(featureLayer => group.addLayer(featureLayer))
+                } else {
+                    layer.eachLayer(featureLayer => map.removeLayer(featureLayer))
+                }
             } else if (parentId) {
                 const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
-                geojsonContainer.querySelector(`#${parentId}`).checked = Array.from(allFeatureChecks).some(check => check.checked)
+                const parent = geojsonContainer.querySelector(`#${parentId}`)
+                parent.checked = Array.from(allFeatureChecks).some(check => check.checked)
             }
         }
 
