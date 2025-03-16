@@ -59,7 +59,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const contentToggle = createIcon({
             parent: parentCheck.parentElement,
             peNone: false,
-            className: 'ms-auto'
+            className: 'ms-auto dropdown-toggle'
         })
 
         const contentCollapse = document.createElement('div')
