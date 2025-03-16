@@ -38,6 +38,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         titleCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
         const featuresContainer = document.createElement('div')
+        featuresContainer.className = 'ps-3'
         geojsonContainer.appendChild(featuresContainer)
         
         for (const featureLayer of layer.getLayers()) {
