@@ -62,6 +62,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         if (Object.keys(info).length) {
             const infoContainer = document.createElement('div')
+            infoContainer.className = 'ps-3'
             geojsonContainer.appendChild(infoContainer)
             
             const infoTable = document.createElement('table')
