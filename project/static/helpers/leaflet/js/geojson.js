@@ -22,14 +22,6 @@ const getLeafletGeoJSONLayer = ({
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
     }
 
-    geojsonLayer.on('layeradd', (e) => {
-        console.log(e.layer.options.icon)
-    })
-    
-    geojsonLayer.on('layerremove', (e) => {
-        console.log(e.layer.options.icon)
-    })
-
     if (geojson) geojsonLayer.addData(geojson)
 
     return geojsonLayer

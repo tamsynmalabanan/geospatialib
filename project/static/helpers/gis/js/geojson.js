@@ -5,6 +5,8 @@ const createGeoJSONChecklist = async (geojsonList, {
     const container = document.createElement('div')
 
     for (const title in geojsonList) {
+        if (controller.signal.aborted) return
+        
         const geojson = geojsonList[title]
 
         if (!geojson?.features?.length) continue

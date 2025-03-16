@@ -11,38 +11,41 @@ const handleLeafletLegendPanel = (map, parent) => {
     layers.className = 'p-3 d-none border-top'
     parent.appendChild(layers)
 
+
+
     map.on('layeradd', (event) => {
         const layer = event.layer
         if (layer instanceof L.GeoJSON) {
             const container = document.createElement('div')
+            container.id = `${layers.id}-${layer._leaflet_id}`
             container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
             parent.appendChild(container)
         
-            const styles = {}
-            layer.eachLayer(subLayer => {
-                const type = subLayer.feature.geometry.type
-                if (type.toLowerCase().endsWith('point')) {
-                    const html = subLayer.options.icon.options.html
-                    if (styles['Point']) {
-                        styles['Point'].count +=1
-                    } else {
-                        styles['Point'] = {
-                            html,
-                            count: 1,
-                        }
-                    }
-                }
-            })
+            // const styles = {}
+            // layer.eachLayer(subLayer => {
+            //     const type = subLayer.feature.geometry.type
+            //     if (type.toLowerCase().endsWith('point')) {
+            //         const html = subLayer.options.icon.options.html
+            //         if (styles['Point']) {
+            //             styles['Point'].count +=1
+            //         } else {
+            //             styles['Point'] = {
+            //                 html,
+            //                 count: 1,
+            //             }
+            //         }
+            //     }
+            // })
             
-            for (const title in styles) {
-                const icon = document.createElement('div')
-                icon.innerHTML = styles[title].html
-                container.appendChild(icon)
+            // for (const title in styles) {
+            //     const icon = document.createElement('div')
+            //     icon.innerHTML = styles[title].html
+            //     container.appendChild(icon)
 
-                const label = document.createElement('div')
-                label.innerText = `${title} (${styles[title].count})`
-                container.appendChild(label)
-            }
+            //     const label = document.createElement('div')
+            //     label.innerText = `${title} (${styles[title].count})`
+            //     container.appendChild(label)
+            // }
         }
     })
 }
