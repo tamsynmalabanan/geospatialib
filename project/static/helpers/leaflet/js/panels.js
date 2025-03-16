@@ -229,7 +229,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     
                     if (mapClickHandler) {
                         console.log('disable')
-                        disableLayerClick(map)
+                        disableLeafletLayerClick(map)
                         map.eachLayer(layer => layer.options.interactive = false)
                         const clickQueryHandler = async (e) => {
                             const mapClick = e.originalEvent.target === mapContainer
@@ -238,7 +238,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         map.on('click', clickQueryHandler)
                     } else {
                         console.log('enable')
-                        enableLayerClick(map)
+                        enableLeafletLayerClick(map)
                         map._events.click = map._events.click?.filter(handler => {
                             return handler.fn.name !== 'clickQueryHandler'
                         })
