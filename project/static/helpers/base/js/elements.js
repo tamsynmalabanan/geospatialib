@@ -92,7 +92,7 @@ const createOffcanvasElement = (id, {
     offcanvas.setAttribute('data-bs-backdrop', `false`)
 
     const header = document.createElement('div')
-    header.className = 'offcanvas-header d-flex justify-content-between py-0 px-2'
+    header.className = 'offcanvas-header d-flex justify-content-between p-0'
     offcanvas.appendChild(header)
 
     const title = document.createElement('h5')
