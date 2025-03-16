@@ -27,13 +27,13 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const isChecked = check.checked
             const isParent = type === 'FeatureCollection'
             const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${check.id}"]`)
-            const groupLayer = layer._eventParents[0] || group
+            const map = group._map
 
             check.title = isChecked ? 'Remove from map' : 'Add to map'
-            isChecked ? groupLayer.addLayer(layer) : groupLayer.removeLayer(layer)
+            isChecked ? group.addLayer(layer) : map.removeLayer(layer)
             if (isParent && featureChecks) {
                 featureChecks.forEach(featureCheck => featureCheck.checked = isChecked)
-                if (!isChecked) layer.eachLayer(featureLayer => groupLayer.removeLayer(featureLayer))
+                if (!isChecked) layer.eachLayer(featureLayer => map.removeLayer(featureLayer))
             } else if (parentId) {
                 const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
                 geojsonContainer.querySelector(`#${parentId}`).checked = Array.from(allFeatureChecks).some(check => check.checked)
