@@ -197,6 +197,22 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: true
         },
+        divider: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        collapse: {
+            iconClass: 'bi bi-chevron-expand',
+            title: 'Collapse/expand results',
+            queryHandler: false,
+            btnClickHandler: () => {
+                const shownCollapseElements = results.querySelectorAll('.collapse.show')
+                shownCollapseElements.forEach(element => {
+                    const instance = bootstrap.Collapse.getOrCreateInstance(element)
+                    instance.hide()
+                })
+            },
+        },
     }
 
     Object.keys(queryTools).forEach(newMode => {
@@ -242,7 +258,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                         })
                     }
                     
-                    if (btnClickHandler) await queryHandler(event, btnClickHandler)
+                    if (btnClickHandler) {
+                        if (data.queryHandler === false) {
+                            btnClickHandler()
+                        } else {
+                            await queryHandler(event, btnClickHandler)
+                        }
+                    }
                 }
             }})
         )
