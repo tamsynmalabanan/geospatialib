@@ -182,7 +182,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-stack',
             title: 'Query layers at point',
         },
-        divider: {
+        divider1: {
             tag: 'div',
             className: 'vr m-2',
         },
@@ -197,7 +197,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: true
         },
-        divider: {
+        divider2: {
             tag: 'div',
             className: 'vr m-2',
         },
