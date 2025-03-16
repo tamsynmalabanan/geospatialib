@@ -233,7 +233,8 @@ const createAccordionNavTabs = (id, tabData, {
 
 const createAccordionElement = (id, tabData, {
     themed,
-    parent
+    parent,
+    accordionCollapseClass = '',
 } = {}) => {
     const accordion = document.createElement('div')
     accordion.id = id
@@ -250,6 +251,7 @@ const createAccordionElement = (id, tabData, {
         accordionCollapse.id = `${id}-${suffix}`
         accordionCollapse.className = removeWhitespace(`
             accordion-collapse collapse flex-grow-1 fade 
+            ${accordionCollapseClass}
             ${data.active ? 'show' : ''}
             ${themed ? `text-bg-${getPreferredTheme()}` : ''}
         `)
@@ -265,9 +267,15 @@ const createAccordionElement = (id, tabData, {
     return accordion
 }
 
-const createAccordion = (id, tabData, {themed = false} = {}) => {
+const createAccordion = (id, tabData, {
+    themed = false,
+    accordionCollapseClass = '',
+} = {}) => {
     const tabs = createAccordionNavTabs(id, tabData, {themed})
-    const accordion = createAccordionElement(id, tabData, {themed})
+    const accordion = createAccordionElement(id, tabData, {
+        themed,
+        accordionCollapseClass,
+    })
     return [tabs, accordion]
 }
 

@@ -22,7 +22,10 @@ const createMapPanels = (container, {} = {}) => {
         'toolbox': {
             label: `Toolbox`,
         },
-    }, {themed:true})
+    }, {
+        themed: true,
+        accordionCollapseClass: 'rounded-bottom'
+    })
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)
     offcanvas.querySelector('.offcanvas-body').appendChild(accordion)
