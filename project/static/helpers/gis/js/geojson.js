@@ -37,9 +37,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         titleCheck.title = 'Add to map'
         titleCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
+        const contentCollapse = document.createElement('div')
+        geojsonContainer.appendChild(contentCollapse)
+
         const featuresContainer = document.createElement('div')
         featuresContainer.className = 'ps-3'
-        geojsonContainer.appendChild(featuresContainer)
+        contentCollapse.appendChild(featuresContainer)
         
         for (const featureLayer of layer.getLayers()) {
             if (controller?.signal.aborted) return
@@ -63,7 +66,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (Object.keys(info).length) {
             const infoContainer = document.createElement('div')
             infoContainer.className = 'ps-3'
-            geojsonContainer.appendChild(infoContainer)
+            contentCollapse.appendChild(infoContainer)
             
             const infoTable = document.createElement('table')
             infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
