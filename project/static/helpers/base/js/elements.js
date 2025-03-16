@@ -126,7 +126,7 @@ const createOffcanvasElement = (id, {
     offcanvas.appendChild(nav)
 
     const body = document.createElement('div')
-    body.className = 'offcanvas-body overflow-auto flex-grow-1 d-flex p-0 border border-top-0 rounded-bottom'
+    body.className = 'offcanvas-body overflow-auto flex-grow-1 d-flex p-0'
     offcanvas.appendChild(body)
 
     return offcanvas
