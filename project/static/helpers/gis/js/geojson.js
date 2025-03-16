@@ -38,10 +38,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         titleCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
         const contentCollapse = document.createElement('div')
+        contentCollapse.className = 'ps-3'
         geojsonContainer.appendChild(contentCollapse)
 
         const featuresContainer = document.createElement('div')
-        featuresContainer.className = 'ps-3'
         contentCollapse.appendChild(featuresContainer)
         
         for (const featureLayer of layer.getLayers()) {
@@ -65,7 +65,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         if (Object.keys(info).length) {
             const infoContainer = document.createElement('div')
-            infoContainer.className = 'ps-3'
             contentCollapse.appendChild(infoContainer)
             
             const infoTable = document.createElement('table')
