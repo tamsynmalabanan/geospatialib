@@ -253,7 +253,6 @@ const createAccordionElement = (id, tabData, {
             accordion-collapse collapse flex-grow-1 fade
             ${accordionCollapseClass}
             ${data.active ? 'show' : ''}
-            ${themed ? `text-bg-${getPreferredTheme()}` : ''}
         `)
         accordionCollapse.setAttribute('data-bs-parent', `#${id}`)
         accordion.appendChild(accordionCollapse)
