@@ -45,7 +45,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 
                 if (!checkParent) {
                     const parentLayer = Object.values(layer._eventParents)[0]
-                    console.log(parentLayer)
+                    group.removeLayer(parentLayer)
                 }
             }
         }
