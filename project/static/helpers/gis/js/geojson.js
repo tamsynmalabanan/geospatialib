@@ -56,17 +56,22 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         parentCheck.title = 'Add to map'
         parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
+        const contentCollapse = document.createElement('div')
+        contentCollapse.id = generateRandomString()
+        contentCollapse.className = 'ps-3 show collapse'
+        geojsonContainer.appendChild(contentCollapse)
+        
         const contentToggle = createIcon({
             parent: parentCheck.parentElement,
             peNone: false,
             className: 'ms-auto dropdown-toggle'
         })
         contentToggle.style.cursor = 'pointer'
+        contentToggle.setAttribute('data-bs-toggle', 'collapse')
+        contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+        contentToggle.setAttribute('aria-controls', contentCollapse.id)
+        contentToggle.setAttribute('aria-expanded', 'true')
 
-        const contentCollapse = document.createElement('div')
-        contentCollapse.className = 'ps-3'
-        geojsonContainer.appendChild(contentCollapse)
-        
         const featuresContainer = document.createElement('div')
         contentCollapse.appendChild(featuresContainer)
         
