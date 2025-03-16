@@ -330,7 +330,7 @@ const createRadios = (radios, {
         const data = radios[option]
 
         const formCheck = document.createElement('div')
-        formCheck.className = 'form-check d-flex gap-2'
+        formCheck.className = 'form-check'
         container.appendChild(formCheck)
 
         const id = data.id || generateRandomString()
@@ -362,7 +362,7 @@ const createFormCheck = ({
     labelInnerText = '',
 } = {}) => {
     const formCheck = document.createElement('div')
-    formCheck.className = 'form-check'
+    formCheck.className = 'form-check d-flex gap-2'
     parent?.appendChild(formCheck)
     
     const input = document.createElement('input')
