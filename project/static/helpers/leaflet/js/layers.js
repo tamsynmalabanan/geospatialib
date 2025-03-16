@@ -58,7 +58,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
 
     const hslaColor = manageHSLAColor(color)
 
-    if (featureType?.toLowerCase() === 'point') {
+    if (featureType?.toLowerCase().endsWith('point')) {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.fontSize = `${iconSize}px`
