@@ -236,7 +236,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
-                        console.log('here')
                         enableLeafletLayerClick(map)
                         map._events.click = map._events.click?.filter(handler => {
                             return handler.fn.name !== 'clickQueryHandler'

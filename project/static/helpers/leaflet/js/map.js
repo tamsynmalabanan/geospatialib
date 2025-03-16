@@ -42,12 +42,12 @@ const disableLeafletLayerClick = (map) => {
 
 const enableLeafletLayerClick = (map) => {
     map.eachLayer(layer => {
+        console.log(layer)
         const clickFns = layer.disabledClickFns
         if (!clickFns) return 
         
         layer._events.click = clickFns
         delete layer._disabledClickFns
 
-        console.log(layer._events.click)
     });
 }
