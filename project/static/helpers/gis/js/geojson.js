@@ -19,22 +19,23 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             styleParams
         })
         
-        console.log(layer)
-        
+        const clickHandler = (e, layer) => {
+            const check = e.target
+            if (check.checked) {
+                check.title = 'Remove from map'
+                group.addLayer(layer)
+            } else {
+                check.title = 'Add to map'
+                group.removeLayer(layer)
+            }
+        }
+
         const titleCheck = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: title,
         }).querySelector('input')
         titleCheck.title = 'Add to map'
-        titleCheck.addEventListener('click', (e) => {
-            if (titleCheck.checked) {
-                titleCheck.title = 'Remove from map'
-                group.addLayer(layer)
-            } else {
-                titleCheck.title = 'Add to map'
-                group.removeLayer(layer)
-            }
-        })
+        titleCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
         const featuresContainer = document.createElement('div')
         geojsonContainer.appendChild(featuresContainer)
@@ -48,15 +49,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 labelInnerText: feature.id || feature.properties.name || feature.properties.id,
             }).querySelector('input')
             featureCheck.title = 'Add to map'
-            featureCheck.addEventListener('click', (e) => {
-                if (featureCheck.checked) {
-                    featureCheck.title = 'Remove from map'
-                    group.addLayer(featureLayer)
-                } else {
-                    featureCheck.title = 'Add to map'
-                    group.removeLayer(featureLayer)
-                }
-            })
+            featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
         }
 
         const info = {}
