@@ -56,6 +56,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         parentCheck.title = 'Add to map'
         parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
+        const contentToggle = createIcon({
+            parent: parentCheck.parentElement,
+            peNone: false,
+            className: 'ms-auto'
+        })
+
         const contentCollapse = document.createElement('div')
         contentCollapse.className = 'ps-3'
         geojsonContainer.appendChild(contentCollapse)
@@ -69,7 +75,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const feature = featureLayer.feature
             const featureCheck = createFormCheck({
                 parent: featuresContainer,
-                inputValue: 'Feature',
                 labelInnerText: feature.id || feature.properties.name || feature.properties.id,
             }).querySelector('input')
             featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
