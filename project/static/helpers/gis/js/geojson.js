@@ -3,6 +3,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     styleParams
 } = {}) => {
     const container = document.createElement('div')
+    container.className = 'd-flex flex-column gap-2'
 
     for (const title in geojsonList) {
         if (controller?.signal.aborted) return
