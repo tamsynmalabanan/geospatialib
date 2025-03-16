@@ -32,7 +32,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             
             const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${check.id}"]`)
 
-            isChecked ? group.addLayer(layer) : map.removeLayer(layer)
+            isChecked ? group.addLayer(layer) : group.removeLayer(layer)
             
             if (isParent && featureChecks) {
                 featureChecks.forEach(featureCheck => {
@@ -48,7 +48,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             parent: geojsonContainer,
             labelInnerText: title,
         }).querySelector('input')
-        parentCheck.setAttribute('data-geojson-type', 'FeatureCollection')
+        parentCheck.setAttribute('data-geojson-type', geojson.type)
         parentCheck.title = 'Add to map'
         parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
@@ -68,7 +68,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 inputValue: 'Feature',
                 labelInnerText: feature.id || feature.properties.name || feature.properties.id,
             }).querySelector('input')
-            featureCheck.setAttribute('data-geojson-type', 'Feature')
+            featureCheck.setAttribute('data-geojson-type', feature.type)
             featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
             featureCheck.title = 'Add to map'
             featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
