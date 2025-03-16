@@ -1,12 +1,12 @@
-const createGeoJSONChecklist = async (geojsonList, {
+const createGeoJSONChecklist = async (geojsonList, group, {
     controller,
     styleParams
 } = {}) => {
     const container = document.createElement('div')
 
     for (const title in geojsonList) {
-        if (controller.signal.aborted) return
-        
+        if (controller?.signal.aborted) return
+
         const geojson = geojsonList[title]
 
         if (!geojson?.features?.length) continue
@@ -24,7 +24,18 @@ const createGeoJSONChecklist = async (geojsonList, {
         const titleCheck = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: title,
+        }).querySelector('input')
+        titleCheck.title = 'Add to map'
+        titleCheck.addEventListener('click', (e) => {
+            if (titleCheck.checked) {
+                titleCheck.title = 'Remove from map'
+                group.addLayer(layer)
+            } else {
+                titleCheck.title = 'Add to map'
+                group.removeLayer(layer)
+            }
         })
+
 
         const info = {}
         Object.keys(geojson).forEach(key => {

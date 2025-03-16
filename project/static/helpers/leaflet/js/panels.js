@@ -50,7 +50,6 @@ const handleLeafletLegendPanel = (map, parent) => {
     // })
 }
 
-
 const handleLeafletQueryPanel = (map, parent) => {
     const mapContainer = map.getContainer()
     const queryGroup = map.getLayerGroups().query
@@ -123,7 +122,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (controllerId !== controller.id) return
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-            const content = await createGeoJSONChecklist(geojsons, {
+            const content = await createGeoJSONChecklist(geojsons, queryGroup, {
                 controller, 
                 styleParams: queryStyleParams
             })
