@@ -47,5 +47,7 @@ const enableLeafletLayerClick = (map) => {
         
         layer._events.click = clickFns
         delete layer._disabledClickFns
+
+        console.log(layer._events.click)
     });
 }
