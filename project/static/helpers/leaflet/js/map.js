@@ -33,19 +33,19 @@ const getLeafletMeterScale = (map) => {
 const disableLeafletLayerClick = (map) => {
     map.eachLayer(layer => {
         const clickFns = layer._events.click
-        if (layer.off && clickFns) {
-            layer.disabledClickFns = clickFns
-            layer.off('click')
-        }
+        if (!clickFns) return
+        
+        layer._disabledClickFns = clickFns
+        delete layer._events.click
     });
 }
 
 const enableLeafletLayerClick = (map) => {
     map.eachLayer(layer => {
         const clickFns = layer.disabledClickFns
-        if (layer.on && clickFns) {
-            layer._events.click = clickFns
-            delete layer.disabledClickFns
-        }
+        if (!clickFns) return 
+        
+        layer._events.click = clickFns
+        delete layer._disabledClickFns
     });
 }

@@ -225,24 +225,21 @@ const handleLeafletQueryPanel = (map, parent) => {
                     btn.classList.toggle('btn-primary', mapClickHandler)
                     btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
                     mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
-                    map._queryMode = activate ? newMode : undefined
+                    map._queryMode = mapClickHandler ? newMode : undefined
                     
                     if (mapClickHandler) {
-                        console.log('disable')
                         disableLeafletLayerClick(map)
-                        map.eachLayer(layer => layer.options.interactive = false)
                         const clickQueryHandler = async (e) => {
-                            const mapClick = e.originalEvent.target === mapContainer
-                            if (mapClick) await queryHandler(e, mapClickHandler)
+                            if (map._queryMode === newMode) await queryHandler(e, mapClickHandler)
+                            // const mapClick = e.originalEvent.target === mapContainer
+                            // if (mapClick) await queryHandler(e, mapClickHandler)
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
-                        console.log('enable')
                         enableLeafletLayerClick(map)
                         map._events.click = map._events.click?.filter(handler => {
                             return handler.fn.name !== 'clickQueryHandler'
                         })
-
                     }
                     
                     if (btnClickHandler) await queryHandler(event, btnClickHandler)
