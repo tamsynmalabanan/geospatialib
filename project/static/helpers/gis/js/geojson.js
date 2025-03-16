@@ -6,21 +6,21 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
     for (const title in geojsonList) {
         if (controller?.signal.aborted) return
-
+        
         const geojson = geojsonList[title]
-
+        
         if (!geojson?.features?.length) continue
-
+        
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
-
+        
         const layer = getLeafletGeoJSONLayer({
             geojson,
             styleParams
         })
-
+        
         console.log(layer)
-
+        
         const titleCheck = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: title,
@@ -35,7 +35,29 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 group.removeLayer(layer)
             }
         })
+        
+        const featuresContainer = document.createElement('div')
+        geojsonContainer.appendChild(featuresContainer)
+        
+        for (const featureLayer of layer.getLayers()) {
+            if (controller?.signal.aborted) return
 
+            const feature = featureLayer.feature
+            const featureCheck = createFormCheck({
+                parent: featuresContainer,
+                labelInnerText: feature.id || feature.properties.name || feature.properties.id,
+            }).querySelector('input')
+            featureCheck.title = 'Add to map'
+            featureCheck.addEventListener('click', (e) => {
+                if (featureCheck.checked) {
+                    featureCheck.title = 'Remove from map'
+                    group.addLayer(featureLayer)
+                } else {
+                    featureCheck.title = 'Add to map'
+                    group.removeLayer(featureLayer)
+                }
+            })
+        }
 
         const info = {}
         Object.keys(geojson).forEach(key => {
