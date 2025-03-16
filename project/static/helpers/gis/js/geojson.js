@@ -43,9 +43,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const parent = geojsonContainer.querySelector(`#${parentId}`)
                 parent.checked = checkParent
                 
+                console.log(layer._eventParents)
                 if (!checkParent) {
                     const parentLayer = layer._eventParents[0]
-                    console.log(parentLayer)
                 }
             }
         }
