@@ -23,7 +23,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const clickHandler = (e, layer) => {
             const check = e.target
             const type = check.dataset.geojsonType
-            const parent = check.dataset.geojsonParent
+            const parentId = check.dataset.geojsonParent
             const isChecked = check.checked
             const isParent = type === 'FeatureCollection'
             const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${check.id}"]`)
@@ -31,11 +31,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             check.title = isChecked ? 'Remove from map' : 'Add to map'
             isChecked ? group.addLayer(layer) : group.removeLayer(layer)
             if (isParent && featureChecks) {
-                featureChecks.forEach(featureCheck => {
-                    if (isChecked !== featureCheck.checked) featureCheck.click()
-                })
-            } else if (parent) {
-                geojsonContainer.querySelector(`#${parent}`).checked = isChecked ? true : false
+                featureChecks.forEach(featureCheck => featureCheck.checked = isChecked)
+            } else if (parentId) {
+                const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
+                geojsonContainer.querySelector(`#${parentId}`).checked = allFeatureChecks.some(check => check.checked)
             }
         }
 
