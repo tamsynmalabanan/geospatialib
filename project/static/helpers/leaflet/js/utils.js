@@ -22,3 +22,7 @@ const leafletZoomToMeter = (zoom) => {
         1: 5000000,
     }[zoom]
 }
+
+const hasOrIsChildOfLeafletControl = (element) => {
+    return element.classList.contains('leaflet-control') || element.closest('.leaflet-control')
+}

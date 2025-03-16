@@ -230,10 +230,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (mapClickHandler) {
                         disableLeafletLayerClick(map)
                         const clickQueryHandler = async (e) => {
-                            console.log(e.originalEvent.target)
+                            console.log(hasOrIsChildOfLeafletControl(e.originalEvent.target))
                             if (map._queryMode === newMode) await queryHandler(e, mapClickHandler)
-                            // const mapClick = e.originalEvent.target === mapContainer
-                            // if (mapClick) await queryHandler(e, mapClickHandler)
                         } 
                         map.on('click', clickQueryHandler)
                     } else {
