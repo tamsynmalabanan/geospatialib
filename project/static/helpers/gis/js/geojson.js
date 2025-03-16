@@ -22,37 +22,45 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         
         const clickHandler = (e, layer) => {
             const check = e.target
-            if (check.checked) {
-                check.title = 'Remove from map'
-                group.addLayer(layer)
-            } else {
-                check.title = 'Add to map'
-                group.removeLayer(layer)
-            }
+            const type = check.dataset.geojsonType
+            const parent = check.dataset.geojsonParent
+            const isChecked = check.checked
+            const isParent = type === 'FeatureCollection'
+            const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${check.id}"]`)
+
+            check.title = isChecked ? 'Remove from map' : 'Add to map'
+            isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+            if (isParent && featureChecks) featureChecks.forEach(featureCheck => {
+                if (isChecked !== featureCheck.checked) featureCheck.click()
+            })
         }
 
-        const titleCheck = createFormCheck({
+        const parentCheck = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: title,
         }).querySelector('input')
-        titleCheck.title = 'Add to map'
-        titleCheck.addEventListener('click', (e) => clickHandler(e, layer))
+        parentCheck.setAttribute('data-geojson-type', 'FeatureCollection')
+        parentCheck.title = 'Add to map'
+        parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
         const contentCollapse = document.createElement('div')
         contentCollapse.className = 'ps-3'
         geojsonContainer.appendChild(contentCollapse)
-
+        
         const featuresContainer = document.createElement('div')
         contentCollapse.appendChild(featuresContainer)
         
         for (const featureLayer of layer.getLayers()) {
             if (controller?.signal.aborted) return
-
+            
             const feature = featureLayer.feature
             const featureCheck = createFormCheck({
                 parent: featuresContainer,
+                inputValue: 'Feature',
                 labelInnerText: feature.id || feature.properties.name || feature.properties.id,
             }).querySelector('input')
+            featureCheck.setAttribute('data-geojson-type', 'Feature')
+            featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
             featureCheck.title = 'Add to map'
             featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
         }
