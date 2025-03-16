@@ -85,14 +85,14 @@ const createOffcanvasElement = (id, {
         ${className}
         ${show ? 'offcanvas-lg' : 'offcanvas'}
         ${themed ? `text-bg-${getPreferredTheme()}` : ''}
-        shadow-lg border-0 p-2 d-flex flex-column
+        shadow-lg border-0 p-0 d-flex flex-column
     `)
     offcanvas.setAttribute('aria-labelledby', `${id}Label`)
     offcanvas.setAttribute('data-bs-scroll', `true`)
     offcanvas.setAttribute('data-bs-backdrop', `false`)
 
     const header = document.createElement('div')
-    header.className = 'offcanvas-header d-flex justify-content-between p-0'
+    header.className = 'offcanvas-header d-flex justify-content-between'
     offcanvas.appendChild(header)
 
     const title = document.createElement('h5')
