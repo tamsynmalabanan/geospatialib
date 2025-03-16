@@ -259,7 +259,7 @@ const createAccordionElement = (id, tabData, {
         accordion.appendChild(accordionCollapse)
 
         const accordionBody = document.createElement('div')
-        accordionBody.className = 'accordion-body h-100 p-0'
+        accordionBody.className = 'accordion-body h-100 p-0 d-flex flex-column'
         accordionCollapse.appendChild(accordionBody)
 
     })

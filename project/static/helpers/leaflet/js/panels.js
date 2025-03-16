@@ -61,7 +61,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const results = document.createElement('div')
     results.id = `${mapContainer.id}-panels-query-results`
-    results.className = 'p-3 d-none border-top'
+    results.className = 'p-3 d-none border-top flex-grow-1 overflow-auto'
     parent.appendChild(results)
     
     const status = document.createElement('div')
