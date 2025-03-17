@@ -20,6 +20,27 @@ const getLeafletGeoJSONLayer = ({
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         assignFeatureLayerTitle(layer)
         layer.bindTooltip(layer._title, {sticky:true})
+
+        if (Object.keys(feature.properties).length) {
+            const createPopup = () => {
+                const popupHeader = [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                console.log(popupHeader)
+                // const propertiesTable = createFeaturePropertiesTable(feature.properties, {
+                //         header: typeof popupHeader === 'function' ? (() => {
+                //             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                //             return popupHeader()
+                //         })() : popupHeader
+                // })
+                
+                // layer.bindPopup(propertiesTable.outerHTML, {
+                //     autoPan: false,
+                // }).openPopup()
+                
+                // layer.off('click', createPopup)
+            }
+
+            layer.on('click', createPopup)
+        }
     }
     
     const getStyle = (feature) => {
