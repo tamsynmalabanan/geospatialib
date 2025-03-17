@@ -2,6 +2,7 @@ const getLeafletGeoJSONLayer = ({
     pane,
     geojson,
     styleParams,
+    title,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         filter: (feature) => {
@@ -10,9 +11,41 @@ const getLeafletGeoJSONLayer = ({
         markersInheritOptions: true,
     })
     
+    if (title) geojsonLayer._title = title
+
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
+    
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
+        
+        if (feature.id) feature.properties.feature_id = feature.id
+        
+        const keywords = [
+            'display_name',
+            'name',
+            'feature_id',
+            'type',
+        ]
+
+        for (const key of keywords) {
+            const matches = Object.keys(feature.properties).filter(i => i.startsWith(key))
+            if (!matches) {
+                continue
+            } else {
+                layer._title = feature.properties[matches[0]]
+                break
+            }
+        }
+
+        if (!layer._title) {
+            for (const key in feature.properties) {
+                const value = properties[key]
+                if (typeof value !== 'object' && value.length < 50 && value.length > 5) {
+                    layer._title = `${key}: ${value}`
+                    break
+                }
+            }
+        }
     }
     
     const getStyle = (feature) => {

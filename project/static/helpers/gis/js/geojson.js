@@ -17,7 +17,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         
         const layer = getLeafletGeoJSONLayer({
             geojson,
-            styleParams
+            styleParams,
+            title,
         })
         const featureLayers = layer.getLayers()
         const listFeatures = featureLayers.length <= 100
@@ -88,7 +89,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const feature = featureLayer.feature
                 const featureCheck = createFormCheck({
                     parent: featuresContainer,
-                    labelInnerText: feature.id || feature.properties.name || feature.properties.id,
+                    labelInnerText: featureLayer._title,
                 }).querySelector('input')
                 featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
                 featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
@@ -215,7 +216,7 @@ const fetchGeoJSONs = async (fetchers, {
 
     const geojsons = {}
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i] // geojson handler
+        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
     }
 
     return geojsons
