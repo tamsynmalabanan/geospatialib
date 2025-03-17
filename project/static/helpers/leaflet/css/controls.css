@@ -7,7 +7,7 @@
         .leaflet-top.leaflet-right {
             display: flex;
             max-height: 80% !important;
-            max-width: 30% !important;
+            max-width: 40% !important;
 
             .leaflet-control {
                 /* margin-bottom: 100px !important; */
@@ -56,6 +56,7 @@
     }
 }
 
+.leaflet-control-geocoder-form,
 .leaflet-control-locate a,
 .leaflet-control-geocoder-icon,
 .leaflet-control-zoom-out[title='Reset view'] {
@@ -64,7 +65,6 @@
 
 .leaflet-control-geocoder-form input {
     padding-bottom: .25rem !important;
-    border-radius: var(--bs-border-radius) !important;
 }
 
 .leaflet-control-locate:not(.active) a.text-bg-dark .leaflet-control-locate-location-arrow {
