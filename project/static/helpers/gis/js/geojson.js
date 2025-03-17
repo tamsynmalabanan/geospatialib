@@ -3,7 +3,7 @@ const handleGeoJSON = async (geojson, {
     sortFeatures = false,
 } = {}) => {
     const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
-    const crs = crsInfo.length ? parseInt(crsInfo[1]) : null
+    const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
     
     geojson.features.forEach(async (feature) => {
         feature.geometry = feature.geometry || defaultGeom
