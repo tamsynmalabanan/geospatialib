@@ -64,6 +64,7 @@
 }
 
 .leaflet-control-geocoder-form input {
+    padding-right: .25rem !important;
     padding-bottom: .25rem !important;
 }
 
