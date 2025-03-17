@@ -1,11 +1,90 @@
-const getGeoJSONCRS = (geojson) => {
-    const name = geojson?.crs?.properties?.name
-    if (name && name.includes('EPSG::')) return parseInt(name.split('EPSG::')[1])            
+const handleGeoJSON = async (geojson, {
+    defaultGeom,
+    sortFeatures = false,
+} = {}) => {
+    const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
+    const crs = crsInfo.length ? parseInt(crsInfo[1]) : null
+    
+    geojson.features.forEach(async (feature) => {
+        feature.geometry = feature.geometry || defaultGeom
+        const geomAssigned = !feature.geometry && defaultGeom
+        
+        if (crs && crs !== 4326 && !geomAssigned) {
+            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)        
+        }
+        
+        if (feature.id) feature.properties.feature_id = feature.id
+    })
+    
+    if (sortFeatures) sortGeoJSONFeatures(geojson)
+}
+
+const sortGeoJSONFeatures = (geojson) => {
+    geojson.features.sort((a, b) => {
+        const featureTypeA = a.geometry.type;
+        const featureTypeB = b.geometry.type;
+    
+        if (featureTypeA === 'Point' && featureTypeB !== 'Point') {
+            return -1;
+        } else if (featureTypeB === 'Point' && featureTypeA !== 'Point') {
+            return 1;
+        } else if (featureTypeA === 'MultiPoint' && featureTypeB !== 'MultiPoint') {
+            return -1;
+        } else if (featureTypeB === 'MultiPoint' && featureTypeA !== 'MultiPoint') {
+            return 1;
+        } else if (featureTypeA === 'LineString' && featureTypeB !== 'LineString') {
+            return -1;
+        } else if (featureTypeB === 'LineString' && featureTypeA !== 'LineString') {
+            return 1;
+        } else if (featureTypeA === 'MultiLineString' && featureTypeB !== 'MultiLineString') {
+            return -1;
+        } else if (featureTypeB === 'MultiLineString' && featureTypeA !== 'MultiLineString') {
+            return 1;
+        } else if (featureTypeA === 'Polygon' && featureTypeB !== 'Polygon') {
+            return -1;
+        } else if (featureTypeB === 'Polygon' && featureTypeA !== 'Polygon') {
+            return 1;
+        } else if (featureTypeA === 'MultiPolygon' && featureTypeB !== 'MultiPolygon') {
+            return -1;
+        } else if (featureTypeB === 'MultiPolygon' && featureTypeA !== 'MultiPolygon') {
+            return 1;
+        } else {
+            return featureTypeA.localeCompare(featureTypeB);
+        }
+    });
+}
+
+const transformGeoJSONCoordinates = async (coordinates, source, target) => {
+    const source_text = `EPSG:${source}`
+    const target_text = `EPSG:${target}`
+    
+    [source_text, target_text].forEach(async (crs) => {
+        if (!proj4.defs(crs)) await fetchProj4Def(crs)
+    })
+
+    if (proj4.defs(source_text) && proj4.defs(target_text)) {
+        loopThroughGeoJSONCoordinates(coordinates, (coords) => {
+            coords[0], coords[1] = proj4(source_text, target_text, coords)
+        })
+    }
+
+    return coordinates
+}
+
+const loopThroughGeoJSONCoordinates = (coordinates, handler) => {
+    if (Array.isArray(coordinates) && coordinates.length === 2 && coordinates.every(item => typeof item === 'number')) {
+        handler(coordinates)
+    } else {
+        Obje
+        ct.values(coordinates).forEach(value => loopThroughGeoJSONCoordinates(value, handler))
+    }
+    return coordinates
 }
 
 const createGeoJSONChecklist = async (geojsonList, group, {
     controller,
-    styleParams
+    styleParams,
+    defaultGeom,
 } = {}) => {
     const container = document.createElement('div')
     container.className = 'd-flex flex-column gap-2'
@@ -14,6 +93,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (controller?.signal.aborted) return
         
         const geojson = geojsonList[title]
+        handleGeoJSON(geojson, {
+            defaultGeom,
+            sortFeatures: true,
+        })
         
         if (!geojson?.features?.length) continue
         

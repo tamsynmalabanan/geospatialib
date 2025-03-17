@@ -17,7 +17,6 @@ const getLeafletGeoJSONLayer = ({
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
-        if (feature.id) properties.feature_id = feature.id
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         assignFeatureLayerTitle(layer)
         if (layer._title) layer.bindTooltip(layer._title, {sticky:true})
