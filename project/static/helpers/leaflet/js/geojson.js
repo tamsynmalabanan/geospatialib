@@ -47,25 +47,25 @@ const getLeafletGeoJSONLayer = ({
         return L.marker(latlng, {icon: getStyle(feature)})
     },
     
-    geojsonLayer.options.symbology = {
-        grouped: false,
-        groups: {
-            'Title': {
-                properties: {
-                    'property key': ['property', 'values'],
-                },
-                style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-                    customStyleParams: 'here'
-                })
-            },
-        },
-        default: {
-            label: 'Others',
-            style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-                customStyleParams: 'here'
-            })
-        }
-    }
+    // geojsonLayer.options.symbology = {
+    //     grouped: false,
+    //     groups: {
+    //         'Title': {
+    //             properties: {
+    //                 'property key': ['property', 'values'],
+    //             },
+    //             style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+    //                 customStyleParams: 'here'
+    //             })
+    //         },
+    //     },
+    //     default: {
+    //         label: 'Others',
+    //         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+    //             customStyleParams: 'here'
+    //         })
+    //     }
+    // }
 
     if (geojson) geojsonLayer.addData(geojson)
 
