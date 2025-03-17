@@ -20,7 +20,7 @@ const getLeafletGeoJSONLayer = ({
         if (feature.id) properties.feature_id = feature.id
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         assignFeatureLayerTitle(layer)
-        layer.bindTooltip(layer._title, {sticky:true})
+        if (layer._title) layer.bindTooltip(layer._title, {sticky:true})
 
         if (Object.keys(properties).length) {
             const createPopup = () => {

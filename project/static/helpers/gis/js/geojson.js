@@ -1,3 +1,8 @@
+const getGeoJSONCRS = (geojson) => {
+    const name = geojson?.crs?.properties?.name
+    if (name && name.includes('EPSG::')) return parseInt(name.split('EPSG::')[1])            
+}
+
 const createGeoJSONChecklist = async (geojsonList, group, {
     controller,
     styleParams
