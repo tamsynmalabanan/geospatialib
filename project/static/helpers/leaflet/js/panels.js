@@ -249,14 +249,17 @@ const handleLeafletQueryPanel = (map, parent) => {
                     map._queryMode = mapClickHandler ? newMode : undefined
                     
                     if (mapClickHandler) {
-                        disableLeafletLayerClick(map)
                         const clickQueryHandler = async (e) => {
                             if (!isLeafletControlElement(e.originalEvent.target) && map._queryMode === newMode) {
                                 map.off('click', clickQueryHandler)
+                                enableLeafletLayerClick(map)
+                                
                                 await queryHandler(e, mapClickHandler)
                                 if (btn.classList.contains('btn-primary')) btn.click()
                             }
                         } 
+                        
+                        disableLeafletLayerClick(map)
                         map.on('click', clickQueryHandler)
                     } else {
                         enableLeafletLayerClick(map)
