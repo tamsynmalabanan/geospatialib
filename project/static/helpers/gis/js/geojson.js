@@ -20,7 +20,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             styleParams
         })
         const featureLayers = layer.getLayers()
-        const listFeatures = featureLayers.length <= 100
+        const listFeatures = featureLayers.length <= 50
+        const disableCheck = featureLayers.length > 100
 
         const clickHandler = (e, layer) => {
             const checkInput = e.target
@@ -55,7 +56,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             parent: geojsonContainer,
             labelInnerText: title,
         }).querySelector('input')
-        parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
+        if (disableCheck) {
+            parentCheck.disabled = true
+        } else {
+            parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
+        }
         
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
