@@ -1,8 +1,8 @@
 :root {
     --adjusted-bg-dark: #35374B;
     --adjusted-bg-light: #FFF5D7;
-    /* --adjusted-bg-light: hsl(210, 17%, 98%);
-    --adjusted-bg-dark: hsl(210, 11%, 15%); */
+    --default-bg-light: hsl(210, 17%, 98%);
+    --default-bg-dark: hsl(210, 11%, 15%);
 }
 
 [data-bs-theme="light"] {
@@ -52,5 +52,9 @@
         color:  #fff !important;
         background-color: var(--adjusted-bg-dark) !important;
         border-radius: var(--bs-border-radius);
+    }
+
+    .leaflet-popup-content-wrapper {
+        background-color: var(--default-bg-dark) !important;
     }
 }
