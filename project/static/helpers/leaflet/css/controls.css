@@ -7,7 +7,7 @@
         .leaflet-top.leaflet-right {
             display: flex;
             max-height: 80% !important;
-            max-width: 40% !important;
+            max-width: 30% !important;
 
             .leaflet-control {
                 /* margin-bottom: 100px !important; */
