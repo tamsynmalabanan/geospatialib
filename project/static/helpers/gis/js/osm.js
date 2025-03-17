@@ -1,11 +1,11 @@
-const fetchNominatim = async (latlng, zoom, {
+const fetchNominatim = async (latlng, map, {
     abortBtns,
     controller,
 } = {}) => {
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
         lat: latlng.lat,
         lon: latlng.lng,
-        zoom: zoom,
+        zoom: map.getZoom(),
         format: 'geojson',
         polygon_geojson: 1,
         polygon_threshold: 0,
@@ -31,11 +31,12 @@ const fetchNominatim = async (latlng, zoom, {
     })
 }
 
-const fetchOverpassAroundPt = async (latlng, buffer, {
+const fetchOverpassAroundPt = async (latlng, map, {
     abortBtns,
     controller,
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'
+    const buffer = (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
     const params = `around:${buffer},${latlng.lat},${latlng.lng}`
     
     return fetchTimeout(url, {

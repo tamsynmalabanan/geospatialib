@@ -160,14 +160,11 @@ const handleLeafletQueryPanel = (map, parent) => {
             mapClickHandler: async (e) => await fetchGeoJSONs({
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
-                    params: [e.latlng, map.getZoom()],
+                    params: [e.latlng, map],
                 },
                 'OpenStreetMap via Overpass': {
                     handler: fetchOverpassAroundPt,
-                    params: [
-                        e.latlng,
-                        (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
-                    ],
+                    params: [e.latlng, map],
                 },
             }, {abortBtns: [getCancelBtn()], controller})
         },

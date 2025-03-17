@@ -208,7 +208,7 @@ const fetchGeoJSONs = async (fetchers, {
 
     const geojsons = {}
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i] // geojson handler
     }
 
     return geojsons
