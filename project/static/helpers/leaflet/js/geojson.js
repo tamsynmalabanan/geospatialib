@@ -19,6 +19,7 @@ const getLeafletGeoJSONLayer = ({
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         
         const properties = feature.properties
+        console.log(properties)
         if (feature.id) properties.feature_id = feature.id
 
         const keywords = [
@@ -47,8 +48,6 @@ const getLeafletGeoJSONLayer = ({
                 }
             }
         }
-
-        if (!layer.title) console.log(properties)
     }
     
     const getStyle = (feature) => {
