@@ -56,6 +56,7 @@
 
     .leaflet-popup-tip,
     .leaflet-popup-content-wrapper {
+        color: white;
         background-color: var(--default-bg-dark) !important;
     }
 }
