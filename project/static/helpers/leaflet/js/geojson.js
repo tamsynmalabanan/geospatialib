@@ -3,58 +3,69 @@ const getLeafletGeoJSONLayer = ({
     geojson,
     styleParams,
 } = {}) => {
-    const options = getLeafletStyleParams(styleParams)
-    
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        style: (feature) => {
-            return getLeafletLayerStyle(feature.geometry.type, options)
+        filter: (feature) => {
+            return true
         },
-        pointToLayer: (feature, latlng) => {
-            return L.marker(latlng, {
-                icon: getLeafletLayerStyle('point', options)
-            })
-        },
-        // filter: (geoJsonFeature) => {
-        //     return true
-        // },
         markersInheritOptions: true,
     })
-
+    
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
     }
+    
+    const getStyle = (feature) => {
+        const symbology = geojsonLayer.options.symbology
+        if (symbology?.grouped) {
+            for (const group in symbology.groups) {
+                let valid = true
 
-    // geojsonLayer.options.symbology = {
-    //     grouped: false,
-    //     gruops: {
-    //         'Title': {
-    //             properties: {
-    //                 'property key': ['property', 'values'],
-    //             },
-    //             style: (feature) => {
-    //                 const type = feature.geometry.type
-    //                 const style = getLeafletLayerStyle(type, options)
-    //                 return type.toLowerCase().endsWith('point') ? L.marker(
-    //                     [...feature.geometry.coordinates.reverse()], {
-    //                         icon: style                            
-    //                     }
-    //                 ) : style
-    //             }
-    //         },
-    //         'Others': {
-    //             style: (feature) => {
-    //                 const type = feature.geometry.type
-    //                 const style = getLeafletLayerStyle(type, options)
-    //                 return type.toLowerCase().endsWith('point') ? L.marker(
-    //                     [...feature.geometry.coordinates.reverse()], {
-    //                         icon: style                            
-    //                     }
-    //                 ) : style
-    //             }
-    //         }
-    //     }
-    // }
+                for (const property in group.properties) {
+                    const valueList = group.properties[property]
+                    const featureValue = feature.properties[property]
+                    if (!valueList.contains(featureValue)) {
+                        valid = false
+                        break
+                    }
+                }
+    
+                if (valid) return group.style(feature)
+            }
+    
+            return symbology.default.style(feature)
+        } else {
+            return getLeafletLayerStyle(
+                feature.geometry.type, 
+                getLeafletStyleParams(styleParams)
+            )
+        }
+    }
+
+    geojsonLayer.options.style = (feature) => getStyle(feature)
+    geojsonLayer.options.pointToLayer = (feature, latlng) => {
+        return L.marker(latlng, {icon: getStyle(feature)})
+    },
+    
+    geojsonLayer.options.symbology = {
+        grouped: false,
+        groups: {
+            'Title': {
+                properties: {
+                    'property key': ['property', 'values'],
+                },
+                style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+                    customStyleParams: 'here'
+                })
+            },
+        },
+        default: {
+            label: 'Others',
+            style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+                customStyleParams: 'here'
+            })
+        }
+    }
 
     if (geojson) geojsonLayer.addData(geojson)
 
