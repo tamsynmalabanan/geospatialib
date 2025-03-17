@@ -1,11 +1,14 @@
 const handleGeoJSON = async (geojson, {
+    controller,
     defaultGeom,
     sortFeatures = false,
 } = {}) => {
     const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
     const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
     
-    geojson.features.forEach(async (feature) => {
+    for (const feature of geojson.features) {
+        if (controller?.signal.aborted) return
+    
         feature.geometry = feature.geometry || defaultGeom
         const geomAssigned = !feature.geometry && defaultGeom
         
@@ -14,8 +17,8 @@ const handleGeoJSON = async (geojson, {
         }
         
         if (feature.id) feature.properties.feature_id = feature.id
-    })
-    
+    }
+
     if (sortFeatures) sortGeoJSONFeatures(geojson)
 }
 
@@ -98,6 +101,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const disableCheck = features.length > 1000
 
         handleGeoJSON(geojson, {
+            controller,
             defaultGeom,
             sortFeatures: listFeatures,
         })
@@ -175,7 +179,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             for (const featureLayer of layer.getLayers()) {
                 if (controller?.signal.aborted) return
                 
-                const feature = featureLayer.feature
                 const featureCheck = createFormCheck({
                     parent: featuresContainer,
                     labelInnerText: featureLayer._title,
