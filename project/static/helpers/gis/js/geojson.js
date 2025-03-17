@@ -104,6 +104,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         if (Object.keys(info).length) {
             const infoContainer = document.createElement('div')
+            infoContainer.className = 'text-muted'
             contentCollapse.appendChild(infoContainer)
             
             const infoTable = document.createElement('table')
