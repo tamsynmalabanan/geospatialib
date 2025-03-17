@@ -205,7 +205,7 @@ const createFeaturePropertiesTable = (properties, {
     header,
 } = {}) => {
     const table = document.createElement('table')
-    table.className = removeWhiteSpace(`
+    table.className = removeWhitespace(`
         table table-sm table-striped
     `)
 
