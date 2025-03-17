@@ -123,10 +123,13 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-            const defaultGeom = e.latlng ? turf.point(
-                Object.values(e.latlng).reverse()
-            ).geometry : L.rectangle(map.getBounds()).toGeoJSON().geometry
-            map.getLayerGroups().indicators.addLayer(defaultGeom)
+            const defaultFeature = e.latlng ? turf.point(Object.values(e.latlng).reverse()) : L.rectangle(map.getBounds()).toGeoJSON()
+            const defaultGeom = defaultFeature.geometry
+            map.getLayerGroups().indicators.addLayer(getLeafletGeoJSONLayer({
+                geojson: defaultFeature, 
+                styleParams: queryStyleParams,
+            }))
+
             const content = await createGeoJSONChecklist(geojsons, queryGroup, {
                 defaultGeom,
                 controller, 
