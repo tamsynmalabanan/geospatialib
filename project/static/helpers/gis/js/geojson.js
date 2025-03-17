@@ -75,8 +75,7 @@ const loopThroughGeoJSONCoordinates = (coordinates, handler) => {
     if (Array.isArray(coordinates) && coordinates.length === 2 && coordinates.every(item => typeof item === 'number')) {
         handler(coordinates)
     } else {
-        Obje
-        ct.values(coordinates).forEach(value => loopThroughGeoJSONCoordinates(value, handler))
+        Object.values(coordinates).forEach(value => loopThroughGeoJSONCoordinates(value, handler))
     }
     return coordinates
 }
