@@ -47,6 +47,8 @@ const getLeafletGeoJSONLayer = ({
                 }
             }
         }
+
+        if (!layer.title) console.log(properties)
     }
     
     const getStyle = (feature) => {
