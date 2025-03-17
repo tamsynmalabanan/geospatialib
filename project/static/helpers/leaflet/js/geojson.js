@@ -19,7 +19,6 @@ const getLeafletGeoJSONLayer = ({
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         
         const properties = feature.properties
-        console.log(properties)
         if (feature.id) properties.feature_id = feature.id
 
         const keywords = [
@@ -42,7 +41,7 @@ const getLeafletGeoJSONLayer = ({
         if (!layer._title) {
             for (const key in properties) {
                 const value = properties[key]
-                if (typeof value !== 'object' && value.length < 50 && value.length > 5) {
+                if (typeof value !== 'object' && value.length < 50) {
                     layer._title = `${key}: ${value}`
                     break
                 }
