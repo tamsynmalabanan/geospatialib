@@ -45,7 +45,7 @@ const getLeafletGeoJSONLayer = ({
     geojsonLayer.options.style = (feature) => getStyle(feature)
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         return L.marker(latlng, {icon: getStyle(feature)})
-    },
+    }
     
     // geojsonLayer.options.symbology = {
     //     grouped: false,
