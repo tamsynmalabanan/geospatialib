@@ -128,7 +128,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             map.getLayerGroups().indicators.addLayer(getLeafletGeoJSONLayer({
                 geojson: defaultFeature, 
                 styleParams: {
-                    color: 'rgb(43, 20, 255)',
+                    color: 'rgb(255, 20, 20)',
                     iconStroke: 1,
                 },
             }))
