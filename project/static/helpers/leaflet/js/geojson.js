@@ -16,27 +16,27 @@ const getLeafletGeoJSONLayer = ({
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
+        const properties = feature.properties
         if (feature.id) properties.feature_id = feature.id
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         assignFeatureLayerTitle(layer)
         layer.bindTooltip(layer._title, {sticky:true})
 
-        if (Object.keys(feature.properties).length) {
+        if (Object.keys(properties).length) {
             const createPopup = () => {
-                const popupHeader = [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
-                console.log(popupHeader)
-                // const propertiesTable = createFeaturePropertiesTable(feature.properties, {
-                //         header: typeof popupHeader === 'function' ? (() => {
-                //             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                //             return popupHeader()
-                //         })() : popupHeader
-                // })
+                const propertiesTable = createFeaturePropertiesTable(properties, {
+                    header: (() => {
+                        const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                        layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                        return popupHeader()
+                    })()
+                })
                 
-                // layer.bindPopup(propertiesTable.outerHTML, {
-                //     autoPan: false,
-                // }).openPopup()
+                layer.bindPopup(propertiesTable.outerHTML, {
+                    autoPan: false,
+                }).openPopup()
                 
-                // layer.off('click', createPopup)
+                layer.off('click', createPopup)
             }
 
             layer.on('click', createPopup)

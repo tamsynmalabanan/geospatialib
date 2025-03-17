@@ -201,6 +201,60 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     return container
 }
 
+const createFeaturePropertiesTable = (properties, {
+    header,
+} = {}) => {
+    const table = document.createElement('table')
+    table.className = removeWhiteSpace(`
+        table table-sm table-striped
+    `)
+
+    if (header) {
+        const thead = document.createElement('thead')
+        table.appendChild(thead)
+
+        const theadtr = document.createElement('tr')
+        thead.appendChild(theadtr)
+
+        const theadth = document.createElement('th')
+        theadth.setAttribute('scope', 'col')
+        theadth.setAttribute('colspan', '2')
+        theadth.innerText = header
+        theadtr.appendChild(theadth)
+    }
+
+    const tbody = document.createElement('tbody')
+    table.appendChild(tbody)
+    
+    const handler = (properties) => {
+        Object.keys(properties).forEach(property => {
+            let data = properties[property]
+            
+            if (data && typeof data === 'object') {
+                handler(data)
+            } else {
+                if (!data) data = null
+
+                const tr = document.createElement('tr')
+                tbody.appendChild(tr)
+                
+                const th = document.createElement('th')
+                th.innerText = property
+                th.setAttribute('scope', 'row')
+                tr.appendChild(th)
+        
+                const td = document.createElement('td')
+                td.innerHTML = data
+                tr.appendChild(td)
+            }
+        })
+    }
+
+    handler(properties)
+
+    return table
+}
+
 const fetchGeoJSONs = async (fetchers, {
     controller,
     abortBtns,
@@ -221,3 +275,4 @@ const fetchGeoJSONs = async (fetchers, {
 
     return geojsons
 }
+
