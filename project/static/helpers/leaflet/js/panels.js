@@ -234,6 +234,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     const mapClickHandler = activate ? data.mapClickHandler : null 
                     const btnClickHandler = activate ? data.btnClickHandler : null 
                     
+                    if (data.queryHandler === false) return btnClickHandler()
+
                     if (activate && currentMode) {
                         toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
                     }
@@ -258,13 +260,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         })
                     }
                     
-                    if (btnClickHandler) {
-                        if (data.queryHandler === false) {
-                            btnClickHandler()
-                        } else {
-                            await queryHandler(event, btnClickHandler)
-                        }
-                    }
+                    if (btnClickHandler) await queryHandler(event, btnClickHandler)
                 }
             }})
         )
