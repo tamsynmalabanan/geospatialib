@@ -202,8 +202,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             className: 'vr m-2',
         },
         collapse: {
-            iconClass: 'bi bi-chevron-expand',
-            title: 'Collapse/expand results',
+            iconClass: 'bi bi-chevron-up',
+            title: 'Collapse results',
             queryHandler: false,
             btnClickHandler: () => {
                 const shownCollapseElements = results.querySelectorAll('.collapse.show')
