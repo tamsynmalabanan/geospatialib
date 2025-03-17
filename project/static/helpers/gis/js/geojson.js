@@ -19,7 +19,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             geojson,
             styleParams
         })
-        
+        const featureLayers = layer.getLayers()
+        const listFeatures = featureLayers.length <= 100
+
         const clickHandler = (e, layer) => {
             const checkInput = e.target
             const isChecked = checkInput.checked
@@ -53,39 +55,40 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             parent: geojsonContainer,
             labelInnerText: title,
         }).querySelector('input')
-        parentCheck.title = 'Add to map'
         parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
-        contentCollapse.className = 'ps-3 collapse'
+        contentCollapse.className = `ps-3 collapse ${!listFeatures ? 'show' : ''}`
         geojsonContainer.appendChild(contentCollapse)
         
-        const contentToggle = createIcon({
-            parent: parentCheck.parentElement,
-            peNone: false,
-            className: 'ms-auto dropdown-toggle'
-        })
-        contentToggle.style.cursor = 'pointer'
-        contentToggle.setAttribute('data-bs-toggle', 'collapse')
-        contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
-        contentToggle.setAttribute('aria-controls', contentCollapse.id)
-        contentToggle.setAttribute('aria-expanded', 'false')
-
-        const featuresContainer = document.createElement('div')
-        contentCollapse.appendChild(featuresContainer)
         
-        for (const featureLayer of layer.getLayers()) {
-            if (controller?.signal.aborted) return
+        if (listFeatures) {
+            const contentToggle = createIcon({
+                parent: parentCheck.parentElement,
+                peNone: false,
+                className: 'ms-auto dropdown-toggle'
+            })
+            contentToggle.style.cursor = 'pointer'
+            contentToggle.setAttribute('data-bs-toggle', 'collapse')
+            contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+            contentToggle.setAttribute('aria-controls', contentCollapse.id)
+            contentToggle.setAttribute('aria-expanded', 'false')
             
-            const feature = featureLayer.feature
-            const featureCheck = createFormCheck({
-                parent: featuresContainer,
-                labelInnerText: feature.id || feature.properties.name || feature.properties.id,
-            }).querySelector('input')
-            featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
-            featureCheck.title = 'Add to map'
-            featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
+            const featuresContainer = document.createElement('div')
+            contentCollapse.appendChild(featuresContainer)
+
+            for (const featureLayer of featureLayers) {
+                if (controller?.signal.aborted) return
+                
+                const feature = featureLayer.feature
+                const featureCheck = createFormCheck({
+                    parent: featuresContainer,
+                    labelInnerText: feature.id || feature.properties.name || feature.properties.id,
+                }).querySelector('input')
+                featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
+                featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
+            }
         }
 
         const info = {}
