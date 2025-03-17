@@ -64,6 +64,7 @@
 
 .leaflet-control-geocoder-form input {
     padding-bottom: .25rem !important;
+    border-radius: var(--bs-border-radius) !important;
 }
 
 .leaflet-control-locate:not(.active) a.text-bg-dark .leaflet-control-locate-location-arrow {
