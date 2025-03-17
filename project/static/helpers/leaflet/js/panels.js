@@ -127,7 +127,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             const defaultGeom = defaultFeature.geometry
             map.getLayerGroups().indicators.addLayer(getLeafletGeoJSONLayer({
                 geojson: defaultFeature, 
-                styleParams: queryStyleParams,
+                styleParams: {
+                    color: 'rgb(43, 20, 255)',
+                    iconStroke: 1,
+                },
             }))
 
             const content = await createGeoJSONChecklist(geojsons, queryGroup, {
