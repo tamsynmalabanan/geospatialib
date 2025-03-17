@@ -20,8 +20,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             styleParams
         })
         const featureLayers = layer.getLayers()
-        const listFeatures = featureLayers.length <= 50
-        const disableCheck = featureLayers.length > 100
+        const listFeatures = featureLayers.length <= 100
+        const disableCheck = featureLayers.length > 1000
 
         const clickHandler = (e, layer) => {
             const checkInput = e.target
