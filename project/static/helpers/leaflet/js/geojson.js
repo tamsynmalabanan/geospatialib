@@ -16,35 +16,9 @@ const getLeafletGeoJSONLayer = ({
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
-        layer.options.pane = geojsonLayer.options.pane || layer.options.pane
-        
-        const properties = feature.properties
         if (feature.id) properties.feature_id = feature.id
-
-        for (const key of [
-            'display_name',
-            'name',
-            'feature_id',
-            'type',
-        ]) {
-            const matches = Object.keys(properties).filter(i => i.startsWith(key))
-            if (!matches) {
-                continue
-            } else {
-                layer._title = properties[matches[0]]
-                break
-            }
-        }
-
-        if (!layer._title) {
-            for (const key in properties) {
-                const value = properties[key]
-                if (typeof value !== 'object' && value.length < 50) {
-                    layer._title = `${key}: ${value}`
-                    break
-                }
-            }
-        }
+        layer.options.pane = geojsonLayer.options.pane || layer.options.pane
+        assignFeatureLayerTitle(layer)
     }
     
     const getStyle = (feature) => {
@@ -73,33 +47,61 @@ const getLeafletGeoJSONLayer = ({
             )
         }
     }
-
     geojsonLayer.options.style = (feature) => getStyle(feature)
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         return L.marker(latlng, {icon: getStyle(feature)})
     }
     
-    // geojsonLayer.options.symbology = {
-    //     grouped: false,
-    //     groups: {
-    //         'Title': {
-    //             properties: {
-    //                 'property key': ['property', 'values'],
-    //             },
-    //             style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-    //                 customStyleParams: 'here'
-    //             })
-    //         },
-    //     },
-    //     default: {
-    //         label: 'Others',
-    //         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-    //             customStyleParams: 'here'
-    //         })
-    //     }
-    // }
-
     if (geojson) geojsonLayer.addData(geojson)
 
     return geojsonLayer
 }
+
+const assignFeatureLayerTitle = (layer) => {
+    const properties = layer.feature.properties
+    
+    for (const key of [
+        'display_name',
+        'name',
+        'feature_id',
+        'type',
+    ]) {
+        const matches = Object.keys(properties).filter(i => i.startsWith(key))
+        if (!matches) {
+            continue
+        } else {
+            layer._title = properties[matches[0]]
+            break
+        }
+    }
+
+    if (!layer._title) {
+        for (const key in properties) {
+            const value = properties[key]
+            if (typeof value !== 'object' && value.length < 50) {
+                layer._title = `${key}: ${value}`
+                break
+            }
+        }
+    }
+}
+
+// geojsonLayer.options.symbology = {
+//     grouped: false,
+//     groups: {
+//         'Title': {
+//             properties: {
+//                 'property key': ['property', 'values'],
+//             },
+//             style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+//                 customStyleParams: 'here'
+//             })
+//         },
+//     },
+//     default: {
+//         label: 'Others',
+//         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+//             customStyleParams: 'here'
+//         })
+//     }
+// }
