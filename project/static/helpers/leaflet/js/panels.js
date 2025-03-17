@@ -254,6 +254,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         const clickQueryHandler = async (e) => {
                             if (!isLeafletControlElement(e.originalEvent.target) && map._queryMode === newMode) {
                                 await queryHandler(e, mapClickHandler)
+                                btn.click()
                             }
                         } 
                         map.on('click', clickQueryHandler)
