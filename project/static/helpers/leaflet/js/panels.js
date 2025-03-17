@@ -130,6 +130,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             const content = await createGeoJSONChecklist(geojsons, queryGroup, {
                 defaultGeom,
                 controller, 
+                pane: 'queryPane', 
                 styleParams: queryStyleParams, 
             })
             results.appendChild(content)
@@ -151,6 +152,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
                 
                 const layer = getLeafletGeoJSONLayer({
+                    pane: 'queryPane',
                     geojson: feature, 
                     styleParams: queryStyleParams,
                 })

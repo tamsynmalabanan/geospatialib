@@ -16,4 +16,7 @@ const handleLeafletLayerGroups = (map) => {
         const groups = Object.values(layerGroups).filter(group => group.hasLayer(layer) || group.hasHiddenLayer(layer)) 
         return groups.length ? groups[0] : null
     }
+
+    const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
+    queryPane.style.zIndex = 625
 }

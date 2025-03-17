@@ -84,6 +84,7 @@ const loopThroughGeoJSONCoordinates = (coordinates, handler) => {
 }
 
 const createGeoJSONChecklist = async (geojsonList, group, {
+    pane,
     controller,
     styleParams,
     defaultGeom,
@@ -112,6 +113,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         container.appendChild(geojsonContainer)
         
         const layer = getLeafletGeoJSONLayer({
+            pane,
             geojson,
             styleParams,
             title,
