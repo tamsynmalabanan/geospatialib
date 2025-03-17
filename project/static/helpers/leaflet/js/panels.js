@@ -121,7 +121,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         if (controllerId !== controller.id) return
         
-        
         if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
             const defaultFeature = e.latlng ? turf.point(
                 Object.values(e.latlng).reverse()
@@ -254,7 +253,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         const clickQueryHandler = async (e) => {
                             if (!isLeafletControlElement(e.originalEvent.target) && map._queryMode === newMode) {
                                 await queryHandler(e, mapClickHandler)
-                                btn.click()
+                                if (btn.classList.contains('btn-primary')) btn.click()
                             }
                         } 
                         map.on('click', clickQueryHandler)
