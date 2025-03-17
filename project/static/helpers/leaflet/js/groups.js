@@ -1,6 +1,6 @@
 const handleLeafletLayerGroups = (map) => {
     map._layerGroups = {}
-    Array('library', 'drawing', 'query', 'indicators').forEach(group => {
+    Array('library', 'drawing', 'query').forEach(group => {
         const layerGroup = L.layerGroup()
         map._layerGroups[group] = layerGroup
  
@@ -16,8 +16,4 @@ const handleLeafletLayerGroups = (map) => {
         const groups = Object.values(layerGroups).filter(group => group.hasLayer(layer) || group.hasHiddenLayer(layer)) 
         return groups.length ? groups[0] : null
     }
-
-    map.on('click', (e) => {
-        if (!isLeafletControlElement(e.originalEvent.target)) map.getLayerGroups().indicators.clearLayers()
-    })
 }
