@@ -64,22 +64,21 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
-        contentCollapse.className = `ps-3 collapse ${!listFeatures ? 'show' : ''}`
+        contentCollapse.className = `ps-3 collapse`
         geojsonContainer.appendChild(contentCollapse)
         
+        const contentToggle = createIcon({
+            parent: parentCheck.parentElement,
+            peNone: false,
+            className: 'ms-auto dropdown-toggle'
+        })
+        contentToggle.style.cursor = 'pointer'
+        contentToggle.setAttribute('data-bs-toggle', 'collapse')
+        contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+        contentToggle.setAttribute('aria-controls', contentCollapse.id)
+        contentToggle.setAttribute('aria-expanded', 'false')
         
         if (listFeatures) {
-            const contentToggle = createIcon({
-                parent: parentCheck.parentElement,
-                peNone: false,
-                className: 'ms-auto dropdown-toggle'
-            })
-            contentToggle.style.cursor = 'pointer'
-            contentToggle.setAttribute('data-bs-toggle', 'collapse')
-            contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
-            contentToggle.setAttribute('aria-controls', contentCollapse.id)
-            contentToggle.setAttribute('aria-expanded', 'false')
-            
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
 
