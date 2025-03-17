@@ -142,7 +142,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const parentCheck = createFormCheck({
             parent: geojsonContainer,
-            labelInnerText: title,
+            labelInnerText: `${title} (${featureLayers.length})`,
         }).querySelector('input')
         if (disableCheck) {
             parentCheck.disabled = true
