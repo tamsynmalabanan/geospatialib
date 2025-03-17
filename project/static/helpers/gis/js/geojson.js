@@ -92,9 +92,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (controller?.signal.aborted) return
         
         const geojson = geojsonList[title]
+
+        const features = geojson.features
+        const listFeatures = features.length <= 100
+        const disableCheck = features.length > 1000
+
         handleGeoJSON(geojson, {
             defaultGeom,
-            sortFeatures: true,
+            sortFeatures: listFeatures,
         })
         
         if (!geojson?.features?.length) continue
@@ -107,9 +112,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             styleParams,
             title,
         })
-        const featureLayers = layer.getLayers()
-        const listFeatures = featureLayers.length <= 100
-        const disableCheck = featureLayers.length > 1000
 
         const clickHandler = (e, layer) => {
             const checkInput = e.target
@@ -142,7 +144,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const parentCheck = createFormCheck({
             parent: geojsonContainer,
-            labelInnerText: `${title} (${featureLayers.length})`,
+            labelInnerText: `${title} (${features.length})`,
         }).querySelector('input')
         if (disableCheck) {
             parentCheck.disabled = true
@@ -170,7 +172,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
 
-            for (const featureLayer of featureLayers) {
+            for (const featureLayer of layer.getLayers()) {
                 if (controller?.signal.aborted) return
                 
                 const feature = featureLayer.feature
