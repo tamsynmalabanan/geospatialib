@@ -195,7 +195,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-
+        group._map.on('layeradd layerremove', (e) => {
+            console.log(e)
+        })
 
         const info = {}
         Object.keys(geojson).forEach(key => {
