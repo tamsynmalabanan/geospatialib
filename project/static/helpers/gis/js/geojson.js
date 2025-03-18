@@ -96,6 +96,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (controller?.signal.aborted) return
         
         const geojson = geojsonList[title]
+        if (!geojson) continue
 
         const features = geojson.features
         const listFeatures = features.length <= 100
