@@ -165,11 +165,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 if (layer.feature) {
                     Object.values(layer._eventParents).forEach(parentLayer => {
                         const checkboxSelector = parentLayer._checkbox
-                        if (checkboxSelector) {
-                            geojsonContainer.querySelector(checkboxSelector)
-                            .checked = isChecked ? true : Array.from(geojsonContainer.querySelectorAll('input.form-check-input'))
-                            .filter(i => `#${i.id}` !== checkboxSelector).some(i => i.checked)
-                        }
+                        if (!checkboxSelector) return
+                        
+                        geojsonContainer.querySelector(checkboxSelector)
+                        .checked = isChecked ? true : parentLayer.getLayers()
+                        .some(featureLayer => group.hasLayer(featureLayer))
                     })
                 }
             })
