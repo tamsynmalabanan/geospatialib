@@ -88,7 +88,7 @@ const assignFeatureLayerTitle = (layer) => {
     ]) {
         const matches = Object.keys(properties).filter(i => {
             console.log(key, i)
-            i === key || i.startsWith(key)
+            return i === key || i.startsWith(key)
         })
         if (!matches) {
             continue
