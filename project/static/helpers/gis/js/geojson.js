@@ -99,6 +99,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (!geojson) continue
 
         const features = geojson.features
+        if (!features?.length) continue
+
         const listFeatures = features.length <= 100
         const disableCheck = features.length > 1000
 
@@ -108,58 +110,30 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             sortFeatures: listFeatures,
         })
         
-        if (!geojson?.features?.length) continue
-        
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
         
-        const layer = getLeafletGeoJSONLayer({
+        const geojsonLayer = getLeafletGeoJSONLayer({
             pane,
             geojson,
             styleParams,
             title,
         })
 
-        // const clickHandler = (e, layer) => {
-        //     const checkInput = e.target
-        //     const isChecked = checkInput.checked
-        //     const isParent = !layer.feature && layer._layers
-
-        //     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-            
-        //     if (isParent) {
-        //         const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${checkInput.id}"]`)
-        //         featureChecks.forEach(featureCheck => {
-        //             if (featureCheck.checked !== isChecked) featureCheck.click()
-        //             })
-        //     } else {
-        //         const parentId = checkInput.dataset.geojsonParent
-        //         const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
-        //         const checkParent = Array.from(allFeatureChecks).some(check => check.checked)
-                
-        //         const parent = geojsonContainer.querySelector(`#${parentId}`)
-        //         parent.checked = checkParent
-                
-        //         if (!checkParent && layer._eventParents.length) {
-        //             const parentLayer = Object.values(layer._eventParents)[0]
-        //             group.removeLayer(parentLayer)
-        //         }
-        //     }
-        // }
-
         const parentCheck = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
         }).querySelector('input')
-        if (disableCheck) {
-            parentCheck.disabled = true
-        } else {
-            parentCheck.addEventListener('click', (e) => {
-                e.target.checked ? group.addLayer(layer) : group.removeLayer(layer)
-            })
-            // parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
-        }
-        
+        disableCheck ? parentCheck.disabled = true : geojsonLayer._checkbox = `#${parentCheck.id}`
+        // if (disableCheck) {
+        //     parentCheck.disabled = true
+        // } else {
+        //     parentCheck.addEventListener('click', (e) => {
+        //         e.target.checked ? group.addLayer(geojsonLayer) : group.removeLayer(geojsonLayer)
+        //     })
+        //     geojsonLayer._checkbox = `#${parentCheck.id}`
+        // }
+
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
         contentCollapse.className = `ps-3 collapse`
@@ -180,24 +154,34 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
 
-            for (const featureLayer of layer.getLayers()) {
+            for (const featureLayer of geojsonLayer.getLayers()) {
                 if (controller?.signal.aborted) return
                 
                 const featureCheck = createFormCheck({
                     parent: featuresContainer,
                     labelInnerText: featureLayer._title,
                 }).querySelector('input')
-                featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
-                featureCheck.addEventListener('click', (e) => {
-                    e.target.checked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
-                })
-                // featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
+                featureLayer._checkbox = `#${featureCheck.id}`
+                // featureCheck.addEventListener('click', (e) => {
+                //     e.target.checked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                // })
             }
         }
 
-        group._map.on('layeradd layerremove', (e) => {
-            console.log(e)
+        [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
+            const checkbox = geojsonContainer.querySelector(layer._checkbox)
+            if (checkbox) checkbox.addEventListener('click', (e) => {
+                checkbox.checked ? group.addLayer(layer) : group.removeLayer(layer)
+            })
         })
+
+        // group._map.on('layeradd layerremove', (e) => {
+        //     const checkbox = document.querySelector(e.layer._checkbox)
+        //     if (!checkbox) return 
+            
+        //     const type = e.type
+            
+        // })
 
         const info = {}
         Object.keys(geojson).forEach(key => {

@@ -394,7 +394,7 @@ const createObjectTRs = (object, parent, {
             const tr = document.createElement('tr')
             parent.appendChild(tr)
 
-            const label = innerText = [...new Set([...prefixes, ...[key]])].map(i => `${i[0].toUpperCase()}${i.slice(1)}`).join(' ')
+            const label = innerText = [...new Set([...prefixes, key])].map(i => `${i[0].toUpperCase()}${i.slice(1)}`).join(' ')
             
             const th = document.createElement('th')
             th.setAttribute('scope', 'row')
