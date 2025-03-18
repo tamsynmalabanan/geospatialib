@@ -120,34 +120,32 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             title,
         })
 
-        const clickHandler = (e, layer) => {
-            const checkInput = e.target
-            const isChecked = checkInput.checked
-            const isParent = !layer.feature
+        // const clickHandler = (e, layer) => {
+        //     const checkInput = e.target
+        //     const isChecked = checkInput.checked
+        //     const isParent = !layer.feature && layer._layers
 
-            const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${checkInput.id}"]`)
+        //     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
             
-            const parentId = checkInput.dataset.geojsonParent
-
-            isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-
-            if (isParent && featureChecks) {
-                featureChecks.forEach(featureCheck => {
-                    if (featureCheck.checked !== isChecked) featureCheck.click()
-                })
-            } else if (parentId) {
-                const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
-                const checkParent = Array.from(allFeatureChecks).some(check => check.checked)
+        //     if (isParent) {
+        //         const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${checkInput.id}"]`)
+        //         featureChecks.forEach(featureCheck => {
+        //             if (featureCheck.checked !== isChecked) featureCheck.click()
+        //             })
+        //     } else {
+        //         const parentId = checkInput.dataset.geojsonParent
+        //         const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
+        //         const checkParent = Array.from(allFeatureChecks).some(check => check.checked)
                 
-                const parent = geojsonContainer.querySelector(`#${parentId}`)
-                parent.checked = checkParent
+        //         const parent = geojsonContainer.querySelector(`#${parentId}`)
+        //         parent.checked = checkParent
                 
-                if (!checkParent && layer._eventParents.length) {
-                    const parentLayer = Object.values(layer._eventParents)[0]
-                    group.removeLayer(parentLayer)
-                }
-            }
-        }
+        //         if (!checkParent && layer._eventParents.length) {
+        //             const parentLayer = Object.values(layer._eventParents)[0]
+        //             group.removeLayer(parentLayer)
+        //         }
+        //     }
+        // }
 
         const parentCheck = createFormCheck({
             parent: geojsonContainer,
@@ -156,7 +154,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (disableCheck) {
             parentCheck.disabled = true
         } else {
-            parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
+            parentCheck.addEventListener('click', (e) => {
+                e.target.clicked ? group.addLayer(layer) : group.removeLayer(layer)
+            })
+            // parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         }
         
         const contentCollapse = document.createElement('div')
@@ -187,9 +188,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     labelInnerText: featureLayer._title,
                 }).querySelector('input')
                 featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
-                featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
+                featureCheck.addEventListener('click', (e) => {
+                    e.target.clicked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                })
+                // featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
             }
         }
+
+
 
         const info = {}
         Object.keys(geojson).forEach(key => {
