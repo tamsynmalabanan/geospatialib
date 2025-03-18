@@ -98,8 +98,12 @@ const handleLeafletQueryPanel = (map, parent) => {
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
  
     const clearResults = () => {
-        toolbar.querySelectorAll(`#${toolbar.id}-clear, #${toolbar.id}-cancel`)
-        .forEach(btn => btn.disabled = true)
+        for (const tool in queryTools) {
+            const data = queryTools[tool]
+            if (data.disabled) {
+                toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
+            }
+        }
         
         results.classList.add('d-none')
         results.innerHTML = ''
@@ -140,6 +144,10 @@ const handleLeafletQueryPanel = (map, parent) => {
         if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
             results.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+            
+            if (results.querySelectorAll('.collapse')) {
+                toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+            }
         }
         
         status.classList.add('d-none')
@@ -213,6 +221,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi bi-chevron-up',
             title: 'Collapse results',
             queryHandler: false,
+            disabled: true,
             btnClickHandler: () => {
                 const shownCollapseElements = results.querySelectorAll('.collapse.show')
                 shownCollapseElements.forEach(element => {
