@@ -80,12 +80,14 @@ const getLeafletGeoJSONLayer = ({
 const assignFeatureLayerTitle = (layer) => {
     const properties = layer.feature.properties
 
-    for (let key of [
+    const keywords = [
         'display_name',
         'name',
         'feature_id',
         'type',
-    ]) {
+    ]
+
+    for (const key of keywords) {
         const matches = Object.keys(properties).filter(i => {
             console.log(key, i)
             return i === key || i.startsWith(key)
