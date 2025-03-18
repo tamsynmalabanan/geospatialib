@@ -44,11 +44,16 @@
 
 .leaflet-control-geocoder-alternatives {
     padding-left: 6px !important;
+    border-radius: var(--bs-border-radius);
 }
 
 .leaflet-control-geocoder-alternatives.text-bg-dark {
     li:hover {
         background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;;
+    }
+
+    a {
+        color: white;
     }
 
     span {
