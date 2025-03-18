@@ -125,14 +125,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
         }).querySelector('input')
         disableCheck ? parentCheck.disabled = true : geojsonLayer._checkbox = `#${parentCheck.id}`
-        // if (disableCheck) {
-        //     parentCheck.disabled = true
-        // } else {
-        //     parentCheck.addEventListener('click', (e) => {
-        //         e.target.checked ? group.addLayer(geojsonLayer) : group.removeLayer(geojsonLayer)
-        //     })
-        //     geojsonLayer._checkbox = `#${parentCheck.id}`
-        // }
 
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
@@ -162,26 +154,23 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     labelInnerText: featureLayer._title,
                 }).querySelector('input')
                 featureLayer._checkbox = `#${featureCheck.id}`
-                // featureCheck.addEventListener('click', (e) => {
-                //     e.target.checked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
-                // })
             }
         }
 
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
-            const checkbox = geojsonContainer.querySelector(layer._checkbox)
-            if (checkbox) checkbox.addEventListener('click', (e) => {
-                checkbox.checked ? group.addLayer(layer) : group.removeLayer(layer)
+            geojsonContainer.querySelector(layer._checkbox)?.addEventListener('click', (e) => {
+                e.target.checked ? group.addLayer(layer) : group.removeLayer(layer)
             })
         })
 
-        // group._map.on('layeradd layerremove', (e) => {
-        //     const checkbox = document.querySelector(e.layer._checkbox)
-        //     if (!checkbox) return 
-            
-        //     const type = e.type
-            
-        // })
+        group._map.on('layeradd layerremove', (e) => {
+            const layer = e.layer
+            const checkbox = document.querySelector(layer._checkbox)
+            if (!checkbox) return 
+
+            const type = e.type
+            console.log(layer, checkbox, type)
+        })
 
         const info = {}
         Object.keys(geojson).forEach(key => {
