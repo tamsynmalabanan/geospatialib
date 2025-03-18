@@ -55,15 +55,19 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         iconStroke,
 
     } = styleParams
-
+    if (!featureType) return
+    const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
+    
     const hslaColor = manageHSLAColor(color)
+    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'
+    const fillColorVal = fillColor === true ? hslaColor?.toString({a:type === 'point' ? iconOpacity: fillOpacity}) || color : fillColor || 'transparent'
 
-    if (featureType?.toLowerCase().endsWith('point')) {
+    if (type === 'point') {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.fontSize = `${iconSize}px`
-        div.style.color = fillColor === true ? hslaColor?.toString({a:iconOpacity}) || color : fillColor || 'transparent'
-        div.style.WebkitTextStroke = `${iconStroke}px ${strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'}`
+        div.style.color = fillColorVal
+        div.style.WebkitTextStroke = `${iconStroke}px ${strokeColorVal}`
         div.style.textShadow = Array(
             iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : '',
             iconGlow ? `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''
@@ -75,12 +79,12 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         });
     } else {
         const properties = {
-            color: strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2}) || color : strokeColor || 'transparent',
+            color: featureType?.toLowerCase().endsWith('polygon') ? strokeColorVal : fillColorVal,
             weight: strokeWidth,
-            opacity: strokeOpacity,
+            opacity: 1 //strokeOpacity,
         }
-        properties.fillOpacity = fillColor ? fillOpacity : 0
-        properties.fillColor = fillColor === true ? color : fillColor || 'transparent'
+        properties.fillOpacity = 1 //fillColor ? fillOpacity : 0
+        properties.fillColor = fillColorVal
         return properties
     }
 }
