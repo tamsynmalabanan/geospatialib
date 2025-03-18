@@ -92,6 +92,7 @@ const assignFeatureLayerTitle = (layer) => {
             console.log(key, i)
             return i === key || i.startsWith(key)
         })
+        console.log(matches)
         if (!matches) {
             continue
         } else {
