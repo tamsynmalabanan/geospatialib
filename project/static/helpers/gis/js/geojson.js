@@ -158,7 +158,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         }
 
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
-            geojsonContainer.querySelector(layer._checkbox)?.addEventListener('click', (e) => {
+            const checkbox = geojsonContainer.querySelector(layer._checkbox)
+            
+            checkbox?.addEventListener('click', (e) => {
                 const isChecked = e.target.checked
                 isChecked ? group.addLayer(layer) : group.removeLayer(layer)
 
@@ -181,34 +183,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     })
                 }
             })
+
+            const menuToggle = createIcon({
+                parent: checkbox.parentElement,
+                peNone: false,
+                className: 'ms-auto bi bi-three-dots'
+            })
+            menuToggle.style.cursor = 'pointer'    
         })
-
-        // const clickHandler = (e, layer) => {
-        //     const checkInput = e.target
-        //     const isChecked = checkInput.checked
-        //     const isParent = !layer.feature && layer._layers
-
-        //     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-            
-        //     if (isParent) {
-        //         const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${checkInput.id}"]`)
-        //         featureChecks.forEach(featureCheck => {
-        //             if (featureCheck.checked !== isChecked) featureCheck.click()
-        //             })
-        //     } else {
-        //         const parentId = checkInput.dataset.geojsonParent
-        //         const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
-        //         const checkParent = Array.from(allFeatureChecks).some(check => check.checked)
-                
-        //         const parent = geojsonContainer.querySelector(`#${parentId}`)
-        //         parent.checked = checkParent
-                
-        //         if (!checkParent && layer._eventParents.length) {
-        //             const parentLayer = Object.values(layer._eventParents)[0]
-        //             group.removeLayer(parentLayer)
-        //         }
-        //     }
-        // }
 
         const info = {}
         Object.keys(geojson).forEach(key => {
