@@ -59,8 +59,8 @@ const getLeafletLayerStyle = (featureType, options={}) => {
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
     
     const hslaColor = manageHSLAColor(color)
-    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity}) || color : strokeColor || 'transparent'
-    const fillColorVal = fillColor === true ? hslaColor?.toString({a:type === 'point' ? iconOpacity: fillOpacity}) || color : fillColor || 'transparent'
+    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity*100}) || color : strokeColor || 'transparent'
+    const fillColorVal = fillColor === true ? hslaColor?.toString({a:(type === 'point' ? iconOpacity: fillOpacity)*100}) || color : fillColor || 'transparent'
 
     if (type === 'point') {
         const div = document.createElement('div')
