@@ -11,7 +11,7 @@ const getLeafletStyleParams = ({
     strokeOpacity=1,
     
     fillColor=true,
-    fillOpacity=0.25,
+    fillOpacity=0.5,
     
     iconClass='bi bi-circle-fill',
     iconOpacity=1,
