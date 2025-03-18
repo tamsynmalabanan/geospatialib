@@ -57,10 +57,9 @@ const getLeafletLayerStyle = (featureType, options={}) => {
     } = styleParams
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
-    
     const hslaColor = manageHSLAColor(color)
-    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:strokeOpacity*100}) || color : strokeColor || 'transparent'
-    const fillColorVal = fillColor === true ? hslaColor?.toString({a:(type === 'point' ? iconOpacity: fillOpacity)*100}) || color : fillColor || 'transparent'
+    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:(type === 'point' ? strokeOpacity: 1)*100}) || color : strokeColor || 'transparent'
+    const fillColorVal = fillColor === true ? hslaColor?.toString({a:(type === 'point' ? iconOpacity: 1)*100}) || color : fillColor || 'transparent'
 
     if (type === 'point') {
         const div = document.createElement('div')
@@ -78,13 +77,12 @@ const getLeafletLayerStyle = (featureType, options={}) => {
             html: div.outerHTML,
         });
     } else {
-        const properties = {
+        return {
             color: type === 'polygon' ? strokeColorVal : fillColorVal,
             weight: strokeWidth,
-            opacity: 1 //strokeOpacity,
+            opacity: strokeOpacity,
+            fillOpacity: fillColor ? fillOpacity : 0,
+            fillColor: fillColorVal,
         }
-        properties.fillOpacity = 1 //fillColor ? fillOpacity : 0
-        properties.fillColor = fillColorVal
-        return properties
     }
 }
