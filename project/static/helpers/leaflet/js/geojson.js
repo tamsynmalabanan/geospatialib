@@ -82,6 +82,7 @@ const assignFeatureLayerTitle = (layer) => {
 
     for (const key of [
         'display_name',
+        'name:en',
         'name',
         'feature_id',
         'type',
