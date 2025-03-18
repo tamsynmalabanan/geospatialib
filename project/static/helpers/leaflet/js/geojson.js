@@ -80,7 +80,7 @@ const getLeafletGeoJSONLayer = ({
 const assignFeatureLayerTitle = (layer) => {
     const properties = layer.feature.properties
 
-    for (const key of [
+    for (let key of [
         'display_name',
         'name',
         'feature_id',
