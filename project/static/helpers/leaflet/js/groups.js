@@ -18,5 +18,5 @@ const handleLeafletLayerGroups = (map) => {
     }
 
     const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
-    queryPane.style.zIndex = 625
+    queryPane.style.zIndex = 599
 }
