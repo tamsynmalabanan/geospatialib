@@ -277,6 +277,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         }})
 
         if (data.altShortcut) document.addEventListener('keydown', (e) => {
+            console.log(e)
             if (e.altKey && e.key === data.altShortcut) element.click()
         })        
         
