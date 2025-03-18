@@ -18,8 +18,7 @@ const getLeafletGeoJSONLayer = ({
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
-        assignFeatureLayerTitle(layer)
-        if (layer._title) layer.bindTooltip(layer._title, {sticky:true})
+        if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
 
         if (Object.keys(properties).length) {
             const createPopup = () => {
@@ -87,7 +86,7 @@ const assignFeatureLayerTitle = (layer) => {
         'feature_id',
         'type',
     ]) {
-        const matches = Object.keys(properties).filter(i => i.startsWith(key))
+        const matches = Object.keys(properties).filter(i => i === key || i.startsWith(key))
         if (!matches) {
             continue
         } else {
@@ -105,6 +104,8 @@ const assignFeatureLayerTitle = (layer) => {
             }
         }
     }
+
+    return layer._title
 }
 
 // geojsonLayer.options.symbology = {
