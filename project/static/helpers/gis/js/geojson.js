@@ -177,11 +177,38 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 } else {
                     layer.getLayers().forEach(featureLayer => {
                         geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
-                        group.removeLayer(featureLayer)
+                        isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
                     })
                 }
             })
         })
+
+        // const clickHandler = (e, layer) => {
+        //     const checkInput = e.target
+        //     const isChecked = checkInput.checked
+        //     const isParent = !layer.feature && layer._layers
+
+        //     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+            
+        //     if (isParent) {
+        //         const featureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${checkInput.id}"]`)
+        //         featureChecks.forEach(featureCheck => {
+        //             if (featureCheck.checked !== isChecked) featureCheck.click()
+        //             })
+        //     } else {
+        //         const parentId = checkInput.dataset.geojsonParent
+        //         const allFeatureChecks = geojsonContainer.querySelectorAll(`input[data-geojson-parent="${parentId}"]`)
+        //         const checkParent = Array.from(allFeatureChecks).some(check => check.checked)
+                
+        //         const parent = geojsonContainer.querySelector(`#${parentId}`)
+        //         parent.checked = checkParent
+                
+        //         if (!checkParent && layer._eventParents.length) {
+        //             const parentLayer = Object.values(layer._eventParents)[0]
+        //             group.removeLayer(parentLayer)
+        //         }
+        //     }
+        // }
 
         const info = {}
         Object.keys(geojson).forEach(key => {
@@ -364,4 +391,3 @@ const fetchGeoJSONs = async (fetchers, {
 
     return geojsons
 }
-
