@@ -225,6 +225,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     Object.keys(queryTools).forEach(newMode => {
         const data = queryTools[newMode]
         const tag = data.tag || 'button'
+        
         const element = tag !== 'button' ?
         customCreateElement(tag, data) :
         createButton({...data, ...{
@@ -274,7 +275,11 @@ const handleLeafletQueryPanel = (map, parent) => {
                 if (btnClickHandler) await queryHandler(event, btnClickHandler)
             }
         }})
-        // if (data.altShortcut) 
+
+        if (data.altShortcut) document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key === data.altShortcut) element.click()
+        })        
+        
         toolbar.appendChild(element)
     })
 }
