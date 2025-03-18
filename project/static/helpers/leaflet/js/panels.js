@@ -140,14 +140,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             results.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
         }
-
+        
         status.classList.add('d-none')
     }
-
+    
     const queryTools = {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query point coordinates',
+            altShortcut: 'Q',
             mapClickHandler: async (e) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
                 
@@ -165,6 +166,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
+            altShortcut: 'W',
             mapClickHandler: async (e) => await fetchGeoJSONs({
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
@@ -223,57 +225,57 @@ const handleLeafletQueryPanel = (map, parent) => {
     Object.keys(queryTools).forEach(newMode => {
         const data = queryTools[newMode]
         const tag = data.tag || 'button'
-        toolbar.appendChild(
-            tag !== 'button' ?
-            customCreateElement(tag, data) :
-            createButton({...data, ...{
-                id: `${toolbar.id}-${newMode}`,
-                className:`btn-sm btn-${getPreferredTheme()}`,
-                clichHandler: async (event) => {
-                    L.DomEvent.stopPropagation(event);
-                    L.DomEvent.preventDefault(event);        
-                    
-                    const btn = event.target
-                    const currentMode = map._queryMode
-                    const activate = currentMode !== newMode
-                    const mapClickHandler = activate ? data.mapClickHandler : null 
-                    const btnClickHandler = activate ? data.btnClickHandler : null 
-                    
-                    if (data.queryHandler === false) return btnClickHandler()
+        const element = tag !== 'button' ?
+        customCreateElement(tag, data) :
+        createButton({...data, ...{
+            id: `${toolbar.id}-${newMode}`,
+            className:`btn-sm btn-${getPreferredTheme()}`,
+            clichHandler: async (event) => {
+                L.DomEvent.stopPropagation(event);
+                L.DomEvent.preventDefault(event);        
+                
+                const btn = event.target
+                const currentMode = map._queryMode
+                const activate = currentMode !== newMode
+                const mapClickHandler = activate ? data.mapClickHandler : null 
+                const btnClickHandler = activate ? data.btnClickHandler : null 
+                
+                if (data.queryHandler === false) return btnClickHandler()
 
-                    if (activate && currentMode) {
-                        toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
-                    }
-                    
-                    btn.classList.toggle('btn-primary', mapClickHandler)
-                    btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
-                    mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
-                    map._queryMode = mapClickHandler ? newMode : undefined
-                    
-                    if (mapClickHandler) {
-                        const clickQueryHandler = async (e) => {
-                            if (!isLeafletControlElement(e.originalEvent.target) && map._queryMode === newMode) {
-                                map.off('click', clickQueryHandler)
-                                enableLeafletLayerClick(map)
-                                
-                                await queryHandler(e, mapClickHandler)
-                                if (btn.classList.contains('btn-primary')) btn.click()
-                            }
-                        } 
-                        
-                        disableLeafletLayerClick(map)
-                        map.on('click', clickQueryHandler)
-                    } else {
-                        enableLeafletLayerClick(map)
-                        map._events.click = map._events.click?.filter(handler => {
-                            return handler.fn.name !== 'clickQueryHandler'
-                        })
-                    }
-                    
-                    if (btnClickHandler) await queryHandler(event, btnClickHandler)
+                if (activate && currentMode) {
+                    toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
                 }
-            }})
-        )
+                
+                btn.classList.toggle('btn-primary', mapClickHandler)
+                btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
+                mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
+                map._queryMode = mapClickHandler ? newMode : undefined
+                
+                if (mapClickHandler) {
+                    const clickQueryHandler = async (e) => {
+                        if (!isLeafletControlElement(e.originalEvent.target) && map._queryMode === newMode) {
+                            map.off('click', clickQueryHandler)
+                            enableLeafletLayerClick(map)
+                            
+                            await queryHandler(e, mapClickHandler)
+                            if (btn.classList.contains('btn-primary')) btn.click()
+                        }
+                    } 
+                    
+                    disableLeafletLayerClick(map)
+                    map.on('click', clickQueryHandler)
+                } else {
+                    enableLeafletLayerClick(map)
+                    map._events.click = map._events.click?.filter(handler => {
+                        return handler.fn.name !== 'clickQueryHandler'
+                    })
+                }
+                
+                if (btnClickHandler) await queryHandler(event, btnClickHandler)
+            }
+        }})
+        // if (data.altShortcut) 
+        toolbar.appendChild(element)
     })
 }
 
