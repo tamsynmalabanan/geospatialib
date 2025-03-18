@@ -224,6 +224,8 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     Object.keys(queryTools).forEach(newMode => {
         const data = queryTools[newMode]
+        if (data.altShortcut && data.title) data.title = `${data.title} (Alt+${data.altShortcut})` 
+
         const tag = data.tag || 'button'
         
         const element = tag !== 'button' ?
