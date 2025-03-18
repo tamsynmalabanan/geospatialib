@@ -79,7 +79,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         });
     } else {
         const properties = {
-            color: featureType?.toLowerCase().endsWith('polygon') ? strokeColorVal : fillColorVal,
+            color: type === 'polygon' ? strokeColorVal : fillColorVal,
             weight: strokeWidth,
             opacity: 1 //strokeOpacity,
         }
