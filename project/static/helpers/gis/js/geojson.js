@@ -155,7 +155,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             parentCheck.disabled = true
         } else {
             parentCheck.addEventListener('click', (e) => {
-                e.target.clicked ? group.addLayer(layer) : group.removeLayer(layer)
+                e.target.checked ? group.addLayer(layer) : group.removeLayer(layer)
             })
             // parentCheck.addEventListener('click', (e) => clickHandler(e, layer))
         }
@@ -189,7 +189,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 }).querySelector('input')
                 featureCheck.setAttribute('data-geojson-parent', parentCheck.id)
                 featureCheck.addEventListener('click', (e) => {
-                    e.target.clicked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                    e.target.checked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
                 })
                 // featureCheck.addEventListener('click', (e) => clickHandler(e, featureLayer))
             }
