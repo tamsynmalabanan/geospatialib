@@ -148,7 +148,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         locationCoords: {
             iconClass: 'bi-geo-alt-fill',
             title: 'Query point coordinates',
-            altShortcut: 'Q',
+            altShortcut: 'q',
             mapClickHandler: async (e) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
                 
@@ -166,7 +166,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmPoint: {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
-            altShortcut: 'W',
+            altShortcut: 'w',
             mapClickHandler: async (e) => await fetchGeoJSONs({
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
@@ -277,7 +277,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         }})
 
         if (data.altShortcut) document.addEventListener('keydown', (e) => {
-            console.log(e)
             if (e.altKey && e.key === data.altShortcut) element.click()
         })        
         
