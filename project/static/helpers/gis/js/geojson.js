@@ -218,9 +218,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 )
 
                 const removeContextMenu = (e) => {
-                    console.log(e)
-                    triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
-                    menuContainer.remove()
+                    if (e.target !== menuToggle) {
+                        triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
+                        menuContainer.remove()
+                    }
                 }
 
                 triggers.forEach(trigger => document.addEventListener(trigger, removeContextMenu))
