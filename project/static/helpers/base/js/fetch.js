@@ -1,4 +1,4 @@
-const fetchCORSProxy = async (url, fetchParams) => {
+const fetchCORSProxy = async (url, fetchParams={}) => {
     const params = {
         method: 'GET',
         headers: {'HX-Request': 'true'}
