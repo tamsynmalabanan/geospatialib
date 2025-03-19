@@ -193,7 +193,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             menuToggle.addEventListener('click', (e) => {
                 L.DomEvent.stopPropagation(e)
                 L.DomEvent.preventDefault(e)        
-
+                
                 checkbox.parentElement.dispatchEvent(new MouseEvent('contextmenu', {
                     bubbles: true,
                     cancelable: true,
@@ -202,8 +202,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     clientY: e.y,
                 }))
             })
-
+            
             checkbox.parentElement.addEventListener('contextmenu', (e) => {
+                L.DomEvent.stopPropagation(e)
+                L.DomEvent.preventDefault(e)      
+                  
                 const menuContainer = document.createElement('div')
                 menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-3`
                 document.body.appendChild(menuContainer)
