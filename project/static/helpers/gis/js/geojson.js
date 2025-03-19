@@ -191,11 +191,13 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             menuToggle.style.cursor = 'pointer'
 
-            const queryContextMenuHandler = (e) => contextMenuHandler(e, 'content')
+            const queryContextMenuHandler = (e) => contextMenuHandler(
+                e.x && e.y ? e : e.originalEvent, 'content'
+            )
 
-            menuToggle.addEventListener('click', (e) => queryContextMenuHandler)
-            checkbox.parentElement.addEventListener('contextmenu', (e) => queryContextMenuHandler)
-            if (layer.feature) layer.on('contextmenu', (e) => queryContextMenuHandler)
+            menuToggle.addEventListener('click', queryContextMenuHandler)
+            checkbox.parentElement.addEventListener('contextmenu', queryContextMenuHandler)
+            if (layer.feature) layer.on('contextmenu', queryContextMenuHandler)
         })
 
         const info = {}
