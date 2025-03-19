@@ -109,6 +109,8 @@ const handleLeafletLocateBtn = (map, include=true) => {
             maxZoom: 18
         },
     }).addTo(map);
+
+    console.log(locateControl)
 }
 
 const leafletControls = {
