@@ -210,11 +210,20 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 let menuContainer = document.querySelector(`[for="${layer._checkbox}"]`)
 
                 const triggers = Array(
-                    'click',
+                    {parent: document, triggers: [
+                        'click'
+                    ]},
+                    {parent: window, triggers: [
+                        'scroll'
+                    ]},
                 )
 
                 const removeContextMenu = (e) => {
-                    triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
+                    triggers.forEach(props => {
+                        props[triggers].forEach(trigger => {
+                            props[parent].removeEventListener(trigger, removeContextMenu)
+                        })
+                    })
                     menuContainer.remove()
                 }
 
@@ -234,7 +243,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 menuContainer.style.top = `${e.y+5}px`
                 menuContainer.style.right = `${windowWidth-e.x+5}px`
 
-                triggers.forEach(trigger => document.addEventListener(trigger, removeContextMenu))
+                triggers.forEach(props => {
+                    props[triggers].forEach(trigger => {
+                        props[parent].addEventListener(trigger, removeContextMenu)
+                    })
+                })
             })
         })
 
