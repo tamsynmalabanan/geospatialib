@@ -199,10 +199,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     clientY: e.y,
                 });
 
-                menuToggle.parentElement.dispatchEvent(contextMenuEvent)
+                checkbox.parentElement.dispatchEvent(contextMenuEvent)
             })
 
-            menuToggle.parentElement.addEventListener('contextmenu', (e) => {
+            checkbox.parentElement.addEventListener('contextmenu', (e) => {
                 console.log(e.x, e.y)
 
                 const menuContainer = document.createElement('div')
