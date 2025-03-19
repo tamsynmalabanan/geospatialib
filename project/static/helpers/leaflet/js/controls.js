@@ -100,6 +100,11 @@ const handleLeafletRestViewBtn = (map, include=true) => {
     control.addEventListener('click', () => {
         map._viewReset = true
     })
+
+    document.addEventListener('keydown', (e) => {
+        if (e.altKey && e.key === 's') control.click()
+    })
+
 }
 
 const handleLeafletLocateBtn = (map, include=true) => {
