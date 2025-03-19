@@ -5,6 +5,20 @@ from urllib.parse import urlparse
 from helpers.general.models import dict_to_choices
 from . import choices
 
+class SpatialRefSys(models.Model):
+    srid = models.IntegerField(primary_key=True)
+    auth_name = models.CharField(max_length=256)
+    auth_srid = models.IntegerField()
+    srtext = models.TextField()
+    proj4text = models.TextField()
+
+    class Meta:
+        managed = False  # No migrations will be created for this model
+        db_table = 'spatial_ref_sys'
+
+    def __str__(self):
+        return f'{self.auth_name}:{self.srid}'
+
 class URL(models.Model):
     path = models.URLField('Path', max_length=512, unique=True)
     
