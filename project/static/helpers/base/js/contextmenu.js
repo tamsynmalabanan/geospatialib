@@ -9,7 +9,7 @@ const contextMenuHandler = (e, content) => {
         text-bg-${getPreferredTheme()} 
         custom-context-menu
         position-fixed 
-        rounded shadow-sm p-2 
+        rounded shadow-sm
         small border
     `)
     menuContainer.appendChild(content)
