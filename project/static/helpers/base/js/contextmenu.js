@@ -12,17 +12,13 @@ const contextMenuHandler = (e, content) => {
         rounded shadow-sm p-2 
         small border
     `)
-    menuContainer.innerText = 'context menu here'
+    menuContainer.appendChild(content)
     document.body.appendChild(menuContainer)
     
     const menuContainerWidth = menuContainer.offsetWidth
     const menuContainerHeight = menuContainer.offsetHeight
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
-    
-    console.log('element', menuContainerWidth, menuContainerHeight)
-    console.log('window', windowWidth, windowHeight)
-    console.log('point', e.x, e.y)
 
     menuContainer.style.left = `${(windowWidth-e.x-menuContainerWidth-10) >= 0 ? e.x : e.x-menuContainerWidth}px`
     menuContainer.style.top = `${(windowHeight-e.y-menuContainerHeight-10) >= 0 ? e.y : e.y-menuContainerHeight}px`
