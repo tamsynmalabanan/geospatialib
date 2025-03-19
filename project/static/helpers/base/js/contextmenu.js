@@ -24,11 +24,7 @@ const contextMenuHandler = (e, content) => {
     console.log('window', windowWidth, windowHeight)
     console.log('point', e.x, e.y)
 
-    if ((windowWidth-e.x-menuContainerWidth-10) >= 0) {
-        menuContainer.style.left = `${e.x}px`
-    } else {
-        menuContainer.style.left = `${e.x-menuContainerWidth}px`
-    }
+    menuContainer.style.left = `${(windowWidth-e.x-menuContainerWidth-10) >= 0 ? e.x : e.x-menuContainerWidth}px`
     menuContainer.style.top = `${e.y}px`
 }
 
