@@ -220,8 +220,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
                 const removeContextMenu = (e) => {
                     triggers.forEach(props => {
-                        props[triggers].forEach(trigger => {
-                            props[parent].removeEventListener(trigger, removeContextMenu)
+                        props.triggers.forEach(trigger => {
+                            props.parent.removeEventListener(trigger, removeContextMenu)
                         })
                     })
                     menuContainer.remove()
@@ -244,8 +244,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 menuContainer.style.right = `${windowWidth-e.x+5}px`
 
                 triggers.forEach(props => {
-                    props[triggers].forEach(trigger => {
-                        props[parent].addEventListener(trigger, removeContextMenu)
+                    props.triggers.forEach(trigger => {
+                        props.parent.addEventListener(trigger, removeContextMenu)
                     })
                 })
             })
