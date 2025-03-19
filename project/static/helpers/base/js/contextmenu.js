@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {parent: document, triggers: [
             'click',
             'wheel',
+            'mousedown',
         ]},
         {parent: window, triggers: [
             'scroll'
