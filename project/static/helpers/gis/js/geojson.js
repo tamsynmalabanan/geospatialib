@@ -162,6 +162,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 e.x && e.y ? e : e.originalEvent,
                 (() => {
                     const container = document.createElement('ul')
+                    container.className = 'list-unstyled p-2'
                     container.innerText = 'content here'
                     return container
                 })()

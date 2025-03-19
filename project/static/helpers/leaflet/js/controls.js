@@ -123,6 +123,10 @@ const handleLeafletLocateBtn = (map, include=true) => {
         locateOptions: {
             maxZoom: 18
         },
+        strings: {
+            title: "Zoom to my location"
+        },
+        showPopup: false,
     }).addTo(map);
 
     document.addEventListener('keydown', (e) => {
