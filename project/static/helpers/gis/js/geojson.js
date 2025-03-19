@@ -222,7 +222,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
                 menuContainer = document.createElement('div')
                 menuContainer.setAttribute('for', layer._checkbox)
-                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-3`
+                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-1 small`
                 menuContainer.innerText = 'context menu here'
                 document.body.appendChild(menuContainer)
 
