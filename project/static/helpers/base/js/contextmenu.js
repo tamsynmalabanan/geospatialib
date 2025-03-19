@@ -1,6 +1,4 @@
 const contextMenuHandler = (e, content) => {
-    console.log(e)
-
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
 
@@ -41,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             props.parent.addEventListener(trigger, (e) => {
                 clearTimeout(removeCustomContextMenuTimeout)
                 removeCustomContextMenuTimeout = setTimeout(() => {
+                    console.log(e)
                     document.querySelector(`.custom-context-menu`)?.remove()
                 }, 100)
             })
