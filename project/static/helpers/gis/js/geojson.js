@@ -160,7 +160,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
             const queryContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
-                'content'
+                document.createElement('div')
             )
             
             if (layer.feature) layer.on('contextmenu', queryContextMenuHandler)
