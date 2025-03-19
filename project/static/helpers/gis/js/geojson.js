@@ -180,6 +180,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     })
                 } else {
                     layer.getLayers().forEach(featureLayer => {
+                        if (!featureLayer._checkbox) return
                         geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
                         isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
                     })
