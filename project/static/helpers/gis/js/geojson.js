@@ -190,21 +190,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 className: 'bi bi-three-dots ms-auto'
             })
             menuToggle.style.cursor = 'pointer'
-            menuToggle.addEventListener('click', (e) => {
-                L.DomEvent.stopPropagation(e)
-                L.DomEvent.preventDefault(e)
-                
-                checkbox.parentElement.dispatchEvent(new MouseEvent('contextmenu', {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window,
-                    clientX: e.x,
-                    clientY: e.y,
-                }))
-            })
 
+            menuToggle.addEventListener('click', (e) => contextMenuHandler(e))
             checkbox.parentElement.addEventListener('contextmenu', (e) => contextMenuHandler(e))
-
             if (layer.feature) layer.on('contextmenu', (e) => console.log(e))
         })
 
