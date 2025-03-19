@@ -20,8 +20,9 @@ const contextMenuHandler = (e, content) => {
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
     
-    console.log(menuContainerWidth, menuContainerHeight)
-    console.log(windowWidth, windowHeight)
+    console.log('element', menuContainerWidth, menuContainerHeight)
+    console.log('window', windowWidth, windowHeight)
+    console.log('point', e.x, e.y)
 
     menuContainer.style.top = `${e.y}px`
     menuContainer.style.left = `${e.x}px`
