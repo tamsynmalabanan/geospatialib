@@ -316,15 +316,7 @@ const handleLeafletMapPanels = (map) => {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const wkt = await fetchCORSProxy('https://spatialreference.org/ref/epsg/4326/ogcwkt/').then(response => {
-        return response.text()
-    })
-
-    console.log(wkt)
-
-    const htmx = await fetchTimeout('/htmx/srs_wkt/4326/').then(response => {
-        return response.text()
-    })
+    const htmx = await fetchProj4Def(4326)
 
     console.log(htmx)
 })  

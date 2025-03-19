@@ -2,7 +2,8 @@ const fetchProj4Def = async (crs, {
     abortBtns,
     controller,
 } = {}) => {
-    const url = `https://spatialreference.org/ref/epsg/${crs}/ogcwkt`
+    const url = `/htmx/srs_wkt/${crs}/`
+    // const url = `https://spatialreference.org/ref/epsg/${crs}/ogcwkt`
     return fetchTimeout(url, {
         abortBtns,
         controller,
