@@ -80,6 +80,12 @@ const handleLeafletSearchBar = (map, include=true) => {
             })
         })
     }
+
+    console.log(geocoder)
+
+    document.addEventListener('keydown', (e) => {
+        // if (e.altKey && e.key === 'a') locateControl._link.click()
+    })
 }
 
 const handleLeafletRestViewBtn = (map, include=true) => {
@@ -113,7 +119,7 @@ const handleLeafletLocateBtn = (map, include=true) => {
     console.log(locateControl)
 
     document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 'a') locateControl._link.click()
+        if (e.altKey && e.key === 'd') locateControl._link.click()
     })
 }
 
