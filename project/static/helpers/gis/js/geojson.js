@@ -215,8 +215,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const menuContainerHeight = menuContainer.offsetHeight
                 console.log(menuContainerWidth, menuContainerHeight)
 
-                // menuContainer.style.top = `${e.y}px`
-                // menuContainer.style.right = `${e.x}px`
+                menuContainer.style.top = `${e.y}px`
+                menuContainer.style.right = `${e.x}px`
             })
         })
 
