@@ -317,7 +317,7 @@ const handleLeafletMapPanels = (map) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchCORSProxy('https://spatialreference.org/ref/epsg/4326/ogcwkt/').then(response => {
-        console.log(response)
+        console.log(response.text())
         return
     })
 })
