@@ -191,6 +191,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', (e) => {
+                L.DomEvent.stopPropagation(e)
+                L.DomEvent.preventDefault(e)        
+
                 checkbox.parentElement.dispatchEvent(new MouseEvent('contextmenu', {
                     bubbles: true,
                     cancelable: true,
@@ -218,10 +221,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 )
 
                 const removeContextMenu = (e) => {
-                    if (e.target !== menuToggle) {
-                        triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
-                        menuContainer.remove()
-                    }
+                    triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
+                    menuContainer.remove()
                 }
 
                 triggers.forEach(trigger => document.addEventListener(trigger, removeContextMenu))
