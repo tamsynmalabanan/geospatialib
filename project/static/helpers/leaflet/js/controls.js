@@ -81,8 +81,6 @@ const handleLeafletSearchBar = (map, include=true) => {
         })
     }
 
-    document.addEventListener('click', () => console.log(event.target))
-
     document.addEventListener('keydown', (e) => {
         if (e.altKey && e.key === 'a') geocoder.getContainer().firstChild.click()
     })
