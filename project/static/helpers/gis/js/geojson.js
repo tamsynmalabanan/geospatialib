@@ -134,7 +134,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const contentToggle = createIcon({
             parent: parentCheck.parentElement,
             peNone: false,
-            className: 'ms-auto dropdown-toggle'
+            className: 'dropdown-toggle'
         })
         contentToggle.style.cursor = 'pointer'
         contentToggle.setAttribute('data-bs-toggle', 'collapse')
@@ -187,7 +187,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const menuToggle = createIcon({
                 parent: checkbox.parentElement,
                 peNone: false,
-                className: 'bi bi-three-dots'
+                className: 'bi bi-three-dots ms-auto'
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', (e) => {
@@ -204,6 +204,16 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
             menuToggle.parentElement.addEventListener('contextmenu', (e) => {
                 console.log(e)
+
+                const menuContainer = document.createElement('div')
+                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded`
+                // menuContainer.style.position = 'fixed'
+                menuContainer.style.height = '200px'
+                menuContainer.style.width = '100px'
+                menuContainer.style.top = `${e.y}px`
+                menuContainer.style.right = `${e.x}px`
+
+                document.body.appendChild(menuContainer)
             })
         })
 
