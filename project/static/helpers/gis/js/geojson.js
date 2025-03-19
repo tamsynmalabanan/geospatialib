@@ -193,6 +193,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
             const queryContextMenuHandler = (e) => {
                 const event = e.x && e.y ? e : e.originalEvent
+                console.log(event)
                 if (event) contextMenuHandler(event, 'content')
             }
 
