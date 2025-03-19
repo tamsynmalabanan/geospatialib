@@ -203,7 +203,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
 
             menuToggle.parentElement.addEventListener('contextmenu', (e) => {
-                console.log(e)
+                console.log(e.x, e.y)
 
                 const menuContainer = document.createElement('div')
                 menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-lg`
