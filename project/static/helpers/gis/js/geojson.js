@@ -220,35 +220,37 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
                 const removeContextMenu = (e) => {
                     triggers.forEach(props => {
+                        console.log(props.parent)
                         props.triggers.forEach(trigger => {
                             props.parent.removeEventListener(trigger, removeContextMenu)
                         })
                     })
                     menuContainer.remove()
                 }
-
+                
                 if (menuContainer) removeContextMenu()
-
-                menuContainer = document.createElement('div')
-                menuContainer.setAttribute('for', layer._checkbox)
-                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-2 small border`
-                menuContainer.innerText = 'context menu here'
-                document.body.appendChild(menuContainer)
-
-                const menuContainerWidth = menuContainer.offsetWidth
-                const menuContainerHeight = menuContainer.offsetHeight
-                const windowWidth = window.innerWidth
-                const windowHeight = window.innerHeight
-
-                menuContainer.style.top = `${e.y+5}px`
-                menuContainer.style.right = `${windowWidth-e.x+5}px`
-
-                triggers.forEach(props => {
-                    props.triggers.forEach(trigger => {
-                        props.parent.addEventListener(trigger, removeContextMenu)
+                    
+                    menuContainer = document.createElement('div')
+                    menuContainer.setAttribute('for', layer._checkbox)
+                    menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-2 small border`
+                    menuContainer.innerText = 'context menu here'
+                    document.body.appendChild(menuContainer)
+                    
+                    const menuContainerWidth = menuContainer.offsetWidth
+                    const menuContainerHeight = menuContainer.offsetHeight
+                    const windowWidth = window.innerWidth
+                    const windowHeight = window.innerHeight
+                    
+                    menuContainer.style.top = `${e.y+5}px`
+                    menuContainer.style.right = `${windowWidth-e.x+5}px`
+                    
+                    triggers.forEach(props => {
+                        console.log(props.parent)
+                        props.triggers.forEach(trigger => {
+                            props.parent.addEventListener(trigger, removeContextMenu)
+                        })
                     })
                 })
-            })
         })
 
         const info = {}
