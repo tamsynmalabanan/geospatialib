@@ -191,7 +191,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', (e) => {
-                console.log(e)
                 const contextMenuEvent = new MouseEvent('contextmenu', {
                     bubbles: true,
                     cancelable: true,
@@ -201,6 +200,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 });
 
                 menuToggle.parentElement.dispatchEvent(contextMenuEvent)
+            })
+
+            menuToggle.parentElement.addEventListener('contextmenu', (e) => {
+                console.log(e)
             })
         })
 
