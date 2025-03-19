@@ -202,10 +202,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
             checkbox.parentElement.addEventListener('contextmenu', (e) => {
                 const menuContainer = document.createElement('div')
-                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm`
-                menuContainer.style.height = '200px'
-                menuContainer.style.width = '100px'
-                checkbox.parentElement.appendChild(menuContainer)
+                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-3`
+                document.body.appendChild(menuContainer)
 
                 const menuContainerWidth = menuContainer.offsetWidth
                 const menuContainerHeight = menuContainer.offsetHeight
@@ -215,6 +213,16 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 menuContainer.style.top = `${e.y+5}px`
                 menuContainer.style.right = `${windowWidth-e.x+5}px`
 
+                const triggers = Array(
+                    'click',
+                )
+
+                const removeContextMenu = () => {
+                    triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
+                    menuContainer.remove()
+                }
+
+                triggers.forEach(trigger => document.addEventListener(trigger, removeContextMenu))
             })
         })
 
