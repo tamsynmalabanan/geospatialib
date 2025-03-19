@@ -185,7 +185,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
 
             const menuToggle = createIcon({
-                parent: checkbox.parentElement,
+                parent: checkbox?.parentElement,
                 peNone: false,
                 className: 'bi bi-three-dots ms-auto'
             })
