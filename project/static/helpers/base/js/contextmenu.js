@@ -25,7 +25,7 @@ const contextMenuHandler = (e, content) => {
     console.log('point', e.x, e.y)
 
     menuContainer.style.left = `${(windowWidth-e.x-menuContainerWidth-10) >= 0 ? e.x : e.x-menuContainerWidth}px`
-    menuContainer.style.top = `${e.y}px`
+    menuContainer.style.top = `${(windowHeight-e.y-menuContainerHeight-10) >= 0 ? e.y : e.y-menuContainerHeight}px`
 }
 
 let removeCustomContextMenuTimeout
