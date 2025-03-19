@@ -206,12 +206,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 console.log(e)
 
                 const menuContainer = document.createElement('div')
-                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded`
+                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-lg`
                 // menuContainer.style.position = 'fixed'
                 menuContainer.style.height = '200px'
                 menuContainer.style.width = '100px'
-                menuContainer.style.top = `${e.y}px`
-                menuContainer.style.left = `${e.x}px`
+                // menuContainer.style.top = `${e.y}px`
+                // menuContainer.style.right = `${e.x}px`
 
                 document.body.appendChild(menuContainer)
             })
