@@ -158,9 +158,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         }
 
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
+            if (!layer._checkbox) return
+
             const checkbox = geojsonContainer.querySelector(layer._checkbox)
             
-            checkbox?.addEventListener('click', (e) => {
+            checkbox.addEventListener('click', (e) => {
                 const isChecked = e.target.checked
                 isChecked ? group.addLayer(layer) : group.removeLayer(layer)
 
