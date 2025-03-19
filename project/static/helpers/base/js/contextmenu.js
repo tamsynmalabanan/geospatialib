@@ -8,9 +8,8 @@ const contextMenuHandler = (e, content) => {
     
     const menuContainer = document.createElement('div')
     menuContainer.className = removeWhitespace(`
-        custom-context-menu
-        dropdown-menu show 
         text-bg-${getPreferredTheme()} 
+        custom-context-menu
         position-fixed 
         rounded shadow-sm p-2 
         small border
@@ -27,23 +26,24 @@ const contextMenuHandler = (e, content) => {
     menuContainer.style.right = `${windowWidth-e.x}px`
 }
 
-// let removeCustomContextMenuTimeout
-// document.addEventListener('DOMContentLoaded', () => {
-//     Array(
-//         {parent: document, triggers: [
-//             'click'
-//         ]},
-//         {parent: window, triggers: [
-//             'scroll'
-//         ]},
-//     ).forEach(props => {
-//         props.triggers.forEach(trigger => {
-//             props.parent.addEventListener(trigger, (e) => {
-//                 clearTimeout(removeCustomContextMenuTimeout)
-//                 removeCustomContextMenuTimeout = setTimeout(() => {
-//                     document.querySelector(`.custom-context-menu`)?.remove()
-//                 }, 100)
-//             })
-//         })
-//     })
-// })
+let removeCustomContextMenuTimeout
+document.addEventListener('DOMContentLoaded', () => {
+    Array(
+        {parent: document, triggers: [
+            'click',
+            'wheel',
+        ]},
+        {parent: window, triggers: [
+            'scroll'
+        ]},
+    ).forEach(props => {
+        props.triggers.forEach(trigger => {
+            props.parent.addEventListener(trigger, (e) => {
+                clearTimeout(removeCustomContextMenuTimeout)
+                removeCustomContextMenuTimeout = setTimeout(() => {
+                    document.querySelector(`.custom-context-menu`)?.remove()
+                }, 100)
+            })
+        })
+    })
+})
