@@ -113,7 +113,7 @@ const handleLeafletLocateBtn = (map, include=true) => {
     console.log(locateControl)
 
     document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 'a') locateControl.getContainer().click()
+        if (e.altKey && e.key === 'a') locateControl._link.click()
     })
 }
 
