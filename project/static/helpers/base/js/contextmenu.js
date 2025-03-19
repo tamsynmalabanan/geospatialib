@@ -37,10 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ).forEach(props => {
         props.triggers.forEach(trigger => {
             props.parent.addEventListener(trigger, (e) => {
+                const menu = document.querySelector(`.custom-context-menu`)
+                if (!menu) return
+
                 clearTimeout(removeCustomContextMenuTimeout)
                 removeCustomContextMenuTimeout = setTimeout(() => {
                     console.log(e)
-                    document.querySelector(`.custom-context-menu`)?.remove()
+                    menu.remove()
                 }, 100)
             })
         })
