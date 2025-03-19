@@ -289,7 +289,10 @@ const handleLeafletQueryPanel = (map, parent) => {
         }})
 
         if (data.altShortcut) document.addEventListener('keydown', (e) => {
-            if (e.altKey && e.key === data.altShortcut) element.click()
+            if (e.altKey && e.key === data.altShortcut) {
+                L.DomEvent.preventDefault(e)
+                element.click()
+            }
         })        
         
         toolbar.appendChild(element)

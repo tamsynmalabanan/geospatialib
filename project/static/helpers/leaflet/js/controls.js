@@ -82,7 +82,10 @@ const handleLeafletSearchBar = (map, include=true) => {
     }
 
     document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 'a') geocoder.getContainer().firstChild.click()
+        if (e.altKey && e.key === 'a') {
+            L.DomEvent.preventDefault(e)
+            geocoder.getContainer().firstChild.click()
+        }
     })
 }
 
@@ -102,7 +105,10 @@ const handleLeafletRestViewBtn = (map, include=true) => {
     })
 
     document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 's') control.click()
+        if (e.altKey && e.key === 's') {
+            L.DomEvent.preventDefault(e)
+            control.click()
+        }
     })
 
 }
@@ -120,7 +126,10 @@ const handleLeafletLocateBtn = (map, include=true) => {
     }).addTo(map);
 
     document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 'd') locateControl._link.click()
+        if (e.altKey && e.key === 'd') {
+            L.DomEvent.preventDefault(e)
+            locateControl._link.click()
+        }
     })
 }
 
