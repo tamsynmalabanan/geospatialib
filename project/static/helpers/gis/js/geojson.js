@@ -191,32 +191,31 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', (e) => {
-                const contextMenuEvent = new MouseEvent('contextmenu', {
+                checkbox.parentElement.dispatchEvent(new MouseEvent('contextmenu', {
                     bubbles: true,
                     cancelable: true,
                     view: window,
                     clientX: e.x,
                     clientY: e.y,
-                });
-
-                checkbox.parentElement.dispatchEvent(contextMenuEvent)
+                }))
             })
 
             checkbox.parentElement.addEventListener('contextmenu', (e) => {
-                console.log(e.x, e.y)
-
                 const menuContainer = document.createElement('div')
-                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-lg`
+                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm`
                 menuContainer.style.height = '200px'
                 menuContainer.style.width = '100px'
-                document.body.appendChild(menuContainer)
+                checkbox.parentElement.appendChild(menuContainer)
 
                 const menuContainerWidth = menuContainer.offsetWidth
                 const menuContainerHeight = menuContainer.offsetHeight
-                console.log(menuContainerWidth, menuContainerHeight)
+                const windowWidth = window.innerWidth
+                const windowHeight = window.innerHeight
 
                 menuContainer.style.top = `${e.y+5}px`
-                menuContainer.style.right = `${window.innerWidth-e.x+5}px`
+                menuContainer.style.right = `${windowWidth-e.x+5}px`
+
+                document
             })
         })
 
