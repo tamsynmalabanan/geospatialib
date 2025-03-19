@@ -203,27 +203,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 }))
             })
 
-            const contextMenuHandler = (e) => {
-                L.DomEvent.stopPropagation(e)
-                L.DomEvent.preventDefault(e)
-    
-                document.querySelector(`.custom-context-menu`)?.remove()
-                
-                const menuContainer = document.createElement('div')
-                menuContainer.className = `custom-context-menu text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-2 small border`
-                menuContainer.innerText = 'context menu here'
-                document.body.appendChild(menuContainer)
-                
-                const menuContainerWidth = menuContainer.offsetWidth
-                const menuContainerHeight = menuContainer.offsetHeight
-                const windowWidth = window.innerWidth
-                const windowHeight = window.innerHeight
-                
-                menuContainer.style.top = `${e.y}px`
-                menuContainer.style.right = `${windowWidth-e.x}px`
-            }
-            
-            checkbox.parentElement.addEventListener('contextmenu', contextMenuHandler)
+            checkbox.parentElement.addEventListener('contextmenu', (e) => contextMenuHandler(e))
 
             if (layer.feature) layer.on('contextmenu', (e) => console.log(e))
         })
