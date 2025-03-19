@@ -206,6 +206,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             
             checkbox.parentElement.addEventListener('contextmenu', (e) => {
+                L.DomEvent.stopPropagation(e)
+                L.DomEvent.preventDefault(e)
+                
                 const menuContainer = document.createElement('div')
                 menuContainer.className = `custom-context-menu text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-2 small border`
                 menuContainer.innerText = 'context menu here'
