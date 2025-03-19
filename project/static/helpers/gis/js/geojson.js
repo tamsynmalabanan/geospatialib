@@ -202,11 +202,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     clientY: e.y,
                 }))
             })
-            
-            checkbox.parentElement.addEventListener('contextmenu', (e) => {
+
+            const contextMenuHandler = (e) => {
                 L.DomEvent.stopPropagation(e)
                 L.DomEvent.preventDefault(e)
-
+    
                 document.querySelector(`.custom-context-menu`)?.remove()
                 
                 const menuContainer = document.createElement('div')
@@ -221,7 +221,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 
                 menuContainer.style.top = `${e.y}px`
                 menuContainer.style.right = `${windowWidth-e.x}px`
-            })
+            }
+            
+            checkbox.parentElement.addEventListener('contextmenu', contextMenuHandler)
+
+            if (layer.feature) layer.on('contextmenu', (e) => console.log(e))
         })
 
         const info = {}
