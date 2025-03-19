@@ -192,9 +192,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             menuToggle.style.cursor = 'pointer'
 
             const queryContextMenuHandler = (e) => {
-                const event = e.x && e.y ? e : e.originalEvent
-                console.log(event)
-                if (event) contextMenuHandler(event, 'content')
+                // const event = e.x && e.y ? e : e.originalEvent
+                // console.log(event)
+                contextMenuHandler(e, 'content')
             }
 
             menuToggle.addEventListener('click', (e) => queryContextMenuHandler)
