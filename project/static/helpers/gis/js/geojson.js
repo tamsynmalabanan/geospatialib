@@ -206,18 +206,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             checkbox.parentElement.addEventListener('contextmenu', (e) => {
                 L.DomEvent.stopPropagation(e)
                 L.DomEvent.preventDefault(e)      
-                  
-                const menuContainer = document.createElement('div')
-                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-3`
-                document.body.appendChild(menuContainer)
 
-                const menuContainerWidth = menuContainer.offsetWidth
-                const menuContainerHeight = menuContainer.offsetHeight
-                const windowWidth = window.innerWidth
-                const windowHeight = window.innerHeight
-
-                menuContainer.style.top = `${e.y+5}px`
-                menuContainer.style.right = `${windowWidth-e.x+5}px`
+                let menuContainer = document.querySelector(`[for="${layer._checkbox}"]`)
 
                 const triggers = Array(
                     'click',
@@ -227,6 +217,22 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     triggers.forEach(trigger => document.removeEventListener(trigger, removeContextMenu))
                     menuContainer.remove()
                 }
+
+                if (menuContainer) removeContextMenu()
+
+                menuContainer = document.createElement('div')
+                menuContainer.setAttribute('for', layer._checkbox)
+                menuContainer.className = `text-bg-${getPreferredTheme()} position-fixed rounded shadow-sm p-3`
+                menuContainer.innerText = 'context menu here'
+                document.body.appendChild(menuContainer)
+
+                const menuContainerWidth = menuContainer.offsetWidth
+                const menuContainerHeight = menuContainer.offsetHeight
+                const windowWidth = window.innerWidth
+                const windowHeight = window.innerHeight
+
+                menuContainer.style.top = `${e.y+5}px`
+                menuContainer.style.right = `${windowWidth-e.x+5}px`
 
                 triggers.forEach(trigger => document.addEventListener(trigger, removeContextMenu))
             })
