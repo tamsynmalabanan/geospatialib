@@ -6,6 +6,7 @@ const fetchProj4Def = async (crs, {
     return fetchTimeout(url, {
         abortBtns,
         controller,
+        fetchParams: {headers: {'HX-Request': 'true'}}
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {
             throw new Error('Response not ok.')
