@@ -1,9 +1,11 @@
 from django.views.decorators.http import require_http_methods
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.http import JsonResponse
 
 import json
 import requests
+
+from main.models import SpatialRefSys
 
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
@@ -29,4 +31,7 @@ def cors_proxy(request):
 
     content_type = response.headers.get('Content-Type')
     return HttpResponse(response.content, content_type=content_type, status=response.status_code)
-    
+
+def srs_wkt(request, srid):
+    srs = get_object_or_404(SpatialRefSys, srid=srid)
+    return HttpResponse(srs.srtext)
