@@ -313,10 +313,3 @@ const handleLeafletMapPanels = (map) => {
     
     control.addTo(map)
 }
-
-
-document.addEventListener('DOMContentLoaded', async () => {
-    const htmx = await fetchProj4Def(4326)
-
-    console.log(htmx)
-})  
