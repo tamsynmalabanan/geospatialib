@@ -1,4 +1,6 @@
 const contextMenuHandler = (e, content) => {
+    console.log(e)
+
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
 
