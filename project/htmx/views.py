@@ -34,4 +34,4 @@ def cors_proxy(request):
 
 def srs_wkt(request, srid):
     srs = get_object_or_404(SpatialRefSys, srid=srid)
-    return HttpResponse(srs.srtext)
+    return HttpResponse(srs.srtext, content_type='text/plain')
