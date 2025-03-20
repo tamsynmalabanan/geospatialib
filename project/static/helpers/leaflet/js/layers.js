@@ -88,7 +88,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
 }
 
 const zoomToLayer = (layer, {
-    zoom = 15,
+    zoom = 18,
 } = {}) => {
     const map = layer._map
     if (!map) return
