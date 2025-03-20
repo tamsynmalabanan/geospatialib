@@ -132,21 +132,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         contentCollapse.className = `ps-3 collapse`
         geojsonContainer.appendChild(contentCollapse)
         
-        const toggleContainer = document.createElement('div')
-        toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-        parentCheck.parentElement.appendChild(toggleContainer)
-
-        const contentToggle = createIcon({
-            parent: toggleContainer,
-            peNone: false,
-            className: 'dropdown-toggle'
-        })
-        contentToggle.style.cursor = 'pointer'
-        contentToggle.setAttribute('data-bs-toggle', 'collapse')
-        contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
-        contentToggle.setAttribute('aria-controls', contentCollapse.id)
-        contentToggle.setAttribute('aria-expanded', 'false')
-        
         if (listFeatures) {
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
@@ -209,6 +194,23 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     })
                 }
             })
+
+            const toggleContainer = document.createElement('div')
+            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+            checkbox.parentElement.appendChild(toggleContainer)    
+
+            if (!layer.feature && typeof layer.getLayers === 'function') {
+                const contentToggle = createIcon({
+                    parent: toggleContainer,
+                    peNone: false,
+                    className: 'dropdown-toggle'
+                })
+                contentToggle.style.cursor = 'pointer'
+                contentToggle.setAttribute('data-bs-toggle', 'collapse')
+                contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+                contentToggle.setAttribute('aria-controls', contentCollapse.id)
+                contentToggle.setAttribute('aria-expanded', 'false')        
+            }
 
             const menuToggle = createIcon({
                 parent: toggleContainer,
