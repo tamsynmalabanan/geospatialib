@@ -1,4 +1,4 @@
 .leaflet-popup-content-wrapper {
-    overflow: auto;
+    overflow-y: auto;
     padding-right: 1rem !important;
 }
