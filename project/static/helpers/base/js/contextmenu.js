@@ -9,11 +9,8 @@ const contextMenuHandler = (e, menuItems) => {
         text-bg-${getPreferredTheme()} 
         custom-context-menu
         dropdown-menu show
+        small shadow-sm
     `)
-        // list-unstyled
-        // position-fixed 
-        // rounded shadow-sm
-        // small border m-0
     for (const item in menuItems) {
         const data = menuItems[item]
         const li = createDropdownMenuLi({...data, parent:menuContainer})
