@@ -166,19 +166,24 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                                 if (checkbox.checked) checkbox.click()
                             })
 
-                            // const allCheckboxes = Array.from(container.querySelectorAll('input.form-check-input'))
-                            // group.eachLayer(groupLayer => {
-                            //     if (groupLayer.feature) return 
-                            //     const checkbox = document.querySelector(groupLayer._checkbox)
-                            //     if (allCheckboxes.includes(checkbox) && checkbox.)
-                            // })
-
                             const checkbox = geojsonContainer.querySelector(layer._checkbox)
                             if (checkbox) {
                                 checkbox.click()
                             } else {
                                 parentCheck.checked = true
                                 group.addLayer(layer)
+                            }
+                        }
+                    },
+                    'hide': {
+                        innerText: `Hide ${type}`,
+                        btnCallback: () => {
+                            const checkbox = geojsonContainer.querySelector(layer._checkbox)
+                            if (checkbox) {
+                                checkbox.click()
+                            } else {
+                                group.removeLayer(layer)
+                                parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
                             }
                         }
                     },
