@@ -216,10 +216,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         innerText: 'Add to legend',
                         btnCallback: () => {
                             group._map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
-                                // pane,
-                                geojson,
-                                // styleParams,
+                                geojson: layer.feature || geojson,
                                 title,
+                                // pane,
+                                // styleParams,
                             }))
                         }
                     },
