@@ -158,6 +158,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         innerText: `Zoom to ${type}`,
                         btnCallback: () => zoomToLayer(layer)
                     },
+                    'divider1': {
+                        divider: true,
+                    },
                     'download': {
                         innerText: 'Download GeoJSON',
                         btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
