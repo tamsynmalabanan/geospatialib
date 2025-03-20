@@ -215,7 +215,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'legend': checkbox.disabled ? null : {
                         innerText: 'Add to legend',
                         btnCallback: () => {
-                            group._map.getLayers().client.addLayer(getLeafletGeoJSONLayer({
+                            group._map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 // pane,
                                 geojson,
                                 // styleParams,
