@@ -268,15 +268,16 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     contentToggle.setAttribute('aria-controls', contentCollapse.id)
                     contentToggle.setAttribute('aria-expanded', 'false')        
                 }
+                
+                const menuToggle = createIcon({
+                    parent: toggleContainer,
+                    peNone: false,
+                    className: 'bi bi-three-dots'
+                })
+                menuToggle.style.cursor = 'pointer'
+                menuToggle.addEventListener('click', checklistContextMenuHandler)
             }
             
-            const menuToggle = createIcon({
-                parent: toggleContainer,
-                peNone: false,
-                className: 'bi bi-three-dots'
-            })
-            menuToggle.style.cursor = 'pointer'
-            menuToggle.addEventListener('click', checklistContextMenuHandler)
         })
 
         const info = {}
