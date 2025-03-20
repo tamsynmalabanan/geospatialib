@@ -29,6 +29,7 @@ const getLeafletGeoJSONLayer = ({
                         return popupHeader()
                     })()
                 })
+                propertiesTable.style.maxWidth = '100%'
                 
                 layer.bindPopup(propertiesTable.outerHTML, {
                     autoPan: false,
