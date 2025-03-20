@@ -193,7 +193,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             if (layer._popup) {
                                 layer.openPopup(typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
                             } else {
-                                layer._path?.click() || layer._icon?.click()
+                                layer.fire('click')
                             }
                         }
                     },
