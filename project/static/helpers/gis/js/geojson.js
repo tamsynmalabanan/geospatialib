@@ -217,7 +217,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         btnCallback: () => {
                             group._map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 geojson: layer.feature || geojson,
-                                title,
+                                title: layer._title,
+                                data: {}
                                 // pane,
                                 // styleParams,
                             }))

@@ -3,6 +3,7 @@ const getLeafletGeoJSONLayer = ({
     geojson,
     styleParams,
     title,
+    data,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         filter: (feature) => {
@@ -12,6 +13,7 @@ const getLeafletGeoJSONLayer = ({
     })
     
     if (title) geojsonLayer._title = title
+    if (data) geojsonLayer._data = data
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     
