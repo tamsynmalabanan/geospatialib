@@ -37,11 +37,9 @@ const contextMenuHandler = (e, menuItems) => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    ['wheel', 'mousedown'].forEach(trigger => {
+    ['wheel', 'click'].forEach(trigger => {
         document.addEventListener(trigger, (e) => {
-            setTimeout(() => {
-                document.querySelector(`.custom-context-menu`)?.remove()
-            }, 100)
+            document.querySelector(`.custom-context-menu`)?.remove()
         })
     })
 })
