@@ -160,7 +160,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         innerText: `Zoom to ${type}`,
                         btnCallback: () => zoomToLayer(layer, group._map)
                     },
-                    'isolate': {
+                    'isolate': checkbox.disabled ? null : {
                         innerText: `Isolate ${type}`,
                         btnCallback: () => {
                             Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
@@ -212,7 +212,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'divider2': {
                         divider: true,
                     },
-                    'legend': {
+                    'legend': checkbox.disabled ? null : {
                         innerText: 'Add to legend',
                         btnCallback: () => {}
                     },
@@ -225,60 +225,59 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             
             if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
 
-            if (checkbox) {
-                checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
-                checkbox.addEventListener('click', (e) => {
-                    const isChecked = e.target.checked
-                    isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-    
-                    if (layer.feature) {
-                        Object.values(layer._eventParents).forEach(parentLayer => {
-                            const checkboxSelector = parentLayer._checkbox
-                            if (!checkboxSelector) return
-                            
-                            const checked = isChecked ? true : Array.from(
-                                geojsonContainer.querySelectorAll('input.form-check-input')
-                            ).filter(i => `#${i.id}` !== checkboxSelector).some(i => i.checked)
-                            
-                            geojsonContainer.querySelector(checkboxSelector).checked = checked
-                            if (!checked) group.removeLayer(parentLayer)
-                        })
-                    } else {
-                        layer.eachLayer(featureLayer => {
-                            isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
-                            
-                            if (!featureLayer._checkbox) return
-                            geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
-                        })
-                    }
-                })
+            if (!checkbox) return
 
-                const toggleContainer = document.createElement('div')
-                toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-                checkbox.parentElement.appendChild(toggleContainer)    
+            checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
+            checkbox.addEventListener('click', (e) => {
+                const isChecked = e.target.checked
+                isChecked ? group.addLayer(layer) : group.removeLayer(layer)
 
-                if (!layer.feature && typeof layer.getLayers === 'function') {
-                    const contentToggle = createIcon({
-                        parent: toggleContainer,
-                        peNone: false,
-                        className: 'dropdown-toggle'
+                if (layer.feature) {
+                    Object.values(layer._eventParents).forEach(parentLayer => {
+                        const checkboxSelector = parentLayer._checkbox
+                        if (!checkboxSelector) return
+                        
+                        const checked = isChecked ? true : Array.from(
+                            geojsonContainer.querySelectorAll('input.form-check-input')
+                        ).filter(i => `#${i.id}` !== checkboxSelector).some(i => i.checked)
+                        
+                        geojsonContainer.querySelector(checkboxSelector).checked = checked
+                        if (!checked) group.removeLayer(parentLayer)
                     })
-                    contentToggle.style.cursor = 'pointer'
-                    contentToggle.setAttribute('data-bs-toggle', 'collapse')
-                    contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
-                    contentToggle.setAttribute('aria-controls', contentCollapse.id)
-                    contentToggle.setAttribute('aria-expanded', 'false')        
+                } else {
+                    layer.eachLayer(featureLayer => {
+                        isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                        
+                        if (!featureLayer._checkbox) return
+                        geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
+                    })
                 }
+            })
 
-                const menuToggle = createIcon({
+            const toggleContainer = document.createElement('div')
+            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+            checkbox.parentElement.appendChild(toggleContainer)    
+
+            if (!layer.feature && typeof layer.getLayers === 'function') {
+                const contentToggle = createIcon({
                     parent: toggleContainer,
                     peNone: false,
-                    className: 'bi bi-three-dots'
+                    className: 'dropdown-toggle'
                 })
-                menuToggle.style.cursor = 'pointer'
-                menuToggle.addEventListener('click', checklistContextMenuHandler)
+                contentToggle.style.cursor = 'pointer'
+                contentToggle.setAttribute('data-bs-toggle', 'collapse')
+                contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+                contentToggle.setAttribute('aria-controls', contentCollapse.id)
+                contentToggle.setAttribute('aria-expanded', 'false')        
             }
-            
+
+            const menuToggle = createIcon({
+                parent: toggleContainer,
+                peNone: false,
+                className: 'bi bi-three-dots'
+            })
+            menuToggle.style.cursor = 'pointer'
+            menuToggle.addEventListener('click', checklistContextMenuHandler)
         })
 
         const info = {}
