@@ -240,7 +240,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
         const element = tag !== 'button' ?
         customCreateElement(tag, data) :
-        createButton({...data, ...{
+        createButton({...data,
             id: `${toolbar.id}-${newMode}`,
             className:`btn-sm btn-${getPreferredTheme()}`,
             clichHandler: async (event) => {
@@ -286,7 +286,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 
                 if (btnClickHandler) await queryHandler(event, btnClickHandler)
             }
-        }})
+        })
 
         if (data.altShortcut) document.addEventListener('keydown', (e) => {
             if (e.altKey && e.key === data.altShortcut) {

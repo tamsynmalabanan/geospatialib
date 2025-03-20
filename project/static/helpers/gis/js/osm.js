@@ -91,11 +91,11 @@ const overpassToGeoJSON = async (data, {
     
         const feature = turf.feature(
             geom=null,
-            properties={...tags, ...{
+            properties={...tags,
                 osm_id: id,
                 osm_type: type,
             }
-        })
+        )
     
         if (type === 'relation') {
             const points = []

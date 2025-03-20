@@ -13,6 +13,12 @@ const contextMenuHandler = (e, menuItems) => {
     `)
     for (const item in menuItems) {
         const data = menuItems[item]
+        if (data.btnCallback) data.btnCallback = (e) => {
+            L.DomEvent.stopPropagation(e)
+            L.DomEvent.preventDefault(e)
+            menuContainer.remove()
+            data.btnCallback(e)
+        }
         const li = createDropdownMenuLi({...data, parent:menuContainer})
     }
     document.body.appendChild(menuContainer)
@@ -26,7 +32,6 @@ const contextMenuHandler = (e, menuItems) => {
     menuContainer.style.top = `${(windowHeight-e.y-menuContainerHeight-10) >= 0 ? e.y : e.y-menuContainerHeight}px`
 }
 
-let removeCustomContextMenuTimeout
 document.addEventListener('DOMContentLoaded', () => {
     Array(
         {parent: document, triggers: [
@@ -41,10 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             props.parent.addEventListener(trigger, (e) => {
                 const menu = document.querySelector(`.custom-context-menu`)
                 if (!menu) return
-
-                clearTimeout(removeCustomContextMenuTimeout)
-                removeCustomContextMenuTimeout = setTimeout(() => {
-                    console.log(e)
+                setTimeout(() => {
                     menu.remove()
                 }, 1000)
             })
