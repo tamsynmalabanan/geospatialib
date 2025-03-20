@@ -132,8 +132,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         contentCollapse.className = `ps-3 collapse`
         geojsonContainer.appendChild(contentCollapse)
         
+        const toggleContainer = document.createElement('div')
+        toggleContainer.className('ms-auto d-flex flex-nowrap gap-2')
+        parentCheck.parentElement.appendChild(toggleContainer)
+
         const contentToggle = createIcon({
-            parent: parentCheck.parentElement,
+            parent: toggleContainer,
             peNone: false,
             className: 'dropdown-toggle'
         })
@@ -207,9 +211,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
 
             const menuToggle = createIcon({
-                parent: checkbox.parentElement,
+                parent: toggleContainer,
                 peNone: false,
-                className: 'bi bi-three-dots ms-auto'
+                className: 'bi bi-three-dots'
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', checklistContextMenuHandler)

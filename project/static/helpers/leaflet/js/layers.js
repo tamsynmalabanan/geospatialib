@@ -103,6 +103,6 @@ const zoomToLayer = (layer, {
     }
 
     if (typeof layer.getLatLng === 'function') {
-        return map.setView(layer.getLatLng(), 15)
+        return map.setView(layer.getLatLng(), zoom)
     }
 }
