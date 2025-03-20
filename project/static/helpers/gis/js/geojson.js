@@ -162,11 +162,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const queryContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
                 {
-                    'download': {
-                        innerText: 'Download GeoJSON',
-                    },
                     'zoomin': {
                         innerText: `Zoom to ${type}`,
+                        btnCallback: () => {
+                            console.log('here')
+                        }
+                    },
+                    'download': {
+                        innerText: 'Download GeoJSON',
                     },
                 }
             )

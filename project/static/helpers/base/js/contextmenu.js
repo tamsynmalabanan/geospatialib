@@ -30,7 +30,6 @@ let removeCustomContextMenuTimeout
 document.addEventListener('DOMContentLoaded', () => {
     Array(
         {parent: document, triggers: [
-            'click',
             'wheel',
             'mousedown',
         ]},
