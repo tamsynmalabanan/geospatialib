@@ -166,6 +166,13 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                                 if (checkbox.checked) checkbox.click()
                             })
 
+                            // const allCheckboxes = Array.from(container.querySelectorAll('input.form-check-input'))
+                            // group.eachLayer(groupLayer => {
+                            //     if (groupLayer.feature) return 
+                            //     const checkbox = document.querySelector(groupLayer._checkbox)
+                            //     if (allCheckboxes.includes(checkbox) && checkbox.)
+                            // })
+
                             const checkbox = geojsonContainer.querySelector(layer._checkbox)
                             if (checkbox) {
                                 checkbox.click()
@@ -207,10 +214,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         if (!checked) group.removeLayer(parentLayer)
                     })
                 } else {
-                    layer.getLayers().forEach(featureLayer => {
+                    layer.eachLayer(featureLayer => {
+                        isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                        
                         if (!featureLayer._checkbox) return
                         geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
-                        isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
                     })
                 }
             })
