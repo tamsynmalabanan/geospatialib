@@ -8,7 +8,7 @@ const contextMenuHandler = (e, menuItems) => {
     menuContainer.className = removeWhitespace(`
         text-bg-${getPreferredTheme()} 
         custom-context-menu
-        dropdown-menu
+        dropdown-menu show
     `)
         // list-unstyled
         // position-fixed 
