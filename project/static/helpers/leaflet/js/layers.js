@@ -89,5 +89,6 @@ const getLeafletLayerStyle = (featureType, options={}) => {
 
 const zoomToLayer = (layer) => {
     const bounds = layer.getBounds()
+    console.log(layer, bounds)
     if (bounds) layer._map?.fitBounds(bounds)
 }
