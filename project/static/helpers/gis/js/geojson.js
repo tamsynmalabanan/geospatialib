@@ -175,7 +175,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             }
                         }
                     },
-                    'hide': !e.x && !e.y ? {
+                    'hide': e.x && e.y ? null : {
                         innerText: `Hide ${type}`,
                         btnCallback: () => {
                             const checkbox = geojsonContainer.querySelector(layer._checkbox)
@@ -186,9 +186,28 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                                 parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
                             }
                         }
-                    } : null,
+                    },
                     'divider1': {
                         divider: true,
+                    },
+                    'copyFeature': !layer.feature ? null : {
+                        innerText: 'Copy feature',
+                        btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
+                    },
+                    'copyProperties': !layer.feature ? null : {
+                        innerText: 'Copy feature properties',
+                        btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
+                    },
+                    'copyGeometry': !layer.feature ? null : {
+                        innerText: 'Copy feature geometry',
+                        btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
+                    },
+                    'divider2': {
+                        divider: true,
+                    },
+                    'legend': {
+                        innerText: 'Add to legend',
+                        btnCallback: () => {}
                     },
                     'download': {
                         innerText: 'Download GeoJSON',
@@ -299,7 +318,6 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     
     const lngSpan = document.createElement('span')
     lngSpan.innerText = coordsFormat === 'DD' ? lngDD : lngDMS
-    
     
     const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
     copyBtn.style.cursor = 'pointer'
