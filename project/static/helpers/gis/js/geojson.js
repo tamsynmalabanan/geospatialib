@@ -225,10 +225,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
 
             if (checkbox) {
-                const toggleContainer = document.createElement('div')
-                toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-                checkbox.parentElement.appendChild(toggleContainer)    
-
                 checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
@@ -256,6 +252,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     }
                 })
 
+                const toggleContainer = document.createElement('div')
+                toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+                checkbox.parentElement.appendChild(toggleContainer)    
+
                 if (!layer.feature && typeof layer.getLayers === 'function') {
                     const contentToggle = createIcon({
                         parent: toggleContainer,
@@ -268,7 +268,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     contentToggle.setAttribute('aria-controls', contentCollapse.id)
                     contentToggle.setAttribute('aria-expanded', 'false')        
                 }
-                
+
                 const menuToggle = createIcon({
                     parent: toggleContainer,
                     peNone: false,
