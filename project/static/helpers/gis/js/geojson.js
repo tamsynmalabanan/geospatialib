@@ -224,11 +224,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             
             if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
 
-            const toggleContainer = document.createElement('div')
-            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-            checkbox.parentElement.appendChild(toggleContainer)    
-
             if (checkbox) {
+                const toggleContainer = document.createElement('div')
+                toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+                checkbox.parentElement.appendChild(toggleContainer)    
+
                 checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
