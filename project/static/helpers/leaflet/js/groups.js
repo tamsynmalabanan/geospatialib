@@ -20,8 +20,8 @@ const handleLeafletLayerGroups = (map) => {
     const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
     queryPane.style.zIndex = 599
 
-    map.on('layeradd layerremove', (element) => {
-        const layer = element.layer
+    map.on('layeradd layerremove', (e) => {
+        const layer = e.layer
         console.log(layer)
     })
 }
