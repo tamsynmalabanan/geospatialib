@@ -190,11 +190,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         btnCallback: () => {
                             zoomToLayer(layer, group._map)
                             if (checkbox && !checkbox.checked) checkbox.click()
-                            if (layer._popup) {
-                                layer.openPopup(typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
-                            } else {
-                                layer.fire('click')
-                            }
+                            layer.fire('click')
+                            // if (layer._popup) {
+                            //     layer.openPopup(typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
+                            // } else {
+                            // }
                         }
                     },
                     'divider1': !layer.feature ? null : {
