@@ -166,7 +166,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                                 if (checkbox.checked) checkbox.click()
                             })
 
-                            const checkbox = geojsonContainer.querySelector(layer._checkbox)
                             if (checkbox) {
                                 checkbox.click()
                             } else {
@@ -178,7 +177,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'hide': e.x && e.y ? null : {
                         innerText: `Hide ${type}`,
                         btnCallback: () => {
-                            const checkbox = geojsonContainer.querySelector(layer._checkbox)
                             if (checkbox) {
                                 if (checkbox.checked) checkbox.click()
                             } else {
@@ -191,11 +189,15 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         innerText: `Show properties`,
                         btnCallback: () => {
                             zoomToLayer(layer, group._map)
-                            console.log(layer, typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
-                            layer.openPopup(typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
+                            if (checkbox && !checkbox.checked) checkbox.click()
+                            if (layer._popup) {
+                                layer.openPopup(typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
+                            } else {
+                                layer._path?.click() || layer._icon?.click()
+                            }
                         }
                     },
-                    'divider1': {
+                    'divider1': !layer.feature ? null : {
                         divider: true,
                     },
                     'copyFeature': !layer.feature ? null : {
