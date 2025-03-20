@@ -87,12 +87,9 @@ const getLeafletLayerStyle = (featureType, options={}) => {
     }
 }
 
-const zoomToLayer = (layer, {
+const zoomToLayer = (layer, map, {
     zoom = 18,
 } = {}) => {
-    const map = layer._map
-    if (!map) return
-
     if (typeof layer.getBounds === 'function') {
         const b = layer.getBounds()
         if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {

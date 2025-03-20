@@ -157,7 +157,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 {
                     'zoomin': {
                         innerText: `Zoom to ${type}`,
-                        btnCallback: () => zoomToLayer(layer)
+                        btnCallback: () => zoomToLayer(layer, group._map)
                     },
                     'isolate': {
                         innerText: `Isolate ${type}`,
