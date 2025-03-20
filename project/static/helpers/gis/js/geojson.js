@@ -187,6 +187,13 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             }
                         }
                     },
+                    'showProperties': !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
+                        innerText: `Show properties`,
+                        btnCallback: () => {
+                            zoomToLayer(layer, group._map)
+                            layer.openPopup()
+                        }
+                    },
                     'divider1': {
                         divider: true,
                     },
@@ -195,11 +202,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
                     },
                     'copyProperties': !layer.feature ? null : {
-                        innerText: 'Copy feature properties',
+                        innerText: 'Copy properties',
                         btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
                     },
                     'copyGeometry': !layer.feature ? null : {
-                        innerText: 'Copy feature geometry',
+                        innerText: 'Copy geometry',
                         btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
                     },
                     'divider2': {
