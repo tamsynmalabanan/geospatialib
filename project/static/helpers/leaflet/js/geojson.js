@@ -34,7 +34,7 @@ const getLeafletGeoJSONLayer = ({
                 layer.bindPopup(propertiesTable.outerHTML, {
                     autoPan: false,
                 }).openPopup()
-                
+
                 layer.off('click', createPopup)
             }
 

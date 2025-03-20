@@ -50,3 +50,9 @@ const enableLeafletLayerClick = (map) => {
 
     });
 }
+
+const assignMapObservers = (map) => {
+    map.on('popupopen', (e) => {
+        e.popup._container.querySelector('.leaflet-popup-content-wrapper').style.maxHeight = `${map.getSize().y * 0.5}px`
+    })
+}

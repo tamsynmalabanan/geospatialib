@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dataset.mapPanels === 'true') handleLeafletMapPanels(map)
         handleLeafletMapControls(map)
         elementResizeObserver(container, () => map.invalidateSize())
+        assignMapObservers(map)
 
         map._initComplete = true
         map.fire('initComplete')
