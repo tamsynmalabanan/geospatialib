@@ -278,12 +278,17 @@ const createAccordion = (id, tabData, {
     return [tabs, accordion]
 }
 
-const createDropdownMenuLi = ({innerText, parent}={}) => {
+const createDropdownMenuLi = ({
+    innerText, 
+    parent,
+    btnCallback,
+}={}) => {
     const li = document.createElement('li')
     parent?.appendChild(li)
     
     const btn = document.createElement('button')
     btn.className = 'dropdown-item bg-transparent border-0 btn btn-sm fs-12'
+    if (btnCallback) btn.addEventListener('click', btnCallback)
     li.appendChild(btn)
 
     const label = createLabel(innerText)

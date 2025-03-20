@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeCustomContextMenuTimeout = setTimeout(() => {
                     console.log(e)
                     menu.remove()
-                }, 500)
+                }, 100)
             })
         })
     })
