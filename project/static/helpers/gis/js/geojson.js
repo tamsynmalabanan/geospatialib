@@ -124,7 +124,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             parent: geojsonContainer,
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
         }).querySelector('input')
-        disableCheck ? parentCheck.disabled = true : geojsonLayer._checkbox = `#${parentCheck.id}`
+        geojsonLayer._checkbox = `#${parentCheck.id}`
+        parentCheck.disabled = disableCheck 
 
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
