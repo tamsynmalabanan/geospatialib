@@ -14,6 +14,8 @@ const contextMenuHandler = (e, menuItems) => {
 
     for (const item in menuItems) {
         const data = menuItems[item]
+        if (!data) continue
+
         const btnCallback = data.btnCallback
         if (btnCallback) {
             delete data.btnCallback

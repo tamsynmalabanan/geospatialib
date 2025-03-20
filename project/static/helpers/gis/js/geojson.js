@@ -89,7 +89,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     styleParams,
     defaultGeom,
 } = {}) => {
-    const map = group._map
     const container = document.createElement('div')
     container.className = 'd-flex flex-column gap-2'
 
@@ -150,6 +149,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
             if (controller?.signal.aborted) return
 
+            const checkbox = geojsonContainer.querySelector(layer._checkbox)
+
             const type = layer.feature ? 'feature' : 'layer'
             const checklistContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
@@ -157,6 +158,22 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'zoomin': {
                         innerText: `Zoom to ${type}`,
                         btnCallback: () => zoomToLayer(layer)
+                    },
+                    'isolate': {
+                        innerText: `Isolate ${type}`,
+                        btnCallback: () => {
+                            Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
+                                if (checkbox.checked) checkbox.click()
+                            })
+
+                            const checkbox = geojsonContainer.querySelector(layer._checkbox)
+                            if (checkbox) {
+                                checkbox.click()
+                            } else {
+                                parentCheck.checked = true
+                                group.addLayer(layer)
+                            }
+                        }
                     },
                     'divider1': {
                         divider: true,
@@ -170,9 +187,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             
             if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
             
-            if (!layer._checkbox) return
+            if (!checkbox) return
             
-            const checkbox = geojsonContainer.querySelector(layer._checkbox)
             checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
             checkbox.addEventListener('click', (e) => {
                 const isChecked = e.target.checked
