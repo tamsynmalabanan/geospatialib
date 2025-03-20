@@ -14,13 +14,16 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layeradd', (e) => {
         const layer = e.layer
         const legend = layer._legend
-        if (layer instanceof L.GeoJSON) {
-            const container = document.createElement('div')
-            container.id = `${layers.id}-${layer._leaflet_id}`
-            container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
-            parent.appendChild(container)
-        
+        if (legend) {
+            console.log(layer)
         }
+        // if (layer instanceof L.GeoJSON) {
+        //     const container = document.createElement('div')
+        //     container.id = `${layers.id}-${layer._leaflet_id}`
+        //     container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
+        //     parent.appendChild(container)
+        
+        // }
     })
 
     // map.on('layeradd', (event) => {
