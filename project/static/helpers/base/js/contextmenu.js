@@ -13,11 +13,15 @@ const contextMenuHandler = (e, menuItems) => {
     `)
     for (const item in menuItems) {
         const data = menuItems[item]
-        if (data.btnCallback) data.btnCallback = (e) => {
-            L.DomEvent.stopPropagation(e)
-            L.DomEvent.preventDefault(e)
-            menuContainer.remove()
-            data.btnCallback(e)
+        const btnCallback = data.btnCallback
+        if (btnCallback) {
+            delete data.btnCallback
+            data.btnCallback = (e) => {
+                L.DomEvent.stopPropagation(e)
+                L.DomEvent.preventDefault(e)
+                menuContainer.remove()
+                btnCallback(e)
+            }
         }
         const li = createDropdownMenuLi({...data, parent:menuContainer})
     }
