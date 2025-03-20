@@ -124,7 +124,7 @@ const handleLeafletLocateBtn = (map, include=true) => {
             maxZoom: 18
         },
         strings: {
-            title: "Zoom to my location"
+            title: "Zoom to my location (alt+d)"
         },
         showPopup: false,
     }).addTo(map);

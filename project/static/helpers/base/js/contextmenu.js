@@ -1,18 +1,23 @@
-const contextMenuHandler = (e, content) => {
+const contextMenuHandler = (e, menuItems) => {
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
 
     document.querySelector(`.custom-context-menu`)?.remove()
     
-    const menuContainer = document.createElement('div')
+    const menuContainer = document.createElement('ul')
     menuContainer.className = removeWhitespace(`
         text-bg-${getPreferredTheme()} 
         custom-context-menu
-        position-fixed 
-        rounded shadow-sm
-        small border
+        dropdown-menu
     `)
-    menuContainer.appendChild(content)
+        // list-unstyled
+        // position-fixed 
+        // rounded shadow-sm
+        // small border m-0
+    for (const item in menuItems) {
+        const data = menuItems[item]
+        const li = createDropdownMenuLi({...data, parent:menuContainer})
+    }
     document.body.appendChild(menuContainer)
     
     const menuContainerWidth = menuContainer.offsetWidth

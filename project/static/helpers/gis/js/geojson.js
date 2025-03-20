@@ -158,14 +158,17 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         }
 
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
+            const type = layer.feature ? 'feature' : 'layer'
             const queryContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
-                (() => {
-                    const container = document.createElement('ul')
-                    container.className = 'list-unstyled p-2'
-                    container.innerText = 'content here'
-                    return container
-                })()
+                {
+                    'download': {
+                        innerText: 'Download GeoJSON',
+                    },
+                    'zoomin': {
+                        innerText: `Zoom to ${type}`,
+                    },
+                }
             )
             
             if (layer.feature) layer.on('contextmenu', queryContextMenuHandler)
