@@ -160,6 +160,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     },
                     'download': {
                         innerText: 'Download GeoJSON',
+                        btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
                     },
                 }
             )
@@ -401,4 +402,17 @@ const fetchGeoJSONs = async (fetchers, {
     }
 
     return geojsons
+}
+
+const downloadGeoJSON = (geojson, fileName) => {
+    const geojsonStr = typeof geojson === 'string' ? geojson : JSON.stringify(geojson)
+    const blob = new Blob([geojsonStr], {type:'application/json'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${fileName}.geojson`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
 }
