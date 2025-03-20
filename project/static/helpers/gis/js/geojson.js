@@ -191,6 +191,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         innerText: `Show properties`,
                         btnCallback: () => {
                             zoomToLayer(layer, group._map)
+                            console.log(layer, typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
                             layer.openPopup(typeof layer.getLatLng === 'function' ? layer.getLatLng() : layer.getCenter())
                         }
                     },
