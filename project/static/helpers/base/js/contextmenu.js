@@ -11,6 +11,7 @@ const contextMenuHandler = (e, menuItems) => {
         dropdown-menu show
         small shadow-sm
     `)
+
     for (const item in menuItems) {
         const data = menuItems[item]
         const btnCallback = data.btnCallback
@@ -25,6 +26,7 @@ const contextMenuHandler = (e, menuItems) => {
         }
         const li = createDropdownMenuLi({...data, parent:menuContainer})
     }
+    
     document.body.appendChild(menuContainer)
     
     const menuContainerWidth = menuContainer.offsetWidth

@@ -89,6 +89,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     styleParams,
     defaultGeom,
 } = {}) => {
+    const map = group._map
     const container = document.createElement('div')
     container.className = 'd-flex flex-column gap-2'
 
@@ -158,15 +159,15 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         }
 
         [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
+            if (controller?.signal.aborted) return
+
             const type = layer.feature ? 'feature' : 'layer'
-            const queryContextMenuHandler = (e) => contextMenuHandler(
+            const checklistContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
                 {
                     'zoomin': {
                         innerText: `Zoom to ${type}`,
-                        btnCallback: () => {
-                            console.log('here')
-                        }
+                        btnCallback: () => zoomToLayer(layer)
                     },
                     'download': {
                         innerText: 'Download GeoJSON',
@@ -174,12 +175,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 }
             )
             
-            if (layer.feature) layer.on('contextmenu', queryContextMenuHandler)
+            if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
             
             if (!layer._checkbox) return
             
             const checkbox = geojsonContainer.querySelector(layer._checkbox)
-            checkbox.parentElement.addEventListener('contextmenu', queryContextMenuHandler)
+            checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
             checkbox.addEventListener('click', (e) => {
                 const isChecked = e.target.checked
                 isChecked ? group.addLayer(layer) : group.removeLayer(layer)
@@ -211,7 +212,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 className: 'bi bi-three-dots ms-auto'
             })
             menuToggle.style.cursor = 'pointer'
-            menuToggle.addEventListener('click', queryContextMenuHandler)
+            menuToggle.addEventListener('click', checklistContextMenuHandler)
         })
 
         const info = {}
