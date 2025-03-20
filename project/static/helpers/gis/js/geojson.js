@@ -133,7 +133,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         geojsonContainer.appendChild(contentCollapse)
         
         const toggleContainer = document.createElement('div')
-        toggleContainer.className('ms-auto d-flex flex-nowrap gap-2')
+        toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
         parentCheck.parentElement.appendChild(toggleContainer)
 
         const contentToggle = createIcon({
