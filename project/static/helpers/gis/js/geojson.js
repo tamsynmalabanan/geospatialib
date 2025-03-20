@@ -147,7 +147,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-        [geojsonLayer, ...geojsonLayer.getLayers()].forEach(layer => {
+        const info = {}
+        Object.keys(geojson).forEach(key => {
+            if (!Array('features', 'type').includes(key)) {
+                info[key] = geojson[key]
+            }
+        })
+
+        Array(geojsonLayer, ...geojsonLayer.getLayers()).forEach(layer => {
             if (controller?.signal.aborted) return
 
             const checkbox = geojsonContainer.querySelector(layer._checkbox)
@@ -218,7 +225,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             group._map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 geojson: layer.feature || geojson,
                                 title: layer._title,
-                                data: {}
+                                legend: {
+                                    title: layer._title,
+                                    attribution: Object.keys(info).map(key => `${key}: ${info[key]}`).join('\n')
+                                }
                                 // pane,
                                 // styleParams,
                             }))
@@ -286,13 +296,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', checklistContextMenuHandler)
-        })
-
-        const info = {}
-        Object.keys(geojson).forEach(key => {
-            if (!Array('features', 'type').includes(key)) {
-                info[key] = geojson[key]
-            }
         })
 
         if (Object.keys(info).length) {
