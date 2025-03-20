@@ -110,15 +110,15 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             sortFeatures: listFeatures,
         })
         
-        const geojsonContainer = document.createElement('div')
-        container.appendChild(geojsonContainer)
-        
         const geojsonLayer = getLeafletGeoJSONLayer({
             pane,
             geojson,
             styleParams,
             title,
         })
+
+        const geojsonContainer = document.createElement('div')
+        container.appendChild(geojsonContainer)
 
         const parentCheck = createFormCheck({
             parent: geojsonContainer,
@@ -214,7 +214,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     },
                     'legend': checkbox.disabled ? null : {
                         innerText: 'Add to legend',
-                        btnCallback: () => {}
+                        btnCallback: () => {
+                            map.getLayers().client.addLayer(getLeafletGeoJSONLayer({
+                                // pane,
+                                geojson,
+                                // styleParams,
+                                title,
+                            }))
+                        }
                     },
                     'download': {
                         innerText: 'Download GeoJSON',

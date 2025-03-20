@@ -1,6 +1,6 @@
 const handleLeafletLayerGroups = (map) => {
     map._layerGroups = {}
-    Array('library', 'drawing', 'query').forEach(group => {
+    Array('library', 'client', 'query').forEach(group => {
         const layerGroup = L.layerGroup()
         map._layerGroups[group] = layerGroup
  
