@@ -87,9 +87,22 @@ const getLeafletLayerStyle = (featureType, options={}) => {
     }
 }
 
-const zoomToLayer = (layer) => {
-    console.log(layer, layer.getLatLng)
+const zoomToLayer = (layer, {
+    zoom = 15,
+} = {}) => {
+    const map = layer._map
+    if (!map) return
+
     if (typeof layer.getBounds === 'function') {
-        layer._map?.fitBounds(layer.getBounds())
+        const b = layer.getBounds()
+        if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+            return map.setView(b.getNorthEast(), zoom)
+        } else {
+            return map.fitBounds(b)
+        }
+    }
+
+    if (typeof layer.getLatLng === 'function') {
+        return map.setView(layer.getLatLng(), 15)
     }
 }
