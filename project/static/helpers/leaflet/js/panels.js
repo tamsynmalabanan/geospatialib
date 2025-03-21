@@ -13,6 +13,8 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (e) => {
         const layer = e.layer
+        const legend = layer._legend
+        if (!legend || !Object.keys(legend).length) return
         console.log(layer)
     })
 
