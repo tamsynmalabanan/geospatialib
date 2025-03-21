@@ -58,10 +58,13 @@ const getLeafletGeoJSONLayer = ({
         // },
         default: {
             label: null,
-            style: (feature) => getLeafletLayerStyle(
-                feature.geometry.type, 
-                getLeafletStyleParams(styleParams)
-            )
+            style: (feature) => {
+                console.log(feature)
+                return getLeafletLayerStyle(
+                    feature.geometry.type, 
+                    getLeafletStyleParams(styleParams)
+                )
+            }
         }
     }
 
@@ -83,7 +86,6 @@ const getLeafletGeoJSONLayer = ({
     }
 
     geojsonLayer.options.style = (feature) => {
-        console.log(feature)
         return getStyle(feature)
     }
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
