@@ -29,7 +29,6 @@ const handleLeafletLegendPanel = (map, parent) => {
         const container = document.createElement('div')
         container.setAttribute('data-layer-pane', paneName)
         container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
-        container.innerText = paneName
         layers.insertBefore(container, layers.firstChild)
         
         if (layer instanceof L.GeoJSON) {
@@ -42,7 +41,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (group) {
                     group[type].count +=1
                 } else {
-                    styles[groupTitle] = {
+                    styles[groupTitle || ''] = {
                         point: {
                             html: '',
                             count: 0
@@ -64,7 +63,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             for (const title in styles) {
                 const icon = document.createElement('div')
-                icon.innerHTML = styles[title].html
+                icon.innerHTML = styles[title].html || ''
                 container.appendChild(icon)
         
                 const label = document.createElement('div')
