@@ -6,7 +6,7 @@ const handleLeafletLayerGroups = (map) => {
  
         layerGroup._hiddenLayers = []
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
-        layerGroup.hasHiddenLayer = (layer) => layerGroup.getHiddenLayers().contains(layer)
+        layerGroup.hasHiddenLayer = (layer) => layerGroup.getHiddenLayers().includes(layer)
 
         map.addLayer(layerGroup)
     })
