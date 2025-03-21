@@ -13,9 +13,8 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (e) => {
         const layer = e.layer
-        const legend = layer._legend
-        if (!legend || !Object.keys(legend).length) return
-        console.log(layer)
+        if (map.isLegendLayer(layer)) return
+        layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
     })
 
     map.on('layeradd', (e) => {
@@ -26,39 +25,40 @@ const handleLeafletLegendPanel = (map, parent) => {
         console.log(layer)
 
         const container = document.createElement('div')
-        // container.setAttribute('data-layer-pane', layer.options)
+        container.setAttribute('data-layer-pane', layer.options.pane)
         container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
+        container.innerText = layer.options.pane
         layers.appendChild(container)
         
-        if (layer instanceof L.GeoJSON) {
-            const styles = {}
-            layer.eachLayer(featureLayer => {
-                const type = featureLayer.feature.geometry.type
-                if (type.toLowerCase().endsWith('point')) {
-                    const html = featureLayer.options.icon.options.html
-                    if (styles['Point']) {
-                        styles['Point'].count +=1
-                    } else {
-                        styles['Point'] = {
-                            html,
-                            count: 1,
-                        }
-                    }
-                } else {
+        // if (layer instanceof L.GeoJSON) {
+        //     const styles = {}
+        //     layer.eachLayer(featureLayer => {
+        //         const type = featureLayer.feature.geometry.type
+        //         if (type.toLowerCase().endsWith('point')) {
+        //             const html = featureLayer.options.icon.options.html
+        //             if (styles['Point']) {
+        //                 styles['Point'].count +=1
+        //             } else {
+        //                 styles['Point'] = {
+        //                     html,
+        //                     count: 1,
+        //                 }
+        //             }
+        //         } else {
 
-                }
-            })
+        //         }
+        //     })
             
-            for (const title in styles) {
-                const icon = document.createElement('div')
-                icon.innerHTML = styles[title].html
-                container.appendChild(icon)
+        //     for (const title in styles) {
+        //         const icon = document.createElement('div')
+        //         icon.innerHTML = styles[title].html
+        //         container.appendChild(icon)
         
-                const label = document.createElement('div')
-                label.innerText = `${title} (${styles[title].count})`
-                container.appendChild(label)
-            }
-        }
+        //         const label = document.createElement('div')
+        //         label.innerText = `${title} (${styles[title].count})`
+        //         container.appendChild(label)
+        //     }
+        // }
     })
 }
 

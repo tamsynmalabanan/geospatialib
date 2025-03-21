@@ -20,4 +20,11 @@ const handleLeafletLayerGroups = (map) => {
 
     const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
     queryPane.style.zIndex = 599
+
+    map.isLegendLayer = (layer) => {
+        return ['library', 'client'].some(groupName => {
+            const group = map.getLayerGroups()[groupName]
+            return group.hasLayer(layer) || group.hasHiddenLayer(layer)
+        })
+    }
 }
