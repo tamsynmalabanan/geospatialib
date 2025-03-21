@@ -226,11 +226,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 geojson: layer.feature || geojson,
                                 title: layer._title,
-                                legend: {
-                                    title: layer._title,
-                                    attribution: Object.keys(info).map(key => `${key}: ${info[key]}`).join('\n')
-                                },
-                                pane: generateRandomString(),
+                                attribution: Object.keys(info).map(key => `${key}: ${info[key]}`).join('\n'),
+                                pane: (() => {
+                                    const paneName = generateRandomString()
+                                    map.getPane(paneName) || map.createPane(paneName)
+                                    return paneName
+                                })(),
                                 // styleParams,
                             }))
                         }

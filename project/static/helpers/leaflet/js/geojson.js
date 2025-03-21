@@ -3,7 +3,7 @@ const getLeafletGeoJSONLayer = ({
     geojson,
     styleParams,
     title,
-    legend = {},
+    attribution,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         filter: (feature) => {
@@ -13,7 +13,7 @@ const getLeafletGeoJSONLayer = ({
     })
     
     if (title) geojsonLayer._title = title
-    geojsonLayer._legend = legend
+    if (attribution) geojsonLayer._attribution = attribution
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     
@@ -45,9 +45,9 @@ const getLeafletGeoJSONLayer = ({
     }
     
     const getStyle = (feature) => {
-        const symbology = geojsonLayer._legend.symbology
-        if (symbology?.groups) {
-            for (const group in symbology.groups) {
+        const legend = geojsonLayer._legend
+        if (legend?.groups) {
+            for (const group in legend.groups) {
                 let valid = true
                 for (const validator in group.valdiators) {
                     if (!validator(feature)) {
@@ -108,7 +108,7 @@ const assignFeatureLayerTitle = (layer) => {
     return layer._title
 }
 
-// geojsonLayer._legend.symbology = {
+// geojsonLayer._legend = {
 //     groups: {
 //         'Title': {
 //             validators: [

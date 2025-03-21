@@ -19,16 +19,18 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layeradd', (e) => {
         const layer = e.layer
-        const legend = layer._legend
         
-        if (!legend || !Object.keys(legend).length) return
+        if (!map.isLegendLayer(layer)) return
+        
         const paneName = layer.options.pane
+        const pane = map.getPane(paneName)
+        pane.style.zIndex = layers.children.length + 200
 
         const container = document.createElement('div')
         container.setAttribute('data-layer-pane', paneName)
         container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
         container.innerText = paneName
-        layers.appendChild(container)
+        layers.insertBefore(container, layers.firstChild)
         
         // if (layer instanceof L.GeoJSON) {
         //     const styles = {}
