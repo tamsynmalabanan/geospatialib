@@ -79,6 +79,7 @@ const getLeafletGeoJSONLayer = ({
                 if (valid) return group.style(feature)
             }
         }
+        console.log(feature)
         return legend.default.style(feature)
     }
 
