@@ -22,12 +22,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         const legend = layer._legend
         
         if (!legend || !Object.keys(legend).length) return
-        console.log(layer)
+        const paneName = layer.options.pane
 
         const container = document.createElement('div')
-        container.setAttribute('data-layer-pane', layer.options.pane)
+        container.setAttribute('data-layer-pane', paneName)
         container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
-        container.innerText = layer.options.pane
+        container.innerText = paneName
         layers.appendChild(container)
         
         // if (layer instanceof L.GeoJSON) {

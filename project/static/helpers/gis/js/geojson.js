@@ -230,11 +230,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                                     title: layer._title,
                                     attribution: Object.keys(info).map(key => `${key}: ${info[key]}`).join('\n')
                                 },
-                                pane: (() => {
-                                    const paneName = generateRandomString()
-                                    map.getPane(paneName) || map.createPane(paneName)
-                                    return paneName
-                                })(),
+                                pane: generateRandomString(),
                                 // styleParams,
                             }))
                         }
