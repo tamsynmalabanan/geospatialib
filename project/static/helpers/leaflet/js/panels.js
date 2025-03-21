@@ -41,7 +41,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (group) {
                     group[type].count +=1
                 } else {
-                    styles[groupTitle || ''] = {
+                    styles[groupTitle] = {
                         point: {
                             html: '',
                             count: 0
@@ -67,7 +67,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 container.appendChild(icon)
         
                 const label = document.createElement('div')
-                label.innerText = `${title ? `${title} ` : ''}(${styles[title].count})`
+                label.innerText = `${title && title !== 'default' ? `${title} ` : ''}(${styles[title].count})`
                 container.appendChild(label)
             }
         }
