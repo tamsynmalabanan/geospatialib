@@ -62,15 +62,15 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             console.log(styles)
             
-            // for (const title in styles) {
-            //     const icon = document.createElement('div')
-            //     icon.innerHTML = styles[title].html
-            //     container.appendChild(icon)
+            for (const title in styles) {
+                const icon = document.createElement('div')
+                icon.innerHTML = styles[title].html
+                container.appendChild(icon)
         
-            //     const label = document.createElement('div')
-            //     label.innerText = `${title} (${styles[title].count})`
-            //     container.appendChild(label)
-            // }
+                const label = document.createElement('div')
+                label.innerText = `${title ? `${title} ` : ''}(${styles[title].count})`
+                container.appendChild(label)
+            }
         }
     })
 }
