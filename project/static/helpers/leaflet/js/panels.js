@@ -38,7 +38,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const polygonFeature = turf.randomPolygon(1).features[0]
 
             const styles = {}
-            const legend = geojsonLayer._legend
+            const legend = layer._legend
             if (legend.groups) {
                 // Object.keys(legend.groups).forEach(group => {
                 //     let valid = true
