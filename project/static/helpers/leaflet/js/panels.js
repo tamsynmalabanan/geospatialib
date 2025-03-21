@@ -11,56 +11,53 @@ const handleLeafletLegendPanel = (map, parent) => {
     layers.className = 'p-3 d-none border-top'
     parent.appendChild(layers)
 
+    map.on('layerremove', (e) => {
+        const layer = e.layer
+        console.log(layer)
+    })
+
     map.on('layeradd', (e) => {
         const layer = e.layer
         const legend = layer._legend
-        if (legend) {
-            console.log(layer)
-        }
-        // if (layer instanceof L.GeoJSON) {
-        //     const container = document.createElement('div')
-        //     container.id = `${layers.id}-${layer._leaflet_id}`
-        //     container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
-        //     parent.appendChild(container)
-        
-        // }
-    })
+        console.log(layer)
 
-    // map.on('layeradd', (event) => {
-    //     const layer = event.layer
-    //     if (layer instanceof L.GeoJSON) {
-    //         const container = document.createElement('div')
-    //         container.id = `${layers.id}-${layer._leaflet_id}`
-    //         container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
-    //         parent.appendChild(container)
+        if (!Object.keys(legend).length) return
+
+        const container = document.createElement('div')
+        // container.setAttribute('data-layer-pane', layer.options)
+        container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
+        layers.appendChild(container)
         
-    //         // const styles = {}
-    //         // layer.eachLayer(subLayer => {
-    //         //     const type = subLayer.feature.geometry.type
-    //         //     if (type.toLowerCase().endsWith('point')) {
-    //         //         const html = subLayer.options.icon.options.html
-    //         //         if (styles['Point']) {
-    //         //             styles['Point'].count +=1
-    //         //         } else {
-    //         //             styles['Point'] = {
-    //         //                 html,
-    //         //                 count: 1,
-    //         //             }
-    //         //         }
-    //         //     }
-    //         // })
+        if (layer instanceof L.GeoJSON) {
+            const styles = {}
+            layer.eachLayer(featureLayer => {
+                const type = featureLayer.feature.geometry.type
+                if (type.toLowerCase().endsWith('point')) {
+                    const html = featureLayer.options.icon.options.html
+                    if (styles['Point']) {
+                        styles['Point'].count +=1
+                    } else {
+                        styles['Point'] = {
+                            html,
+                            count: 1,
+                        }
+                    }
+                } else {
+                    
+                }
+            })
             
-    //         // for (const title in styles) {
-    //         //     const icon = document.createElement('div')
-    //         //     icon.innerHTML = styles[title].html
-    //         //     container.appendChild(icon)
-
-    //         //     const label = document.createElement('div')
-    //         //     label.innerText = `${title} (${styles[title].count})`
-    //         //     container.appendChild(label)
-    //         // }
-    //     }
-    // })
+            for (const title in styles) {
+                const icon = document.createElement('div')
+                icon.innerHTML = styles[title].html
+                container.appendChild(icon)
+        
+                const label = document.createElement('div')
+                label.innerText = `${title} (${styles[title].count})`
+                container.appendChild(label)
+            }
+        }
+    })
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
