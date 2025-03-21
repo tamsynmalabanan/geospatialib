@@ -19,9 +19,9 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layeradd', (e) => {
         const layer = e.layer
         const legend = layer._legend
-        console.log(layer)
-
+        
         if (!legend || !Object.keys(legend).length) return
+        console.log(layer)
 
         const container = document.createElement('div')
         // container.setAttribute('data-layer-pane', layer.options)
