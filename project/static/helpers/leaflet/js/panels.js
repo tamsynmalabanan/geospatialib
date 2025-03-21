@@ -33,10 +33,33 @@ const handleLeafletLegendPanel = (map, parent) => {
         layers.insertBefore(container, layers.firstChild)
         
         if (layer instanceof L.GeoJSON) {
-            console.log(layer.options.pointToLayer(turf.randomPoint(1).features[0]))
-            console.log(layer.options.style(turf.randomLineString(1).features[0]))
-            console.log(layer.options.style(turf.randomPolygon(1).features[0]))
+            const pointFeature = turf.randomPoint(1).features[0]
+            const lineFeature = turf.randomLineString(1).features[0]
+            const polygonFeature = turf.randomPolygon(1).features[0]
+
+            const styles = {}
+            const legend = geojsonLayer._legend
+            if (legend.groups) {
+                // Object.keys(legend.groups).forEach(group => {
+                //     let valid = true
+                //     for (const validator in group.valdiators) {
+                //         if (!validator(feature)) {
+                //             valid = false
+                //             break
+                //         }
+                //     }
+                //     if (valid) return group.style(feature)
+                // })
+            } else {
+                styles[legend.default.label || ''] = {
+                    point: legend.default.style(pointFeature), 
+                    line: legend.default.style(lineFeature), 
+                    polygon: legend.default.style(polygonFeature), 
+                }
+            }
             
+            console.log(styles)
+
             // const styles = {}
             // layer.eachLayer(featureLayer => {
             //     const type = featureLayer.feature.geometry.type
