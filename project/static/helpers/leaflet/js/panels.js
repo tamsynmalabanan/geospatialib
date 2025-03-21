@@ -32,35 +32,44 @@ const handleLeafletLegendPanel = (map, parent) => {
         container.innerText = paneName
         layers.insertBefore(container, layers.firstChild)
         
-        // if (layer instanceof L.GeoJSON) {
-        //     const styles = {}
-        //     layer.eachLayer(featureLayer => {
-        //         const type = featureLayer.feature.geometry.type
-        //         if (type.toLowerCase().endsWith('point')) {
-        //             const html = featureLayer.options.icon.options.html
-        //             if (styles['Point']) {
-        //                 styles['Point'].count +=1
-        //             } else {
-        //                 styles['Point'] = {
-        //                     html,
-        //                     count: 1,
-        //                 }
-        //             }
-        //         } else {
-
-        //         }
-        //     })
+        if (layer instanceof L.GeoJSON) {
+            const legend = layer._legend
+            if (legend.groups) {
+                
+            } else {
+                console.log(
+                    legend.default.style(turf.randomPoint(1))
+                )
+            }
             
-        //     for (const title in styles) {
-        //         const icon = document.createElement('div')
-        //         icon.innerHTML = styles[title].html
-        //         container.appendChild(icon)
+            // const styles = {}
+            // layer.eachLayer(featureLayer => {
+            //     const type = featureLayer.feature.geometry.type
+            //     if (type.toLowerCase().endsWith('point')) {
+            //         const html = featureLayer.options.icon.options.html
+            //         if (styles['Point']) {
+            //             styles['Point'].count +=1
+            //         } else {
+            //             styles['Point'] = {
+            //                 html,
+            //                 count: 1,
+            //             }
+            //         }
+            //     } else {
+
+            //     }
+            // })
+            
+            // for (const title in styles) {
+            //     const icon = document.createElement('div')
+            //     icon.innerHTML = styles[title].html
+            //     container.appendChild(icon)
         
-        //         const label = document.createElement('div')
-        //         label.innerText = `${title} (${styles[title].count})`
-        //         container.appendChild(label)
-        //     }
-        // }
+            //     const label = document.createElement('div')
+            //     label.innerText = `${title} (${styles[title].count})`
+            //     container.appendChild(label)
+            // }
+        }
     })
 }
 

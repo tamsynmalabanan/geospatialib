@@ -43,10 +43,31 @@ const getLeafletGeoJSONLayer = ({
             layer.on('click', createPopup)
         }
     }
-    
+ 
+    geojsonLayer._legend = {
+        // groups: {
+        //     'Title': {
+        //         validators: [
+        //             (feature) => ['property', 'values'].contains(feature.properties['key'])
+        //             // array of functions that return true or false
+        //         ],
+        //         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
+        //             customStyleParams: 'here'
+        //         })
+        //     },
+        // },
+        default: {
+            label: null,
+            style: (feature) => getLeafletLayerStyle(
+                feature.geometry.type, 
+                getLeafletStyleParams(styleParams)
+            )
+        }
+    }
+
     const getStyle = (feature) => {
         const legend = geojsonLayer._legend
-        if (legend?.groups) {
+        if (legend.groups) {
             for (const group in legend.groups) {
                 let valid = true
                 for (const validator in group.valdiators) {
@@ -57,13 +78,8 @@ const getLeafletGeoJSONLayer = ({
                 }
                 if (valid) return group.style(feature)
             }
-            return symbology.default.style(feature)
-        } else {
-            return getLeafletLayerStyle(
-                feature.geometry.type, 
-                getLeafletStyleParams(styleParams)
-            )
         }
+        return legend.default.style(feature)
     }
 
     geojsonLayer.options.style = (feature) => getStyle(feature)
@@ -107,23 +123,3 @@ const assignFeatureLayerTitle = (layer) => {
 
     return layer._title
 }
-
-// geojsonLayer._legend = {
-//     groups: {
-//         'Title': {
-//             validators: [
-//                 (feature) => ['property', 'values'].contains(feature.properties['key'])
-//                 // array of functions that return true or false
-//             ],
-//             style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-//                 customStyleParams: 'here'
-//             })
-//         },
-//     },
-//     default: {
-//         label: 'Others',
-//         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-//             customStyleParams: 'here'
-//         })
-//     }
-// }
