@@ -82,10 +82,12 @@ const getLeafletGeoJSONLayer = ({
                 if (valid) return group.style(feature)
             }
         }
+        console.log(feature)
         return legend.default.style(feature)
     }
 
     geojsonLayer.options.style = (feature) => {
+        console.log(feature)
         return getStyle(feature)
     }
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
