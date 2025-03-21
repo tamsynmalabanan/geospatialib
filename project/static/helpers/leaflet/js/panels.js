@@ -21,7 +21,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const legend = layer._legend
         console.log(layer)
 
-        if (!Object.keys(legend).length) return
+        if (!legend || !Object.keys(legend).length) return
 
         const container = document.createElement('div')
         // container.setAttribute('data-layer-pane', layer.options)
@@ -43,7 +43,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     }
                 } else {
-                    
+
                 }
             })
             
