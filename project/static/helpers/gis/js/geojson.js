@@ -89,6 +89,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     styleParams,
     defaultGeom,
 } = {}) => {
+    const map = group._map
     const container = document.createElement('div')
     container.className = 'd-flex flex-column gap-2'
 
@@ -165,7 +166,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 {
                     'zoomin': {
                         innerText: `Zoom to ${type}`,
-                        btnCallback: () => zoomToLayer(layer, group._map)
+                        btnCallback: () => zoomToLayer(layer, map)
                     },
                     'isolate': checkbox.disabled ? null : {
                         innerText: `Isolate ${type}`,
@@ -196,7 +197,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'showProperties': !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
                         innerText: `Show properties`,
                         btnCallback: () => {
-                            zoomToLayer(layer, group._map)
+                            zoomToLayer(layer, map)
                             if (checkbox && !checkbox.checked) checkbox.click()
                             layer.fire('click')
                         }
@@ -222,14 +223,18 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'legend': checkbox.disabled ? null : {
                         innerText: 'Add to legend',
                         btnCallback: () => {
-                            group._map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
+                            map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 geojson: layer.feature || geojson,
                                 title: layer._title,
                                 legend: {
                                     title: layer._title,
                                     attribution: Object.keys(info).map(key => `${key}: ${info[key]}`).join('\n')
-                                }
-                                // pane,
+                                },
+                                pane: (() => {
+                                    const paneName = generateRandomString()
+                                    map.getPane(paneName) || map.createPane(paneName)
+                                    return paneName
+                                })(),
                                 // styleParams,
                             }))
                         }
