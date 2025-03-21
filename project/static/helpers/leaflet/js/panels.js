@@ -33,9 +33,9 @@ const handleLeafletLegendPanel = (map, parent) => {
         layers.insertBefore(container, layers.firstChild)
         
         if (layer instanceof L.GeoJSON) {
-            console.log(layer.options.pointToLayer(turf.randomPoint(1)))
-            console.log(layer.options.style(turf.randomLineString(1)))
-            console.log(layer.options.style(turf.randomPolygon(1)))
+            console.log(layer.options.pointToLayer(turf.randomPoint(1).features[0]))
+            console.log(layer.options.style(turf.randomLineString(1).features[0]))
+            console.log(layer.options.style(turf.randomPolygon(1).features[0]))
             
             // const styles = {}
             // layer.eachLayer(featureLayer => {
