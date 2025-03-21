@@ -69,19 +69,27 @@ const getLeafletGeoJSONLayer = ({
 
     const getStyle = (feature) => {
         const legend = geojsonLayer._legend
-        if (legend.groups) {
-            for (const group in legend.groups) {
+        if (legend?.groups) {
+            for (const groupTitle in legend.groups) {
+                const group = legend.groups[groupTitle]
                 let valid = true
-                for (const validator in group.valdiators) {
+                for (const validator in group.validators) {
                     if (!validator(feature)) {
                         valid = false
                         break
                     }
                 }
-                if (valid) return group.style(feature)
+                if (valid) {
+                    feature._groupTitle = groupTitle
+                    return group.style(feature)
+                }
             }
         }
-        return legend.default.style(feature)
+        feature._groupTitle = legend?.default?.label || ''
+        return legend?.default?.style(feature) || getLeafletLayerStyle(
+            feature.geometry.type, 
+            getLeafletStyleParams(styleParams)
+        )
     }
 
     geojsonLayer.options.style = (feature) => {

@@ -33,50 +33,34 @@ const handleLeafletLegendPanel = (map, parent) => {
         layers.insertBefore(container, layers.firstChild)
         
         if (layer instanceof L.GeoJSON) {
-            const pointFeature = turf.randomPoint(1).features[0]
-            const lineFeature = turf.randomLineString(1).features[0]
-            const polygonFeature = turf.randomPolygon(1).features[0]
-
             const styles = {}
-            const legend = layer._legend
-            if (legend.groups) {
-                // Object.keys(legend.groups).forEach(group => {
-                //     let valid = true
-                //     for (const validator in group.valdiators) {
-                //         if (!validator(feature)) {
-                //             valid = false
-                //             break
-                //         }
-                //     }
-                //     if (valid) return group.style(feature)
-                // })
-            } else {
-                styles[legend.default.label || ''] = {
-                    point: legend.default.style(pointFeature), 
-                    line: legend.default.style(lineFeature), 
-                    polygon: legend.default.style(polygonFeature), 
+            layer.eachLayer(featureLayer => {
+                const featureType = featureLayer.feature.geometry.type.toLowerCase()
+                const type = featureType.split('multi')[featureType.split('multi').length-1]
+                const groupTitle = featureLayer._groupTitle
+                const group = styles[groupTitle]
+                if (group) {
+                    group[type].count +=1
+                } else {
+                    styles[groupTitle] = {
+                        point: {
+                            html: '',
+                            count: 0
+                        },
+                        linestring: {
+                            html: '',
+                            count: 0
+                        },
+                        polygon: {
+                            html: '',
+                            count: 0
+                        },
+                    }
+                    styles[groupTitle][type].count +=1
                 }
-            }
+            })
             
             console.log(styles)
-
-            // const styles = {}
-            // layer.eachLayer(featureLayer => {
-            //     const type = featureLayer.feature.geometry.type
-            //     if (type.toLowerCase().endsWith('point')) {
-            //         const html = featureLayer.options.icon.options.html
-            //         if (styles['Point']) {
-            //             styles['Point'].count +=1
-            //         } else {
-            //             styles['Point'] = {
-            //                 html,
-            //                 count: 1,
-            //             }
-            //         }
-            //     } else {
-
-            //     }
-            // })
             
             // for (const title in styles) {
             //     const icon = document.createElement('div')
