@@ -284,6 +284,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
+            altShortcut: 'e',
             btnClickHandler: async (e) => await fetchGeoJSONs({
                 'OpenStreetMap via Overpass': {
                     handler: fetchOverpass,
