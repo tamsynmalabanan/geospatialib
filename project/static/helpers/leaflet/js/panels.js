@@ -46,8 +46,9 @@ const handleLeafletLegendPanel = (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                console.log(map.hasHiddenLegendLayers())
-                map.hasHiddenLegendLayers() ? map.showLegendLayers() : map.hideLegendLayers()
+                map.hasHiddenLegendLayers() ? 
+                map.showLegendLayers() : 
+                map.hideLegendLayers()
             },
         },
     }
@@ -84,11 +85,15 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (e) => {
         const layer = e.layer
-        if (map.hasLegendLayer(layer)) return
-        
-        layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)?.remove()
+        const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
+        if (!layerLegend) return
 
-        if (layers.innerHTML === '') clearLegend()
+        if (map.hasLegendLayer(layer)) {
+            layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
+        } else {
+            layerLegend.remove()
+            if (layers.innerHTML === '') clearLegend()
+        }
     })
 
     map.on('layeradd', (e) => {
@@ -158,6 +163,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 layer, 
                 legendDetails
             )
+        } else {
+            container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
         }
 
         // const legendDetails = container.querySelector(`#${container.id}-details`)
