@@ -54,10 +54,10 @@ const handleLeafletLayerGroups = (map) => {
     }
 
     map.getLegendLayer = (layerId) => {
+        console.log(layerId)
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
             const layer = group.getLayer(layerId) || group.getHiddenLayer(layerId)
-            console.log(layer)
             if (layer) return layer
         }
     }

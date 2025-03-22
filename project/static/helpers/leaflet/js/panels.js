@@ -49,6 +49,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const show = map.getHiddenLegendLayers().length
                 Array.from(layers.children).forEach(legend => {
                     const layer = map.getLegendLayer(legend.dataset.layerId)
+                    console.log(layer)
                     if (!layer) return
 
                     if (show) {
