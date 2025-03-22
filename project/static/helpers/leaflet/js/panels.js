@@ -38,10 +38,10 @@ const handleLeafletLegendPanel = (map, parent) => {
         legendTitle.appendChild(createSpan(layer._title))
         container.appendChild(legendTitle)
         
-        const legendCollapse = document.createElement('div')
-        legendCollapse.id = `${container.id}-collapse`
-        legendCollapse.className = 'collapse show'
-        container.appendChild(legendCollapse)
+        const legendDetails = document.createElement('div')
+        legendDetails.id = `${container.id}-details`
+        legendDetails.className = 'collapse show'
+        container.appendChild(legendDetails)
         
         const toggleContainer = document.createElement('div')
         toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
@@ -54,50 +54,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         })
         collapseToggle.style.cursor = 'pointer'
         collapseToggle.setAttribute('data-bs-toggle', 'collapse')
-        collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
-        collapseToggle.setAttribute('aria-controls', legendCollapse.id)
+        collapseToggle.setAttribute('data-bs-target', `#${legendDetails.id}`)
+        collapseToggle.setAttribute('aria-controls', legendDetails.id)
         collapseToggle.setAttribute('aria-expanded', 'true')
 
-        const legendDetails = document.createElement('div')
-        legendDetails.id = `${container.id}-details`
-        legendDetails.className = 'd-flex flex-nowrap flex-column'
-        legendCollapse.appendChild(legendDetails)
-
-        const layerLegend = layer._legend
         if (layer instanceof L.GeoJSON) {
-            const styles = {}
-            layer.eachLayer(featureLayer => {
-                const feature = featureLayer.feature
-                const featureType = feature.geometry.type.toLowerCase()
-                const type = featureType.split('multi')[featureType.split('multi').length-1]
-                
-                const groupId = feature._groupId
-                const group = styles[groupId]
-                
-                if (group) {
-                    group.types[type].count +=1
-                } else {
-                    const featureLegend = layerLegend.groups && layerLegend.groups[groupId] ? layerLegend.groups[groupId] : layerLegend.default 
-                    const styleHandler = featureLegend.style
-                    styles[groupId] = {
-                        label: featureLegend.label || '', 
-                        types: {}
-                    }
-                    Array('point', 'linestring', 'polygon').forEach(typeName => {
-                        styles[groupId].types[typeName] = {
-                            count: 0,
-                            html: layerStyleToHTML(
-                                styleHandler({geometry:{type:typeName}}),
-                                typeName
-                            )
-                        }
-                    })
-                    styles[groupId].types[type].count +=1
-                }
-            })
-            
-            console.log(styles)
-            
+            const styles = getGeoJSONLayerStyles(layer)
             for (const id in styles) {
                 const style = styles[id]
                 

@@ -137,3 +137,39 @@ const assignFeatureLayerTitle = (layer) => {
 
     return layer._title
 }
+
+const getGeoJSONLayerStyles = (layer) => {
+    const styles = {}
+    const layerLegend = layer._legend
+    layer.eachLayer(featureLayer => {
+        const feature = featureLayer.feature
+        const featureType = feature.geometry.type.toLowerCase()
+        const type = featureType.split('multi')[featureType.split('multi').length-1]
+        
+        const groupId = feature._groupId
+        const group = styles[groupId]
+        
+        if (group) {
+            group.types[type].count +=1
+        } else {
+            const featureLegend = layerLegend.groups && layerLegend.groups[groupId] ? layerLegend.groups[groupId] : layerLegend.default 
+            const styleHandler = featureLegend.style
+            styles[groupId] = {
+                label: featureLegend.label || '', 
+                types: {}
+            }
+            Array('point', 'linestring', 'polygon').forEach(typeName => {
+                styles[groupId].types[typeName] = {
+                    count: 0,
+                    html: layerStyleToHTML(
+                        styleHandler({geometry:{type:typeName}}),
+                        typeName
+                    )
+                }
+            })
+            styles[groupId].types[type].count +=1
+        }
+    })
+
+    return styles
+}
