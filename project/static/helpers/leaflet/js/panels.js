@@ -72,48 +72,64 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (!map.isLegendLayer(layer)) return
         
         const paneName = layer.options.pane
-        const pane = map.getPane(paneName)
-        pane.style.zIndex = layers.children.length + 200
 
-        const container = document.createElement('div')
-        container.id = `${layers.id}-${paneName}`
-        container.setAttribute('data-layer-pane', paneName)
-        container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2'
-        layers.insertBefore(container, layers.firstChild)
-        
-        const legendTitle = document.createElement('div')
-        legendTitle.id = `${container.id}-title`
-        legendTitle.className = 'd-flex flex-nowrap'
-        legendTitle.appendChild(createSpan(layer._title))
-        container.appendChild(legendTitle)
-        
-        const toggleContainer = document.createElement('div')
-        toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-        legendTitle.appendChild(toggleContainer)
-        
-        const legendDetails = document.createElement('div')
-        legendDetails.id = `${container.id}-details`
-        legendDetails.className = 'collapse show'
-        container.appendChild(legendDetails)
+        let container = layers.querySelector(`#${layers.id}-${paneName}`)
+        if (!container) {
+            const pane = map.getPane(paneName)
+            pane.style.zIndex = layers.children.length + 200
 
-        const collapseToggle = createIcon({
-            parent: toggleContainer,
-            peNone: false,
-            className: 'dropdown-toggle'
-        })
-        collapseToggle.style.cursor = 'pointer'
-        collapseToggle.setAttribute('data-bs-toggle', 'collapse')
-        collapseToggle.setAttribute('data-bs-target', `#${legendDetails.id}`)
-        collapseToggle.setAttribute('aria-controls', legendDetails.id)
-        collapseToggle.setAttribute('aria-expanded', 'true')
+            container = document.createElement('div')
+            container.id = `${layers.id}-${paneName}`
+            container.setAttribute('data-layer-pane', paneName)
+            container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2'
+            layers.insertBefore(container, layers.firstChild)
+            
+            const legendTitle = document.createElement('div')
+            legendTitle.id = `${container.id}-title`
+            legendTitle.className = 'd-flex flex-nowrap'
+            legendTitle.appendChild(createSpan(layer._title))
+            container.appendChild(legendTitle)
+            
+            const toggleContainer = document.createElement('div')
+            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+            legendTitle.appendChild(toggleContainer)
+            
+            const legendCollapse = document.createElement('div')
+            legendCollapse.id = `${container.id}-collapse`
+            legendCollapse.className = 'collapse show'
+            container.appendChild(legendCollapse)
 
-        const menuToggle = createIcon({
-            parent: toggleContainer,
-            peNone: false,
-            className: 'bi bi-three-dots'
-        })
-        menuToggle.style.cursor = 'pointer'
-        // menuToggle.addEventListener('click', checklistContextMenuHandler)
+            const legendDetails = document.createElement('div')
+            legendDetails.id = `${container.id}-details`
+            legendDetails.className = 'd-flex'
+            legendCollapse.appendChild(legendDetails)
+            
+            const legendAttribution = document.createElement('div')
+            legendAttribution.id = `${container.id}-attribution`
+            legendAttribution.className = 'd-flex'
+            legendAttribution.appendChild(createSpan(layer._attribution))
+            legendCollapse.appendChild(legendAttribution)
+    
+            const collapseToggle = createIcon({
+                parent: toggleContainer,
+                peNone: false,
+                className: 'dropdown-toggle'
+            })
+            collapseToggle.style.cursor = 'pointer'
+            collapseToggle.setAttribute('data-bs-toggle', 'collapse')
+            collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
+            collapseToggle.setAttribute('aria-controls', legendCollapse.id)
+            collapseToggle.setAttribute('aria-expanded', 'true')
+    
+            const menuToggle = createIcon({
+                parent: toggleContainer,
+                peNone: false,
+                className: 'bi bi-three-dots'
+            })
+            menuToggle.style.cursor = 'pointer'
+            // menuToggle.addEventListener('click', checklistContextMenuHandler)
+        }
+
 
         if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
             layer, 
