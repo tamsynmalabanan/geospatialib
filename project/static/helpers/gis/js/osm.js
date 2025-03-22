@@ -31,7 +31,28 @@ const fetchNominatim = async (latlng, map, {
     })
 }
 
-const fetchOverpassAroundPt = async (latlng, map, {
+// const getOverpassRequestBody = (latlng, map) => {
+//     if (!map) return
+
+//     let params
+//     if (latlng) {
+//         const buffer = (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
+//         params = `around:${buffer},${latlng.lat},${latlng.lng}`
+//     }
+
+//     return "data="+ encodeURIComponent(`
+//         [out:json][timeout:180];
+//         (
+//             node(${params});
+//             way(${params});
+//             relation(${params});
+//         );
+//         out tags geom body;
+//     `)
+// }
+
+const fetchOverpassAroundPt = async (map, {
+    latlng,
     abortBtns,
     controller,
 } = {}) => {
@@ -74,6 +95,65 @@ const fetchOverpassAroundPt = async (latlng, map, {
         console.log(error)
     })
 }
+
+// const _ = async (bbox, map, {
+//     abortBtns,
+//     controller,
+// } = {}) => {
+//     return fetchDataWithTimeout("https://overpass-api.de/api/interpreter", {
+//         abortBtn:options.abortBtn,
+//         controller:options.controller,
+//         method: "POST",
+//         body: "data="+ encodeURIComponent(`
+//             [bbox:${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]}][out:json][timeout:180];
+//             (
+//                 node
+//                     (
+//                         ${bbox[2]},
+//                         ${bbox[3]},
+//                         ${bbox[0]},
+//                         ${bbox[1]}
+//                     );
+//                 way
+//                     (
+//                         ${bbox[2]},
+//                         ${bbox[3]},
+//                         ${bbox[0]},
+//                         ${bbox[1]}
+//                     );
+//                 relation
+//                     (
+//                         ${bbox[2]},
+//                         ${bbox[3]},
+//                         ${bbox[0]},
+//                         ${bbox[1]}
+//                     );
+//             );
+//             out geom;
+//         `)
+//     }).then(response => {
+//         if (response.ok || response.status === 200) {
+//             try {
+//                 return parseChunkedResponseToJSON(response)
+//             } catch {
+//                 throw new Error('Failed to parse JSON.')
+//             }
+//         } else {
+//             throw new Error('Response not ok')
+//         }
+//     })
+//     .then(data => {
+//         if (data) {
+//             const filteredElements = data.elements.filter(element => Object.keys(element).includes('tags'))
+//             data.elements = filteredElements
+//             return defaultOSMGeoJSON(overpassOSMDataToGeoJSON(data))
+//         }
+//     })
+//     .catch(error => {
+//         console.error(error)
+//         return
+//     })
+// }
 
 const overpassToGeoJSON = async (data, {
     controller,

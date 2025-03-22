@@ -459,6 +459,7 @@ const fetchGeoJSONs = async (fetchers, {
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
         ...fetcher.params, {
+            ...fetcher.options,
             controller,
             abortBtns
         }

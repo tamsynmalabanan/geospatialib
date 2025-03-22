@@ -259,7 +259,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 },
                 'OpenStreetMap via Overpass': {
                     handler: fetchOverpassAroundPt,
-                    params: [e.latlng, map],
+                    params: [map],
+                    options: {latlng:e.latlng},
                 },
             }, {abortBtns: [getCancelBtn()], controller})
         },
