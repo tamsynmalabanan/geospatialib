@@ -54,7 +54,7 @@ const handleLeafletLayerGroups = (map) => {
             if (visibleLayer || hiddenLayer) return [
                 visibleLayer || hiddenLayer,
                 group,
-                hiddenLayer && !visibleLayer
+                hiddenLayer && !visibleLayer ? true : false
             ]
         }
     }
