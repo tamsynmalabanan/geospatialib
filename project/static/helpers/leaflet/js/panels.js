@@ -8,13 +8,14 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     const layers = document.createElement('div')
     layers.id = `${mapContainer.id}-panels-legend-layers`
-    layers.className = 'p-3  border-top'
+    layers.className = 'p-3 d-none border-top'
     parent.appendChild(layers)
 
     map.on('layerremove', (e) => {
         const layer = e.layer
         if (map.isLegendLayer(layer)) return
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
+        layers.classList.toggle('d-none', layers.innerHTML === '')
     })
 
     map.on('layeradd', (e) => {
@@ -70,6 +71,8 @@ const handleLeafletLegendPanel = (map, parent) => {
             layer, 
             legendDetails
         )
+
+        layers.classList.toggle('d-none', layers.innerHTML === '')
     })
 }
 
