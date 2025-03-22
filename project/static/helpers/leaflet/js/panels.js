@@ -171,9 +171,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             results.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
             
-            if (results.querySelectorAll('.collapse').length) {
-                toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
-            }
+            toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+            toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
         }
         
         status.classList.add('d-none')
