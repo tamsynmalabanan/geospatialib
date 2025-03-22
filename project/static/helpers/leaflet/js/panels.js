@@ -63,7 +63,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         legendDetails.className = 'd-flex flex-nowrap flex-column'
         legendCollapse.appendChild(legendDetails)
 
-        const layerLegend = featureLayer._legend
+        const layerLegend = layer._legend
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
