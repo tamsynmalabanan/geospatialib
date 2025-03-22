@@ -34,13 +34,33 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         const legendTitle = document.createElement('div')
         legendTitle.id = `${container.id}-title`
-        legendTitle.innerText = layer._title
+        legendTitle.appendChild(createSpan(layer._title))
         container.appendChild(legendTitle)
         
+        const legendCollapse = document.createElement('div')
+        legendCollapse.id = `${container.id}-collapse`
+        legendCollapse.className = 'collapse show'
+        container.appendChild(legendCollapse)
+        
+        const toggleContainer = document.createElement('div')
+        toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+        legendTitle.appendChild(toggleContainer)
+
+        const collapseToggle = createIcon({
+            parent: toggleContainer,
+            peNone: false,
+            className: 'dropdown-toggle'
+        })
+        collapseToggle.style.cursor = 'pointer'
+        collapseToggle.setAttribute('data-bs-toggle', 'collapse')
+        collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
+        collapseToggle.setAttribute('aria-controls', legendCollapse.id)
+        collapseToggle.setAttribute('aria-expanded', 'false')
+
         const legendDetails = document.createElement('div')
         legendDetails.id = `${container.id}-details`
-        legendDetails.className = 'collapse d-flex flex-nowrap ps-3'
-        container.appendChild(legendDetails)
+        legendDetails.className = 'd-flex flex-nowrap ps-3'
+        legendCollapse.appendChild(legendDetails)
 
         if (layer instanceof L.GeoJSON) {
             const styles = {}
