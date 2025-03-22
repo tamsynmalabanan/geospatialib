@@ -58,8 +58,9 @@ const assignMapObservers = (map) => {
 }
 
 const getLeafletMapBbox = (map) => {
-    return loopThroughCoordinates(
+    console.log(loopThroughCoordinates(
         map.getBounds(), 
         validateLeafletLayerCoords
-    ).toBboxString().split(',') // w,s,e,n
+    ))
+    return map.getBounds().toBboxString().split(',') // w,s,e,n
 }
