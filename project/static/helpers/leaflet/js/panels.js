@@ -249,13 +249,29 @@ const handleLeafletQueryPanel = (map, parent) => {
             queryHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                const shownCollapseElements = results.querySelectorAll('.collapse.show')
-                shownCollapseElements.forEach(element => {
-                    const instance = bootstrap.Collapse.getOrCreateInstance(element)
-                    instance.hide()
+                const collapseElements = Array.from(results.querySelectorAll('.collapse'))
+                const hide = collapseElements.some(el => el.classList.contains('show'))
+                collapseElements.forEach(el => {
+                    if (el.classList.contains('show') === hide) {
+                        const instance = bootstrap.Collapse.getOrCreateInstance(el)
+                        hide ? instance.hide() : instance.show()
+                    }
                 })
             },
         },
+        // visibility: {
+        //     iconClass: 'bi bi-chevron-up',
+        //     title: 'Collapse results',
+        //     queryHandler: false,
+        //     disabled: true,
+        //     btnClickHandler: () => {
+        //         const shownCollapseElements = results.querySelectorAll('.collapse.show')
+        //         shownCollapseElements.forEach(element => {
+        //             const instance = bootstrap.Collapse.getOrCreateInstance(element)
+        //             instance.hide()
+        //         })
+        //     },
+        // },
     }
 
     Object.keys(queryTools).forEach(newMode => {
