@@ -66,54 +66,64 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
+                const featureLegend = featureLayer._legend
+
                 const featureType = featureLayer.feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
-                const groupTitle = featureLayer.feature._groupTitle
-                const group = styles[groupTitle]
+                
+                const groupId = featureLayer.feature._groupId
+                const group = styles[groupId]
+                
                 if (group) {
-                    group[type].count +=1
+                    group.types[type].count +=1
                 } else {
                     console.log(featureLayer)
-                    styles[groupTitle] = {
-                        point: {
-                            html: 'point',
-                            count: 0
-                        },
-                        linestring: {
-                            html: 'line',
-                            count: 0
-                        },
-                        polygon: {
-                            html: 'polygon',
-                            count: 0
-                        },
+                    styles[groupId] = {
+                        label: featureLegend.groups ? featureLegend.groups[groupId].label : featureLegend.default.label || '', 
+                        types: {
+                            point: {
+                                html: 'point',
+                                count: 0
+                            },
+                            linestring: {
+                                html: 'line',
+                                count: 0
+                            },
+                            polygon: {
+                                html: 'polygon',
+                                count: 0
+                            },
+                        }
                     }
-                    styles[groupTitle][type].count +=1
+                    styles[groupId].types[type].count +=1
                 }
             })
             
             console.log(styles)
             
-            for (const title in styles) {
-                const style = styles[title]
+            for (const id in styles) {
+                const style = styles[id]
                 
                 const icon = document.createElement('div')
                 icon.className = 'd-flex flex-no-wrap gap-1'
                 legendDetails.appendChild(icon)
 
                 const label = document.createElement('div')
-                label.appendChild(createSpan(title ? `${title} ` : '', {id:`${legendDetails.id}-title`}))
+                label.appendChild(createSpan(
+                    style.label ? `${style.label} ` : '', 
+                    {id:`${legendDetails.id}-title`})
+                )
                 label.appendChild(createSpan(
                     `(${Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
                     {id:`${legendDetails.id}-count`}
                 ))
                 legendDetails.appendChild(label)
 
-                for (const type in style) {
-                    if (!style[type].count) continue
+                for (const type in style.types) {
+                    if (!style.types[type].count) continue
                     
                     const typeIcon = document.createElement('div')
-                    typeIcon.innerHTML = style[type].html
+                    typeIcon.innerHTML = style.types[type].html
                     icon.appendChild(typeIcon) 
                 }
             }

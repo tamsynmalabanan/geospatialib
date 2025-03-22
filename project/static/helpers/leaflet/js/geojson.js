@@ -47,7 +47,8 @@ const getLeafletGeoJSONLayer = ({
     const styleParams = getLeafletStyleParams(customStyleParams)
     geojsonLayer._legend = {
         // groups: {
-        //     'Title': {
+        //     id: {
+        //         label: 'Label
         //         validators: [
         //             (feature) => ['property', 'values'].contains(feature.properties['key'])
         //             // array of functions that return true or false
@@ -58,7 +59,7 @@ const getLeafletGeoJSONLayer = ({
         //     },
         // },
         default: {
-            label: null,
+            label: '',
             style: (feature) => {
                 return getLeafletLayerStyle(
                     feature.geometry.type, 
@@ -71,8 +72,8 @@ const getLeafletGeoJSONLayer = ({
     const getStyle = (feature) => {
         const legend = geojsonLayer._legend
         if (legend?.groups) {
-            for (const groupTitle in legend.groups) {
-                const group = legend.groups[groupTitle]
+            for (const id in legend.groups) {
+                const group = legend.groups[id]
                 let valid = true
                 for (const validator in group.validators) {
                     if (!validator(feature)) {
@@ -81,12 +82,12 @@ const getLeafletGeoJSONLayer = ({
                     }
                 }
                 if (valid) {
-                    feature._groupTitle = groupTitle
+                    feature._groupId = id
                     return group.style(feature)
                 }
             }
         }
-        feature._groupTitle = legend?.default?.label || ''
+        feature._groupId = ''
         return legend?.default?.style(feature) || getLeafletLayerStyle(
             feature.geometry.type, 
             styleParams
