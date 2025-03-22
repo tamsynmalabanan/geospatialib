@@ -76,13 +76,18 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
             html: div.outerHTML,
         });
     } else {
-        return {
+        const params = {
             color: type === 'polygon' ? strokeColorVal : fillColorVal,
             weight: strokeWidth,
             opacity: strokeOpacity,
-            fillOpacity: fillColor ? fillOpacity : 0,
-            fillColor: fillColorVal,
+        } 
+        
+        if (type === 'polygon') {
+            params.fillOpacity = fillColor ? fillOpacity : 0
+            params.fillColor = fillColorVal
         }
+        
+        return params
     }
 }
 
