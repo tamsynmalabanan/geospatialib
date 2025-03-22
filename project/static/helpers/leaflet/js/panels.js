@@ -63,10 +63,10 @@ const handleLeafletLegendPanel = (map, parent) => {
         legendDetails.className = 'd-flex flex-nowrap flex-column'
         legendCollapse.appendChild(legendDetails)
 
+        const layerLegend = featureLayer._legend
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
-                const featureLegend = featureLayer._legend
 
                 const featureType = featureLayer.feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
@@ -79,7 +79,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 } else {
                     console.log(featureLayer)
                     styles[groupId] = {
-                        label: featureLegend.groups ? featureLegend.groups[groupId].label : featureLegend.default.label || '', 
+                        label: layerLegend.groups ? layerLegend.groups[groupId].label : layerLegend.default.label || '', 
                         types: {
                             point: {
                                 html: 'point',
