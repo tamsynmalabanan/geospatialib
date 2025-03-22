@@ -110,12 +110,16 @@ const zoomToLayer = (layer, map, {
 
 const layerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
-        console.log(style)
+        const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
         const div = document.createElement('div')
         div.className = 'h-100 w-100'
-        div.style.borderTop = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
-        if (type === 'polygon') div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
+        if (type === 'polygon') {
+            div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
+            div.style.border = borderStyle
+        } else {
+            div.style.borderTop = borderStyle
+        }
 
         return div.outerHTML
     })()
