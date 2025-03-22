@@ -85,8 +85,7 @@ const getLeafletGeoJSONLayer = ({
                 }
             }
         }
-        console.log(legend?.default?.label || '')
-        feature._groupTitle = legend?.default?.label || ''
+        feature._groupTitle = legend?.default?.label || '_'
         return legend?.default?.style(feature) || getLeafletLayerStyle(
             feature.geometry.type, 
             getLeafletStyleParams(styleParams)
