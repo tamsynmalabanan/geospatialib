@@ -127,3 +127,26 @@ const layerStyleToHTML = (style, type) => {
         return div.outerHTML
     })()
 }
+
+const validateLeafletLayerCoords = (coords, precision=6) => {
+    const reference = {
+        'lat' : {min:-90, max:90},
+        'lng' : {min:-180, max:180},
+    }
+
+    Object.keys(coords).forEach(dir => {
+        const min = reference[dir].min
+        const max = reference[dir].max
+        
+        let value = coords[dir]
+        if (value < min) {
+            value = min
+        } else if (value > max) {
+            value = max
+        } else {
+            value = Number(value.toFixed(precision))
+        }
+        
+        coords[dir] = value
+    })
+}

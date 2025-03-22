@@ -66,20 +66,11 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     })
 
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
-        loopThroughGeoJSONCoordinates(coordinates, (coords) => {
+        loopThroughCoordinates(coordinates, (coords) => {
             coords[0], coords[1] = proj4(source_text, target_text, coords)
         })
     }
 
-    return coordinates
-}
-
-const loopThroughGeoJSONCoordinates = (coordinates, handler) => {
-    if (Array.isArray(coordinates) && coordinates.length === 2 && coordinates.every(item => typeof item === 'number')) {
-        handler(coordinates)
-    } else {
-        Object.values(coordinates).forEach(value => loopThroughGeoJSONCoordinates(value, handler))
-    }
     return coordinates
 }
 

@@ -13,3 +13,14 @@ const ddToDMS = (decimalDegrees, precision=2) => {
         toString: () => `${degrees}°${minutes}'${seconds}"`
     }
 }
+
+const loopThroughCoordinates = (coordinates, handler) => {
+    if (Object.keys(coordinates).every(key => Array('lat', 'lng').includes(key))) {
+        handler(coordinates)
+    } else if (Array.isArray(coordinates) && coordinates.length === 2 && coordinates.every(item => typeof item === 'number')) {
+        handler(coordinates)
+    } else {
+        Object.values(coordinates).forEach(value => loopThroughCoordinates(value, handler))
+    }
+    return coordinates
+}

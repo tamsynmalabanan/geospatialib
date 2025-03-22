@@ -258,7 +258,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     params: [e.latlng, map],
                 },
                 'OpenStreetMap via Overpass': {
-                    handler: fetchOverpassAroundPt,
+                    handler: fetchOverpass,
                     params: [map],
                     options: {latlng:e.latlng},
                 },
@@ -267,9 +267,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
-            btnClickHandler: async (e) => {
-                console.log('osm in bbox')
-            }
+            btnClickHandler: async (e) => await fetchGeoJSONs({
+                'OpenStreetMap via Overpass': {
+                    handler: fetchOverpass,
+                    params: [map],
+                },
+            }, {abortBtns: [getCancelBtn()], controller})
         },
         layerPoint: {
             iconClass: 'bi-stack',

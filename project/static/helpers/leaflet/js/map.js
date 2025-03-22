@@ -56,3 +56,10 @@ const assignMapObservers = (map) => {
         e.popup._container.querySelector('.leaflet-popup-content-wrapper').style.maxHeight = `${map.getSize().y * 0.5}px`
     })
 }
+
+const getLeafletMapBbox = (map) => {
+    return loopThroughCoordinates(
+        map.getBounds(), 
+        validateLeafletLayerCoords
+    ).toBboxString().split(',') // w,s,e,n
+}
