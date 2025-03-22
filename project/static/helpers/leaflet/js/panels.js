@@ -34,6 +34,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
+                console.log(featureLayer)
                 const featureType = featureLayer.feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
                 const groupTitle = featureLayer._groupTitle
