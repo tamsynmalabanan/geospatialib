@@ -11,7 +11,7 @@ const handleLeafletLayerGroups = (map) => {
         }
         layerGroup.getHiddenLayer = (layerId) => {
             const matches = layerGroup.getHiddenLayers().filter(l => {
-                console.log(l)
+                console.log(l._leadlet_id)
                 return l._leaflet_id === layerId
             })
             if (matches.length) return matches[0]
