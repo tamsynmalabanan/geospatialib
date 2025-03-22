@@ -155,6 +155,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')
+            toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
             toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
         }
     })
