@@ -180,7 +180,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     table.className = removeWhitespace(`
         table table-sm table-borderless
         table-${getPreferredTheme()}
-        align-middle
+        align-middle m-0
     `)
     parent.appendChild(table)
 
@@ -197,7 +197,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         tbody.appendChild(tr)
 
         const icon = document.createElement('td')
-        // icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
+        icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
         tr.appendChild(icon)
 
         const label = document.createElement('td')
