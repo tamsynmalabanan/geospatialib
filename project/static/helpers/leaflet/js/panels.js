@@ -27,6 +27,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         pane.style.zIndex = layers.children.length + 200
 
         const container = document.createElement('div')
+        container.id = `${layers.id}-${paneName}`
         container.setAttribute('data-layer-pane', paneName)
         container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
         layers.insertBefore(container, layers.firstChild)
@@ -34,7 +35,6 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
-                console.log(featureLayer)
                 const featureType = featureLayer.feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
                 const groupTitle = featureLayer.feature._groupTitle
@@ -44,15 +44,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                 } else {
                     styles[groupTitle] = {
                         point: {
-                            html: '',
+                            html: 'point',
                             count: 0
                         },
                         linestring: {
-                            html: '',
+                            html: 'line',
                             count: 0
                         },
                         polygon: {
-                            html: '',
+                            html: 'polygon',
                             count: 0
                         },
                     }
@@ -63,13 +63,29 @@ const handleLeafletLegendPanel = (map, parent) => {
             console.log(styles)
             
             for (const title in styles) {
+                const style = styles[title]
+                
                 const icon = document.createElement('div')
-                icon.innerHTML = styles[title].html || ''
+                icon.className = 'd-flex flex-no-wrap gap-1'
                 container.appendChild(icon)
-        
+
                 const label = document.createElement('div')
                 label.innerText = `${title ? `${title} ` : ''}(${styles[title].count})`
+                label.appendChild(createSpan(title ? `${title} ` : '', {id:`${container.id}-title`}))
+                label.appendChild(createSpan(
+                    Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0), 
+                    {id:`${container.id}-count`}
+                ))
                 container.appendChild(label)
+
+                for (const type in style) {
+                    if (!style[type].count) continue
+                    
+                    const typeIcon = document.createElement('div')
+                    typeIcon.outerHTML = style[type].html
+                    icon.appendChild(typeIcon) 
+                }
+        
             }
         }
     })

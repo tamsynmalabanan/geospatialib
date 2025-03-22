@@ -33,8 +33,9 @@ const createIcon = ({className='', parent, peNone=true} = {}) => {
     return icon
 }
 
-const createLabel = (innerText, {className, parent} = {}) => {
+const createSpan = (innerText, {id, className, parent} = {}) => {
     const label = document.createElement('span')
+    if (id) label.id = id
     label.innerText = innerText
     label.className = className || ''
     parent?.appendChild(label)
@@ -158,7 +159,7 @@ const createOffcanvas = (id, {
     })
 
     if (toggleIconClass) createIcon({className: `bi ${toggleIconClass}`, parent: toggle})
-    if (toggleLabelText) createLabel(toggleLabelText, {className: `ms-2 text-nowrap ${toggleLabelClass}`, parent: toggle})
+    if (toggleLabelText) createSpan(toggleLabelText, {className: `ms-2 text-nowrap ${toggleLabelClass}`, parent: toggle})
 
     const offcanvas = createOffcanvasElement(id, {
         show: show,
@@ -296,7 +297,7 @@ const createDropdownMenuLi = ({
         element.className = 'dropdown-item bg-transparent border-0 btn btn-sm fs-12'
         if (btnCallback) element.addEventListener('click', btnCallback)
             
-        const label = createLabel(innerText)
+        const label = createSpan(innerText)
         element.appendChild(label)
     }
     
