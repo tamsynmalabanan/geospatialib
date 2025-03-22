@@ -125,6 +125,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     if (!style.types[type].count) continue
                     
                     const typeIcon = document.createElement('div')
+                    typeIcon.style.height = '10px'
                     typeIcon.style.width = type === 'point' ? '10px' : '16px'
                     typeIcon.innerHTML = style.types[type].html
                     icon.appendChild(typeIcon) 

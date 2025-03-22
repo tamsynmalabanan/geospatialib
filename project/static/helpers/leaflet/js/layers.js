@@ -57,8 +57,8 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
     const hslaColor = manageHSLAColor(color)
-    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:(type === 'point' ? strokeOpacity: 1)*100}) || color : strokeColor || 'transparent'
-    const fillColorVal = fillColor === true ? hslaColor?.toString({a:(type === 'point' ? iconOpacity: 1)*100}) || color : fillColor || 'transparent'
+    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:(type === 'point' ? strokeOpacity: 1)}) || color : strokeColor || 'transparent'
+    const fillColorVal = fillColor === true ? hslaColor?.toString({a:(type === 'point' ? iconOpacity: 1)}) || color : fillColor || 'transparent'
 
     if (type === 'point') {
         const div = document.createElement('div')
@@ -111,6 +111,13 @@ const zoomToLayer = (layer, map, {
 const layerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
         console.log(style)
-        return JSON.stringify(style)
+        
+        const div = document.createElement('div')
+        div.style.width = '100%'
+        div.style.height = type === 'polygon' ? '100%' : '0px'
+        div.style.border = `${style.weight} solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
+        if (type === 'polygon') div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
+
+        return div.outerHTML
     })()
 }
