@@ -72,6 +72,7 @@ const handleLeafletLayerGroups = (map) => {
         const hiddenLayers = []
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
+            console.log(group)
             hiddenLayers.concat(group.getHiddenLayers())
         }
         return hiddenLayers
@@ -82,6 +83,7 @@ const handleLeafletLayerGroups = (map) => {
             const group = map.getLayerGroups()[groupName]
             group._hiddenLayers = [...group._hiddenLayers, ...group.getLayers()]
             group.clearLayers()
+            console.log(group._hiddenLayers)
         }
     }
     
