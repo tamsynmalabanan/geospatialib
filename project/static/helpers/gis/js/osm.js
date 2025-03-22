@@ -31,25 +31,27 @@ const fetchNominatim = async (latlng, map, {
     })
 }
 
-// const getOverpassRequestBody = (latlng, map) => {
-//     if (!map) return
+const getOverpassRequestBody = (latlng, map) => {
+    if (!map) return
 
-//     let params
-//     if (latlng) {
-//         const buffer = (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
-//         params = `around:${buffer},${latlng.lat},${latlng.lng}`
-//     }
+    let params
+    if (latlng) {
+        const buffer = (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
+        params = `around:${buffer},${latlng.lat},${latlng.lng}`
+    } else {
 
-//     return "data="+ encodeURIComponent(`
-//         [out:json][timeout:180];
-//         (
-//             node(${params});
-//             way(${params});
-//             relation(${params});
-//         );
-//         out tags geom body;
-//     `)
-// }
+    }
+
+    return "data="+ encodeURIComponent(`
+        [out:json][timeout:180];
+        (
+            node(${params});
+            way(${params});
+            relation(${params});
+        );
+        out tags geom body;
+    `)
+}
 
 const fetchOverpassAroundPt = async (map, {
     latlng,
@@ -65,15 +67,7 @@ const fetchOverpassAroundPt = async (map, {
         controller,
         fetchParams: {
             method: "POST",
-            body: "data="+ encodeURIComponent(`
-                [out:json][timeout:180];
-                (
-                    node(${params});
-                    way(${params});
-                    relation(${params});
-                );
-                out tags geom body;
-            `)
+            body: getOverpassRequestBody(latlng, map)
         }
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {
