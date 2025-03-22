@@ -48,7 +48,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             btnClickHandler: () => {
                 const show = map.getHiddenLegendLayers().length
                 Array.from(layers.children).forEach(legend => {
-                    const layer = map.getLegendLayer(legend.dataset.layerId)
+                    const layer = map.getLegendLayer(parseInt(legend.dataset.layerId))
                     console.log(layer)
                     if (!layer) return
 
