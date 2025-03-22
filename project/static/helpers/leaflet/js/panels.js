@@ -162,7 +162,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 defaultGeom,
                 controller, 
                 pane: 'queryPane', 
-                styleParams: queryStyleParams, 
+                customElements: queryStyleParams, 
             })
             results.appendChild(content)
         }
