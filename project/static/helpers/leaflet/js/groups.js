@@ -17,11 +17,12 @@ const handleLeafletLayerGroups = (map) => {
         }
         layerGroup.hideLayer = (layer) => {
             layerGroup._hiddenLayers = [...layerGroup._hiddenLayers, layer]
-            console.log(layerGroup._hiddenLayers)
             layerGroup.removeLayer(layer)
         }
         layerGroup.showLayer = (layer) => {
+            console.log(layerGroup._hiddenLayers)
             layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => l !== layer)
+            console.log(layerGroup._hiddenLayers)
             layerGroup.addLayer(layer)
         }
 
