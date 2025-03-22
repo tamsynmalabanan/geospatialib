@@ -83,7 +83,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         label: featureLegend.label || '', 
                         types: {}
                     }
-                    ['point', 'linestring', 'polygon'].forEach(typeName => {
+                    Array('point', 'linestring', 'polygon').forEach(typeName => {
                         styles[groupId].types[typeName] = {
                             count: 0,
                             html: layerStyleToHTML(
