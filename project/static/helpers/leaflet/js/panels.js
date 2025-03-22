@@ -29,9 +29,13 @@ const handleLeafletLegendPanel = (map, parent) => {
         const container = document.createElement('div')
         container.id = `${layers.id}-${paneName}`
         container.setAttribute('data-layer-pane', paneName)
-        container.className = 'd-flex flex-nowrap gap-3 px-3 mb-3'
+        container.className = 'd-flex flex-nowrap gap-3'
         layers.insertBefore(container, layers.firstChild)
         
+        const layerTitle = document.createElement('div')
+        layerTitle.innerText = layer._title
+        container.appendChild(layerTitle)
+
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
@@ -84,7 +88,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                     typeIcon.innerHTML = style[type].html
                     icon.appendChild(typeIcon) 
                 }
-        
             }
         }
     })
