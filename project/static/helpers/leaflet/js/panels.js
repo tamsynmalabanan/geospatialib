@@ -44,11 +44,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         visibility: {
             iconClass: 'bi bi-eye',
             title: 'Toggle visibility',
-            queryHandler: false,
             disabled: true,
             btnClickHandler: () => {
                 const hiddenLayers = map.getHiddenLegendLayers()
+                console.log(hiddenLayers)
                 const hide = hiddenLayers.length
+                console.log(hide ? 0 : 1)
                 hide ? map.hideLegendLayers() : map.showLegendLayers()
             },
         },
