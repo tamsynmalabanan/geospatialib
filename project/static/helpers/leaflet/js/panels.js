@@ -82,7 +82,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-query-toolbar`
-    toolbar.className = 'd-flex px-3 py-2 gap-1'
+    toolbar.className = 'd-flex px-3 py-2'
     parent.appendChild(toolbar)
     
     const results = document.createElement('div')
@@ -264,7 +264,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             queryHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                const checkboxes = results.querySelectorAll('input.form-check-input')
+                const checkboxes = Array.from(results.querySelectorAll('input.form-check-input'))
                 const hide = checkboxes.some(el => el.checked)
                 checkboxes.forEach(el => {
                     if (el.checked === hide) el.click()
