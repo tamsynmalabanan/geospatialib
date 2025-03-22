@@ -17,13 +17,10 @@ const handleLeafletLayerGroups = (map) => {
         }
         layerGroup.hideLayer = (layer) => {
             layerGroup._hiddenLayers = [...layerGroup._hiddenLayers, layer]
-            console.log(layerGroup._hiddenLayers)
             layerGroup.removeLayer(layer)
         }
         layerGroup.showLayer = (layer) => {
-            console.log(layerGroup._hiddenLayers)
             layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => l !== layer)
-            console.log(layerGroup._hiddenLayers)
             layerGroup.addLayer(layer)
         }
 
@@ -59,6 +56,7 @@ const handleLeafletLayerGroups = (map) => {
     map.getLegendLayer = (layerId) => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
+            console.log(group.getHiddenLayers())
             const layer = group.getLayer(layerId) || group.getHiddenLayer(layerId)
             if (layer) return layer
         }
