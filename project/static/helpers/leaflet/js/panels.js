@@ -90,6 +90,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (e) => {
         const layer = e.layer
+        console.log(map.hasHiddenLegendLayer(layer))
         if (map.hasLegendLayer(layer)) return
         
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
