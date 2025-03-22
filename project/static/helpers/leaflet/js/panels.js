@@ -37,8 +37,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 console.log(featureLayer)
                 const featureType = featureLayer.feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
-                const groupTitle = featureLayer._groupTitle
-                console.log(groupTitle)
+                const groupTitle = featureLayer.feature._groupTitle
                 const group = styles[groupTitle]
                 if (group) {
                     group[type].count +=1
