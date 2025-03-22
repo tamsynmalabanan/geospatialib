@@ -59,10 +59,7 @@ const fetchOverpass = async (map, {
     abortBtns,
     controller,
 } = {}) => {
-    const url = 'https://overpass-api.de/api/interpreter'
-    const buffer = (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
-    const params = `around:${buffer},${latlng.lat},${latlng.lng}`
-    
+    const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
         abortBtns,
         controller,
