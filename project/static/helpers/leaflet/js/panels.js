@@ -41,6 +41,17 @@ const handleLeafletLegendPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: () => toggleCollapseElements(layers),
         },
+        visibility: {
+            iconClass: 'bi bi-eye',
+            title: 'Toggle visibility',
+            queryHandler: false,
+            disabled: true,
+            btnClickHandler: () => {
+                const hiddenLayers = map.getHiddenLegendLayers()
+                const hide = hiddenLayers.length
+                hide ? map.hideLegendLayers() : map.showLegendLayers()
+            },
+        },
     }
 
     Object.keys(legendTools).forEach(toolId => {
@@ -317,21 +328,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             tag: 'div',
             className: 'vr m-2',
         },
-        cancel: {
-            iconClass: 'bi-arrow-counterclockwise',
-            title: 'Cancel ongoing query',
-            disabled: true,
-        },
-        clear: {
-            iconClass: 'bi-trash-fill',
-            title: 'Clear query results',
-            disabled: true,
-            btnClickHandler: true
-        },
-        divider2: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
         collapse: {
             iconClass: 'bi bi-chevron-up',
             title: 'Collapse/expand',
@@ -351,6 +347,21 @@ const handleLeafletQueryPanel = (map, parent) => {
                     if (el.checked === hide) el.click()
                 })
             },
+        },
+        divider2: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        cancel: {
+            iconClass: 'bi-arrow-counterclockwise',
+            title: 'Cancel ongoing query',
+            disabled: true,
+        },
+        clear: {
+            iconClass: 'bi-trash-fill',
+            title: 'Clear query results',
+            disabled: true,
+            btnClickHandler: true
         },
     }
 

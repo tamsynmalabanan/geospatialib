@@ -7,6 +7,14 @@ const handleLeafletLayerGroups = (map) => {
         layerGroup._hiddenLayers = []
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
         layerGroup.hasHiddenLayer = (layer) => layerGroup.getHiddenLayers().includes(layer)
+        layerGroup.hideLayer = (layer) => {
+            layerGroup._hiddenLayers.push(layer)
+            layerGroup.removeLayer(layer)
+        }
+        layerGroup.showLayer = (layer) => {
+            layerGroup.addLayer(layer)
+            layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => l !== layer)
+        }
 
         map.addLayer(layerGroup)
     })
@@ -22,10 +30,12 @@ const handleLeafletLayerGroups = (map) => {
     queryPane.style.zIndex = 599
 
     map.isLegendLayer = (layer) => {
-        return ['library', 'client'].some(groupName => {
+        for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
-            return group.hasLayer(layer) || group.hasHiddenLayer(layer)
-        })
+            if (group.hasLayer(layer) || group.hasHiddenLayer(layer)) {
+                return groupName
+            }
+        }
     }
 
     map.getLegendLayer = (layerId) => {
@@ -35,10 +45,33 @@ const handleLeafletLayerGroups = (map) => {
             if (layer) return layer
         }
     }
-
+    
     map.clearLegendLayers = () => {
         ['library', 'client'].forEach(groupName => {
             map.getLayerGroups()[groupName].clearLayers()
         })
+    }
+    
+    map.getHiddenLegendLayers = () => {
+        const hiddenLayers = []
+        for (const groupName of ['library', 'client']) {
+            const group = map.getLayerGroups()[groupName]
+            hiddenLayers.concat(group.getHiddenLayers())
+        }
+        return hiddenLayers
+    }
+    
+    map.hideLegendLayers = () => {
+        for (const groupName of ['library', 'client']) {
+            const group = map.getLayerGroups()[groupName]
+            group.eachLayer(layer => group.hideLayer(layer))
+        }
+    }
+    
+    map.showLegendLayers = () => {
+        for (const groupName of ['library', 'client']) {
+            const group = map.getLayerGroups()[groupName]
+            group.getHiddenLayers().forEach(layer => group.showLayer(layer))
+        }
     }
 }
