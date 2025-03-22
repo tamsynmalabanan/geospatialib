@@ -49,8 +49,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const show = map.getHiddenLegendLayers().length
                 Array.from(layers.children).forEach(legend => {
                     const leafletId = legend.getAttribute('data-layer-id')
-                    const [layer, group, hidden] = map.getLegendLayer(leafletId)
-                    console.log(layer, group, hidden)
+                    const layer = map.getLegendLayer(leafletId)
+                    if (!layer) return
+
+                    show ? map.hasHiddenLegendLayer(layer)?.showLayer(layer) : map.hasLegendLayer(layer)?.hideLayer(layer)
                 })
             },
         },
@@ -88,7 +90,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (e) => {
         const layer = e.layer
-        if (map.isLegendLayer(layer)) return
+        if (map.hasLegendLayer(layer)) return
         
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
 
@@ -98,7 +100,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layeradd', (e) => {
         const layer = e.layer
         
-        if (!map.isLegendLayer(layer)) return
+        if (!map.hasLegendLayer(layer)) return
         
         const paneName = layer.options.pane
         let container = layers.querySelector(`#${layers.id}-${paneName}`)

@@ -7,6 +7,7 @@ const handleLeafletLayerGroups = (map) => {
         layerGroup._hiddenLayers = []
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
         layerGroup.hasHiddenLayer = (layer) => {
+            console.log(layer, layerGroup.getHiddenLayers())
             return layerGroup.getHiddenLayers().includes(layer)
         }
         layerGroup.getHiddenLayer = (layerId) => {
@@ -37,25 +38,27 @@ const handleLeafletLayerGroups = (map) => {
     const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
     queryPane.style.zIndex = 599
 
-    map.isLegendLayer = (layer) => {
+    map.hasLegendLayer = (layer) => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
             if (group.hasLayer(layer) || group.hasHiddenLayer(layer)) {
-                return groupName
+                return group
             }
+        }
+    }
+    
+    map.hasHiddenLegendLayer = (layer) => {
+        for (const groupName of ['library', 'client']) {
+            const group = map.getLayerGroups()[groupName]
+            if (group.hasHiddenLayer(layer)) return group
         }
     }
 
     map.getLegendLayer = (layerId) => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
-            const visibleLayer = group.getLayer(layerId) 
-            const hiddenLayer = group.getHiddenLayer(layerId)
-            if (visibleLayer || hiddenLayer) return [
-                visibleLayer || hiddenLayer,
-                group,
-                hiddenLayer && !visibleLayer ? true : false
-            ]
+            const layer = group.getLayer(layerId) || group.getHiddenLayer(layerId)
+            if (layer) return layer
         }
     }
     
