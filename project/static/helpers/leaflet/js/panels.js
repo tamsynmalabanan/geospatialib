@@ -70,10 +70,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                 container.appendChild(icon)
 
                 const label = document.createElement('div')
-                label.innerText = `${title ? `${title} ` : ''}(${styles[title].count})`
                 label.appendChild(createSpan(title ? `${title} ` : '', {id:`${container.id}-title`}))
                 label.appendChild(createSpan(
-                    Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0), 
+                    `(${Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
                     {id:`${container.id}-count`}
                 ))
                 container.appendChild(label)
@@ -82,7 +81,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     if (!style[type].count) continue
                     
                     const typeIcon = document.createElement('div')
-                    typeIcon.outerHTML = style[type].html
+                    typeIcon.innerHTML = style[type].html
                     icon.appendChild(typeIcon) 
                 }
         
