@@ -8,6 +8,7 @@ const handleLeafletLayerGroups = (map) => {
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
         layerGroup.hasHiddenLayer = (layer) => layerGroup.getHiddenLayers().includes(layer)
         layerGroup.hideLayer = (layer) => {
+            console.log(layer)
             layerGroup._hiddenLayers.push(layer)
             layerGroup.removeLayer(layer)
         }
