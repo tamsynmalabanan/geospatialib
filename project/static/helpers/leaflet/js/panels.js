@@ -108,7 +108,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 
                 const groupContainer = document.createElement('div')
                 groupContainer.id = `${legendDetails.id}-${id}`
-                groupContainer.className = 'd-flex flex-nowrap'
+                groupContainer.className = 'd-flex flex-nowrap gap-2'
                 legendDetails.appendChild(groupContainer)
 
                 const icon = document.createElement('div')
