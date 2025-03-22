@@ -168,7 +168,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         innerText: `Zoom to ${type}`,
                         btnCallback: () => zoomToLayer(layer, map)
                     },
-                    'isolate': checkbox.disabled ? null : {
+                    'isolate': checkbox?.disabled ? null : {
                         innerText: `Isolate ${type}`,
                         btnCallback: () => {
                             Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
