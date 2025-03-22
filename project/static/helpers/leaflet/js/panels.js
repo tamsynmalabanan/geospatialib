@@ -67,11 +67,11 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (layer instanceof L.GeoJSON) {
             const styles = {}
             layer.eachLayer(featureLayer => {
-
-                const featureType = featureLayer.feature.geometry.type.toLowerCase()
+                const feature = featureLayer.feature
+                const featureType = feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
                 
-                const groupId = featureLayer.feature._groupId
+                const groupId = feature._groupId
                 const group = styles[groupId]
                 
                 if (group) {
@@ -79,19 +79,20 @@ const handleLeafletLegendPanel = (map, parent) => {
                 } else {
                     console.log(featureLayer)
                     const featureLegend = layerLegend.groups && layerLegend.groups[groupId] ? layerLegend.groups[groupId] : layerLegend.default 
+                    const styleHandler = featureLegend.style
                     styles[groupId] = {
                         label: featureLegend.label || '', 
                         types: {
                             point: {
-                                html: featureLegend.style(featureLayer.feature),
+                                html: layerStyleToHTML(styleHandler({geometry:{type:'point'}})),
                                 count: 0
                             },
                             linestring: {
-                                html: 'line',
+                                html: layerStyleToHTML(styleHandler({geometry:{type:'linestring'}})),
                                 count: 0
                             },
                             polygon: {
-                                html: 'polygon',
+                                html: layerStyleToHTML(styleHandler({geometry:{type:'polygon'}})),
                                 count: 0
                             },
                         }

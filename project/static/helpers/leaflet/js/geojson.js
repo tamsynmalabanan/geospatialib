@@ -55,7 +55,7 @@ const getLeafletGeoJSONLayer = ({
         //         ],
         //         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
         //             customStyleParams: 'here'
-        //         })
+        //         }),
         //     },
         // },
         default: {

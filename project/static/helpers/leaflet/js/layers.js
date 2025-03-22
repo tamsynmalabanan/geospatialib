@@ -102,3 +102,7 @@ const zoomToLayer = (layer, map, {
         return map.setView(layer.getLatLng(), zoom)
     }
 }
+
+const layerStyleToHTML = (style) => {
+    console.log(style)
+}
