@@ -114,7 +114,7 @@ const layerStyleToHTML = (style, type) => {
         
         const div = document.createElement('div')
         div.className = 'h-100 w-100'
-        div.style.border = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
+        div.style.borderTop = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         if (type === 'polygon') div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
 
         return div.outerHTML
