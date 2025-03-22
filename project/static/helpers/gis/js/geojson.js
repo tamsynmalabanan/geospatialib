@@ -220,7 +220,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     'divider2': {
                         divider: true,
                     },
-                    'legend': checkbox.disabled ? null : {
+                    'legend': checkbox?.disabled ? null : {
                         innerText: 'Add to legend',
                         btnCallback: () => {
                             map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
