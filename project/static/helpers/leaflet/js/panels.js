@@ -48,7 +48,13 @@ const handleLeafletLegendPanel = (map, parent) => {
             btnClickHandler: () => {
                 const hiddenLayers = map.getHiddenLegendLayers()
                 const hide = hiddenLayers.length
-                hide ? map.hideLegendLayers() : map.showLegendLayers()
+                if (hide) {
+                    console.log('here')
+                    map.hideLegendLayers()
+                } else {
+                    console.log('here')
+                    map.showLegendLayers()
+                }
             },
         },
     }
