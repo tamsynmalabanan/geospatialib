@@ -78,11 +78,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                     group.types[type].count +=1
                 } else {
                     console.log(featureLayer)
+                    const featureLegend = layerLegend.groups && layerLegend.groups[groupId] ? layerLegend.groups[groupId] : layerLegend.default 
                     styles[groupId] = {
-                        label: layerLegend.groups ? layerLegend.groups[groupId].label : layerLegend.default.label || '', 
+                        label: featureLegend.label || '', 
                         types: {
                             point: {
-                                html: 'point',
+                                html: featureLegend.style(featureLayer.feature),
                                 count: 0
                             },
                             linestring: {
@@ -104,20 +105,25 @@ const handleLeafletLegendPanel = (map, parent) => {
             for (const id in styles) {
                 const style = styles[id]
                 
+                const groupContainer = document.createElement('div')
+                groupContainer.id = `${legendDetails.id}-${id}`
+                groupContainer.className = 'd-flex flex-nowrap'
+                legendDetails.appendChild(groupContainer)
+
                 const icon = document.createElement('div')
                 icon.className = 'd-flex flex-no-wrap gap-1'
-                legendDetails.appendChild(icon)
+                groupContainer.appendChild(icon)
 
                 const label = document.createElement('div')
                 label.appendChild(createSpan(
                     style.label ? `${style.label} ` : '', 
-                    {id:`${legendDetails.id}-title`})
+                    {id:`${groupContainer.id}-title`})
                 )
                 label.appendChild(createSpan(
                     `(${Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
-                    {id:`${legendDetails.id}-count`}
+                    {id:`${groupContainer.id}-count`}
                 ))
-                legendDetails.appendChild(label)
+                groupContainer.appendChild(label)
 
                 for (const type in style.types) {
                     if (!style.types[type].count) continue
