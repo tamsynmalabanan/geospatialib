@@ -34,6 +34,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         const legendTitle = document.createElement('div')
         legendTitle.id = `${container.id}-title`
+        legendTitle.className = 'd-flex flex-nowrap'
         legendTitle.appendChild(createSpan(layer._title))
         container.appendChild(legendTitle)
         
@@ -55,7 +56,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         collapseToggle.setAttribute('data-bs-toggle', 'collapse')
         collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
         collapseToggle.setAttribute('aria-controls', legendCollapse.id)
-        collapseToggle.setAttribute('aria-expanded', 'false')
+        collapseToggle.setAttribute('aria-expanded', 'true')
 
         const legendDetails = document.createElement('div')
         legendDetails.id = `${container.id}-details`
