@@ -37,6 +37,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const featureType = featureLayer.feature.geometry.type.toLowerCase()
                 const type = featureType.split('multi')[featureType.split('multi').length-1]
                 const groupTitle = featureLayer._groupTitle
+                console.log(groupTitle)
                 const group = styles[groupTitle]
                 if (group) {
                     group[type].count +=1
@@ -67,7 +68,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 container.appendChild(icon)
         
                 const label = document.createElement('div')
-                label.innerText = `${title && title !== 'default' ? `${title} ` : ''}(${styles[title].count})`
+                label.innerText = `${title ? `${title} ` : ''}(${styles[title].count})`
                 container.appendChild(label)
             }
         }
