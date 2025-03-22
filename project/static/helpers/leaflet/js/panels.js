@@ -189,7 +189,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const layer = getLeafletGeoJSONLayer({
                     pane: 'queryPane',
                     geojson: feature, 
-                    styleParams: queryStyleParams,
+                    customStyleParams: queryStyleParams,
                 })
                 queryGroup.addLayer(layer)
 

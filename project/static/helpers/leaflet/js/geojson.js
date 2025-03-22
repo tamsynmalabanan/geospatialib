@@ -1,7 +1,7 @@
 const getLeafletGeoJSONLayer = ({
     pane,
     geojson,
-    styleParams,
+    customStyleParams,
     title,
     attribution,
 } = {}) => {
@@ -44,6 +44,7 @@ const getLeafletGeoJSONLayer = ({
         }
     }
  
+    const styleParams = getLeafletStyleParams(customStyleParams)
     geojsonLayer._legend = {
         // groups: {
         //     'Title': {
@@ -61,7 +62,7 @@ const getLeafletGeoJSONLayer = ({
             style: (feature) => {
                 return getLeafletLayerStyle(
                     feature.geometry.type, 
-                    getLeafletStyleParams(styleParams)
+                    styleParams
                 )
             }
         }
@@ -88,7 +89,7 @@ const getLeafletGeoJSONLayer = ({
         feature._groupTitle = legend?.default?.label || ''
         return legend?.default?.style(feature) || getLeafletLayerStyle(
             feature.geometry.type, 
-            getLeafletStyleParams(styleParams)
+            styleParams
         )
     }
 

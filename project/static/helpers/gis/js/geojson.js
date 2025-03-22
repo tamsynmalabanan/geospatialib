@@ -86,7 +86,7 @@ const loopThroughGeoJSONCoordinates = (coordinates, handler) => {
 const createGeoJSONChecklist = async (geojsonList, group, {
     pane,
     controller,
-    styleParams,
+    customStyleParams,
     defaultGeom,
 } = {}) => {
     const map = group._map
@@ -114,7 +114,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const geojsonLayer = getLeafletGeoJSONLayer({
             pane,
             geojson,
-            styleParams,
+            customStyleParams,
             title,
         })
 
@@ -232,7 +232,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                                     map.getPane(paneName) || map.createPane(paneName)
                                     return paneName
                                 })(),
-                                // styleParams,
+                                // customStyleParams,
                             }))
                         }
                     },

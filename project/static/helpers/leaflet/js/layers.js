@@ -37,8 +37,7 @@ const getLeafletStyleParams = ({
     }    
 }
 
-const getLeafletLayerStyle = (featureType, options={}) => {
-    const styleParams = getLeafletStyleParams(options)
+const getLeafletLayerStyle = (featureType, styleParams={}) => {
     const {
         color,
         strokeWidth,
@@ -54,7 +53,7 @@ const getLeafletLayerStyle = (featureType, options={}) => {
         iconGlow,
         iconStroke,
 
-    } = styleParams
+    } = getLeafletStyleParams(styleParams)
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
     const hslaColor = manageHSLAColor(color)
