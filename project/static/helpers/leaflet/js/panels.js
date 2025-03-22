@@ -21,7 +21,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     }
 
     Object.keys(legendTools).forEach(toolId => {
-        const data = queryTools[toolId]
+        const data = legendTools[toolId]
         if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
 
         const tag = data.tag || 'button'
@@ -54,7 +54,16 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layer = e.layer
         if (map.isLegendLayer(layer)) return
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
-        layers.classList.toggle('d-none', layers.innerHTML === '')
+
+        if (layers.innerHTML === '') {
+            layers.classList.add('d-none')
+            for (const tool in legendTools) {
+                const data = legendTools[tool]
+                if (data.disabled) {
+                    toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
+                }
+            }    
+        }
     })
 
     map.on('layeradd', (e) => {
@@ -111,7 +120,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             legendDetails
         )
 
-        layers.classList.toggle('d-none', layers.innerHTML === '')
+        if (layers.innerHTML !== '') {
+            layers.classList.remove('d-none')
+            toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+        }
     })
 }
 
