@@ -46,17 +46,9 @@ const handleLeafletLegendPanel = (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                const show = map.getHiddenLegendLayers().length
-                Array.from(layers.children).forEach(legend => {
-                    const layer = map.getLegendLayer(parseInt(legend.dataset.layerId))
-                    if (!layer) return
-
-                    if (show) {
-                        map.hasHiddenLegendLayer(layer)?.showLayer(layer)
-                    } else {
-                        map.hasLegendLayer(layer)?.hideLayer(layer)
-                    }
-                })
+                const hiddenLayers = map.getHiddenLegendLayers()
+                const show = hiddenLayers.length
+                show ? map.hideLegendLayers() : console.log('show')
             },
         },
     }
