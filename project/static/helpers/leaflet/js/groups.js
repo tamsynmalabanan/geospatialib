@@ -7,7 +7,6 @@ const handleLeafletLayerGroups = (map) => {
         layerGroup._hiddenLayers = []
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
         layerGroup.hasHiddenLayer = (layer) => {
-            console.log(layer, layerGroup.getHiddenLayers())
             return layerGroup.getHiddenLayers().includes(layer)
         }
         layerGroup.getHiddenLayer = (layerId) => {
@@ -52,11 +51,11 @@ const handleLeafletLayerGroups = (map) => {
             const group = map.getLayerGroups()[groupName]
             const visibleLayer = group.getLayer(layerId) 
             const hiddenLayer = group.getHiddenLayer(layerId)
-            if (visibleLayer || hiddenLayer) return {
-                layer: visibleLayer || hiddenLayer,
+            if (visibleLayer || hiddenLayer) return [
+                visibleLayer || hiddenLayer,
                 group,
-                hidden: hiddenLayer && !visibleLayer
-            }
+                hiddenLayer && !visibleLayer
+            ]
         }
     }
     
