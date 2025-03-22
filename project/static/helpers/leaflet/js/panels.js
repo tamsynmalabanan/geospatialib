@@ -12,7 +12,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     parent.appendChild(layers)
 
     const clearLegend = () => {
-        layers.innerHTML === ''
+        layers.innerHTML = ''
         layers.classList.add('d-none')
         map.clearLegendLayers()
 
@@ -49,7 +49,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const show = map.getHiddenLegendLayers().length
                 Array.from(layers.children).forEach(legend => {
                     const layer = map.getLegendLayer(parseInt(legend.dataset.layerId))
-                    console.log(layer)
                     if (!layer) return
 
                     if (show) {
