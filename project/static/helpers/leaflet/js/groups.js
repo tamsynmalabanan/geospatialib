@@ -88,7 +88,10 @@ const handleLeafletLayerGroups = (map) => {
     map.showLegendLayers = () => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
-            group._hiddenLayers.forEach(l => group.addLayer(l))
+            group._hiddenLayers.forEach(l => {
+                console.log(l)
+                return group.addLayer(l)
+            })
             group._hiddenLayers = []
         }
     }
