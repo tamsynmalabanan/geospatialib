@@ -50,7 +50,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 Array.from(layers.children).forEach(legend => {
                     const layer = map.getLegendLayer(legend.dataset.layerId)
                     if (!layer) return
-                    console.log(map.hasHiddenLegendLayer(layer))
+                    console.log(map.getHiddenLegendLayers())
 
                     if (show) {
                         map.hasHiddenLegendLayer(layer)?.showLayer(layer)
