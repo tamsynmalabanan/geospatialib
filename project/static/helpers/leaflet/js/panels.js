@@ -130,7 +130,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             // menuToggle.addEventListener('click', checklistContextMenuHandler)
         }
 
-
+        const legendDetails = container.querySelector(`#${container.id}-details`)
         if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
             layer, 
             legendDetails
