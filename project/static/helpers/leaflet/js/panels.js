@@ -168,6 +168,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             layers.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
             toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+            toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
         }
     })
 }
