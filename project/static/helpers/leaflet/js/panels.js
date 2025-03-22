@@ -52,10 +52,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     if (!layer) return
 
                     if (show) {
-                        console.log(map.hasHiddenLegendLayer(layer))
                         map.hasHiddenLegendLayer(layer)?.showLayer(layer)
                     } else {
-                        console.log(map.hasLegendLayer(layer))
                         map.hasLegendLayer(layer)?.hideLayer(layer)
                     }
                 })
@@ -96,6 +94,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layerremove', (e) => {
         const layer = e.layer
         if (map.hasLegendLayer(layer)) return
+        console.log(layer)
         
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
 
