@@ -106,7 +106,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             const legendAttribution = document.createElement('div')
             legendAttribution.id = `${container.id}-attribution`
-            legendAttribution.className = 'd-flex small'
+            legendAttribution.className = 'd-flex'
             legendAttribution.innerHTML = layer._attribution
             legendCollapse.appendChild(legendAttribution)
     
@@ -128,13 +128,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
             menuToggle.style.cursor = 'pointer'
             // menuToggle.addEventListener('click', checklistContextMenuHandler)
+            
+            if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
+                layer, 
+                legendDetails
+            )
         }
 
-        const legendDetails = container.querySelector(`#${container.id}-details`)
-        if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
-            layer, 
-            legendDetails
-        )
+        // const legendDetails = container.querySelector(`#${container.id}-details`)
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')

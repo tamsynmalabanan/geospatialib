@@ -303,6 +303,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         if (infoTable) {
             const infoContainer = document.createElement('div')
+            infoContainer.className = 'd-flex'
             infoContainer.innerHTML = infoTable.outerHTML
             contentCollapse.appendChild(infoContainer)
         }
