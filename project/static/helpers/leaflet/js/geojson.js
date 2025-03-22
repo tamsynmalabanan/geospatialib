@@ -200,26 +200,32 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
         tr.appendChild(icon)
 
+        const totalCount = formatNumberWithCommas(
+            Object.values(style.types)
+            .map(type => type.count || 0)
+            .reduce((a, b) => a + b, 0)
+        )
         const label = document.createElement('td')
         label.appendChild(createSpan(
             style.label ? `${style.label} ` : '', 
             {id:`${tr.id}-title`})
         )
         label.appendChild(createSpan(
-            `(${Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
+            `(${totalCount})`, 
             {id:`${tr.id}-count`}
         ))
         tr.appendChild(label)
 
         for (const type in style.types) {
-            if (!style.types[type].count) continue
+            const typeCount = style.types[type].count
+            if (!typeCount) continue
             
             const typeIcon = document.createElement('div')
-
             typeIcon.style.height = type === 'linestring' ? '0px' : '10px'
             typeIcon.style.width = type === 'point' ? '10px' : '16px'
             typeIcon.innerHTML = style.types[type].html
-            icon.appendChild(typeIcon) 
+            titleToTooltip(typeIcon, `${count}`)
+            icon.appendChild(formatNumberWithCommas(typeCount)) 
         }
     }
 }

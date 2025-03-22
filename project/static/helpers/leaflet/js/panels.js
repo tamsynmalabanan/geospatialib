@@ -58,6 +58,14 @@ const handleLeafletLegendPanel = (map, parent) => {
         collapseToggle.setAttribute('aria-controls', legendDetails.id)
         collapseToggle.setAttribute('aria-expanded', 'true')
 
+        const menuToggle = createIcon({
+            parent: toggleContainer,
+            peNone: false,
+            className: 'bi bi-three-dots'
+        })
+        menuToggle.style.cursor = 'pointer'
+        // menuToggle.addEventListener('click', checklistContextMenuHandler)
+
         if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
             layer, 
             legendDetails
