@@ -60,7 +60,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         const legendDetails = document.createElement('div')
         legendDetails.id = `${container.id}-details`
-        legendDetails.className = 'd-flex flex-nowrap ps-3'
+        legendDetails.className = 'd-flex flex-nowrap flex-column'
         legendCollapse.appendChild(legendDetails)
 
         if (layer instanceof L.GeoJSON) {
@@ -73,6 +73,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (group) {
                     group[type].count +=1
                 } else {
+                    console.log(featureLayer)
                     styles[groupTitle] = {
                         point: {
                             html: 'point',
