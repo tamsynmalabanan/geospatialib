@@ -8,10 +8,33 @@ const handleLeafletLegendPanel = (map, parent) => {
     
     const layers = document.createElement('div')
     layers.id = `${mapContainer.id}-panels-legend-layers`
-    layers.className = 'p-3 d-none border-top'
+    layers.className = `p-3 d-none border-top text-bg-${gerPreferredTheme()}`
     parent.appendChild(layers)
 
+    const clearLegend = () => {
+        layers.innerHTML === ''
+        layers.classList.add('d-none')
+        map.clearLegendLayers()
+
+        for (const tool in legendTools) {
+            const data = legendTools[tool]
+            if (data.disabled) {
+                toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
+            }
+        }    
+    }
+
     const legendTools = {
+        clear: {
+            iconClass: 'bi-trash-fill',
+            title: 'Clear legend layers',
+            disabled: true,
+            btnClickHandler: clearLegend
+        },
+        divider1: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
         collapse: {
             iconClass: 'bi bi-chevron-up',
             title: 'Collapse/expand',
@@ -53,17 +76,10 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layerremove', (e) => {
         const layer = e.layer
         if (map.isLegendLayer(layer)) return
+        
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()
 
-        if (layers.innerHTML === '') {
-            layers.classList.add('d-none')
-            for (const tool in legendTools) {
-                const data = legendTools[tool]
-                if (data.disabled) {
-                    toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
-                }
-            }    
-        }
+        if (layers.innerHTML === '') clearLegend()
     })
 
     map.on('layeradd', (e) => {
@@ -72,7 +88,6 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (!map.isLegendLayer(layer)) return
         
         const paneName = layer.options.pane
-
         let container = layers.querySelector(`#${layers.id}-${paneName}`)
         if (!container) {
             const pane = map.getPane(paneName)
@@ -81,6 +96,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             container = document.createElement('div')
             container.id = `${layers.id}-${paneName}`
             container.setAttribute('data-layer-pane', paneName)
+            container.setAttribute('data-layer-id', layer._leaflet_id)
             container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2'
             layers.insertBefore(container, layers.firstChild)
             
