@@ -12,7 +12,7 @@ const createButton = ({
     iconClass,
     title,
     disabled,
-    clichHandler,
+    clickHandler,
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
@@ -21,7 +21,7 @@ const createButton = ({
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
-    if (clichHandler) btn.addEventListener('click', clichHandler)
+    if (clickHandler) btn.addEventListener('click', clickHandler)
     return btn
 }
 

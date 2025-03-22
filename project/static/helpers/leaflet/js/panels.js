@@ -5,11 +5,50 @@ const handleLeafletLegendPanel = (map, parent) => {
     toolbar.id = `${mapContainer.id}-panels-legend-toolbar`
     toolbar.className = 'd-flex px-3 py-2'
     parent.appendChild(toolbar)
-
+    
     const layers = document.createElement('div')
     layers.id = `${mapContainer.id}-panels-legend-layers`
     layers.className = 'p-3 d-none border-top'
     parent.appendChild(layers)
+
+    const legendTools = {
+        collapse: {
+            iconClass: 'bi bi-chevron-up',
+            title: 'Collapse/expand',
+            disabled: true,
+            btnClickHandler: () => toggleCollapseElements(layers),
+        },
+    }
+
+    Object.keys(legendTools).forEach(toolId => {
+        const data = queryTools[toolId]
+        if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
+
+        const tag = data.tag || 'button'
+        
+        const element = tag !== 'button' ?
+        customCreateElement(tag, data) :
+        createButton({...data,
+            id: `${toolbar.id}-${toolId}`,
+            className:`btn-sm btn-${getPreferredTheme()}`,
+            clickHandler: async (event) => {
+                L.DomEvent.stopPropagation(event);
+                L.DomEvent.preventDefault(event);        
+                
+                const btnClickHandler = data.btnClickHandler 
+                if (btnClickHandler) await btnClickHandler()
+            }
+        })
+
+        if (data.altShortcut) document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key === data.altShortcut) {
+                L.DomEvent.preventDefault(e)
+                element.click()
+            }
+        })        
+        
+        toolbar.appendChild(element)
+    })
 
     map.on('layerremove', (e) => {
         const layer = e.layer
@@ -275,7 +314,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         createButton({...data,
             id: `${toolbar.id}-${newMode}`,
             className:`btn-sm btn-${getPreferredTheme()}`,
-            clichHandler: async (event) => {
+            clickHandler: async (event) => {
                 L.DomEvent.stopPropagation(event);
                 L.DomEvent.preventDefault(event);        
                 
