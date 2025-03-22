@@ -146,6 +146,16 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         })
 
+        let infoTable
+        if (Object.keys(info).length) {
+            infoTable = document.createElement('table')
+            infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
+    
+            const infoTBody = document.createElement('tbody')
+            createObjectTRs(info, infoTBody)
+            infoTable.appendChild(infoTBody)
+        }
+
         Array(geojsonLayer, ...geojsonLayer.getLayers()).forEach(layer => {
             if (controller?.signal.aborted) return
 
@@ -217,7 +227,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 geojson: layer.feature || geojson,
                                 title: layer._title,
-                                attribution: JSON.stringify(info),
+                                attribution: infoTable?.outerHTML,
                                 pane: (() => {
                                     const paneName = generateRandomString()
                                     map.getPane(paneName) || map.createPane(paneName)
@@ -291,17 +301,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             menuToggle.addEventListener('click', checklistContextMenuHandler)
         })
 
-        if (Object.keys(info).length) {
+        if (infoTable) {
             const infoContainer = document.createElement('div')
+            infoContainer.innerHTML = infoTable.outerHTML
             contentCollapse.appendChild(infoContainer)
-            
-            const infoTable = document.createElement('table')
-            infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
-            infoContainer.appendChild(infoTable)
-    
-            const infoTBody = document.createElement('tbody')
-            createObjectTRs(info, infoTBody)
-            infoTable.appendChild(infoTBody)
         }
     }
 
