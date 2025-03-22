@@ -103,6 +103,8 @@ const zoomToLayer = (layer, map, {
     }
 }
 
-const layerStyleToHTML = (style) => {
-    console.log(style)
+const layerStyleToHTML = (style, type) => {
+    return type === 'point' ? style.options?.html : (() => {
+        return JSON.stringify(style)
+    })()
 }

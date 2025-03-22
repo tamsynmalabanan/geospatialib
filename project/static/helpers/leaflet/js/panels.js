@@ -77,26 +77,21 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (group) {
                     group.types[type].count +=1
                 } else {
-                    console.log(featureLayer)
                     const featureLegend = layerLegend.groups && layerLegend.groups[groupId] ? layerLegend.groups[groupId] : layerLegend.default 
                     const styleHandler = featureLegend.style
                     styles[groupId] = {
                         label: featureLegend.label || '', 
-                        types: {
-                            point: {
-                                html: layerStyleToHTML(styleHandler({geometry:{type:'point'}})),
-                                count: 0
-                            },
-                            linestring: {
-                                html: layerStyleToHTML(styleHandler({geometry:{type:'linestring'}})),
-                                count: 0
-                            },
-                            polygon: {
-                                html: layerStyleToHTML(styleHandler({geometry:{type:'polygon'}})),
-                                count: 0
-                            },
-                        }
+                        types: {}
                     }
+                    ['point', 'linestring', 'polygon'].forEach(typeName => {
+                        styles[groupId].types[typeName] = {
+                            count: 0,
+                            html: layerStyleToHTML(
+                                styleHandler({geometry:{type:typeName}}),
+                                typeName
+                            )
+                        }
+                    })
                     styles[groupId].types[type].count +=1
                 }
             })
