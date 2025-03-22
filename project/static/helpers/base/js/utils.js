@@ -105,3 +105,14 @@ const pushURLParams = (url, params) => {
 const formatNumberWithCommas = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+const toggleCollapseElements = (parent) => {
+    const collapseElements = Array.from(parent.querySelectorAll('.collapse'))
+    const hide = collapseElements.some(el => el.classList.contains('show'))
+    collapseElements.forEach(el => {
+        if (el.classList.contains('show') === hide) {
+            const instance = bootstrap.Collapse.getOrCreateInstance(el)
+            hide ? instance.hide() : instance.show()
+        }
+    })
+}

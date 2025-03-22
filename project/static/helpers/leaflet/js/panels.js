@@ -247,16 +247,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Collapse/expand',
             queryHandler: false,
             disabled: true,
-            btnClickHandler: () => {
-                const collapseElements = Array.from(results.querySelectorAll('.collapse'))
-                const hide = collapseElements.some(el => el.classList.contains('show'))
-                collapseElements.forEach(el => {
-                    if (el.classList.contains('show') === hide) {
-                        const instance = bootstrap.Collapse.getOrCreateInstance(el)
-                        hide ? instance.hide() : instance.show()
-                    }
-                })
-            },
+            btnClickHandler: () => toggleCollapseElements(results),
         },
         visibility: {
             iconClass: 'bi bi-eye',
