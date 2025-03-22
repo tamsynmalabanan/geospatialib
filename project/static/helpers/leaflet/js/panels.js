@@ -52,8 +52,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                     if (!layer) return
 
                     if (show) {
+                        console.log(map.hasHiddenLegendLayer(layer))
                         map.hasHiddenLegendLayer(layer)?.showLayer(layer)
                     } else {
+                        console.log(map.hasLegendLayer(layer))
                         map.hasLegendLayer(layer)?.hideLayer(layer)
                     }
                 })
