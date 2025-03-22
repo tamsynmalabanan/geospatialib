@@ -221,6 +221,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
             if (!typeCount) continue
             
             const typeIcon = document.createElement('div')
+            typeIcon.className = 'd-flex align-items-center'
             typeIcon.style.height = '10px'
             typeIcon.style.width = type === 'point' ? '10px' : '16px'
             typeIcon.innerHTML = style.types[type].html
