@@ -38,14 +38,14 @@ const handleLeafletLegendPanel = (map, parent) => {
         legendTitle.appendChild(createSpan(layer._title))
         container.appendChild(legendTitle)
         
+        const toggleContainer = document.createElement('div')
+        toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+        legendTitle.appendChild(toggleContainer)
+        
         const legendDetails = document.createElement('div')
         legendDetails.id = `${container.id}-details`
         legendDetails.className = 'collapse show'
         container.appendChild(legendDetails)
-        
-        const toggleContainer = document.createElement('div')
-        toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-        legendTitle.appendChild(toggleContainer)
 
         const collapseToggle = createIcon({
             parent: toggleContainer,
