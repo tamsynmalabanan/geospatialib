@@ -77,15 +77,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                 
                 const icon = document.createElement('div')
                 icon.className = 'd-flex flex-no-wrap gap-1'
-                layerDetails.appendChild(icon)
+                legendDetails.appendChild(icon)
 
                 const label = document.createElement('div')
-                label.appendChild(createSpan(title ? `${title} ` : '', {id:`${container.id}-details-title`}))
+                label.appendChild(createSpan(title ? `${title} ` : '', {id:`${legendDetails.id}-title`}))
                 label.appendChild(createSpan(
                     `(${Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
-                    {id:`${container.id}-details-count`}
+                    {id:`${legendDetails.id}-count`}
                 ))
-                layerDetails.appendChild(label)
+                legendDetails.appendChild(label)
 
                 for (const type in style) {
                     if (!style[type].count) continue
