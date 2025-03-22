@@ -29,15 +29,18 @@ const handleLeafletLegendPanel = (map, parent) => {
         const container = document.createElement('div')
         container.id = `${layers.id}-${paneName}`
         container.setAttribute('data-layer-pane', paneName)
-        container.className = 'd-flex flex-nowrap gap-3'
+        container.className = 'd-flex flex-nowrap flex-column'
         layers.insertBefore(container, layers.firstChild)
         
         const legendTitle = document.createElement('div')
+        legendTitle.id = `${container.id}-title`
         legendTitle.innerText = layer._title
         container.appendChild(legendTitle)
         
-        const layerDetails = document.createElement('div')
-        container.appendChild(layerDetails)
+        const legendDetails = document.createElement('div')
+        legendDetails.id = `${container.id}-details`
+        legendDetails.className = 'ps-3'
+        container.appendChild(legendDetails)
 
         if (layer instanceof L.GeoJSON) {
             const styles = {}
