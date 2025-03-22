@@ -173,3 +173,53 @@ const getGeoJSONLayerStyles = (layer) => {
 
     return styles
 }
+
+const createGeoJSONLayerLegend = (layer, parent) => {
+    const table = document.createElement('table')
+    table.id = `${parent.id}-table`
+    table.className = removeWhitespace(`
+        table table-sm table-borderless
+        table-${getPreferredTheme()}
+        align-middle
+    `)
+    parent.appendChild(table)
+
+    const tbody = document.createElement('tbody')
+    table.appendChild(tbody)
+
+    const styles = getGeoJSONLayerStyles(layer)
+    for (const id in styles) {
+        const style = styles[id]
+        
+        const tr = document.createElement('tr')
+        tr.id = `${table.id}-${id}`
+        tr.className = 'd-flex flex-nowrap gap-2'
+        tbody.appendChild(tr)
+
+        const icon = document.createElement('td')
+        // icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
+        tr.appendChild(icon)
+
+        const label = document.createElement('td')
+        label.appendChild(createSpan(
+            style.label ? `${style.label} ` : '', 
+            {id:`${tr.id}-title`})
+        )
+        label.appendChild(createSpan(
+            `(${Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
+            {id:`${tr.id}-count`}
+        ))
+        tr.appendChild(label)
+
+        for (const type in style.types) {
+            if (!style.types[type].count) continue
+            
+            const typeIcon = document.createElement('div')
+
+            typeIcon.style.height = type === 'linestring' ? '0px' : '10px'
+            typeIcon.style.width = type === 'point' ? '10px' : '16px'
+            typeIcon.innerHTML = style.types[type].html
+            icon.appendChild(typeIcon) 
+        }
+    }
+}

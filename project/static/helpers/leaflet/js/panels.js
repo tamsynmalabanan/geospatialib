@@ -58,43 +58,10 @@ const handleLeafletLegendPanel = (map, parent) => {
         collapseToggle.setAttribute('aria-controls', legendDetails.id)
         collapseToggle.setAttribute('aria-expanded', 'true')
 
-        if (layer instanceof L.GeoJSON) {
-            const styles = getGeoJSONLayerStyles(layer)
-            for (const id in styles) {
-                const style = styles[id]
-                
-                const groupContainer = document.createElement('div')
-                groupContainer.id = `${legendDetails.id}-${id}`
-                groupContainer.className = 'd-flex flex-nowrap gap-2'
-                legendDetails.appendChild(groupContainer)
-
-                const icon = document.createElement('div')
-                icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
-                groupContainer.appendChild(icon)
-
-                const label = document.createElement('div')
-                label.appendChild(createSpan(
-                    style.label ? `${style.label} ` : '', 
-                    {id:`${groupContainer.id}-title`})
-                )
-                label.appendChild(createSpan(
-                    `(${Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
-                    {id:`${groupContainer.id}-count`}
-                ))
-                groupContainer.appendChild(label)
-
-                for (const type in style.types) {
-                    if (!style.types[type].count) continue
-                    
-                    const typeIcon = document.createElement('div')
-
-                    typeIcon.style.height = type === 'linestring' ? '0px' : '10px'
-                    typeIcon.style.width = type === 'point' ? '10px' : '16px'
-                    typeIcon.innerHTML = style.types[type].html
-                    icon.appendChild(typeIcon) 
-                }
-            }
-        }
+        if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
+            layer, 
+            legendDetails
+        )
     })
 }
 
