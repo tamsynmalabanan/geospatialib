@@ -245,7 +245,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         collapse: {
             iconClass: 'bi bi-chevron-up',
-            title: 'Collapse results',
+            title: 'Collapse/expand',
             queryHandler: false,
             disabled: true,
             btnClickHandler: () => {
@@ -259,19 +259,19 @@ const handleLeafletQueryPanel = (map, parent) => {
                 })
             },
         },
-        // visibility: {
-        //     iconClass: 'bi bi-chevron-up',
-        //     title: 'Collapse results',
-        //     queryHandler: false,
-        //     disabled: true,
-        //     btnClickHandler: () => {
-        //         const shownCollapseElements = results.querySelectorAll('.collapse.show')
-        //         shownCollapseElements.forEach(element => {
-        //             const instance = bootstrap.Collapse.getOrCreateInstance(element)
-        //             instance.hide()
-        //         })
-        //     },
-        // },
+        visibility: {
+            iconClass: 'bi bi-eye',
+            title: 'Toggle visibility',
+            queryHandler: false,
+            disabled: true,
+            btnClickHandler: () => {
+                const checkboxes = results.querySelectorAll('input.form-check-input')
+                const hide = checkboxes.some(el => el.checked)
+                checkboxes.forEach(el => {
+                    if (el.checked === hide) el.click()
+                })
+            },
+        },
     }
 
     Object.keys(queryTools).forEach(newMode => {
