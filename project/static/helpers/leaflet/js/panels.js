@@ -8,7 +8,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     
     const layers = document.createElement('div')
     layers.id = `${mapContainer.id}-panels-legend-layers`
-    layers.className = `p-3 d-none border-top text-bg-${getPreferredTheme()}`
+    layers.className = `p-3 d-none border-top rounded text-bg-${getPreferredTheme()}`
     parent.appendChild(layers)
 
     const clearLegend = () => {
