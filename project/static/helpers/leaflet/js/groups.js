@@ -76,10 +76,7 @@ const handleLeafletLayerGroups = (map) => {
     map.hideLegendLayers = () => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
-            console.log(group.getLayers())
-            group.eachLayer(layer => {
-                console.log(layer)
-            })
+            group.eachLayer(layer => group.hideLayer(layer))
         }
     }
     
