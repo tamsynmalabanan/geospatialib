@@ -39,7 +39,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         const legendDetails = document.createElement('div')
         legendDetails.id = `${container.id}-details`
-        legendDetails.className = 'd-flex flex-nowrap ps-3'
+        legendDetails.className = 'collapse d-flex flex-nowrap ps-3'
         container.appendChild(legendDetails)
 
         if (layer instanceof L.GeoJSON) {
