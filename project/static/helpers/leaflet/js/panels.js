@@ -32,9 +32,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         container.className = 'd-flex flex-nowrap gap-3'
         layers.insertBefore(container, layers.firstChild)
         
-        const layerTitle = document.createElement('div')
-        layerTitle.innerText = layer._title
-        container.appendChild(layerTitle)
+        const legendTitle = document.createElement('div')
+        legendTitle.innerText = layer._title
+        container.appendChild(legendTitle)
+        
+        const layerDetails = document.createElement('div')
+        container.appendChild(layerDetails)
 
         if (layer instanceof L.GeoJSON) {
             const styles = {}
@@ -71,15 +74,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                 
                 const icon = document.createElement('div')
                 icon.className = 'd-flex flex-no-wrap gap-1'
-                container.appendChild(icon)
+                layerDetails.appendChild(icon)
 
                 const label = document.createElement('div')
-                label.appendChild(createSpan(title ? `${title} ` : '', {id:`${container.id}-title`}))
+                label.appendChild(createSpan(title ? `${title} ` : '', {id:`${container.id}-details-title`}))
                 label.appendChild(createSpan(
                     `(${Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
-                    {id:`${container.id}-count`}
+                    {id:`${container.id}-details-count`}
                 ))
-                container.appendChild(label)
+                layerDetails.appendChild(label)
 
                 for (const type in style) {
                     if (!style[type].count) continue
