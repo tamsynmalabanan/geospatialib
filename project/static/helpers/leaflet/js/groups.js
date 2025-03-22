@@ -10,6 +10,12 @@ const handleLeafletLayerGroups = (map) => {
             console.log(layer, layerGroup.getHiddenLayers())
             return layerGroup.getHiddenLayers().includes(layer)
         }
+        layerGroup.getHiddenLayer = (layerId) => {
+            const matches = layerGroup.getHiddenLayers().filter(l => {
+                return l._leaflet_id === layerId
+            })
+            if (matches.length) return matches[0]
+        }
         layerGroup.hideLayer = (layer) => {
             layerGroup._hiddenLayers.push(layer)
             layerGroup.removeLayer(layer)
@@ -41,20 +47,16 @@ const handleLeafletLayerGroups = (map) => {
         }
     }
 
-    // map.getLegendLayers = () => {
-    //     const hiddenLayers = []
-    //     for (const groupName of ['library', 'client']) {
-    //         const group = map.getLayerGroups()[groupName]
-    //         hiddenLayers.concat(group.getHiddenLayers())
-    //     }
-    //     return hiddenLayers
-    // }
-
     map.getLegendLayer = (layerId) => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
-            const layer = group.getLayer(layerId)
-            if (layer) return layer
+            const visibleLayer = group.getLayer(layerId) 
+            const hiddenLayer = group.getHiddenLayer(layerId)
+            if (visibleLayer || hiddenLayer) return {
+                layer: visibleLayer || hiddenLayer,
+                group,
+                hidden: hiddenLayer && !visibleLayer
+            }
         }
     }
     
@@ -71,19 +73,5 @@ const handleLeafletLayerGroups = (map) => {
             hiddenLayers.concat(group.getHiddenLayers())
         }
         return hiddenLayers
-    }
-    
-    map.hideLegendLayers = () => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            group.eachLayer(layer => group.hideLayer(layer))
-        }
-    }
-    
-    map.showLegendLayers = () => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            group.getHiddenLayers().forEach(layer => group.showLayer(layer))
-        }
     }
 }
