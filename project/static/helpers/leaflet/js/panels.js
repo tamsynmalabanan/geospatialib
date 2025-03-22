@@ -48,11 +48,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             btnClickHandler: () => {
                 const show = map.getHiddenLegendLayers().length
                 Array.from(layers.children).forEach(legend => {
-                    const leafletId = legend.getAttribute('data-layer-id')
-                    const layer = map.getLegendLayer(leafletId)
+                    const layer = map.getLegendLayer(legend.dataset.layerId)
                     if (!layer) return
 
-                    show ? map.hasHiddenLegendLayer(layer)?.showLayer(layer) : map.hasLegendLayer(layer)?.hideLayer(layer)
+                    if (show) {
+                        map.hasHiddenLegendLayer(layer)?.showLayer(layer)
+                    } else {
+                        map.hasLegendLayer(layer)?.hideLayer(layer)
+                    }
                 })
             },
         },
@@ -90,7 +93,6 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (e) => {
         const layer = e.layer
-        console.log(map.hasHiddenLegendLayer(layer))
         if (map.hasLegendLayer(layer)) return
         
         layers.querySelector(`[data-layer-pane="${layer.options.pane}"]`)?.remove()

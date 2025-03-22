@@ -16,7 +16,7 @@ const handleLeafletLayerGroups = (map) => {
             if (matches.length) return matches[0]
         }
         layerGroup.hideLayer = (layer) => {
-            layerGroup._hiddenLayers.push(layer)
+            layerGroup._hiddenLayers = [...layerGroup._hiddenLayers, layer]
             layerGroup.removeLayer(layer)
         }
         layerGroup.showLayer = (layer) => {
