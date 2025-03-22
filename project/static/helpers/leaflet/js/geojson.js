@@ -193,7 +193,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         
         const tr = document.createElement('tr')
         tr.id = `${table.id}-${id}`
-        tr.className = 'd-flex flex-nowrap gap-2'
+        tr.className = 'd-flex flex-nowrap'
         tbody.appendChild(tr)
 
         const icon = document.createElement('td')
