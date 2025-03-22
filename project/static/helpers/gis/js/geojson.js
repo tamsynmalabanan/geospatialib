@@ -159,7 +159,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-
         Array(geojsonLayer, ...geojsonLayer.getLayers()).forEach(layer => {
             if (controller?.signal.aborted) return
 
