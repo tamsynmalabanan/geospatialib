@@ -139,22 +139,26 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-        const info = {}
-        Object.keys(geojson).forEach(key => {
-            if (!Array('features', 'type').includes(key)) {
-                info[key] = geojson[key]
-            }
-        })
-
-        let infoTable
-        if (Object.keys(info).length) {
-            infoTable = document.createElement('table')
-            infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
+        const createAttributionTable = () => {
+            const info = {}
+            Object.keys(geojson).forEach(key => {
+                if (!Array('features', 'type').includes(key)) {
+                    info[key] = geojson[key]
+                }
+            })
     
-            const infoTBody = document.createElement('tbody')
-            createObjectTRs(info, infoTBody)
-            infoTable.appendChild(infoTBody)
+            if (Object.keys(info).length) {
+                const infoTable = document.createElement('table')
+                infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
+        
+                const infoTBody = document.createElement('tbody')
+                createObjectTRs(info, infoTBody)
+                infoTable.appendChild(infoTBody)
+
+                return infoTable
+            }
         }
+
 
         Array(geojsonLayer, ...geojsonLayer.getLayers()).forEach(layer => {
             if (controller?.signal.aborted) return
@@ -227,7 +231,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                                 geojson: layer.feature || geojson,
                                 title: layer._title,
-                                attribution: infoTable?.outerHTML,
+                                attribution: createAttributionTable()?.outerHTML?.outerHTML,
                                 pane: (() => {
                                     const paneName = generateRandomString()
                                     map.getPane(paneName) || map.createPane(paneName)
@@ -301,12 +305,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             menuToggle.addEventListener('click', checklistContextMenuHandler)
         })
 
-        if (infoTable) {
-            const infoContainer = document.createElement('div')
-            infoContainer.className = 'd-flex'
-            infoContainer.innerHTML = infoTable.outerHTML
-            contentCollapse.appendChild(infoContainer)
-        }
+
+        const infoContainer = document.createElement('div')
+        infoContainer.className = 'd-flex'
+        infoContainer.innerHTML = createAttributionTable()?.outerHTML
+        contentCollapse.appendChild(infoContainer)
     }
 
     return container
