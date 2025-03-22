@@ -107,7 +107,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 legendDetails.appendChild(groupContainer)
 
                 const icon = document.createElement('div')
-                icon.className = 'd-flex flex-no-wrap gap-1 align-items-center'
+                icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
                 groupContainer.appendChild(icon)
 
                 const label = document.createElement('div')
@@ -116,7 +116,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     {id:`${groupContainer.id}-title`})
                 )
                 label.appendChild(createSpan(
-                    `(${Object.values(style).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
+                    `(${Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)})`, 
                     {id:`${groupContainer.id}-count`}
                 ))
                 groupContainer.appendChild(label)
