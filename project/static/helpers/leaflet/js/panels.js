@@ -2,8 +2,9 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     statusBar = false,
     statusRemark = '',
     clearLayersHandler,
+    toolHandler,
 } = {}) => {
-    const template = {tools:{}}
+    const template = {}
 
     const mapContainer = map.getContainer()
     
@@ -39,14 +40,14 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         template.remark = remark
     }
 
-    template.clearLayers = () => {
+    template.clearLayers = (tools) => {
         layers.innerHTML = ''
         layers.classList.add('d-none')
 
         if (clearLayersHandler) clearLayersHandler()
             
-        for (const tool in template.tools) {
-            const data = template.tools[tool]
+        for (const tool in tools) {
+            const data = tools[tool]
             if (data.disabled) {
                 toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
             }
@@ -59,7 +60,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
     
             const tag = data.tag || 'button'
-            
             const element = tag !== 'button' ?
             customCreateElement(tag, data) :
             createButton({...data,
@@ -69,8 +69,43 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
-                    const btnClickHandler = data.btnClickHandler 
-                    if (btnClickHandler) await btnClickHandler()
+                    const btn = event.target
+                    const currentMode = map._panelMode
+                    const activate = currentMode !== toolId
+                    const mapClickHandler = activate ? data.mapClickHandler : null 
+                    const btnClickHandler = activate ? data.btnClickHandler : null     
+                    const skipToolHandler = !toolHandler || data.toolHandler === false
+
+                    if (activate && currentMode) {
+                        toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
+                    }
+                    
+                    btn.classList.toggle('btn-primary', mapClickHandler)
+                    btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
+                    mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
+                    map._panelMode = mapClickHandler ? toolId : undefined
+    
+                    if (mapClickHandler) {
+                        const panelMapClickHandler = async (e) => {
+                            if (isLeafletControlElement(e.originalEvent.target) || map._panelMode !== toolId) return
+    
+                            map.off('click', panelMapClickHandler)
+                            enableLeafletLayerClick(map)
+                            
+                            skipToolHandler ? await mapClickHandler() : await toolHandler(e, mapClickHandler)
+                            if (btn.classList.contains('btn-primary')) btn.click()
+                        }
+                        
+                        disableLeafletLayerClick(map)
+                        map.on('click', panelMapClickHandler)
+                    } else {
+                        enableLeafletLayerClick(map)
+                        map._events.click = map._events.click?.filter(handler => {
+                            return handler.fn.name !== 'panelMapClickHandler'
+                        })
+                    }
+                    
+                    if (btnClickHandler) skipToolHandler ? await btnClickHandler() : await toolHandler(event, btnClickHandler)
                 }
             })
     
@@ -91,8 +126,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
 }
 
 const handleLeafletLegendPanel = (map, parent) => {
-    let {
-        tools,
+    const {
         toolbar, 
         layers,
         clearLayers,
@@ -101,8 +135,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayersHandler: () => map.clearLegendLayers()
     })
 
-    tools = toolsHandler({
-        ...tools,
+    const tools = toolsHandler({
         collapse: {
             iconClass: 'bi bi-chevron-up',
             title: 'Collapse/expand',
@@ -145,7 +178,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
-            btnClickHandler: clearLayers
+            btnClickHandler: () => clearLayers(tools)
         },
     })
 
@@ -158,7 +191,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
         } else {
             layerLegend.remove()
-            if (layers.innerHTML === '') clearLayers()
+            if (layers.innerHTML === '') clearLayers(tools)
         }
     })
 
@@ -250,17 +283,58 @@ const handleLeafletLegendPanel = (map, parent) => {
 const handleLeafletQueryPanel = (map, parent) => {
     const queryGroup = map.getLayerGroups().query
     const {
-        tools,
         toolbar, 
         layers,
         status,
         spinner,
         remark,
         clearLayers,
+        toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'query', {
         statusBar: true,
         statusRemark: 'Running query...',
-        clearLayersHandler: () => queryGroup.clearLayers()
+        clearLayersHandler: () => queryGroup.clearLayers(),
+        toolHandler: async (e, handler) => {
+            clearLayers(tools)
+            
+            if (typeof handler !== 'function') return
+    
+            const controllerId = resetController().id
+    
+            status.classList.remove('d-none')
+            
+            const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
+            cancelBtn.disabled = false
+            const geojsons = await handler(e)
+            cancelBtn.disabled = true
+            
+            if (controllerId !== controller.id) return
+            
+            if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
+                const defaultFeature = e.latlng ? turf.point(
+                    Object.values(e.latlng).reverse()
+                ) : L.rectangle(map.getBounds()).toGeoJSON()
+                const defaultGeom = defaultFeature.geometry
+    
+                const content = await createGeoJSONChecklist(geojsons, queryGroup, {
+                    defaultGeom,
+                    controller, 
+                    pane: 'queryPane', 
+                    customStyleParams: queryStyleParams, 
+                })
+                layers.appendChild(content)
+            }
+            
+            if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
+                layers.classList.remove('d-none')
+                toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+                
+                toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+                toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
+            }
+            
+            status.classList.add('d-none')
+        }
     })
 
     const queryStyleParams = {
@@ -281,201 +355,95 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
-    const queryHandler = async (e, handler) => {
-        clearLayers()
-        
-        if (typeof handler !== 'function') return
-
-        const controllerId = resetController().id
-
-        status.classList.remove('d-none')
-        
-        const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
-        cancelBtn.disabled = false
-        const geojsons = await handler(e)
-        cancelBtn.disabled = true
-        
-        if (controllerId !== controller.id) return
-        
-        if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-            const defaultFeature = e.latlng ? turf.point(
-                Object.values(e.latlng).reverse()
-            ) : L.rectangle(map.getBounds()).toGeoJSON()
-            const defaultGeom = defaultFeature.geometry
-
-            const content = await createGeoJSONChecklist(geojsons, queryGroup, {
-                defaultGeom,
-                controller, 
-                pane: 'queryPane', 
-                customStyleParams: queryStyleParams, 
-            })
-            layers.appendChild(content)
-        }
-        
-        if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
-            layers.classList.remove('d-none')
-            toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-            
-            toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
-            toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
-        }
-        
-        status.classList.add('d-none')
-    }
+    const tools = toolsHandler({
+        locationCoords: {
+            iconClass: 'bi-geo-alt-fill',
+            title: 'Query point coordinates',
+            altShortcut: 'q',
+            mapClickHandler: async (e) => {
+                const feature = turf.point(Object.values(e.latlng).reverse())
+                
+                const layer = getLeafletGeoJSONLayer({
+                    pane: 'queryPane',
+                    geojson: feature, 
+                    customStyleParams: queryStyleParams,
+                })
+                queryGroup.addLayer(layer)
     
-    tools.locationCoords = {
-        iconClass: 'bi-geo-alt-fill',
-        title: 'Query point coordinates',
-        altShortcut: 'q',
-        mapClickHandler: async (e) => {
-            const feature = turf.point(Object.values(e.latlng).reverse())
-            
-            const layer = getLeafletGeoJSONLayer({
-                pane: 'queryPane',
-                geojson: feature, 
-                customStyleParams: queryStyleParams,
-            })
-            queryGroup.addLayer(layer)
-
-            const content = createPointCoordinatesTable(feature, {precision:6})
-            layers.appendChild(content)
+                const content = createPointCoordinatesTable(feature, {precision:6})
+                layers.appendChild(content)
+            },
         },
-    }
-    tools.osmPoint = {
-        iconClass: 'bi-pin-map-fill',
-        title: 'Query OSM at point',
-        altShortcut: 'w',
-        mapClickHandler: async (e) => await fetchGeoJSONs({
-            'OpenStreetMap via Nominatim': {
-                handler: fetchNominatim,
-                params: [e.latlng, map],
-            },
-            'OpenStreetMap via Overpass': {
-                handler: fetchOverpass,
-                params: [map],
-                options: {latlng:e.latlng},
-            },
-        }, {abortBtns: [getCancelBtn()], controller})
-    }
-    tools.osmView = {
-        iconClass: 'bi-bounding-box-circles',
-        title: 'Query OSM in map view',
-        altShortcut: 'e',
-        btnClickHandler: async (e) => await fetchGeoJSONs({
-            'OpenStreetMap via Overpass': {
-                handler: fetchOverpass,
-                params: [map],
-            },
-        }, {abortBtns: [getCancelBtn()], controller})
-    }
-    tools.layerPoint = {
-        iconClass: 'bi-stack',
-        title: 'Query layers at point',
-    }
-    tools.divider1 = {
-        tag: 'div',
-        className: 'vr m-2',
-    }
-    tools.collapse = {
-        iconClass: 'bi bi-chevron-up',
-        title: 'Collapse/expand',
-        queryHandler: false,
-        disabled: true,
-        btnClickHandler: () => toggleCollapseElements(layers),
-    }
-    tools.visibility = {
-        iconClass: 'bi bi-eye',
-        title: 'Toggle visibility',
-        queryHandler: false,
-        disabled: true,
-        btnClickHandler: () => {
-            const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
-            const hide = checkboxes.some(el => el.checked)
-            checkboxes.forEach(el => {
-                if (el.checked === hide) el.click()
-            })
+        osmPoint: {
+            iconClass: 'bi-pin-map-fill',
+            title: 'Query OSM at point',
+            altShortcut: 'w',
+            mapClickHandler: async (e) => await fetchGeoJSONs({
+                'OpenStreetMap via Nominatim': {
+                    handler: fetchNominatim,
+                    params: [e.latlng, map],
+                },
+                'OpenStreetMap via Overpass': {
+                    handler: fetchOverpass,
+                    params: [map],
+                    options: {latlng:e.latlng},
+                },
+            }, {abortBtns: [getCancelBtn()], controller})
         },
-    }
-    tools.divider2 = {
-        tag: 'div',
-        className: 'vr m-2',
-    }
-    tools.cancel = {
-        iconClass: 'bi-arrow-counterclockwise',
-        title: 'Cancel ongoing query',
-        disabled: true,
-    }
-    tools.clear = {
-        iconClass: 'bi-trash-fill',
-        title: 'Clear query results',
-        disabled: true,
-        btnClickHandler: true
-    }
-
-    Object.keys(tools).forEach(newMode => {
-        const data = tools[newMode]
-        if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
-
-        const tag = data.tag || 'button'
-        
-        const element = tag !== 'button' ?
-        customCreateElement(tag, data) :
-        createButton({...data,
-            id: `${toolbar.id}-${newMode}`,
-            className:`btn-sm btn-${getPreferredTheme()}`,
-            clickHandler: async (event) => {
-                L.DomEvent.stopPropagation(event);
-                L.DomEvent.preventDefault(event);        
-                
-                const btn = event.target
-                const currentMode = map._queryMode
-                const activate = currentMode !== newMode
-                const mapClickHandler = activate ? data.mapClickHandler : null 
-                const btnClickHandler = activate ? data.btnClickHandler : null 
-                
-                if (data.queryHandler === false) return btnClickHandler()
-
-                if (activate && currentMode) {
-                    toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
-                }
-                
-                btn.classList.toggle('btn-primary', mapClickHandler)
-                btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
-                map.getContainer().style.cursor = mapClickHandler ? 'pointer' : ''
-                map._queryMode = mapClickHandler ? newMode : undefined
-                
-                if (mapClickHandler) {
-                    const clickQueryHandler = async (e) => {
-                        if (!isLeafletControlElement(e.originalEvent.target) && map._queryMode === newMode) {
-                            map.off('click', clickQueryHandler)
-                            enableLeafletLayerClick(map)
-                            
-                            await queryHandler(e, mapClickHandler)
-                            if (btn.classList.contains('btn-primary')) btn.click()
-                        }
-                    } 
-                    
-                    disableLeafletLayerClick(map)
-                    map.on('click', clickQueryHandler)
-                } else {
-                    enableLeafletLayerClick(map)
-                    map._events.click = map._events.click?.filter(handler => {
-                        return handler.fn.name !== 'clickQueryHandler'
-                    })
-                }
-                
-                if (btnClickHandler) await queryHandler(event, btnClickHandler)
-            }
-        })
-
-        if (data.altShortcut) document.addEventListener('keydown', (e) => {
-            if (e.altKey && e.key === data.altShortcut) {
-                L.DomEvent.preventDefault(e)
-                element.click()
-            }
-        })        
-        
-        toolbar.appendChild(element)
+        osmView: {
+            iconClass: 'bi-bounding-box-circles',
+            title: 'Query OSM in map view',
+            altShortcut: 'e',
+            btnClickHandler: async (e) => await fetchGeoJSONs({
+                'OpenStreetMap via Overpass': {
+                    handler: fetchOverpass,
+                    params: [map],
+                },
+            }, {abortBtns: [getCancelBtn()], controller})
+        },
+        layerPoint: {
+            iconClass: 'bi-stack',
+            title: 'Query layers at point',
+        },
+        divider1: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        collapse: {
+            iconClass: 'bi bi-chevron-up',
+            title: 'Collapse/expand',
+            toolHandler: false,
+            disabled: true,
+            btnClickHandler: () => toggleCollapseElements(layers),
+        },
+        visibility: {
+            iconClass: 'bi bi-eye',
+            title: 'Toggle visibility',
+            toolHandler: false,
+            disabled: true,
+            btnClickHandler: () => {
+                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
+                const hide = checkboxes.some(el => el.checked)
+                checkboxes.forEach(el => {
+                    if (el.checked === hide) el.click()
+                })
+            },
+        },
+        divider2: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        cancel: {
+            iconClass: 'bi-arrow-counterclockwise',
+            title: 'Cancel ongoing query',
+            disabled: true,
+        },
+        clear: {
+            iconClass: 'bi-trash-fill',
+            title: 'Clear query results',
+            disabled: true,
+            btnClickHandler: true
+        },
     })
 }
 
