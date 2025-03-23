@@ -25,21 +25,25 @@ const handleLeafletLegendPanel = (map, parent) => {
     }
 
     const legendTools = {
-        clear: {
-            iconClass: 'bi-trash-fill',
-            title: 'Clear legend layers',
-            disabled: true,
-            btnClickHandler: clearLegend
-        },
-        divider1: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
         collapse: {
             iconClass: 'bi bi-chevron-up',
             title: 'Collapse/expand',
             disabled: true,
             btnClickHandler: () => toggleCollapseElements(layers),
+        },
+        toggleLegends: {
+            iconClass: 'bi bi-list-task',
+            title: 'Toggle layer legends',
+            disabled: true,
+            btnClickHandler: () => {
+                const legendElements = layers.querySelectorAll(`#${layers.id}-details`)
+                const show = Array.from(legendElements).some(el => el.classList.contains('d-none'))
+                legendElements.forEach(el =>  el.classList.toggle('d-none', !show))
+            },
+        },
+        divider1: {
+            tag: 'div',
+            className: 'vr m-2',
         },
         visibility: {
             iconClass: 'bi bi-eye',
@@ -50,6 +54,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                 map.showLegendLayers() : 
                 map.hideLegendLayers()
             },
+        },
+        clear: {
+            iconClass: 'bi-trash-fill',
+            title: 'Clear legend layers',
+            disabled: true,
+            btnClickHandler: clearLegend
         },
     }
 
@@ -171,9 +181,12 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')
-            toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-            toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
-            toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
+            for (const tool in legendTools) {
+                const data = legendTools[tool]
+                if (data.disabled) {
+                    toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = false
+                }
+            }        
         }
     })
 }
