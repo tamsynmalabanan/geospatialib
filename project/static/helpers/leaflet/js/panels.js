@@ -177,7 +177,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             container.id = `${layers.id}-${paneName}`
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
-            container.className = 'd-flex flex-nowrap flex-column gap-1 p-3'
+            container.className = 'd-flex flex-nowrap flex-column gap-1 p-3 pb-0'
             layers.insertBefore(container, layers.firstChild)
             
             const legendTitle = document.createElement('div')
@@ -310,7 +310,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 pane: 'queryPane', 
                 customStyleParams: queryStyleParams, 
             })
-            content.classList.add('p-3')
+            content.classList.add('p-3', 'pb-0')
             layers.appendChild(content)
         }
         
@@ -340,7 +340,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             queryGroup.addLayer(layer)
 
             const content = createPointCoordinatesTable(feature, {precision:6})
-            content.classList.add('p-3')
+            content.classList.add('p-3', 'pb-0')
             layers.appendChild(content)
         },
     }
