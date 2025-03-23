@@ -33,7 +33,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         },
         toggleLegends: {
             iconClass: 'bi bi-list-task',
-            title: 'Toggle layer legends',
+            title: 'Toggle legends',
             disabled: true,
             btnClickHandler: () => {
                 const legendElements = Array.from(layers.children).map(container => {
@@ -45,7 +45,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         },
         toggleAttribution: {
             iconClass: 'bi bi-c-circle',
-            title: 'Toggle layer attributions',
+            title: 'Toggle attributions',
             disabled: true,
             btnClickHandler: () => {
                 const attrElements = Array.from(layers.children).map(container => {
