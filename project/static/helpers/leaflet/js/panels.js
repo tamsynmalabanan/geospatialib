@@ -3,7 +3,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-legend-toolbar`
-    toolbar.className = 'd-flex px-3 py-2'
+    toolbar.className = 'd-flex px-3 py-2 flex-wrap'
     parent.appendChild(toolbar)
     
     const layers = document.createElement('div')
@@ -211,13 +211,13 @@ const handleLeafletQueryPanel = (map, parent) => {
     
     const toolbar = document.createElement('div')
     toolbar.id = `${mapContainer.id}-panels-query-toolbar`
-    toolbar.className = 'd-flex px-3 py-2'
+    toolbar.className = 'd-flex px-3 py-2 flex-wrap'
     parent.appendChild(toolbar)
     
-    const results = document.createElement('div')
-    results.id = `${mapContainer.id}-panels-query-results`
-    results.className = 'p-3 d-none border-top flex-grow-1 overflow-auto'
-    parent.appendChild(results)
+    const layers = document.createElement('div')
+    layers.id = `${mapContainer.id}-panels-query-layers`
+    layers.className = 'p-3 d-none border-top flex-grow-1 overflow-auto'
+    parent.appendChild(layers)
     
     const status = document.createElement('div')
     status.id = `${mapContainer.id}-panels-query-status`
@@ -252,7 +252,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
  
-    const clearResults = () => {
+    const clearQuery = () => {
         for (const tool in queryTools) {
             const data = queryTools[tool]
             if (data.disabled) {
@@ -260,13 +260,13 @@ const handleLeafletQueryPanel = (map, parent) => {
             }
         }
         
-        results.classList.add('d-none')
-        results.innerHTML = ''
+        layers.classList.add('d-none')
+        layers.innerHTML = ''
         queryGroup.clearLayers()        
     }
 
     const queryHandler = async (e, handler) => {
-        clearResults()
+        clearQuery()
         
         if (typeof handler !== 'function') return
 
@@ -293,11 +293,11 @@ const handleLeafletQueryPanel = (map, parent) => {
                 pane: 'queryPane', 
                 customStyleParams: queryStyleParams, 
             })
-            results.appendChild(content)
+            layers.appendChild(content)
         }
         
-        if (results.innerHTML !== '' || queryGroup.getLayers().length > 0) {
-            results.classList.remove('d-none')
+        if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
+            layers.classList.remove('d-none')
             toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
             
             toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
@@ -323,7 +323,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 queryGroup.addLayer(layer)
 
                 const content = createPointCoordinatesTable(feature, {precision:6})
-                results.appendChild(content)
+                layers.appendChild(content)
             },
         },
         osmPoint: {
@@ -366,7 +366,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Collapse/expand',
             queryHandler: false,
             disabled: true,
-            btnClickHandler: () => toggleCollapseElements(results),
+            btnClickHandler: () => toggleCollapseElements(layers),
         },
         visibility: {
             iconClass: 'bi bi-eye',
@@ -374,7 +374,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             queryHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                const checkboxes = Array.from(results.querySelectorAll('input.form-check-input'))
+                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
                 const hide = checkboxes.some(el => el.checked)
                 checkboxes.forEach(el => {
                     if (el.checked === hide) el.click()
