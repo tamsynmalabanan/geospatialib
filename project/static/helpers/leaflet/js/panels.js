@@ -177,7 +177,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             container.id = `${layers.id}-${paneName}`
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
-            container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2 p-3'
+            container.className = 'd-flex flex-nowrap flex-column gap-1 p-3'
             layers.insertBefore(container, layers.firstChild)
             
             const legendTitle = document.createElement('div')
