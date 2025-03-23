@@ -80,11 +80,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         iconClass: 'bi bi-list-task',
         title: 'Toggle legends',
         disabled: true,
-        btnClickHandler: () => {
-            const legendElements = Array.from(layers.children)
-            const show = legendElements.some(el => el.classList.contains('d-none'))
-            legendElements.forEach(el =>  el.classList.toggle('d-none', !show))
-        },
+        btnClickHandler: () => layers.classList.toggle('d-none'),
     }
     tools.toggleAttribution = {
         iconClass: 'bi bi-c-circle',
