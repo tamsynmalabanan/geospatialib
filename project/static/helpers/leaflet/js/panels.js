@@ -200,14 +200,14 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (!map.hasLegendLayer(layer)) return
         
-        const paneName = layer.options.pane
-        let container = layers.querySelector(`#${layers.id}-${paneName}`)
+        let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
+            const paneName = layer.options.pane
             const pane = map.getPane(paneName)
             pane.style.zIndex = layers.children.length + 200
 
             container = document.createElement('div')
-            container.id = `${layers.id}-${paneName}`
+            container.id = `${layers.id}-${layer._leaflet_id}`
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
             container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2'
