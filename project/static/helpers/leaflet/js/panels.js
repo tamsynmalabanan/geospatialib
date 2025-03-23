@@ -54,14 +54,45 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     }
 
     template.toolsHandler = () => {
-
+        const tools = template.tools
+        Object.keys(tools).forEach(toolId => {
+            const data = tools[toolId]
+            if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
+    
+            const tag = data.tag || 'button'
+            
+            const element = tag !== 'button' ?
+            customCreateElement(tag, data) :
+            createButton({...data,
+                id: `${toolbar.id}-${toolId}`,
+                className:`btn-sm btn-${getPreferredTheme()}`,
+                clickHandler: async (event) => {
+                    L.DomEvent.stopPropagation(event);
+                    L.DomEvent.preventDefault(event);        
+                    
+                    const btnClickHandler = data.btnClickHandler 
+                    if (btnClickHandler) await btnClickHandler()
+                }
+            })
+    
+            if (data.altShortcut) document.addEventListener('keydown', (e) => {
+                if (e.altKey && e.key === data.altShortcut) {
+                    L.DomEvent.preventDefault(e)
+                    element.click()
+                }
+            })        
+            
+            toolbar.appendChild(element)
+        })
+    
+        return tools
     }
 
     return template
 }
 
 const handleLeafletLegendPanel = (map, parent) => {
-    const {
+    let {
         tools,
         toolbar, 
         layers,
@@ -71,79 +102,52 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayersHandler: () => map.clearLegendLayers()
     })
 
-    tools.collapse = {
-        iconClass: 'bi bi-chevron-up',
-        title: 'Collapse/expand',
-        disabled: true,
-        btnClickHandler: () => toggleCollapseElements(layers),
-    }
-    tools.toggleLegends = {
-        iconClass: 'bi bi-list-task',
-        title: 'Toggle legends',
-        disabled: true,
-        btnClickHandler: () => layers.classList.toggle('d-none'),
-    }
-    tools.toggleAttribution = {
-        iconClass: 'bi bi-c-circle',
-        title: 'Toggle attributions',
-        disabled: true,
-        btnClickHandler: () => {
-            const attrElements = Array.from(layers.children).map(container => {
-                return container.querySelector(`#${container.id}-attribution`)
-            })
-            const show = attrElements.some(el => el.classList.contains('d-none'))
-            attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
+    tools = toolsHandler({
+        ...tools,
+        collapse: {
+            iconClass: 'bi bi-chevron-up',
+            title: 'Collapse/expand',
+            disabled: true,
+            btnClickHandler: () => toggleCollapseElements(layers),
         },
-    }
-    tools.divider1 = {
-        tag: 'div',
-        className: 'vr m-2',
-    }
-    tools.visibility = {
-        iconClass: 'bi bi-eye',
-        title: 'Toggle visibility',
-        disabled: true,
-        btnClickHandler: () => {
-            map.hasHiddenLegendLayers() ? 
-            map.showLegendLayers() : 
-            map.hideLegendLayers()
+        toggleLegends: {
+            iconClass: 'bi bi-list-task',
+            title: 'Toggle legends',
+            disabled: true,
+            btnClickHandler: () => layers.classList.toggle('d-none'),
         },
-    }
-    tools.clear = {
-        iconClass: 'bi-trash-fill',
-        title: 'Clear legend layers',
-        disabled: true,
-        btnClickHandler: clearLayers
-    }
-
-    Object.keys(tools).forEach(toolId => {
-        const data = tools[toolId]
-        if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
-
-        const tag = data.tag || 'button'
-        
-        const element = tag !== 'button' ?
-        customCreateElement(tag, data) :
-        createButton({...data,
-            id: `${toolbar.id}-${toolId}`,
-            className:`btn-sm btn-${getPreferredTheme()}`,
-            clickHandler: async (event) => {
-                L.DomEvent.stopPropagation(event);
-                L.DomEvent.preventDefault(event);        
-                
-                const btnClickHandler = data.btnClickHandler 
-                if (btnClickHandler) await btnClickHandler()
-            }
-        })
-
-        if (data.altShortcut) document.addEventListener('keydown', (e) => {
-            if (e.altKey && e.key === data.altShortcut) {
-                L.DomEvent.preventDefault(e)
-                element.click()
-            }
-        })        
-        
-        toolbar.appendChild(element)
+        toggleAttribution: {
+            iconClass: 'bi bi-c-circle',
+            title: 'Toggle attributions',
+            disabled: true,
+            btnClickHandler: () => {
+                const attrElements = Array.from(layers.children).map(container => {
+                    return container.querySelector(`#${container.id}-attribution`)
+                })
+                const show = attrElements.some(el => el.classList.contains('d-none'))
+                attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
+            },
+        },
+        divider1: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        visibility: {
+            iconClass: 'bi bi-eye',
+            title: 'Toggle visibility',
+            disabled: true,
+            btnClickHandler: () => {
+                map.hasHiddenLegendLayers() ? 
+                map.showLegendLayers() : 
+                map.hideLegendLayers()
+            },
+        },
+        clear: {
+            iconClass: 'bi-trash-fill',
+            title: 'Clear legend layers',
+            disabled: true,
+            btnClickHandler: clearLayers
+        },
     })
 
     map.on('layerremove', (e) => {
