@@ -310,7 +310,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 pane: 'queryPane', 
                 customStyleParams: queryStyleParams, 
             })
-            content.classList.add('p-3', 'pb-0')
+            content.classList.add('p-3')
             layers.appendChild(content)
         }
         
@@ -340,7 +340,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             queryGroup.addLayer(layer)
 
             const content = createPointCoordinatesTable(feature, {precision:6})
-            content.classList.add('p-3', 'pb-0')
+            content.classList.add('p-3')
             layers.appendChild(content)
         },
     }
