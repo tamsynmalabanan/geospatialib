@@ -24,6 +24,20 @@ const handleLeafletLayerGroups = (map) => {
             layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => l !== layer)
             layerGroup.addLayer(layer)
         }
+        layerGroup.getBounds = () => {
+            const bounds = [
+                ...layerGroup.getLayers(), 
+                ...layerGroup.getHiddenLayers()
+            ].map(layer => {
+                if (layer.getBounds) {
+                    return L.rectangle(layer.getBounds()).toGeoJSON()
+                }
+            }).filter(bound => bound)
+
+            if (bounds.length) {
+                return L.geoJSON(turf.featureCollection(bounds)).getBounds()
+            }
+        }
 
         map.addLayer(layerGroup)
     })
@@ -88,6 +102,20 @@ const handleLeafletLayerGroups = (map) => {
             const group = map.getLayerGroups()[groupName]
             group._hiddenLayers.forEach(l => group.addLayer(l))
             group._hiddenLayers = []
+        }
+    }
+
+    map.zoomToLegendLayers = () => {
+        const bounds = ['library', 'client'].map(groupName => {
+            const group = map.getLayerGroups()[groupName]
+            const bounds = group.getBounds()
+            if (bounds) {
+                return L.rectangle(bounds).toGeoJSON()
+            }
+        }).filter(bound => bound)
+
+        if (bounds.length) {
+            return L.geoJSON(turf.featureCollection(bounds)).getBounds()
         }
     }
 }

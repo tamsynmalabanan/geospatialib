@@ -136,6 +136,16 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 
     const tools = toolsHandler({
+        zoomin: {
+            iconClass: 'bi bi-zoom-in',
+            title: 'Zoom to layers',
+            disabled: true,
+            btnClickHandler: () => map.zoomToLegendLayers(),
+        },
+        divider1: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
         collapse: {
             iconClass: 'bi bi-chevron-up',
             title: 'Collapse/expand',
@@ -160,7 +170,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
             },
         },
-        divider1: {
+        divider2: {
             tag: 'div',
             className: 'vr m-2',
         },
