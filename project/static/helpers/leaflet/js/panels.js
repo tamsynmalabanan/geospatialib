@@ -1,84 +1,128 @@
-const handleLeafletLegendPanel = (map, parent) => {
+const createLeafletMapPanelTemplate = (map, parent, name, {
+    statusBar = false,
+    statusRemark = '',
+    clearLayersHandler,
+} = {}) => {
+    const template = {}
+
+    const tools = {}
+    template.tools = tools
+
     const mapContainer = map.getContainer()
     
     const toolbar = document.createElement('div')
-    toolbar.id = `${mapContainer.id}-panels-legend-toolbar`
+    toolbar.id = `${mapContainer.id}-panels-${name}-toolbar`
     toolbar.className = 'd-flex px-3 py-2 flex-wrap'
     parent.appendChild(toolbar)
+    template.toolbar = toolbar
     
     const layers = document.createElement('div')
-    layers.id = `${mapContainer.id}-panels-legend-layers`
+    layers.id = `${mapContainer.id}-panels-${name}-layers`
     layers.className = `p-3 d-none border-top rounded text-bg-${getPreferredTheme()}`
     parent.appendChild(layers)
+    template.layers = layers
+    
+    if (statusBar) {
+        const status = document.createElement('div')
+        status.id = `${mapContainer.id}-panels-${name}-status`
+        status.className = 'p-3 border-top d-flex gap-2 flex-nowrap d-none'
+        parent.appendChild(status)
+        template.status = status
+        
+        const spinner = document.createElement('div')
+        spinner.id = `${mapContainer.id}-panels-${name}-spinner`
+        spinner.className = 'spinner-border spinner-border-sm'
+        spinner.setAttribute('role', 'status')
+        status.appendChild(spinner)
+        template.spinner = spinner
+        
+        const remark = document.createElement('div')
+        remark.innerText = statusRemark
+        status.appendChild(remark)
+        template.remark = remark
+    }
 
-    const clearLegend = () => {
+    const clearLayers = () => {
         layers.innerHTML = ''
         layers.classList.add('d-none')
-        map.clearLegendLayers()
 
-        for (const tool in legendTools) {
-            const data = legendTools[tool]
+        if (clearLayersHandler) clearLayersHandler()
+            
+        for (const tool in tools) {
+            const data = tools[tool]
             if (data.disabled) {
                 toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
             }
         }    
     }
+    template.clearLayers = clearLayers
 
-    const legendTools = {
-        collapse: {
-            iconClass: 'bi bi-chevron-up',
-            title: 'Collapse/expand',
-            disabled: true,
-            btnClickHandler: () => toggleCollapseElements(layers),
-        },
-        toggleLegends: {
-            iconClass: 'bi bi-list-task',
-            title: 'Toggle legends',
-            disabled: true,
-            btnClickHandler: () => {
-                const legendElements = Array.from(layers.children).map(container => {
-                    return container.querySelector(`#${container.id}-details`)
-                })
-                const show = legendElements.some(el => el.classList.contains('d-none'))
-                legendElements.forEach(el =>  el.classList.toggle('d-none', !show))
-            },
-        },
-        toggleAttribution: {
-            iconClass: 'bi bi-c-circle',
-            title: 'Toggle attributions',
-            disabled: true,
-            btnClickHandler: () => {
-                const attrElements = Array.from(layers.children).map(container => {
-                    return container.querySelector(`#${container.id}-attribution`)
-                })
-                const show = attrElements.some(el => el.classList.contains('d-none'))
-                attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
-            },
-        },
-        divider1: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
-        visibility: {
-            iconClass: 'bi bi-eye',
-            title: 'Toggle visibility',
-            disabled: true,
-            btnClickHandler: () => {
-                map.hasHiddenLegendLayers() ? 
-                map.showLegendLayers() : 
-                map.hideLegendLayers()
-            },
-        },
-        clear: {
-            iconClass: 'bi-trash-fill',
-            title: 'Clear legend layers',
-            disabled: true,
-            btnClickHandler: clearLegend
+    return template
+}
+
+const handleLeafletLegendPanel = (map, parent) => {
+    const {
+        tools,
+        toolbar, 
+        layers,
+        clearLayers,
+    } = createLeafletMapPanelTemplate(map, parent, 'legend', {
+        clearLayersHandler: () => map.clearLegendLayers()
+    })
+
+    tools.collapse = {
+        iconClass: 'bi bi-chevron-up',
+        title: 'Collapse/expand',
+        disabled: true,
+        btnClickHandler: () => toggleCollapseElements(layers),
+    }
+    tools.toggleLegends = {
+        iconClass: 'bi bi-list-task',
+        title: 'Toggle legends',
+        disabled: true,
+        btnClickHandler: () => {
+            const legendElements = Array.from(layers.children).map(container => {
+                return container.querySelector(`#${container.id}-details`)
+            })
+            const show = legendElements.some(el => el.classList.contains('d-none'))
+            legendElements.forEach(el =>  el.classList.toggle('d-none', !show))
         },
     }
+    tools.toggleAttribution = {
+        iconClass: 'bi bi-c-circle',
+        title: 'Toggle attributions',
+        disabled: true,
+        btnClickHandler: () => {
+            const attrElements = Array.from(layers.children).map(container => {
+                return container.querySelector(`#${container.id}-attribution`)
+            })
+            const show = attrElements.some(el => el.classList.contains('d-none'))
+            attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
+        },
+    }
+    tools.divider1 = {
+        tag: 'div',
+        className: 'vr m-2',
+    }
+    tools.visibility = {
+        iconClass: 'bi bi-eye',
+        title: 'Toggle visibility',
+        disabled: true,
+        btnClickHandler: () => {
+            map.hasHiddenLegendLayers() ? 
+            map.showLegendLayers() : 
+            map.hideLegendLayers()
+        },
+    }
+    tools.clear = {
+        iconClass: 'bi-trash-fill',
+        title: 'Clear legend layers',
+        disabled: true,
+        btnClickHandler: clearLayers
+    }
 
-    Object.keys(legendTools).forEach(toolId => {
-        const data = legendTools[toolId]
+    Object.keys(tools).forEach(toolId => {
+        const data = tools[toolId]
         if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
 
         const tag = data.tag || 'button'
@@ -116,7 +160,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
         } else {
             layerLegend.remove()
-            if (layers.innerHTML === '') clearLegend()
+            if (layers.innerHTML === '') clearLayers()
         }
     })
 
@@ -195,8 +239,8 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')
-            for (const tool in legendTools) {
-                const data = legendTools[tool]
+            for (const tool in tools) {
+                const data = tools[tool]
                 if (data.disabled) {
                     toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = false
                 }
@@ -206,33 +250,21 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
-    const mapContainer = map.getContainer()
-    const queryGroup = map.getLayerGroups().query
-    
-    const toolbar = document.createElement('div')
-    toolbar.id = `${mapContainer.id}-panels-query-toolbar`
-    toolbar.className = 'd-flex px-3 py-2 flex-wrap'
-    parent.appendChild(toolbar)
-    
-    const layers = document.createElement('div')
-    layers.id = `${mapContainer.id}-panels-query-layers`
-    layers.className = 'p-3 d-none border-top flex-grow-1 overflow-auto'
-    parent.appendChild(layers)
-    
-    const status = document.createElement('div')
-    status.id = `${mapContainer.id}-panels-query-status`
-    status.className = 'p-3 border-top d-flex gap-2 flex-nowrap d-none'
-    parent.appendChild(status)
-    
-    const spinner = document.createElement('div')
-    spinner.id = `${mapContainer.id}-panels-query-spinner`
-    spinner.className = 'spinner-border spinner-border-sm'
-    spinner.setAttribute('role', 'status')
-    status.appendChild(spinner)
+    const {
+        tools,
+        toolbar, 
+        layers,
+        status,
+        spinner,
+        remark,
+        clearLayers,
+    } = createLeafletMapPanelTemplate(map, parent, 'query', {
+        statusBar: true,
+        statusRemark: 'Running query...',
+        clearLayersHandler: () => queryGroup.clearLayers()
+    })
 
-    const remark = document.createElement('div')
-    remark.innerText = 'Running query...'
-    status.appendChild(remark)
+    const queryGroup = map.getLayerGroups().query
 
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
@@ -251,22 +283,9 @@ const handleLeafletQueryPanel = (map, parent) => {
     resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
- 
-    const clearQuery = () => {
-        for (const tool in queryTools) {
-            const data = queryTools[tool]
-            if (data.disabled) {
-                toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
-            }
-        }
-        
-        layers.classList.add('d-none')
-        layers.innerHTML = ''
-        queryGroup.clearLayers()        
-    }
 
     const queryHandler = async (e, handler) => {
-        clearQuery()
+        clearLayers()
         
         if (typeof handler !== 'function') return
 
@@ -307,99 +326,97 @@ const handleLeafletQueryPanel = (map, parent) => {
         status.classList.add('d-none')
     }
     
-    const queryTools = {
-        locationCoords: {
-            iconClass: 'bi-geo-alt-fill',
-            title: 'Query point coordinates',
-            altShortcut: 'q',
-            mapClickHandler: async (e) => {
-                const feature = turf.point(Object.values(e.latlng).reverse())
-                
-                const layer = getLeafletGeoJSONLayer({
-                    pane: 'queryPane',
-                    geojson: feature, 
-                    customStyleParams: queryStyleParams,
-                })
-                queryGroup.addLayer(layer)
+    tools.locationCoords = {
+        iconClass: 'bi-geo-alt-fill',
+        title: 'Query point coordinates',
+        altShortcut: 'q',
+        mapClickHandler: async (e) => {
+            const feature = turf.point(Object.values(e.latlng).reverse())
+            
+            const layer = getLeafletGeoJSONLayer({
+                pane: 'queryPane',
+                geojson: feature, 
+                customStyleParams: queryStyleParams,
+            })
+            queryGroup.addLayer(layer)
 
-                const content = createPointCoordinatesTable(feature, {precision:6})
-                layers.appendChild(content)
-            },
-        },
-        osmPoint: {
-            iconClass: 'bi-pin-map-fill',
-            title: 'Query OSM at point',
-            altShortcut: 'w',
-            mapClickHandler: async (e) => await fetchGeoJSONs({
-                'OpenStreetMap via Nominatim': {
-                    handler: fetchNominatim,
-                    params: [e.latlng, map],
-                },
-                'OpenStreetMap via Overpass': {
-                    handler: fetchOverpass,
-                    params: [map],
-                    options: {latlng:e.latlng},
-                },
-            }, {abortBtns: [getCancelBtn()], controller})
-        },
-        osmView: {
-            iconClass: 'bi-bounding-box-circles',
-            title: 'Query OSM in map view',
-            altShortcut: 'e',
-            btnClickHandler: async (e) => await fetchGeoJSONs({
-                'OpenStreetMap via Overpass': {
-                    handler: fetchOverpass,
-                    params: [map],
-                },
-            }, {abortBtns: [getCancelBtn()], controller})
-        },
-        layerPoint: {
-            iconClass: 'bi-stack',
-            title: 'Query layers at point',
-        },
-        divider1: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
-        collapse: {
-            iconClass: 'bi bi-chevron-up',
-            title: 'Collapse/expand',
-            queryHandler: false,
-            disabled: true,
-            btnClickHandler: () => toggleCollapseElements(layers),
-        },
-        visibility: {
-            iconClass: 'bi bi-eye',
-            title: 'Toggle visibility',
-            queryHandler: false,
-            disabled: true,
-            btnClickHandler: () => {
-                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
-                const hide = checkboxes.some(el => el.checked)
-                checkboxes.forEach(el => {
-                    if (el.checked === hide) el.click()
-                })
-            },
-        },
-        divider2: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
-        cancel: {
-            iconClass: 'bi-arrow-counterclockwise',
-            title: 'Cancel ongoing query',
-            disabled: true,
-        },
-        clear: {
-            iconClass: 'bi-trash-fill',
-            title: 'Clear query results',
-            disabled: true,
-            btnClickHandler: true
+            const content = createPointCoordinatesTable(feature, {precision:6})
+            layers.appendChild(content)
         },
     }
+    tools.osmPoint = {
+        iconClass: 'bi-pin-map-fill',
+        title: 'Query OSM at point',
+        altShortcut: 'w',
+        mapClickHandler: async (e) => await fetchGeoJSONs({
+            'OpenStreetMap via Nominatim': {
+                handler: fetchNominatim,
+                params: [e.latlng, map],
+            },
+            'OpenStreetMap via Overpass': {
+                handler: fetchOverpass,
+                params: [map],
+                options: {latlng:e.latlng},
+            },
+        }, {abortBtns: [getCancelBtn()], controller})
+    }
+    tools.osmView = {
+        iconClass: 'bi-bounding-box-circles',
+        title: 'Query OSM in map view',
+        altShortcut: 'e',
+        btnClickHandler: async (e) => await fetchGeoJSONs({
+            'OpenStreetMap via Overpass': {
+                handler: fetchOverpass,
+                params: [map],
+            },
+        }, {abortBtns: [getCancelBtn()], controller})
+    }
+    tools.layerPoint = {
+        iconClass: 'bi-stack',
+        title: 'Query layers at point',
+    }
+    tools.divider1 = {
+        tag: 'div',
+        className: 'vr m-2',
+    }
+    tools.collapse = {
+        iconClass: 'bi bi-chevron-up',
+        title: 'Collapse/expand',
+        queryHandler: false,
+        disabled: true,
+        btnClickHandler: () => toggleCollapseElements(layers),
+    }
+    tools.visibility = {
+        iconClass: 'bi bi-eye',
+        title: 'Toggle visibility',
+        queryHandler: false,
+        disabled: true,
+        btnClickHandler: () => {
+            const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
+            const hide = checkboxes.some(el => el.checked)
+            checkboxes.forEach(el => {
+                if (el.checked === hide) el.click()
+            })
+        },
+    }
+    tools.divider2 = {
+        tag: 'div',
+        className: 'vr m-2',
+    }
+    tools.cancel = {
+        iconClass: 'bi-arrow-counterclockwise',
+        title: 'Cancel ongoing query',
+        disabled: true,
+    }
+    tools.clear = {
+        iconClass: 'bi-trash-fill',
+        title: 'Clear query results',
+        disabled: true,
+        btnClickHandler: true
+    }
 
-    Object.keys(queryTools).forEach(newMode => {
-        const data = queryTools[newMode]
+    Object.keys(tools).forEach(newMode => {
+        const data = tools[newMode]
         if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
 
         const tag = data.tag || 'button'
@@ -427,7 +444,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 
                 btn.classList.toggle('btn-primary', mapClickHandler)
                 btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
-                mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
+                map.getContainer().style.cursor = mapClickHandler ? 'pointer' : ''
                 map._queryMode = mapClickHandler ? newMode : undefined
                 
                 if (mapClickHandler) {
