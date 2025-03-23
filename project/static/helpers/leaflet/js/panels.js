@@ -45,7 +45,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         },
         toggleAttribution: {
             iconClass: 'bi bi-c-circle',
-            title: 'Toggle layer attribution',
+            title: 'Toggle layer attributions',
             disabled: true,
             btnClickHandler: () => {
                 const attrElements = Array.from(layers.children).map(container => {
