@@ -3,10 +3,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     statusRemark = '',
     clearLayersHandler,
 } = {}) => {
-    const template = {}
-
-    const tools = {}
-    template.tools = tools
+    const template = {tools:{}}
 
     const mapContainer = map.getContainer()
     
@@ -42,20 +39,23 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         template.remark = remark
     }
 
-    const clearLayers = () => {
+    template.clearLayers = () => {
         layers.innerHTML = ''
         layers.classList.add('d-none')
 
         if (clearLayersHandler) clearLayersHandler()
             
-        for (const tool in tools) {
-            const data = tools[tool]
+        for (const tool in template.tools) {
+            const data = template.tools[tool]
             if (data.disabled) {
                 toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
             }
         }    
     }
-    template.clearLayers = clearLayers
+
+    template.toolsHandler = () => {
+
+    }
 
     return template
 }
@@ -66,6 +66,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         toolbar, 
         layers,
         clearLayers,
+        toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
         clearLayersHandler: () => map.clearLegendLayers()
     })
@@ -244,6 +245,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
+    const queryGroup = map.getLayerGroups().query
     const {
         tools,
         toolbar, 
@@ -257,8 +259,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         statusRemark: 'Running query...',
         clearLayersHandler: () => queryGroup.clearLayers()
     })
-
-    const queryGroup = map.getLayerGroups().query
 
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
