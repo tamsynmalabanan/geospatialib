@@ -37,6 +37,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: () => {
                 const legendElements = layers.querySelectorAll(`#${layers.id}-details`)
+                console.log(legendElements)
                 const show = Array.from(legendElements).some(el => el.classList.contains('d-none'))
                 legendElements.forEach(el =>  el.classList.toggle('d-none', !show))
             },
