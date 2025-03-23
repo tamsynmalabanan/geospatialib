@@ -53,8 +53,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         }    
     }
 
-    template.toolsHandler = () => {
-        const tools = template.tools
+    template.toolsHandler = (tools) => {
         Object.keys(tools).forEach(toolId => {
             const data = tools[toolId]
             if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
