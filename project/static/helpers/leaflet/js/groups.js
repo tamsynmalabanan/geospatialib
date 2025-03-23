@@ -115,7 +115,7 @@ const handleLeafletLayerGroups = (map) => {
         }).filter(bound => bound)
 
         if (bounds.length) {
-            return L.geoJSON(turf.featureCollection(bounds)).getBounds()
+            map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
         }
     }
 }
