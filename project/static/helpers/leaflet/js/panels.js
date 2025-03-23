@@ -81,9 +81,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         title: 'Toggle legends',
         disabled: true,
         btnClickHandler: () => {
-            const legendElements = Array.from(layers.children).map(container => {
-                return container.querySelector(`#${container.id}-details`)
-            })
+            const legendElements = Array.from(layers.children)
             const show = legendElements.some(el => el.classList.contains('d-none'))
             legendElements.forEach(el =>  el.classList.toggle('d-none', !show))
         },
