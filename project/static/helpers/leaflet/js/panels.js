@@ -51,7 +51,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         template.error = error
 
         const errorIcon = document.createElement('div')
-        errorIcon.className = 'bi bi-bug'
+        errorIcon.className = 'bi bi-exclamation-triangle-fill'
         error.appendChild(errorIcon)
         
         const errorRemarkDiv = document.createElement('div')
