@@ -216,8 +216,8 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
-    map.on('layerremove', (e) => {
-        const layer = e.layer
+    map.on('layerremove', (event) => {
+        const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
 
@@ -229,8 +229,8 @@ const handleLeafletLegendPanel = (map, parent) => {
         }
     })
 
-    map.on('layeradd', (e) => {
-        const layer = e.layer
+    map.on('layeradd', (event) => {
+        const layer = event.layer
         
         if (!map.hasLegendLayer(layer)) return
         
@@ -290,7 +290,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                 className: 'bi bi-three-dots'
             })
             menuToggle.style.cursor = 'pointer'
-            // menuToggle.addEventListener('click', checklistContextMenuHandler)
+            // menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
+            //     e.x && e.y ? e : e.originalEvent, layer, map, map.getLayerGroup(layer), {
+            //         checkbox,
+            //         checkboxArray: Array.from(container.querySelectorAll('input.form-check-input')),
+            //         geojson
+            //     }
+            // ))
             
             if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
                 layer, 

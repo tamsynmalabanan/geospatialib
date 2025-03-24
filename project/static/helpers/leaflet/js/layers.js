@@ -156,11 +156,12 @@ const getLeafletLayerType = (layer) => {
     if (layer instanceof L.GeoJSON) return 'geojson'
 }
 
-const getLeafletLayerContextMenu = (e, layer, map, group, {
+const getLeafletLayerContextMenu = (e, layer, map, {
     checkbox,
     checkboxArray,
     layerArray,
     geojson,
+    group = map.getLayerGroup(layer),
 } = {}) => {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'

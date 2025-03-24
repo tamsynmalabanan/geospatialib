@@ -3,7 +3,8 @@ const handleLeafletLayerGroups = (map) => {
     Array('library', 'client', 'query').forEach(group => {
         const layerGroup = L.layerGroup()
         map._layerGroups[group] = layerGroup
- 
+        layerGroup._name = group
+
         layerGroup._hiddenLayers = []
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
         layerGroup.hasHiddenLayer = (layer) => {
@@ -45,8 +46,11 @@ const handleLeafletLayerGroups = (map) => {
     map.getLayerGroups = () => map._layerGroups 
 
     map.getLayerGroup = (layer) => {
-        const groups = Object.values(layerGroups).filter(group => group.hasLayer(layer) || group.hasHiddenLayer(layer)) 
-        return groups.length ? groups[0] : null
+        for (const group of Object.values(map.getLayerGroups())) {
+            if (group.hasLayer(layer) || group.hasHiddenLayer(layer)) {
+                return group
+            }
+        }
     }
 
     const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
