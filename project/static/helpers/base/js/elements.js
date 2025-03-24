@@ -376,7 +376,7 @@ const createFormCheck = ({
     inputClass = ''
 } = {}) => {
     const formCheck = document.createElement('div')
-    formCheck.className = 'form-check d-flex gap-2'
+    formCheck.className = `form-check ${formCheckClass}`
     parent?.appendChild(formCheck)
     
     const input = document.createElement('input')
