@@ -182,6 +182,16 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
                         if (c.checked) c.click()
                     } else {
                         group.removeLayer(l)
+                        if (l._eventParents) {
+                            Object.values(l._eventParents).forEach(p => {
+                                if (p._checkbox) {
+                                    document.querySelector(
+                                        p._checkbox
+                                    ).checked = p.getLayers().some(f => group.hasLayer(f))
+    
+                                }
+                            })
+                        }
                     }
                 })
 
