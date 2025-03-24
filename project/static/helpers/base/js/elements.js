@@ -373,7 +373,8 @@ const createFormCheck = ({
     inputValue = '',
     inputId =  generateRandomString(),
     labelInnerText = '',
-    inputClass = ''
+    inputClass = '',
+    formCheckClass = '',
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check ${formCheckClass}`
