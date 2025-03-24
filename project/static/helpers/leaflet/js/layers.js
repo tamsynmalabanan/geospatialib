@@ -287,9 +287,9 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 layer._title
             )
         },
-        remove: checkbox ? null : {
+        remove: checkbox || checkboxArray ? null : {
             innerText: `Remove ${typeLabel}`,
-            btnCallback: () => removeLayer(layer)
+            btnCallback: () => group.removeLayer(layer)
         }
     })
 }
