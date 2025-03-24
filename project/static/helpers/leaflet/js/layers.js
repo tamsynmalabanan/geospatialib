@@ -195,7 +195,7 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
         },
-        isolate: (!layerArray && !checkboxArray) || checkbox?.disabled ? null : {
+        isolate: (!layerArray && !checkboxArray) || (checkbox && checkbox.disabled) ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
                 checkboxArray?.forEach(c => {
@@ -258,22 +258,21 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
         divider2: {
             divider: true,
         },
-        // legend: checkbox?.disabled ? null : {
-        //     innerText: 'Add to legend',
-        //     btnCallback: () => {
-        //         map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
-        //             geojson: feature || geojson,
-        //             title: layer._title,
-        //             attribution: createAttributionTable()?.outerHTML,
-        //             pane: (() => {
-        //                 const paneName = generateRandomString()
-        //                 map.getPane(paneName) || map.createPane(paneName)
-        //                 return paneName
-        //             })(),
-        //             // customStyleParams,
-        //         }))
-        //     }
-        // },
+        legend: !checkbox || checkbox.disabled ? null : {
+            innerText: 'Add to legend',
+            btnCallback: () => {
+                map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
+                    geojson: feature || geojson,
+                    title: layer._title,
+                    attribution: createAttributionTable()?.outerHTML,
+                    pane: (() => {
+                        const paneName = generateRandomString()
+                        map.getPane(paneName) || map.createPane(paneName)
+                        return paneName
+                    })(),
+                }))
+            }
+        },
         // download: {
         //     innerText: 'Download GeoJSON',
         //     btnCallback: () => downloadGeoJSON(feature || geojson, layer._title)
