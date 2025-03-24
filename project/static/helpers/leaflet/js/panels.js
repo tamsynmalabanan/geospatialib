@@ -357,8 +357,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     pane: 'queryPane', 
                     customStyleParams: queryStyleParams, 
                 })
-                console.log(content)
-                spinner.classList.add('d-none')
                 if (content) {
                     layers.appendChild(content)
                 } else {
@@ -366,9 +364,11 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
             }
             
+            spinner.classList.add('d-none')
+            
             if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
                 layers.classList.remove('d-none')
-            
+                
                 Array(
                     'clear',
                     'collapse',
