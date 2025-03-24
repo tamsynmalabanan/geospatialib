@@ -56,7 +56,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         
         const errorRemarkDiv = document.createElement('div')
         errorRemarkDiv.innerText = errorRemark
-        spinner.appendChild(spinnerRemarkDiv)    
+        error.appendChild(errorRemarkDiv)    
     }
 
     template.clearLayers = (tools) => {
