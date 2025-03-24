@@ -159,152 +159,156 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-        for (const layer of Array(geojsonLayer, ...geojsonLayer.getLayers())) {
-            if (controller?.signal.aborted) return
-    
-            const checkbox = geojsonContainer.querySelector(layer._checkbox)
-    
-            const type = layer.feature ? 'feature' : 'layer'
-            const checklistContextMenuHandler = (e) => contextMenuHandler(
-                e.x && e.y ? e : e.originalEvent,
-                {
-                    zoomin: {
-                        innerText: `Zoom to ${type}`,
-                        btnCallback: () => zoomToLayer(layer, map)
-                    },
-                    isolate: checkbox?.disabled ? null : {
-                        innerText: `Isolate ${type}`,
-                        btnCallback: () => {
-                            Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
-                                if (checkbox.checked) checkbox.click()
-                            })
-    
-                            if (checkbox) {
-                                checkbox.click()
-                            } else {
-                                parentCheck.checked = true
-                                group.addLayer(layer)
+        try {
+            for (const layer of Array(geojsonLayer, ...geojsonLayer.getLayers())) {
+                if (controller?.signal.aborted) return
+        
+                const checkbox = geojsonContainer.querySelector(layer._checkbox)
+        
+                const type = layer.feature ? 'feature' : 'layer'
+                const checklistContextMenuHandler = (e) => contextMenuHandler(
+                    e.x && e.y ? e : e.originalEvent,
+                    {
+                        zoomin: {
+                            innerText: `Zoom to ${type}`,
+                            btnCallback: () => zoomToLayer(layer, map)
+                        },
+                        isolate: checkbox?.disabled ? null : {
+                            innerText: `Isolate ${type}`,
+                            btnCallback: () => {
+                                Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
+                                    if (checkbox.checked) checkbox.click()
+                                })
+        
+                                if (checkbox) {
+                                    checkbox.click()
+                                } else {
+                                    parentCheck.checked = true
+                                    group.addLayer(layer)
+                                }
                             }
-                        }
-                    },
-                    hide: e.x && e.y ? null : {
-                        innerText: `Hide ${type}`,
-                        btnCallback: () => {
-                            if (checkbox) {
-                                if (checkbox.checked) checkbox.click()
-                            } else {
-                                group.removeLayer(layer)
-                                parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
+                        },
+                        hide: e.x && e.y ? null : {
+                            innerText: `Hide ${type}`,
+                            btnCallback: () => {
+                                if (checkbox) {
+                                    if (checkbox.checked) checkbox.click()
+                                } else {
+                                    group.removeLayer(layer)
+                                    parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
+                                }
                             }
-                        }
-                    },
-                    showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
-                        innerText: `Show properties`,
-                        btnCallback: () => {
-                            zoomToLayer(layer, map)
-                            if (checkbox && !checkbox.checked) checkbox.click()
-                            layer.fire('click')
-                        }
-                    },
-                    divider1: !layer.feature ? null : {
-                        divider: true,
-                    },
-                    copyFeature: !layer.feature ? null : {
-                        innerText: 'Copy feature',
-                        btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
-                    },
-                    copyProperties: !layer.feature ? null : {
-                        innerText: 'Copy properties',
-                        btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
-                    },
-                    copyGeometry: !layer.feature ? null : {
-                        innerText: 'Copy geometry',
-                        btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
-                    },
-                    divider2: {
-                        divider: true,
-                    },
-                    legend: checkbox?.disabled ? null : {
-                        innerText: 'Add to legend',
-                        btnCallback: () => {
-                            map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
-                                geojson: layer.feature || geojson,
-                                title: layer._title,
-                                attribution: createAttributionTable()?.outerHTML,
-                                pane: (() => {
-                                    const paneName = generateRandomString()
-                                    map.getPane(paneName) || map.createPane(paneName)
-                                    return paneName
-                                })(),
-                                // customStyleParams,
-                            }))
-                        }
-                    },
-                    download: {
-                        innerText: 'Download GeoJSON',
-                        btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
-                    },
-                }
-            )
-            
-            if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
-    
-            if (!checkbox) continue
-    
-            checkbox._leafletLayer = layer
-            checkbox.setAttribute('data-geojson-type', type)
-    
-            checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
-            checkbox.addEventListener('click', (e) => {
-                const isChecked = e.target.checked
-                isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-    
-                if (layer.feature) {
-                    Object.values(layer._eventParents).forEach(parentLayer => {
-                        const checkboxSelector = parentLayer._checkbox
-                        if (!checkboxSelector) return
-                        
-                        const checked = isChecked ? true : Array.from(
-                            geojsonContainer.querySelectorAll('input.form-check-input')
-                        ).filter(i => `#${i.id}` !== checkboxSelector).some(i => i.checked)
-                        
-                        geojsonContainer.querySelector(checkboxSelector).checked = checked
-                        if (!checked) group.removeLayer(parentLayer)
+                        },
+                        showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
+                            innerText: `Show properties`,
+                            btnCallback: () => {
+                                zoomToLayer(layer, map)
+                                if (checkbox && !checkbox.checked) checkbox.click()
+                                layer.fire('click')
+                            }
+                        },
+                        divider1: !layer.feature ? null : {
+                            divider: true,
+                        },
+                        copyFeature: !layer.feature ? null : {
+                            innerText: 'Copy feature',
+                            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
+                        },
+                        copyProperties: !layer.feature ? null : {
+                            innerText: 'Copy properties',
+                            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
+                        },
+                        copyGeometry: !layer.feature ? null : {
+                            innerText: 'Copy geometry',
+                            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
+                        },
+                        divider2: {
+                            divider: true,
+                        },
+                        legend: checkbox?.disabled ? null : {
+                            innerText: 'Add to legend',
+                            btnCallback: () => {
+                                map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
+                                    geojson: layer.feature || geojson,
+                                    title: layer._title,
+                                    attribution: createAttributionTable()?.outerHTML,
+                                    pane: (() => {
+                                        const paneName = generateRandomString()
+                                        map.getPane(paneName) || map.createPane(paneName)
+                                        return paneName
+                                    })(),
+                                    // customStyleParams,
+                                }))
+                            }
+                        },
+                        download: {
+                            innerText: 'Download GeoJSON',
+                            btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
+                        },
+                    }
+                )
+                
+                if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
+        
+                if (!checkbox) continue
+        
+                checkbox._leafletLayer = layer
+                checkbox.setAttribute('data-geojson-type', type)
+        
+                checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
+                checkbox.addEventListener('click', (e) => {
+                    const isChecked = e.target.checked
+                    isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+        
+                    if (layer.feature) {
+                        Object.values(layer._eventParents).forEach(parentLayer => {
+                            const checkboxSelector = parentLayer._checkbox
+                            if (!checkboxSelector) return
+                            
+                            const checked = isChecked ? true : Array.from(
+                                geojsonContainer.querySelectorAll('input.form-check-input')
+                            ).filter(i => `#${i.id}` !== checkboxSelector).some(i => i.checked)
+                            
+                            geojsonContainer.querySelector(checkboxSelector).checked = checked
+                            if (!checked) group.removeLayer(parentLayer)
+                        })
+                    } else {
+                        layer.eachLayer(featureLayer => {
+                            isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                            
+                            if (!featureLayer._checkbox) return
+                            geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
+                        })
+                    }
+                })
+        
+                const toggleContainer = document.createElement('div')
+                toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+                checkbox.parentElement.appendChild(toggleContainer)    
+        
+                if (!layer.feature && typeof layer.getLayers === 'function') {
+                    const contentToggle = createIcon({
+                        parent: toggleContainer,
+                        peNone: false,
+                        className: 'dropdown-toggle'
                     })
-                } else {
-                    layer.eachLayer(featureLayer => {
-                        isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
-                        
-                        if (!featureLayer._checkbox) return
-                        geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
-                    })
+                    contentToggle.style.cursor = 'pointer'
+                    contentToggle.setAttribute('data-bs-toggle', 'collapse')
+                    contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+                    contentToggle.setAttribute('aria-controls', contentCollapse.id)
+                    contentToggle.setAttribute('aria-expanded', 'false')        
                 }
-            })
-    
-            const toggleContainer = document.createElement('div')
-            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-            checkbox.parentElement.appendChild(toggleContainer)    
-    
-            if (!layer.feature && typeof layer.getLayers === 'function') {
-                const contentToggle = createIcon({
+        
+                const menuToggle = createIcon({
                     parent: toggleContainer,
                     peNone: false,
-                    className: 'dropdown-toggle'
+                    className: 'bi bi-three-dots'
                 })
-                contentToggle.style.cursor = 'pointer'
-                contentToggle.setAttribute('data-bs-toggle', 'collapse')
-                contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
-                contentToggle.setAttribute('aria-controls', contentCollapse.id)
-                contentToggle.setAttribute('aria-expanded', 'false')        
+                menuToggle.style.cursor = 'pointer'
+                menuToggle.addEventListener('click', checklistContextMenuHandler)
             }
-    
-            const menuToggle = createIcon({
-                parent: toggleContainer,
-                peNone: false,
-                className: 'bi bi-three-dots'
-            })
-            menuToggle.style.cursor = 'pointer'
-            menuToggle.addEventListener('click', checklistContextMenuHandler)
+        } catch {
+            return
         }
 
         const infoContainer = document.createElement('div')
