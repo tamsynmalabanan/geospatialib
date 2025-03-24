@@ -337,7 +337,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             if (layers.innerHTML !== '') {
                 layers.classList.remove('d-none')
-                for (const tool in tools) {
+                for (const tool in ['zoomin', 'visibility', 'collapse', 'clear']) {
                     const data = tools[tool]
                     if (data.disabled) {
                         toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = false
@@ -436,7 +436,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: () => {
                 const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input[data-geojson-type="layer"]'))
-                checkboxes.forEach(checkbox => console.log(checkbox))
+                console.log(checkboxes)
             },
         },
         visibility: {
