@@ -373,6 +373,7 @@ const createFormCheck = ({
     inputValue = '',
     inputId =  generateRandomString(),
     labelInnerText = '',
+    inputClass = ''
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = 'form-check d-flex gap-2'
@@ -380,7 +381,7 @@ const createFormCheck = ({
     
     const input = document.createElement('input')
     input.id = inputId
-    input.className = 'form-check-input'
+    input.className = `form-check-input ${inputClass}`
     input.setAttribute('type', 'checkbox')
     input.value = inputValue
     formCheck.appendChild(input)

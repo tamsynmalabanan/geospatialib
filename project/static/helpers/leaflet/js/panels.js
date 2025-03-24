@@ -426,7 +426,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Zoom to layers',
             disabled: true,
             btnClickHandler: () => {
-                
+                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
+                checkboxes.forEach(checkbox => console.log(checkbox.leafletLayer))
             },
         },
         visibility: {
@@ -435,7 +436,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             toolHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
+                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input[data-geojson-type="layer"]'))
                 const hide = checkboxes.some(el => el.checked)
                 checkboxes.forEach(el => {
                     if (el.checked === hide) el.click()

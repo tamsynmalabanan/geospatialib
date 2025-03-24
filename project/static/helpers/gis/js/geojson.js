@@ -252,6 +252,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             if (!checkbox) return
 
             checkbox.leafletLayer = layer
+            checkbox.setAttribute('data-geojson-type', type)
 
             checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
             checkbox.addEventListener('click', (e) => {
