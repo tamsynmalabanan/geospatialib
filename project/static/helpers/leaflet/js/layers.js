@@ -164,6 +164,31 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
 
+    const addLayer = (l) => {
+        group.addLayer(l)
+        if (l._eventParents) {
+            Object.values(l._eventParents).forEach(p => {
+                if (p._checkbox) {
+                    document.querySelector(p._checkbox).checked = true
+                }
+            })
+        }
+    }
+
+    const removeLayer = (l) => {
+        group.removeLayer(l)
+        if (l._eventParents) {
+            Object.values(l._eventParents).forEach(p => {
+                if (p._checkbox) {
+                    document.querySelector(
+                        p._checkbox
+                    ).checked = p.getLayers().some(f => group.hasLayer(f))
+
+                }
+            })
+        }
+    }
+
     return contextMenuHandler(e, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
@@ -181,31 +206,14 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
                         const c = document.querySelector(l._checkbox)
                         if (c.checked) c.click()
                     } else {
-                        group.removeLayer(l)
-                        if (l._eventParents) {
-                            Object.values(l._eventParents).forEach(p => {
-                                if (p._checkbox) {
-                                    document.querySelector(
-                                        p._checkbox
-                                    ).checked = p.getLayers().some(f => group.hasLayer(f))
-    
-                                }
-                            })
-                        }
+                        removeLayer(l)
                     }
                 })
 
                 if (checkbox) {
                     checkbox.click()
                 } else {
-                    group.addLayer(layer)
-                    if (layer._eventParents) {
-                        Object.values(layer._eventParents).forEach(l => {
-                            if (l._checkbox) {
-                                document.querySelector(l._checkbox).checked = true
-                            }
-                        })
-                    }
+                    addLayer(layer)
                 }
             }
         },
@@ -215,27 +223,22 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
                 if (checkbox) {
                     if (checkbox.checked) checkbox.click()
                 } else {
-                    group.removeLayer(layer)
-                    if (layer._eventParents) {
-                        Object.values(layer._eventParents).forEach(l => {
-                            if (l._checkbox) {
-                                document.querySelector(
-                                    l._checkbox
-                                ).checked = l.getLayers().some(f => group.hasLayer(f))
-                            }
-                        })
-                    }
+                    removeLayer(layer)
                 }
             }
         },
-        // showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
-        //     innerText: `Show properties`,
-        //     btnCallback: () => {
-        //         zoomToLeafletLayer(layer, map)
-        //         if (checkbox && !checkbox.checked) checkbox.click()
-        //         layer.fire('click')
-        //     }
-        // },
+        showProperties: type !== 'feature' || !Object.keys(layer.feature.properties).length ? null : {
+            innerText: `Show properties`,
+            btnCallback: () => {
+                zoomToLeafletLayer(layer, map)
+                if (checkbox) {
+                    if (!checkbox.checked) checkbox.click()
+                } else {
+                    if (!group.hasLayer(layer)) addLayer(layer)
+                }
+                layer.fire('click')
+            }
+        },
         // divider1: !layer.feature ? null : {
         //     divider: true,
         // },
