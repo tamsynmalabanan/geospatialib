@@ -168,11 +168,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const checklistContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
                 {
-                    'zoomin': {
+                    zoomin: {
                         innerText: `Zoom to ${type}`,
                         btnCallback: () => zoomToLayer(layer, map)
                     },
-                    'isolate': checkbox?.disabled ? null : {
+                    isolate: checkbox?.disabled ? null : {
                         innerText: `Isolate ${type}`,
                         btnCallback: () => {
                             Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
@@ -187,7 +187,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             }
                         }
                     },
-                    'hide': e.x && e.y ? null : {
+                    hide: e.x && e.y ? null : {
                         innerText: `Hide ${type}`,
                         btnCallback: () => {
                             if (checkbox) {
@@ -198,7 +198,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             }
                         }
                     },
-                    'showProperties': !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
+                    showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
                         innerText: `Show properties`,
                         btnCallback: () => {
                             zoomToLayer(layer, map)
@@ -206,25 +206,25 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             layer.fire('click')
                         }
                     },
-                    'divider1': !layer.feature ? null : {
+                    divider1: !layer.feature ? null : {
                         divider: true,
                     },
-                    'copyFeature': !layer.feature ? null : {
+                    copyFeature: !layer.feature ? null : {
                         innerText: 'Copy feature',
                         btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
                     },
-                    'copyProperties': !layer.feature ? null : {
+                    copyProperties: !layer.feature ? null : {
                         innerText: 'Copy properties',
                         btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
                     },
-                    'copyGeometry': !layer.feature ? null : {
+                    copyGeometry: !layer.feature ? null : {
                         innerText: 'Copy geometry',
                         btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
                     },
-                    'divider2': {
+                    divider2: {
                         divider: true,
                     },
-                    'legend': checkbox?.disabled ? null : {
+                    legend: checkbox?.disabled ? null : {
                         innerText: 'Add to legend',
                         btnCallback: () => {
                             map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
@@ -240,7 +240,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             }))
                         }
                     },
-                    'download': {
+                    download: {
                         innerText: 'Download GeoJSON',
                         btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
                     },
@@ -250,6 +250,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
 
             if (!checkbox) return
+
+            checkbox.leafletLayer = layer
 
             checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
             checkbox.addEventListener('click', (e) => {
@@ -303,7 +305,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', checklistContextMenuHandler)
         })
-
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
