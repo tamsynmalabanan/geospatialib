@@ -31,7 +31,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         
         const spinner = document.createElement('div')
         spinner.id = `${status.id}-spinner`
-        spinner.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex'
+        spinner.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
         status.appendChild(spinner)
         template.spinner = spinner
 
@@ -46,12 +46,12 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
         const error = document.createElement('div')
         error.id = `${status.id}-error`
-        error.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex'
+        error.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
         status.appendChild(error)
         template.error = error
 
         const errorIcon = document.createElement('div')
-        errorIcon.className = 'bi bi-exclamation-triangle-fill'
+        errorIcon.className = 'bi bi-exclamation-triangle-fill fs-6'
         error.appendChild(errorIcon)
         
         const errorRemarkDiv = document.createElement('div')
