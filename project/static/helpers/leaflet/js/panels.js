@@ -16,7 +16,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
     const layers = document.createElement('div')
     layers.id = `${mapContainer.id}-panels-${name}-layers`
-    layers.className = `flex-grow-1 overfow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
+    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
     parent.appendChild(layers)
     template.layers = layers
     
