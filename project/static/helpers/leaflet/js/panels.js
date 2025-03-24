@@ -73,8 +73,8 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         }    
 
         if (statusBar) {
-            spinner.classList.add('d-none')
-            error.classList.add('d-none')
+            parent.querySelector(`#${baseId}-status-spinner`).classList.add('d-none')
+            parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
         }
     }
 
