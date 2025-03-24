@@ -292,6 +292,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
                 e.x && e.y ? e : e.originalEvent, layer, map, {
+                    hideLayer: true,
                 }
             ))
             

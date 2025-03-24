@@ -162,6 +162,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     layerArray = map.getLegendLayers(),
     geojson,
     group = map.getLayerGroup(layer),
+    hideLayer = false
 } = {}) => {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
@@ -169,8 +170,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
 
     
     const addLayer = (l) => {
-        console.log(group)
-        group.addLayer(l)
+        group.showLayer(layer)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -180,9 +180,8 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         }
     }
     
-    const removeLayer = (l) => {
-        console.log(group)
-        group.removeLayer(l)
+    const removeLayer = (l, hidden=false) => {
+        hidden ? group.hideLayer(layer) : group.removeLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -212,7 +211,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                         const c = document.querySelector(l._checkbox)
                         if (c.checked) c.click()
                     } else {
-                        removeLayer(l)
+                        removeLayer(l, hideLayer)
                     }
                 })
 
@@ -229,7 +228,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 if (checkbox) {
                     if (checkbox.checked) checkbox.click()
                 } else {
-                    removeLayer(layer)
+                    removeLayer(layer, hideLayer)
                 }
             }
         },
