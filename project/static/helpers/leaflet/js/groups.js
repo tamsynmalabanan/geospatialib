@@ -16,12 +16,16 @@ const handleLeafletLayerGroups = (map) => {
             })
             if (matches.length) return matches[0]
         }
+
+        layerGroup.removeHiddenLayer = (layer) => {
+            layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => l !== layer)
+        }
         layerGroup.hideLayer = (layer) => {
             layerGroup._hiddenLayers = [...new Set([...layerGroup._hiddenLayers, layer])]
             layerGroup.removeLayer(layer)
         }
         layerGroup.showLayer = (layer) => {
-            layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => l !== layer)
+            layerGroup.removeHiddenLayer(layer)
             layerGroup.addLayer(layer)
         }
         layerGroup.getBounds = () => {

@@ -221,17 +221,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
         
-        const handler = () => {
-            layer.off('remove', handler)
-            if (map.hasLegendLayer(layer)) {
-                layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
-            } else {
-                layerLegend.remove()
-                if (layers.innerHTML === '') clearLayers(tools)
-            }
+        if (map.hasLegendLayer(layer)) {
+            layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
+        } else {
+            layerLegend.remove()
+            if (layers.innerHTML === '') clearLayers(tools)
         }
-
-        layer?.on('remove', handler)
     })
 
     map.on('layeradd', (event) => {
