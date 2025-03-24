@@ -425,7 +425,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi bi-zoom-in',
             title: 'Zoom to layers',
             disabled: true,
-            // btnClickHandler: () => map.zoomToLegendLayers(),
+            btnClickHandler: () => map.fitBounds(queryGroup.getBounds()),
         },
         visibility: {
             iconClass: 'bi bi-eye',
