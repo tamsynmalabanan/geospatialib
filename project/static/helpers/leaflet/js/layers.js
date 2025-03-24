@@ -179,8 +179,9 @@ const getLeafletLayerContextMenu = (e, layer, map, {
             })
         }
     }
-
+    
     const removeLayer = (l) => {
+        console.log(group)
         group.removeLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
