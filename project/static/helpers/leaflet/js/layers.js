@@ -274,9 +274,9 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
                 }))
             }
         },
-        // download: {
-        //     innerText: 'Download GeoJSON',
-        //     btnCallback: () => downloadGeoJSON(feature || geojson, layer._title)
-        // },
+        download: !feature && !geojson ? null : {
+            innerText: 'Download GeoJSON',
+            btnCallback: () => downloadGeoJSON(feature || geojson, layer._title)
+        },
     })
 }
