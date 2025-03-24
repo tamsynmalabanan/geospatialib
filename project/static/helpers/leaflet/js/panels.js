@@ -434,10 +434,11 @@ const handleLeafletQueryPanel = (map, parent) => {
         zoomin: {
             iconClass: 'bi bi-zoom-in',
             title: 'Zoom to layers',
+            toolHandler: false,
             disabled: true,
             btnClickHandler: () => {
                 const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input[data-geojson-type="layer"]'))
-                console.log(checkboxes)
+                checkboxes.forEach(checkbox => console.log(checkbox._leafletLayer))
             },
         },
         visibility: {
