@@ -358,6 +358,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     customStyleParams: queryStyleParams, 
                 })
                 console.log(content)
+                spinner.classList.add('d-none')
                 if (content) {
                     layers.appendChild(content)
                 } else {
@@ -375,8 +376,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     'zoomin',
                 ).forEach(toolName => toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false)
             }
-                
-            spinner.classList.add('d-none')
         }
     })
 
