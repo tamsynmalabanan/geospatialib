@@ -332,7 +332,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     pane: 'queryPane', 
                     customStyleParams: queryStyleParams, 
                 })
-                layers.appendChild(content)
+                if (content) layers.appendChild(content)
             }
             
             if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
