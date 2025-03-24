@@ -163,6 +163,7 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
 } = {}) => {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
+    const feature = layer.feature
 
     const addLayer = (l) => {
         group.addLayer(l)
@@ -227,7 +228,7 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
                 }
             }
         },
-        showProperties: type !== 'feature' || !Object.keys(layer.feature.properties).length ? null : {
+        showProperties: !feature || !Object.keys(feature.properties).length ? null : {
             innerText: `Show properties`,
             btnCallback: () => {
                 zoomToLeafletLayer(layer, map)
@@ -239,29 +240,29 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
                 layer.fire('click')
             }
         },
-        // divider1: !layer.feature ? null : {
-        //     divider: true,
-        // },
-        // copyFeature: !layer.feature ? null : {
-        //     innerText: 'Copy feature',
-        //     btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
-        // },
-        // copyProperties: !layer.feature ? null : {
-        //     innerText: 'Copy properties',
-        //     btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
-        // },
-        // copyGeometry: !layer.feature ? null : {
-        //     innerText: 'Copy geometry',
-        //     btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
-        // },
-        // divider2: {
-        //     divider: true,
-        // },
+        divider1: !feature ? null : {
+            divider: true,
+        },
+        copyFeature: !feature ? null : {
+            innerText: 'Copy feature',
+            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature))
+        },
+        copyProperties: !feature ? null : {
+            innerText: 'Copy properties',
+            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.properties))
+        },
+        copyGeometry: !feature ? null : {
+            innerText: 'Copy geometry',
+            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
+        },
+        divider2: {
+            divider: true,
+        },
         // legend: checkbox?.disabled ? null : {
         //     innerText: 'Add to legend',
         //     btnCallback: () => {
         //         map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
-        //             geojson: layer.feature || geojson,
+        //             geojson: feature || geojson,
         //             title: layer._title,
         //             attribution: createAttributionTable()?.outerHTML,
         //             pane: (() => {
@@ -275,7 +276,7 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
         // },
         // download: {
         //     innerText: 'Download GeoJSON',
-        //     btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
+        //     btnCallback: () => downloadGeoJSON(feature || geojson, layer._title)
         // },
     })
 }
