@@ -188,7 +188,6 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                     document.querySelector(
                         p._checkbox
                     ).checked = p.getLayers().some(f => group.hasLayer(f))
-
                 }
             })
         }
@@ -288,5 +287,9 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 layer._title
             )
         },
+        remove: checkbox ? null : {
+            innerText: `Remove ${typeLabel}`,
+            btnCallback: () => removeLayer(layer)
+        }
     })
 }
