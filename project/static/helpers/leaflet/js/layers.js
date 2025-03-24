@@ -207,7 +207,6 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 })
 
                 layerArray?.forEach(l => {
-                    console.log(l)
                     if (l._checkbox) {
                         const c = document.querySelector(l._checkbox)
                         if (c?.checked) c.click()
