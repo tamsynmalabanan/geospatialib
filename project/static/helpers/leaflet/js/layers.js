@@ -160,6 +160,7 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
     checkbox,
     checkboxArray,
     layerArray,
+    geojson,
 } = {}) => {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
@@ -258,13 +259,13 @@ const getLeafletLayerContextMenu = (e, layer, map, group, {
         divider2: {
             divider: true,
         },
-        legend: !checkbox || checkbox.disabled ? null : {
+        legend: (!feature && !geojson) || !checkbox || checkbox.disabled ? null : {
             innerText: 'Add to legend',
             btnCallback: () => {
                 map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
                     geojson: feature || geojson,
                     title: layer._title,
-                    attribution: createAttributionTable()?.outerHTML,
+                    attribution: createAttributionTable(geojson || {})?.outerHTML,
                     pane: (() => {
                         const paneName = generateRandomString()
                         map.getPane(paneName) || map.createPane(paneName)

@@ -74,6 +74,26 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     return coordinates
 }
 
+const createAttributionTable = (geojson) => {
+    const info = {}
+    Object.keys(geojson).forEach(key => {
+        if (!Array('features', 'type').includes(key)) {
+            info[key] = geojson[key]
+        }
+    })
+
+    if (Object.keys(info).length) {
+        const infoTable = document.createElement('table')
+        infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
+
+        const infoTBody = document.createElement('tbody')
+        createObjectTRs(info, infoTBody)
+        infoTable.appendChild(infoTBody)
+
+        return infoTable
+    }
+}
+
 const createGeoJSONChecklist = async (geojsonList, group, {
     pane,
     controller,
@@ -141,26 +161,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-        const createAttributionTable = () => {
-            const info = {}
-            Object.keys(geojson).forEach(key => {
-                if (!Array('features', 'type').includes(key)) {
-                    info[key] = geojson[key]
-                }
-            })
-    
-            if (Object.keys(info).length) {
-                const infoTable = document.createElement('table')
-                infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
-        
-                const infoTBody = document.createElement('tbody')
-                createObjectTRs(info, infoTBody)
-                infoTable.appendChild(infoTBody)
-
-                return infoTable
-            }
-        }
-
         try {
             for (const layer of Array(geojsonLayer, ...geojsonLayer.getLayers())) {
                 if (controller?.signal.aborted) return
@@ -171,71 +171,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     e.x && e.y ? e : e.originalEvent, layer, map, group, {
                         checkbox,
                         checkboxArray: Array.from(container.querySelectorAll('input.form-check-input')),
+                        geojson
                     }
                 )
-
-                // const checklistContextMenuHandler = (e) => contextMenuHandler(
-                //     e.x && e.y ? e : e.originalEvent,
-                //     {
-                //         hide: e.x && e.y ? null : {
-                //             innerText: `Hide ${type}`,
-                //             btnCallback: () => {
-                //                 if (checkbox) {
-                //                     if (checkbox.checked) checkbox.click()
-                //                 } else {
-                //                     group.removeLayer(layer)
-                //                     parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
-                //                 }
-                //             }
-                //         },
-                //         showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
-                //             innerText: `Show properties`,
-                //             btnCallback: () => {
-                //                 zoomToLeafletLayer(layer, map)
-                //                 if (checkbox && !checkbox.checked) checkbox.click()
-                //                 layer.fire('click')
-                //             }
-                //         },
-                //         divider1: !layer.feature ? null : {
-                //             divider: true,
-                //         },
-                //         copyFeature: !layer.feature ? null : {
-                //             innerText: 'Copy feature',
-                //             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
-                //         },
-                //         copyProperties: !layer.feature ? null : {
-                //             innerText: 'Copy properties',
-                //             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
-                //         },
-                //         copyGeometry: !layer.feature ? null : {
-                //             innerText: 'Copy geometry',
-                //             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
-                //         },
-                //         divider2: {
-                //             divider: true,
-                //         },
-                //         legend: checkbox?.disabled ? null : {
-                //             innerText: 'Add to legend',
-                //             btnCallback: () => {
-                //                 map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
-                //                     geojson: layer.feature || geojson,
-                //                     title: layer._title,
-                //                     attribution: createAttributionTable()?.outerHTML,
-                //                     pane: (() => {
-                //                         const paneName = generateRandomString()
-                //                         map.getPane(paneName) || map.createPane(paneName)
-                //                         return paneName
-                //                     })(),
-                //                     // customStyleParams,
-                //                 }))
-                //             }
-                //         },
-                //         download: {
-                //             innerText: 'Download GeoJSON',
-                //             btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
-                //         },
-                //     }
-                // )
                 
                 if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
         
@@ -301,7 +239,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
-        infoContainer.innerHTML = createAttributionTable()?.outerHTML
+        infoContainer.innerHTML = createAttributionTable(geojson)?.outerHTML
         contentCollapse.appendChild(infoContainer)
     }
 
