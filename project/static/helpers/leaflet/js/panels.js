@@ -30,7 +30,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         template.status = status
         
         const spinner = document.createElement('div')
-        status.id = `${status.id}-spinner`
+        spinner.id = `${status.id}-spinner`
         spinner.className = 'p-3 border-top d-none'
         status.appendChild(spinner)
         template.spinner = spinner
