@@ -62,6 +62,7 @@ const handleLeafletLayerGroups = (map) => {
     map.hasLegendLayer = (layer) => {
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
+            console.log(group.hasLayer(layer), group.hasHiddenLayer(layer))
             if (group.hasLayer(layer) || group.hasHiddenLayer(layer)) {
                 return group
             }
