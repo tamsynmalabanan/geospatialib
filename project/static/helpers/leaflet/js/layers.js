@@ -91,7 +91,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     }
 }
 
-const zoomToLayer = (layer, map, {
+const zoomToLeafletLayer = (layer, map, {
     zoom = 18,
 } = {}) => {
     if (typeof layer.getBounds === 'function') {
@@ -108,7 +108,7 @@ const zoomToLayer = (layer, map, {
     }
 }
 
-const layerStyleToHTML = (style, type) => {
+const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
         const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
@@ -148,5 +148,109 @@ const validateLeafletLayerCoords = (coords, precision=6) => {
         }
         
         coords[dir] = value
+    })
+}
+
+const getLeafletLayerType = (layer) => {
+    if (layer.feature) return 'feature'
+    if (layer instanceof L.GeoJSON) return 'geojson'
+}
+
+const getLeafletLayerContextMenu = (e, layer, map, {
+    checkbox,
+    layerArray,
+    group,
+} = {}) => {
+    const type = getLeafletLayerType(layer) 
+    const typeLabel = type === 'feature' ? type : 'layer'
+
+    return contextMenuHandler(e, {
+        zoomin: {
+            innerText: `Zoom to ${typeLabel}`,
+            btnCallback: () => zoomToLeafletLayer(layer, map)
+        },
+        isolate: !layerArray || checkbox?.disabled ? null : {
+            innerText: `Isolate ${typeLabel}`,
+            btnCallback: () => {
+                layerArray.forEach(l => {
+                    if (l._checkbox) {
+                        const layerCheckbox = document.querySelector(l._checkbox)
+                        if (layerCheckbox.checked) layerCheckbox.click()
+                    } else {
+                        group ? group.removeLayer(l) : map.removeLayer(l)
+                    }
+                })
+
+                if (checkbox) {
+                    checkbox.click()
+                } else {
+                    group ? group.addLayer(layer) : map.addLayer(layer)
+                    if (layer._eventParents) {
+                        Object.values(layer._eventParents).forEach(l => {
+                            if (l._checkbox) {
+                                document.querySelector(l._checkbox).checked = true
+                            }
+                        })
+                    }
+                }
+            }
+        },
+        // hide: e.x && e.y ? null : {
+        //     innerText: `Hide ${typeLabel}`,
+        //     btnCallback: () => {
+        //         if (checkbox) {
+        //             if (checkbox.checked) checkbox.click()
+        //         } else {
+        //             group.removeLayer(layer)
+        //             parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
+        //         }
+        //     }
+        // },
+        // showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
+        //     innerText: `Show properties`,
+        //     btnCallback: () => {
+        //         zoomToLeafletLayer(layer, map)
+        //         if (checkbox && !checkbox.checked) checkbox.click()
+        //         layer.fire('click')
+        //     }
+        // },
+        // divider1: !layer.feature ? null : {
+        //     divider: true,
+        // },
+        // copyFeature: !layer.feature ? null : {
+        //     innerText: 'Copy feature',
+        //     btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature))
+        // },
+        // copyProperties: !layer.feature ? null : {
+        //     innerText: 'Copy properties',
+        //     btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.properties))
+        // },
+        // copyGeometry: !layer.feature ? null : {
+        //     innerText: 'Copy geometry',
+        //     btnCallback: () => navigator.clipboard.writeText(JSON.stringify(layer.feature.geometry))
+        // },
+        // divider2: {
+        //     divider: true,
+        // },
+        // legend: checkbox?.disabled ? null : {
+        //     innerText: 'Add to legend',
+        //     btnCallback: () => {
+        //         map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
+        //             geojson: layer.feature || geojson,
+        //             title: layer._title,
+        //             attribution: createAttributionTable()?.outerHTML,
+        //             pane: (() => {
+        //                 const paneName = generateRandomString()
+        //                 map.getPane(paneName) || map.createPane(paneName)
+        //                 return paneName
+        //             })(),
+        //             // customStyleParams,
+        //         }))
+        //     }
+        // },
+        // download: {
+        //     innerText: 'Download GeoJSON',
+        //     btnCallback: () => downloadGeoJSON(layer.feature || geojson, layer._title)
+        // },
     })
 }

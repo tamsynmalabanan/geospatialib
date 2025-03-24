@@ -283,7 +283,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
             collapseToggle.setAttribute('aria-controls', legendCollapse.id)
             collapseToggle.setAttribute('aria-expanded', 'true')
-    
+
             const menuToggle = createIcon({
                 parent: toggleContainer,
                 peNone: false,
@@ -464,9 +464,12 @@ const handleLeafletQueryPanel = (map, parent) => {
             toolHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input[data-geojson-type="layer"]'))
+                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
                 const bounds = checkboxes.map(checkbox => {
-                    return L.rectangle(checkbox._leafletLayer.getBounds()).toGeoJSON()
+                    const layer = checkbox._leafletLayer
+                    if (layer instanceof L.GeoJSON) return L.rectangle(
+                        layer.getBounds()
+                    ).toGeoJSON()
                 }).filter(bound => bound)
                 map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
             },
@@ -477,7 +480,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             toolHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input[data-geojson-type="layer"]'))
+                const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
                 const hide = checkboxes.some(el => el.checked)
                 checkboxes.forEach(el => {
                     if (el.checked === hide) el.click()

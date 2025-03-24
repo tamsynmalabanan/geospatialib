@@ -161,7 +161,7 @@ const getGeoJSONLayerStyles = (layer) => {
             Array('point', 'linestring', 'polygon').forEach(typeName => {
                 styles[groupId].types[typeName] = {
                     count: 0,
-                    html: layerStyleToHTML(
+                    html: leafletLayerStyleToHTML(
                         styleHandler({geometry:{type:typeName}}),
                         typeName
                     )
