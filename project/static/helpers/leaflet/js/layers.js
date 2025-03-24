@@ -181,7 +181,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     }
     
     const removeLayer = (l, hidden=false) => {
-        hidden ? group.hideLayer(layer) : group.removeLayer(l)
+        hidden ? group.hideLayer(l) : group.removeLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
