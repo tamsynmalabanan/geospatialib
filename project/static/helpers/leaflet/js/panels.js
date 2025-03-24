@@ -1,43 +1,62 @@
 const createLeafletMapPanelTemplate = (map, parent, name, {
     statusBar = false,
-    statusRemark = '',
+    spinnerRemark = '',
+    errorRemark = '',
     clearLayersHandler,
     toolHandler,
 } = {}) => {
     const template = {}
 
     const mapContainer = map.getContainer()
-    
+    const baseId = `${mapContainer.id}-panels-${name}`
+
     const toolbar = document.createElement('div')
-    toolbar.id = `${mapContainer.id}-panels-${name}-toolbar`
+    toolbar.id = `${baseId}-toolbar`
     toolbar.className = 'd-flex px-3 py-2 flex-wrap'
     parent.appendChild(toolbar)
     template.toolbar = toolbar
     
     const layers = document.createElement('div')
-    layers.id = `${mapContainer.id}-panels-${name}-layers`
+    layers.id = `${baseId}-layers`
     layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
     parent.appendChild(layers)
     template.layers = layers
     
     if (statusBar) {
         const status = document.createElement('div')
-        status.id = `${mapContainer.id}-panels-${name}-status`
-        status.className = 'p-3 border-top d-flex gap-2 flex-nowrap d-none'
+        status.id = `${baseId}-status`
+        status.className = 'd-flex gap-2 flex-nowrap'
         parent.appendChild(status)
         template.status = status
         
         const spinner = document.createElement('div')
-        spinner.id = `${mapContainer.id}-panels-${name}-spinner`
-        spinner.className = 'spinner-border spinner-border-sm'
-        spinner.setAttribute('role', 'status')
+        status.id = `${status.id}-spinner`
+        spinner.className = 'p-3 border-top d-none'
         status.appendChild(spinner)
         template.spinner = spinner
+
+        const spinnerIcon = document.createElement('div')
+        spinnerIcon.className = 'spinner-border spinner-border-sm'
+        spinnerIcon.setAttribute('role', 'status')
+        spinner.appendChild(spinnerIcon)
         
-        const remark = document.createElement('div')
-        remark.innerText = statusRemark
-        status.appendChild(remark)
-        template.remark = remark
+        const spinnerRemarkDiv = document.createElement('div')
+        spinnerRemarkDiv.innerText = spinnerRemark
+        spinner.appendChild(spinnerRemarkDiv)
+    
+        const error = document.createElement('div')
+        error.id = `${status.id}-error`
+        error.className = 'p-3 border-top d-none'
+        status.appendChild(error)
+        template.error = error
+
+        const errorIcon = document.createElement('div')
+        errorIcon.className = 'bi bi-bug'
+        error.appendChild(errorIcon)
+        
+        const errorRemarkDiv = document.createElement('div')
+        errorRemarkDiv.innerText = errorRemark
+        spinner.appendChild(spinnerRemarkDiv)    
     }
 
     template.clearLayers = (tools) => {
@@ -52,6 +71,11 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                 toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
             }
         }    
+
+        if (statusBar) {
+            spinner.classList.add('d-none')
+            error.classList.add('d-none')
+        }
     }
 
     template.toolsHandler = (tools) => {
@@ -297,12 +321,13 @@ const handleLeafletQueryPanel = (map, parent) => {
         layers,
         status,
         spinner,
-        remark,
+        error,
         clearLayers,
         toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'query', {
         statusBar: true,
-        statusRemark: 'Running query...',
+        spinnerRemark: 'Running query...',
+        errorRemark: 'Query was unsuccessful. Please try again.',
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
             clearLayers(tools)
@@ -311,7 +336,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     
             const controllerId = resetController().id
     
-            status.classList.remove('d-none')
+            spinner.classList.remove('d-none')
             
             const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
             cancelBtn.disabled = false
@@ -332,7 +357,11 @@ const handleLeafletQueryPanel = (map, parent) => {
                     pane: 'queryPane', 
                     customStyleParams: queryStyleParams, 
                 })
-                if (content) layers.appendChild(content)
+                if (content) {
+                    layers.appendChild(content)
+                } else {
+                    error.classList.remove('d-none')
+                }
             }
             
             if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
@@ -346,7 +375,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 ).forEach(toolName => toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false)
             }
                 
-            status.classList.add('d-none')
+            spinner.classList.add('d-none')
         }
     })
 
