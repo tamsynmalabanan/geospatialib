@@ -438,7 +438,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: () => {
                 const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input[data-geojson-type="layer"]'))
-                checkboxes.forEach(checkbox => console.log(checkbox._leafletLayer))
+                const bounds = checkboxes.map(checkbox => {
+                    return L.rectangle(checkbox._leafletLayer.getBounds()).toGeoJSON()
+                }).filter(bound => bound)
+                map.fitBounds(L.geojson(turf.featureCollection(bounds)).getBounds())
             },
         },
         visibility: {
