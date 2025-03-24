@@ -87,6 +87,19 @@ const handleLeafletLayerGroups = (map) => {
         }
     }
     
+    map.getLegendLayers = () => {
+        let layers = []
+        for (const groupName of ['library', 'client']) {
+            const group = map.getLayerGroups()[groupName]
+            layers = [
+                ...layers,
+                ...group.getLayers(),
+                ...group.getHiddenLayers()
+            ]
+        }
+        return layers
+    }
+    
     map.clearLegendLayers = () => {
         ['library', 'client'].forEach(groupName => {
             map.getLayerGroups()[groupName].clearLayers()

@@ -290,13 +290,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                 className: 'bi bi-three-dots'
             })
             menuToggle.style.cursor = 'pointer'
-            // menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
-            //     e.x && e.y ? e : e.originalEvent, layer, map, map.getLayerGroup(layer), {
-            //         checkbox,
-            //         checkboxArray: Array.from(container.querySelectorAll('input.form-check-input')),
-            //         geojson
-            //     }
-            // ))
+            menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
+                e.x && e.y ? e : e.originalEvent, layer, map, {
+                }
+            ))
             
             if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
                 layer, 

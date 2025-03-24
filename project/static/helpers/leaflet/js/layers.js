@@ -159,7 +159,7 @@ const getLeafletLayerType = (layer) => {
 const getLeafletLayerContextMenu = (e, layer, map, {
     checkbox,
     checkboxArray,
-    layerArray,
+    layerArray = map.getLegendLayers(),
     geojson,
     group = map.getLayerGroup(layer),
 } = {}) => {
@@ -275,9 +275,12 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 }))
             }
         },
-        download: !feature && !geojson ? null : {
+        download: !feature && type !== 'geojson' ? null : {
             innerText: 'Download GeoJSON',
-            btnCallback: () => downloadGeoJSON(feature || geojson, layer._title)
+            btnCallback: () => downloadGeoJSON(
+                feature || geojson || layer.toGeoJSON(), 
+                layer._title
+            )
         },
     })
 }
