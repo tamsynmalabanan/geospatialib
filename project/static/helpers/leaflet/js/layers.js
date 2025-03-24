@@ -222,13 +222,17 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 }
             }
         },
-        hide: {
-            innerText: `Hide ${typeLabel}`,
+        visibility: {
+            innerText: `Toggle ${typeLabel} visibility`,
             btnCallback: () => {
                 if (checkbox) {
-                    if (checkbox.checked) checkbox.click()
+                    checkbox.click()
                 } else {
-                    removeLayer(layer, hideLayer)
+                    if (group.hasLayer(layer)) {
+                        removeLayer(layer, hideLayer)
+                    } else {
+                        addLayer(layer)
+                    }
                 }
             }
         },
