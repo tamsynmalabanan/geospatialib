@@ -441,7 +441,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const bounds = checkboxes.map(checkbox => {
                     return L.rectangle(checkbox._leafletLayer.getBounds()).toGeoJSON()
                 }).filter(bound => bound)
-                map.fitBounds(L.geojson(turf.featureCollection(bounds)).getBounds())
+                map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
             },
         },
         visibility: {
