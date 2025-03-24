@@ -292,7 +292,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
             innerText: `Remove ${typeLabel}`,
             btnCallback: () => {
                 group.removeHiddenLayer(layer)
-                group.removeLayer(layer)
+                map.removeLayer(layer)
             }
         }
     })
