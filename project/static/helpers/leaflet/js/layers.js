@@ -156,11 +156,10 @@ const getLeafletLayerType = (layer) => {
     if (layer instanceof L.GeoJSON) return 'geojson'
 }
 
-const getLeafletLayerContextMenu = (e, layer, map, {
+const getLeafletLayerContextMenu = (e, layer, map, group, {
     checkbox,
     checkboxArray,
     layerArray,
-    group,
 } = {}) => {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
@@ -182,14 +181,14 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                         const c = document.querySelector(l._checkbox)
                         if (c.checked) c.click()
                     } else {
-                        group ? group.removeLayer(l) : map.removeLayer(l)
+                        group.removeLayer(l)
                     }
                 })
 
                 if (checkbox) {
                     checkbox.click()
                 } else {
-                    group ? group.addLayer(layer) : map.addLayer(layer)
+                    group.addLayer(layer)
                     if (layer._eventParents) {
                         Object.values(layer._eventParents).forEach(l => {
                             if (l._checkbox) {
@@ -200,17 +199,25 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 }
             }
         },
-        // hide: e.x && e.y ? null : {
-        //     innerText: `Hide ${typeLabel}`,
-        //     btnCallback: () => {
-        //         if (checkbox) {
-        //             if (checkbox.checked) checkbox.click()
-        //         } else {
-        //             group.removeLayer(layer)
-        //             parentCheck.checked = geojsonLayer.getLayers().some(featureLayer => group.hasLayer(featureLayer))
-        //         }
-        //     }
-        // },
+        hide: {
+            innerText: `Hide ${typeLabel}`,
+            btnCallback: () => {
+                if (checkbox) {
+                    if (checkbox.checked) checkbox.click()
+                } else {
+                    group.removeLayer(layer)
+                    if (layer._eventParents) {
+                        Object.values(layer._eventParents).forEach(l => {
+                            if (l._checkbox) {
+                                document.querySelector(
+                                    l._checkbox
+                                ).checked = l.getLayers().some(f => group.hasLayer(f))
+                            }
+                        })
+                    }
+                }
+            }
+        },
         // showProperties: !layer.feature || !Object.keys(layer.feature.properties).length ? null : {
         //     innerText: `Show properties`,
         //     btnCallback: () => {

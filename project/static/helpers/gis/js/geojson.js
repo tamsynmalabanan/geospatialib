@@ -168,9 +168,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const checkbox = geojsonContainer.querySelector(layer._checkbox)
         
                 const checklistContextMenuHandler = (e) => getLeafletLayerContextMenu(
-                    e.x && e.y ? e : e.originalEvent, layer, map, {
+                    e.x && e.y ? e : e.originalEvent, layer, map, group, {
                         checkbox,
-                        group,
                         checkboxArray: Array.from(container.querySelectorAll('input.form-check-input')),
                     }
                 )
@@ -178,25 +177,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 // const checklistContextMenuHandler = (e) => contextMenuHandler(
                 //     e.x && e.y ? e : e.originalEvent,
                 //     {
-                //         zoomin: {
-                //             innerText: `Zoom to ${type}`,
-                //             btnCallback: () => zoomToLeafletLayer(layer, map)
-                //         },
-                //         isolate: checkbox?.disabled ? null : {
-                //             innerText: `Isolate ${type}`,
-                //             btnCallback: () => {
-                //                 Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
-                //                     if (checkbox.checked) checkbox.click()
-                //                 })
-        
-                //                 if (checkbox) {
-                //                     checkbox.click()
-                //                 } else {
-                //                     parentCheck.checked = true
-                //                     group.addLayer(layer)
-                //                 }
-                //             }
-                //         },
                 //         hide: e.x && e.y ? null : {
                 //             innerText: `Hide ${type}`,
                 //             btnCallback: () => {
