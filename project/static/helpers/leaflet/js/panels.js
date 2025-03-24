@@ -421,6 +421,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             tag: 'div',
             className: 'vr m-2',
         },
+        cancel: {
+            iconClass: 'bi-arrow-counterclockwise',
+            title: 'Cancel ongoing query',
+            disabled: true,
+        },
+        divider2: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
         zoomin: {
             iconClass: 'bi bi-zoom-in',
             title: 'Zoom to layers',
@@ -443,14 +452,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                 })
             },
         },
-        divider2: {
+        divider3: {
             tag: 'div',
             className: 'vr m-2',
-        },
-        cancel: {
-            iconClass: 'bi-arrow-counterclockwise',
-            title: 'Cancel ongoing query',
-            disabled: true,
         },
         collapse: {
             iconClass: 'bi bi-chevron-up',
