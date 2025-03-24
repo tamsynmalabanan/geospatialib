@@ -357,11 +357,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     pane: 'queryPane', 
                     customStyleParams: queryStyleParams, 
                 })
-                if (content) {
-                    layers.appendChild(content)
-                } else {
-                    error.classList.remove('d-none')
-                }
+                if (content) layers.appendChild(content)
             }
             
             spinner.classList.add('d-none')
@@ -375,6 +371,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     'visibility',
                     'zoomin',
                 ).forEach(toolName => toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false)
+            } else {
+                error.classList.remove('d-none')
             }
         }
     })
