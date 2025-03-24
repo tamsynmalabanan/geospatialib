@@ -142,6 +142,16 @@ const handleLeafletLegendPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: () => map.zoomToLegendLayers(),
         },
+        visibility: {
+            iconClass: 'bi bi-eye',
+            title: 'Toggle visibility',
+            disabled: true,
+            btnClickHandler: () => {
+                map.hasHiddenLegendLayers() ? 
+                map.showLegendLayers() : 
+                map.hideLegendLayers()
+            },
+        },
         divider1: {
             tag: 'div',
             className: 'vr m-2',
@@ -170,26 +180,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                 attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
             },
         },
-        divider2: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
-        visibility: {
-            iconClass: 'bi bi-eye',
-            title: 'Toggle visibility',
-            disabled: true,
-            btnClickHandler: () => {
-                map.hasHiddenLegendLayers() ? 
-                map.showLegendLayers() : 
-                map.hideLegendLayers()
-            },
-        },
         clear: {
             iconClass: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
             btnClickHandler: () => clearLayers(tools)
         },
+        // divider2: {
+        //     tag: 'div',
+        //     className: 'vr m-2',
+        // },
     })
 
     map.on('layerremove', (e) => {
@@ -335,14 +335,16 @@ const handleLeafletQueryPanel = (map, parent) => {
                 layers.appendChild(content)
             }
             
-            if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
+            if (layers.innerHTML !== '') {
                 layers.classList.remove('d-none')
-                toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-                
-                toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
-                toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
+                for (const tool in tools) {
+                    const data = tools[tool]
+                    if (data.disabled) {
+                        toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = false
+                    }
+                }        
             }
-            
+                
             status.classList.add('d-none')
         }
     })
@@ -419,12 +421,11 @@ const handleLeafletQueryPanel = (map, parent) => {
             tag: 'div',
             className: 'vr m-2',
         },
-        collapse: {
-            iconClass: 'bi bi-chevron-up',
-            title: 'Collapse/expand',
-            toolHandler: false,
+        zoomin: {
+            iconClass: 'bi bi-zoom-in',
+            title: 'Zoom to layers',
             disabled: true,
-            btnClickHandler: () => toggleCollapseElements(layers),
+            // btnClickHandler: () => map.zoomToLegendLayers(),
         },
         visibility: {
             iconClass: 'bi bi-eye',
@@ -447,6 +448,13 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-arrow-counterclockwise',
             title: 'Cancel ongoing query',
             disabled: true,
+        },
+        collapse: {
+            iconClass: 'bi bi-chevron-up',
+            title: 'Collapse/expand',
+            toolHandler: false,
+            disabled: true,
+            btnClickHandler: () => toggleCollapseElements(layers),
         },
         clear: {
             iconClass: 'bi-trash-fill',
