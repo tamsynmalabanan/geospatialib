@@ -51,7 +51,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         template.error = error
 
         const errorIcon = document.createElement('div')
-        errorIcon.className = 'bi bi-exclamation-triangle-fill fs-6'
+        errorIcon.className = 'bi bi-exclamation-triangle-fill'
         error.appendChild(errorIcon)
         
         const errorRemarkDiv = document.createElement('div')
@@ -327,7 +327,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     } = createLeafletMapPanelTemplate(map, parent, 'query', {
         statusBar: true,
         spinnerRemark: 'Running query...',
-        errorRemark: 'Query was unsuccessful. Please try again.',
+        errorRemark: 'Query was interrupted.',
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
             clearLayers(tools)
