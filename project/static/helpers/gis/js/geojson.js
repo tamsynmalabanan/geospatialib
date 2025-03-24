@@ -85,7 +85,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     container.className = 'd-flex flex-column gap-2'
 
     for (const title in geojsonList) {
-        if (controller?.signal.aborted) return
+        if (controller?.signal.aborted) continue
         
         const geojson = geojsonList[title]
         if (!geojson) continue
@@ -308,7 +308,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 menuToggle.addEventListener('click', checklistContextMenuHandler)
             }
         } catch {
-            return
+            continue
         }
 
         const infoContainer = document.createElement('div')
