@@ -220,14 +220,18 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
-
-        const group = map.hasLegendLayer(layer)
-        if (group?.hasLayer(layer || group?.hasHiddenLegendLayer(layer))) {
-            layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
-        } else {
-            layerLegend.remove()
-            if (layers.innerHTML === '') clearLayers(tools)
+        
+        const handler = () => {
+            layer.off('remove', handler)
+            if (map.hasLegendLayer(layer)) {
+                layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
+            } else {
+                layerLegend.remove()
+                if (layers.innerHTML === '') clearLayers(tools)
+            }
         }
+
+        layer?.on('remove', handler)
     })
 
     map.on('layeradd', (event) => {

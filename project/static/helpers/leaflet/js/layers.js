@@ -168,6 +168,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     const typeLabel = type === 'feature' ? type : 'layer'
     const feature = layer.feature
 
+    if (!group) return
     
     const addLayer = (l) => {
         group.showLayer(layer)
