@@ -159,11 +159,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             }
         }
 
-        Array(geojsonLayer, ...geojsonLayer.getLayers()).forEach(layer => {
+        for (const layer of Array(geojsonLayer, ...geojsonLayer.getLayers())) {
             if (controller?.signal.aborted) return
-
+    
             const checkbox = geojsonContainer.querySelector(layer._checkbox)
-
+    
             const type = layer.feature ? 'feature' : 'layer'
             const checklistContextMenuHandler = (e) => contextMenuHandler(
                 e.x && e.y ? e : e.originalEvent,
@@ -178,7 +178,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             Array.from(container.querySelectorAll('input.form-check-input')).forEach(checkbox => {
                                 if (checkbox.checked) checkbox.click()
                             })
-
+    
                             if (checkbox) {
                                 checkbox.click()
                             } else {
@@ -248,17 +248,17 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             )
             
             if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
-
-            if (!checkbox) return
-
+    
+            if (!checkbox) continue
+    
             checkbox._leafletLayer = layer
             checkbox.setAttribute('data-geojson-type', type)
-
+    
             checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
             checkbox.addEventListener('click', (e) => {
                 const isChecked = e.target.checked
                 isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-
+    
                 if (layer.feature) {
                     Object.values(layer._eventParents).forEach(parentLayer => {
                         const checkboxSelector = parentLayer._checkbox
@@ -280,11 +280,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     })
                 }
             })
-
+    
             const toggleContainer = document.createElement('div')
             toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
             checkbox.parentElement.appendChild(toggleContainer)    
-
+    
             if (!layer.feature && typeof layer.getLayers === 'function') {
                 const contentToggle = createIcon({
                     parent: toggleContainer,
@@ -297,7 +297,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 contentToggle.setAttribute('aria-controls', contentCollapse.id)
                 contentToggle.setAttribute('aria-expanded', 'false')        
             }
-
+    
             const menuToggle = createIcon({
                 parent: toggleContainer,
                 peNone: false,
@@ -305,7 +305,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             })
             menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', checklistContextMenuHandler)
-        })
+        }
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
