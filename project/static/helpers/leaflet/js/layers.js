@@ -158,6 +158,7 @@ const getLeafletLayerType = (layer) => {
 
 const getLeafletLayerContextMenu = (e, layer, map, {
     checkbox,
+    checkboxArray,
     layerArray,
     group,
 } = {}) => {
@@ -169,15 +170,17 @@ const getLeafletLayerContextMenu = (e, layer, map, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
         },
-        isolate: !layerArray || checkbox?.disabled ? null : {
+        isolate: (!layerArray && !checkboxArray) || checkbox?.disabled ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
-                console.log(layerArray)
-                layerArray.forEach(l => {
-                    console.log(l._checkbox)
+                checkboxArray?.forEach(c => {
+                    if (c.checked) c.click()
+                })
+
+                layerArray?.forEach(l => {
                     if (l._checkbox) {
-                        const layerCheckbox = document.querySelector(l._checkbox)
-                        if (layerCheckbox.checked) layerCheckbox.click()
+                        const c = document.querySelector(l._checkbox)
+                        if (c.checked) c.click()
                     } else {
                         group ? group.removeLayer(l) : map.removeLayer(l)
                     }
