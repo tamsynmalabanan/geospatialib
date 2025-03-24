@@ -335,14 +335,15 @@ const handleLeafletQueryPanel = (map, parent) => {
                 layers.appendChild(content)
             }
             
-            if (layers.innerHTML !== '') {
+            if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
                 layers.classList.remove('d-none')
-                for (const tool in ['zoomin', 'visibility', 'collapse', 'clear']) {
-                    const data = tools[tool]
-                    if (data.disabled) {
-                        toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = false
-                    }
-                }        
+            
+                Array(
+                    'clear',
+                    'collapse',
+                    'visibility',
+                    'zoomin',
+                ).forEach(toolName => toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false)
             }
                 
             status.classList.add('d-none')
