@@ -219,9 +219,9 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layerremove', (event) => {
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
-        console.log(layerLegend)
         if (!layerLegend) return
 
+        console.log(map.hasLegendLayer(layer), map.getLayerGroups().client)
         if (map.hasLegendLayer(layer)) {
             layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
         } else {
