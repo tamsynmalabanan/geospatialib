@@ -73,7 +73,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         }    
 
         if (statusBar) {
-            console.log(parent)
             parent.querySelector(`#${baseId}-status-spinner`).classList.add('d-none')
             parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
         }
@@ -358,6 +357,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     pane: 'queryPane', 
                     customStyleParams: queryStyleParams, 
                 })
+                console.log(content)
                 if (content) {
                     layers.appendChild(content)
                 } else {
