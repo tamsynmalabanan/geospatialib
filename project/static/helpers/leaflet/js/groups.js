@@ -60,6 +60,7 @@ const handleLeafletLayerGroups = (map) => {
     queryPane.style.zIndex = 599
 
     map.hasLegendLayer = (layer) => {
+        console.log(layer)
         for (const groupName of ['library', 'client']) {
             const group = map.getLayerGroups()[groupName]
             console.log(group.hasLayer(layer), group.hasHiddenLayer(layer))
