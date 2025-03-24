@@ -202,6 +202,8 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         isolate: (!layerArray && !checkboxArray) || (checkbox && checkbox.disabled) ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
+                console.log(layerArray)
+
                 checkboxArray?.forEach(c => {
                     if (c.checked) c.click()
                 })
