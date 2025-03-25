@@ -223,7 +223,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 }
             }
         },
-        visibility: {
+        visibility: checkbox && checkbox.disabled ? null : {
             innerText: `Toggle ${typeLabel} visibility`,
             btnCallback: () => {
                 if (checkbox) {
@@ -267,7 +267,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         divider2: {
             divider: true,
         },
-        legend: feature && isLegendGroup ? null : {
+        legend: (feature && isLegendGroup) || (checkbox && checkbox.disabled ) ? null : {
             innerText: isLegendGroup ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
