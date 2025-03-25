@@ -173,8 +173,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         geojson,
                     }
                 )
-                
-                // if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
         
                 if (!checkbox) continue
         
