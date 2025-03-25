@@ -272,10 +272,10 @@ const getLeafletLayerContextMenu = (e, layer, map, {
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
                 const pane = createCustomPane(map)
-                const attribution = createAttributionTable(geojson || {})?.outerHTML
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
+                    const attribution = createAttributionTable(geojson || {})?.outerHTML
                     newLayer = getLeafletGeoJSONLayer({
                         geojson: feature || geojson,
                         title: layer._title,
@@ -299,10 +299,10 @@ const getLeafletLayerContextMenu = (e, layer, map, {
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
                 const pane = createCustomPane(map)
-                const attribution = createAttributionTable(geojson || {})?.outerHTML
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
+                    const attribution = createAttributionTable(geojson || {})?.outerHTML
                     newLayer = getLeafletGeoJSONLayer({
                         geojson: feature || geojson,
                         title: layer._title,
