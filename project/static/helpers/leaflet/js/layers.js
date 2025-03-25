@@ -165,7 +165,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
 } = {}) => {
     if (!group) return
 
-    const checkbox = document.querySelector(`#${layer._checkbox}`)
+    const checkbox = layer._checkbox
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
@@ -177,7 +177,8 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
-                    document.querySelector(p._checkbox).checked = true
+                    p._checkbox.checked = true
+                    // document.querySelector(p._checkbox).checked = true
                 }
             })
         }
@@ -188,9 +189,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
-                    document.querySelector(
-                        p._checkbox
-                    ).checked = p.getLayers().some(f => group.hasLayer(f))
+                    p._checkbox.checked = p.getLayers().some(f => group.hasLayer(f))
                 }
             })
         }
@@ -210,8 +209,8 @@ const getLeafletLayerContextMenu = (e, layer, map, {
 
                 layerArray?.forEach(l => {
                     if (l._checkbox) {
-                        const c = document.querySelector(l._checkbox)
-                        if (c?.checked) c.click()
+                        const c = l._checkbox
+                        if (c.checked) c.click()
                     } else {
                         removeLayer(l, hideLayer)
                     }

@@ -137,7 +137,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
             formCheckClass: `d-flex gap-2 border-bottom`,
         }).querySelector('input')
-        geojsonLayer._checkbox = `#${parentCheck.id}`
+        geojsonLayer._checkbox = parentCheck //`#${parentCheck.id}`
         parentCheck.disabled = disableCheck 
 
         const contentCollapse = document.createElement('div')
@@ -157,7 +157,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     labelInnerText: featureLayer._title,
                     formCheckClass: `d-flex gap-2 border-bottom`,
                 }).querySelector('input')
-                featureLayer._checkbox = `#${featureCheck.id}`
+                featureLayer._checkbox = featureCheck //`#${featureCheck.id}`
             }
         }
 
@@ -165,7 +165,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             for (const layer of Array(geojsonLayer, ...geojsonLayer.getLayers())) {
                 if (controller?.signal.aborted) return
         
-                const checkbox = geojsonContainer.querySelector(layer._checkbox)
+                const checkbox = layer._checkbox //geojsonContainer.querySelector(layer._checkbox)
         
                 const checklistContextMenuHandler = (e) => getLeafletLayerContextMenu(
                     e.x && e.y ? e : e.originalEvent, layer, map, {
@@ -188,14 +188,16 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         
                     if (layer.feature) {
                         Object.values(layer._eventParents).forEach(parentLayer => {
-                            const checkboxSelector = parentLayer._checkbox
+                            const checkbox = parentLayer._checkbox
+                            // const checkboxSelector = parentLayer._checkbox
                             if (!checkboxSelector) return
                             
                             const checked = isChecked ? true : Array.from(
                                 geojsonContainer.querySelectorAll('input.form-check-input')
                             ).filter(i => `#${i.id}` !== checkboxSelector).some(i => i.checked)
                             
-                            geojsonContainer.querySelector(checkboxSelector).checked = checked
+                            checkbox.checked = checked
+                            // geojsonContainer.querySelector(checkboxSelector).checked = checked
                             if (!checked) group.removeLayer(parentLayer)
                         })
                     } else {
@@ -203,7 +205,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
                             
                             if (!featureLayer._checkbox) return
-                            geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
+                            // geojsonContainer.querySelector(featureLayer._checkbox).checked = isChecked
+                            featureLayer._checkbox.checked = isChecked
                         })
                     }
                 })
