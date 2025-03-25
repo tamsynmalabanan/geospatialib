@@ -251,6 +251,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
             container = document.createElement('div')
             container.id = `${layers.id}-${layer._leaflet_id}`
+            container.setAttribute('data-layer-legend', "true")
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
             container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2 position-relative'
@@ -279,6 +280,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                     
                     const mouseUpHandler = (e3) => {
                         console.log(e3)
+                        const target = e3.target
+                        const legend = target.closest('[data-layer-legend="true"]')
+                        console.log(legend)
                         document.body.classList.remove('user-select-none')
                     }                
 
