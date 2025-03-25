@@ -283,6 +283,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                         title: layer._title,
                         attribution,
                         pane,
+                        group: targetGroup,
                     })
                 }
 

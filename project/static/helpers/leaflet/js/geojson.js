@@ -14,6 +14,7 @@ const getLeafletGeoJSONLayer = ({
     
     if (title) geojsonLayer._title = title
     if (attribution) geojsonLayer._attribution = attribution
+    if (group) geojsonLayer._group = group
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
     
