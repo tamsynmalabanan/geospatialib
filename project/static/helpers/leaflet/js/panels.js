@@ -272,10 +272,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                     const containerTop = container.getBoundingClientRect().top
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
                     const allowance = startY - containerTop
+                    console.log(containerTop, startY, allowance)
 
                     const mouseMoveHandler = (e2) => {
                         document.body.classList.add('user-select-none')
                         const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
+                        console.log(newY)
                         container.style.top =`${newY - allowance}px`;
                     }   
                     
