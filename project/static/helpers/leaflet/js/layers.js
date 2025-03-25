@@ -216,10 +216,14 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                     console.log(group.getHiddenLayers())
                 })
                 
+                console.log(group.getHiddenLayers())
                 if (checkbox) {
+                    console.log(group.getHiddenLayers())
                     checkbox.click()
                 } else {
+                    console.log(group.getHiddenLayers())
                     addLayer(layer)
+                    console.log(group.getHiddenLayers())
                 }
                 console.log(group.getHiddenLayers())
             }
