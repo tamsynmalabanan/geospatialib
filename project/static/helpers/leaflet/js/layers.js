@@ -159,7 +159,7 @@ const getLeafletLayerType = (layer) => {
 const getLeafletLayerContextMenu = (e, layer, {
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
 } = {}) => {
-    const group = map.getLayerGroup(layer) || layer._group
+    const group = layer._group
     if (!group) return
 
     const map = group._map
