@@ -272,8 +272,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     const layersTop = layers.getBoundingClientRect().top
                     const containerTop = container.getBoundingClientRect().top
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
-                    const allowance = startY - containerTop - layersTop
-                    console.log(containerTop, startY, layersTop, allowance)
+                    const allowance = layersTop - startY - containerTop
+                    console.log(layersTop, containerTop, startY, allowance)
 
                     const mouseMoveHandler = (e2) => {
                         document.body.classList.add('user-select-none')
