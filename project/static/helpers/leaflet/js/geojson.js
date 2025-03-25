@@ -4,6 +4,7 @@ const getLeafletGeoJSONLayer = ({
     customStyleParams,
     title,
     attribution,
+    group,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         filter: (feature) => {
@@ -20,7 +21,10 @@ const getLeafletGeoJSONLayer = ({
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
+
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
+        layer._group = geojsonLayer._group
+        
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
 
         if (Object.keys(properties).length) {

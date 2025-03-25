@@ -127,6 +127,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             geojson,
             customStyleParams,
             title,
+            group,
         })
 
         const geojsonContainer = document.createElement('div')
@@ -179,7 +180,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         
                 checkbox._leafletLayer = layer
                 layer._checkboxContainer = container
-                layer._group = group
 
                 checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
                 checkbox.addEventListener('click', (e) => {
