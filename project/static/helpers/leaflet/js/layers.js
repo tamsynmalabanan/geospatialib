@@ -266,19 +266,21 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         divider2: {
             divider: true,
         },
-        legend: (!feature && !geojson) || !checkbox || checkbox.disabled ? null : {
+        legend: map._legendLayerGroups.includes(group) ? null : {
             innerText: 'Add to legend',
             btnCallback: () => {
-                map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
-                    geojson: feature || geojson,
-                    title: layer._title,
-                    attribution: createAttributionTable(geojson || {})?.outerHTML,
-                    pane: (() => {
-                        const paneName = generateRandomString()
-                        map.getPane(paneName) || map.createPane(paneName)
-                        return paneName
-                    })(),
-                }))
+                if (['feature', 'geojson'].includes(type)) {
+                    map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
+                        geojson: feature || geojson,
+                        title: layer._title,
+                        attribution: createAttributionTable(geojson || {})?.outerHTML,
+                        pane: (() => {
+                            const paneName = generateRandomString()
+                            map.getPane(paneName) || map.createPane(paneName)
+                            return paneName
+                        })(),
+                    }))
+                }
             }
         },
         download: !feature && type !== 'geojson' ? null : {
