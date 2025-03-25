@@ -258,10 +258,16 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             const legendTitle = document.createElement('div')
             legendTitle.id = `${container.id}-title`
-            legendTitle.className = 'd-flex flex-nowrap'
+            legendTitle.className = 'd-flex flex-nowrap gap-1'
             legendTitle.appendChild(createSpan(layer._title))
             container.appendChild(legendTitle)
             
+            const moveToggle = createIcon({
+                peNone: false,
+                className: 'bi bi-grip-vertical'
+            })
+            legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
+
             const toggleContainer = document.createElement('div')
             toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
             legendTitle.appendChild(toggleContainer)
