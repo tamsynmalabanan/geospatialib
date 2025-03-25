@@ -287,6 +287,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                         
                         console.log(e3)
+                        console.log(document.elementsFromPoint(e3.x, e3.y))
                         const legend = e3.target.closest(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)
                         console.log(legend, offset)
 
