@@ -173,7 +173,9 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     const isLegendGroup = map._legendLayerGroups.includes(group)
     
     const addLayer = (l) => {
+        console.log(group.getHiddenLayers())
         group.showLayer(l)
+        console.log(group.getHiddenLayers())
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -213,19 +215,13 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                     } else {
                         removeLayer(l, hideLayer)
                     }
-                    console.log(group.getHiddenLayers())
                 })
                 
-                console.log(group.getHiddenLayers())
                 if (checkbox) {
-                    console.log(group.getHiddenLayers())
                     checkbox.click()
                 } else {
-                    console.log(group.getHiddenLayers())
                     addLayer(layer)
-                    console.log(group.getHiddenLayers())
                 }
-                console.log(group.getHiddenLayers())
             }
         },
         visibility: checkbox && checkbox.disabled ? null : {
