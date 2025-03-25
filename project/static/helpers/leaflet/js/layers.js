@@ -267,15 +267,15 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         divider2: {
             divider: true,
         },
-        legend: isLegendGroup ? null : {
-            innerText: 'Add to legend',
+        legend: feature && isLegendGroup ? null : {
+            innerText: isLegendGroup ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
                 const pane = createCustomPane(map)
+                const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
-                    const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                     newLayer = getLeafletGeoJSONLayer({
                         geojson: feature || geojson,
                         title: layer._title,
@@ -293,26 +293,6 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 feature || geojson, 
                 layer._title
             )
-        },
-        duplicate: feature || !isLegendGroup ? null : {
-            innerText: `Duplicate ${typeLabel}`,
-            btnCallback: () => {
-                const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
-                const pane = createCustomPane(map)
-                
-                let newLayer
-                if (['feature', 'geojson'].includes(type)) {
-                    const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
-                    newLayer = getLeafletGeoJSONLayer({
-                        geojson: feature || geojson,
-                        title: layer._title,
-                        attribution,
-                        pane,
-                    })
-                }
-
-                if (newLayer) targetGroup.addLayer(newLayer)              
-            }
         },
         remove: !isLegendGroup ? null : {
             innerText: `Remove ${typeLabel}`,
