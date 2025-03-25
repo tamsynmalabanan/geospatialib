@@ -56,8 +56,11 @@ const handleLeafletLayerGroups = (map) => {
         }
 
         layerGroup.showLayer = (layer) => {
+            console.log(layerGroup.getHiddenLayers())
             layerGroup.removeHiddenLayer(layer, {silent:true})
+            console.log(layerGroup.getHiddenLayers())
             layerGroup.addLayer(layer)
+            console.log(layerGroup.getHiddenLayers())
         }
 
         layerGroup.showAllLayers = () => {

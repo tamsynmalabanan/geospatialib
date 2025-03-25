@@ -173,9 +173,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     const isLegendGroup = map._legendLayerGroups.includes(group)
     
     const addLayer = (l) => {
-        console.log(group.getHiddenLayers())
         group.showLayer(l)
-        console.log(group.getHiddenLayers())
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
