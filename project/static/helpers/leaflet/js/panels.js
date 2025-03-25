@@ -298,7 +298,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             }
                         } else {
                             if (offset < 0) {
-                                console.log('move to top')
+                                layers.insertBefore(container, layers.firstChild)
                             } else {
                                 console.log('move to bottom')
                             }
