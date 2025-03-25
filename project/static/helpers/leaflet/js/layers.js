@@ -288,7 +288,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 layer._title
             )
         },
-        remove: group._name === 'query' || checkbox || checkboxArray ? null : {
+        remove: !map._legendLayerGroups.includes(group) ? null : {
             innerText: `Remove ${typeLabel}`,
             btnCallback: () => {
                 group.removeHiddenLayer(layer)
