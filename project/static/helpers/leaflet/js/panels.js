@@ -300,8 +300,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                             if (offset < 0) {
                                 layers.insertBefore(container, layers.firstChild)
                             } else {
-                                console.log('move to bottom')
+                                layers.appendChild(container)
                             }
+                        }
+
+                        const layerLegends = Array.from(layers.children).reverse()
+                        for (let i=0; i<layerLegends.length; i++) {
+                            const child = layerLegends[i]
+                            const paneName = child.dataset.layerPane
+                            const pane = map.getPane(paneName)
+                            pane.style.zIndex = i + 200
                         }
 
                         document.body.classList.remove('user-select-none')
