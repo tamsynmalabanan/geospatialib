@@ -75,6 +75,8 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
 }
 
 const createAttributionTable = (geojson) => {
+    if (geojson.type !== 'FeatureCollection') return
+
     const info = {}
     Object.keys(geojson).forEach(key => {
         if (!Array('features', 'type').includes(key)) {
