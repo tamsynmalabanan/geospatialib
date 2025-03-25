@@ -258,7 +258,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             const legendTitle = document.createElement('div')
             legendTitle.id = `${container.id}-title`
-            legendTitle.className = 'd-flex flex-nowrap gap-1'
+            legendTitle.className = 'd-flex flex-nowrap gap-2'
             legendTitle.appendChild(createSpan(layer._title))
             container.appendChild(legendTitle)
             
@@ -311,7 +311,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             const legendCollapse = document.createElement('div')
             legendCollapse.id = `${container.id}-collapse`
-            legendCollapse.className = 'collapse show'
+            legendCollapse.className = 'collapse show ps-3'
             container.appendChild(legendCollapse)
 
             const legendDetails = document.createElement('div')
