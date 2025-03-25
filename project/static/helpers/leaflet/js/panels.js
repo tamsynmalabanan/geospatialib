@@ -280,7 +280,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     
                     const mouseUpHandler = (e3) => {
                         console.log(e3)
-                        const legend = e3.target.closest('[data-layer-legend="true"]')
+                        const legend = e3.target.closest(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)
                         const offset = container.style.top
                         console.log(legend, offset)
                         document.body.classList.remove('user-select-none')
