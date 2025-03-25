@@ -160,7 +160,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     checkbox,
     checkboxArray,
     layerArray = map.getLegendLayers(),
-    geojson,
+    geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
     group = map.getLayerGroup(layer),
     hideLayer = false
 } = {}) => {
@@ -270,26 +270,49 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         legend: isLegendGroup ? null : {
             innerText: 'Add to legend',
             btnCallback: () => {
+                const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
+                const pane = createCustomPane(map)
+                const attribution = createAttributionTable(geojson || {})?.outerHTML
+                
+                let newLayer
                 if (['feature', 'geojson'].includes(type)) {
-                    map.getLayerGroups().client.addLayer(getLeafletGeoJSONLayer({
+                    newLayer = getLeafletGeoJSONLayer({
                         geojson: feature || geojson,
                         title: layer._title,
-                        attribution: createAttributionTable(geojson || {})?.outerHTML,
-                        pane: (() => {
-                            const paneName = generateRandomString()
-                            map.getPane(paneName) || map.createPane(paneName)
-                            return paneName
-                        })(),
-                    }))
+                        attribution,
+                        pane,
+                    })
                 }
+
+                if (newLayer) targetGroup.addLayer(newLayer)
             }
         },
         download: !feature && type !== 'geojson' ? null : {
             innerText: 'Download GeoJSON',
             btnCallback: () => downloadGeoJSON(
-                feature || geojson || layer.toGeoJSON(), 
+                feature || geojson, 
                 layer._title
             )
+        },
+        duplicate: feature || !isLegendGroup ? null : {
+            innerText: `Duplicate ${typeLabel}`,
+            btnCallback: () => {
+                const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
+                const pane = createCustomPane(map)
+                const attribution = createAttributionTable(geojson || {})?.outerHTML
+                
+                let newLayer
+                if (['feature', 'geojson'].includes(type)) {
+                    newLayer = getLeafletGeoJSONLayer({
+                        geojson: feature || geojson,
+                        title: layer._title,
+                        attribution,
+                        pane,
+                    })
+                }
+
+                if (newLayer) targetGroup.addLayer(newLayer)              
+            }
         },
         remove: !isLegendGroup ? null : {
             innerText: `Remove ${typeLabel}`,
@@ -297,6 +320,6 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 group.removeHiddenLayer(layer)
                 group.removeLayer(layer)
             }
-        }
+        },
     })
 }

@@ -27,3 +27,8 @@ const isLeafletControlElement = (element) => {
     return element.classList.contains('leaflet-control') || element.closest('.leaflet-control')
 }
 
+const createCustomPane = (map) => {
+    const paneName = generateRandomString()
+    map.getPane(paneName) || map.createPane(paneName)
+    return paneName
+}
