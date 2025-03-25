@@ -170,7 +170,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const checklistContextMenuHandler = (e) => getLeafletLayerContextMenu(
                     e.x && e.y ? e : e.originalEvent, layer, {
                         geojson,
-                        group,
                     }
                 )
                 

@@ -157,23 +157,23 @@ const getLeafletLayerType = (layer) => {
 }
 
 const getLeafletLayerContextMenu = (e, layer, {
-    layerArray = group.getAllLayers(),
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
-    hideLayer = false
 } = {}) => {
     const group = map.getLayerGroup(layer) || layer._group
     if (!group) return
 
     const map = group._map
+    const isLegendGroup = map._legendLayerGroups.includes(group)
     const checkbox = layer._checkbox
     const checkboxArray = layer._checkboxContainer ? Array.from(
         layer._checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
+    const layerArray = isLegendGroup ? map.getLegendLayers() : group.getAllLayers()
+    const hideLayer = isLegendGroup
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
     const feature = layer.feature
-    const isLegendGroup = map._legendLayerGroups.includes(group)
     
     const addLayer = (l) => {
         group.showLayer(l)
