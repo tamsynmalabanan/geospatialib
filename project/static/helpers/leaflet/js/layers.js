@@ -213,13 +213,15 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                     } else {
                         removeLayer(l, hideLayer)
                     }
+                    console.log(group.getHiddenLayers())
                 })
-
+                
                 if (checkbox) {
                     checkbox.click()
                 } else {
                     addLayer(layer)
                 }
+                console.log(group.getHiddenLayers())
             }
         },
         visibility: checkbox && checkbox.disabled ? null : {
