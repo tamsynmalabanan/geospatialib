@@ -286,12 +286,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                             return
                         }
                         
-                        console.log(e3)
                         console.log(document.elementsFromPoint(e3.x, e3.y))
-                        const legend = e3.target.closest(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)
-                        console.log(legend, offset)
+                        const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
+                            console.log(el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`))
+                            el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)
+                        }) 
 
-                        if (legend) {
+                        if (referenceLegend) {
                             if (offset < 0) {
                                 console.log('move up')
                             } else {
