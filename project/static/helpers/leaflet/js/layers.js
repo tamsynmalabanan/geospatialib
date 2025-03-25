@@ -156,16 +156,19 @@ const getLeafletLayerType = (layer) => {
     if (layer instanceof L.GeoJSON) return 'geojson'
 }
 
-const getLeafletLayerContextMenu = (e, layer, map, {
-    group = map.getLayerGroup(layer),
-    checkboxArray,
+const getLeafletLayerContextMenu = (e, layer, {
     layerArray = group.getAllLayers(),
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
     hideLayer = false
 } = {}) => {
+    const group = map.getLayerGroup(layer) || layer._group
     if (!group) return
 
+    const map = group._map
     const checkbox = layer._checkbox
+    const checkboxArray = layer._checkboxContainer ? Array.from(
+        layer._checkboxContainer?.querySelectorAll('input.form-check-input')
+    ) : null
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'

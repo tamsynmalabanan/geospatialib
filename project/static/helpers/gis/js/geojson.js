@@ -168,8 +168,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const checkbox = layer._checkbox
         
                 const checklistContextMenuHandler = (e) => getLeafletLayerContextMenu(
-                    e.x && e.y ? e : e.originalEvent, layer, map, {
-                        checkboxArray: Array.from(container.querySelectorAll('input.form-check-input')),
+                    e.x && e.y ? e : e.originalEvent, layer, {
                         geojson,
                         group,
                     }
@@ -180,7 +179,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 if (!checkbox) continue
         
                 checkbox._leafletLayer = layer
-        
+                layer._checkboxContainer = container
+                layer._group = group
+
                 checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked

@@ -372,7 +372,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 className: 'bi bi-three-dots'
             })
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
-                e.x && e.y ? e : e.originalEvent, layer, map, {
+                e.x && e.y ? e : e.originalEvent, layer, {
                     layerArray: map.getLegendLayers(),
                     hideLayer: true,
                 }
