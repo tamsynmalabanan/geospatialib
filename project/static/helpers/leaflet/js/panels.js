@@ -269,16 +269,17 @@ const handleLeafletLegendPanel = (map, parent) => {
             legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
             Array('mousedown', 'touchstart').forEach(t1 => {
                 moveToggle.addEventListener(t1, (e1) => {
+                    const layersTop = layers.getBoundingClientRect().top
                     const containerTop = container.getBoundingClientRect().top
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
-                    const allowance = startY - containerTop
-                    console.log(containerTop, startY, allowance, container.getBoundingClientRect())
+                    // const allowance = startY - containerTop
+                    console.log(containerTop, startY, layersTop)
 
                     const mouseMoveHandler = (e2) => {
                         document.body.classList.add('user-select-none')
                         const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
-                        container.style.top =`${newY - allowance}px`;
-                        console.log(newY, container.style.top)
+                        console.log(newY)
+                        // container.style.top =`${newY - allowance}px`;
                     }   
                     
                     const mouseUpHandler = (e3) => {
