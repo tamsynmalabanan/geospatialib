@@ -17,10 +17,15 @@ const handleLeafletLayerGroups = (map) => {
         }
 
         layerGroup.removeHiddenLayer = (layer, {silent=false}={}) => {
-            layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => {
-                if (l !== layer) return true
-                if (!silent) map.fire('layerremove', {layer})
-            })
+            const hiddenLayers = [...layerGroup.getHiddenLayers()]
+            layerGroup._hiddenLayers = []
+            
+            if (!silent) {
+                hiddenLayers.forEach(l => {
+                    if (l !== layer) return
+                    map.fire('layerremove', {layer})
+                })
+            }
         }
 
         layerGroup.clearHiddenLayers = ({silent=false}={}) => {
