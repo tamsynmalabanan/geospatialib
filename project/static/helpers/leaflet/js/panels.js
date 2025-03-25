@@ -94,7 +94,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                     L.DomEvent.preventDefault(event);        
                     
                     const btn = event.target
-                    const [panelName, currentMode] = map._panelMode
+                    const [panelName, currentMode] = map._panelMode || []
                     const activate = currentMode !== toolId
                     const mapClickHandler = activate ? data.mapClickHandler : null 
                     const btnClickHandler = activate ? data.btnClickHandler : null     
