@@ -157,7 +157,6 @@ const getLeafletLayerType = (layer) => {
 }
 
 const getLeafletLayerContextMenu = (e, layer, map, {
-    checkbox,
     checkboxArray,
     layerArray = map.getLegendLayers(),
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
@@ -165,6 +164,8 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     hideLayer = false
 } = {}) => {
     if (!group) return
+
+    const checkbox = document.querySelector(`#${layer._checkbox}`)
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
