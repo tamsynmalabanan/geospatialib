@@ -163,6 +163,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
     hideLayer = false
 } = {}) => {
+    console.log(group)
     if (!group) return
 
     const checkbox = layer._checkbox
