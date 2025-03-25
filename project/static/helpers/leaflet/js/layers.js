@@ -202,7 +202,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
         },
-        isolate: (!layerArray && !checkboxArray) || (checkbox && checkbox.disabled) ? null : {
+        isolate: (isLegendGroup && feature) || (!layerArray && !checkboxArray) || (checkbox && checkbox.disabled) ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
                 checkboxArray?.forEach(c => {

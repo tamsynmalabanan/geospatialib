@@ -371,9 +371,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 peNone: false,
                 className: 'bi bi-three-dots'
             })
-            menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
-                e.x && e.y ? e : e.originalEvent, layer, 
-            ))
+            menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
                 layer, 

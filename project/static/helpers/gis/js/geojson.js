@@ -171,9 +171,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const checkbox = layer._checkbox
         
                 const checklistContextMenuHandler = (e) => getLeafletLayerContextMenu(
-                    e.x && e.y ? e : e.originalEvent, layer, {
-                        geojson,
-                    }
+                    e, layer, {geojson}
                 )
         
                 if (!checkbox) continue
