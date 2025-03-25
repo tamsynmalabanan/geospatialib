@@ -164,11 +164,12 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     group = map.getLayerGroup(layer),
     hideLayer = false
 } = {}) => {
+    if (!group) return
+
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
     const feature = layer.feature
-
-    if (!group) return
+    const isLegendGroup = map._legendLayerGroups.includes(group)
     
     const addLayer = (l) => {
         group.showLayer(layer)
@@ -266,7 +267,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
         divider2: {
             divider: true,
         },
-        legend: map._legendLayerGroups.includes(group) ? null : {
+        legend: isLegendGroup ? null : {
             innerText: 'Add to legend',
             btnCallback: () => {
                 if (['feature', 'geojson'].includes(type)) {
@@ -290,7 +291,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 layer._title
             )
         },
-        remove: !map._legendLayerGroups.includes(group) ? null : {
+        remove: !isLegendGroup ? null : {
             innerText: `Remove ${typeLabel}`,
             btnCallback: () => {
                 group.removeHiddenLayer(layer)

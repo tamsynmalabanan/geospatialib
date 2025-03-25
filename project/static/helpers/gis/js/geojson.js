@@ -217,7 +217,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     const contentToggle = createIcon({
                         parent: toggleContainer,
                         peNone: false,
-                        className: 'dropdown-toggle'
+                        className: 'dropdown-toggle ms-5'
                     })
                     contentToggle.style.cursor = 'pointer'
                     contentToggle.setAttribute('data-bs-toggle', 'collapse')

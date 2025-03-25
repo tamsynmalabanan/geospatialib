@@ -285,7 +285,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const collapseToggle = createIcon({
                 parent: toggleContainer,
                 peNone: false,
-                className: 'dropdown-toggle'
+                className: 'dropdown-toggle ms-5'
             })
             collapseToggle.style.cursor = 'pointer'
             collapseToggle.setAttribute('data-bs-toggle', 'collapse')
