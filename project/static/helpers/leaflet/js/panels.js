@@ -279,10 +279,30 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }   
                     
                     const mouseUpHandler = (e3) => {
+                        const offset = container.style.top
+                        if (Math.abs(parseInt(offset)) < 10) {
+                            container.style.top = '0px'
+                            return
+                        }
+                        
                         console.log(e3)
                         const legend = e3.target.closest(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)
-                        const offset = container.style.top
                         console.log(legend, offset)
+
+                        if (legend) {
+                            if (offset < 0) {
+                                console.log('move up')
+                            } else {
+                                console.log('move down')
+                            }
+                        } else {
+                            if (offset < 0) {
+                                console.log('move to top')
+                            } else {
+                                console.log('move to bottom')
+                            }
+                        }
+
                         document.body.classList.remove('user-select-none')
                     }                
 
