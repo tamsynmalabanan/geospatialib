@@ -283,7 +283,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
                     newLayer = getLeafletGeoJSONLayer({
-                        geojson: feature || geojson,
+                        geojson: turf.featureCollection([feature]) || geojson,
                         title: layer._title,
                         attribution,
                         pane,
