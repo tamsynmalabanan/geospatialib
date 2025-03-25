@@ -163,7 +163,6 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
     hideLayer = false
 } = {}) => {
-    console.log(group)
     if (!group) return
 
     const checkbox = layer._checkbox
@@ -174,7 +173,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
     const isLegendGroup = map._legendLayerGroups.includes(group)
     
     const addLayer = (l) => {
-        group.showLayer(layer)
+        group.showLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
