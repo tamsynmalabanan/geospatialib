@@ -163,17 +163,19 @@ const getLeafletLayerContextMenu = (e, layer, {
     if (!group) return
 
     const map = group._map
+    const feature = layer.feature
     const isLegendGroup = map._legendLayerGroups.includes(group)
+    const isLegendFeature = isLegendGroup && feature
     const checkbox = layer._checkbox
+    const disabledCheckbox = checkbox && checkbox.disabled
     const checkboxArray = layer._checkboxContainer ? Array.from(
         layer._checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
     const layerArray = isLegendGroup ? map.getLegendLayers() : group.getAllLayers()
-    const hideLayer = isLegendGroup
+    const noArrays = !checkboxArray && !layerArray
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
-    const feature = layer.feature
     
     const addLayer = (l) => {
         group.showLayer(l)
@@ -202,7 +204,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
         },
-        isolate: (isLegendGroup && feature) || (!layerArray && !checkboxArray) || (checkbox && checkbox.disabled) ? null : {
+        isolate: isLegendFeature || noArrays || disabledCheckbox ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
                 checkboxArray?.forEach(c => {
@@ -214,7 +216,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                         const c = l._checkbox
                         if (c.checked) c.click()
                     } else {
-                        removeLayer(l, hideLayer)
+                        removeLayer(l, isLegendGroup)
                     }
                 })
                 
@@ -225,14 +227,14 @@ const getLeafletLayerContextMenu = (e, layer, {
                 }
             }
         },
-        visibility: checkbox && checkbox.disabled ? null : {
+        visibility: isLegendFeature || disabledCheckbox ? null : {
             innerText: `Toggle ${typeLabel} visibility`,
             btnCallback: () => {
                 if (checkbox) {
                     checkbox.click()
                 } else {
                     if (group.hasLayer(layer)) {
-                        removeLayer(layer, hideLayer)
+                        removeLayer(layer, isLegendGroup)
                     } else {
                         addLayer(layer)
                     }
@@ -251,6 +253,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                 layer.fire('click')
             }
         },
+
         divider1: !feature ? null : {
             divider: true,
         },
@@ -266,10 +269,11 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: 'Copy geometry',
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
+        
         divider2: {
             divider: true,
         },
-        legend: checkbox && checkbox.disabled ? null : {
+        legend: disabledCheckbox ? null : {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
@@ -297,7 +301,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                 layer._title
             )
         },
-        remove: !isLegendGroup ? null : {
+        remove: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Remove ${typeLabel}`,
             btnCallback: () => {
                 group.removeHiddenLayer(layer)
