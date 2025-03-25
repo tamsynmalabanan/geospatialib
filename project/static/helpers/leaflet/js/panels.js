@@ -282,7 +282,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                         console.log(e3)
                         const target = e3.target
                         const legend = target.closest('[data-layer-legend="true"]')
-                        console.log(legend)
+                        const offset = container.style.top
+                        console.log(legend, offset)
                         document.body.classList.remove('user-select-none')
                     }                
 
