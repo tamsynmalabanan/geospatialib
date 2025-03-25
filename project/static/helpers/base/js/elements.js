@@ -28,6 +28,7 @@ const createButton = ({
 const createIcon = ({className='', parent, peNone=true} = {}) => {
     const icon = document.createElement('i')
     icon.className = `${className} ${peNone ? 'pe-none' : ''}`
+    if (!peNone) icon.style.cursor = 'pointer'
     parent?.appendChild(icon)
 
     return icon

@@ -293,7 +293,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 peNone: false,
                 className: 'dropdown-toggle ms-5'
             })
-            collapseToggle.style.cursor = 'pointer'
             collapseToggle.setAttribute('data-bs-toggle', 'collapse')
             collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
             collapseToggle.setAttribute('aria-controls', legendCollapse.id)
@@ -304,7 +303,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 peNone: false,
                 className: 'bi bi-three-dots'
             })
-            menuToggle.style.cursor = 'pointer'
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
                 e.x && e.y ? e : e.originalEvent, layer, map, {
                     hideLayer: true,
