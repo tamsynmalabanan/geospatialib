@@ -220,47 +220,22 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
-
-        const handler = (e) => {
-            console.log(e)
-            if (map.hasLegendLayer(layer)) {
-                layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
-            } else {
-                layerLegend.remove()
-                if (layers.innerHTML === '') clearLayers(tools)
-                
-                const paneName = layer.options.pane
-                const pane = map.getPane(paneName)
-                if (pane) {
-                    console.log(pane)
-                    L.DomUtil.remove(pane)
-                    delete map._panes[paneName]
-                    delete map._paneRenderers[paneName]
-                }
+        
+        if (map.hasHiddenLegendLayer(layer)) {
+            layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
+        } else {
+            layerLegend.remove()
+            const paneName = layer.options.pane
+            const pane = map.getPane(paneName)
+            if (pane) {
+                console.log(pane)
+                L.DomUtil.remove(pane)
+                delete map._panes[paneName]
+                delete map._paneRenderers[paneName]
             }
-            layer.off('remove', handler)
+
+            if (layers.innerHTML === '') clearLayers(tools)
         }
-        layer.on('remove', handler)
-        
-        // console.log(layer, layerLegend)
-        // console.log(map.hasLegendLayer(layer))
-        // console.log(map.getLayerGroup(layer))
-        
-        // if (map.hasLegendLayer(layer)) {
-        //     layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
-        // } else {
-        //     layerLegend.remove()
-        //     if (layers.innerHTML === '') clearLayers(tools)
-            
-        //     const paneName = layer.options.pane
-        //     const pane = map.getPane(paneName)
-        //     if (pane) {
-        //         console.log(pane)
-        //         L.DomUtil.remove(pane)
-        //         delete map._panes[paneName]
-        //         delete map._paneRenderers[paneName]
-        //     }
-        // }
     })
 
     map.on('layeradd', (event) => {
