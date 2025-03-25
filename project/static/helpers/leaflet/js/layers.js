@@ -162,6 +162,8 @@ const getLeafletLayerContextMenu = (e, layer, {
     const group = layer._group
     if (!group) return
 
+    if (geojson.type === 'feature') geojson = turf.featureCollection([geojson]) 
+
     const map = group._map
     const feature = layer.feature
     const isLegendGroup = map._legendLayerGroups.includes(group)
@@ -283,7 +285,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
                     newLayer = getLeafletGeoJSONLayer({
-                        geojson: turf.featureCollection([feature]) || geojson,
+                        geojson: feature ? turf.featureCollection([feature]) : geojson,
                         title: layer._title,
                         attribution,
                         pane,
