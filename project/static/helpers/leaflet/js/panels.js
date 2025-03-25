@@ -286,21 +286,19 @@ const handleLeafletLegendPanel = (map, parent) => {
                             return
                         }
                         
-                        console.log(document.elementsFromPoint(e3.x, e3.y))
                         const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         }) 
-                        console.log(referenceLegend)
 
-                        if (referenceLegend) {
-                            if (offset < 0) {
-                                console.log('move up')
+                        if (offset < 0) {
+                            if (referenceLegend) {
+                                layers.insertBefore(container, referenceLegend)
                             } else {
-                                console.log('move down')
+                                layers.insertBefore(container, layers.firstChild)
                             }
                         } else {
-                            if (offset < 0) {
-                                layers.insertBefore(container, layers.firstChild)
+                            if (referenceLegend && referenceLegend.nextSibling) {
+                                layers.insertBefore(container, referenceLegend.nextSibling)
                             } else {
                                 layers.appendChild(container)
                             }
