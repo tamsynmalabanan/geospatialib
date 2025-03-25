@@ -277,8 +277,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     const mouseMoveHandler = (e2) => {
                         document.body.classList.add('user-select-none')
                         const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
-                        console.log(newY)
                         container.style.top =`${newY - allowance}px`;
+                        console.log(newY, container.style.top)
                     }   
                     
                     const mouseUpHandler = (e3) => {
