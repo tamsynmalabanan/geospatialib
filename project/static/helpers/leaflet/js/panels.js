@@ -279,9 +279,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }   
                     
                     const mouseUpHandler = (e3) => {
-                        const offset = container.style.top
-                        console.log(parseInt(offset))
-                        if (Math.abs(parseInt(offset)) < 10) {
+                        const offset = parseInt(container.style.top)
+                        console.log(offset)
+                        if (Math.abs(offset) < 10) {
                             container.style.top = '0px'
                             return
                         }
