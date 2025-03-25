@@ -18,6 +18,7 @@ const handleLeafletLayerGroups = (map) => {
         }
 
         layerGroup.removeHiddenLayer = (layer) => {
+            console.log(layerGroup._hiddenLayers)
             layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => {
                 if (l !== layer) {
                     return l
@@ -25,6 +26,7 @@ const handleLeafletLayerGroups = (map) => {
                     map.fire('layerremove', {layer:layer})
                 }
             })
+            console.log(layerGroup._hiddenLayers)
         }
         layerGroup.hideLayer = (layer) => {
             layerGroup._hiddenLayers = [...new Set([...layerGroup._hiddenLayers, layer])]
