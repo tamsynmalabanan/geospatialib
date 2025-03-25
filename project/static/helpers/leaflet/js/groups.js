@@ -4,38 +4,54 @@ const handleLeafletLayerGroups = (map) => {
         const layerGroup = L.layerGroup()
         map._layerGroups[group] = layerGroup
         layerGroup._name = group
-
         layerGroup._hiddenLayers = []
+
         layerGroup.getHiddenLayers = () => layerGroup._hiddenLayers
-        layerGroup.hasHiddenLayer = (layer) => {
-            return layerGroup.getHiddenLayers().includes(layer)
-        }
-        layerGroup.getHiddenLayer = (layerId) => {
-            const matches = layerGroup.getHiddenLayers().filter(l => {
-                return l._leaflet_id === layerId
-            })
-            if (matches.length) return matches[0]
+        
+        layerGroup.hasHiddenLayer = (layer) => layerGroup.getHiddenLayers().includes(layer)
+
+        layerGroup.getHiddenLayer = (id) => {
+            for (const l of layerGroup.getHiddenLayers()) {
+                if (l._leaflet_id === id) return l
+            }
         }
 
-        layerGroup.removeHiddenLayer = (layer) => {
-            console.log(layerGroup._hiddenLayers)
+        layerGroup.removeHiddenLayer = (layer, {silent=false}={}) => {
             layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(l => {
-                if (l !== layer) {
-                    return l
-                } else {
-                    map.fire('layerremove', {layer:layer})
-                }
+                if (l !== layer) return true
+                if (!silent) map.fire('layerremove', {layer})
             })
-            console.log(layerGroup._hiddenLayers)
         }
+
+        layerGroup.clearHiddenLayers = ({silent=false}={}) => {
+            layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(layer => {
+                if (!silent) map.fire('layerremove', {layer})
+            })
+        }
+
+        layerGroup.clearAllLayers = () => {
+            layerGroup.clearLayers()
+            layerGroup.clearHiddenLayers()
+        }
+
         layerGroup.hideLayer = (layer) => {
             layerGroup._hiddenLayers = [...new Set([...layerGroup._hiddenLayers, layer])]
             layerGroup.removeLayer(layer)
         }
+
+        layerGroup.hideAllLayers = () => {
+            layerGroup.eachLayer(l => layerGroup.hideLayer(l))
+        }
+
         layerGroup.showLayer = (layer) => {
-            layerGroup.removeHiddenLayer(layer)
+            layerGroup.removeHiddenLayer(layer, {silent:true})
             layerGroup.addLayer(layer)
         }
+
+        layerGroup.showAllLayers = () => {
+            layerGroup.getHiddenLayers().forEach(l => layerGroup.showLayer(l))
+        }
+
         layerGroup.getBounds = () => {
             const bounds = [
                 ...layerGroup.getLayers(), 
@@ -64,14 +80,11 @@ const handleLeafletLayerGroups = (map) => {
         }
     }
 
-    const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
-    queryPane.style.zIndex = 599
+    const legendLayerGroups = map.getLayerGroups()
+    .filter(g => ['library', 'client'].contains(g._name))
 
     map.hasLegendLayer = (layer) => {
-        console.log(layer)
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            console.log(group.hasLayer(layer), group.hasHiddenLayer(layer))
+        for (const group of legendLayerGroups) {
             if (group.hasLayer(layer) || group.hasHiddenLayer(layer)) {
                 return group
             }
@@ -79,31 +92,27 @@ const handleLeafletLayerGroups = (map) => {
     }
     
     map.hasHiddenLegendLayer = (layer) => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
+        for (const group of legendLayerGroups) {
             if (group.hasHiddenLayer(layer)) return group
         }
     }
     
     map.hasHiddenLegendLayers = () => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            if (group._hiddenLayers.length) return true
+        for (const group of legendLayerGroups) {
+            if (group.getHiddenLayers().length) return true
         }
     }
 
-    map.getLegendLayer = (layerId) => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            const layer = group.getLayer(layerId) || group.getHiddenLayer(layerId)
+    map.getLegendLayer = (id) => {
+        for (const group of legendLayerGroups) {
+            const layer = group.getLayer(id) || group.getHiddenLayer(id)
             if (layer) return layer
         }
     }
     
     map.getLegendLayers = () => {
         let layers = []
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
+        for (const group of legendLayerGroups) {
             layers = [
                 ...layers,
                 ...group.getLayers(),
@@ -114,34 +123,25 @@ const handleLeafletLayerGroups = (map) => {
     }
     
     map.clearLegendLayers = () => {
-        ['library', 'client'].forEach(groupName => {
-            map.getLayerGroups()[groupName].clearLayers()
-        })
+        legendLayerGroups.forEach(group => group.clearAllLayers())
     }
     
     map.hideLegendLayers = () => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            group._hiddenLayers = [...group._hiddenLayers, ...group.getLayers()]
-            group.clearLayers()
+        for (const group of legendLayerGroups) {
+            group.hideAllLayers()
         }
     }
     
     map.showLegendLayers = () => {
-        for (const groupName of ['library', 'client']) {
-            const group = map.getLayerGroups()[groupName]
-            group._hiddenLayers.forEach(l => group.addLayer(l))
-            group._hiddenLayers = []
+        for (const group of legendLayerGroups) {
+            group.showAllLayers()
         }
     }
 
     map.zoomToLegendLayers = () => {
-        const bounds = ['library', 'client'].map(groupName => {
-            const group = map.getLayerGroups()[groupName]
+        const bounds = legendLayerGroups.map(group => {
             const bounds = group.getBounds()
-            if (bounds) {
-                return L.rectangle(bounds).toGeoJSON()
-            }
+            if (bounds) return L.rectangle(bounds).toGeoJSON()
         }).filter(bound => bound)
 
         if (bounds.length) {
