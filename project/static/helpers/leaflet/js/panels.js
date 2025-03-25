@@ -94,24 +94,24 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                     L.DomEvent.preventDefault(event);        
                     
                     const btn = event.target
-                    const currentMode = map._panelMode
+                    const [panelName, currentMode] = map._panelMode
                     const activate = currentMode !== toolId
                     const mapClickHandler = activate ? data.mapClickHandler : null 
                     const btnClickHandler = activate ? data.btnClickHandler : null     
                     const skipToolHandler = !toolHandler || data.toolHandler === false
 
                     if (activate && currentMode) {
-                        toolbar.querySelector(`#${toolbar.id}-${currentMode}`).click()
+                        document.querySelector(`#${mapContainer.id}-panels-${panelName}-toolbar-${currentMode}`).click()
                     }
                     
                     btn.classList.toggle('btn-primary', mapClickHandler)
                     btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
                     mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
-                    map._panelMode = mapClickHandler ? toolId : undefined
+                    map._panelMode = [name, mapClickHandler ? toolId : undefined]
     
                     if (mapClickHandler) {
                         const panelMapClickHandler = async (e) => {
-                            if (isLeafletControlElement(e.originalEvent.target) || map._panelMode !== toolId) return
+                            if (isLeafletControlElement(e.originalEvent.target) || map._panelMode[1] !== toolId) return
     
                             map.off('click', panelMapClickHandler)
                             enableLeafletLayerClick(map)
