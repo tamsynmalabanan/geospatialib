@@ -157,10 +157,10 @@ const getLeafletLayerType = (layer) => {
 }
 
 const getLeafletLayerContextMenu = (e, layer, map, {
-    checkboxArray,
-    layerArray = map.getLegendLayers(),
-    geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
     group = map.getLayerGroup(layer),
+    checkboxArray,
+    layerArray = group.getAllLayers(),
+    geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
     hideLayer = false
 } = {}) => {
     if (!group) return
@@ -178,7 +178,6 @@ const getLeafletLayerContextMenu = (e, layer, map, {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
                     p._checkbox.checked = true
-                    // document.querySelector(p._checkbox).checked = true
                 }
             })
         }

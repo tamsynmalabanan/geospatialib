@@ -10,6 +10,13 @@ const handleLeafletLayerGroups = (map) => {
         
         layerGroup.hasHiddenLayer = (layer) => layerGroup.getHiddenLayers().includes(layer)
 
+        layerGroup.getAllLayers = () => {
+            return [
+                ...layerGroup.getLayers(),
+                ...layerGroup.getHiddenLayers()
+            ]
+        }
+
         layerGroup.getHiddenLayer = (id) => {
             for (const l of layerGroup.getHiddenLayers()) {
                 if (l._leaflet_id === id) return l

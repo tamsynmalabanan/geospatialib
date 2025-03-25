@@ -373,6 +373,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(
                 e.x && e.y ? e : e.originalEvent, layer, map, {
+                    layerArray: map.getLegendLayers(),
                     hideLayer: true,
                 }
             ))
