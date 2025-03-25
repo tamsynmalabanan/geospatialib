@@ -81,7 +81,7 @@ const handleLeafletLayerGroups = (map) => {
     }
 
     const legendLayerGroups = Object.values(map.getLayerGroups())
-    .filter(g => ['library', 'client'].contains(g._name))
+    .filter(g => ['library', 'client'].includes(g._name))
 
     map.hasLegendLayer = (layer) => {
         for (const group of legendLayerGroups) {
