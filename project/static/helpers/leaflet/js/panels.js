@@ -307,6 +307,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                         const layerLegends = Array.from(layers.children).reverse()
                         for (let i=0; i<layerLegends.length; i++) {
                             const child = layerLegends[i]
+                            child.style.top = '0px'
+                            
                             const paneName = child.dataset.layerPane
                             const pane = map.getPane(paneName)
                             pane.style.zIndex = i + 200
