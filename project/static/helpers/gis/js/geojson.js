@@ -136,7 +136,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const parentCheck = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
-            formCheckClass: `d-flex gap-2 border-bottom`,
+            formCheckClass: `d-flex gap-2 `,
         }).querySelector('input')
         geojsonLayer._checkbox = parentCheck
         parentCheck.disabled = disableCheck 
@@ -156,7 +156,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const featureCheck = createFormCheck({
                     parent: featuresContainer,
                     labelInnerText: featureLayer._title,
-                    formCheckClass: `d-flex gap-2 border-bottom`,
+                    formCheckClass: `d-flex gap-2 `,
                 }).querySelector('input')
                 featureLayer._checkbox = featureCheck
             }
@@ -174,7 +174,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     }
                 )
                 
-                if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
+                // if (layer.feature) layer.on('contextmenu', checklistContextMenuHandler)
         
                 if (!checkbox) continue
         

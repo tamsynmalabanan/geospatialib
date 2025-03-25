@@ -12,7 +12,7 @@ const getLeafletGeoJSONLayer = ({
         },
         markersInheritOptions: true,
     })
-    
+
     if (title) geojsonLayer._title = title
     if (attribution) geojsonLayer._attribution = attribution
     if (group) geojsonLayer._group = group
@@ -47,6 +47,12 @@ const getLeafletGeoJSONLayer = ({
 
             layer.on('click', createPopup)
         }
+
+        layer.on('contextmenu', (e) => getLeafletLayerContextMenu(
+            e.originalEvent, layer, {
+                geojson: geojson || layer.toGeoJSON(),
+            }
+        ))
     }
  
     const styleParams = getLeafletStyleParams(customStyleParams)
