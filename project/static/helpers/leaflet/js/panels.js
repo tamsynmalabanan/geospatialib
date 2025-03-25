@@ -270,6 +270,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             Array('mousedown', 'touchstart').forEach(t1 => {
                 moveToggle.addEventListener(t1, (e1) => {
                     const containerTop = container.getBoundingClientRect().top
+                    console.log(container.getBoundingClientRect())
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
 
                     const mouseMoveHandler = (e2) => {
@@ -289,8 +290,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     })                
 
                     Array('mouseup', 'touchend').forEach(t3 => {
-                        document.addEventListener(t3, () => {
-                            mouseUpHandler()
+                        document.addEventListener(t3, (e3) => {
+                            mouseUpHandler(e3)
                             
                             Array('mousemove', 'touchmove').forEach(t2 => {
                                 document.removeEventListener(t2, mouseMoveHandler)
