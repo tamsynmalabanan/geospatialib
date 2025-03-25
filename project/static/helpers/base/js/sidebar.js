@@ -28,10 +28,8 @@ const resizeSidebar = (sidebarSelector) => {
     const mouseMoveHandler = (event) => {
         document.body.classList.add('user-select-none')
 
-        let moveX = event.clientX - startX
-        if (event.type === 'touchmove') {
-            moveX = event.touches[0].clientX - startX
-        }
+        const newX = event.type === 'touchmove' ? event.touches[0].clientX : event.clientX
+        const moveX = newX - startX
 
         sidebar.style.width =`${sidebarWidth + moveX}px`;
     }

@@ -267,6 +267,42 @@ const handleLeafletLegendPanel = (map, parent) => {
                 className: 'bi bi-grip-vertical'
             })
             legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
+            Array('mousedown', 'touchstart').forEach(t1 => {
+                moveToggle.addEventListener(t1, (e1) => {
+                    const containerTop = container.getBoundingClientRect().top
+                    const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
+
+                    const mouseMoveHandler = (e2) => {
+                        document.body.classList.add('user-select-none')
+                        const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
+                        const moveY = newY - startY
+                        container.style.top =`${containerTop + moveY}px`;
+                    }   
+                    
+                    const mouseUpHandler = (e3) => {
+                        console.log(e3)
+                        document.body.classList.remove('user-select-none')
+                    }                
+
+                    Array('mousemove', 'touchmove').forEach(t2 => {
+                        document.addEventListener(t2, mouseMoveHandler)
+                    })                
+
+                    Array('mouseup', 'touchend').forEach(t3 => {
+                        document.addEventListener(t3, () => {
+                            mouseUpHandler()
+                            
+                            Array('mousemove', 'touchmove').forEach(t2 => {
+                                document.removeEventListener(t2, mouseMoveHandler)
+                            })
+                            
+                            Array('mouseup', 'touchend').forEach(t3 => {
+                                document.removeEventListener(t3, mouseUpHandler)
+                            })
+                        })
+                    })                
+                })
+            })
 
             const toggleContainer = document.createElement('div')
             toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
