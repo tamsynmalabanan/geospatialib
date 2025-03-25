@@ -275,7 +275,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
-                    const attribution = createAttributionTable(geojson || {})?.outerHTML
+                    const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                     newLayer = getLeafletGeoJSONLayer({
                         geojson: feature || geojson,
                         title: layer._title,
@@ -302,7 +302,7 @@ const getLeafletLayerContextMenu = (e, layer, map, {
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
-                    const attribution = createAttributionTable(geojson || {})?.outerHTML
+                    const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                     newLayer = getLeafletGeoJSONLayer({
                         geojson: feature || geojson,
                         title: layer._title,
