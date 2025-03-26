@@ -18,8 +18,10 @@ const getLeafletGeoJSONLayer = ({
     if (group) geojsonLayer._group = group
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
-    geojsonLayer.options.renderer = new L.SVG()
-    console.log(geojsonLayer.options.renderer)
+
+    // const renderer = new L.SVG()
+    // geojsonLayer.options.renderer = renderer
+    // console.log(geojsonLayer.options.renderer)
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
