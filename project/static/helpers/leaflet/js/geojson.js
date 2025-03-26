@@ -122,7 +122,7 @@ const getLeafletGeoJSONLayer = ({
     if (geojson) geojsonLayer.addData(geojson)
     
     geojsonLayer.on('add', () => {
-        console.log('added')
+        geojsonLayer.clearLayers()
     })
     
 
