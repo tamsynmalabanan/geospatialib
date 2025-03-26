@@ -314,15 +314,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                             const layerLegends = Array.from(layers.children).reverse()
                             for (let i=0; i<layerLegends.length; i++) {
                                 const child = layerLegends[i]
-                                child.style.top = '0px'
-                                
                                 const paneName = child.dataset.layerPane
                                 const pane = map.getPane(paneName)
                                 pane.style.zIndex = i + 200
                             }
                         }
                         
-                        Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
+                        Array.from(layers.children).forEach(c => {
+                            c.style.top = '0px'
+                            c.classList.remove('highlight')
+                        }) 
                         document.body.classList.remove('user-select-none')
                     }                
 
