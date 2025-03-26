@@ -35,7 +35,7 @@ const handleLeafletLayerGroups = (map) => {
                 })
             },
             clearLayer: (layer) => {
-                layerGroup._ch.removeLayer(layer)
+                layerGroup.removeLayer(layer)
                 layerGroup._ch.removeHiddenLayer(layer)
                 
                 const paneName = layer.options.pane
