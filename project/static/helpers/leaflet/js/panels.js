@@ -319,6 +319,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
 
                         document.body.classList.remove('user-select-none')
+                        Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
                     }                
 
                     Array('mousemove', 'touchmove').forEach(t2 => {
