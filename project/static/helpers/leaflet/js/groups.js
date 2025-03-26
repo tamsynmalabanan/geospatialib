@@ -45,7 +45,7 @@ const handleLeafletLayerGroups = (map) => {
                 
             },
             clearAllLayers: () => {
-                layerGroup_customHandlers.getAllLayers().forEach(l => clearLayer(l))
+                layerGroup._customHandlers.getAllLayers().forEach(l => clearLayer(l))
             },
             hideLayer: (layer) => {
                 layerGroup._hiddenLayers.push(layer)
