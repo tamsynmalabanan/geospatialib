@@ -1,5 +1,9 @@
 const handlerLeafletRenderer =(map) => {
+    let timeout
     map.on('layeradd layerremove', (e) => {
-        console.log(map.getContainer().querySelectorAll('path').length)
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            console.log(map.getContainer().querySelectorAll('path').length)
+        }, 100);
     })
 }
