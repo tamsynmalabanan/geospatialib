@@ -28,7 +28,16 @@ const isLeafletControlElement = (element) => {
 }
 
 const createCustomPane = (map) => {
-    const paneName = generateRandomString()
+    const paneName = `custom-${generateRandomString()}`
     map.getPane(paneName) || map.createPane(paneName)
     return paneName
+}
+
+const deletePane = (paneName) => {
+    const pane = map.getPane(paneName)
+    if (!pane) return
+    
+    L.DomUtil.remove(pane)
+    delete map._panes[paneName]
+    delete map._paneRenderers[paneName]
 }
