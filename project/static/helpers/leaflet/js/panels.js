@@ -156,7 +156,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayers,
         toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
-        clearLayersHandler: () => map._customHandlers.clearLegendLayers()
+        clearLayersHandler: () => map._ch.clearLegendLayers()
     })
 
     const tools = toolsHandler({
@@ -164,16 +164,16 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconClass: 'bi bi-zoom-in',
             title: 'Zoom to layers',
             disabled: true,
-            btnClickHandler: () => map._customHandlers.zoomToLegendLayers(),
+            btnClickHandler: () => map._ch.zoomToLegendLayers(),
         },
         visibility: {
             iconClass: 'bi bi-eye',
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                map._customHandlers.hasHiddenLegendLayers() ? 
-                map._customHandlers.showLegendLayers() : 
-                map._customHandlers.hideLegendLayers()
+                map._ch.hasHiddenLegendLayers() ? 
+                map._ch.showLegendLayers() : 
+                map._ch.hideLegendLayers()
             },
         },
         divider1: {
@@ -221,7 +221,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
         
-        if (map._customHandlers.hasHiddenLegendLayer(layer)) {
+        if (map._ch.hasHiddenLegendLayer(layer)) {
             layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
         } else {
             layerLegend.remove()
@@ -236,7 +236,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layeradd', (event) => {
         const layer = event.layer
         
-        if (!map._customHandlers.hasLegendLayer(layer)) return
+        if (!map._ch.hasLegendLayer(layer)) return
         
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
@@ -406,7 +406,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
-    const queryGroup = map._customHandlers.getLayerGroups().query
+    const queryGroup = map._ch.getLayerGroups().query
     const {
         toolbar, 
         layers,

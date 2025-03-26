@@ -97,7 +97,7 @@ const zoomToLeafletLayer = (layer, map, {
     if (typeof layer.getBounds === 'function') {
         const b = layer.getBounds()
         if (!b) return 
-        
+
         if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
             return map.setView(b.getNorthEast(), zoom)
         } else {
@@ -175,14 +175,14 @@ const getLeafletLayerContextMenu = (e, layer, {
     const checkboxArray = layer._checkboxContainer ? Array.from(
         layer._checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
-    const layerArray = isLegendGroup ? map._customHandlers.getLegendLayers() : group._customHandlers.getAllLayers()
+    const layerArray = isLegendGroup ? map._ch.getLegendLayers() : group._ch.getAllLayers()
     const noArrays = !checkboxArray && !layerArray
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
     
     const addLayer = (l) => {
-        group._customHandlers.showLayer(l)
+        group._ch.showLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -193,7 +193,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     }
     
     const removeLayer = (l, hidden=false) => {
-        hidden ? group._customHandlers.hideLayer(l) : group.removeLayer(l)
+        hidden ? group._ch.hideLayer(l) : group.removeLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -280,7 +280,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: () => {
-                const targetGroup = isLegendGroup ? group : map._customHandlers.getLayerGroups().client
+                const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
                 const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                 
@@ -308,7 +308,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         remove: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Remove ${typeLabel}`,
             btnCallback: () => {
-                group._customHandlers.removeHiddenLayer(layer)
+                group._ch.removeHiddenLayer(layer)
                 group.removeLayer(layer)
             }
         },
