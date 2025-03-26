@@ -22,6 +22,7 @@ const getLeafletGeoJSONLayer = ({
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
 
+        layer.options.renderer = L.Canvas()
         layer.options.pane = geojsonLayer.options.pane || layer.options.pane
         layer._group = geojsonLayer._group
         
