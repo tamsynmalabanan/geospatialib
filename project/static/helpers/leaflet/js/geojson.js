@@ -120,13 +120,14 @@ const getLeafletGeoJSONLayer = async ({
         return L.marker(latlng, {icon: getStyle(feature)})
     }
     
-    const data = await dataFetcher()
-    if (data) geojsonLayer.addData(data)
-
     geojsonLayer._renderers = {
         svg: new L.SVG({pane:geojsonLayer.options.pane}),
         canvas: new L.Canvas({pane:geojsonLayer.options.pane}),
     }
+
+    geojsonLayer.options.renderer = geojsonLayer._renderers.svg
+    const data = await dataFetcher()
+    if (data) geojsonLayer.addData(data)
 
     geojsonLayer.on('rendererupdated', async (e) => {
         const newRenderer = geojsonLayer._renderers[e.renderer]
