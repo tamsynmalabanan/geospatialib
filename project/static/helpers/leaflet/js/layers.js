@@ -280,7 +280,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map._customHandlers.getLayerGroups().client
                 const pane = createCustomPane(map)
-                const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
+                const attribution = layer._attribution || createAttributionTable(geojson || {})?.outerHTML
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
