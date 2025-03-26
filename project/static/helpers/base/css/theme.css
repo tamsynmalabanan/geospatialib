@@ -7,7 +7,8 @@
 
 .highlight {
     border-radius: var(--bs-border-radius);
-    padding: 16px;
+    padding: 10px;
+    margin: 10px;
 }
 
 [data-bs-theme="light"] {
@@ -26,13 +27,15 @@
 
     .highlight {
         border: 2px solid var(--adjusted-bg-light);
+        background-color: var(--default-bg-light);
     }
 }
 
 [data-bs-theme="dark"] {
-
+    
     .highlight {
         border: 2px solid var(--adjusted-bg-dark);
+        background-color: var(--default-bg-dark);
     }
 
     .offcanvas, .offcanvas-lg {
