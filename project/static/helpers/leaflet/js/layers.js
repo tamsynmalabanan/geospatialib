@@ -275,7 +275,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         divider2: {
             divider: true,
         },
-        legend: disabledCheckbox ? null : {
+        legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: () => {
                 const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
