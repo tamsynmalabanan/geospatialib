@@ -148,7 +148,7 @@ const handleLeafletLayerGroups = (map) => {
 
     map.zoomToLegendLayers = () => {
         const bounds = map._legendLayerGroups.map(group => {
-            const bounds = group._customHandler.getBounds()
+            const bounds = group._customHandlers.getBounds()
             if (bounds) return L.rectangle(bounds).toGeoJSON()
         }).filter(bound => bound)
 
