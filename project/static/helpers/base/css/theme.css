@@ -5,6 +5,11 @@
     --default-bg-dark: hsl(210, 11%, 15%);
 }
 
+.highlight {
+    border-radius: var(--bs-border-radius);
+    padding: 16px;
+}
+
 [data-bs-theme="light"] {
     
     .offcanvas, .offcanvas-lg {
@@ -27,7 +32,7 @@
 [data-bs-theme="dark"] {
 
     .highlight {
-        border: 2px solid var(--adjusted-bg-light);
+        border: 2px solid var(--adjusted-bg-dark);
     }
 
     .offcanvas, .offcanvas-lg {
