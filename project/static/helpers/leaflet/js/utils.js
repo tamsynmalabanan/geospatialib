@@ -33,7 +33,7 @@ const createCustomPane = (map) => {
     return paneName
 }
 
-const deletePane = (paneName) => {
+const deletePane = (map, paneName) => {
     const pane = map.getPane(paneName)
     if (!pane) return
     
