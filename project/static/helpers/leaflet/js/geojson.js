@@ -19,7 +19,8 @@ const getLeafletGeoJSONLayer = ({
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
 
-    if (geojson?.features?.length > 100) {
+    const features = geojson?.features || []
+    if (features.length > 100) {
         const renderer = new L.Canvas({pane:geojsonLayer.options.pane})
         geojsonLayer.options.renderer = renderer
     }
