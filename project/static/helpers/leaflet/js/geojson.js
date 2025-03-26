@@ -1,4 +1,4 @@
-const getLeafletGeoJSONLayer = ({
+const getLeafletGeoJSONLayer = async ({
     pane,
     geojson,
     customStyleParams,
@@ -120,6 +120,9 @@ const getLeafletGeoJSONLayer = ({
         return L.marker(latlng, {icon: getStyle(feature)})
     }
     
+    const data = await dataFetcher()
+    if (data) geojsonLayer.addData(data)
+
     geojsonLayer.on('add', async (e) => {
         console.log(e)
         geojsonLayer.clearLayers()
