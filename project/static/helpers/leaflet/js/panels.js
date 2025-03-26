@@ -324,6 +324,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             c.style.top = '0px'
                             c.classList.remove('highlight')
                         }) 
+                        
                         document.body.classList.remove('user-select-none')
                     }                
 
