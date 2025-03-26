@@ -173,14 +173,14 @@ const getLeafletLayerContextMenu = (e, layer, {
     const checkboxArray = layer._checkboxContainer ? Array.from(
         layer._checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
-    const layerArray = isLegendGroup ? map.getLegendLayers() : group.getAllLayers()
+    const layerArray = isLegendGroup ? map.getLegendLayers() : group._customHandlers.getAllLayers()
     const noArrays = !checkboxArray && !layerArray
 
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
     
     const addLayer = (l) => {
-        group.showLayer(l)
+        group._customHandlers.showLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -191,7 +191,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     }
     
     const removeLayer = (l, hidden=false) => {
-        hidden ? group.hideLayer(l) : group.removeLayer(l)
+        hidden ? group._customHandlers.hideLayer(l) : group.removeLayer(l)
         if (l._eventParents) {
             Object.values(l._eventParents).forEach(p => {
                 if (p._checkbox) {
@@ -306,7 +306,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         remove: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Remove ${typeLabel}`,
             btnCallback: () => {
-                group.removeHiddenLayer(layer)
+                group._customHandlers.removeHiddenLayer(layer)
                 group.removeLayer(layer)
             }
         },
