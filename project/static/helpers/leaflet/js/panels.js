@@ -281,16 +281,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                         const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         })
-                        Array.from(layers.children).forEach(c => c.classList.toggle(
-                            'highlight', 
-                            Array(referenceLegend, container).includes(c)
-                        )) 
+                        Array.from(layers.children).forEach(c => c.classList.toggle('highlight', c === referenceLegend && c === container)) 
                     }   
                     
                     const mouseUpHandler = (e3) => {
                         const offset = parseInt(container.style.top)
                         if (Math.abs(offset) < 10) {
                             container.style.top = '0px'
+                            return
                         }
                         
                         const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
@@ -315,7 +313,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         for (let i=0; i<layerLegends.length; i++) {
                             const child = layerLegends[i]
                             child.style.top = '0px'
-                            child.classList.remove('highlight')
                             
                             const paneName = child.dataset.layerPane
                             const pane = map.getPane(paneName)
