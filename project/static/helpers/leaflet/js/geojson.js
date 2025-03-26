@@ -124,13 +124,12 @@ const getLeafletGeoJSONLayer = async ({
     if (data) geojsonLayer.addData(data)
 
     geojsonLayer.on('rendererupdated', async (e) => {
-        geojsonLayer.clearLayers()
-
         const pane = geojsonLayer.options.pane
         const newRenderer = e.renderer === 'svg' ? new L.SVG({pane}) : new L.Canvas({pane})
         geojsonLayer.options.renderer = newRenderer
         console.log(geojsonLayer.options.renderer)
-
+        
+        geojsonLayer.clearLayers()
         const data = await dataFetcher()
         if (data) geojsonLayer.addData(data)
 
