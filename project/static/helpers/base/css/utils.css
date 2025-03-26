@@ -33,3 +33,7 @@
 .user-select-none {
     user-select: none;
 }
+
+.highlight {
+    background-color: black !important;
+}
