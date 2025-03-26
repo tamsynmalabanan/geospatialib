@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleLeafletMapControls(map)
         elementResizeObserver(container, () => map.invalidateSize())
         assignMapObservers(map)
+        handlerLeafletRenderer(map)
 
         const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
         queryPane.style.zIndex = 599
