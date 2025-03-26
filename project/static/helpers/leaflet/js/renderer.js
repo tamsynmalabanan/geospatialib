@@ -20,6 +20,6 @@ const handlerLeafletRenderer =(map) => {
                     })
                 }
             }
-        }, 1000);
+        }, 100);
     })
 }
