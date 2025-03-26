@@ -1,3 +1,7 @@
 const handlerLeafletRenderer =(map) => {
-    map.options.preferCanvas = true
+    map.options.renderer = L.Canvas
+
+    // map.on('layeradd', (e) => {
+        
+    // })
 }
