@@ -293,36 +293,36 @@ const handleLeafletLegendPanel = (map, parent) => {
                         if (Math.abs(offset) < 10) {
                             container.style.top = '0px'
                             return
+                        } else {
+                            const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
+                                if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
+                            }) 
+    
+                            if (offset < 0) {
+                                if (referenceLegend) {
+                                    layers.insertBefore(container, referenceLegend)
+                                } else {
+                                    layers.insertBefore(container, layers.firstChild)
+                                }
+                            } else {
+                                if (referenceLegend && referenceLegend.nextSibling) {
+                                    layers.insertBefore(container, referenceLegend.nextSibling)
+                                } else {
+                                    layers.appendChild(container)
+                                }
+                            }
+    
+                            const layerLegends = Array.from(layers.children).reverse()
+                            for (let i=0; i<layerLegends.length; i++) {
+                                const child = layerLegends[i]
+                                child.style.top = '0px'
+                                
+                                const paneName = child.dataset.layerPane
+                                const pane = map.getPane(paneName)
+                                pane.style.zIndex = i + 200
+                            }
                         }
                         
-                        const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
-                            if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                        }) 
-
-                        if (offset < 0) {
-                            if (referenceLegend) {
-                                layers.insertBefore(container, referenceLegend)
-                            } else {
-                                layers.insertBefore(container, layers.firstChild)
-                            }
-                        } else {
-                            if (referenceLegend && referenceLegend.nextSibling) {
-                                layers.insertBefore(container, referenceLegend.nextSibling)
-                            } else {
-                                layers.appendChild(container)
-                            }
-                        }
-
-                        const layerLegends = Array.from(layers.children).reverse()
-                        for (let i=0; i<layerLegends.length; i++) {
-                            const child = layerLegends[i]
-                            child.style.top = '0px'
-                            
-                            const paneName = child.dataset.layerPane
-                            const pane = map.getPane(paneName)
-                            pane.style.zIndex = i + 200
-                        }
-
                         document.body.classList.remove('user-select-none')
                         Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
                     }                
