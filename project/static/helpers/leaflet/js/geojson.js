@@ -58,7 +58,7 @@ const getLeafletGeoJSONLayer = ({
 
         layer.on('contextmenu', (e) => getLeafletLayerContextMenu(
             e.originalEvent, layer, {
-                geojson: turf.featureCollection([layer.toGeoJSON()]),
+                geojson: geojson || layer.toGeoJSON(),
             }
         ))
     }
