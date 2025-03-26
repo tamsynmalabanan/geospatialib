@@ -17,7 +17,7 @@ const handlerLeafletRenderer =(map) => {
                         if (!layer._renderers) return
                         
                         Object.keys(layer._renderers).forEach(k => {
-                            console.log(layer._renderers[k])
+                            console.log(layer._renderers[k]._container)
                             // layer._renderers[k]._container
                             // .classList.toggle('d-none', k !== map._currentRenderer)
                         })
