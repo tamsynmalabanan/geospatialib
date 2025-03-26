@@ -383,10 +383,15 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
-            if (layer instanceof L.GeoJSON) createGeoJSONLayerLegend(
-                layer, 
-                legendDetails
-            )
+            if (layer instanceof L.GeoJSON) {
+                legendDetails.innerHTML = ''
+                layer.on('dataadd', () => {
+                    createGeoJSONLayerLegend(
+                        layer, 
+                        legendDetails
+                    )    
+                })
+            }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
         }
