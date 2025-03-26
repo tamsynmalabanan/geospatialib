@@ -22,7 +22,6 @@ const getLeafletGeoJSONLayer = ({
     const renderer = new L.SVG()
     // const renderer = new L.SVG({pane:geojsonLayer.options.pane})
     geojsonLayer.options.renderer = renderer
-    console.log(geojsonLayer.options.renderer)
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
