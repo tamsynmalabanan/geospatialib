@@ -5,7 +5,6 @@ const getLeafletGeoJSONLayer = ({
     title,
     attribution,
     group,
-    renderer,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         filter: (feature) => {
@@ -121,6 +120,11 @@ const getLeafletGeoJSONLayer = ({
     }
     
     if (geojson) geojsonLayer.addData(geojson)
+    
+    geojsonLayer.on('add', () => {
+        console.log('added')
+    })
+    
 
     return geojsonLayer
 }
