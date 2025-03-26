@@ -5,6 +5,7 @@ const getLeafletGeoJSONLayer = ({
     title,
     attribution,
     group,
+    renderer,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         filter: (feature) => {
@@ -19,11 +20,11 @@ const getLeafletGeoJSONLayer = ({
 
     geojsonLayer.options.pane = pane || geojsonLayer.options.pane
 
-    const features = geojson?.features || []
-    if (features.length > 100) {
-        const renderer = new L.Canvas({pane:geojsonLayer.options.pane})
-        geojsonLayer.options.renderer = renderer
-    }
+    // const features = geojson?.features || []
+    // if (features.length > 100) {
+    //     const renderer = new L.Canvas({pane:geojsonLayer.options.pane})
+    //     geojsonLayer.options.renderer = renderer
+    // }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties

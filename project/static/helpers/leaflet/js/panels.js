@@ -445,7 +445,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const content = await createGeoJSONChecklist(geojsons, queryGroup, {
                     defaultGeom,
                     controller, 
-                    pane: 'queryPane', 
+                    pane: 'queryPane',
                     customStyleParams: queryStyleParams, 
                 })
                 if (content) layers.appendChild(content)
