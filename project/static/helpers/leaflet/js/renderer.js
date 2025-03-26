@@ -17,9 +17,10 @@ const handlerLeafletRenderer =(map) => {
                         if (!layer._renderers) return
                         
                         Object.keys(layer._renderers).forEach(k => {
-                            console.log(layer._renderers[k]._container)
-                            // layer._renderers[k]._container
-                            // .classList.toggle('d-none', k !== map._currentRenderer)
+                            layer._renderers[k]._container?.classList.toggle(
+                                'd-none', 
+                                k !== map._currentRenderer
+                            )
                         })
                 
                         if (map._currentRenderer === 'svg' && layer.options.renderer instanceof L.SVG) return
