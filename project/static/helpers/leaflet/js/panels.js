@@ -271,6 +271,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             Array('mousedown', 'touchstart').forEach(t1 => {
                 moveToggle.addEventListener(t1, (e1) => {
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
+                    container.classList.add('highlight')
 
                     const mouseMoveHandler = (e2) => {
                         document.body.classList.add('user-select-none')
@@ -280,7 +281,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         })
-                        Array.from(layers.children).forEach(c => c.classList.toggle('highlight', c === referenceLegend)) 
+                        Array.from(layers.children).forEach(c => c.classList.toggle('highlight', c === referenceLegend && c === container)) 
                     }   
                     
                     const mouseUpHandler = (e3) => {
