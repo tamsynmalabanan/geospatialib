@@ -292,7 +292,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         const offset = parseInt(container.style.top)
                         if (Math.abs(offset) < 10) {
                             container.style.top = '0px'
-                            return
                         } else {
                             const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
                                 if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
@@ -323,8 +322,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                             }
                         }
                         
-                        document.body.classList.remove('user-select-none')
                         Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
+                        document.body.classList.remove('user-select-none')
                     }                
 
                     Array('mousemove', 'touchmove').forEach(t2 => {
