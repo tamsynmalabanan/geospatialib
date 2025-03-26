@@ -295,7 +295,7 @@ const getLeafletLayerContextMenu = (e, layer, {
 
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
-        },
+        }, //disabledCheckbox ? null : 
         download: !feature && type !== 'geojson' ? null : {
             innerText: 'Download GeoJSON',
             btnCallback: () => downloadGeoJSON(
