@@ -14,8 +14,14 @@ const handlerLeafletRenderer =(map) => {
                 }
                 Object.values(map._ch.getLayerGroups()).forEach(group => {
                     group._ch.getAllLayers().forEach(layer => {
+                        Object.keys(layer._renderers).forEach(k => {
+                            layer._renderers[k]._container
+                            .classList.toggle('d-none', k !== map._currentRenderer)
+                        })
+                
                         if (map._currentRenderer === 'svg' && layer.options.renderer instanceof L.SVG) return
                         if (map._currentRenderer === 'canvas' && layer.options.renderer instanceof L.Canvas) return
+                        
                         layer.fire('rendererupdated', {renderer:map._currentRenderer})
                     })
                 })

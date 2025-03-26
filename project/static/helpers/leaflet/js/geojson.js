@@ -138,6 +138,11 @@ const getLeafletGeoJSONLayer = async ({
         const data = await dataFetcher()
         if (data) geojsonLayer.addData(data)
 
+        Object.keys(geojsonLayer._renderers).forEach(k => {
+            geojsonLayer._renderers[k]._container
+            .classList.toggle('d-none', k !== e.renderer)
+        })
+
         geojsonLayer.fire('dataupdate')
     })
 
