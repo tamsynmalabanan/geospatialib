@@ -229,6 +229,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const paneName = layer.options.pane
             const pane = map.getPane(paneName)
             if (pane) {
+                console.log(pane)
                 L.DomUtil.remove(pane)
                 delete map._panes[paneName]
                 delete map._paneRenderers[paneName]
