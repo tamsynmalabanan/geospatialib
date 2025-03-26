@@ -1,6 +1,7 @@
 const handlerLeafletRenderer =(map) => {
+    map.options.preferCanvas = false
     map._currentRenderer = 'svg'
-
+    
     let timeout
     map.on('layeradd layerremove', (e) => {
         clearTimeout(timeout)
@@ -11,6 +12,7 @@ const handlerLeafletRenderer =(map) => {
                 const count = map.getContainer().querySelectorAll('path').length
                 if ((count > threshold && map._currentRenderer !== 'canvas') || (count <= threshold && map._currentRenderer !== 'svg')) {
                     map._currentRenderer = map._currentRenderer === 'canvas' ? 'svg' : 'canvas'
+                    map.options.preferCanvas = map._currentRenderer === 'canvas'
                     Object.values(map._ch.getLayerGroups()).forEach(group => {
                         group._ch.getAllLayers().forEach(layer => {
                             if (map._currentRenderer === 'svg' && layer.options.renderer instanceof L.SVG) return
