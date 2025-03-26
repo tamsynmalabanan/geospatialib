@@ -385,7 +385,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             if (layer instanceof L.GeoJSON) {
                 legendDetails.innerHTML = ''
-                layer.on('dataadd', () => {
+                layer.on('dataupdate', () => {
                     createGeoJSONLayerLegend(
                         layer, 
                         legendDetails
