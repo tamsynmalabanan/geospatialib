@@ -290,42 +290,40 @@ const handleLeafletLegendPanel = (map, parent) => {
                     const mouseUpHandler = (e3) => {
                         const offset = parseInt(container.style.top)
                         if (Math.abs(offset) < 10) {
-                            Array.from(layers.children).forEach(c => {
-                                c.style.top = '0px'
-                                c.classList.remove('highlight')
-                            })
-                        } else {
-                            const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
-                                if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                            }) 
-    
-                            if (offset < 0) {
-                                if (referenceLegend) {
-                                    layers.insertBefore(container, referenceLegend)
-                                } else {
-                                    layers.insertBefore(container, layers.firstChild)
-                                }
+                            container.style.top = '0px'
+                        }
+                        
+                        const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
+                            if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
+                        }) 
+
+                        if (offset < 0) {
+                            if (referenceLegend) {
+                                layers.insertBefore(container, referenceLegend)
                             } else {
-                                if (referenceLegend && referenceLegend.nextSibling) {
-                                    layers.insertBefore(container, referenceLegend.nextSibling)
-                                } else {
-                                    layers.appendChild(container)
-                                }
+                                layers.insertBefore(container, layers.firstChild)
                             }
-    
-                            const layerLegends = Array.from(layers.children).reverse()
-                            for (let i=0; i<layerLegends.length; i++) {
-                                const child = layerLegends[i]
-                                child.style.top = '0px'
-                                child.classList.remove('highlight')
-                                
-                                const paneName = child.dataset.layerPane
-                                const pane = map.getPane(paneName)
-                                pane.style.zIndex = i + 200
+                        } else {
+                            if (referenceLegend && referenceLegend.nextSibling) {
+                                layers.insertBefore(container, referenceLegend.nextSibling)
+                            } else {
+                                layers.appendChild(container)
                             }
                         }
 
+                        const layerLegends = Array.from(layers.children).reverse()
+                        for (let i=0; i<layerLegends.length; i++) {
+                            const child = layerLegends[i]
+                            child.style.top = '0px'
+                            child.classList.remove('highlight')
+                            
+                            const paneName = child.dataset.layerPane
+                            const pane = map.getPane(paneName)
+                            pane.style.zIndex = i + 200
+                        }
+
                         document.body.classList.remove('user-select-none')
+                        Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
                     }                
 
                     Array('mousemove', 'touchmove').forEach(t2 => {
