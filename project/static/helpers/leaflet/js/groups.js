@@ -6,74 +6,68 @@ const handleLeafletLayerGroups = (map) => {
         
         layerGroup._name = group
         layerGroup._hiddenLayers = []
-        layerGroup._customHandlers = {}
-
-        layerGroup._customHandlers.getHiddenLayers = () => layerGroup._hiddenLayers
-        
-        layerGroup._customHandlers.hasHiddenLayer = (layer) => layerGroup._customHandlers.getHiddenLayers().includes(layer)
-
-        layerGroup._customHandlers.getAllLayers = () => {
-            return [
-                ...layerGroup.getLayers(),
-                ...layerGroup._customHandlers.getHiddenLayers()
-            ]
-        }
-
-        layerGroup._customHandlers.getHiddenLayer = (id) => {
-            for (const l of layerGroup._customHandlers.getHiddenLayers()) {
-                if (l._leaflet_id === id) return l
-            }
-        }
-
-        layerGroup._customHandlers.removeHiddenLayer = (layer, {silent=false}={}) => {
-            const match = layerGroup._customHandlers.getHiddenLayers().find(l => l === layer)
-            layerGroup._hiddenLayers = layerGroup._customHandlers.getHiddenLayers().filter(l => l !== layer)
-            if (match && !silent) map.fire('layerremove', {layer})
-        }
-
-        layerGroup._customHandlers.clearHiddenLayers = ({silent=false}={}) => {
-            layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(layer => {
-                if (!silent) map.fire('layerremove', {layer})
-            })
-        }
-
-        layerGroup._customHandlers.clearAllLayers = () => {
-            layerGroup.clearLayers()
-            layerGroup._customHandlers.clearHiddenLayers()
-        }
-
-        layerGroup._customHandlers.hideLayer = (layer) => {
-            layerGroup._hiddenLayers.push(layer)
-            layerGroup.removeLayer(layer)
-        }
-
-        layerGroup._customHandlers.hideAllLayers = () => {
-            layerGroup.eachLayer(l => layerGroup._customHandlers.hideLayer(l))
-        }
-
-        layerGroup._customHandlers.showLayer = (layer) => {
-            layerGroup._customHandlers.removeHiddenLayer(layer, {silent:true})
-            layerGroup.addLayer(layer)
-        }
-
-        layerGroup._customHandlers.showAllLayers = () => {
-            layerGroup._customHandlers.getHiddenLayers().forEach(l => layerGroup._customHandlers.showLayer(l))
-        }
-
-        layerGroup._customHandlers.getBounds = () => {
-            const bounds = [
-                ...layerGroup.getLayers(), 
-                ...layerGroup._customHandlers.getHiddenLayers()
-            ].map(layer => {
-                if (layer.getBounds) {
-                    return L.rectangle(layer.getBounds()).toGeoJSON()
+        layerGroup._customHandlers = {
+            getHiddenLayers: () => {
+                return layerGroup._hiddenLayers
+            },
+            hasHiddenLayer: (layer) => {
+                return layerGroup._customHandlers.getHiddenLayers().includes(layer)
+            },
+            getAllLayers: () => {
+                return [
+                    ...layerGroup.getLayers(),
+                    ...layerGroup._customHandlers.getHiddenLayers()
+                ]
+            },
+            getHiddenLayer: (id) => {
+                for (const l of layerGroup._customHandlers.getHiddenLayers()) {
+                    if (l._leaflet_id === id) return l
                 }
-            }).filter(bound => bound)
-
-            if (bounds.length) {
-                return L.geoJSON(turf.featureCollection(bounds)).getBounds()
-            }
+            },
+            removeHiddenLayer: (layer, {silent=false}={}) => {
+                const match = layerGroup._customHandlers.getHiddenLayers().find(l => l === layer)
+                layerGroup._hiddenLayers = layerGroup._customHandlers.getHiddenLayers().filter(l => l !== layer)
+                if (match && !silent) map.fire('layerremove', {layer})
+            },
+            clearHiddenLayers: ({silent=false}={}) => {
+                layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(layer => {
+                    if (!silent) map.fire('layerremove', {layer})
+                })
+            },
+            clearAllLayers: () => {
+                layerGroup.clearLayers()
+                layerGroup._customHandlers.clearHiddenLayers()
+            },
+            hideLayer: (layer) => {
+                layerGroup._hiddenLayers.push(layer)
+                layerGroup.removeLayer(layer)
+            },
+            hideAllLayers: () => {
+                layerGroup.eachLayer(l => layerGroup._customHandlers.hideLayer(l))
+            },
+            showLayer: (layer) => {
+                layerGroup._customHandlers.removeHiddenLayer(layer, {silent:true})
+                layerGroup.addLayer(layer)
+            },
+            showAllLayers: () => {
+                layerGroup._customHandlers.getHiddenLayers().forEach(l => layerGroup._customHandlers.showLayer(l))
+            },
+            getBounds: () => {
+                const bounds = [
+                    ...layerGroup.getLayers(), 
+                    ...layerGroup._customHandlers.getHiddenLayers()
+                ].map(layer => {
+                    if (layer.getBounds) {
+                        return L.rectangle(layer.getBounds()).toGeoJSON()
+                    }
+                }).filter(bound => bound)
+    
+                if (bounds.length) {
+                    return L.geoJSON(turf.featureCollection(bounds)).getBounds()
+                }
+            },
         }
+
 
         map.addLayer(layerGroup)
     })
