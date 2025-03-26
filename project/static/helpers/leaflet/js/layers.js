@@ -279,14 +279,14 @@ const getLeafletLayerContextMenu = (e, layer, {
         },
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
-            btnCallback: () => {
+            btnCallback: async () => {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
                 const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
-                    newLayer = getLeafletGeoJSONLayer({
+                    newLayer = await getLeafletGeoJSONLayer({
                         geojson: feature ? turf.featureCollection([feature]) : geojson,
                         title: layer._title,
                         attribution,
