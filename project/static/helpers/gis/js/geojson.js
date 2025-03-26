@@ -116,7 +116,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         if (!features?.length) continue
 
         const listFeatures = features.length <= 100
-        const disableCheck = features.length > 1000
+        const disableCheck = features.length > 10000
 
         handleGeoJSON(geojson, {
             controller,
