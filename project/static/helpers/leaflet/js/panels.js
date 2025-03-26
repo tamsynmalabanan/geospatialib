@@ -384,8 +384,8 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                legendDetails.innerHTML = ''
                 layer.on('dataupdate', () => {
+                    legendDetails.innerHTML = ''
                     createGeoJSONLayerLegend(
                         layer, 
                         legendDetails
