@@ -71,9 +71,6 @@ const handleLeafletLayerGroups = (map) => {
         map.addLayer(layerGroup)
     })
 
-    map._legendLayerGroups = Object.values(map._customHandlers.getLayerGroups())
-    .filter(g => ['library', 'client'].includes(g._name))
-
     map._customHandlers = {
         getLayerGroups: () => {
             return map._layerGroups
@@ -143,4 +140,7 @@ const handleLeafletLayerGroups = (map) => {
             }
         },
     }
+
+    map._legendLayerGroups = Object.values(map._customHandlers.getLayerGroups())
+    .filter(g => ['library', 'client'].includes(g._name))
 }
