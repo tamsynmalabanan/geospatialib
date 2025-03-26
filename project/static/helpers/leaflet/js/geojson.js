@@ -123,12 +123,12 @@ const getLeafletGeoJSONLayer = async ({
     const data = await dataFetcher()
     if (data) geojsonLayer.addData(data)
 
-    geojsonLayer.on('add', async (e) => {
+    geojsonLayer.on('rendererupdated', async (e) => {
         console.log(e)
-        geojsonLayer.clearLayers()
-        const data = await dataFetcher()
-        if (data) geojsonLayer.addData(data)
-        geojsonLayer.fire('dataupdate')
+        // geojsonLayer.clearLayers()
+        // const data = await dataFetcher()
+        // if (data) geojsonLayer.addData(data)
+        // geojsonLayer.fire('dataupdate')
     })
 
     return geojsonLayer
