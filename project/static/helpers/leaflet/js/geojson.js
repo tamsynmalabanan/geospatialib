@@ -120,7 +120,8 @@ const getLeafletGeoJSONLayer = ({
         return L.marker(latlng, {icon: getStyle(feature)})
     }
     
-    geojsonLayer.on('add', async () => {
+    geojsonLayer.on('add', async (e) => {
+        console.log(e)
         geojsonLayer.clearLayers()
         const data = await dataFetcher()
         if (data) geojsonLayer.addData(data)
