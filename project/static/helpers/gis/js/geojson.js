@@ -152,6 +152,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
 
+            console.log(geojsonLayer, geojsonLayer.getLayers
             for (const featureLayer of geojsonLayer.getLayers()) {
                 if (controller?.signal.aborted) return
                 
