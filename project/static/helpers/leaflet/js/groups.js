@@ -60,7 +60,7 @@ const handleLeafletLayerGroups = (map) => {
             layerGroup._customHandlers.getHiddenLayers().forEach(l => layerGroup._customHandlers.showLayer(l))
         }
 
-        layerGroup._customHandler.getBounds = () => {
+        layerGroup._customHandlers.getBounds = () => {
             const bounds = [
                 ...layerGroup.getLayers(), 
                 ...layerGroup._customHandlers.getHiddenLayers()
