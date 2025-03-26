@@ -35,13 +35,14 @@ const handleLeafletLayerGroups = (map) => {
                 })
             },
             clearLayer: (layer) => {
+                layerGroup.removeLayer(layer)
+                layerGroup.removeHiddenLayer(layer)
+                
                 const paneName = layer.options.pane
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
                 }
 
-                layerGroup.removeLayer(layer)
-                layerGroup.removeHiddenLayer(layer)
                 
             },
             clearAllLayers: () => {
