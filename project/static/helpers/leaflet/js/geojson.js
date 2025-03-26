@@ -129,6 +129,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer.on('rendererupdated', async (e) => {
+        console.log(geojsonLayer._renderers[e.renderer])
         const newRenderer = geojsonLayer._renderers[e.renderer]
         geojsonLayer.options.renderer = newRenderer
         console.log(geojsonLayer.options.renderer)
