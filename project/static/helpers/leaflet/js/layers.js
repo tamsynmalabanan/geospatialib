@@ -96,6 +96,8 @@ const zoomToLeafletLayer = (layer, map, {
 } = {}) => {
     if (typeof layer.getBounds === 'function') {
         const b = layer.getBounds()
+        if (!b) return 
+        
         if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
             return map.setView(b.getNorthEast(), zoom)
         } else {
