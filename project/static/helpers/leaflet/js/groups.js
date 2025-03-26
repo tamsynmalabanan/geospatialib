@@ -71,84 +71,76 @@ const handleLeafletLayerGroups = (map) => {
         map.addLayer(layerGroup)
     })
 
-    map._legendLayerGroups = Object.values(map.getLayerGroups())
+    map._legendLayerGroups = Object.values(map._customHandlers.getLayerGroups())
     .filter(g => ['library', 'client'].includes(g._name))
 
-    map.addHandler('getLayerGroups', () => map._layerGroups)
-
-    // map.getLayerGroups = () => map._layerGroups 
-
-    map.getLayerGroup = (layer) => {
-        for (const group of Object.values(map.getLayerGroups())) {
-            if (group.hasLayer(layer) || group._customHandlers.hasHiddenLayer(layer)) {
-                return group
+    map._customHandlers = {
+        getLayerGroups: () => {
+            return map._layerGroups
+        },
+        getLayerGroup: (layer) => {
+            for (const group of Object.values(map._customHandlers.getLayerGroups())) {
+                if (group.hasLayer(layer) || group._customHandlers.hasHiddenLayer(layer)) {
+                    return group
+                }
             }
-        }
-    }
-
-    map.hasLegendLayer = (layer) => {
-        for (const group of map._legendLayerGroups) {
-            if (group.hasLayer(layer) || group._customHandlers.hasHiddenLayer(layer)) {
-                return group
+        },
+        hasLegendLayer: (layer) => {
+            for (const group of map._legendLayerGroups) {
+                if (group.hasLayer(layer) || group._customHandlers.hasHiddenLayer(layer)) {
+                    return group
+                }
             }
-        }
-    }
+        },
+        hasHiddenLegendLayer: (layer) => {
+            for (const group of map._legendLayerGroups) {
+                if (group._customHandlers.hasHiddenLayer(layer)) return group
+            }
+        },
+        hasHiddenLegendLayers: () => {
+            for (const group of map._legendLayerGroups) {
+                if (group._customHandlers.getHiddenLayers().length) return true
+            }
+        },
+        getLegendLayer: (id) => {
+            for (const group of map._legendLayerGroups) {
+                const layer = group.getLayer(id) || group._customHandlers.getHiddenLayer(id)
+                if (layer) return layer
+            }
+        },
+        getLegendLayers: () => {
+            let layers = []
+            for (const group of map._legendLayerGroups) {
+                layers = [
+                    ...layers,
+                    ...group.getLayers(),
+                    ...group._customHandlers.getHiddenLayers()
+                ]
+            }
+            return layers
+        },
+        clearLegendLayers: () => {
+            map._legendLayerGroups.forEach(group => group._customHandlers.clearAllLayers())
+        },
+        hideLegendLayers: () => {
+            for (const group of map._legendLayerGroups) {
+                group._customHandlers.hideAllLayers()
+            }
+        },
+        showLegendLayers: () => {
+            for (const group of map._legendLayerGroups) {
+                group._customHandlers.showAllLayers()
+            }
+        },
+        zoomToLegendLayers: () => {
+            const bounds = map._legendLayerGroups.map(group => {
+                const bounds = group._customHandlers.getBounds()
+                if (bounds) return L.rectangle(bounds).toGeoJSON()
+            }).filter(bound => bound)
     
-    map.hasHiddenLegendLayer = (layer) => {
-        for (const group of map._legendLayerGroups) {
-            if (group._customHandlers.hasHiddenLayer(layer)) return group
-        }
-    }
-    
-    map.hasHiddenLegendLayers = () => {
-        for (const group of map._legendLayerGroups) {
-            if (group._customHandlers.getHiddenLayers().length) return true
-        }
-    }
-
-    map.getLegendLayer = (id) => {
-        for (const group of map._legendLayerGroups) {
-            const layer = group.getLayer(id) || group._customHandlers.getHiddenLayer(id)
-            if (layer) return layer
-        }
-    }
-    
-    map.getLegendLayers = () => {
-        let layers = []
-        for (const group of map._legendLayerGroups) {
-            layers = [
-                ...layers,
-                ...group.getLayers(),
-                ...group._customHandlers.getHiddenLayers()
-            ]
-        }
-        return layers
-    }
-    
-    map.clearLegendLayers = () => {
-        map._legendLayerGroups.forEach(group => group._customHandlers.clearAllLayers())
-    }
-    
-    map.hideLegendLayers = () => {
-        for (const group of map._legendLayerGroups) {
-            group._customHandlers.hideAllLayers()
-        }
-    }
-    
-    map.showLegendLayers = () => {
-        for (const group of map._legendLayerGroups) {
-            group._customHandlers.showAllLayers()
-        }
-    }
-
-    map.zoomToLegendLayers = () => {
-        const bounds = map._legendLayerGroups.map(group => {
-            const bounds = group._customHandlers.getBounds()
-            if (bounds) return L.rectangle(bounds).toGeoJSON()
-        }).filter(bound => bound)
-
-        if (bounds.length) {
-            map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
-        }
+            if (bounds.length) {
+                map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
+            }
+        },
     }
 }

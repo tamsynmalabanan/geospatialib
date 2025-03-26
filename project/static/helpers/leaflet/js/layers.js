@@ -173,7 +173,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     const checkboxArray = layer._checkboxContainer ? Array.from(
         layer._checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
-    const layerArray = isLegendGroup ? map.getLegendLayers() : group._customHandlers.getAllLayers()
+    const layerArray = isLegendGroup ? map._customHandlers.getLegendLayers() : group._customHandlers.getAllLayers()
     const noArrays = !checkboxArray && !layerArray
 
     const type = getLeafletLayerType(layer) 
@@ -278,7 +278,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: () => {
-                const targetGroup = isLegendGroup ? group : map.getLayerGroups().client
+                const targetGroup = isLegendGroup ? group : map._customHandlers.getLayerGroups().client
                 const pane = createCustomPane(map)
                 const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
                 
