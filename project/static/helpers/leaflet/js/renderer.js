@@ -15,6 +15,6 @@ const handlerLeafletRenderer =(map) => {
                 if (feature && !isPoint) featureLayers.push(l)
             }))
             console.log(featureLayers.length)
-        }, 100);
+        }, 1000);
     })
 }
