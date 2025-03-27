@@ -16,7 +16,7 @@ const handlerLeafletRenderer =(map) => {
                 const layerGroups = Object.values(map._ch.getLayerGroups())
                 
                 const geojsonLayers = []
-                const featureLayers = []
+                const count = 0
                 layerGroups.forEach(group => {
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
@@ -31,47 +31,25 @@ const handlerLeafletRenderer =(map) => {
                             if (featureLayers.includes(l)) return
                             if (!group.hasLayer(l) && !group.hasLayer(geojsonLayer)) return
                             if (l.feature.geometry.type.toLowerCase().endsWith('point')) return
-                            featureLayers.push(l)
+                            count +=1
                         })
                     })
                 })
                 
-                console.log(featureLayers.length)
-                const renderer = featureLayers.length > 100 ? L.Canvas : L.SVG
-                // featureLayers.forEach(layer => {
-                //     if (layer._renderer instanceof renderer) return
-                    
-                //     const geojsonLayer = findFeatureLayerGeoJSONLayer(layer)
-                //     const group = geojsonLayer._group
-                //     const isLegendGroup = map._legendLayerGroups.includes(group)
-                //     const newRenderer = Object.values(geojsonLayer._renderers).find(r => {
-                //         const isRenderer = r instanceof renderer
-                //         r._container?.classList.toggle('d-none', !isRenderer)
-                //         return isRenderer
-                //     })
-                //     Array(layer, geojsonLayer).forEach(l => l.options.renderer = newRenderer)
-                //     activeLayers.push(layer)
-                //     geojsonLayer.removeLayer(layer)
-                //     geojsonLayer.addData([layer.toGeoJSON()])
-                // })
-                
-                // layerGroups.forEach(group => {
-                //     group.eachLayer(layer => {
-                //         const type = getLeafletLayerType(layer)
-                //         if (type !== 'geojson') return
-                        
-                //         if (layer.options.renderer instanceof renderer) return
-                //         const newRenderer = Object.values(layer._renderers).find(r => {
-                //             const isRenderer = r instanceof renderer
-                //             r._container?.classList.toggle('d-none', !isRenderer)
-                //             return isRenderer
-                //         })
-                        
-                //         const group = layer._group
-                //         const isLegendGroup = map._legendLayerGroups.includes(group)
-                        
-                //     })
-                // })
+                const renderer = count > 100 ? L.Canvas : L.SVG
+                geojsonLayers.forEach(layer => {
+                    if (layer.options.renderer instanceof renderer) return
+
+                    const group = layer._group
+                    const isLegendGroup = map._legendLayerGroups.includes(group)
+                    const newRenderer = Object.values(layer._renderers).find(r => {
+                        const isRenderer = r instanceof renderer
+                        r._container?.classList.toggle('d-none', !isRenderer)
+                        return isRenderer
+                    })
+                    layer.options.renderer = newRenderer
+                    console.log(layer, renderer)
+                })
             }, 100);
         }
     })
