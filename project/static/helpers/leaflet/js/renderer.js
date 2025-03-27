@@ -39,7 +39,7 @@ const handlerLeafletRenderer =(map) => {
                     if (!['geojson', 'feature'].includes(type)) return
                     
                     const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
-                    if (geojsonLayers.includes(geojsonLayer)) return
+                    if (geojsonLayers.includes(geojsonLayer) || mappedLayers.keys().includes(geojsonLayer)) return
 
                     geojsonLayers.push(geojsonLayer)
                     const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : geojsonLayer.getLayers().filter(l => group.hasLayer(l))
