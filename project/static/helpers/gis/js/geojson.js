@@ -171,6 +171,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 if (!checkbox) continue
         
                 checkbox._leafletLayer = layer
+                layer.on('add remove', (e) => {
+                    const isAdd = e.type === 'add'
+                    const isChecked = checkbox.checked
+                    if ((isChecked && !isAdd) || (!isChecked && isAdd)) {
+                        console.log(`checkbox ${e.type} mismatch`, e)
+                        checkbox.click()
+                    }
+                })
 
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
