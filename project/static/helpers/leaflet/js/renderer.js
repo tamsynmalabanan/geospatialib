@@ -33,10 +33,8 @@ const handlerLeafletRenderer =(map) => {
                         const type = getLeafletLayerType(layer)
                         if (!['geojson', 'feature'].includes(type)) return
                         
-                        console.log(layer.options.renderer)
-                        // const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
-                        // const currentRenderer = geojsonLayer.optio
-                        
+                        const currentRenderer = layer.options.renderer || findFeatureLayerGeoJSONLayer(layer)?.options.renderer
+                        console.log(currentRenderer, renderer, currentRenderer instanceof renderer)                        
                     })
                 })
 
