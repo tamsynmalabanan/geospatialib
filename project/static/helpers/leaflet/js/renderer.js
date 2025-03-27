@@ -1,9 +1,10 @@
 const handlerLeafletRenderer =(map) => {
-    const activeLayers = []
+    let activeLayers = []
     let timeout
     
     map.on('layeradd layerremove', (e) => {
         if (activeLayers.includes(e.layer)) {
+            if (e.type === 'layeradd') activeLayers = activeLayers.filter(l => l !== e.layer)
             return console.log('active layer', e.layer)
         }
 
