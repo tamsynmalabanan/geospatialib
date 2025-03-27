@@ -41,7 +41,6 @@ const handlerLeafletRenderer =(map) => {
                     const isLegendGroup = map._legendLayerGroups.includes(group)
                     const newRenderer = Object.values(geojsonLayer._renderers).find(r => {
                         const isRenderer = r instanceof renderer
-                        console.log(r._container)
                         r._container?.classList.toggle('d-none', !isRenderer)
                         return isRenderer
                     })
