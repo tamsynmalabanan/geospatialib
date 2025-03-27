@@ -26,7 +26,7 @@ const handlerLeafletRenderer =(map) => {
                 })
 
                 const renderer = featureLayers.length > 1000 ? 'canvas' : 'svg'
-                console.log(renderer)
+                console.log(featureLayers, renderer)
 
 
             }, 100);
