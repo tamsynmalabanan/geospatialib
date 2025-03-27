@@ -171,6 +171,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 if (!checkbox) continue
         
                 checkbox._leafletLayer = layer
+
                 layer.on('add remove', (e) => {
                     const isAdd = e.type === 'add'
                     const isChecked = checkbox.checked
@@ -187,23 +188,23 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     if (!isChecked && hasLayer) group.removeLayer(layer)
         
                     if (layer.feature) {
-                        Object.values(layer._eventParents).forEach(parentLayer => {
-                            const checkbox = parentLayer._checkbox
-                            if (!checkbox) return
+                        Object.values(layer._eventParents).forEach(p => {
+                            const c = p._checkbox
+                            if (!c) return
                             
-                            const checked = isChecked ? true : Array.from(
+                            c.checked = isChecked ? true : Array.from(
                                 geojsonContainer.querySelectorAll('input.form-check-input')
-                            ).filter(i => i !== checkbox).some(i => i.checked)
-                            
-                            checkbox.checked = checked
-                            if (!checked) group.removeLayer(parentLayer)
+                            ).filter(i => i !== c).some(i => i.checked)
+                            if (!c.checked) group.removeLayer(p)
                         })
                     } else {
-                        layer.eachLayer(featureLayer => {
-                            isChecked ? group.addLayer(featureLayer) : group.removeLayer(featureLayer)
+                        layer.eachLayer(f => {
+                            const hasLayerF = group.hasLayer(f)
+                            if (isChecked && !hasLayerF) group.addLayer(f)
+                            if (!isChecked && hasLayerF) group.removeLayer(f)
                             
-                            if (!featureLayer._checkbox) return
-                            featureLayer._checkbox.checked = isChecked
+                            // if (!f._checkbox) return
+                            // f._checkbox.checked = isChecked
                         })
                     }
                 })
