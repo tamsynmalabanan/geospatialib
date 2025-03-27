@@ -214,11 +214,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Show properties`,
             btnCallback: () => {
                 zoomToLeafletLayer(layer, map)
-                if (checkbox) {
-                    if (!checkbox.checked) checkbox.click()
-                } else {
-                    if (!group.hasLayer(layer)) addLayer(layer)
-                }
+                if (!group.hasLayer(layer)) addLayer(layer)
                 layer.fire('click')
             }
         },
