@@ -42,7 +42,9 @@ const handlerLeafletRenderer =(map) => {
                     if (geojsonLayers.includes(geojsonLayer) || Array.from(mappedLayers.keys()).includes(geojsonLayer)) return
 
                     geojsonLayers.push(geojsonLayer)
-                    const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : geojsonLayer.getLayers().filter(l => group.hasLayer(l))
+                    const layers = group.hasLayer(geojsonLayer) ? 
+                    geojsonLayer.getLayers() : 
+                    geojsonLayer.getLayers().filter(l => group.hasLayer(l))
                     layers.forEach(l => {
                         if (!group.hasLayer(l) && !group.hasLayer(geojsonLayer)) return
                         if (l.feature.geometry.type.toLowerCase().endsWith('point')) return
