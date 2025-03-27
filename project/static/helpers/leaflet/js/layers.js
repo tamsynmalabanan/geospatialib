@@ -184,27 +184,8 @@ const getLeafletLayerContextMenu = (e, layer, {
     const type = getLeafletLayerType(layer) 
     const typeLabel = type === 'feature' ? type : 'layer'
     
-    const addLayer = (l) => {
-        group._ch.showLayer(l)
-        // if (l._eventParents) {
-        //     Object.values(l._eventParents).forEach(p => {
-        //         if (p._checkbox) {
-        //             p._checkbox.checked = true
-        //         }
-        //     })
-        // }
-    }
-    
-    const removeLayer = (l, hidden=false) => {
-        hidden ? group._ch.hideLayer(l) : group.removeLayer(l)
-        // if (l._eventParents) {
-        //     Object.values(l._eventParents).forEach(p => {
-        //         if (p._checkbox) {
-        //             p._checkbox.checked = p.getLayers().some(f => group.hasLayer(f))
-        //         }
-        //     })
-        // }
-    }
+    const addLayer = (l) => group._ch.showLayer(l)
+    const removeLayer = (l, hidden=false) => hidden ? group._ch.hideLayer(l) : group.removeLayer(l)
 
     return contextMenuHandler(e, {
         zoomin: {
@@ -218,20 +199,9 @@ const getLeafletLayerContextMenu = (e, layer, {
                     if (c.checked) c.click()
                 })
 
-                layerArray?.forEach(l => {
-                    if (l._checkbox) {
-                        const c = l._checkbox
-                        if (c.checked) c.click()
-                    } else {
-                        removeLayer(l, isLegendGroup)
-                    }
-                })
+                layerArray?.forEach(l => removeLayer(l, isLegendGroup))
                 
-                if (checkbox) {
-                    checkbox.click()
-                } else {
-                    addLayer(layer)
-                }
+                addLayer(layer)
             }
         },
         visibility: isLegendFeature || disabledCheckbox ? null : {
