@@ -103,9 +103,11 @@ const getLeafletGeoJSONLayer = async ({
     const data = dataFetcher ? await dataFetcher() : geojson
     if (data) geojsonLayer.addData(data)
 
-    // if (dataFetcher) {
-        
-    // }
+    if (dataFetcher) {
+        layer.on('add remove', (e) => {
+            console.log(e)
+        })
+    }
 
     // geojsonLayer.on('rendererupdated', async (e) => {
     //     const newRenderer = geojsonLayer._renderers[e.renderer]
