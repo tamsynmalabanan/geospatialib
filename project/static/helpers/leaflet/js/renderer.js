@@ -16,7 +16,6 @@ const handlerLeafletRenderer =(map) => {
                 layerGroups.forEach(g => {
                     console.log(g)
                     g.eachLayer(l => {
-                        console.log(l)
                         const feature = l.feature
                         const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
                         if (feature && !isPoint) featureLayers.push(l)
@@ -24,7 +23,7 @@ const handlerLeafletRenderer =(map) => {
                     console.log(featureLayers)
                 })
                 console.log(featureLayers.length)
-            }, 100);
+            }, 1000);
         }
     })
 }
