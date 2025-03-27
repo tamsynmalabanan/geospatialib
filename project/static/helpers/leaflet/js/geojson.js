@@ -118,7 +118,7 @@ const getLeafletGeoJSONLayer = async ({
     }
     // geojsonLayer.options.renderer = geojsonLayer._renderers.svg
 
-    const data = await dataFetcher()
+    const data = dataFetcher ? await dataFetcher() : geojson
     if (data) geojsonLayer.addData(data)
 
     // geojsonLayer.on('rendererupdated', async (e) => {
