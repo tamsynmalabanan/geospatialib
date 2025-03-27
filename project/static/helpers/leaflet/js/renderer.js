@@ -36,7 +36,6 @@ const handlerLeafletRenderer =(map) => {
                 featureLayers.forEach(layer => {
                     if (layer._renderer instanceof renderer) return
                     
-                    delete layer._renderer
                     const geojsonLayer = findFeatureLayerGeoJSONLayer(layer)
                     const group = geojsonLayer._group
                     const isLegendGroup = map._legendLayerGroups.includes(group)
@@ -48,8 +47,8 @@ const handlerLeafletRenderer =(map) => {
                     })
                     Array(layer, geojsonLayer).forEach(l => l.options.renderer = newRenderer)
                     activeLayers.push(layer)
-                    isLegendGroup ? group._ch.hideLayer(layer) : group.removeLayer(layer)
-                    group._ch.showLayer(layer)
+                    geojsonLayer.removeLayer(layer)
+                    geojsonLayer.addLayer(layer)
                 })
             }, 100);
         }
