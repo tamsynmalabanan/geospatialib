@@ -35,6 +35,7 @@ const handlerLeafletRenderer =(map) => {
                     })
                 })
                 
+                console.log(count)
                 const renderer = count > 100 ? L.Canvas : L.SVG
                 geojsonLayers.forEach(layer => {
                     if (layer.options.renderer instanceof renderer) return
