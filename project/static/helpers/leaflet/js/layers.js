@@ -159,7 +159,8 @@ const getLeafletLayerType = (layer) => {
 }
 
 const findFeatureLayerGeoJSONLayer = (layer) => {
-    if (!layer.feaure || !layer._eventParents?.length) return
+    console.log(p)
+    if (!layer.feature || !layer._eventParents?.length) return
 
     for (const p of Object.values(layer._eventParents)) {
         console.log(p)
