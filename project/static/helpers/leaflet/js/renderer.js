@@ -48,7 +48,7 @@ const handlerLeafletRenderer =(map) => {
                             r._container?.classList.toggle('d-none', !isRenderer)
                             return isRenderer
                         })
-                        Array(...new Set(geojsonLayer, layer)).forEach(l => l.options.renderer = newRenderer)
+                        Array(...new Set([...geojsonLayer, layer])).forEach(l => l.options.renderer = newRenderer)
                         activeLayers.push(layer)
                         isLegendGroup ? group._ch.hideLayer(layer) : group.removeLayer(layer)
                         group._ch.showLayer()
