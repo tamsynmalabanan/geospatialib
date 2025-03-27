@@ -1,13 +1,12 @@
 const handlerLeafletRenderer =(map) => {
     const objMap = new Map()
     
-    let timeout
     map.on('layeradd layerremove', (e) => {
         const feature = e.layer.feature
         const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
         if (feature && !isPoint) {
-            clearTimeout(timeout)
-            timeout = setTimeout(() => {
+            clearTimeout(map._rendererTimeout)
+            map._rendererTimeout = setTimeout(() => {
                 console.log('event', e)
     
                 const featureLayers = []
