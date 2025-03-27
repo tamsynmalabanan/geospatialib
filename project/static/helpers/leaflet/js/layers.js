@@ -253,7 +253,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
                 const attribution = createAttributionTable(geojson || {})?.outerHTML || layer._attribution
-                console.log(attribution, layer._attribution)
+                console.log(geojson, attribution, layer._attribution)
                 let newLayer
                 if (layerGeoJSON) {
                     newLayer = await getLeafletGeoJSONLayer({
