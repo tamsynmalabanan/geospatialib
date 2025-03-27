@@ -167,14 +167,13 @@ const findFeatureLayerGeoJSONLayer = (layer) => {
 }
 
 const getLeafletLayerContextMenu = (e, layer, {
-    geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
+
 } = {}) => {
     const feature = layer.feature
     const group = feature ? findFeatureLayerGeoJSONLayer(layer)?._group : layer._group
     if (!group) return
 
-    if (geojson?.type === 'feature') geojson = turf.featureCollection([geojson]) 
-    const layerGeoJSON = feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : geojson
+    const layerGeoJSON = feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
 
     const map = group._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
@@ -252,7 +251,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             btnCallback: async () => {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
-                const attribution = layer._attribution
+                const attribution = feature ? findFeatureLayerGeoJSONLayer(layer)._attribution : layer._attribution
                 
                 let newLayer
                 if (layerGeoJSON) {

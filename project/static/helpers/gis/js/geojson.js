@@ -125,12 +125,15 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             sortFeatures: listFeatures,
         })
         
+        const attribution = createAttributionTable(geojson)?.outerHTML
+
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
             geojson,
             customStyleParams,
             title,
             group,
+            attribution,
         })
 
         const geojsonContainer = document.createElement('div')
@@ -217,7 +220,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     className: 'bi bi-three-dots'
                 })
                 menuToggle.addEventListener('click', (e) => {
-                    getLeafletLayerContextMenu(e, layer, {geojson})
+                    getLeafletLayerContextMenu(e, layer)
                 })
             }
         } catch {
@@ -226,7 +229,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
-        infoContainer.innerHTML = createAttributionTable(geojson)?.outerHTML
+        if (attribution) infoContainer.innerHTML = attribution
         contentCollapse.appendChild(infoContainer)
     }
 

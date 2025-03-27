@@ -40,9 +40,7 @@ const getLeafletGeoJSONLayer = async ({
         }
 
         layer.on('contextmenu', (e) => getLeafletLayerContextMenu(
-            e.originalEvent, layer, {
-                geojson: geojson || layer.toGeoJSON(),
-            }
+            e.originalEvent, layer
         ))
     }
  
