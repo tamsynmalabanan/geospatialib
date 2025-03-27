@@ -37,12 +37,6 @@ const getLeafletGeoJSONLayer = async ({
             }).outerHTML, {
                 autoPan: false,
             })
-            // const createPopup = () => {
-
-            //     layer.off('click', createPopup)
-            // }
-
-            // layer.on('click', createPopup)
         }
 
         layer.on('contextmenu', (e) => getLeafletLayerContextMenu(
@@ -68,12 +62,10 @@ const getLeafletGeoJSONLayer = async ({
         // },
         default: {
             label: '',
-            style: (feature) => {
-                return getLeafletLayerStyle(
-                    feature.geometry.type, 
-                    styleParams
-                )
-            }
+            style: (feature) => getLeafletLayerStyle(
+                feature.geometry.type, 
+                styleParams
+            )
         }
     }
 
@@ -102,21 +94,20 @@ const getLeafletGeoJSONLayer = async ({
         )
     }
 
-    geojsonLayer.options.style = (feature) => {
-        return getStyle(feature)
-    }
-    geojsonLayer.options.pointToLayer = (feature, latlng) => {
-        return L.marker(latlng, {icon: getStyle(feature)})
-    }
+    geojsonLayer.options.style = (feature) => getStyle(feature)
+    geojsonLayer.options.pointToLayer = (feature, latlng) => L.marker(latlng, {icon: getStyle(feature)})
     
     geojsonLayer._renderers = {
-        svg: new L.SVG({pane:geojsonLayer.options.pane}),
-        canvas: new L.Canvas({pane:geojsonLayer.options.pane}),
+        svg: geojson.options.renderer,
+        canvas: new L.Canvas({pane}),
     }
-    // geojsonLayer.options.renderer = geojsonLayer._renderers.svg
 
     const data = dataFetcher ? await dataFetcher() : geojson
     if (data) geojsonLayer.addData(data)
+
+    // if (dataFetcher) {
+        
+    // }
 
     // geojsonLayer.on('rendererupdated', async (e) => {
     //     const newRenderer = geojsonLayer._renderers[e.renderer]
