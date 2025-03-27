@@ -1,16 +1,18 @@
 const getLeafletGeoJSONLayer = async ({
-    pane,
+    pane = 'overlayPane',
     geojson,
     customStyleParams,
     title,
     attribution,
     group,
-    dataFetcher = async () => geojson
+    dataFetcher,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        filter: (feature) => {
-            return true
-        },
+        // filter: (feature) => {
+        //     return true
+        // },
+        pane,
+        renderer: new L.SVG({pane}),
         markersInheritOptions: true,
     })
 
@@ -18,20 +20,10 @@ const getLeafletGeoJSONLayer = async ({
     if (attribution) geojsonLayer._attribution = attribution
     if (group) geojsonLayer._group = group
 
-    geojsonLayer.options.pane = pane || geojsonLayer.options.pane
-
-    // const features = geojson?.features || []
-    // if (features.length > 100) {
-    //     const renderer = new L.Canvas({pane:geojsonLayer.options.pane})
-    //     geojsonLayer.options.renderer = renderer
-    // }
-
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
         
-        // layer.options.renderer = geojsonLayer.options.renderer
-        layer.options.pane = geojsonLayer.options.pane || layer.options.pane
-        layer._group = geojsonLayer._group
+        layer.options.pane = geojsonLayer.options.pane
         
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
 
@@ -124,8 +116,8 @@ const getLeafletGeoJSONLayer = async ({
         svg: new L.SVG({pane:geojsonLayer.options.pane}),
         canvas: new L.Canvas({pane:geojsonLayer.options.pane}),
     }
-
     // geojsonLayer.options.renderer = geojsonLayer._renderers.svg
+
     const data = await dataFetcher()
     if (data) geojsonLayer.addData(data)
 

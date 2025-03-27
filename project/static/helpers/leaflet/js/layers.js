@@ -158,16 +158,24 @@ const getLeafletLayerType = (layer) => {
     if (layer instanceof L.GeoJSON) return 'geojson'
 }
 
+const findFeatureLayerGeoJSONLayer = (layer) => {
+    if (!layer.feaure || !layer._eventParents?.length) return
+
+    for (const p of Object.values(layer._eventParents)) {
+        if (p instanceof L.GeoJSON) return p
+    }
+}
+
 const getLeafletLayerContextMenu = (e, layer, {
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
 } = {}) => {
-    const group = layer._group
+    const feature = layer.feature
+    const group = feature ? findFeatureLayerGeoJSONLayer(layer)?._group : layer._group
     if (!group) return
 
     if (geojson.type === 'feature') geojson = turf.featureCollection([geojson]) 
 
     const map = group._map
-    const feature = layer.feature
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
     
@@ -258,7 +266,7 @@ const getLeafletLayerContextMenu = (e, layer, {
 
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
-        }, //disabledCheckbox ? null : 
+        },
         download: !feature && type !== 'geojson' ? null : {
             innerText: 'Download GeoJSON',
             btnCallback: () => downloadGeoJSON(
