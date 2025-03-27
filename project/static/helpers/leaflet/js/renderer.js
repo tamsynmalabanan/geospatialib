@@ -47,7 +47,7 @@ const handlerLeafletRenderer =(map) => {
                     Array(layer, geojsonLayer).forEach(l => l.options.renderer = newRenderer)
                     activeLayers.push(layer)
                     geojsonLayer.removeLayer(layer)
-                    geojsonLayer.addLayer(layer)
+                    geojsonLayer.addData([layer.toGeoJSON()])
                 })
             }, 100);
         }
