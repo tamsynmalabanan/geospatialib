@@ -170,9 +170,11 @@ const getLeafletLayerContextMenu = (e, layer, {
     const feature = layer.feature
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
+    
     const checkbox = layer._checkbox
     const disabledCheckbox = checkbox && checkbox.disabled
     const checkboxContainer = checkbox?.closest('.geojson-checklist')
+    
     const checkboxArray = checkboxContainer ? Array.from(
         checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
@@ -184,24 +186,24 @@ const getLeafletLayerContextMenu = (e, layer, {
     
     const addLayer = (l) => {
         group._ch.showLayer(l)
-        if (l._eventParents) {
-            Object.values(l._eventParents).forEach(p => {
-                if (p._checkbox) {
-                    p._checkbox.checked = true
-                }
-            })
-        }
+        // if (l._eventParents) {
+        //     Object.values(l._eventParents).forEach(p => {
+        //         if (p._checkbox) {
+        //             p._checkbox.checked = true
+        //         }
+        //     })
+        // }
     }
     
     const removeLayer = (l, hidden=false) => {
         hidden ? group._ch.hideLayer(l) : group.removeLayer(l)
-        if (l._eventParents) {
-            Object.values(l._eventParents).forEach(p => {
-                if (p._checkbox) {
-                    p._checkbox.checked = p.getLayers().some(f => group.hasLayer(f))
-                }
-            })
-        }
+        // if (l._eventParents) {
+        //     Object.values(l._eventParents).forEach(p => {
+        //         if (p._checkbox) {
+        //             p._checkbox.checked = p.getLayers().some(f => group.hasLayer(f))
+        //         }
+        //     })
+        // }
     }
 
     return contextMenuHandler(e, {

@@ -205,7 +205,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         peNone: false,
                         className: 'dropdown-toggle ms-5'
                     })
-                    contentToggle.style.cursor = 'pointer'
                     contentToggle.setAttribute('data-bs-toggle', 'collapse')
                     contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
                     contentToggle.setAttribute('aria-controls', contentCollapse.id)
@@ -217,7 +216,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     peNone: false,
                     className: 'bi bi-three-dots'
                 })
-                menuToggle.style.cursor = 'pointer'
                 menuToggle.addEventListener('click', (e) => {
                     getLeafletLayerContextMenu(e, layer, {geojson})
                 })
@@ -258,7 +256,6 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     lngSpan.innerText = coordsFormat === 'DD' ? lngDD : lngDMS
     
     const copyBtn = createIcon({className:'bi bi-clipboard', peNone: false})
-    copyBtn.style.cursor = 'pointer'
 
     const setCopyBtnTooltip = (copied=false) => titleToTooltip(copyBtn, `${copied ? 'Copied' : 'Copy'} to clipboard`)
     copyBtn.addEventListener('click', () => {
