@@ -8,26 +8,28 @@ const handlerLeafletRenderer =(map) => {
         if (feature && !isPoint) {
             clearTimeout(timeout)
             timeout = setTimeout(() => {
-                console.log(e)
+                console.log('event', e)
     
                 const featureLayers = []
                 Object.values(map._ch.getLayerGroups()).forEach(group => {
-                    console.log(group._name)
+                    console.log('group name', group._name)
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
                         if (!['geojson', 'feature'].includes(type)) return
                         
                         const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
-                        console.log(geojsonLayer)
+                        console.log('geojsonLayer', geojsonLayer)
                         const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : [layer]
-                        console.log(layers)
+                        console.log('layers', layers)
                         layers.forEach(l => {
-                            if (featureLayers.includes(l) || !group.hasLayer(l) || l.feature.geometry.type.toLowerCase().endsWith('point')) return console.log(l)
+                            if (featureLayers.includes(l)) return console.log('already in featureLayers', l)
+                            if (!group.hasLayer(l)) return console.log('not shown', l)
+                            if (l.feature.geometry.type.toLowerCase().endsWith('point')) return console.log('is point', l)
                             featureLayers.push(l)
                         })
-                        console.log(featureLayers)
+                        console.log('featureLayers after geojson layers loop', featureLayers)
                     })
-                    console.log(featureLayers)
+                    console.log('featureLayers after group loop', featureLayers)
                 })
 
                 console.log(featureLayers, featureLayers.length)
