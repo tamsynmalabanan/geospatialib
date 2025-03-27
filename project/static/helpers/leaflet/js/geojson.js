@@ -125,26 +125,26 @@ const getLeafletGeoJSONLayer = async ({
         canvas: new L.Canvas({pane:geojsonLayer.options.pane}),
     }
 
-    geojsonLayer.options.renderer = geojsonLayer._renderers.svg
+    // geojsonLayer.options.renderer = geojsonLayer._renderers.svg
     const data = await dataFetcher()
     if (data) geojsonLayer.addData(data)
 
-    geojsonLayer.on('rendererupdated', async (e) => {
-        const newRenderer = geojsonLayer._renderers[e.renderer]
-        geojsonLayer.options.renderer = newRenderer
-        console.log(geojsonLayer.options.renderer)
+    // geojsonLayer.on('rendererupdated', async (e) => {
+    //     const newRenderer = geojsonLayer._renderers[e.renderer]
+    //     geojsonLayer.options.renderer = newRenderer
+    //     console.log(geojsonLayer.options.renderer)
         
-        geojsonLayer.clearLayers()
-        const data = await dataFetcher()
-        if (data) geojsonLayer.addData(data)
+    //     geojsonLayer.clearLayers()
+    //     const data = await dataFetcher()
+    //     if (data) geojsonLayer.addData(data)
 
-        Object.keys(geojsonLayer._renderers).forEach(k => {
-            geojsonLayer._renderers[k]._container
-            .classList.toggle('d-none', k !== e.renderer)
-        })
+    //     Object.keys(geojsonLayer._renderers).forEach(k => {
+    //         geojsonLayer._renderers[k]._container
+    //         .classList.toggle('d-none', k !== e.renderer)
+    //     })
 
-        geojsonLayer.fire('dataupdate')
-    })
+    //     geojsonLayer.fire('dataupdate')
+    // })
 
     return geojsonLayer
 }
