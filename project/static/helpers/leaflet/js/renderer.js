@@ -8,8 +8,10 @@ const handlerLeafletRenderer =(map) => {
         if (feature && !isPoint) {
             clearTimeout(timeout)
             timeout = setTimeout(() => {
-                const featureLayers = []
-                Object.values(map._ch.getLayerGroups()).forEach(group => {
+                const layerGroups = Object.values(map._ch.getLayerGroups())
+
+                const count = 0
+                layerGroups.forEach(group => {
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
                         const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
@@ -18,11 +20,14 @@ const handlerLeafletRenderer =(map) => {
                             if (featureLayers.includes(l)) return
                             if (!group.hasLayer(l) && !group.hasLayer(geojsonLayer)) return
                             if (l.feature.geometry.type.toLowerCase().endsWith('point')) return
-                            featureLayers.push(l)
+                            count +=1
                         })
                     })
                 })
-                console.log(featureLayers, featureLayers.length)
+
+                const renderer = count > 100 ? 'canvas' : 'svg'
+                console.log(renderer)
+
             }, 100);
         }
     })
