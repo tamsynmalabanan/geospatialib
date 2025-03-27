@@ -18,7 +18,6 @@ const handlerLeafletRenderer =(map) => {
                             if (featureLayers.includes(l)) return
                             if (!group.hasLayer(l) && !group.hasLayer(geojsonLayer)) return
                             if (l.feature.geometry.type.toLowerCase().endsWith('point')) return
-                            console.log('new feature added', l)
                             featureLayers.push(l)
                         })
                     })
