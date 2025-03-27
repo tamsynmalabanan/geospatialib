@@ -48,11 +48,13 @@ const handlerLeafletRenderer =(map) => {
                             r._container?.classList.toggle('d-none', !isRenderer)
                             return isRenderer
                         })
-                        Array(...new Set([geojsonLayer, layer])).forEach(l => l.options.renderer = newRenderer)
-                        activeLayers.push(layer)
-                        group.removeLayer(layer)
-                        // isLegendGroup ? group._ch.hideLayer(layer) : group.removeLayer(layer)
-                        group._ch.showLayer(layer)
+                        geojsonLayer.options.renderer = newRenderer
+                        Array(geojsonLayer, ...geojsonLayer.getLayers()).forEach(l => {
+                            if (!group.hasLayer(l)) return
+                            activeLayers.push(l)
+                            isLegendGroup ? group._ch.hideLayer(l) : group.removeLayer(l)
+                            group._ch.showLayer(l)
+                        })
                     })
                 })
             }, 100);
