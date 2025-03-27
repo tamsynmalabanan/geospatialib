@@ -3,8 +3,7 @@ const handlerLeafletRenderer =(map) => {
     
     let timeout
     map.on('layeradd layerremove', (e) => {
-        const layer = e.layer
-        const feature = layer.feature
+        const feature = e.layer.feature
         const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
         if (feature && !isPoint) {
             clearTimeout(timeout)
@@ -13,16 +12,19 @@ const handlerLeafletRenderer =(map) => {
     
                 const featureLayers = []
                 const layerGroups = Object.values(map._ch.getLayerGroups())
-                layerGroups.forEach(g => {
-                    console.log(g)
-                    g.eachLayer(l => {
-                        const feature = l.feature
-                        const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
-                        if (feature && !isPoint) featureLayers.push(l)
+                layerGroups.forEach(group => {
+                    group.eachLayer(layer => {
+                        const type = getLeafletLayerType(layer)
+                        if (!['geojson', 'feature'].includes(type)) return
+                        
+                        const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
+                        const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : [layer]
+                        layers.forEach(l => {
+                            const isPoint = l.feature.geometry.type.toLowerCase().endsWith('point')
+                            if (!isPoint) featureLayers.push(l)
+                        })
                     })
-                    console.log(featureLayers)
                 })
-                console.log(featureLayers.length)
             }, 1000);
         }
     })
