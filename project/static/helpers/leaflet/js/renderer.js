@@ -1,8 +1,12 @@
 const handlerLeafletRenderer =(map) => {
-    const objMap = new Map()
+    const activeLayers = []
     let timeout
     
     map.on('layeradd layerremove', (e) => {
+        if (activeLayers.includes(e.layer)) {
+            return console.log('active layer', e.layer)
+        }
+
         const feature = e.layer.feature
         const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
         if (feature && !isPoint) {
@@ -29,17 +33,26 @@ const handlerLeafletRenderer =(map) => {
                 
                 const renderer = featureLayers.length > 100 ? L.Canvas : L.SVG
                 layerGroups.forEach(group => {
+                    const isLegendGroup = map._legendLayerGroups.includes(group)
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
                         if (!['geojson', 'feature'].includes(type)) return
                         
-                        const currentRenderer = layer.options.renderer || findFeatureLayerGeoJSONLayer(layer)?.options.renderer
-                        console.log(currentRenderer, renderer, currentRenderer instanceof renderer)                        
+                        const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
+                        const currentRenderer = layer.options.renderer || geojsonLayer?.options.renderer
+                        if (currentRenderer instanceof renderer) return
+                        
+                        const newRenderer = Object.values(geojsonLayer._renderer).find(r => {
+                            const isRenderer = r instanceof renderer
+                            r._container?.classList.toggle('d-none', !isRenderer)
+                            return isRenderer
+                        })
+                        Array(...new Set(geojsonLayer, layer)).forEach(l => l.options.renderer = newRenderer)
+                        activeLayers.push(layer)
+                        isLegendGroup ? group._ch.hideLayer(layer) : group.removeLayer(layer)
+                        group._ch.showLayer()
                     })
                 })
-
-
-
             }, 100);
         }
     })
