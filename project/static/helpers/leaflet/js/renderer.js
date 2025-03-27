@@ -3,16 +3,16 @@ const handlerLeafletRenderer =(map) => {
     let timeout
     
     map.on('layeradd layerremove', (e) => {
-        if (activeLayers.includes(e.layer)) {
-            if (e.type === 'layeradd') activeLayers = activeLayers.filter(l => l !== e.layer)
-            return console.log('active layer', e.layer)
-        }
-
+        
         const feature = e.layer.feature
         const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
         if (feature && !isPoint) {
             clearTimeout(timeout)
             timeout = setTimeout(() => {
+                if (activeLayers.includes(e.layer)) {
+                    if (e.type === 'layeradd') activeLayers = activeLayers.filter(l => l !== e.layer)
+                    return console.log('active layer', e.layer)
+                }
                 const layerGroups = Object.values(map._ch.getLayerGroups())
                 
                 const featureLayers = []
