@@ -28,23 +28,21 @@ const getLeafletGeoJSONLayer = async ({
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
 
         if (Object.keys(properties).length) {
-            const createPopup = () => {
-                const propertiesTable = createFeaturePropertiesTable(properties, {
-                    header: (() => {
-                        const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
-                        layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                        return popupHeader()
-                    })()
-                })
-                
-                layer.bindPopup(propertiesTable.outerHTML, {
-                    autoPan: false,
-                }).openPopup()
+            layer.bindPopup(createFeaturePropertiesTable(properties, {
+                header: (() => {
+                    const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                    layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                    return popupHeader()
+                })()
+            }).outerHTML, {
+                autoPan: false,
+            })
+            // const createPopup = () => {
 
-                layer.off('click', createPopup)
-            }
+            //     layer.off('click', createPopup)
+            // }
 
-            layer.on('click', createPopup)
+            // layer.on('click', createPopup)
         }
 
         layer.on('contextmenu', (e) => getLeafletLayerContextMenu(
