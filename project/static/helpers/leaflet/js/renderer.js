@@ -7,20 +7,22 @@ const handlerLeafletRenderer =(map) => {
         if (!feature) return
 
         const geojsonLayer = findFeatureLayerGeoJSONLayer(e.layer)
-        console.log(e.layer, geojsonLayer)
-        const id = geojsonLayer._leaflet_id
-        let layerCount = mappedLayers.get(id)
-        console.log(layerCount)
-        if (layerCount !== undefined) {
-            if (e.type === 'layeradd') {
-                layerCount -= 1
-                if (layerCount === 0) {
-                    mappedLayers.delete(id)
-                } else {
-                    mappedLayers.set(id, layerCount)
+        const id = geojsonLayer?._leaflet_id
+
+        if (id) {
+            let layerCount = mappedLayers.get(id)
+            console.log(layerCount)
+            if (layerCount !== undefined) {
+                if (e.type === 'layeradd') {
+                    layerCount -= 1
+                    if (layerCount === 0) {
+                        mappedLayers.delete(id)
+                    } else {
+                        mappedLayers.set(id, layerCount)
+                    }
                 }
+                return
             }
-            return
         }
         
         const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
