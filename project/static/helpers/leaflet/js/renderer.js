@@ -11,22 +11,25 @@ const handlerLeafletRenderer =(map) => {
                 console.log(e)
     
                 const featureLayers = []
-                const layerGroups = Object.values(map._ch.getLayerGroups())
-                layerGroups.forEach(group => {
+                Object.values(map._ch.getLayerGroups()).forEach(group => {
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
                         if (!['geojson', 'feature'].includes(type)) return
                         
                         const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
+                        console.log(geojsonLayer)
                         const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : [layer]
+                        console.log(layers)
                         layers.forEach(l => {
-                            if (featureLayers.includes(l) || !group.hasLayer(l) || l.feature.geometry.type.toLowerCase().endsWith('point')) return 
+                            if (featureLayers.includes(l) || !group.hasLayer(l) || l.feature.geometry.type.toLowerCase().endsWith('point')) return console.log(l)
                             featureLayers.push(l)
                         })
+                        console.log(featureLayers)
                     })
+                    console.log(featureLayers)
                 })
 
-                console.log(featureLayers.length)
+                console.log(featureLayers, featureLayers.length)
             }, 100);
         }
     })
