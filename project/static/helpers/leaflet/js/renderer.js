@@ -11,15 +11,18 @@ const handlerLeafletRenderer =(map) => {
             timeout = setTimeout(() => {
                 console.log(e)
     
-                let featureLayers = []
+                const featureLayers = []
                 const layerGroups = Object.values(map._ch.getLayerGroups())
-                console.log(layerGroups)
-                layerGroups.forEach(g => g.eachLayer(l => {
-                    console.log(l)
-                    const feature = l.feature
-                    const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
-                    if (feature && !isPoint) featureLayers.push(l)
-                }))
+                layerGroups.forEach(g => {
+                    console.log(g)
+                    g.eachLayer(l => {
+                        console.log(l)
+                        const feature = l.feature
+                        const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
+                        if (feature && !isPoint) featureLayers.push(l)
+                    })
+                    console.log(featureLayers)
+                })
                 console.log(featureLayers.length)
             }, 100);
         }
