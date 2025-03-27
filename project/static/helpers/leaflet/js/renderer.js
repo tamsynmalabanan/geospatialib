@@ -44,8 +44,8 @@ const handlerLeafletRenderer =(map) => {
                     })
                     Array(layer, geojsonLayer).forEach(l => l.options.renderer = newRenderer)
                     activeLayers.push(layer)
-                    isLegendGroup ? group._ch.hideLayer(l) : group.removeLayer(l)
-                    group._ch.showLayer(l)
+                    isLegendGroup ? group._ch.hideLayer(layer) : group.removeLayer(layer)
+                    group._ch.showLayer(layer)
                 })
             }, 100);
         }
