@@ -37,6 +37,8 @@ const handlerLeafletRenderer =(map) => {
                     if (layer._renderer instanceof renderer) return
                     
                     const geojsonLayer = findFeatureLayerGeoJSONLayer(layer)
+                    const group = geojsonLayer._group
+                    const isLegendGroup = map._legendLayerGroups.includes(group)
                     const newRenderer = Object.values(geojsonLayer._renderers).find(r => {
                         const isRenderer = r instanceof renderer
                         r._container?.classList.toggle('d-none', !isRenderer)
