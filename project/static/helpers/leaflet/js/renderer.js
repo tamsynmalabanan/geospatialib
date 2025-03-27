@@ -23,7 +23,7 @@ const handlerLeafletRenderer =(map) => {
                         // console.log('layers', layers)
                         layers.forEach(l => {
                             if (featureLayers.includes(l)) return console.log('already in featureLayers', l)
-                            if (!group.hasLayer(l)) return console.log('not shown', l)
+                            if (!group.hasLayer(l) && !group.hasLayer(geojsonLayer)) return console.log('not shown', group.getLayers(), l)
                             if (l.feature.geometry.type.toLowerCase().endsWith('point')) return console.log('is point', l)
                             console.log('new feature added', l)
                             featureLayers.push(l)
