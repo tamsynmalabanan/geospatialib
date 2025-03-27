@@ -162,6 +162,7 @@ const findFeatureLayerGeoJSONLayer = (layer) => {
     if (!layer.feaure || !layer._eventParents?.length) return
 
     for (const p of Object.values(layer._eventParents)) {
+        console.log(p)
         if (p instanceof L.GeoJSON) return p
     }
 }
@@ -170,6 +171,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     geojson = layer.toGeoJSON ? layer.toGeoJSON() : null,
 } = {}) => {
     const feature = layer.feature
+    console.log(findFeatureLayerGeoJSONLayer(layer))
     const group = feature ? findFeatureLayerGeoJSONLayer(layer)?._group : layer._group
     if (!group) return
 
