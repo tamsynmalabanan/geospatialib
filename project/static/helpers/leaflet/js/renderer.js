@@ -7,6 +7,7 @@ const handlerLeafletRenderer =(map) => {
         if (!feature) return
 
         const geojsonLayer = findFeatureLayerGeoJSONLayer(e.layer)
+        console.log(e.layer, geojsonLayer)
         const id = geojsonLayer._leaflet_id
         let layerCount = mappedLayers.get(id)
         console.log(layerCount)
