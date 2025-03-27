@@ -172,8 +172,9 @@ const getLeafletLayerContextMenu = (e, layer, {
     const isLegendFeature = isLegendGroup && feature
     const checkbox = layer._checkbox
     const disabledCheckbox = checkbox && checkbox.disabled
-    const checkboxArray = layer._checkboxContainer ? Array.from(
-        layer._checkboxContainer?.querySelectorAll('input.form-check-input')
+    const checkboxContainer = checkbox?.closest('.geojson-checklist')
+    const checkboxArray = checkboxContainer ? Array.from(
+        checkboxContainer?.querySelectorAll('input.form-check-input')
     ) : null
     const layerArray = isLegendGroup ? map._ch.getLegendLayers() : group._ch.getAllLayers()
     const noArrays = !checkboxArray && !layerArray

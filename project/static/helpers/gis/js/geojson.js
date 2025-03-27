@@ -103,8 +103,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     defaultGeom,
 } = {}) => {
     const map = group._map
+
     const container = document.createElement('div')
-    container.className = 'd-flex flex-column gap-2'
+    container.className = 'd-flex flex-column gap-2 geojson-checklist'
 
     for (const title in geojsonList) {
         if (controller?.signal.aborted) return
@@ -135,13 +136,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
 
-        const parentCheck = createFormCheck({
+        geojsonLayer._checkbox = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
             formCheckClass: `d-flex gap-2 `,
+            disabled: disableCheck,
         }).querySelector('input')
-        geojsonLayer._checkbox = parentCheck
-        parentCheck.disabled = disableCheck 
 
         const contentCollapse = document.createElement('div')
         contentCollapse.id = generateRandomString()
@@ -155,12 +155,11 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             for (const featureLayer of geojsonLayer.getLayers()) {
                 if (controller?.signal.aborted) return
                 
-                const featureCheck = createFormCheck({
+                featureLayer._checkbox = createFormCheck({
                     parent: featuresContainer,
                     labelInnerText: featureLayer._title,
                     formCheckClass: `d-flex gap-2 `,
                 }).querySelector('input')
-                featureLayer._checkbox = featureCheck
             }
         }
 
@@ -169,15 +168,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 if (controller?.signal.aborted) return
         
                 const checkbox = layer._checkbox
-        
-                const checklistContextMenuHandler = (e) => getLeafletLayerContextMenu(e, layer, {geojson})
-        
                 if (!checkbox) continue
         
                 checkbox._leafletLayer = layer
-                layer._checkboxContainer = container
 
-                checkbox.parentElement.addEventListener('contextmenu', checklistContextMenuHandler)
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
@@ -227,7 +221,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     className: 'bi bi-three-dots'
                 })
                 menuToggle.style.cursor = 'pointer'
-                menuToggle.addEventListener('click', checklistContextMenuHandler)
+                menuToggle.addEventListener('click', (e) => {
+                    getLeafletLayerContextMenu(e, layer, {geojson})
+                })
             }
         } catch {
             return
