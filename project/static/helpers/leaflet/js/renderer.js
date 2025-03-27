@@ -19,7 +19,7 @@ const handlerLeafletRenderer =(map) => {
                         
                         const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
                         const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : [layer]
-                        layers.filter(l => !featureLayers.includes(l)).forEach(l => {
+                        layers.filter(l => !featureLayers.includes(l) && group.hasLayer(l)).forEach(l => {
                             const isPoint = l.feature.geometry.type.toLowerCase().endsWith('point')
                             if (!isPoint) featureLayers.push(l)
                         })
