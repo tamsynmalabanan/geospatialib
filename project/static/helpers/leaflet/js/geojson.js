@@ -1,4 +1,5 @@
 const getLeafletGeoJSONLayer = async ({
+    geojson,
     pane = 'overlayPane',
     customStyleParams,
     title,
