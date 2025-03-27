@@ -12,6 +12,7 @@ const handlerLeafletRenderer =(map) => {
     
                 const featureLayers = []
                 Object.values(map._ch.getLayerGroups()).forEach(group => {
+                    console.log(group._name)
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
                         if (!['geojson', 'feature'].includes(type)) return
