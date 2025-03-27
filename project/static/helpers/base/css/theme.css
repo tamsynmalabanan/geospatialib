@@ -8,7 +8,7 @@
 .highlight {
     border-radius: var(--bs-border-radius);
     padding: 10px;
-    margin: 10px;
+    margin: 5px;
 }
 
 [data-bs-theme="light"] {
