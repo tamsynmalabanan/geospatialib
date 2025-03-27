@@ -16,7 +16,7 @@ const handlerLeafletRenderer =(map) => {
                 const layerGroups = Object.values(map._ch.getLayerGroups())
                 
                 const geojsonLayers = []
-                const count = 0
+                let count = 0
                 layerGroups.forEach(group => {
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
