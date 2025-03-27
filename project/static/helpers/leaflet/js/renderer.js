@@ -7,7 +7,7 @@ const handlerLeafletRenderer =(map) => {
         timeout = setTimeout(() => {
             console.log(e)
 
-            const featureLayers = []
+            let featureLayers = []
             const layerGroups = Object.values(map._ch.getLayerGroups())
             layerGroups.forEach(g => g.eachLayer(l => {
                 const feature = l.feature
