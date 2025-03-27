@@ -1,6 +1,5 @@
 const getLeafletGeoJSONLayer = async ({
     pane = 'overlayPane',
-    geojson,
     customStyleParams,
     title,
     attribution,
@@ -103,7 +102,7 @@ const getLeafletGeoJSONLayer = async ({
     const data = dataFetcher ? await dataFetcher() : geojson
     if (data) geojsonLayer.addData(data)
 
-    if (dataFetcher) {
+    if (!dataFetcher) {
         layer.on('add remove', (e) => {
             console.log(e)
         })
