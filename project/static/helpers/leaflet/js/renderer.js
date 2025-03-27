@@ -13,7 +13,9 @@ const handlerLeafletRenderer =(map) => {
     
                 let featureLayers = []
                 const layerGroups = Object.values(map._ch.getLayerGroups())
+                console.log(layerGroups)
                 layerGroups.forEach(g => g.eachLayer(l => {
+                    console.log(l)
                     const feature = l.feature
                     const isPoint = feature && feature.geometry.type.toLowerCase().endsWith('point')
                     if (feature && !isPoint) featureLayers.push(l)
