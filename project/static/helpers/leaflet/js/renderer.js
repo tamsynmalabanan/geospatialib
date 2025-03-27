@@ -43,7 +43,7 @@ const handlerLeafletRenderer =(map) => {
                         const currentRenderer = layer.options.renderer || geojsonLayer?.options.renderer
                         if (currentRenderer instanceof renderer) return
                         
-                        const newRenderer = Object.values(geojsonLayer._renderer).find(r => {
+                        const newRenderer = Object.values(geojsonLayer._renderers).find(r => {
                             const isRenderer = r instanceof renderer
                             r._container?.classList.toggle('d-none', !isRenderer)
                             return isRenderer
