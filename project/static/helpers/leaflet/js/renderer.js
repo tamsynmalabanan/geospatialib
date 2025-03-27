@@ -15,7 +15,7 @@ const handlerLeafletRenderer =(map) => {
                     group.eachLayer(layer => {
                         const type = getLeafletLayerType(layer)
                         if (!['geojson', 'feature'].includes(type)) return
-
+                        
                         const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
                         const layers = group.hasLayer(geojsonLayer) ? geojsonLayer.getLayers() : [layer]
                         layers.forEach(l => {
@@ -26,18 +26,19 @@ const handlerLeafletRenderer =(map) => {
                         })
                     })
                 })
-
+                
                 const renderer = featureLayers.length > 100 ? L.Canvas : L.SVG
-                console.log(renderer)
-                // layerGroups.forEach(group => {
-                //     group.eachLayer(layer => {
-                //         const currentRenderer = layer
+                layerGroups.forEach(group => {
+                    group.eachLayer(layer => {
+                        const type = getLeafletLayerType(layer)
+                        if (!['geojson', 'feature'].includes(type)) return
                         
-                //         const type = getLeafletLayerType(layer)
-                //         const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
-                //         const 
-                //     })
-                // })
+                        console.log(layer.options.renderer)
+                        // const geojsonLayer = type === 'geojson' ? layer : findFeatureLayerGeoJSONLayer(layer)
+                        // const currentRenderer = geojsonLayer.optio
+                        
+                    })
+                })
 
 
 
