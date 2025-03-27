@@ -25,6 +25,8 @@ const handlerLeafletRenderer =(map) => {
                         })
                     })
                 })
+
+                console.log(featureLayers.length)
             }, 1000);
         }
     })
