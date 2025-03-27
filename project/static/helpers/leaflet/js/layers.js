@@ -172,7 +172,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     const isLegendFeature = isLegendGroup && feature
     
     const checkbox = layer._checkbox
-    const disabledCheckbox = checkbox && checkbox.disabled
+    const disabledCheckbox = checkbox?.disabled
     const checkboxContainer = checkbox?.closest('.geojson-checklist')
     
     const checkboxArray = checkboxContainer ? Array.from(
@@ -207,15 +207,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         visibility: isLegendFeature || disabledCheckbox ? null : {
             innerText: `Toggle ${typeLabel} visibility`,
             btnCallback: () => {
-                if (checkbox) {
-                    checkbox.click()
-                } else {
-                    if (group.hasLayer(layer)) {
-                        removeLayer(layer, isLegendGroup)
-                    } else {
-                        addLayer(layer)
-                    }
-                }
+                group.hasLayer(layer) ? removeLayer(layer, isLegendGroup) : addLayer(layer)
             }
         },
         showProperties: !feature || !Object.keys(feature.properties).length ? null : {
