@@ -98,7 +98,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.pointToLayer = (feature, latlng) => L.marker(latlng, {icon: getStyle(feature)})
     
     geojsonLayer._renderers = {
-        svg: geojson.options.renderer,
+        svg: geojsonLayer.options.renderer,
         canvas: new L.Canvas({pane}),
     }
 
