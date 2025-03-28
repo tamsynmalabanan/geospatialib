@@ -39,8 +39,6 @@ const handlerLeafletRenderer = (map) => {
             
                 renderingLayers.set(layer.feature.properties.gsl_id, layer._leaflet_id)
                 console.log(geojsonLayer.getLayers())
-                layer.remove()
-                console.log(geojsonLayer.getLayers())
                 layer.removeFrom(geojsonLayer)
                 console.log(geojsonLayer.getLayers())
             }
