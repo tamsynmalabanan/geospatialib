@@ -1,6 +1,6 @@
 const getPathFeatureLayers = (map) => {
     const pathLayers = []
-    map._ch.getLayerGroups().forEach(group => {
+    Object.values(map._ch.getLayerGroups()).forEach(group => {
         group.eachLayer(layer => {
             const type = getLeafletLayerType(layer)
             const layers = type === 'geojson' ? layer.getLayers() : type === 'feature' ? [layer] : []
