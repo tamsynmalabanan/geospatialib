@@ -101,6 +101,19 @@ const getLeafletGeoJSONLayer = async ({
 
     if (geojson) geojsonLayer.addData(geojson)
 
+    geojsonLayer.getLayerByFeature = (validators) => {
+        const match = geojsonLayer.getLayers().find(l => {
+            let valid = true
+            for (const v of validators) {
+                if (!v(l.feature)) {
+                    valid = false
+                    break
+                }
+            }
+            if (valid) return true
+        })
+    }
+
     return geojsonLayer
 }
 
