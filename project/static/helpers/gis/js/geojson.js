@@ -166,10 +166,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     formCheckClass: `d-flex gap-2 `,
                 }).querySelector('input')
                 featureCheckbox.getLeafletLayer = () => {
-                    return geojsonLayer.getLayers()
-                    .find(l => {
-                        return l.feature.properties.gslId === featureLayer.feature.properties.gslId
-                    })
+                    return geojsonLayer.findGslId(featureLayer.feature.properties.gslId)
                 }
                 
             }

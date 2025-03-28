@@ -101,6 +101,8 @@ const getLeafletGeoJSONLayer = async ({
 
     if (geojson) geojsonLayer.addData(geojson)
 
+    geojsonLayer.findGslId = (id) => geojsonLayer.getLayers().find(l => l.feature.properties.gslId === id)
+
     return geojsonLayer
 }
 

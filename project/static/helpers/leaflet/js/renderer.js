@@ -55,7 +55,7 @@ const handlerLeafletRenderer = (map) => {
                 renderingLayers.set(gslId, layer._leaflet_id)
                 layer.removeFrom(geojsonLayer)
                 geojsonLayer.addData(layer.toGeoJSON())
-                const newLayer = geojsonLayer.getLayers().find(l => l.feature.properties.gslId === gslId)
+                const newLayer = geojsonLayer.findGslId(gslId)
                 resolveRerenderedLeafletPathLayer(layer, newLayer)
                 parent.addLayer(newLayer)
             }
