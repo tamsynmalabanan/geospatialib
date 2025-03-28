@@ -188,28 +188,51 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
-                    isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-                    
+
                     if (feature) {
-                        Object.values(layer._eventParents).forEach(p => {
-                            const c = p._checkbox
-                            if (!c) return
-                            
-                            c.checked = isChecked ? true : Array.from(
-                                geojsonContainer.querySelectorAll('input.form-check-input')
-                            ).filter(i => i !== c).some(i => i.checked)
-                            if (!c.checked) group.removeLayer(p)
-                        })
-                    } else {
-                        // layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
-                    }
                     
-                    console.log('has geojson layer', group.hasLayer(geojsonLayer))
-                    const allShown = geojsonLayer.getLayers().every(l => group.hasLayer(l))
-                    console.log('all feature layers shown', allShown)
-                    // geojsonLayer.eachLayer(l => console.log(group.hasLayer(l)))
-                    console.log(layer, group.getLayers())
+                    } else {
+                        layer.eachLayer(l => group.removeLayer(l))
+                        isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+                    }
+
+
+                    
+                    // if (feature) {
+                    //     Object.values(layer._eventParents).forEach(p => {
+                    //         const c = p._checkbox
+                    //         if (!c) return
+                            
+                    //         c.checked = isChecked ? true : Array.from(
+                    //             geojsonContainer.querySelectorAll('input.form-check-input')
+                    //         ).filter(i => i !== c).some(i => i.checked)
+                    //         if (!c.checked) group.removeLayer(p)
+                    //     })
+                    // } else {
+                    //     layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
+                    // }
+
+                    console.log(group.getLayers())
                 })
+
+                // checkbox.addEventListener('click', (e) => {
+                //     const isChecked = e.target.checked
+                //     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+                    
+                //     if (feature) {
+                //         Object.values(layer._eventParents).forEach(p => {
+                //             const c = p._checkbox
+                //             if (!c) return
+                            
+                //             c.checked = isChecked ? true : Array.from(
+                //                 geojsonContainer.querySelectorAll('input.form-check-input')
+                //             ).filter(i => i !== c).some(i => i.checked)
+                //             if (!c.checked) group.removeLayer(p)
+                //         })
+                //     } else {
+                //         layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
+                //     }
+                // })
         
                 const toggleContainer = document.createElement('div')
                 toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
