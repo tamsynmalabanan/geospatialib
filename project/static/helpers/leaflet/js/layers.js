@@ -169,12 +169,16 @@ const findFeatureLayerGeoJSONLayer = (layer) => {
 const getLeafletLayerContextMenu = (e, layer, {
 
 } = {}) => {
+    const type = getLeafletLayerType(layer)
+
     const feature = layer.feature
-    const group = feature ? findFeatureLayerGeoJSONLayer(layer)?._group : layer._group
+    const geojsonLayer = type === 'geojson' ? layer : feature ? findFeatureLayerGeoJSONLayer(layer) : null
+
+    const group = layer._group || geojsonLayer?._group
     if (!group) return
-
+    
     const layerGeoJSON = feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
-
+    
     const map = group._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
@@ -188,19 +192,18 @@ const getLeafletLayerContextMenu = (e, layer, {
     ) : null
     const layerArray = isLegendGroup ? map._ch.getLegendLayers() : group._ch.getAllLayers()
     const noArrays = !checkboxArray && !layerArray
-
-    const type = getLeafletLayerType(layer) 
+    
     const typeLabel = type === 'feature' ? type : 'layer'
     
     const addLayer = (l) => group._ch.showLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._ch.hideLayer(l) : group.removeLayer(l)
-
+    
     return contextMenuHandler(e, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
         },
-        isolate: isLegendFeature || noArrays || disabledCheckbox ? null : {
+        isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
                 checkboxArray?.forEach(c => {
