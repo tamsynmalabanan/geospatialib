@@ -38,10 +38,11 @@ const handlerLeafletRenderer = (map) => {
                 geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => r instanceof renderer)
             
                 const gslId = layer.feature.properties.gsl_id
+                console.log(gslId)
                 // renderingLayers.set(gslId, layer._leaflet_id)
                 layer.removeFrom(geojsonLayer)
                 geojsonLayer.addData(layer.toGeoJSON())
-                const newLayer = geojsonLayer.getLayerByFeature(f => f.properties.gslId === gslId)
+                const newLayer = geojsonLayer.getLayers().find(l => l.feature.properties.gslId === gslId)
                 console.log(layer, newLayer)
             }
         }, 100);
