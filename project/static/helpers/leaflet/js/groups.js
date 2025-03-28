@@ -67,11 +67,6 @@ const handleLeafletLayerGroups = (map) => {
             },
 
 
-            // addGeoJSONLayer: (layer) => {
-
-            // },
-
-
             getBounds: () => {
                 const bounds = [
                     ...layerGroup.getLayers(), 
