@@ -203,11 +203,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         console.log(allLayers, shownLayers, allShown, noneShown, someShown)
 
                         geojsonLayer._checkbox.checked = allShown || someShown
-                        shownLayers.forEach(l => {
-                            console.log(shownLayers, l, l._checkbox.checked)
-                            someShown ? group.addLayer(l) : group.removeLayer(l)
-                            console.log(group.getLayers())
-                        })
+                        if (!someShown) shownLayers.forEach(l => map.removeLayer(l))
                         allShown ? group.addLayer(geojsonLayer) : group.removeLayer(geojsonLayer)
                     } else {
                         layer.eachLayer(l => {
