@@ -178,14 +178,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const feature = layer.feature
 
                 layer.on('add remove', (e) => {
-                    console.log(e, checkbox.checked, group.getLayers())
-                    if (checkbox.checked !== (e.type === 'add')) checkbox.click()
-                    console.log(e, checkbox.checked, group.getLayers())
+                    if ((checkbox.checked || geojsonLayer._checkbox.checked) !== (e.type === 'add')) checkbox.click()
                 })
             
                 checkbox.addEventListener('click', (e) => {
                     console.log(e, checkbox.checked, group.getLayers())
-                    
+
                     const isChecked = e.target.checked
 
                     const parentShown = map.hasLayer(geojsonContainer)
