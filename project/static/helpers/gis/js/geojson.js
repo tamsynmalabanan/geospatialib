@@ -202,6 +202,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             group.removeLayer(l)
                         })
                     }
+
+                    console.log(group.getLayers())
                 })
         
                 const toggleContainer = document.createElement('div')
