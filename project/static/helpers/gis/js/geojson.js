@@ -200,8 +200,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     }
 
                     geojsonLayer.eachLayer(l => console.log(group.hasLayer(l), map.hasLayer(l)))
-
-                    console.log(group.getLayers())
+                    console.log(layer, group.getLayers())
                 })
         
                 const toggleContainer = document.createElement('div')
