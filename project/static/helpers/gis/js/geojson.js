@@ -178,6 +178,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const feature = layer.feature
 
                 layer.on('add remove', (e) => {
+                    console.log(e, checkbox.checked, group.getLayers())
                     if (checkbox.checked !== (e.type === 'add')) checkbox.click()
                     console.log(e, checkbox.checked, group.getLayers())
                 })
