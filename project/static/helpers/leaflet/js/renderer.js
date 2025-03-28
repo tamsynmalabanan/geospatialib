@@ -47,7 +47,7 @@ const handlerLeafletRenderer = (map) => {
                 const geojsonLayer = findLeafletFeatureLayerParent(layer)
                 geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => {
                     const match = r instanceof renderer
-                    r._container?.classList.toggle('d-none', !match)
+                    if (!match) r._container?.remove()
                     return match
                 })
             
