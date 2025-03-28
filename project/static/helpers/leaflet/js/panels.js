@@ -347,7 +347,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             const legendCollapse = document.createElement('div')
             legendCollapse.id = `${container.id}-collapse`
-            legendCollapse.className = 'collapse show'
+            legendCollapse.className = 'collapse show ps-3'
             container.appendChild(legendCollapse)
 
             const legendDetails = document.createElement('div')
