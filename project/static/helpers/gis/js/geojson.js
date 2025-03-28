@@ -189,22 +189,26 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
-                    const isShown = map.hasLayer(layer) || map.hasLayer(geojsonLayer)
-                    
-                    if (isChecked && !isShown) group.addLayer(layer)
-                    if (!isChecked && isShown) group.removeLayer(layer)
 
                     if (feature) {
-                        Object.values(layer._eventParents).forEach(p => {
-                            const c = p._checkbox
-                            if (!c) return
-                            
-                            const shownLayers = p.getLayers().filter(l => l._checkbox?.checked)
-                            c.checked = isChecked || shownLayers.length > 0
-                            // if (shownLayers.length < ) group.removeLayer(p)
-                        })
+                        isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+                        
+                        const allLayers = geojsonLayer.getLayers()
+                        const shownLayers = allLayers.filter(l => map.hasLayer(l))
+
+                        const allShown = allLayers.length === shownLayers.length
+                        const noneShown = shownLayers.length === 0
+                        const someShown = !allShown && !noneShown
+
+                        geojsonLayer._checkbox.checked = allShown || someShown
+                        shownLayers.forEach(l => someShown ? group.addLayer(l) : group.removeLayer(l))
+                        allShown ? group.addLayer(geojsonLayer) : group.removeLayer(geojsonLayer)
                     } else {
-                        layer.eachLayer(l => l._checkbox.checked = isChecked)
+                        layer.eachLayer(l => {
+                            if (l._checkbox) l._checkbox.checked = isChecked
+                            group.removeLayer(l)
+                        })
+                        isChecked ? group.addLayer(layer) : group.removeLayer(layer)
                     }
                     
                     console.log(group.getLayers())
