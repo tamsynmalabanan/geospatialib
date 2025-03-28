@@ -560,7 +560,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnClickHandler: () => {
                 const checkboxes = Array.from(layers.querySelectorAll('input.form-check-input'))
                 const bounds = checkboxes.map(checkbox => {
-                    const layer = checkbox.getLeafletLayer()
+                    const layer = checkbox._leafletLayer
                     if (layer instanceof L.GeoJSON) return L.rectangle(
                         layer.getBounds()
                     ).toGeoJSON()
