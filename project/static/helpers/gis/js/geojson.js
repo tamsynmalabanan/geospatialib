@@ -204,7 +204,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
                     }
 
-                    geojsonLayer.eachLayer(l => console.log(group.hasLayer(l), map.hasLayer(l)))
+                    const allShown = geojsonLayer.every(l => group.hasLayer(l))
+                    console.log(allShown)
+                    // geojsonLayer.eachLayer(l => console.log(group.hasLayer(l)))
                     console.log(layer, group.getLayers())
                 })
         
