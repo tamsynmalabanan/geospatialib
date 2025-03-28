@@ -21,16 +21,16 @@ const handlerLeafletRenderer = (map) => {
         clearTimeout(timeout)
         timeout = setTimeout(() => {
             const pathLayers = getPathLayers(map)
-            console.log(pathLayers)
             const renderer = pathLayers.length > 100 ? L.Canvas : L.SVG
-            if (map._rendererFn === renderer) return console.log('correct map renderer') 
+            if (map._rendererFn === renderer) return
+
             map._rendererFn = renderer
             pathLayers.forEach(l => {
                 const currentRenderer = l.options.renderer
-                if (currentRenderer instanceof renderer) return console.log('correct layer renderer', currentRenderer)
+                if (currentRenderer instanceof renderer) return
                 
                 const geojsonLayer = findLeafletFeatureLayerParent(l)
-                console.log('update renderer', geojsonLayer)
+                console.log('update renderer', currentRenderer, geojsonLayer)
             })
         }, 100);
     })
