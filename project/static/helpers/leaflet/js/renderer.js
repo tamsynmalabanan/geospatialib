@@ -38,7 +38,6 @@ const handlerLeafletRenderer = (map) => {
                 geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => r instanceof renderer)
             
                 const gslId = layer.feature.properties.gslId
-                console.log(gslId)
                 // renderingLayers.set(gslId, layer._leaflet_id)
                 layer.removeFrom(geojsonLayer)
                 geojsonLayer.addData(layer.toGeoJSON())
