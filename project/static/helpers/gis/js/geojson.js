@@ -17,7 +17,7 @@ const handleGeoJSON = async (geojson, {
         }
         
         if (feature.id) feature.properties.feature_id = feature.id
-        feature.properties.gsl_id = generateRandomString(8)
+        feature.properties.gslId = generateRandomString(8)
     }
 
     if (sortFeatures) sortGeoJSONFeatures(geojson)
