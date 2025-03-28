@@ -101,10 +101,6 @@ const getLeafletGeoJSONLayer = async ({
 
     if (geojson) geojsonLayer.addData(geojson)
 
-    geojsonLayer.getLayerByFeature = (validator) => {
-        return geojsonLayer.getLayers().find(l => validator(l.feature))
-    }
-
     return geojsonLayer
 }
 

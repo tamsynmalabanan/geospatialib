@@ -42,7 +42,7 @@ const handlerLeafletRenderer = (map) => {
                 // renderingLayers.set(gslId, layer._leaflet_id)
                 layer.removeFrom(geojsonLayer)
                 geojsonLayer.addData(layer.toGeoJSON())
-                const newLayer = geojsonLayer.getLayerByFeature(f => f.properties.gslId === gslId)
+                const newLayer = geojsonLayer.getLayers().find(l => l.feature.properties.gslId === gslId)
                 console.log(layer, newLayer)
             }
         }, 100);
