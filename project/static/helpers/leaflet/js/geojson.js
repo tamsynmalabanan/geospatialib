@@ -101,7 +101,9 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     const data = dataFetcher ? await dataFetcher() : geojson
-    if (data) geojsonLayer.addData(data)
+    if (data) {
+        const renderer = data.type === 'feature' || data.features?.lengt
+    }
 
     // update to fetch new data when map moves on layer add, remove listerners on layer remove
     // if (dataFetcher) {
@@ -109,23 +111,6 @@ const getLeafletGeoJSONLayer = async ({
     //         console.log(e)
     //     })
     // }
-
-    // geojsonLayer.on('rendererupdated', async (e) => {
-    //     const newRenderer = geojsonLayer._renderers[e.renderer]
-    //     geojsonLayer.options.renderer = newRenderer
-    //     console.log(geojsonLayer.options.renderer)
-        
-    //     geojsonLayer.clearLayers()
-    //     const data = await dataFetcher()
-    //     if (data) geojsonLayer.addData(data)
-
-    //     Object.keys(geojsonLayer._renderers).forEach(k => {
-    //         geojsonLayer._renderers[k]._container
-    //         .classList.toggle('d-none', k !== e.renderer)
-    //     })
-
-    //     geojsonLayer.fire('dataupdate')
-    // })
 
     return geojsonLayer
 }
