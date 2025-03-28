@@ -101,9 +101,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     const data = dataFetcher ? await dataFetcher() : geojson
-    if (data) {
-        const renderer = data.type === 'feature' || data.features?.lengt
-    }
+    if (data) geojsonLayer.addData(data)
 
     // update to fetch new data when map moves on layer add, remove listerners on layer remove
     // if (dataFetcher) {

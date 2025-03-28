@@ -139,7 +139,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
 
-        geojsonLayer._checkbox = createFormCheck({
+        const pCheckbox = geojsonLayer._checkbox = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
             formCheckClass: `d-flex gap-2 `,
@@ -179,7 +179,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
                 layer.on('add remove', (e) => {
                     const added = e.type === 'add'
-                    if (checkbox.checked === added || geojsonLayer._checkbox.checked === added) {
+                    if (checkbox.checked === added || pCheckbox.checked === added) {
                         checkbox.checked = added
                     } else {
                         checkbox.click()
@@ -191,10 +191,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
                     
                     if (feature) {
-                        geojsonLayer._checkbox.checked = isChecked ? true : Array.from(
+                        pCheckbox.checked = isChecked ? true : Array.from(
                             geojsonContainer.querySelectorAll('input.form-check-input')
-                        ).filter(i => i !== geojsonLayer._checkbox).some(i => i.checked)
-                        if (!geojsonLayer._checkbox.checked) group.removeLayer(geojsonLayer)
+                        ).filter(i => i !== pCheckbox).some(i => i.checked)
+                        if (!pCheckbox.checked) group.removeLayer(geojsonLayer)
                     } else {
                         layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
                     }
