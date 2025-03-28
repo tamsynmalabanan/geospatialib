@@ -176,7 +176,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         }
 
         try {
-            const checkboxes = Array.from(container.querySelectorAll('input.form-check-input'))
+            const checkboxes = Array.from(geojsonContainer.querySelectorAll('input.form-check-input'))
             for (const checkbox of checkboxes) {
                 if (controller?.signal.aborted) return
                 
