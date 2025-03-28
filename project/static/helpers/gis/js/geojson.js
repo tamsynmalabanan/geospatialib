@@ -139,7 +139,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
 
-        const pCheckbox = geojsonLayer._checkbox = createFormCheck({
+        geojsonLayer._checkbox = createFormCheck({
             parent: geojsonContainer,
             labelInnerText: `${title} (${formatNumberWithCommas(features.length)})`,
             formCheckClass: `d-flex gap-2 `,
@@ -176,6 +176,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 checkbox._leafletLayer = layer
 
                 const feature = layer.feature
+                const pCheckbox = geojsonLayer._checkbox
 
                 layer.on('add remove', (e) => {
                     const added = e.type === 'add'
