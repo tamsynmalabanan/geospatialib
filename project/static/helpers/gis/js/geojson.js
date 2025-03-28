@@ -204,6 +204,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             geojsonLayer.eachLayer(l => {
                                 l._checkbox.checked = isChecked
                                 group.removeLayer(l)
+                                geojsonLayer.addLayer(l)
                             })
                         } else {
                             group.removeLayer(geojsonLayer)
