@@ -51,7 +51,7 @@ const handlerLeafletRenderer = (map) => {
                 geojsonLayer.addData(layer.toGeoJSON())
                 const newLayer = geojsonLayer.getLayers().find(l => l.feature.properties.gslId === gslId)
                 resolveRerenderedLeafletPathLayer(layer, newLayer)
-                console.log(newLayer)
+                parent.addLayer(newLayer)
             }
         }, 100);
     })
