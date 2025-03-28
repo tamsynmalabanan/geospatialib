@@ -26,11 +26,12 @@ const handlerLeafletRenderer = (map) => {
 
             map._rendererFn = renderer
             pathLayers.forEach(l => {
-                const currentRenderer = l.options.renderer
-                if (currentRenderer instanceof renderer) return
+                if (l.options.renderer instanceof renderer) return
                 
                 const geojsonLayer = findLeafletFeatureLayerParent(l)
-                console.log('update renderer', currentRenderer, geojsonLayer)
+                const currentRenderer = geojsonLayer.options.renderer
+                if (!currentRenderer instanceof renderer) geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => r instanceof renderer)
+                console.log(geojsonLayer.options.renderer)
             })
         }, 100);
     })
