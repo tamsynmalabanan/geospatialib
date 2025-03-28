@@ -212,7 +212,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
                 checkbox.parentElement.appendChild(toggleContainer)    
                
-                if (!feature) {
+                if (!feature && typeof layer.getLayers === 'function') {
                     const contentToggle = createIcon({
                         parent: toggleContainer,
                         peNone: false,
@@ -223,14 +223,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     contentToggle.setAttribute('aria-controls', contentCollapse.id)
                     contentToggle.setAttribute('aria-expanded', 'false')        
                 }
-
+                
                 const menuToggle = createIcon({
                     parent: toggleContainer,
                     peNone: false,
                     className: 'bi bi-three-dots'
                 })
                 menuToggle.addEventListener('click', (e) => {
-                    getLeafletLayerContextMenu(e, checkbox.getLeafletLayer())
+                    getLeafletLayerContextMenu(e, layer)
                 })
             }
         } catch {
