@@ -22,7 +22,7 @@ const handlerLeafletRenderer = (map) => {
     map._rendererFn = L.SVG
     
     let timeout
-    const renderingLayers = new Map()
+    // const renderingLayers = new Map()
     map.on('layeradd layerremove', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(() => {
@@ -37,10 +37,9 @@ const handlerLeafletRenderer = (map) => {
                 const geojsonLayer = findLeafletFeatureLayerParent(layer)
                 geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => r instanceof renderer)
             
-                renderingLayers.set(layer.feature.properties.gsl_id, layer._leaflet_id)
-                console.log(geojsonLayer.getLayers())
+                // renderingLayers.set(layer.feature.properties.gsl_id, layer._leaflet_id)
                 layer.removeFrom(geojsonLayer)
-                console.log(geojsonLayer.getLayers())
+                geojsonLayer.addData(layer.toGeoJSON())
             }
         }, 100);
     })
