@@ -175,6 +175,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         
                 checkbox._leafletLayer = layer
 
+                const feature = layer.feature
+
                 layer.on('add remove', (e) => {
                     if (checkbox.checked !== (e.type === 'add')) checkbox.click()
                 })
@@ -183,7 +185,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     const isChecked = e.target.checked
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
                     
-                    if (layer.feature) {
+                    if (feature) {
                         Object.values(layer._eventParents).forEach(p => {
                             const c = p._checkbox
                             if (!c) return
@@ -194,7 +196,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             if (!c.checked) group.removeLayer(p)
                         })
                     } else {
-                        layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
+                        // layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
                     }
                 })
         
@@ -202,7 +204,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
                 checkbox.parentElement.appendChild(toggleContainer)    
         
-                if (!layer.feature && typeof layer.getLayers === 'function') {
+                if (!feature && typeof layer.getLayers === 'function') {
                     const contentToggle = createIcon({
                         parent: toggleContainer,
                         peNone: false,
