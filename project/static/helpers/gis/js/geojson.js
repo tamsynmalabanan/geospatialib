@@ -192,7 +192,21 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
 
                     if (feature) {
-                        // const checkedFeatures = geojsonLayer    
+                        const allLayers = geojsonLayer.getLayers()
+                        const checkedFeatures = allLayers.filter(l => l._checkbox.checked)
+                        const allChecked = checkedFeatures.length === allLayers.length
+                        const noneChecked = checkedFeatures.length === 0
+
+                        geojsonLayer._checkbox.checked = isChecked
+                        if (allChecked || noneChecked) {
+                            allChecked ? group.addLayer(geojsonLayer) : group.removeLayer(geojsonLayer)
+                            geojsonLayer.eachLayer(l => {
+                                l._checkbox.checked = isChecked
+                                group.removeLayer(l)
+                            })
+                        } else {
+                            group.removeLayer(geojsonLayer)
+                        }
                     } else {
                         layer.eachLayer(l => {
                             if (l._checkbox) l._checkbox.checked = isChecked
