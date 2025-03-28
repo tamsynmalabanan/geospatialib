@@ -17,7 +17,7 @@ const handlerLeafletRenderer =(map) => {
 
     map.on('layeradd layerremove', () => {
         clearTimeout(timeout)
-        setTimeout(() => {
+        timeout = setTimeout(() => {
             const pathFeatureLayers = getPathFeatureLayers(map)
             console.log(pathFeatureLayers)
         }, 100);
