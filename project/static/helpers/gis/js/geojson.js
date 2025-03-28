@@ -202,12 +202,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             ).filter(i => i !== c).some(i => i.checked)
                             
                             if (!c.checked) group.removeLayer(p)
-                            })
+                        })
                     } else {
                         layer.eachLayer(l => group.removeLayer(l))
                     }
                     
-                    console.log(e, checkbox.checked, group.getLayers())
+                    console.log(group.getLayers())
                 })
             
                 const toggleContainer = document.createElement('div')
