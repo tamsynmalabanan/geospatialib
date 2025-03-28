@@ -178,13 +178,14 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 const feature = layer.feature
 
                 layer.on('add remove', (e) => {
-                    if (checkbox.checked !== (e.type === 'add')) checkbox.click()
                     console.log(e, group.getLayers())
+                    if (checkbox.checked !== (e.type === 'add')) checkbox.click()
                 })
 
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+                    console.log(e, group.getLayers())
                     
                     if (feature) {
                         Object.values(layer._eventParents).forEach(p => {
@@ -200,7 +201,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                         // layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
                     }
 
-                    console.log(e, group.getLayers())
                 })
         
                 const toggleContainer = document.createElement('div')
