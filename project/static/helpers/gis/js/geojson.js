@@ -190,6 +190,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
                     const isShown = map.hasLayer(layer) || map.hasLayer(geojsonLayer)
+                    isChecked && !isShown ? group.addLayer(layer) : group.removeLayer(layer)
 
                     if (feature) {
                         Object.values(layer._eventParents).forEach(p => {
@@ -203,10 +204,9 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                             if (!c.checked) group.removeLayer(p)
                             })
                     } else {
-                        // layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
+                        layer.eachLayer(l => group.removeLayer(l))
                     }
                     
-                    isChecked && !isShown ? group.addLayer(layer) : group.removeLayer(layer)
                     console.log(e, checkbox.checked, group.getLayers())
                 })
             
