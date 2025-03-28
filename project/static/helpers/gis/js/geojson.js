@@ -177,48 +177,33 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
                 const feature = layer.feature
 
-                // layer.on('add remove', (e) => {
-                //     const layerAdded = e.type === 'add'
-                //     const checked = Array(checkbox, geojsonLayer._checkbox).some(c => c.checked)
-                //     if (checked !== layerAdded) {
-                //         checkbox.click()
-                //     } else {
-                //         checkbox.checked = layerAdded
-                //     }
-                // })
-            
+                layer.on('add remove', (e) => {
+                    const layerAdded = e.type === 'add'
+                    const checked = Array(checkbox, geojsonLayer._checkbox).some(c => c.checked)
+                    if (checked !== layerAdded) {
+                        checkbox.click()
+                    } else {
+                        checkbox.checked = layerAdded
+                    }
+                })
+
                 checkbox.addEventListener('click', (e) => {
                     const isChecked = e.target.checked
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-
+                    
                     if (feature) {
-                        const allLayers = geojsonLayer.getLayers()
-                        const checkedFeatures = allLayers.filter(l => l._checkbox.checked)
-                        const allChecked = checkedFeatures.length === allLayers.length
-                        const noneChecked = checkedFeatures.length === 0
-                        console.log(allChecked, noneChecked)
-
-                        geojsonLayer._checkbox.checked = isChecked
-                        if (allChecked || noneChecked) {
-                            allChecked ? group.addLayer(geojsonLayer) : group.removeLayer(geojsonLayer)
-                            geojsonLayer.eachLayer(l => {
-                                l._checkbox.checked = isChecked
-                                group.removeLayer(l)
-                                geojsonLayer.addLayer(l)
-                            })
-                        } else {
-                            group.removeLayer(geojsonLayer)
-                        }
+                        geojsonLayer._checkbox.checked = isChecked || Array.from(
+                            geojsonContainer.querySelectorAll('input.form-check-input')
+                        ).some(i => i !== geojsonLayer._checkbox && i.checked)
+                        if (!geojsonLayer._checkbox.checked) group.removeLayer(p)
                     } else {
                         layer.eachLayer(l => {
                             if (l._checkbox) l._checkbox.checked = isChecked
                             group.removeLayer(l)
                         })
                     }
-                    
-                    console.log(group.getLayers())
                 })
-            
+        
                 const toggleContainer = document.createElement('div')
                 toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
                 checkbox.parentElement.appendChild(toggleContainer)    
