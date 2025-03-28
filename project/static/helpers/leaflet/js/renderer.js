@@ -5,10 +5,11 @@ const getPathFeatureLayers = (map) => {
             const type = getLeafletLayerType(layer)
             const layers = type === 'geojson' ? layer.getLayers() : type === 'feature' ? [layer] : []
             layers.forEach(l => {
-                // if (!pathLayers)
+                if (!pathLayers.includes(l)) pathLayers.push(l)
             }) 
         })
     })
+    return pathLayers
 }
 
 const handlerLeafletRenderer =(map) => {
@@ -17,7 +18,8 @@ const handlerLeafletRenderer =(map) => {
     map.on('layeradd layerremove', () => {
         clearTimeout(timeout)
         setTimeout(() => {
-            
+            const pathFeatureLayers = getPathFeatureLayers(map)
+            console.log(pathFeatureLayers)
         }, 100);
     })
 
