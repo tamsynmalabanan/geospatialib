@@ -45,7 +45,11 @@ const handlerLeafletRenderer = (map) => {
                 if (layer.options.renderer instanceof renderer) return
                 
                 const geojsonLayer = findLeafletFeatureLayerParent(layer)
-                geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => r instanceof renderer)
+                geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => {
+                    const match = r instanceof renderer
+                    r._container?.classList.toggle('d-none', !match)
+                    return match
+                })
             
                 const gslId = layer.feature.properties.gslId
                 renderingLayers.set(gslId, layer._leaflet_id)
@@ -54,7 +58,6 @@ const handlerLeafletRenderer = (map) => {
                 const newLayer = geojsonLayer.getLayers().find(l => l.feature.properties.gslId === gslId)
                 resolveRerenderedLeafletPathLayer(layer, newLayer)
                 parent.addLayer(newLayer)
-
             }
         }, 100);
     })
