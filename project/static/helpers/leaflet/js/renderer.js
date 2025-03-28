@@ -34,7 +34,7 @@ const handlerLeafletRenderer = (map) => {
             for (const [layer, parent] of pathLayers) {
                 if (layer.options.renderer instanceof renderer) return
                 
-                const geojsonLayer = findLeafletFeatureLayerParent(l)
+                const geojsonLayer = findLeafletFeatureLayerParent(layer)
                 geojsonLayer.options.renderer = Object.values(geojsonLayer._renderers).find(r => r instanceof renderer)
                 console.log(geojsonLayer.options.renderer)
             }
