@@ -19,11 +19,8 @@ const getLeafletPathLayers = (map) => {
 }
 
 const resolveRerenderedLeafletPathLayer = (oldLayer, newLayer) => {
-    for (const property in oldLayer) {
-        if (!newLayer.hasOwnProperty(property)) {
-            newLayer[property] = oldLayer[property]
-        }
-    }
+    if (oldLayer._checkbox) newLayer._checkbox = oldLayer._checkbox
+    
 }
 
 const handlerLeafletRenderer = (map) => {
