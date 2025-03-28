@@ -193,7 +193,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
         },
-        visibility: isLegendFeature || disabledCheckbox ? null : {
+        visibility: isLegendFeature ? null : {
             innerText: `Toggle ${typeLabel} visibility`,
             btnCallback: () => {
                 group.hasLayer(layer) ? removeLayer(layer, isLegendGroup) : addLayer(layer)
