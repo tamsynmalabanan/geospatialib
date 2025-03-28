@@ -30,7 +30,7 @@ const handlerLeafletRenderer = (map) => {
                 
                 const geojsonLayer = findLeafletFeatureLayerParent(l)
                 const currentRenderer = geojsonLayer.options.renderer
-                if (!currentRenderer instanceof renderer) geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => r instanceof renderer)
+                geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => r instanceof renderer)
                 console.log(geojsonLayer.options.renderer)
             })
         }, 100);
