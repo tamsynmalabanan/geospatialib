@@ -1,4 +1,4 @@
-const getPathLayers = (map) => {
+const getLeafletPathLayers = (map) => {
     const pathLayers = new Map()
     Object.values(map._ch.getLayerGroups()).forEach(group => {
         group.eachLayer(layer => {
@@ -18,6 +18,14 @@ const getPathLayers = (map) => {
     return pathLayers
 }
 
+const resolveRerenderedLeafletPathLayer = (oldLayer, newLayer) => {
+    for (const property in oldLayer) {
+        if (!newLayer.hasOwnProperty(property)) {
+            newLayer[property] = oldLayer[property]
+        }
+    }
+}
+
 const handlerLeafletRenderer = (map) => {
     map._rendererFn = L.SVG
     
@@ -26,7 +34,7 @@ const handlerLeafletRenderer = (map) => {
     map.on('layeradd layerremove', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(() => {
-            const pathLayers = getPathLayers(map)
+            const pathLayers = getLeafletPathLayers(map)
             const renderer = pathLayers.size > 5 ? L.Canvas : L.SVG
             if (map._rendererFn === renderer) return
 
@@ -46,5 +54,4 @@ const handlerLeafletRenderer = (map) => {
             }
         }, 100);
     })
-
 }
