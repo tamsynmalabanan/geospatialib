@@ -183,16 +183,6 @@ const getLeafletLayerContextMenu = (e, layer, {
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
     
-    const checkbox = layer._checkbox
-    const disabledCheckbox = checkbox?.disabled
-    const checkboxContainer = checkbox?.closest('.geojson-checklist')
-    
-    const checkboxArray = checkboxContainer ? Array.from(
-        checkboxContainer?.querySelectorAll('input.form-check-input')
-    ) : null
-    const layerArray = isLegendGroup ? map._ch.getLegendLayers() : group._ch.getAllLayers()
-    const noArrays = !checkboxArray && !layerArray
-    
     const typeLabel = type === 'feature' ? type : 'layer'
     
     const addLayer = (l) => group._ch.showLayer(l)
@@ -202,18 +192,6 @@ const getLeafletLayerContextMenu = (e, layer, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: () => zoomToLeafletLayer(layer, map)
-        },
-        isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
-            innerText: `Isolate ${typeLabel}`,
-            btnCallback: () => {
-                checkboxArray?.forEach(c => {
-                    if (c.checked) c.click()
-                })
-
-                layerArray?.forEach(l => removeLayer(l, isLegendGroup))
-                
-                addLayer(layer)
-            }
         },
         visibility: isLegendFeature || disabledCheckbox ? null : {
             innerText: `Toggle ${typeLabel} visibility`,
