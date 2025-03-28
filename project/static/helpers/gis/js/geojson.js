@@ -183,7 +183,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     if (checked !== added) {
                         checkbox.click()
                     } else {
-                        checkbox.checked = added
+                        // checkbox.checked = added
                     }
                 })
 
