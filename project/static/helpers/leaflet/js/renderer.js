@@ -21,7 +21,8 @@ const handlerLeafletRenderer = (map) => {
         clearTimeout(timeout)
         timeout = setTimeout(() => {
             const pathLayers = getPathLayers(map)
-            const renderer = pathLayers > 100 ? L.Canvas : L.SVG
+            console.log(pathLayers)
+            const renderer = pathLayers.length > 100 ? L.Canvas : L.SVG
             if (map._rendererFn === renderer) return console.log('correct map renderer') 
             map._rendererFn = renderer
             pathLayers.forEach(l => {
