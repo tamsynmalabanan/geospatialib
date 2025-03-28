@@ -19,7 +19,10 @@ const getLeafletPathLayers = (map) => {
 }
 
 const resolveRerenderedLeafletPathLayer = (oldLayer, newLayer) => {
-    if (oldLayer._checkbox) newLayer._checkbox = oldLayer._checkbox
+    if (oldLayer._checkbox) {
+        newLayer._checkbox = oldLayer._checkbox
+        oldLayer._checkbox._leafletLayer = newLayer
+    }
     newLayer._events = oldLayer._events
 }
 
