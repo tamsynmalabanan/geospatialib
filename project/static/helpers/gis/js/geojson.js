@@ -176,11 +176,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                 checkbox._leafletLayer = layer
 
                 const feature = layer.feature
-                const pCheckbox = geojsonLayer._checkbox
 
                 layer.on('add remove', (e) => {
                     const added = e.type === 'add'
-                    if (checkbox.checked === added || pCheckbox.checked === added) {
+                    if (checkbox.checked === added || geojsonLayer._checkbox.checked === added) {
                         checkbox.checked = added
                     } else {
                         checkbox.click()
@@ -192,10 +191,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
                     isChecked ? group.addLayer(layer) : group.removeLayer(layer)
                     
                     if (feature) {
-                        pCheckbox.checked = isChecked ? true : Array.from(
+                        geojsonLayer._checkbox.checked = isChecked ? true : Array.from(
                             geojsonContainer.querySelectorAll('input.form-check-input')
-                        ).filter(i => i !== pCheckbox).some(i => i.checked)
-                        if (!pCheckbox.checked) group.removeLayer(geojsonLayer)
+                        ).filter(i => i !== geojsonLayer._checkbox).some(i => i.checked)
+                        if (!geojsonLayer._checkbox.checked) group.removeLayer(geojsonLayer)
                     } else {
                         layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
                     }
