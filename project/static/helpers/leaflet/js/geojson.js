@@ -5,7 +5,6 @@ const getLeafletGeoJSONLayer = async ({
     title,
     attribution,
     group,
-    dataFetcher,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         // filter: (feature) => {
@@ -100,15 +99,7 @@ const getLeafletGeoJSONLayer = async ({
         canvas: new L.Canvas({pane}),
     }
 
-    const data = dataFetcher ? await dataFetcher() : geojson
-    if (data) geojsonLayer.addData(data)
-
-    // update to fetch new data when map moves on layer add, remove listerners on layer remove
-    // if (dataFetcher) {
-    //     layer.on('add remove', (e) => {
-    //         console.log(e)
-    //     })
-    // }
+    if (geojson) geojsonLayer.addData(geojson)
 
     return geojsonLayer
 }

@@ -10,30 +10,35 @@ const handleLeafletLayerGroups = (map) => {
             getHiddenLayers: () => {
                 return layerGroup._hiddenLayers
             },
+            getHiddenLayer: (id) => {
+                return layerGroup._ch.getHiddenLayers().find(l => l._leaflet_id === id)
+            },
             hasHiddenLayer: (layer) => {
                 return layerGroup._ch.getHiddenLayers().includes(layer)
             },
+            removeHiddenLayer: (layer, {silent=false}={}) => {
+                let match
+                layerGroup._hiddenLayers = layerGroup._ch.getHiddenLayers().filter(l => {
+                    if (l === layer) match = l
+                    return l !== layer
+                })
+                if (match && !silent) map.fire('layerremove', {layer})
+            },
+            clearHiddenLayers: ({silent=false}={}) => {
+                const hiddenLayers = [...new layerGroup._ch.getHiddenLayers()]
+                layerGroup._hiddenLayers = []
+                if (!silent) hiddenLayers.forEach(layer => map.fire('layerremove', {layer}))
+            },
+            
+            
             getAllLayers: () => {
                 return [
                     ...layerGroup.getLayers(),
                     ...layerGroup._ch.getHiddenLayers()
                 ]
             },
-            getHiddenLayer: (id) => {
-                for (const l of layerGroup._ch.getHiddenLayers()) {
-                    if (l._leaflet_id === id) return l
-                }
-            },
-            removeHiddenLayer: (layer, {silent=false}={}) => {
-                const match = layerGroup._ch.getHiddenLayers().find(l => l === layer)
-                layerGroup._hiddenLayers = layerGroup._ch.getHiddenLayers().filter(l => l !== layer)
-                if (match && !silent) map.fire('layerremove', {layer})
-            },
-            clearHiddenLayers: ({silent=false}={}) => {
-                layerGroup._hiddenLayers = layerGroup._hiddenLayers.filter(layer => {
-                    if (!silent) map.fire('layerremove', {layer})
-                })
-            },
+        
+            
             clearLayer: (layer) => {
                 layerGroup.removeLayer(layer)
                 layerGroup._ch.removeHiddenLayer(layer)
@@ -42,8 +47,6 @@ const handleLeafletLayerGroups = (map) => {
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
                 }
-
-                
             },
             clearAllLayers: () => {
                 layerGroup._ch.getAllLayers().forEach(l => layerGroup._ch.clearLayer(l))
@@ -62,6 +65,13 @@ const handleLeafletLayerGroups = (map) => {
             showAllLayers: () => {
                 layerGroup._ch.getHiddenLayers().forEach(l => layerGroup._ch.showLayer(l))
             },
+
+
+            // addGeoJSONLayer: (layer) => {
+
+            // },
+
+
             getBounds: () => {
                 const bounds = [
                     ...layerGroup.getLayers(), 
