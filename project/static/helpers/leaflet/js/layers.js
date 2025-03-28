@@ -158,7 +158,7 @@ const getLeafletLayerType = (layer) => {
     if (layer instanceof L.GeoJSON) return 'geojson'
 }
 
-const findFeatureLayerGeoJSONLayer = (layer) => {
+const findLeafletFeatureLayerParent = (layer) => {
     if (!layer.feature || !layer._eventParents) return
 
     for (const p of Object.values(layer._eventParents)) {
@@ -172,7 +172,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     const type = getLeafletLayerType(layer)
 
     const feature = layer.feature
-    const geojsonLayer = type === 'geojson' ? layer : feature ? findFeatureLayerGeoJSONLayer(layer) : null
+    const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
 
     const group = layer._group || geojsonLayer?._group
     if (!group) return
@@ -254,7 +254,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             btnCallback: async () => {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
-                const attribution = feature ? findFeatureLayerGeoJSONLayer(layer)._attribution : layer._attribution
+                const attribution = feature ? findLeafletFeatureLayerParent(layer)._attribution : layer._attribution
                 
                 let newLayer
                 if (layerGeoJSON) {
