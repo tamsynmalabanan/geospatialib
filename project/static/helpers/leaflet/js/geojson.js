@@ -119,7 +119,12 @@ const getLeafletGeoJSONLayer = async ({
                 // switch renderer
                 const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
                 if (geojsonLayer.options.renderer instanceof renderer === false) {
-                    geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => r instanceof renderer)
+                    geojsonLayer.options.renderer._container?.classList.add('d-none')
+                    geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => {
+                        const match = r instanceof renderer
+                        if (match) r._container?.classList.remove('d-none')
+                        return match
+                    })
                 }
 
                 geojsonLayer.clearLayers()
