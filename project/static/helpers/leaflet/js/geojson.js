@@ -108,12 +108,24 @@ const getLeafletGeoJSONLayer = async ({
         const fetchHandler = () => {
             clearTimeout(timeout)
             timeout = setTimeout(async () => {
+                const controller = geojsonLayer._abortController
                 const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
                 const fetcher = geojsonLayer._fetcher || (() => {
+                    const signal = controller.signal
+
                     const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
                     const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
-                    console.log(mapBbox, dataBbox, filterBbox)
-                    return geojson
+                    if (!filterBbox) return
+
+                    const geojsonClone = turf.clone(geojson)
+                    geojsonClone.features = geojsonClone.features.filter(feature => {
+                        if (signal.aborted) return
+                        return turf.booleanIntersects(filterBbox, feature)
+                    })
+                    
+                    if (geojsonClone.features.length === 0) return
+        
+                    return geojsonClone
                 })
                 const data = await fetcher()
                 if (!data) return
