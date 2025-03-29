@@ -126,7 +126,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             sortFeatures: listFeatures,
         })
         
-        const attribution = createAttributionTable(geojson)?.outerHTML
+        const attributionFn = ({data=geojson}={}) => createAttributionTable(data)?.outerHTML
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
@@ -134,7 +134,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             customStyleParams,
             title,
             group,
-            attribution,
+            attributionFn,
         })
 
         const geojsonContainer = document.createElement('div')
@@ -240,7 +240,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
-        if (attribution) infoContainer.innerHTML = attribution
+        infoContainer.innerHTML = attributionFn() || ''
         contentCollapse.appendChild(infoContainer)
     }
 
