@@ -86,6 +86,7 @@ const createAttributionTable = (geojson) => {
     })
 
     if (Object.keys(info).length) {
+        console.log(getPreferredTheme())
         const infoTable = document.createElement('table')
         infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
 
