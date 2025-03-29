@@ -132,7 +132,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             customStyleParams,
             title,
             group,
-            attribution: createAttributionTable(geojson),
+            attribution: createAttributionTable(geojson).outerHTML,
         })
 
         console.log(geojsonLayer._attribution)
