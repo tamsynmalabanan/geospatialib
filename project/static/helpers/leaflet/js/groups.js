@@ -69,7 +69,7 @@ const handleLeafletLayerGroups = (map) => {
                     ...layerGroup.getLayers(), 
                     ...layerGroup._ch.getHiddenLayers()
                 ].map(layer => {
-                    console.log(layer.getBounds)
+                    console.log(layer.getBounds, layer)
                     if (layer.getBounds) {
                         return L.rectangle(layer.getBounds()).toGeoJSON()
                     }
