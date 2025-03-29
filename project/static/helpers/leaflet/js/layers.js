@@ -280,9 +280,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         download: !layerGeoJSON ? null : {
             innerText: 'Download GeoJSON',
             btnCallback: () => {
-                if (['feature', 'geojson'].includes(type) && layerGeoJSON) {
-                    downloadGeoJSON(layerGeoJSON, layer._title)
-                }
+                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
