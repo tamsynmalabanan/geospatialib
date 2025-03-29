@@ -254,14 +254,14 @@ const getLeafletLayerContextMenu = (e, layer, {
             btnCallback: async () => {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
-                const attributionFn = feature ? findLeafletFeatureLayerParent(layer)._attributionFn : layer._attributionFn
+                const attribution = feature ? findLeafletFeatureLayerParent(layer)._attribution : layer._attribution
                 
                 let newLayer
                 if (layerGeoJSON) {
                     newLayer = await getLeafletGeoJSONLayer({
                         geojson: layerGeoJSON,
                         title: layer._title,
-                        attributionFn,
+                        attribution,
                         pane,
                         group: targetGroup,
                     })

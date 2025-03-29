@@ -358,7 +358,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const legendAttribution = document.createElement('div')
             legendAttribution.id = `${container.id}-attribution`
             legendAttribution.className = 'd-flex'
-            if (layer._attributionFn) legendAttribution.innerHTML = layer._attributionFn()
+            if (layer._attribution) legendAttribution.appendChild(layer._attribution)
             legendCollapse.appendChild(legendAttribution)
     
             const collapseToggle = createIcon({

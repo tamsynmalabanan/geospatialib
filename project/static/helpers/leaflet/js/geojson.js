@@ -3,7 +3,7 @@ const getLeafletGeoJSONLayer = async ({
     pane = 'overlayPane',
     customStyleParams,
     title,
-    attributionFn,
+    attribution,
     group,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
@@ -16,7 +16,7 @@ const getLeafletGeoJSONLayer = async ({
     })
 
     if (title) geojsonLayer._title = title
-    if (attribution) geojsonLayer._attributionFn = attributionFn
+    if (attribution) geojsonLayer._attribution = attribution
     if (group) geojsonLayer._group = group
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {

@@ -86,7 +86,6 @@ const createAttributionTable = (geojson) => {
     })
 
     if (Object.keys(info).length) {
-        console.log(getPreferredTheme())
         const infoTable = document.createElement('table')
         infoTable.className = `table table-${getPreferredTheme()} small table-borderless table-sm m-0`
 
@@ -127,15 +126,13 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             sortFeatures: listFeatures,
         })
         
-        const attributionFn = ({data=geojson}={}) => createAttributionTable(data)?.outerHTML
-
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
             geojson,
             customStyleParams,
             title,
             group,
-            attributionFn,
+            attribution: createAttributionTable(geojson),
         })
 
         const geojsonContainer = document.createElement('div')
@@ -241,7 +238,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
-        infoContainer.innerHTML = attributionFn() || ''
+        infoContainer.appendChild(geojsonLayer._attribution)
         contentCollapse.appendChild(infoContainer)
     }
 
