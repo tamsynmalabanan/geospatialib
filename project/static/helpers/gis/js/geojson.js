@@ -422,7 +422,7 @@ const fetchStaticGeoJSON = async (geojson, map, {
         
             const clone = turf.clone(geojson)
             clone.features = clone.features.filter(feature => {
-                if (signal.aborted) throw
+                if (signal.aborted) throw new Error()
                 return turf.booleanIntersects(filterBbox, feature)
             })
             
