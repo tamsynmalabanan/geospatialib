@@ -103,7 +103,7 @@ const getLeafletGeoJSONLayer = async ({
 
     const isLegendGroup = group._map._legendLayerGroups.includes(group)
     if (isLegendGroup) {
-        geojsonLayer.on('add remove', (e) => {
+        geojsonLayer.on('add remove', async (e) => {
             if (e.type === 'add') {
                 const fetcher = geojsonLayer._fetcher || (() => geojson)
                 const data = await (fetcher)
