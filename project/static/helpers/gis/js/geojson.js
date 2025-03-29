@@ -414,20 +414,30 @@ const fetchStaticGeoJSON = async (geojson, map, {
 
     const signal = controller.signal
     const geojsonClone = (async () => {
-        const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
-        const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
-        const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
-        if (!filterBbox) return
-    
-        const clone = turf.clone(geojson)
-        clone.features = clone.features.filter(feature => {
-            if (signal.aborted) return
-            return turf.booleanIntersects(filterBbox, feature)
-        })
+        try {
+            const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
+            const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+            const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
+            if (!filterBbox) return
         
-        if (clone.features.length === 0) return
-
-        return clone
+            const clone = turf.clone(geojson)
+            clone.features = clone.features.filter(feature => {
+                if (signal.aborted) throw
+                return turf.booleanIntersects(filterBbox, feature)
+            })
+            
+            if (clone.features.length === 0) return
+    
+            return clone
+        } catch {
+            if (error.name === 'AbortError') {
+                return
+            } else {
+                throw error
+            }
+        } finally {
+            setTimeout(() => mapForFetchStaticGeoJSON.delete(mapKey), 1000)
+        }
     })()
 
     console.log(geojsonClone)
