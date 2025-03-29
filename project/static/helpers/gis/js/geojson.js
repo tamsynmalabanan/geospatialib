@@ -427,7 +427,7 @@ const fetchStaticGeoJSON = async (geojson, queryBbox, mapKey, {
             if (clone.features.length === 0) return
     
             return clone
-        } catch {
+        } catch (error) {
             if (error.name === 'AbortError') {
                 return
             } else {
