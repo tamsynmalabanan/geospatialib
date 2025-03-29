@@ -129,7 +129,6 @@ const getLeafletGeoJSONLayer = async ({
             clearTimeout(timeout)
             timeout = setTimeout(async () => {
                 const data = await geojsonLayer._fetcher()
-                if (!data) return
 
                 const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
                 if (geojsonLayer.options.renderer instanceof renderer === false) {
