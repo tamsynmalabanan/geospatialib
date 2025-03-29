@@ -29,16 +29,14 @@ const handleLeafletLayerGroups = (map) => {
                 layerGroup._hiddenLayers = []
                 if (!silent) hiddenLayers.forEach(layer => map.fire('layerremove', {layer}))
             },
-            
-            
+                
             getAllLayers: () => {
                 return [
                     ...layerGroup.getLayers(),
                     ...layerGroup._ch.getHiddenLayers()
                 ]
             },
-        
-            
+                    
             clearLayer: (layer) => {
                 layerGroup.removeLayer(layer)
                 layerGroup._ch.removeHiddenLayer(layer)
@@ -66,12 +64,12 @@ const handleLeafletLayerGroups = (map) => {
                 layerGroup._ch.getHiddenLayers().forEach(l => layerGroup._ch.showLayer(l))
             },
 
-
             getBounds: () => {
                 const bounds = [
                     ...layerGroup.getLayers(), 
                     ...layerGroup._ch.getHiddenLayers()
                 ].map(layer => {
+                    console.log(layer.getBounds)
                     if (layer.getBounds) {
                         return L.rectangle(layer.getBounds()).toGeoJSON()
                     }
