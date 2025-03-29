@@ -130,7 +130,7 @@ const getLeafletGeoJSONLayer = async ({
             timeout = setTimeout(async () => {
                 const data = await geojsonLayer._fetcher()
 
-                const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
+                const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
                 if (geojsonLayer.options.renderer instanceof renderer === false) {
                     geojsonLayer.options.renderer._container?.classList.add('d-none')
                     geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => {
@@ -141,7 +141,7 @@ const getLeafletGeoJSONLayer = async ({
                 }
 
                 geojsonLayer.clearLayers()
-                geojsonLayer.addData(data)
+                if (data) geojsonLayer.addData(data)
                 geojsonLayer.fire('dataupdate')
             }, 100);
         }
