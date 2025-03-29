@@ -5,6 +5,7 @@ const getLeafletGeoJSONLayer = async ({
     title,
     attribution,
     group,
+    fetcher,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         // filter: (feature) => {
@@ -18,6 +19,7 @@ const getLeafletGeoJSONLayer = async ({
     if (title) geojsonLayer._title = title
     if (attribution) geojsonLayer._attribution = attribution
     if (group) geojsonLayer._group = group
+    if (fetcher) geojsonLayer._fetcher = fetcher
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
@@ -99,7 +101,22 @@ const getLeafletGeoJSONLayer = async ({
         canvas: new L.Canvas({pane}),
     }
 
-    if (geojson) geojsonLayer.addData(geojson)
+    const isLegendGroup = group._map._legendLayerGroups.includes(group)
+    if (isLegendGroup) {
+        geojsonLayer.on('add remove', (e) => {
+            if (e.type === 'add') {
+                const fetcher = geojsonLayer._fetcher || (() => geojson)
+                const data = await (fetcher)
+                console.log(data, e)
+                geojsonLayer.addData(data)
+            } else {
+                geojsonLayer.clearLayers()
+            }
+            layer.fire('dataupdate')
+        })
+    } else {
+        if (geojson) geojsonLayer.addData(geojson)
+    }
 
     geojsonLayer.findGslId = (id) => geojsonLayer.getLayers().find(l => l.feature.properties.gslId === id)
 
