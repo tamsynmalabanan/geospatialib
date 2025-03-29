@@ -111,7 +111,8 @@ const getLeafletGeoJSONLayer = async ({
                 const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
                 const fetcher = geojsonLayer._fetcher || (() => {
                     const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
-                    console.log(mapBbox, dataBbox)
+                    const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
+                    console.log(mapBbox, dataBbox, filterBbox)
                     return geojson
                 })
                 const data = await fetcher()
