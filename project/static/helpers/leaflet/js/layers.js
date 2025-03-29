@@ -258,7 +258,6 @@ const getLeafletLayerContextMenu = (e, layer, {
                 
                 let newLayer
                 if (layerGeoJSON) {
-                    console.log(layer._fetcher)
                     newLayer = await getLeafletGeoJSONLayer({
                         geojson: layerGeoJSON,
                         title: layer._title,

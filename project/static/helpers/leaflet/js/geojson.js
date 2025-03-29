@@ -2,8 +2,8 @@ const getLeafletGeoJSONLayer = async ({
     geojson,
     pane = 'overlayPane',
     customStyleParams,
-    title,
-    attribution,
+    title = '',
+    attribution = '',
     group,
     fetcher,
 } = {}) => {
@@ -16,11 +16,32 @@ const getLeafletGeoJSONLayer = async ({
         markersInheritOptions: true,
     })
 
-    if (title) geojsonLayer._title = title
-    if (attribution) geojsonLayer._attribution = attribution
-    if (group) geojsonLayer._group = group
-    if (fetcher) geojsonLayer._fetcher = fetcher
+    geojsonLayer._title = title
+    geojsonLayer._attribution = attribution
     geojsonLayer._abortController = new AbortController()
+    
+    geojsonLayer._group = group
+    const map = group?._map
+    const isLegendGroup = map?._legendLayerGroups.includes(group)
+
+    if (isLegendGroup) geojsonLayer._fetcher = fetcher || (() => {
+        const signal = geojsonLayer._abortController.signal
+        
+        const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
+        const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+        const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
+        if (!filterBbox) return
+
+        const geojsonClone = turf.clone(geojson)
+        geojsonClone.features = geojsonClone.features.filter(feature => {
+            if (signal.aborted) return
+            return turf.booleanIntersects(filterBbox, feature)
+        })
+        
+        if (geojsonClone.features.length === 0) return
+
+        return geojsonClone
+    })
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
@@ -102,31 +123,12 @@ const getLeafletGeoJSONLayer = async ({
         new L.Canvas({pane})
     ]
 
-    const map = group._map
-    if (map._legendLayerGroups.includes(group)) {
+    if (isLegendGroup) {
         let timeout
         const fetchHandler = () => {
             clearTimeout(timeout)
             timeout = setTimeout(async () => {
-                const fetcher = geojsonLayer._fetcher || (() => {
-                    const signal = geojsonLayer._abortController.signal
-                    
-                    const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
-                    const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
-                    const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
-                    if (!filterBbox) return
-
-                    const geojsonClone = turf.clone(geojson)
-                    geojsonClone.features = geojsonClone.features.filter(feature => {
-                        if (signal.aborted) return
-                        return turf.booleanIntersects(filterBbox, feature)
-                    })
-                    
-                    if (geojsonClone.features.length === 0) return
-        
-                    return geojsonClone
-                })
-                const data = await fetcher()
+                const data = await geojsonLayer._fetcher()
                 if (!data) return
 
                 const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
