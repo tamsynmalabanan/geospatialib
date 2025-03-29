@@ -25,7 +25,9 @@ const getLeafletGeoJSONLayer = async ({
     const isLegendGroup = map?._legendLayerGroups.includes(group)
 
     const mapKey = generateRandomString()
-    geojsonLayer._fetcher = fetcher ||  (() => {
+    geojsonLayer._fetcher = fetcher || (() => {
+        if (!geojson) return 
+        
         // cache geojson
         // update getBounds to be based on cached geojson
         const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()

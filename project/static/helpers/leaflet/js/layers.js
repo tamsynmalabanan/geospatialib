@@ -177,8 +177,13 @@ const getLeafletLayerContextMenu = (e, layer, {
     const group = layer._group || geojsonLayer?._group
     if (!group) return
     
-    console.log(layer)
-    const layerGeoJSON = feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
+    const layerGeoJSON = (() => {
+        try {
+            return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
+        } catch {
+            return
+        }
+    })()
     
     const map = group._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
@@ -258,7 +263,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                 const attribution = feature ? findLeafletFeatureLayerParent(layer)._attribution : layer._attribution
                 
                 let newLayer
-                if (layerGeoJSON) {
+                if (['feature', 'geojson'].includes(type)) {
                     newLayer = await getLeafletGeoJSONLayer({
                         geojson: layerGeoJSON,
                         title: layer._title,
@@ -272,12 +277,13 @@ const getLeafletLayerContextMenu = (e, layer, {
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
         },
-        download: !layerGeoJSON ? null : {
+        download: {
             innerText: 'Download GeoJSON',
-            btnCallback: () => downloadGeoJSON(
-                layerGeoJSON, 
-                layer._title
-            )
+            btnCallback: () => {
+                if (['feature', 'geojson'].includes(type)) {
+                    downloadGeoJSON(layerGeoJSON, layer._title)
+                }
+            }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Remove ${typeLabel}`,

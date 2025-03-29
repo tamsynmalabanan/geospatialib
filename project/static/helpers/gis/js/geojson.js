@@ -443,6 +443,8 @@ const fetchStaticGeoJSON = async (geojson, queryBbox, mapKey, {
 }
 
 const downloadGeoJSON = (geojson, fileName) => {
+    if (!geojson) return 
+    
     const geojsonStr = typeof geojson === 'string' ? geojson : JSON.stringify(geojson)
     const blob = new Blob([geojsonStr], {type:'application/json'})
     const url = URL.createObjectURL(blob)
