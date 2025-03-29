@@ -135,6 +135,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             attribution: createAttributionTable(geojson),
         })
 
+        console.log(geojsonLayer._attribution)
+
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
 
