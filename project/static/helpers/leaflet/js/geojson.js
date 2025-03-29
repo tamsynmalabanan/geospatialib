@@ -97,10 +97,10 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.style = (feature) => getStyle(feature)
     geojsonLayer.options.pointToLayer = (feature, latlng) => L.marker(latlng, {icon: getStyle(feature)})
     
-    geojsonLayer._renderers = {
-        svg: geojsonLayer.options.renderer,
-        canvas: new L.Canvas({pane}),
-    }
+    geojsonLayer._renderers = [
+        geojsonLayer.options.renderer,
+        new L.Canvas({pane})
+    ]
 
     const map = group._map
     if (map._legendLayerGroups.includes(group)) {
@@ -118,7 +118,9 @@ const getLeafletGeoJSONLayer = async ({
                 
                 // switch renderer
                 const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
-                console.log(geojsonLayer.options.renderer instanceof renderer === true)
+                if (geojsonLayer.options.renderer instanceof renderer === false) {
+                    geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => r instanceof renderer)
+                }
 
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(data)
