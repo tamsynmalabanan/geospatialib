@@ -406,7 +406,6 @@ const mapForFetchStaticGeoJSON = new Map()
 const fetchStaticGeoJSON = async (geojson, map, mapKey, {
     controller
 } = {}) => {
-    console.log(mapKey, mapForFetchStaticGeoJSON.has(mapKey))
     if (mapForFetchStaticGeoJSON.has(mapKey)) {
         return await mapForFetchStaticGeoJSON.get(mapKey)
     }
@@ -439,7 +438,6 @@ const fetchStaticGeoJSON = async (geojson, map, mapKey, {
         }
     })()
 
-    console.log('here')
     mapForFetchStaticGeoJSON.set(mapKey, geojsonClone)
     return geojsonClone
 }
