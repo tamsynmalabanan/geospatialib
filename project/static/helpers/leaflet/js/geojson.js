@@ -20,6 +20,7 @@ const getLeafletGeoJSONLayer = async ({
     if (attribution) geojsonLayer._attribution = attribution
     if (group) geojsonLayer._group = group
     if (fetcher) geojsonLayer._fetcher = fetcher
+    geojsonLayer._abortController = new AbortController()
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
@@ -101,18 +102,41 @@ const getLeafletGeoJSONLayer = async ({
         canvas: new L.Canvas({pane}),
     }
 
-    const isLegendGroup = group._map._legendLayerGroups.includes(group)
+    const map = group._map
+    const isLegendGroup = map._legendLayerGroups.includes(group)
     if (isLegendGroup) {
-        geojsonLayer.on('add remove', async (e) => {
-            if (e.type === 'add') {
+        let timeout
+        const fetchHandler = () => {
+            clearTimeout(timeout)
+            timeout = setTimeout(async () => {
+                const controller = geojsonLayer._abortController
                 const fetcher = geojsonLayer._fetcher || (() => geojson)
-                const data = await fetcher()
-                console.log(data, e)
+                const data = await fetcher({controller})
+                console.log(data)
+                // filter based on map extent
+                // switch renderer
                 geojsonLayer.addData(data)
-            } else {
-                geojsonLayer.clearLayers()
-            }
-            geojsonLayer.fire('dataupdate')
+                geojsonLayer.fire('dataupdate')
+            }, 100);
+        }
+
+        const abortHandler = () => {
+            geojsonLayer._abortController.abort('Map moved or layer removed')
+            geojsonLayer._abortController = new AbortController()
+        }
+
+        const clearHandlers = () => {
+            geojsonLayer.clearLayers()
+            map.off('moveend zoomend', fetchHandler)
+            map.off('movestart zoomstart', abortHandler)
+            geojsonLayer.off('remove', clearHandlers)
+        }
+
+        geojsonLayer.on('add', (e) => {
+            fetchHandler()
+            map.on('moveend zoomend', fetchHandler)
+            map.on('movestart zoomstart', abortHandler)
+            geojsonLayer.on('remove', clearHandlers)
         })
     } else {
         if (geojson) geojsonLayer.addData(geojson)
