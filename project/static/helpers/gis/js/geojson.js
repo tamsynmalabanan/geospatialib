@@ -431,6 +431,7 @@ const fetchStaticGeoJSON = async (geojson, queryBbox, mapKey, {
             if (error.name === 'AbortError') {
                 return
             } else {
+                console.log(error)
                 throw error
             }
         } finally {
