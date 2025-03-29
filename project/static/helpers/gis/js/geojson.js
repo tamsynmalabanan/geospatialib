@@ -402,26 +402,37 @@ const fetchGeoJSONs = async (fetchers, {
     return geojsons
 }
 
-const fetchStaticGeoJSONMap = new Map()
-const fetchStaticGeoJSON = (geojson, map, {
+const mapForFetchStaticGeoJSON = new Map()
+const fetchStaticGeoJSON = async (geojson, map, {
     controller
 } = {}) => {
-    const signal = controller.signal
-        
-    const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
-    const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
-    const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
-    if (!filterBbox) return
+    const mapKey = [geojson, map]
+    console.log(mapForFetchStaticGeoJSON.has(mapKey))
+    if (mapForFetchStaticGeoJSON.has(mapKey)) {
+        return await mapForFetchStaticGeoJSON.get(mapKey)
+    }
 
-    const geojsonClone = turf.clone(geojson)
-    geojsonClone.features = geojsonClone.features.filter(feature => {
-        if (signal.aborted) return
-        return turf.booleanIntersects(filterBbox, feature)
-    })
+    const signal = controller.signal
+    const geojsonClone = (async () => {
+        const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
+        const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+        const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
+        if (!filterBbox) return
     
-    if (geojsonClone.features.length === 0) return
+        const clone = turf.clone(geojson)
+        clone.features = clone.features.filter(feature => {
+            if (signal.aborted) return
+            return turf.booleanIntersects(filterBbox, feature)
+        })
+        
+        if (clone.features.length === 0) return
+
+        return clone
+    })()
 
     console.log(geojsonClone)
+    
+    mapForFetchStaticGeoJSON.set(mapKey, geojsonClone)
     return geojsonClone
 }
 

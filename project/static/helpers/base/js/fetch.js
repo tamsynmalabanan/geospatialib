@@ -20,7 +20,7 @@ const fetchCORSProxy = async (url, fetchParams={}) => {
     })
 }
 
-const fetchTimeoutMap = new Map()
+const mapForFetchTimeout = new Map()
 const fetchTimeout = async (url, {
     fetchParams,
     timeoutMs = 60000,
@@ -28,7 +28,7 @@ const fetchTimeout = async (url, {
     abortBtns,
 } = {}) => {
     const mapKey = `${url}_${JSON.stringify(fetchParams)}` 
-    if (fetchTimeoutMap.has(mapKey)) return await fetchTimeoutMap.get(mapKey)
+    if (mapForFetchTimeout.has(mapKey)) return await mapForFetchTimeout.get(mapKey)
 
     const abortController = () => controller.abort('Fetch timed out or manually aborted.')
     abortBtns?.forEach(btn => btn.addEventListener('click', abortController))
@@ -47,19 +47,19 @@ const fetchTimeout = async (url, {
             throw error
         }
     }).finally(() => {
-        setTimeout(() => fetchTimeoutMap.delete(mapKey), 1000)
+        setTimeout(() => mapForFetchTimeout.delete(mapKey), 1000)
     })
 
-    fetchTimeoutMap.set(mapKey, fetchPromise)
+    mapForFetchTimeout.set(mapKey, fetchPromise)
     return fetchPromise
 }
 
-const parseJSONResponseMap = new Map()
+const mapForParseJSONResponse = new Map()
 const parseJSONResponse = async (response, {
     timeoutMs = 60000,
 } = {}) => {
-    if (parseJSONResponseMap.has(response)) {
-        return await parseJSONResponseMap.get(response)
+    if (mapForParseJSONResponse.has(response)) {
+        return await mapForParseJSONResponse.get(response)
     }
 
     const reader = response.body.getReader()
@@ -88,10 +88,10 @@ const parseJSONResponse = async (response, {
             }
         } finally {
             reader.releaseLock()
-            setTimeout(() => parseJSONResponseMap.delete(response), 1000)
+            setTimeout(() => mapForParseJSONResponse.delete(response), 1000)
         }
     })()
 
-    parseJSONResponseMap.set(response, parsePromise)
+    mapForParseJSONResponse.set(response, parsePromise)
     return parsePromise
 }
