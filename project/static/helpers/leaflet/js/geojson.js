@@ -24,7 +24,7 @@ const getLeafletGeoJSONLayer = async ({
     const map = group?._map
     const isLegendGroup = map?._legendLayerGroups.includes(group)
 
-    if (isLegendGroup) geojsonLayer._fetcher = fetcher ||  (() => fetchStaticGeoJSON(
+    geojsonLayer._fetcher = fetcher ||  (() => fetchStaticGeoJSON(
         geojson, map, generateRandomString(), {
             controller:geojsonLayer._abortController
         }
