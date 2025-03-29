@@ -28,7 +28,8 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._fetcher = fetcher ||  (() => {
         // cache geojson
         // update getBounds to be based on cached geojson
-        return fetchStaticGeoJSON(geojson, map, mapKey, {
+        const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
+        return fetchStaticGeoJSON(geojson, queryBbox, mapKey, {
             controller:geojsonLayer._abortController
         })
     })

@@ -403,8 +403,8 @@ const fetchGeoJSONs = async (fetchers, {
 }
 
 const mapForFetchStaticGeoJSON = new Map()
-const fetchStaticGeoJSON = async (geojson, map, mapKey, {
-    controller
+const fetchStaticGeoJSON = async (geojson, queryBbox, mapKey, {
+    controller,
 } = {}) => {
     if (mapForFetchStaticGeoJSON.has(mapKey)) {
         return await mapForFetchStaticGeoJSON.get(mapKey)
@@ -413,9 +413,8 @@ const fetchStaticGeoJSON = async (geojson, map, mapKey, {
     const signal = controller.signal
     const geojsonClone = (async () => {
         try {
-            const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
             const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
-            const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
+            const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
             if (!filterBbox) return
         
             const clone = turf.clone(geojson)
