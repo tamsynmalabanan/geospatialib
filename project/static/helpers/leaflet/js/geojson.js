@@ -115,6 +115,7 @@ const getLeafletGeoJSONLayer = async ({
                 console.log(data)
                 // filter based on map extent
                 // switch renderer
+                geojsonLayer.clearLayers()
                 geojsonLayer.addData(data)
                 geojsonLayer.fire('dataupdate')
             }, 100);
