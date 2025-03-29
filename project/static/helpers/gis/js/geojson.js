@@ -406,7 +406,7 @@ const mapForFetchStaticGeoJSON = new Map()
 const fetchStaticGeoJSON = async (geojson, map, {
     controller
 } = {}) => {
-    const mapKey = [geojson, map]
+    const mapKey = geojson
     console.log(mapForFetchStaticGeoJSON.has(mapKey))
     if (mapForFetchStaticGeoJSON.has(mapKey)) {
         return await mapForFetchStaticGeoJSON.get(mapKey)
