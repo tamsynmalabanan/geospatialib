@@ -277,10 +277,10 @@ const getLeafletLayerContextMenu = (e, layer, {
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
         },
-        download: {
+        download: !layerGeoJSON ? null : {
             innerText: 'Download GeoJSON',
             btnCallback: () => {
-                if (['feature', 'geojson'].includes(type)) {
+                if (['feature', 'geojson'].includes(type) && layerGeoJSON) {
                     downloadGeoJSON(layerGeoJSON, layer._title)
                 }
             }
