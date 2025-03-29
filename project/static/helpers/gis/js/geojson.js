@@ -402,6 +402,29 @@ const fetchGeoJSONs = async (fetchers, {
     return geojsons
 }
 
+const fetchStaticGeoJSONMap = new Map()
+const fetchStaticGeoJSON = (geojson, map, {
+    controller
+} = {}) => {
+    const signal = controller.signal
+        
+    const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
+    const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+    const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
+    if (!filterBbox) return
+
+    const geojsonClone = turf.clone(geojson)
+    geojsonClone.features = geojsonClone.features.filter(feature => {
+        if (signal.aborted) return
+        return turf.booleanIntersects(filterBbox, feature)
+    })
+    
+    if (geojsonClone.features.length === 0) return
+
+    console.log(geojsonClone)
+    return geojsonClone
+}
+
 const downloadGeoJSON = (geojson, fileName) => {
     const geojsonStr = typeof geojson === 'string' ? geojson : JSON.stringify(geojson)
     const blob = new Blob([geojsonStr], {type:'application/json'})

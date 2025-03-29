@@ -24,24 +24,12 @@ const getLeafletGeoJSONLayer = async ({
     const map = group?._map
     const isLegendGroup = map?._legendLayerGroups.includes(group)
 
-    if (isLegendGroup) geojsonLayer._fetcher = fetcher || (() => {
-        const signal = geojsonLayer._abortController.signal
-        
-        const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
-        const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
-        const filterBbox = turf.intersect(turf.featureCollection([mapBbox, dataBbox]))
-        if (!filterBbox) return
-
-        const geojsonClone = turf.clone(geojson)
-        geojsonClone.features = geojsonClone.features.filter(feature => {
-            if (signal.aborted) return
-            return turf.booleanIntersects(filterBbox, feature)
-        })
-        
-        if (geojsonClone.features.length === 0) return
-
-        return geojsonClone
-    })
+    if (isLegendGroup) geojsonLayer._fetcher = fetcher ||  (() => fetchStaticGeoJSON(
+        geojson, 
+        map, {
+            controller:geojsonLayer._abortController
+        }
+    ))
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
