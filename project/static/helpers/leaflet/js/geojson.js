@@ -25,11 +25,13 @@ const getLeafletGeoJSONLayer = async ({
     const isLegendGroup = map?._legendLayerGroups.includes(group)
 
     const mapKey = generateRandomString()
-    geojsonLayer._fetcher = fetcher ||  (() => fetchStaticGeoJSON(
-        geojson, map, mapKey, {
+    geojsonLayer._fetcher = fetcher ||  (() => {
+        // cache geojson
+        // update getBounds to be based on cached geojson
+        return () => fetchStaticGeoJSON(geojson, map, mapKey, {
             controller:geojsonLayer._abortController
-        }
-    ))
+        })
+    })
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
@@ -111,50 +113,52 @@ const getLeafletGeoJSONLayer = async ({
         new L.Canvas({pane})
     ]
 
-    if (isLegendGroup) {
-        let timeout
-        const fetchHandler = () => {
-            clearTimeout(timeout)
-            timeout = setTimeout(async () => {
-                const data = await geojsonLayer._fetcher()
+    // if (isLegendGroup) {
+    //     let timeout
+    //     const fetchHandler = () => {
+    //         clearTimeout(timeout)
+    //         timeout = setTimeout(async () => {
+    //             const data = await geojsonLayer._fetcher()
 
-                const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
-                if (geojsonLayer.options.renderer instanceof renderer === false) {
-                    geojsonLayer.options.renderer._container?.classList.add('d-none')
-                    geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => {
-                        const match = r instanceof renderer
-                        if (match) r._container?.classList.remove('d-none')
-                        return match
-                    })
-                }
+    //             const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
+    //             if (geojsonLayer.options.renderer instanceof renderer === false) {
+    //                 geojsonLayer.options.renderer._container?.classList.add('d-none')
+    //                 geojsonLayer.options.renderer = geojsonLayer._renderers.find(r => {
+    //                     const match = r instanceof renderer
+    //                     if (match) r._container?.classList.remove('d-none')
+    //                     return match
+    //                 })
+    //             }
 
-                geojsonLayer.clearLayers()
-                if (data) geojsonLayer.addData(data)
-                geojsonLayer.fire('dataupdate')
-            }, 100);
-        }
+    //             geojsonLayer.clearLayers()
+    //             if (data) geojsonLayer.addData(data)
+    //             geojsonLayer.fire('dataupdate')
+    //         }, 100);
+    //     }
 
-        const abortHandler = () => {
-            geojsonLayer._abortController.abort('Map moved or layer removed')
-            geojsonLayer._abortController = new AbortController()
-        }
+    //     const abortHandler = () => {
+    //         geojsonLayer._abortController.abort('Map moved or layer removed')
+    //         geojsonLayer._abortController = new AbortController()
+    //     }
 
-        const clearHandlers = () => {
-            geojsonLayer.clearLayers()
-            map.off('moveend zoomend', fetchHandler)
-            map.off('movestart zoomstart', abortHandler)
-            geojsonLayer.off('remove', clearHandlers)
-        }
+    //     const clearHandlers = () => {
+    //         geojsonLayer.clearLayers()
+    //         map.off('moveend zoomend', fetchHandler)
+    //         map.off('movestart zoomstart', abortHandler)
+    //         geojsonLayer.off('remove', clearHandlers)
+    //     }
 
-        geojsonLayer.on('add', () => {
-            fetchHandler()
-            map.on('moveend zoomend', fetchHandler)
-            map.on('movestart zoomstart', abortHandler)
-            geojsonLayer.on('remove', clearHandlers)
-        })
-    } else {
-        if (geojson) geojsonLayer.addData(geojson)
-    }
+    //     geojsonLayer.on('add', () => {
+    //         fetchHandler()
+    //         map.on('moveend zoomend', fetchHandler)
+    //         map.on('movestart zoomstart', abortHandler)
+    //         geojsonLayer.on('remove', clearHandlers)
+    //     })
+    // } else {
+    //     if (geojson) geojsonLayer.addData(geojson)
+    // }
+    
+    if (geojson) geojsonLayer.addData(geojson)
 
     geojsonLayer.findGslId = (id) => geojsonLayer.getLayers().find(l => l.feature.properties.gslId === id)
 
