@@ -83,9 +83,7 @@ const fetchOverpass = async (map, {
         delete properties.elements
         return await overpassToGeoJSON(elements, {controller, properties}
         )
-    }).catch(error => {
-        console.log(error)
-    })
+    }).catch(error => {})
 }
 
 const overpassToGeoJSON = async (data, {

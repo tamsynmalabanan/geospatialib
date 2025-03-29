@@ -177,6 +177,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     const group = layer._group || geojsonLayer?._group
     if (!group) return
     
+    console.log(layer)
     const layerGeoJSON = feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
     
     const map = group._map
