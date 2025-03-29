@@ -267,6 +267,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 moveToggle.addEventListener(t1, (e1) => {
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
                     container.classList.add('highlight')
+                    container.classList.add('z-3')
 
                     const mouseMoveHandler = (e2) => {
                         document.body.classList.add('user-select-none')
@@ -316,7 +317,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 pane.style.zIndex = i + 200
                             }
                         }
-                        
+
+                        container.classList.remove('z-3')
                         Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
                         document.body.classList.remove('user-select-none')
                     }                
