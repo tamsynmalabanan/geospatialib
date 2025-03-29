@@ -103,8 +103,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     const map = group._map
-    const isLegendGroup = map._legendLayerGroups.includes(group)
-    if (isLegendGroup) {
+    if (map._legendLayerGroups.includes(group)) {
         let timeout
         const fetchHandler = () => {
             clearTimeout(timeout)
@@ -112,9 +111,15 @@ const getLeafletGeoJSONLayer = async ({
                 const controller = geojsonLayer._abortController
                 const fetcher = geojsonLayer._fetcher || (() => geojson)
                 const data = await fetcher({controller})
+                if (!data) return
+
                 console.log(data)
                 // filter based on map extent
+                
                 // switch renderer
+                const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
+                console.log(geojsonLayer.options.renderer instanceof renderer === true)
+
                 geojsonLayer.clearLayers()
                 geojsonLayer.addData(data)
                 geojsonLayer.fire('dataupdate')
