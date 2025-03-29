@@ -135,8 +135,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             attribution: createAttributionTable(geojson).outerHTML,
         })
 
-        console.log(geojsonLayer._attribution)
-
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
 
@@ -240,7 +238,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const infoContainer = document.createElement('div')
         infoContainer.className = 'd-flex'
-        infoContainer.appendChild(geojsonLayer._attribution)
+        infoContainer.innerHTML = geojsonLayer._attribution || ''
         contentCollapse.appendChild(infoContainer)
     }
 
