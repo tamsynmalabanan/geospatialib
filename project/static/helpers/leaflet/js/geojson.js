@@ -108,15 +108,15 @@ const getLeafletGeoJSONLayer = async ({
         const fetchHandler = () => {
             clearTimeout(timeout)
             timeout = setTimeout(async () => {
-                const controller = geojsonLayer._abortController
-                const fetcher = geojsonLayer._fetcher || (() => geojson)
-                const data = await fetcher({controller})
+                const mapBbox = L.rectangle(map.getBounds()).toGeoJSON()
+                const fetcher = geojsonLayer._fetcher || (() => {
+                    const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+                    console.log(mapBbox, dataBbox)
+                    return geojson
+                })
+                const data = await fetcher()
                 if (!data) return
 
-                console.log(data)
-                // filter based on map extent
-                
-                // switch renderer
                 const renderer = data.features.length > 1000 ? L.Canvas : L.SVG
                 if (geojsonLayer.options.renderer instanceof renderer === false) {
                     geojsonLayer.options.renderer._container?.classList.add('d-none')
@@ -145,7 +145,7 @@ const getLeafletGeoJSONLayer = async ({
             geojsonLayer.off('remove', clearHandlers)
         }
 
-        geojsonLayer.on('add', (e) => {
+        geojsonLayer.on('add', () => {
             fetchHandler()
             map.on('moveend zoomend', fetchHandler)
             map.on('movestart zoomstart', abortHandler)
