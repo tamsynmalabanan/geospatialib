@@ -371,19 +371,33 @@ const createFeaturePropertiesTable = (properties, {
     return table
 }
 
+const fetchedGeoJSON = async (handler, params, options) => {
+    return handler(
+        ...params, {
+            ...options,
+            controller,
+            abortBtns
+        }
+    )
+}
+
 const fetchGeoJSONs = async (fetchers, {
     controller,
     abortBtns,
     defaultGeom,
     sortFeatures,
 } = {}) => {
-    const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
-        ...fetcher.params, {
-            ...fetcher.options,
-            controller,
-            abortBtns
-        }
-    )))
+    const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(f => {
+        f.options = {...f.options, controller, abortBtns}
+        return fetchedGeoJSON(...f)
+    }))
+    // const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
+    //     ...fetcher.params, {
+    //         ...fetcher.options,
+    //         controller,
+    //         abortBtns
+    //     }
+    // )))
 
     if (controller.signal.aborted) return
 
