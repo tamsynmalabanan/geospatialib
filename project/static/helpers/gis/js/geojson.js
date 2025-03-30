@@ -383,7 +383,7 @@ const fetchGeoJSONs = async (fetchers, {
     sortFeatures,
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(f => {
-        f.options = {...f.options, controller, abortBtns}
+        f.options = {...(f.options || {}), controller, abortBtns}
         return fetchGeoJSON(...f)
     }))
     // const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
