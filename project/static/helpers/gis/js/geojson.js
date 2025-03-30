@@ -101,10 +101,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
     pane,
     controller,
     customStyleParams,
-    defaultGeom,
 } = {}) => {
-    const map = group._map
-
     const container = document.createElement('div')
     container.className = 'd-flex flex-column gap-2 geojson-checklist'
 
@@ -120,12 +117,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const listFeatures = features.length <= 100
         const disableCheck = features.length > 1000
 
-        handleGeoJSON(geojson, {
-            controller,
-            defaultGeom,
-            sortFeatures: listFeatures,
-        })
-        
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
             geojson,
@@ -383,6 +374,8 @@ const createFeaturePropertiesTable = (properties, {
 const fetchGeoJSONs = async (fetchers, {
     controller,
     abortBtns,
+    defaultGeom,
+    sortFeatures,
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
         ...fetcher.params, {
@@ -396,7 +389,13 @@ const fetchGeoJSONs = async (fetchers, {
 
     const geojsons = {}
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+        const geojson = fetchedGeoJSONs[i]
+        if (geojson) handleGeoJSON(geojson, {
+            controller,
+            defaultGeom,
+            sortFeatures: typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
+        })
+        geojsons[Object.keys(fetchers)[i]] = geojson
     }
 
     return geojsons

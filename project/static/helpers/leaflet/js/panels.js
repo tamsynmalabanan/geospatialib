@@ -437,19 +437,23 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
             cancelBtn.disabled = false
-            const geojsons = await handler(e)
+
+            const defaultFeature = e.latlng ? turf.point(
+                Object.values(e.latlng).reverse()
+            ) : L.rectangle(map.getBounds()).toGeoJSON()
+            const geojsons = await handler(e, {
+                controller,
+                abortBtns: [getCancelBtn()], 
+                defaultGeom: defaultFeature.geometry,
+                sortFeatures: (g) => g.features.length <= 100,
+            })
+        
             cancelBtn.disabled = true
             
             if (controllerId !== controller.id) return
             
             if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-                const defaultFeature = e.latlng ? turf.point(
-                    Object.values(e.latlng).reverse()
-                ) : L.rectangle(map.getBounds()).toGeoJSON()
-                const defaultGeom = defaultFeature.geometry
-    
                 const content = await createGeoJSONChecklist(geojsons, queryGroup, {
-                    defaultGeom,
                     controller, 
                     pane: 'queryPane',
                     customStyleParams: queryStyleParams, 
@@ -515,7 +519,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconClass: 'bi-pin-map-fill',
             title: 'Query OSM at point',
             altShortcut: 'w',
-            mapClickHandler: async (e) => await fetchGeoJSONs({
+            mapClickHandler: async (e, options={}) => await fetchGeoJSONs({
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
                     params: [e.latlng, map],
@@ -525,18 +529,18 @@ const handleLeafletQueryPanel = (map, parent) => {
                     params: [map],
                     options: {latlng:e.latlng},
                 },
-            }, {abortBtns: [getCancelBtn()], controller})
+            }, options)
         },
         osmView: {
             iconClass: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             altShortcut: 'e',
-            btnClickHandler: async (e) => await fetchGeoJSONs({
+            btnClickHandler: async (e, options={}) => await fetchGeoJSONs({
                 'OpenStreetMap via Overpass': {
                     handler: fetchOverpass,
                     params: [map],
                 },
-            }, {abortBtns: [getCancelBtn()], controller})
+            }, options)
         },
         layerPoint: {
             iconClass: 'bi-stack',
