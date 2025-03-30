@@ -278,6 +278,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         })
+                        
                         Array.from(layers.children).forEach(c => c.classList.toggle(
                             'highlight', 
                             Array(referenceLegend, container).includes(c)
