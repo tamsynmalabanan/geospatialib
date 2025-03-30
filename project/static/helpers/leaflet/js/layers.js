@@ -181,6 +181,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         try {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
+            console.log('here')
             return
         }
     })()

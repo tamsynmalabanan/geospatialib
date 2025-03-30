@@ -422,7 +422,6 @@ const fetchStaticGeoJSON = async (geojson, queryBbox, mapKey, {
         return await mapForFetchStaticGeoJSON.get(mapKey)
     }
 
-    console.log(geojson)
     const signal = controller.signal
     const geojsonClone = (async () => {
         try {
