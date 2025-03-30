@@ -22,14 +22,18 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     const map = group?._map
 
-    const mapKey = generateRandomString()
-    geojsonLayer._fetcher = fetcher || (({filter=true, controller}) => {
-        if (!geojson) return 
-        if (!filter) return geojson
-        // update getBounds to be based on cached geojson
-        const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
-        return filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
-    })
+    if (!fetcher) {
+        const mapKey = generateRandomString()
+        fetcher = customFetcher = ({filter=true, controller}) => {
+            if (!geojson) return 
+            if (!filter) return geojson
+            
+            // update getBounds to be based on cached geojson
+            const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
+            return filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
+        }
+    }
+    geojsonLayer._fetcher = fetcher
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
