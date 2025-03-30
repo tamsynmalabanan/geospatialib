@@ -371,7 +371,7 @@ const createFeaturePropertiesTable = (properties, {
     return table
 }
 
-const fetchedGeoJSON = async (handler, params, options) => {
+const fetchGeoJSON = async (handler, params, options) => {
     const geojson = await handler(...params, options)
     return geojson
 }
@@ -384,7 +384,7 @@ const fetchGeoJSONs = async (fetchers, {
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(f => {
         f.options = {...f.options, controller, abortBtns}
-        return fetchedGeoJSON(...f)
+        return fetchGeoJSON(...f)
     }))
     // const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
     //     ...fetcher.params, {
