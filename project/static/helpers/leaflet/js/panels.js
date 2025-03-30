@@ -420,7 +420,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 }
 
                 const clearHandlers = () => {
-                    layer.clearLayers()
+                    // layer.clearLayers()
                     map.off('moveend zoomend', fetchHandler)
                     map.off('movestart zoomstart', resetController)
                     layer.off('remove', clearHandlers)
