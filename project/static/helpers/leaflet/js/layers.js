@@ -181,10 +181,11 @@ const getLeafletLayerContextMenu = (e, layer, {
         try {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
-            console.log(layer._fetcher.name)
+            if (layer._fetcher?.name === 'defaultFetcher') return layer._fetcher({filter:false})
             return
         }
     })()
+    console.log(layerGeoJSON)
     
     const map = group._map
     const isLegendGroup = map._legendLayerGroups.includes(group)

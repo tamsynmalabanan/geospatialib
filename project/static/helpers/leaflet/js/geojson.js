@@ -24,7 +24,7 @@ const getLeafletGeoJSONLayer = async ({
 
     if (!fetcher) {
         const mapKey = generateRandomString()
-        fetcher = customFetcher = ({filter=true, controller}) => {
+        fetcher = defaultFetcher = ({filter=true, controller}) => {
             if (!geojson) return 
             if (!filter) return geojson
             
