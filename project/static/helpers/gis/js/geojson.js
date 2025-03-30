@@ -382,7 +382,7 @@ const fetchGeoJSON = async ({
     controller,
     abortBtns,
 } = {}) => {
-    console.log()    
+    console.log(handler, params, options, defaultGeom, sortFeatures, controller, abortBtns)    
 
     const geojson = await handler(...params, {...options, controller, abortBtns})
 
@@ -408,8 +408,7 @@ const fetchGeoJSONs = async (fetchers, {
 
     const geojsons = {}
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-        const geojson = fetchedGeoJSONs[i]
-        geojsons[Object.keys(fetchers)[i]] = geojson
+        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
     }
 
     return geojsons
