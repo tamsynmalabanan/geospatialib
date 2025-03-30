@@ -382,7 +382,7 @@ const fetchGeoJSON = async ({
     controller,
     abortBtns,
 } = {}) => {
-    console.log(handler, params, options, defaultGeom, sortFeatures, controller, abortBtns)    
+    console.log(handler.name, ...params, options, defaultGeom, sortFeatures, controller, abortBtns)    
 
     const geojson = await handler(...params, {...options, controller, abortBtns})
 
