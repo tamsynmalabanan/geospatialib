@@ -372,13 +372,8 @@ const createFeaturePropertiesTable = (properties, {
 }
 
 const fetchedGeoJSON = async (handler, params, options) => {
-    return handler(
-        ...params, {
-            ...options,
-            controller,
-            abortBtns
-        }
-    )
+    const geojson = await handler(...params, options)
+    return geojson
 }
 
 const fetchGeoJSONs = async (fetchers, {
