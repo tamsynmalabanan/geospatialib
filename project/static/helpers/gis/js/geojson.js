@@ -427,10 +427,14 @@ const fetchStaticGeoJSON = async (geojson, queryBbox, mapKey, {
     const geojsonClone = (async () => {
         try {
             const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+            console.log(dataBbox)
             const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
+            console.log(filterBbox)
             if (!filterBbox) return
-        
+            
+            console.log(geojson)
             const clone = turf.clone(geojson)
+            console.log(clone)
 
             clone.features = clone.features.filter(feature => {
                 if (signal.aborted) throw new Error()
