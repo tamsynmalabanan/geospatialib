@@ -371,8 +371,24 @@ const createFeaturePropertiesTable = (properties, {
     return table
 }
 
-const fetchGeoJSON = async (handler, params, options) => {
-    const geojson = await handler(...params, options)
+const fetchGeoJSON = async ({
+    handler,
+    params = [],
+    options = {}
+}, {
+    defaultGeom,
+    sortFeatures
+}, {
+    controller,
+    abortBtns,
+} = {}) => {
+    const geojson = await handler(...params, {...options, controller, abortBtns})
+
+    if (geojson) {
+        sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
+        handleGeoJSON(geojson, {defaultGeom, sortFeatures, controller, abortBtns})
+    }
+
     return geojson
 }
 
@@ -382,30 +398,15 @@ const fetchGeoJSONs = async (fetchers, {
     defaultGeom,
     sortFeatures,
 } = {}) => {
-    const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(f => {
-        f.options = {...(f.options || {}), controller, abortBtns}
-        return fetchGeoJSON(...Object.values(f))
+    const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
+        return fetchGeoJSON(fetcher, {defaultGeom, sortFeatures}, {abortBtns, controller})
     }))
-    // const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => fetcher.handler(
-    //     ...fetcher.params, {
-    //         ...fetcher.options,
-    //         controller,
-    //         abortBtns
-    //     }
-    // )))
 
     if (controller.signal.aborted) return
 
     const geojsons = {}
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
         const geojson = fetchedGeoJSONs[i]
-        if (geojson) {
-            handleGeoJSON(geojson, {
-                controller,
-                defaultGeom,
-                sortFeatures: typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
-            })
-        }
         geojsons[Object.keys(fetchers)[i]] = geojson
     }
 
