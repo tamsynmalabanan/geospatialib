@@ -391,12 +391,11 @@ const fetchGeoJSONs = async (fetchers, {
     for (let i = 0; i < fetchedGeoJSONs.length; i++) {
         const geojson = fetchedGeoJSONs[i]
         if (geojson) {
-            const sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures
-            console.log(sortFeatures)
+            console.log(typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures)
             handleGeoJSON(geojson, {
                 controller,
                 defaultGeom,
-                sortFeatures,
+                sortFeatures: typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
             })
         }
         geojsons[Object.keys(fetchers)[i]] = geojson
