@@ -159,6 +159,15 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayersHandler: () => map._ch.clearLegendLayers()
     })
 
+    let controller
+    const resetController = () => {
+        if (controller) controller.abort('Map moved or zoomed.')
+        controller = new AbortController()
+        controller.id = generateRandomString()
+        return controller
+    }
+    resetController()
+
     const tools = toolsHandler({
         zoomin: {
             iconClass: 'bi bi-zoom-in',
@@ -382,16 +391,44 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                const handler = () => {
-                    legendDetails.innerHTML = ''
-                    createGeoJSONLayerLegend(
-                        layer, 
-                        legendDetails
-                    )
+                let timeout
+                const fetchHandler = (wait=100) => {
+                    clearTimeout(timeout)
+                    timeout = setTimeout(async () => {
+                        const data = await layer._fetcher()
+        
+                        const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
+                        if (layer.options.renderer instanceof renderer === false) {
+                            layer.options.renderer._container?.classList.add('d-none')
+                            layer.options.renderer = layer._renderers.find(r => {
+                                const match = r instanceof renderer
+                                if (match) r._container?.classList.remove('d-none')
+                                return match
+                            })
+                        }
+        
+                        layer.clearLayers()
+                        if (data) layer.addData(data)
+                        
+                        legendDetails.innerHTML = ''
+                        createGeoJSONLayerLegend(
+                            layer, 
+                            legendDetails
+                        )
+                    }, wait)
                 }
 
-                layer.on('dataupdate', handler)
-                handler()
+                const clearHandlers = () => {
+                    layer.clearLayers()
+                    map.off('moveend zoomend', fetchHandler)
+                    map.off('movestart zoomstart', resetController)
+                    layer.off('remove', clearHandlers)
+                }
+
+                map.on('moveend zoomend', fetchHandler)
+                map.on('movestart zoomstart', resetController)
+                layer.on('remove', clearHandlers)
+                fetchHandler(wait=0)
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')

@@ -382,6 +382,8 @@ const fetchGeoJSON = async ({
     controller,
     abortBtns,
 } = {}) => {
+    
+
     const geojson = await handler(...params, {...options, controller, abortBtns})
 
     if (geojson) {
