@@ -420,16 +420,21 @@ const handleLeafletLegendPanel = (map, parent) => {
                 }
 
                 const clearHandlers = () => {
-                    // layer.clearLayers()
+                    layer.clearLayers()
                     map.off('moveend zoomend', fetchHandler)
                     map.off('movestart zoomstart', resetController)
                     layer.off('remove', clearHandlers)
+                    layer.on('add', addHandlers)
                 }
 
-                map.on('moveend zoomend', fetchHandler)
-                map.on('movestart zoomstart', resetController)
-                layer.on('remove', clearHandlers)
-                fetchHandler(wait=0)
+                const addHandlers = () => {
+                    map.on('moveend zoomend', fetchHandler)
+                    map.on('movestart zoomstart', resetController)
+                    layer.on('remove', clearHandlers)
+                    fetchHandler(wait=0)
+                }
+
+                addHandlers()
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
