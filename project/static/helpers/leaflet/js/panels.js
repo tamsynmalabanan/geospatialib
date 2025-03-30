@@ -395,7 +395,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const fetchHandler = (wait=100) => {
                     clearTimeout(timeout)
                     timeout = setTimeout(async () => {
-                        const data = await layer._fetcher()
+                        const data = await layer._fetcher({controller})
                         
                         const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
                         if (layer.options.renderer instanceof renderer === false) {
