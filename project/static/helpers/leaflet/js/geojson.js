@@ -115,6 +115,7 @@ const getLeafletGeoJSONLayer = async ({
         new L.Canvas({pane})
     ]
 
+    console.log(geojson)
     if (geojson) geojsonLayer.addData(geojson)
 
     geojsonLayer.findGslId = (id) => geojsonLayer.getLayers().find(l => l.feature.properties.gslId === id)

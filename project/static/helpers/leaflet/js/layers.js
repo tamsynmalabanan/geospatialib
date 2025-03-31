@@ -274,7 +274,6 @@ const getLeafletLayerContextMenu = (e, layer, {
                         fetcher: layer._fetcher 
                     })
                 }
-                console.log(newLayer)
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
         },
