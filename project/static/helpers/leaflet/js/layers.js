@@ -263,8 +263,6 @@ const getLeafletLayerContextMenu = (e, layer, {
                 const pane = createCustomPane(map)
                 const attribution = feature ? findLeafletFeatureLayerParent(layer)._attribution : layer._attribution
                 
-                console.log(layerGeoJSON)
-
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
                     newLayer = await getLeafletGeoJSONLayer({
@@ -276,7 +274,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                         fetcher: layer._fetcher 
                     })
                 }
-
+                console.log(newLayer)
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
         },
