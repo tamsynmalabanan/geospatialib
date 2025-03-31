@@ -54,8 +54,7 @@ const getOverpassRequestBody = (latlng, map) => {
     `)
 }
 
-const fetchOverpass = async (map, {
-    latlng,
+const fetchOverpass = async (latlng, map, {
     abortBtns,
     controller,
 } = {}) => {
