@@ -456,6 +456,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
             if (!filterBbox) return
             
             const clone = turf.clone(geojson)
+            console.log(clone)
             clone.features = clone.features.filter(feature => {
                 if (signal.aborted) throw new Error()
                 const featureBbox = turf.bboxPolygon(turf.bbox(feature))
@@ -466,7 +467,6 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
     
             return clone
         } catch (error) {
-            console.log(error)
             throw error
         } finally {
             setTimeout(() => mapForFetchStaticGeoJSON.delete(mapKey), 1000)
