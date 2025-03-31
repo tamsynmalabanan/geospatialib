@@ -583,7 +583,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, options={}) => {
-                console.log(e)
                 return await fetchGeoJSONs({
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
