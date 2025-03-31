@@ -233,30 +233,18 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            if (map._openpopup) {
-                map._openpopup.openOn(map)
-                delete map._openpopup
-            }
-
             Array.from(layers.children).reverse().forEach(async legend => {
                 const layer = map._ch.getLegendLayer(legend.dataset.layerId)
                 if (map.hasLayer(layer) && layer instanceof L.GeoJSON) {
                     await updateGeoJSONData(layer, {controller})
+
+                    if (layer._openpopup) {
+                        layer._openpopup.openOn(map)
+                        delete map._openpopup
+                    }
                 }
             })
         }, 100)
-    })
-
-    map.on('popupopen', (e) => {
-        const popup = e.popup
-        if (popup._source)
-        console.log(popup)
-        map._openpopup = popup
-    })
-    
-    map.on('popupclose', (e) => {
-        const popup = e.popup
-        if (map._openpopup === popup) delete map._openpopup 
     })
 
     map.on('layerremove', (event) => {
@@ -427,6 +415,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
+                layer.on('popupopen', (e) => {
+                    layer._openpopup = e.popup
+                })
+                
+                layer.on('popupclose', (e) => {
+                    delete map._openpopup 
+                })            
+                
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
                     createGeoJSONLayerLegend(
