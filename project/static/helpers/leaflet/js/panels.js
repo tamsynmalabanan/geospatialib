@@ -482,15 +482,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
             cancelBtn.disabled = false
 
-            const defaultFeature = e.latlng ? turf.point(
-                Object.values(e.latlng).reverse()
-            ) : L.rectangle(map.getBounds()).toGeoJSON()
-
             if (e.target instanceof L.Map === false) e._leafletMap = map
             const geojsons = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
-                defaultGeom: defaultFeature.geometry,
                 sortFeatures: (g) => g.features.length <= 100,
             })
         

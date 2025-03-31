@@ -376,17 +376,21 @@ const fetchGeoJSON = async ({
     event,
     options = {}
 }, {
-    defaultGeom,
-    sortFeatures
-}, {
+    sortFeatures,
     controller,
     abortBtns,
 } = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
+    const latlng = event.latlng
+    const defaultFeature = latlng ? turf.point(
+        Object.values(latlng).reverse()
+    ) : L.rectangle(map.getBounds()).toGeoJSON()
+    const defaultGeom = defaultFeature.geometry
+
     console.log(
         handler.name, 
         map, 
-        event.latlng, 
+        latlng, 
         options, 
         defaultGeom, 
         sortFeatures, 
@@ -405,13 +409,12 @@ const fetchGeoJSON = async ({
 }
 
 const fetchGeoJSONs = async (fetchers, {
-    defaultGeom,
     sortFeatures,
     controller,
     abortBtns,
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
-        return fetchGeoJSON(fetcher, {defaultGeom, sortFeatures}, {abortBtns, controller})
+        return fetchGeoJSON(fetcher, {sortFeatures, abortBtns, controller})
     }))
 
     if (controller.signal.aborted) return
