@@ -227,46 +227,19 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
-    let timeout
-    const fetchHandler = (layer, container, {
-        wait=100
-    } = {}) => {
-        clearTimeout(timeout)
-        timeout = setTimeout(async () => {
-            const data = await layer._fetcher({controller})
-            
-            const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
-            if (layer.options.renderer instanceof renderer === false) {
-                layer.options.renderer._container?.classList.add('d-none')
-                layer.options.renderer = layer._renderers.find(r => {
-                    const match = r instanceof renderer
-                    if (match) r._container?.classList.remove('d-none')
-                    return match
-                })
-            }
-
-            layer.clearLayers()
-            if (data) layer.addData(data)
-            
-            container.innerHTML = ''
-            createGeoJSONLayerLegend(
-                layer, 
-                container
-            )
-        }, wait)
-    }
-
     map.on('movestart zoomstart', resetController)
     
+    let timeout
     map.on('moveend zoomend', (e) => {
-        console.log(e)
-        // const legendLayers = map._ch.getLegendLayers()
-        // legendLayers.forEach(l => {
-        //     console.log(map.hasLayer(l))
-        // })
+        clearTimeout(timeout)
+        timeout = setTimeout(async () => {
+            console.log(e)
+            // const legendLayers = map._ch.getLegendLayers()
+            // legendLayers.forEach(l => {
+            //     console.log(map.hasLayer(l))
+            // })
+        }, wait)
     })
-    
-    map.on('viewreset', (e) => console.log(e))
 
     map.on('layerremove', (event) => {
         const layer = event.layer
@@ -436,7 +409,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                fetchHandler(layer, legendDetails, {wait:0})
+                layer.on('dataupdate', () => {
+                    legendDetails.innerHTML = ''
+                    createGeoJSONLayerLegend(
+                        layer, 
+                        legendDetails
+                    )
+                })
+                updateGeoJSONData(layer, legendDetails)
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
