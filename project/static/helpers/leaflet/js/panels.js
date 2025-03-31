@@ -234,7 +234,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
             Array.from(layers.children).reverse().forEach(async legend => {
-                const layer = map.getLayer(legend.dataset.layerId)
+                const layer = map._ch.getLegendLayer(legend.dataset.layerId)
                 if (map.hasLayer(layer) && layer instanceof L.GeoJSON) {
                     await updateGeoJSONData(layer, {controller})
                 }
