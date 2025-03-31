@@ -2,10 +2,12 @@ const fetchNominatim = async (e, {
     abortBtns,
     controller,
 } = {}) => {
+    const map = e._leafletMap || e.target
+
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
         lat: e.latlng.lat,
         lon: e.latlng.lng,
-        zoom: e._leafletMap.getZoom(),
+        zoom: map.getZoom(),
         format: 'geojson',
         polygon_geojson: 1,
         polygon_threshold: 0,

@@ -486,7 +486,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 Object.values(e.latlng).reverse()
             ) : L.rectangle(map.getBounds()).toGeoJSON()
 
-            e._leafletMap = map
+            if (e.target instanceof L.Map === false) e._leafletMap = map
             const geojsons = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
