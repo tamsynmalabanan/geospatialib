@@ -90,6 +90,8 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                 id: `${toolbar.id}-${toolId}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clickHandler: async (event) => {
+                    console.log(event)
+
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
@@ -129,7 +131,9 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                         })
                     }
                     
-                    if (btnClickHandler) skipToolHandler ? await btnClickHandler() : await toolHandler(event, btnClickHandler)
+                    if (btnClickHandler) {
+                        skipToolHandler ? await btnClickHandler() : await toolHandler(event, btnClickHandler)
+                    }
                 }
             })
     
@@ -562,7 +566,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, options={}) => {
-                console.log(e)
                 return await fetchGeoJSONs({
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
@@ -579,7 +582,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, options={}) => {
-                console.log(e)
                 return await fetchGeoJSONs({
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
