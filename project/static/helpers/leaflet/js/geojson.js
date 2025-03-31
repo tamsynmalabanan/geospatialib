@@ -24,13 +24,13 @@ const getLeafletGeoJSONLayer = async ({
 
     if (!fetcher) {
         const mapKey = generateRandomString()
-        fetcher = defaultFetcher = ({filter=true, controller}) => {
+        fetcher = defaultFetcher = async ({filter=true, controller}) => {
             if (!geojson) return 
             if (!filter) return geojson
             
             // update getBounds to be based on cached geojson
             const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
-            const filteredGeoJSON = filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
+            const filteredGeoJSON = await filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
             console.log(filteredGeoJSON)
             return filteredGeoJSON
         }
