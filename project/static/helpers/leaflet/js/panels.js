@@ -242,6 +242,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         }, 100)
     })
 
+    map.on('popupopen', (e) => {
+        const popup = e.popup
+        console.log(popup)
+        map._openpopup = popup
+    })
+
     map.on('layerremove', (event) => {
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)

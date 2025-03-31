@@ -206,7 +206,6 @@ const updateGeoJSONData = async (layer, {controller}) => {
 
     layer.clearLayers()
     if (data) layer.addData(data)
-    console.log(layer.getLayers().length)
     layer.fire('dataupdate')
 }
 
