@@ -185,7 +185,6 @@ const getLeafletLayerContextMenu = (e, layer, {
             return
         }
     })()
-    console.log(layerGeoJSON)
     
     const map = group._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
