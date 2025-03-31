@@ -371,6 +371,7 @@ const createFeaturePropertiesTable = (properties, {
     return table
 }
 
+const mapForFetchGeoJSON = new Map()
 const fetchGeoJSON = async ({
     handler,
     event,
@@ -387,22 +388,37 @@ const fetchGeoJSON = async ({
     ) : L.rectangle(map.getBounds()).toGeoJSON()
     const defaultGeom = defaultFeature.geometry
 
-    console.log(
-        [handler.name, 
+    const mapKey = [
+            handler.name, 
         turf.bbox(defaultGeom).join(','), 
         JSON.stringify(options), 
         sortFeatures.toString(),
-        controller.id].join(';'), 
-    )    
+        controller.id
+    ].join(';')
 
-    const geojson = await handler(event, {...options, controller, abortBtns})
-
-    if (geojson) {
-        sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
-        handleGeoJSON(geojson, {defaultGeom, sortFeatures, controller, abortBtns})
+    if (mapForFetchGeoJSON.has(mapKey)) {
+        return await mapForFetchGeoJSON.get(mapKey)
     }
 
-    return geojson
+    const geojsonPromise = (async () => {
+        try {
+            const geojson = await handler(event, {...options, controller, abortBtns})
+    
+            if (geojson) {
+                sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
+                handleGeoJSON(geojson, {defaultGeom, sortFeatures, controller, abortBtns})
+            }
+    
+            return geojson
+        } catch (error) {
+            throw error
+        } finally {
+            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
+        }
+    })()
+
+    mapForFetchGeoJSON.set(mapKey, geojsonPromise)
+    return geojsonPromise
 }
 
 const fetchGeoJSONs = async (fetchers, {
@@ -450,12 +466,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
     
             return clone
         } catch (error) {
-            if (error.name === 'AbortError') {
-                return
-            } else {
-                console.log(error)
-                throw error
-            }
+            throw error
         } finally {
             setTimeout(() => mapForFetchStaticGeoJSON.delete(mapKey), 1000)
         }
