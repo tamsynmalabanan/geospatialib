@@ -385,7 +385,8 @@ const fetchGeoJSON = async ({
     const map = ['target', '_leafletMap'].find(p => event[p] instanceof L.Map)
     console.log(
         handler.name, 
-        map, e.latlng, 
+        map, 
+        e.latlng, 
         options, 
         defaultGeom, 
         sortFeatures, 
