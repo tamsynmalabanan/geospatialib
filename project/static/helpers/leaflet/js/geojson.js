@@ -21,6 +21,7 @@ const getLeafletGeoJSONLayer = async ({
     
     geojsonLayer._group = group
     const map = group?._map
+    const isLegendGroup = map._legendLayerGroups.includes(group)
 
     if (!fetcher) {
         const mapKey = generateRandomString()
@@ -116,7 +117,7 @@ const getLeafletGeoJSONLayer = async ({
         new L.Canvas({pane})
     ]
 
-    if (geojson) geojsonLayer.addData(geojson)
+    if (geojson && !isLegendGroup) geojsonLayer.addData(geojson)
 
     geojsonLayer.findGslId = (id) => geojsonLayer.getLayers().find(l => l.feature.properties.gslId === id)
 

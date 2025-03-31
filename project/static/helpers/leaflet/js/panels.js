@@ -227,6 +227,41 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
+    let timeout
+    const fetchHandler = (layer, {
+        wait=100
+    } = {}) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(async () => {
+            const data = await layer._fetcher({controller})
+            
+            const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
+            if (layer.options.renderer instanceof renderer === false) {
+                layer.options.renderer._container?.classList.add('d-none')
+                layer.options.renderer = layer._renderers.find(r => {
+                    const match = r instanceof renderer
+                    if (match) r._container?.classList.remove('d-none')
+                    return match
+                })
+            }
+
+            layer.clearLayers()
+            if (data) layer.addData(data)
+            
+            legendDetails.innerHTML = ''
+            createGeoJSONLayerLegend(
+                layer, 
+                legendDetails
+            )
+        }, wait)
+    }
+
+    map.on('movestart zoomstart', resetController)
+    
+    map.on('moveend zoomend', () => {
+        const legendLayers = map._ch.getLegendLayers()
+    })
+    
     map.on('layerremove', (event) => {
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
@@ -242,6 +277,8 @@ const handleLeafletLegendPanel = (map, parent) => {
 
             if (layers.innerHTML === '') clearLayers(tools)
         }
+
+        if (layer instanceof L.GeoJSON) layer.clearLayers()
     })
 
     map.on('layeradd', (event) => {
@@ -393,49 +430,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                let timeout
-                const fetchHandler = (wait=100) => {
-                    clearTimeout(timeout)
-                    timeout = setTimeout(async () => {
-                        const data = await layer._fetcher({controller})
-                        
-                        const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
-                        if (layer.options.renderer instanceof renderer === false) {
-                            layer.options.renderer._container?.classList.add('d-none')
-                            layer.options.renderer = layer._renderers.find(r => {
-                                const match = r instanceof renderer
-                                if (match) r._container?.classList.remove('d-none')
-                                return match
-                            })
-                        }
-        
-                        layer.clearLayers()
-                        if (data) layer.addData(data)
-                        
-                        legendDetails.innerHTML = ''
-                        createGeoJSONLayerLegend(
-                            layer, 
-                            legendDetails
-                        )
-                    }, wait)
-                }
-
-                const clearHandlers = () => {
-                    layer.clearLayers()
-                    map.off('moveend zoomend', fetchHandler)
-                    map.off('movestart zoomstart', resetController)
-                    layer.off('remove', clearHandlers)
-                    layer.on('add', addHandlers)
-                }
-
-                const addHandlers = () => {
-                    map.on('moveend zoomend', fetchHandler)
-                    map.on('movestart zoomstart', resetController)
-                    layer.on('remove', clearHandlers)
-                    fetchHandler(wait=0)
-                }
-
-                addHandlers()
+                fetchHandler(layer, {wait:0})
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
