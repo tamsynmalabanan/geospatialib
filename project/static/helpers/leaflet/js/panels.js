@@ -486,7 +486,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 Object.values(e.latlng).reverse()
             ) : L.rectangle(map.getBounds()).toGeoJSON()
 
-            e.map = map
+            e._leafletMap = map
             const geojsons = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
@@ -566,15 +566,14 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, options={}) => {
-                console.log(e)
                 return await fetchGeoJSONs({
                     'OpenStreetMap via Nominatim': {
                         handler: fetchNominatim,
-                        params: [e.latlng, map],
+                        params: [e],
                     },
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
-                        params: [e.latlng, map],
+                        params: [e],
                     },
                 }, options)}
         },

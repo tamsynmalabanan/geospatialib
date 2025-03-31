@@ -1,11 +1,11 @@
-const fetchNominatim = async (latlng, map, {
+const fetchNominatim = async (e, {
     abortBtns,
     controller,
 } = {}) => {
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
-        lat: latlng.lat,
-        lon: latlng.lng,
-        zoom: map.getZoom(),
+        lat: e.latlng.lat,
+        lon: e.latlng.lng,
+        zoom: e._leafletMap.getZoom(),
         format: 'geojson',
         polygon_geojson: 1,
         polygon_threshold: 0,
@@ -54,7 +54,7 @@ const getOverpassRequestBody = (latlng, map) => {
     `)
 }
 
-const fetchOverpass = async (latlng, map, {
+const fetchOverpass = async (e, {
     abortBtns,
     controller,
 } = {}) => {
@@ -64,7 +64,7 @@ const fetchOverpass = async (latlng, map, {
         controller,
         fetchParams: {
             method: "POST",
-            body: getOverpassRequestBody(latlng, map)
+            body: getOverpassRequestBody(e.latlng, e._leafletMap)
         }
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {
