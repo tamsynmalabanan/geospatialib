@@ -586,7 +586,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 return await fetchGeoJSONs({
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
-                        params: [null, map],
+                        params: [e],
                     },
                 }, options)
             }
