@@ -90,8 +90,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                 id: `${toolbar.id}-${toolId}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
                 clickHandler: async (event) => {
-                    console.log(event)
-
                     L.DomEvent.stopPropagation(event);
                     L.DomEvent.preventDefault(event);        
                     
@@ -487,6 +485,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             const defaultFeature = e.latlng ? turf.point(
                 Object.values(e.latlng).reverse()
             ) : L.rectangle(map.getBounds()).toGeoJSON()
+
+            console.log(e)
             const geojsons = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
