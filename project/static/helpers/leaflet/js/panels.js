@@ -233,11 +233,10 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            console.log(e)
-            // const legendLayers = map._ch.getLegendLayers()
-            // legendLayers.forEach(l => {
-            //     console.log(map.hasLayer(l))
-            // })
+            Array.from(layers.children).reverse().forEach(async legend => {
+                const layer = map.getLayer(legend.dataset.layerId)
+                if (layer instanceof L.GeoJSON) await updateGeoJSONData(layer)
+            })
         }, 100)
     })
 
