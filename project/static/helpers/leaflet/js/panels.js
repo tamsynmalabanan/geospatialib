@@ -228,7 +228,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 
     let timeout
-    const fetchHandler = (layer, {
+    const fetchHandler = (layer, container, {
         wait=100
     } = {}) => {
         clearTimeout(timeout)
@@ -248,10 +248,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             layer.clearLayers()
             if (data) layer.addData(data)
             
-            legendDetails.innerHTML = ''
+            container.innerHTML = ''
             createGeoJSONLayerLegend(
                 layer, 
-                legendDetails
+                container
             )
         }, wait)
     }
@@ -433,7 +433,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                fetchHandler(layer, {wait:0})
+                fetchHandler(layer, legendDetails, {wait:0})
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
