@@ -233,6 +233,11 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
+            if (map._openpopup) {
+                map._openpopup.openOn(map)
+                delete map._openpopup
+            }
+
             Array.from(layers.children).reverse().forEach(async legend => {
                 const layer = map._ch.getLegendLayer(legend.dataset.layerId)
                 if (map.hasLayer(layer) && layer instanceof L.GeoJSON) {
@@ -244,8 +249,14 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('popupopen', (e) => {
         const popup = e.popup
+        if (popup._source)
         console.log(popup)
         map._openpopup = popup
+    })
+    
+    map.on('popupclose', (e) => {
+        const popup = e.popup
+        if (map._openpopup === popup) delete map._openpopup 
     })
 
     map.on('layerremove', (event) => {
