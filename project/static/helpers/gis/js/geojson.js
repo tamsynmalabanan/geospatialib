@@ -382,7 +382,7 @@ const fetchGeoJSON = async ({
     controller,
     abortBtns,
 } = {}) => {
-    const map = ['target', '_leafletMap'].find(p => event[p] instanceof L.Map)
+    const map = event[['target', '_leafletMap'].find(p => event[p] instanceof L.Map)]
     console.log(
         handler.name, 
         map, 
