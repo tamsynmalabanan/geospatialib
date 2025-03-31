@@ -389,10 +389,8 @@ const fetchGeoJSON = async ({
 
     console.log(
         handler.name, 
-        map, 
-        latlng, 
-        options, 
         defaultGeom, 
+        options, 
         sortFeatures, 
         controller, 
         abortBtns
