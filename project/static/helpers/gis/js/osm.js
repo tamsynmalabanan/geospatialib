@@ -3,6 +3,7 @@ const fetchNominatim = async (e, {
     controller,
 } = {}) => {
     const map = [e.target, e._leafletMap].find(m => m instanceof L.Map)
+    console.log(e, map)
 
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
         lat: e.latlng.lat,
