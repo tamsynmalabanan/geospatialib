@@ -396,9 +396,11 @@ const fetchGeoJSON = async ({
         controller.id
     ].join(';')
 
-    if (mapForFetchGeoJSON.has(mapKey)) {
-        return await mapForFetchGeoJSON.get(mapKey)
-    }
+    // if (mapForFetchGeoJSON.has(mapKey)) {
+    //     return await mapForFetchGeoJSON.get(mapKey)
+    // }
+
+    console.log('here')
 
     const geojsonPromise = (async () => {
         try {
