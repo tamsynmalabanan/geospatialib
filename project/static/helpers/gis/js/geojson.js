@@ -389,12 +389,12 @@ const fetchGeoJSON = async ({
 
     console.log(
         handler.name, 
-        JSON.toString(turf.bbox(defaultGeom)), 
+        turf.bbox(defaultGeom).join(','), 
         options, 
         sortFeatures, 
         controller, 
         abortBtns
-    )
+    )    
 
     const geojson = await handler(event, {...options, controller, abortBtns})
 
