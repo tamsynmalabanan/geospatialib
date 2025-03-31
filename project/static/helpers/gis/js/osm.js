@@ -58,7 +58,6 @@ const fetchOverpass = async (latlng, map, {
     abortBtns,
     controller,
 } = {}) => {
-    console.log(latlng, map)
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
         abortBtns,
