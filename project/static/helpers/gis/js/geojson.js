@@ -451,7 +451,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
     const signal = controller.signal
     const geojsonClone = (async () => {
         try {
-            const dataBbox = turf.bboxPolygon(turf.bbox(geojson))
+            const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)),1)
             const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
             console.log(geojson, dataBbox, queryBbox, filterBbox)
             if (!filterBbox) return
