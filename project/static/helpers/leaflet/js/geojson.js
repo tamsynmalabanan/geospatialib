@@ -192,7 +192,7 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const updateGeoJSONData = async (layer) => {
+const updateGeoJSONData = async (layer, {controller}) => {
     const data = await layer._fetcher({controller})
     
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG

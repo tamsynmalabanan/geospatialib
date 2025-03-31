@@ -236,7 +236,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             Array.from(layers.children).reverse().forEach(async legend => {
                 const layer = map.getLayer(legend.dataset.layerId)
                 if (map.hasLayer(layer) && layer instanceof L.GeoJSON) {
-                    await updateGeoJSONData(layer)
+                    await updateGeoJSONData(layer, {controller})
                 }
             })
         }, 100)
@@ -417,7 +417,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         legendDetails
                     )
                 })
-                updateGeoJSONData(layer, legendDetails)
+                updateGeoJSONData(layer, {controller})
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
