@@ -260,6 +260,9 @@ const handleLeafletLegendPanel = (map, parent) => {
     
     map.on('moveend zoomend', () => {
         const legendLayers = map._ch.getLegendLayers()
+        legendLayers.forEach(l => {
+            console.log(map.hasLayer(l))
+        })
     })
     
     map.on('layerremove', (event) => {
