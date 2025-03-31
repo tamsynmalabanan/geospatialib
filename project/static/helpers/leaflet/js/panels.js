@@ -266,7 +266,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         // })
     })
     
-    map.on('viewreset', () => console.log(e))
+    map.on('viewreset', (e) => console.log(e))
 
     map.on('layerremove', (event) => {
         const layer = event.layer
