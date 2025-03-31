@@ -562,6 +562,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, options={}) => {
+                console.log(e)
                 return await fetchGeoJSONs({
                 'OpenStreetMap via Nominatim': {
                     handler: fetchNominatim,
