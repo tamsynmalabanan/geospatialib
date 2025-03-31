@@ -566,15 +566,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, options={}) => {
-                const params = [e]
+                const event = e
                 return await fetchGeoJSONs({
                     'OpenStreetMap via Nominatim': {
                         handler: fetchNominatim,
-                        params,
+                        event,
                     },
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
-                        params,
+                        event,
                     },
                 }, options)}
         },
@@ -586,7 +586,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 return await fetchGeoJSONs({
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
-                        params: [e],
+                        event: e,
                     },
                 }, options)
             }

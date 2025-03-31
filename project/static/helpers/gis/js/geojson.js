@@ -373,7 +373,7 @@ const createFeaturePropertiesTable = (properties, {
 
 const fetchGeoJSON = async ({
     handler,
-    params = [],
+    event,
     options = {}
 }, {
     defaultGeom,
@@ -382,10 +382,10 @@ const fetchGeoJSON = async ({
     controller,
     abortBtns,
 } = {}) => {
-    console.log(params[0].target instanceof L.Map)
-    console.log(handler.name, ...params, options, defaultGeom, sortFeatures, controller, abortBtns)    
+    const map = ['target', '_leafletMap'].find(p => event[p] instanceof L.Map)
+    console.log(handler.name, event, options, defaultGeom, sortFeatures, controller, abortBtns)    
 
-    const geojson = await handler(...params, {...options, controller, abortBtns})
+    const geojson = await handler(event {...options, controller, abortBtns})
 
     if (geojson) {
         sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
