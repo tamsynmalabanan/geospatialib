@@ -385,7 +385,7 @@ const fetchGeoJSON = async ({
     const map = ['target', '_leafletMap'].find(p => event[p] instanceof L.Map)
     console.log(handler.name, event, options, defaultGeom, sortFeatures, controller, abortBtns)    
 
-    const geojson = await handler(event {...options, controller, abortBtns})
+    const geojson = await handler(event, {...options, controller, abortBtns})
 
     if (geojson) {
         sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
