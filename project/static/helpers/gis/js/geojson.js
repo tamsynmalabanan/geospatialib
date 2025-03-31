@@ -383,7 +383,15 @@ const fetchGeoJSON = async ({
     abortBtns,
 } = {}) => {
     const map = ['target', '_leafletMap'].find(p => event[p] instanceof L.Map)
-    console.log(handler.name, event, options, defaultGeom, sortFeatures, controller, abortBtns)    
+    console.log(
+        handler.name, 
+        map, e.latlng, 
+        options, 
+        defaultGeom, 
+        sortFeatures, 
+        controller, 
+        abortBtns
+    )    
 
     const geojson = await handler(event, {...options, controller, abortBtns})
 
