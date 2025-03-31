@@ -3,7 +3,6 @@ const fetchNominatim = async (e, {
     controller,
 } = {}) => {
     const map = [e.target, e._leafletMap].find(m => m instanceof L.Map)
-    console.log(e, map, map.getZoom())
 
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
         lat: e.latlng.lat,
@@ -61,13 +60,15 @@ const fetchOverpass = async (e, {
     abortBtns,
     controller,
 } = {}) => {
+    const map = [e.target, e._leafletMap].find(m => m instanceof L.Map)
+
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
         abortBtns,
         controller,
         fetchParams: {
             method: "POST",
-            body: getOverpassRequestBody(e.latlng, e._leafletMap)
+            body: getOverpassRequestBody(e.latlng, map)
         }
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {
