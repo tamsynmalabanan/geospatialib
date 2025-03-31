@@ -194,7 +194,6 @@ const getGeoJSONLayerStyles = (layer) => {
 
 const updateGeoJSONData = async (layer, {controller}) => {
     const data = await layer._fetcher({controller})
-    console.log(data)
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {
         layer.options.renderer._container?.classList.add('d-none')
@@ -207,6 +206,7 @@ const updateGeoJSONData = async (layer, {controller}) => {
 
     layer.clearLayers()
     if (data) layer.addData(data)
+    console.log(layer.getLayers().length)
     layer.fire('dataupdate')
 }
 
