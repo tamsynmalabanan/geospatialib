@@ -238,7 +238,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             // legendLayers.forEach(l => {
             //     console.log(map.hasLayer(l))
             // })
-        }, wait)
+        }, 100)
     })
 
     map.on('layerremove', (event) => {
