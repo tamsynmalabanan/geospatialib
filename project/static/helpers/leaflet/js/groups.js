@@ -68,8 +68,8 @@ const handleLeafletLayerGroups = (map) => {
                 const bounds = [
                     ...layerGroup.getLayers(), 
                     ...layerGroup._ch.getHiddenLayers()
-                ].map(layer => {
-                    const layerBounds = getLeafletLayerBounds(layer)
+                ].map(async layer => {
+                    const layerBounds = await getLeafletLayerBounds(layer)
                     console.log(layerBounds)
                     if (layerBounds) return L.rectangle(layerBounds).toGeoJSON()
                 }).filter(bound => bound)

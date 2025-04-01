@@ -603,17 +603,17 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Zoom to layers',
             toolHandler: false,
             disabled: true,
-            btnClickHandler: () => {
+            btnClickHandler: async () => {
                 const bounds = Array.from(layers.querySelectorAll('input.form-check-input')).map(checkbox => {
                     const layer = checkbox._leafletLayer
                     if (layer instanceof L.GeoJSON) {
                         return L.rectangle(layer.getBounds()).toGeoJSON()
                     }
                 }).filter(bound => bound)
-                
+
                 if (!bounds.length) return
 
-                zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
+                await zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
             },
         },
         visibility: {

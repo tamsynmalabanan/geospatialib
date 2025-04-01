@@ -123,7 +123,6 @@ const zoomToLeafletLayer = async (layer, map, {
     } else {
         return map.fitBounds(b)
     }
-
 }
 
 const leafletLayerStyleToHTML = (style, type) => {
@@ -224,7 +223,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     return contextMenuHandler(e, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
-            btnCallback: () => zoomToLeafletLayer(layer, map)
+            btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
         isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
             innerText: `Isolate ${typeLabel}`,
@@ -246,8 +245,8 @@ const getLeafletLayerContextMenu = (e, layer, {
         },
         showProperties: !feature || !Object.keys(feature.properties).length ? null : {
             innerText: `Show properties`,
-            btnCallback: () => {
-                zoomToLeafletLayer(layer, map)
+            btnCallback: async () => {
+                await zoomToLeafletLayer(layer, map)
                 if (!group.hasLayer(layer)) addLayer(layer)
                 layer.fire('click')
             }
