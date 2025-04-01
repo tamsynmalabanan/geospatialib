@@ -410,8 +410,8 @@ const fetchGeoJSON = async ({
                 if (controller?.signal.aborted) return
                 
                 geojson = await handler(event, {...options, controller, abortBtns})
-                if (!geojson) throw new Error('No geojson retrieved.')
-                if (!geojson.features.length) throw new Error('No features retrieved.')
+                if (!geojson) return
+                if (!geojson.features.length) return
                 
                 geojson._queryGeom = queryGeom
                 handleGeoJSON(geojson, {controller, abortBtns})
