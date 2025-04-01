@@ -21,37 +21,37 @@ const handleGeoJSON = async (geojson, {
 
 const sortGeoJSONFeaturesByType = (geojson) => {
     geojson.features.sort((a, b) => {
-        const featureTypeA = a.geometry.type;
-        const featureTypeB = b.geometry.type;
+        const featureTypeA = a.geometry.type
+        const featureTypeB = b.geometry.type
     
         if (featureTypeA === 'Point' && featureTypeB !== 'Point') {
-            return -1;
+            return -1
         } else if (featureTypeB === 'Point' && featureTypeA !== 'Point') {
-            return 1;
+            return 1
         } else if (featureTypeA === 'MultiPoint' && featureTypeB !== 'MultiPoint') {
-            return -1;
+            return -1
         } else if (featureTypeB === 'MultiPoint' && featureTypeA !== 'MultiPoint') {
-            return 1;
+            return 1
         } else if (featureTypeA === 'LineString' && featureTypeB !== 'LineString') {
-            return -1;
+            return -1
         } else if (featureTypeB === 'LineString' && featureTypeA !== 'LineString') {
-            return 1;
+            return 1
         } else if (featureTypeA === 'MultiLineString' && featureTypeB !== 'MultiLineString') {
-            return -1;
+            return -1
         } else if (featureTypeB === 'MultiLineString' && featureTypeA !== 'MultiLineString') {
-            return 1;
+            return 1
         } else if (featureTypeA === 'Polygon' && featureTypeB !== 'Polygon') {
-            return -1;
+            return -1
         } else if (featureTypeB === 'Polygon' && featureTypeA !== 'Polygon') {
-            return 1;
+            return 1
         } else if (featureTypeA === 'MultiPolygon' && featureTypeB !== 'MultiPolygon') {
-            return -1;
+            return -1
         } else if (featureTypeB === 'MultiPolygon' && featureTypeA !== 'MultiPolygon') {
-            return 1;
+            return 1
         } else {
-            return featureTypeA.localeCompare(featureTypeB);
+            return featureTypeA.localeCompare(featureTypeB)
         }
-    });
+    })
 }
 
 const transformGeoJSONCoordinates = async (coordinates, source, target) => {
@@ -385,8 +385,8 @@ const fetchGeoJSON = async ({
     ) : L.rectangle(map.getBounds()).toGeoJSON()
     const queryGeom = queryFeature.geometry
 
-    const dbKey = [handler.name, JSON.stringify(options)].join(';')
-    const mapKey = [dbKey, turf.bbox(queryGeom).join(','), controller.id].join(';')
+    const dbKey = [handler.name, JSON.stringify(options)].join('')
+    const mapKey = [dbKey, turf.bbox(queryGeom).join(','), controller.id].join('')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
         return await mapForFetchGeoJSON.get(mapKey)
@@ -403,35 +403,32 @@ const fetchGeoJSON = async ({
             ) : queryGeom
 
             geojson = await (async () => {
-                if (controller?.signal.aborted) return
-                
-                const cached = await getFromGeoJSONDB(dbKey)
-                if (!cached) return
-                
                 try {
-                    const equalBounds = turf.booleanEqual(queryExtent, cached._queryExtent)
-                    const withinBounds = turf.booleanWithin(queryExtent, cached._queryExtent)
-                    if (!equalBounds && !withinBounds) return
-                } catch (error) {
-                    return
-                }
-                
-                const features = cached.features.filter(feature => {
-                    if (controller?.signal.aborted) return
-                    const featureBbox = turf.bboxPolygon(turf.bbox(feature))
-                    return turf.booleanIntersects(queryExtent, featureBbox)
-                })
-                
-                if (cached.features.length === 0) return
-                
-                saveToGeoJSONDB(dbKey, cached)
-                return turf.featureCollection(features)
-            })()
-            
-            if (!geojson) {
-                geojson = await (async () => {
-                    return handler(event, {...options, controller, abortBtns})
-                    .then(async geojson => {
+                    const fromCache = (async () => {
+                        const cached = await getFromGeoJSONDB(dbKey)
+                        if (!cached) return
+                        
+                        try {
+                            const equalBounds = turf.booleanEqual(queryExtent, cached._queryExtent)
+                            const withinBounds = turf.booleanWithin(queryExtent, cached._queryExtent)
+                            if (!equalBounds && !withinBounds) return
+                        } catch (error) {
+                            return
+                        }
+                        
+                        const features = cached.features.filter(feature => {
+                            const featureBbox = turf.bboxPolygon(turf.bbox(feature))
+                            return turf.booleanIntersects(queryExtent, featureBbox)
+                        })
+                        
+                        if (features.length === 0) return
+                        
+                        saveToGeoJSONDB(dbKey, cached)
+                        return turf.featureCollection(features)
+                    })()
+                    
+                    const fromAPI = (async () => {
+                        const geojson = await handler(event, {...options, controller, abortBtns})
                         if (!geojson?.features?.length) return
                         
                         if (controller?.signal.aborted) return
@@ -440,17 +437,23 @@ const fetchGeoJSON = async ({
                         geojson._queryExtent = queryExtent
                         const {type, features, _queryExtent} = turf.clone(geojson)
                         await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
-
+                        
                         return geojson
-                    })
-                })()
-            }
+                    })()
+                    
+                    return await Promise.race([fromCache, fromAPI])
+                } catch (error) {
+                    console.error("Error fetching GeoJSON:", error)
+                    return null
+                }
+            })()
+            
             
             return geojson
         } catch (error) {
             throw error
         } finally {
-            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
+            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000)
         }
     })()
 
@@ -469,7 +472,7 @@ const fetchGeoJSONs = async (fetchers, {
     if (controller.signal.aborted) return
 
     const geojsons = {}
-    for (let i = 0; i < fetchedGeoJSONs.length; i++) {
+    for (let i = 0 i < fetchedGeoJSONs.length i++) {
         geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
     }
 
