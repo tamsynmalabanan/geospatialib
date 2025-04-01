@@ -425,7 +425,7 @@ const fetchGeoJSON = async ({
                 
                 if (cached.features.length === 0) return
                 saveToGeoJSONDB(dbKey, clone)
-                return cached)
+                return cached
             })()
             
             if (!geojson) {
