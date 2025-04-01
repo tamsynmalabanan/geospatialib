@@ -427,8 +427,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
                 
                 layer.on('popupclose', (e) => {
-                    delete map._openpopup 
-                })            
+                    delete layer._openpopup 
+                })
                 
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''

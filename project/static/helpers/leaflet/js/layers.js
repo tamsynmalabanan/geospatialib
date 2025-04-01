@@ -237,7 +237,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             }
         },
         visibility: isLegendFeature || disabledCheckbox ? null : {
-            innerText: `Toggle ${typeLabel} visibility`,
+            innerText: `Toggle visibility`,
             btnCallback: () => {
                 group.hasLayer(layer) ? removeLayer(layer, isLegendGroup) : addLayer(layer)
             }
@@ -250,6 +250,12 @@ const getLeafletLayerContextMenu = (e, layer, {
                 layer.fire('click')
             }
         },
+        // refreshData: !isLegendGroup || isLegendFeature ? null : {
+        //     innerText: `Refresh ${typeLabel}`,
+        //     btnCallback: async () => {
+                
+        //     }
+        // },
 
         divider1: !feature ? null : {
             divider: true,
