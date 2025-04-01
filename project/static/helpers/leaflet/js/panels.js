@@ -610,7 +610,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         return L.rectangle(layer.getBounds()).toGeoJSON()
                     }
                 }).filter(bound => bound)
-                zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), bounds)
+                zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
                 // map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
             },
         },
