@@ -5,6 +5,7 @@ self.onmessage = (e) => {
     const {newGeoJSON, currentGeoJSON} = e.data
     
     if (currentGeoJSON) {
+        console.log(newGeoJSON)
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
@@ -23,6 +24,5 @@ self.onmessage = (e) => {
         }
     }
     
-    console.log(newGeoJSON)
     self.postMessage({geojson:newGeoJSON})
 }
