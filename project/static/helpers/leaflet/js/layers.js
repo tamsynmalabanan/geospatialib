@@ -93,16 +93,19 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
 
 const getLeafletLayerBounds = async (layer) => {
     if (layer._library?.bbox) {
+        console.log('_library.bbox')
         const [w,s,n,e] = JSON.parse(layer._library.bbox)
         return L.latLangBounds([s,w],[n,e])
     }
 
     if (layer instanceof L.GeoJSON && layer._fetch) {
+        console.log('_fetch')
         const geojson = await layer._fetch({filter:false})
         return L.geoJSON(geojson).getBounds()
     }
 
     if (layer.getBounds) {
+        console.log('getBounds')
         return layer.getBounds()
     }
 }
