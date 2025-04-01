@@ -270,13 +270,16 @@ const getLeafletLayerContextMenu = (e, layer, {
         divider2: !isLegendGroup? null : {
             divider: true,
         },
-        // hideLegend: !isLegendGroup? null : {
-        //     innerText: `Remove ${typeLabel}`,
-        //     btnCallback: () => {
-        //         group._ch.removeHiddenLayer(layer)
-        //         group.removeLayer(layer)
-        //     }
-        // },
+        toggleLegend: !isLegendGroup? null : {
+            innerText: `Toggle legend`,
+            btnCallback: () => {
+                const mapContainer = map.getContainer()
+                const mapId = mapContainer.id
+                mapContainer.querySelector(
+                    `#${mapId}-panels-legend-layers-${layer._leaflet_id}`
+                )?.classList.toggle('d-none')
+            }
+        },
         toggleAttribution: !isLegendGroup? null : {
             innerText: `Toggle attribution`,
             btnCallback: () => {

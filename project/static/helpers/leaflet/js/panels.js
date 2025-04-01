@@ -201,18 +201,23 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconClass: 'bi bi-list-task',
             title: 'Toggle legends',
             disabled: true,
-            btnClickHandler: () => layers.classList.toggle('d-none'),
+            btnClickHandler: () => {
+                const elements = Array.from(layers.children)
+                const show = elements.some(el => el.classList.contains('d-none'))
+                elements.forEach(el =>  el.classList.toggle('d-none', !show))
+                layers.classList.toggle('d-none', !show)
+            },
         },
         toggleAttribution: {
             iconClass: 'bi bi-c-circle',
             title: 'Toggle attributions',
             disabled: true,
             btnClickHandler: () => {
-                const attrElements = Array.from(layers.children).map(container => {
+                const elements = Array.from(layers.children).map(container => {
                     return container.querySelector(`#${container.id}-attribution`)
                 })
-                const show = attrElements.some(el => el.classList.contains('d-none'))
-                attrElements.forEach(el =>  el.classList.toggle('d-none', !show))
+                const show = elements.some(el => el.classList.contains('d-none'))
+                elements.forEach(el =>  el.classList.toggle('d-none', !show))
             },
         },
         clear: {
