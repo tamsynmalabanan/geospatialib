@@ -264,9 +264,6 @@ const handleLeafletLegendPanel = (map, parent) => {
         } else {
             layerLegend.remove()
 
-            console.log(layer._events.add)
-            layer.off('add', 'update')
-
             const paneName = layer.options.pane
             deletePane(map, paneName)
 
@@ -440,14 +437,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                         legendDetails
                     )
                 })
-
-                const update = ({controller}={}) => updateGeoJSONData(layer, {controller})
-                layer.on('add', update)
-                update({controller})
             }
         } else {
             container.querySelector(`#${container.id}-details`).classList.remove('d-none')
         }
+
+        if (layer instanceof L.GeoJSON) updateGeoJSONData(layer, {controller})
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')
