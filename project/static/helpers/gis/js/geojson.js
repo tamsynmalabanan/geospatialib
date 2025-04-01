@@ -76,7 +76,7 @@ const createAttributionTable = (geojson) => {
 
     const info = {}
     Object.keys(geojson).forEach(key => {
-        if (!Array('features', 'type').includes(key)) {
+        if (!Array('features', 'type', '_queryExtent').includes(key)) {
             info[key] = geojson[key]
         }
     })
@@ -425,7 +425,7 @@ const fetchGeoJSON = async ({
                 
                 if (cached.features.length === 0) return
                 saveToGeoJSONDB(dbKey, clone)
-                delete cached._queryExtent
+                console.log(cached)
                 return cached
             })()
             
