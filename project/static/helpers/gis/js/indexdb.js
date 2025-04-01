@@ -28,7 +28,6 @@ const updateGeoJSONOnDB = async (id, newGeoJSON) => {
 
     worker.onmessage = (e) => {
         const geojson = e.data.geojson
-        console.log(geojson)
         if (geojson) saveToGeoJSONDB(id, geojson)
         worker.terminate()
     }
