@@ -386,25 +386,40 @@ const fetchGeoJSON = async ({
     ) : L.rectangle(map.getBounds()).toGeoJSON()
     const defaultGeom = defaultFeature.geometry
 
-    const dbKey = [handler.name,JSON.stringify(options)].join(';')
-    const mapKey = [
-        dbKey, 
-        turf.bbox(defaultGeom).join(','), 
-        controller.id
-    ].join(';')
-    console.log(dbKey, mapKey)
+    const dbKey = [handler.name, JSON.stringify(options)].join(';')
+    const mapKey = [dbKey, turf.bbox(defaultGeom).join(','), controller.id].join(';')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
         return await mapForFetchGeoJSON.get(mapKey)
     }
 
+    
     const geojsonPromise = (async () => {
         try {
+            let geojson
+            
+            // geojson = await (async () => {
+            //     if (controller?.signal.aborted) return
+            //     const cached = await getFromGeoJSONDB(dbKey)
+            //     if (!cached) return
+            //     const clone = turf.clone(cached)
 
-            const geojson = await handler(event, {...options, controller, abortBtns})
-            if (!geojson) throw new Error('No geojson retrieved.')
-    
-            handleGeoJSON(geojson, {defaultGeom, controller, abortBtns})
+
+            // })()
+
+            if (!geojson) {
+                if (controller?.signal.aborted) return
+                
+                geojson = await handler(event, {...options, controller, abortBtns})
+                if (!geojson) throw new Error('No geojson retrieved.')
+                if (!geojson.features.length) throw new Error('No features retrieved.')
+                
+                geojson._queryGeom = latlng ? turf.buffer(defaultGeom, 1/100000) : defaultGeom
+                handleGeoJSON(geojson, {defaultGeom, controller, abortBtns})
+                
+                const {type, features, _queryGeom} = geojson
+                await updateGeoJSONOnDB(dbKey, {type, features, _queryGeom})
+            }
             
             return geojson
         } catch (error) {
@@ -447,7 +462,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
-            const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)),1/100000)
+            const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)), 1/100000)
             const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
             if (!filterBbox) return
             

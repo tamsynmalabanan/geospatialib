@@ -11,6 +11,10 @@ self.onmessage = (e) => {
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
+            newGeoJSON._queryGeom = turf.union(turf.featureCollection([
+                newGeoJSON._queryGeom,
+                currentGeoJSON._queryGeom,
+            ]))
         }
     }
 
