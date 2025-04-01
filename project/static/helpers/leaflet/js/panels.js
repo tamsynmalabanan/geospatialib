@@ -432,6 +432,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                         legendDetails
                     )
                 })
+
+                layer.on('add', () => updateGeoJSONData(layer))
+
                 updateGeoJSONData(layer, {controller})
             }
         } else {
