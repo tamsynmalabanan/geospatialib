@@ -386,7 +386,7 @@ const fetchGeoJSON = async ({
     const queryGeom = queryFeature.geometry
 
     const dbKey = [handler.name, JSON.stringify(options)].join(';')
-    const mapKey = [dbKey, turf.bbox(defaultGeom).join(','), controller.id].join(';')
+    const mapKey = [dbKey, turf.bbox(queryGeom).join(','), controller.id].join(';')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
         return await mapForFetchGeoJSON.get(mapKey)
