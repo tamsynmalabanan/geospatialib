@@ -144,6 +144,7 @@ const handleLeafletLayerGroups = (map) => {
         zoomToLegendLayers: () => {
             const bounds = map._legendLayerGroups.map(group => {
                 const bounds = group._ch.getBounds()
+                console.log(bounds)
                 if (bounds) return L.rectangle(bounds).toGeoJSON()
             }).filter(bound => bound)
     
