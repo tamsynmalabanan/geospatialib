@@ -604,12 +604,14 @@ const handleLeafletQueryPanel = (map, parent) => {
             toolHandler: false,
             disabled: true,
             btnClickHandler: () => {
-                Array.from(layers.querySelectorAll('input.form-check-input')).map(checkbox => {
+                const bounds = Array.from(layers.querySelectorAll('input.form-check-input')).map(checkbox => {
                     const layer = checkbox._leafletLayer
                     if (layer instanceof L.GeoJSON) {
                         return L.rectangle(layer.getBounds()).toGeoJSON()
                     }
                 }).filter(bound => bound)
+                if (!bounds.length) return
+                
                 zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
                 // map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
             },
