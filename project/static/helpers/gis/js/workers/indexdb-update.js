@@ -30,6 +30,7 @@ self.onmessage = (e) => {
             newGeoJSON._queryGeom, 1/100000
         ) : newGeoJSON._queryGeom
         console.log(newQueryGeom)
+        console.log(newGeoJSON)
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
