@@ -127,24 +127,25 @@ const handleLeafletLayerGroups = (map) => {
             }
         },
         zoomToLegendLayers:  () => {
-            const groups = map._legendLayerGroups
-            const boundFeatures = []
-            groups.forEach(group => {
-                const layers = [
-                    ...group.getLayers(),
+            let layers = []
+            map._legendLayerGroups.forEach(group => {
+                layers = layers.concat([
+                    ...group.getLayers(), 
                     ...group._ch.getHiddenLayers()
-                ]
-                layers.forEach(async layer => {
-                    const b = await getLeafletLayerBounds(layer)
-                    if (!b) return
-
-                    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
-                        boundFeatures.push(turf.point([b.getEast(), b.getNorth()]))
-                    } else {
-                        boundFeatures.push(L.rectangle(b).toGeoJSON())
-                    }
-                })
+                ]) 
             })
+
+            const boundFeatures = layers.map(async layer => {
+                const b = await getLeafletLayerBounds(layer)
+                if (!b) return
+
+                if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+                    return turf.point([b.getEast(), b.getNorth()])
+                } else {
+                    return L.rectangle(b).toGeoJSON()
+                }
+            })
+
             console.log(boundFeatures)
         },
     }
