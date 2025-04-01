@@ -139,9 +139,9 @@ const handleLeafletLayerGroups = (map) => {
                     if (!b) return
 
                     if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
-                        return boundFeatures.push(turf.point([b.getEast(), b.getNorth()]))
+                        boundFeatures.push(turf.point([b.getEast(), b.getNorth()]))
                     } else {
-                        return boundFeatures.push(L.rectangle(b).toGeoJSON())
+                        boundFeatures.push(L.rectangle(b).toGeoJSON())
                     }
                 })
             })
