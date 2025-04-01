@@ -439,8 +439,7 @@ const fetchGeoJSON = async ({
                     
                     if (controller?.signal.aborted) return
                     geojson._queryExtent = queryExtent
-                    const {type, features, _queryExtent} = turf.clone(geojson)
-                    await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
+                    await updateGeoJSONOnDB(dbKey, turf.clone(geojson))
 
                     return geojson
                 })()
