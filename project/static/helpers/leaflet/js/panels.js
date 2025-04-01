@@ -255,7 +255,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (!layerLegend) return
         
         if (map._ch.hasHiddenLegendLayer(layer)) {
-            layerLegend.querySelector(`#${layerLegend.id}-collapse`).classList.add('d-none')
+            layerLegend.querySelector(`#${layerLegend.id}-details`).classList.add('d-none')
         } else {
             layerLegend.remove()
 
@@ -440,10 +440,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 update({controller})
             }
         } else {
-            container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
+            container.querySelector(`#${container.id}-details`).classList.remove('d-none')
         }
-
-        // const legendDetails = container.querySelector(`#${container.id}-details`)
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')

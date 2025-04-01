@@ -270,6 +270,31 @@ const getLeafletLayerContextMenu = (e, layer, {
         divider2: {
             divider: true,
         },
+        // hideLegend: !isLegendGroup? null : {
+        //     innerText: `Remove ${typeLabel}`,
+        //     btnCallback: () => {
+        //         group._ch.removeHiddenLayer(layer)
+        //         group.removeLayer(layer)
+        //     }
+        // },
+        hideAttribution: !isLegendGroup? null : {
+            innerText: `Remove ${typeLabel}`,
+            btnCallback: () => {
+                group._ch.removeHiddenLayer(layer)
+                group.removeLayer(layer)
+            }
+        },
+        remove: !isLegendGroup || isLegendFeature ? null : {
+            innerText: `Remove ${typeLabel}`,
+            btnCallback: () => {
+                group._ch.removeHiddenLayer(layer)
+                group.removeLayer(layer)
+            }
+        },
+
+        divider3: {
+            divider: true,
+        },
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: async () => {
@@ -295,13 +320,6 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: 'Download GeoJSON',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
-            }
-        },
-        remove: !isLegendGroup || isLegendFeature ? null : {
-            innerText: `Remove ${typeLabel}`,
-            btnCallback: () => {
-                group._ch.removeHiddenLayer(layer)
-                group.removeLayer(layer)
             }
         },
     })
