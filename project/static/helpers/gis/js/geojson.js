@@ -423,21 +423,27 @@ const fetchGeoJSON = async ({
                 })
                 
                 if (cached.features.length === 0) return
+                
                 saveToGeoJSONDB(dbKey, cached)
                 return turf.featureCollection(features)
             })()
             
             if (!geojson) {
-                geojson = await handler(event, {...options, controller, abortBtns})
-                if (!geojson?.features?.length) return
-                
-                if (controller?.signal.aborted) return
-                handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
-                
-                if (controller?.signal.aborted) return
-                geojson._queryExtent = queryExtent
-                const {type, features, _queryExtent} = turf.clone(geojson)
-                await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
+                geojson = await (async () => {
+                    return handler(event, {...options, controller, abortBtns})
+                    .then(async geojson => {
+                        if (!geojson?.features?.length) return
+                        
+                        if (controller?.signal.aborted) return
+                        await handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
+                        
+                        geojson._queryExtent = queryExtent
+                        const {type, features, _queryExtent} = turf.clone(geojson)
+                        await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
+
+                        return geojson
+                    })
+                })()
             }
             
             return geojson
