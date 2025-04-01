@@ -23,16 +23,16 @@ self.onmessage = (e) => {
         })
         console.log(filteredFeatures)
         
-        const newQueryIsPoint = turf.getType(newGeoJSON._queryGeom) === 'Point'
-        const newQueryGeom = newQueryIsPoint ? turf.buffer(
-            newGeoJSON._queryGeom, 1/100000
-        ) : newGeoJSON._queryGeom
+        const newQueryIsPoint = turf.getType(newGeoJSON._queryExtent) === 'Point'
+        const newQueryExtent = newQueryIsPoint ? turf.buffer(
+            newGeoJSON._queryExtent, 1/100000
+        ) : newGeoJSON._queryExtent
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
-            newGeoJSON._queryGeom = turf.union(turf.featureCollection([
-                newQueryGeom,
-                currentGeoJSON._queryGeom,
+            newGeoJSON._queryExtent = turf.union(turf.featureCollection([
+                newQueryExtent,
+                currentGeoJSON._queryExtent,
             ]))
         }
     }

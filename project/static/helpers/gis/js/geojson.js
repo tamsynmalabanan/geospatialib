@@ -397,14 +397,35 @@ const fetchGeoJSON = async ({
         try {
             let geojson
             
-            // geojson = await (async () => {
-            //     if (controller?.signal.aborted) return
-            //     const cached = await getFromGeoJSONDB(dbKey)
-            //     if (!cached) return
-            //     const clone = turf.clone(cached)
+            const queryExtent = latlng ? turf.buffer(
+                queryGeom, 
+                (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2/1000
+            ) : queryGeom
 
-
-            // })()
+            geojson = await (async () => {
+                if (controller?.signal.aborted) return
+                
+                const cached = await getFromGeoJSONDB(dbKey)
+                if (!cached) return
+                
+                try {
+                    const equalBounds = turf.booleanEqual(queryExtent, cached._queryExtent)
+                    const withinBounds = turf.booleanWithin(queryExtent, cached._queryExtent)
+                    if (!equalBounds && !withinBounds) return
+                } catch (error) {
+                    return
+                }
+                
+                const features = cached.features.filter(feature => {
+                    if (controller?.signal.aborted) return
+                    return turf.booleanIntersects(queryExtent, feature)
+                })
+                
+                if (cached.features.length === 0) return
+                saveToGeoJSONDB(dbKey, cached)
+                return turf.featureCollection(features)
+    
+            })()
 
             if (!geojson) {
                 geojson = await handler(event, {...options, controller, abortBtns})
@@ -414,9 +435,9 @@ const fetchGeoJSON = async ({
                 handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
                 
                 if (controller?.signal.aborted) return
-                geojson._queryGeom = latlng ? turf.buffer(queryGeom, 1/100000) : queryGeom
-                const {type, features, _queryGeom} = turf.clone(geojson)
-                await updateGeoJSONOnDB(dbKey, {type, features, _queryGeom})
+                geojson._queryExtent = queryExtent
+                const {type, features, _queryExtent} = turf.clone(geojson)
+                await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
             }
             
             return geojson
