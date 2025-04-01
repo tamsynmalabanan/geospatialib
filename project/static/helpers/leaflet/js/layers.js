@@ -267,7 +267,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
         
-        divider2: {
+        divider2: !isLegendGroup? null : {
             divider: true,
         },
         // hideLegend: !isLegendGroup? null : {
@@ -277,11 +277,14 @@ const getLeafletLayerContextMenu = (e, layer, {
         //         group.removeLayer(layer)
         //     }
         // },
-        hideAttribution: !isLegendGroup? null : {
-            innerText: `Remove ${typeLabel}`,
+        toggleAttribution: !isLegendGroup? null : {
+            innerText: `Toggle ${typeLabel} attribution`,
             btnCallback: () => {
-                group._ch.removeHiddenLayer(layer)
-                group.removeLayer(layer)
+                const mapContainer = map.getContainer().id
+                const mapId = mapContainer.id
+                mapContainer.querySelector(
+                    `#${mapId}-panels-legend-layers-${layer._leaflet_id}-attribution`
+                )?.classList.toggle('d-none')
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
