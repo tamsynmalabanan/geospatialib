@@ -99,9 +99,9 @@ const getLeafletLayerBounds = async (layer) => {
         return L.latLangBounds([s,w],[n,e])
     }
 
-    if (layer instanceof L.GeoJSON && layer._fetch) {
-        console.log('_fetch')
-        const geojson = await layer._fetch({filter:false})
+    if (layer instanceof L.GeoJSON && layer._fetcher) {
+        console.log('_fetcher')
+        const geojson = await layer._fetcher({filter:false})
         return L.geoJSON(geojson).getBounds()
     }
 
