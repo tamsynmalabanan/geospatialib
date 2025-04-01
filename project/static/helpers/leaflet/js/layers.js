@@ -274,10 +274,14 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Toggle legend`,
             btnCallback: () => {
                 const mapContainer = map.getContainer()
-                const mapId = mapContainer.id
-                mapContainer.querySelector(
-                    `#${mapId}-panels-legend-layers-${layer._leaflet_id}`
-                )?.classList.toggle('d-none')
+                const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
+                layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
+
+                layers.classList.toggle(
+                    'd-none', 
+                    !Array.from(layers.children)
+                    .some(el => el.classList.contains('d-none'))
+                )
             }
         },
         toggleAttribution: !isLegendGroup? null : {
