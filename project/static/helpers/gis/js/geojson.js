@@ -1,15 +1,15 @@
 const handleGeoJSON = async (geojson, {
     controller,
-    defaultGeom,
 } = {}) => {
     const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
     const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
-    
+    const queryGeom = geojson._queryGeom
+
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
     
-        feature.geometry = feature.geometry || defaultGeom
-        const geomAssigned = !feature.geometry && defaultGeom
+        feature.geometry = feature.geometry || queryGeom
+        const geomAssigned = !feature.geometry && queryGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
             await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)        
@@ -381,18 +381,17 @@ const fetchGeoJSON = async ({
 } = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
     const latlng = event.latlng
-    const defaultFeature = latlng ? turf.point(
+    const queryFeature = latlng ? turf.point(
         Object.values(latlng).reverse()
     ) : L.rectangle(map.getBounds()).toGeoJSON()
-    const defaultGeom = defaultFeature.geometry
+    const queryGeom = queryFeature.geometry
 
     const dbKey = [handler.name, JSON.stringify(options)].join(';')
-    const mapKey = [dbKey, turf.bbox(defaultGeom).join(','), controller.id].join(';')
+    const mapKey = [dbKey, turf.bbox(queryGeom).join(','), controller.id].join(';')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
         return await mapForFetchGeoJSON.get(mapKey)
     }
-
     
     const geojsonPromise = (async () => {
         try {
@@ -414,8 +413,8 @@ const fetchGeoJSON = async ({
                 if (!geojson) throw new Error('No geojson retrieved.')
                 if (!geojson.features.length) throw new Error('No features retrieved.')
                 
-                geojson._queryGeom = latlng ? turf.buffer(defaultGeom, 1/100000) : defaultGeom
-                handleGeoJSON(geojson, {defaultGeom, controller, abortBtns})
+                geojson._queryGeom = queryGeom
+                handleGeoJSON(geojson, {controller, abortBtns})
                 
                 const {type, features, _queryGeom} = geojson
                 await updateGeoJSONOnDB(dbKey, {type, features, _queryGeom})
