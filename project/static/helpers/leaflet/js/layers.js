@@ -92,21 +92,17 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
 }
 
 const getLeafletLayerBounds = async (layer) => {
-    console.log(layer)
     if (layer._library?.bbox) {
-        console.log('_library.bbox')
         const [w,s,n,e] = JSON.parse(layer._library.bbox)
         return L.latLangBounds([s,w],[n,e])
     }
 
     if (layer instanceof L.GeoJSON && layer._fetcher) {
-        console.log('_fetcher')
         const geojson = await layer._fetcher({filter:false})
         return L.geoJSON(geojson).getBounds()
     }
 
     if (layer.getBounds) {
-        console.log('getBounds')
         return layer.getBounds()
     }
 }
@@ -121,7 +117,6 @@ const zoomToLeafletLayer = async (layer, map, {
     const b = await getLeafletLayerBounds(layer)
     if (!b) return
     
-    console.log(b)
     if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
         return map.setView(b.getNorthEast(), zoom)
     } else {
