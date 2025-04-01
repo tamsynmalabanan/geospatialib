@@ -487,7 +487,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             const geojsons = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
-                sortFeatures: (g) => g.features.length <= 100,
             })
         
             cancelBtn.disabled = true

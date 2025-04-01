@@ -1,7 +1,6 @@
 const handleGeoJSON = async (geojson, {
     controller,
     defaultGeom,
-    sortFeatures = false,
 } = {}) => {
     const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
     const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
@@ -19,11 +18,9 @@ const handleGeoJSON = async (geojson, {
         if (feature.id) feature.properties.feature_id = feature.id
         feature.properties.gslId = generateRandomString()
     }
-
-    if (sortFeatures) sortGeoJSONFeatures(geojson)
 }
 
-const sortGeoJSONFeatures = (geojson) => {
+const sortGeoJSONFeaturesByType = (geojson) => {
     geojson.features.sort((a, b) => {
         const featureTypeA = a.geometry.type;
         const featureTypeB = b.geometry.type;
@@ -116,6 +113,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const listFeatures = features.length <= 100
         const disableCheck = features.length > 1000
+
+        if (listFeatures) sortGeoJSONFeaturesByType(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
@@ -377,7 +376,6 @@ const fetchGeoJSON = async ({
     event,
     options = {}
 }, {
-    sortFeatures,
     controller,
     abortBtns,
 } = {}) => {
@@ -389,10 +387,9 @@ const fetchGeoJSON = async ({
     const defaultGeom = defaultFeature.geometry
 
     const mapKey = [
-            handler.name, 
+        handler.name, 
         turf.bbox(defaultGeom).join(','), 
         JSON.stringify(options), 
-        sortFeatures.toString(),
         controller.id
     ].join(';')
 
@@ -405,8 +402,7 @@ const fetchGeoJSON = async ({
             const geojson = await handler(event, {...options, controller, abortBtns})
     
             if (geojson) {
-                sortFeatures = typeof sortFeatures === 'function' ? sortFeatures(geojson) : sortFeatures,
-                handleGeoJSON(geojson, {defaultGeom, sortFeatures, controller, abortBtns})
+                handleGeoJSON(geojson, {defaultGeom, controller, abortBtns})
             }
     
             return geojson
@@ -422,12 +418,11 @@ const fetchGeoJSON = async ({
 }
 
 const fetchGeoJSONs = async (fetchers, {
-    sortFeatures,
     controller,
     abortBtns,
 } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
-        return fetchGeoJSON(fetcher, {sortFeatures, abortBtns, controller})
+        return fetchGeoJSON(fetcher, {abortBtns, controller})
     }))
 
     if (controller.signal.aborted) return
