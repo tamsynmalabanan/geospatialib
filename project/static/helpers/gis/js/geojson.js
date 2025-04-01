@@ -386,12 +386,13 @@ const fetchGeoJSON = async ({
     ) : L.rectangle(map.getBounds()).toGeoJSON()
     const defaultGeom = defaultFeature.geometry
 
+    const dbKey = [handler.name,JSON.stringify(options)].join(';')
     const mapKey = [
-        handler.name, 
+        dbKey, 
         turf.bbox(defaultGeom).join(','), 
-        JSON.stringify(options), 
         controller.id
     ].join(';')
+    console.log(dbKey, mapKey)
 
     if (mapForFetchGeoJSON.has(mapKey)) {
         return await mapForFetchGeoJSON.get(mapKey)
@@ -399,8 +400,6 @@ const fetchGeoJSON = async ({
 
     const geojsonPromise = (async () => {
         try {
-            const dbKey = JSON.stringify(options)
-            console.log(dbKey)
 
             const geojson = await handler(event, {...options, controller, abortBtns})
             if (!geojson) throw new Error('No geojson retrieved.')
