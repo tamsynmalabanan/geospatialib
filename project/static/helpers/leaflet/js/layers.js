@@ -92,6 +92,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
 }
 
 const getLeafletLayerBounds = async (layer) => {
+    console.log(layer)
     if (layer._library?.bbox) {
         console.log('_library.bbox')
         const [w,s,n,e] = JSON.parse(layer._library.bbox)
