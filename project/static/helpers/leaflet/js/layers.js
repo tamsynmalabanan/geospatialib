@@ -107,7 +107,7 @@ const getLeafletLayerBounds = async (layer) => {
     }
 }
 
-const zoomToLeafletLayer = (layer, map, {
+const zoomToLeafletLayer = async (layer, map, {
     zoom = 18,
 } = {}) => {
     console.log(layer)
@@ -115,7 +115,7 @@ const zoomToLeafletLayer = (layer, map, {
         return map.setView(layer.getLatLng(), zoom)
     }
     
-    const b = getLeafletLayerBounds(layer)
+    const b = await getLeafletLayerBounds(layer)
     console.log(b)
     if (!b) return
     
