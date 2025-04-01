@@ -21,7 +21,6 @@ self.onmessage = (e) => {
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
-        console.log(filteredFeatures)
         
         const newQueryIsPoint = turf.getType(newGeoJSON._queryExtent) === 'Point'
         const newQueryExtent = newQueryIsPoint ? turf.buffer(

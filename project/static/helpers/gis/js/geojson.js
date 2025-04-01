@@ -423,11 +423,11 @@ const fetchGeoJSON = async ({
                 
                 if (cached.features.length === 0) return
                 saveToGeoJSONDB(dbKey, cached)
-                console.log(cached)
                 return turf.featureCollection(features)
             })()
             
             if (!geojson) {
+                console.log('here')
                 geojson = await handler(event, {...options, controller, abortBtns})
                 if (!geojson?.features?.length) return
                 
@@ -438,7 +438,6 @@ const fetchGeoJSON = async ({
                 geojson._queryExtent = queryExtent
                 const {type, features, _queryExtent} = turf.clone(geojson)
                 await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
-                console.log(geojson)
             }
             
             return geojson
