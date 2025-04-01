@@ -17,8 +17,6 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 
 self.onmessage = (e) => {
     const {newGeoJSON, currentGeoJSON} = e.data
-    console.log(newGeoJSON)
-    console.log(currentGeoJSON)
     
     if (currentGeoJSON) {
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
@@ -30,8 +28,6 @@ self.onmessage = (e) => {
         const newQueryGeom = newQueryIsPoint ? turf.buffer(
             newGeoJSON._queryGeom, 1/100000
         ) : newGeoJSON._queryGeom
-        console.log(newQueryGeom)
-        console.log(newGeoJSON)
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
@@ -40,8 +36,8 @@ self.onmessage = (e) => {
                 currentGeoJSON._queryGeom,
             ]))
         }
-        console.log(newGeoJSON)
     }
     
+    console.log(newGeoJSON)
     self.postMessage({geojson:newGeoJSON})
 }
