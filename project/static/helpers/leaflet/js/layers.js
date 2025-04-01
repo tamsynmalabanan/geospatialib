@@ -279,8 +279,8 @@ const getLeafletLayerContextMenu = (e, layer, {
 
                 layers.classList.toggle(
                     'd-none', 
-                    !Array.from(layers.children)
-                    .some(el => el.classList.contains('d-none'))
+                    Array.from(layers.children)
+                    .some(el => !el.classList.contains('d-none'))
                 )
             }
         },
