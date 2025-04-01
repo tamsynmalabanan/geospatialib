@@ -126,7 +126,7 @@ const handleLeafletLayerGroups = (map) => {
                 group._ch.showAllLayers()
             }
         },
-        zoomToLegendLayers:  () => {
+        zoomToLegendLayers: async () => {
             let layers = []
             map._legendLayerGroups.forEach(group => {
                 layers = layers.concat([
@@ -146,7 +146,7 @@ const handleLeafletLayerGroups = (map) => {
                 }
             })
 
-            console.log(boundFeatures)
+            console.log(await boundFeatures)
         },
     }
 
