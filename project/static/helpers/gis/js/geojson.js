@@ -416,7 +416,7 @@ const fetchGeoJSON = async ({
                 geojson._queryGeom = latlng ? turf.buffer(queryGeom, 1/100000) : queryGeom
                 handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
                 
-                const {type, features, _queryGeom} = geojson
+                const {type, features, _queryGeom} = turf.clone(geojson)
                 await updateGeoJSONOnDB(dbKey, {type, features, _queryGeom})
             }
             
