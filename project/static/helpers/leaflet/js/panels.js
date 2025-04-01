@@ -175,7 +175,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconClass: 'bi bi-zoom-in',
             title: 'Zoom to layers',
             disabled: true,
-            btnClickHandler: () => map._ch.zoomToLegendLayers(),
+            btnClickHandler: async () => await map._ch.zoomToLegendLayers(),
         },
         visibility: {
             iconClass: 'bi bi-eye',

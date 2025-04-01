@@ -135,7 +135,7 @@ const handleLeafletLayerGroups = (map) => {
                 ]) 
             })
 
-            const boundFeatures = await (async () => {
+            const boundFeatures = (async () => {
                 return layers.map(async layer => {
                     const b = await getLeafletLayerBounds(layer)
                     if (!b) return
@@ -149,6 +149,7 @@ const handleLeafletLayerGroups = (map) => {
             })()
 
             console.log(boundFeatures)
+            return
         },
     }
 
