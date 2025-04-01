@@ -73,7 +73,7 @@ const handleLeafletLayerGroups = (map) => {
                     console.log(layerBounds)
                     if (layerBounds) return L.rectangle(layerBounds).toGeoJSON()
                 }).filter(bound => bound)
-    
+                console.log(bounds)
                 if (!bounds.length) return
 
                 return L.geoJSON(turf.featureCollection(bounds)).getBounds()
