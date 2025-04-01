@@ -110,18 +110,21 @@ const getLeafletLayerBounds = async (layer) => {
 const zoomToLeafletLayer = (layer, map, {
     zoom = 18,
 } = {}) => {
+    console.log(layer)
     if (layer.getLatLng) {
         return map.setView(layer.getLatLng(), zoom)
     }
-
+    
     const b = getLeafletLayerBounds(layer)
+    console.log(b)
     if (!b) return
-
+    
     if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
         return map.setView(b.getNorthEast(), zoom)
     } else {
         return map.fitBounds(b)
     }
+
 }
 
 const leafletLayerStyleToHTML = (style, type) => {
