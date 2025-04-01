@@ -63,24 +63,6 @@ const handleLeafletLayerGroups = (map) => {
             showAllLayers: () => {
                 layerGroup._ch.getHiddenLayers().forEach(l => layerGroup._ch.showLayer(l))
             },
-
-            getBounds: async () => {
-                const layers = [
-                    ...layerGroup.getLayers(), 
-                    ...layerGroup._ch.getHiddenLayers()
-                ]
-                const bounds = await (async () => {
-                    layers.map(async layer => {
-                        const layerBounds = await getLeafletLayerBounds(layer)
-                        console.log(layerBounds)
-                        if (layerBounds) return L.rectangle(layerBounds).toGeoJSON()
-                    }).filter(bound => bound)
-                })()
-                console.log(bounds)
-                if (!bounds.length) return
-
-                return L.geoJSON(turf.featureCollection(bounds)).getBounds()
-            },
         }
 
         map.addLayer(layerGroup)
@@ -144,16 +126,19 @@ const handleLeafletLayerGroups = (map) => {
                 group._ch.showAllLayers()
             }
         },
-        zoomToLegendLayers: () => {
-            const bounds = map._legendLayerGroups.map(group => {
-                const bounds = group._ch.getBounds()
-                console.log(bounds)
-                if (bounds) return L.rectangle(bounds).toGeoJSON()
-            }).filter(bound => bound)
-    
-            if (bounds.length) {
-                map.fitBounds(L.geoJSON(turf.featureCollection(bounds)).getBounds())
-            }
+        zoomToLegendLayers:  () => {
+            const groups = map._legendLayerGroups
+            const boundFeatures = []
+            groups.forEach(group => {
+                const layers = [
+                    ...group.getLayers(),
+                    ...group._ch.getHiddenLayers()
+                ]
+                layers.forEach(layer => {
+                    const bounds = getLeafletLayerBounds(layer)
+                    console.log(bounds)
+                })
+            })
         },
     }
 
