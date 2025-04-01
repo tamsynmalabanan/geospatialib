@@ -399,12 +399,14 @@ const fetchGeoJSON = async ({
 
     const geojsonPromise = (async () => {
         try {
+            const dbKey = JSON.stringify(options)
+            console.log(dbKey)
+
             const geojson = await handler(event, {...options, controller, abortBtns})
+            if (!geojson) throw new Error('No geojson retrieved.')
     
-            if (geojson) {
-                handleGeoJSON(geojson, {defaultGeom, controller, abortBtns})
-            }
-    
+            handleGeoJSON(geojson, {defaultGeom, controller, abortBtns})
+            
             return geojson
         } catch (error) {
             throw error
@@ -446,7 +448,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
-            const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)),1)
+            const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)),1/100000)
             const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
             if (!filterBbox) return
             
@@ -484,4 +486,18 @@ const downloadGeoJSON = (geojson, fileName) => {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
+}
+
+const featuresAreSimilar = (feature1, feature2) => {
+    const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
+    const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
+    return propertiesEqual && geometriesEqual
+}
+
+const hasSimilarFeature = (featureList, targetFeature) => {
+    for (const feature of featureList) {
+        if (featuresAreSimilar(feature, targetFeature)) return true
+    }
+
+    return false
 }
