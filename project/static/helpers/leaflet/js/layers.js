@@ -91,22 +91,36 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     }
 }
 
+const getLeafletLayerBounds = async (layer) => {
+    if (layer._library.bbox) {
+        const [w,s,n,e] = JSON.parse(layer._library.bbox)
+        return L.latLangBounds([s,w],[n,e])
+    }
+
+    if (layer instanceof L.GeoJSON && layer._fetch) {
+        const geojson = await layer._fetch({filter:false})
+        return L.geoJSON(geojson).getBounds()
+    }
+
+    if (layer.getBounds) {
+        return layer.getBounds()
+    }
+}
+
 const zoomToLeafletLayer = (layer, map, {
     zoom = 18,
 } = {}) => {
-    if (typeof layer.getBounds === 'function') {
-        const b = layer.getBounds()
-        if (!b) return 
-
-        if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
-            return map.setView(b.getNorthEast(), zoom)
-        } else {
-            return map.fitBounds(b)
-        }
+    if (layer.getLatLng) {
+        return map.setView(layer.getLatLng(), zoom)
     }
 
-    if (typeof layer.getLatLng === 'function') {
-        return map.setView(layer.getLatLng(), zoom)
+    const b = getLeafletLayerBounds(layer)
+    if (!b) return
+
+    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+        return map.setView(b.getNorthEast(), zoom)
+    } else {
+        return map.fitBounds(b)
     }
 }
 

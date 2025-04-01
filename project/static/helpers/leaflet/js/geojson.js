@@ -29,7 +29,6 @@ const getLeafletGeoJSONLayer = async ({
             if (!geojson) return 
             if (!filter) return geojson
             
-            // update getBounds to be based on cached geojson
             const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
             const filteredGeoJSON = await filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
             return filteredGeoJSON
