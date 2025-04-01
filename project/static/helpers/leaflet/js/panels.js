@@ -435,7 +435,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                     )
                 })
 
-                const update = ({controller}={}) => updateGeoJSONData(layer, {controller})
+                const update = ({controller}={}) => {
+                    console.log('updating')
+                    updateGeoJSONData(layer, {controller})
+                }
 
                 layer.on('add', update)
 
