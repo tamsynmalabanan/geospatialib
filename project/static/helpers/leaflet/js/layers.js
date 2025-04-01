@@ -278,9 +278,9 @@ const getLeafletLayerContextMenu = (e, layer, {
         //     }
         // },
         toggleAttribution: !isLegendGroup? null : {
-            innerText: `Toggle ${typeLabel} attribution`,
+            innerText: `Toggle attribution`,
             btnCallback: () => {
-                const mapContainer = map.getContainer().id
+                const mapContainer = map.getContainer()
                 const mapId = mapContainer.id
                 mapContainer.querySelector(
                     `#${mapId}-panels-legend-layers-${layer._leaflet_id}-attribution`
