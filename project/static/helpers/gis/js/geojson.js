@@ -393,7 +393,6 @@ const fetchGeoJSON = async ({
         return await mapForFetchGeoJSON.get(mapKey)
     }
 
-    
     const geojsonPromise = (async () => {
         try {
             let geojson
