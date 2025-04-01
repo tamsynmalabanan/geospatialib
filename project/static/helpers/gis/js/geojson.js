@@ -403,51 +403,46 @@ const fetchGeoJSON = async ({
             ) : queryGeom
 
             geojson = await (async () => {
+                if (controller?.signal.aborted) return
+                
+                const cached = await getFromGeoJSONDB(dbKey)
+                if (!cached) return
+                
                 try {
-                    const fromCache = (async () => {
-                        const cached = await getFromGeoJSONDB(dbKey)
-                        if (!cached) return
-                        
-                        try {
-                            const equalBounds = turf.booleanEqual(queryExtent, cached._queryExtent)
-                            const withinBounds = turf.booleanWithin(queryExtent, cached._queryExtent)
-                            if (!equalBounds && !withinBounds) return
-                        } catch (error) {
-                            return
-                        }
-                        
-                        const features = cached.features.filter(feature => {
-                            const featureBbox = turf.bboxPolygon(turf.bbox(feature))
-                            return turf.booleanIntersects(queryExtent, featureBbox)
-                        })
-                        
-                        if (features.length === 0) return
-                        
-                        saveToGeoJSONDB(dbKey, cached)
-                        return turf.featureCollection(features)
-                    })()
-                    
-                    const fromAPI = (async () => {
-                        const geojson = await handler(event, {...options, controller, abortBtns})
-                        if (!geojson?.features?.length) return
-                    
-                        if (controller?.signal.aborted) return
-                        await handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
-                        
-                        geojson._queryExtent = queryExtent
-                        const {type, features, _queryExtent} = turf.clone(geojson)
-                        await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
-                        
-                        return geojson
-                    })()
-                    
-                    return await Promise.race([fromCache, fromAPI])
+                    const equalBounds = turf.booleanEqual(queryExtent, cached._queryExtent)
+                    const withinBounds = turf.booleanWithin(queryExtent, cached._queryExtent)
+                    if (!equalBounds && !withinBounds) return
                 } catch (error) {
-                    console.error("Error fetching GeoJSON:", error)
-                    return null
+                    return
                 }
-            })();
+                
+                const features = cached.features.filter(feature => {
+                    if (controller?.signal.aborted) return
+                    const featureBbox = turf.bboxPolygon(turf.bbox(feature))
+                    return turf.booleanIntersects(queryExtent, feature)
+                })
+                
+                if (cached.features.length === 0) return
+                saveToGeoJSONDB(dbKey, cached)
+                return turf.featureCollection(features)
+            })()
             
+            if (!geojson) {
+                geojson = await (async () => {
+                    const geojson = await handler(event, {...options, controller, abortBtns})
+                    if (!geojson?.features?.length) return
+                    
+                    if (controller?.signal.aborted) return
+                    handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
+                    
+                    if (controller?.signal.aborted) return
+                    geojson._queryExtent = queryExtent
+                    const {type, features, _queryExtent} = turf.clone(geojson)
+                    await updateGeoJSONOnDB(dbKey, {type, features, _queryExtent})
+
+                    return geojson
+                })()
+            }
             
             return geojson
         } catch (error) {
