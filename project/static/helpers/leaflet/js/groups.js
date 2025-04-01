@@ -134,8 +134,8 @@ const handleLeafletLayerGroups = (map) => {
                     ...group.getLayers(),
                     ...group._ch.getHiddenLayers()
                 ]
-                layers.forEach(layer => {
-                    const bounds = getLeafletLayerBounds(layer)
+                layers.forEach(async layer => {
+                    const bounds = await getLeafletLayerBounds(layer)
                     console.log(bounds)
                 })
             })
