@@ -135,18 +135,20 @@ const handleLeafletLayerGroups = (map) => {
                 ]) 
             })
 
-            const boundFeatures = layers.map(async layer => {
-                const b = await getLeafletLayerBounds(layer)
-                if (!b) return
+            const boundFeatures = await (async () => {
+                return layers.map(async layer => {
+                    const b = await getLeafletLayerBounds(layer)
+                    if (!b) return
+    
+                    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+                        return turf.point([b.getEast(), b.getNorth()])
+                    } else {
+                        return L.rectangle(b).toGeoJSON()
+                    }
+                })
+            })()
 
-                if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
-                    return turf.point([b.getEast(), b.getNorth()])
-                } else {
-                    return L.rectangle(b).toGeoJSON()
-                }
-            })
-
-            console.log(await boundFeatures)
+            console.log(boundFeatures)
         },
     }
 
