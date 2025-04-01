@@ -12,7 +12,8 @@ const handleGeoJSON = async (geojson, {
         const geomAssigned = !feature.geometry && defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
-            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)        
+            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
+            delete geojson.crs   
         }
         
         if (feature.id) feature.properties.feature_id = feature.id
