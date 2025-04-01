@@ -3,7 +3,7 @@ self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
 const featuresAreSimilar = (feature1, feature2) => {
     const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
     const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
-    console.log(propertiesEqual, geometriesEqual)
+    console.log(propertiesEqual && geometriesEqual)
     return propertiesEqual && geometriesEqual
 }
 
@@ -25,6 +25,7 @@ self.onmessage = (e) => {
         console.log(filteredFeatures)
         
         const newQueryIsPoint = turf.getType(newGeoJSON._queryGeom) === 'Point'
+        console.log(newQueryIsPoint)
         const newQueryGeom = newQueryIsPoint ? turf.buffer(
             newGeoJSON._queryGeom, 1/100000
         ) : newGeoJSON._queryGeom
