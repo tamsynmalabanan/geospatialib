@@ -407,17 +407,19 @@ const fetchGeoJSON = async ({
             // })()
 
             if (!geojson) {
-                if (controller?.signal.aborted) return
-                
                 geojson = await handler(event, {...options, controller, abortBtns})
-                if (!geojson) return
-                if (!geojson.features.length) return
+                if (!geojson?.features?.length) return
                 
-                geojson._queryGeom = latlng ? turf.buffer(queryGeom, 1/100000) : queryGeom
+                if (controller?.signal.aborted) return
                 handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
                 
-                const {type, features, _queryGeom} = turf.clone(geojson)
-                await updateGeoJSONOnDB(dbKey, {type, features, _queryGeom})
+                if (controller?.signal.aborted) return
+                const {type, features} = turf.clone(geojson)
+                await updateGeoJSONOnDB(
+                    dbKey, 
+                    {type, features},
+                    latlng ? turf.buffer(queryGeom, 1/100000) : queryGeom
+                )
             }
             
             return geojson

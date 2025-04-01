@@ -23,7 +23,7 @@ const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60) => {
     }
 }
 
-const updateGeoJSONOnDB = async (id, newGeoJSON) => {
+const updateGeoJSONOnDB = async (id, newGeoJSON, queryGeom) => {
     const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
 
     worker.onmessage = (e) => {
@@ -37,7 +37,8 @@ const updateGeoJSONOnDB = async (id, newGeoJSON) => {
     }
     
     const currentGeoJSON = await getFromGeoJSONDB(id)
-    worker.postMessage({newGeoJSON, currentGeoJSON})
+    console.log(currentGeoJSON, currentGeoJSON.geojson)
+    worker.postMessage({newGeoJSON, currentGeoJSON, queryGeom})
 }
 
 const getFromGeoJSONDB = async (id) => {
