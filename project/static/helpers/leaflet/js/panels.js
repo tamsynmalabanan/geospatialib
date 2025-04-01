@@ -259,6 +259,8 @@ const handleLeafletLegendPanel = (map, parent) => {
         } else {
             layerLegend.remove()
 
+            layer.off('add', 'update')
+
             const paneName = layer.options.pane
             deletePane(map, paneName)
 
@@ -433,9 +435,11 @@ const handleLeafletLegendPanel = (map, parent) => {
                     )
                 })
 
-                layer.on('add', () => updateGeoJSONData(layer))
+                const update = ({controller}={}) => updateGeoJSONData(layer, {controller})
 
-                updateGeoJSONData(layer, {controller})
+                layer.on('add', update)
+
+                update({controller})
             }
         } else {
             container.querySelector(`#${container.id}-collapse`).classList.remove('d-none')
