@@ -448,7 +448,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
         return await mapForFetchStaticGeoJSON.get(mapKey)
     }
 
-    const signal = controller.signal
+    const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
             const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)),1)
@@ -457,7 +457,7 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
             
             const clone = turf.clone(geojson)
             clone.features = clone.features.filter(feature => {
-                if (signal.aborted) throw new Error()
+                if (signal?.aborted) throw new Error()
                 const featureBbox = turf.bboxPolygon(turf.bbox(feature))
                 return turf.booleanIntersects(filterBbox, featureBbox)
             })
