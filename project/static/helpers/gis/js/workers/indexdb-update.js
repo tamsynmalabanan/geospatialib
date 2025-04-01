@@ -37,8 +37,8 @@ self.onmessage = (e) => {
                 newQueryGeom,
                 currentGeoJSON._queryGeom,
             ]))
-            console.log(newGeoJSON)
         }
+        console.log(newGeoJSON)
     }
     
     self.postMessage({geojson:newGeoJSON})
