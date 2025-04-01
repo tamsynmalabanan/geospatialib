@@ -418,7 +418,8 @@ const fetchGeoJSON = async ({
                 
                 const features = cached.features.filter(feature => {
                     if (controller?.signal.aborted) return
-                    return turf.booleanIntersects(queryExtent, feature)
+                    const featureBbox = turf.bboxPolygon(turf.bbox(feature))
+                    return turf.booleanIntersects(queryExtent, featureBbox)
                 })
                 
                 if (cached.features.length === 0) return
