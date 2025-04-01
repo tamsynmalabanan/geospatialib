@@ -65,14 +65,17 @@ const handleLeafletLayerGroups = (map) => {
             },
 
             getBounds: () => {
-                const bounds = [
+                const layers = [
                     ...layerGroup.getLayers(), 
                     ...layerGroup._ch.getHiddenLayers()
-                ].map(async layer => {
-                    const layerBounds = await getLeafletLayerBounds(layer)
-                    console.log(layerBounds)
-                    if (layerBounds) return L.rectangle(layerBounds).toGeoJSON()
-                }).filter(bound => bound)
+                ]
+                const bounds = await (async () => {
+                    layers.map(async layer => {
+                        const layerBounds = await getLeafletLayerBounds(layer)
+                        console.log(layerBounds)
+                        if (layerBounds) return L.rectangle(layerBounds).toGeoJSON()
+                    }).filter(bound => bound)
+                })()
                 console.log(bounds)
                 if (!bounds.length) return
 
