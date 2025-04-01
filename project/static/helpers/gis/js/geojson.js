@@ -427,7 +427,6 @@ const fetchGeoJSON = async ({
             })()
             
             if (!geojson) {
-                console.log('here')
                 geojson = await handler(event, {...options, controller, abortBtns})
                 if (!geojson?.features?.length) return
                 
