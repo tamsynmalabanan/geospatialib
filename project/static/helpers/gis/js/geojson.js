@@ -1,22 +1,21 @@
 const handleGeoJSON = async (geojson, {
     controller,
+    defaultGeom,
 } = {}) => {
     const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
     const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
-    const queryGeom = geojson._queryGeom
-
+    
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
     
-        feature.geometry = feature.geometry || queryGeom
-        const geomAssigned = !feature.geometry && queryGeom
+        feature.geometry = feature.geometry || defaultGeom
+        const geomAssigned = !feature.geometry && defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
             await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)        
         }
         
         if (feature.id) feature.properties.feature_id = feature.id
-        feature.properties.gslId = generateRandomString()
     }
 }
 
@@ -387,11 +386,12 @@ const fetchGeoJSON = async ({
     const queryGeom = queryFeature.geometry
 
     const dbKey = [handler.name, JSON.stringify(options)].join(';')
-    const mapKey = [dbKey, turf.bbox(queryGeom).join(','), controller.id].join(';')
+    const mapKey = [dbKey, turf.bbox(defaultGeom).join(','), controller.id].join(';')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
         return await mapForFetchGeoJSON.get(mapKey)
     }
+
     
     const geojsonPromise = (async () => {
         try {
@@ -413,8 +413,8 @@ const fetchGeoJSON = async ({
                 if (!geojson) return
                 if (!geojson.features.length) return
                 
-                geojson._queryGeom = queryGeom
-                handleGeoJSON(geojson, {controller, abortBtns})
+                geojson._queryGeom = latlng ? turf.buffer(queryGeom, 1/100000) : queryGeom
+                handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
                 
                 const {type, features, _queryGeom} = geojson
                 await updateGeoJSONOnDB(dbKey, {type, features, _queryGeom})
@@ -499,18 +499,4 @@ const downloadGeoJSON = (geojson, fileName) => {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-}
-
-const featuresAreSimilar = (feature1, feature2) => {
-    const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
-    const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
-    return propertiesEqual && geometriesEqual
-}
-
-const hasSimilarFeature = (featureList, targetFeature) => {
-    for (const feature of featureList) {
-        if (featuresAreSimilar(feature, targetFeature)) return true
-    }
-
-    return false
 }

@@ -1,11 +1,25 @@
 self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
-self.importScripts('/static/helpers/gis/js/geojson.js')
+
+const featuresAreSimilar = (feature1, feature2) => {
+    const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
+    const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
+    return propertiesEqual && geometriesEqual
+}
+
+const hasSimilarFeature = (featureList, targetFeature) => {
+    for (const feature of featureList) {
+        if (featuresAreSimilar(feature, targetFeature)) return true
+    }
+
+    return false
+}
 
 self.onmessage = (e) => {
     const {newGeoJSON, currentGeoJSON} = e.data
+    console.log(newGeoJSON)
+    console.log(currentGeoJSON)
     
     if (currentGeoJSON) {
-        console.log(currentGeoJSON)
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
@@ -15,6 +29,7 @@ self.onmessage = (e) => {
         const newQueryGeom = newQueryIsPoint ? turf.buffer(
             newGeoJSON._queryGeom, 1/100000
         ) : newGeoJSON._queryGeom
+        console.log(newQueryGeom)
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
@@ -22,6 +37,7 @@ self.onmessage = (e) => {
                 newQueryGeom,
                 currentGeoJSON._queryGeom,
             ]))
+            console.log(newGeoJSON)
         }
     }
     
