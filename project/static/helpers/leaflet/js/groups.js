@@ -135,7 +135,7 @@ const handleLeafletLayerGroups = (map) => {
                 ]) 
             })
 
-            const boundFeatures = await Promise.all(
+            const bounds = await Promise.all(
                 layers.map(async layer => {
                     const b = await getLeafletLayerBounds(layer)
                     if (!b) return
@@ -148,8 +148,9 @@ const handleLeafletLayerGroups = (map) => {
                 })
             );
             
-            console.log(boundFeatures)
-            return
+            if (!bounds.length) return
+
+            await zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
         },
     }
 
