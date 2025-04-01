@@ -64,7 +64,7 @@ const handleLeafletLayerGroups = (map) => {
                 layerGroup._ch.getHiddenLayers().forEach(l => layerGroup._ch.showLayer(l))
             },
 
-            getBounds: () => {
+            getBounds: async () => {
                 const layers = [
                     ...layerGroup.getLayers(), 
                     ...layerGroup._ch.getHiddenLayers()
