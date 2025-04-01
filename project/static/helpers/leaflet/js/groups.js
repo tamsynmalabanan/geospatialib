@@ -135,10 +135,17 @@ const handleLeafletLayerGroups = (map) => {
                     ...group._ch.getHiddenLayers()
                 ]
                 layers.forEach(async layer => {
-                    const bounds = await getLeafletLayerBounds(layer)
-                    console.log(bounds)
+                    const b = await getLeafletLayerBounds(layer)
+                    if (!b) return
+
+                    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+                        return boundFeatures.push(turf.point([b.getEast, b.getNorth]))
+                    } else {
+                        return boundFeatures.push(L.rectangle(b).toGeoJSON())
+                    }
                 })
             })
+            console.log(boundFeatures)
         },
     }
 
