@@ -69,15 +69,13 @@ const handleLeafletLayerGroups = (map) => {
                     ...layerGroup.getLayers(), 
                     ...layerGroup._ch.getHiddenLayers()
                 ].map(layer => {
-                    console.log(layer.getBounds, layer)
-                    if (layer.getBounds) {
-                        return L.rectangle(layer.getBounds()).toGeoJSON()
-                    }
+                    const layerBounds = getLeafletLayerBounds(layer)
+                    if (layerBounds) return L.rectangle(layerBounds).toGeoJSON()
                 }).filter(bound => bound)
     
-                if (bounds.length) {
-                    return L.geoJSON(turf.featureCollection(bounds)).getBounds()
-                }
+                if (!bounds.length) return
+
+                return L.geoJSON(turf.featureCollection(bounds)).getBounds()
             },
         }
 
