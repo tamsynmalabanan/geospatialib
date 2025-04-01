@@ -264,6 +264,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         } else {
             layerLegend.remove()
 
+            console.log(layer._events.add)
             layer.off('add', 'update')
 
             const paneName = layer.options.pane
