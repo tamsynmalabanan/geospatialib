@@ -407,6 +407,7 @@ const fetchGeoJSON = async ({
                 
                 const cached = await getFromGeoJSONDB(dbKey)
                 if (!cached) return
+                const clone = turf.clone(cached)
                 
                 try {
                     const equalBounds = turf.booleanEqual(queryExtent, cached._queryExtent)
@@ -416,15 +417,15 @@ const fetchGeoJSON = async ({
                     return
                 }
                 
-                const features = cached.features.filter(feature => {
+                cached.features = cached.features.filter(feature => {
                     if (controller?.signal.aborted) return
                     const featureBbox = turf.bboxPolygon(turf.bbox(feature))
                     return turf.booleanIntersects(queryExtent, featureBbox)
                 })
                 
                 if (cached.features.length === 0) return
-                saveToGeoJSONDB(dbKey, cached)
-                return turf.featureCollection(features)
+                saveToGeoJSONDB(dbKey, clone)
+                return cached)
             })()
             
             if (!geojson) {
