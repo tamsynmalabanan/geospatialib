@@ -516,13 +516,18 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
                 layers.classList.remove('d-none')
+
+                toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+
+                if (layers.querySelectorAll('collapse').length) {
+                    toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+                }
                 
-                Array(
-                    'clear',
-                    'collapse',
-                    'visibility',
-                    'zoomin',
-                ).forEach(toolName => toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false)
+                if (layers.querySelectorAll('input.form-check-input').length) {
+                    Array('visibility', 'zoomin').forEach(toolName => {
+                        toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false
+                    })
+                }
             } else {
                 error.classList.remove('d-none')
             }
