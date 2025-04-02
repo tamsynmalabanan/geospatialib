@@ -547,7 +547,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
-                category.className = `d-flex flex-column gap-3`
+                category.className = `d-flex flex-column gap-1`
                 body.appendChild(category)
 
                 const categorySections = document.createElement('div')
@@ -580,7 +580,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const data = sections[sectionName]
         
                     const section = document.createElement('div')
-                    section.className = `d-flex flex-column gap-2 border-start border-2 ps-2`
+                    section.className = `d-flex flex-column gap-2 border-start border-2 ms-2`
                     categorySections.appendChild(section)
     
                     const sectionHeader = document.createElement('span')
