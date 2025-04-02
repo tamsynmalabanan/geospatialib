@@ -554,9 +554,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 categorySections.id =generateRandomString()
                 categorySections.className = 'collapse show'
 
-                const categoryHeader = document.createElement('button')
-                categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()} text-start d-flex`
-                categoryHeader.setAttribute('type', 'button')
+                const categoryHeader = document.createElement('div')
+                categoryHeader.className = `d-flex`
+                // categoryHeader.setAttribute('type', 'button')
                 categoryHeader.setAttribute('data-bs-toggle', 'collapse')
                 categoryHeader.setAttribute('aria-expanded', 'true')
                 categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
