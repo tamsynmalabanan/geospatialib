@@ -537,7 +537,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                         if (!layer._visibility) layer._visibility = {}
                                         layer._visibility.min = field.value
-                                        field.setAttribute('min', field.value)
+                                        maxScaleField.setAttribute('min', field.value)
                                     }
                                 }
                             },
