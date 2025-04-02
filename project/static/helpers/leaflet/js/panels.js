@@ -517,6 +517,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             fieldAttrs: {
                                 name:'minScale',
                                 type:'number',
+                                min: '10',
+                                max: '5000000',
+                                step: '10',
                             },
                             fieldClassName: 'form-control-sm',
                         },
@@ -524,6 +527,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             fieldAttrs: {
                                 name:'maxScale',
                                 type:'number',
+                                min: '10',
+                                max: '5000000',
+                                step: '10',
                             },
                             fieldClassName: 'form-control-sm',
                         },
@@ -535,10 +541,17 @@ const handleLeafletStylePanel = (map, parent) => {
         
         Object.keys(styleFields).forEach(categoryName => {
             const category = document.createElement('div')
-            category.className = `d-flex gap-3 flex-column`
-            category.innerText = categoryName
+            category.className = `d-flex flex-column`
             body.appendChild(category)
     
+            const categoryHeader = document.createElement('h5')
+            categoryHeader.innerText = categoryName
+            category.appendChild(categoryHeader)
+
+            const categorySections = document.createElement('div')
+            categorySections.className = 'd-flex gap-3'
+            category.appendChild(categorySections)
+
             const sections = styleFields[categoryName]
             Object.keys(sections).forEach(sectionName => {
                 const data = sections[sectionName]
@@ -546,7 +559,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const section = document.createElement('div')
                 section.className = `d-flex gap-3 ${data.className}`
                 section.innerText = sectionName
-                category.appendChild(section)
+                categorySections.appendChild(section)
     
                 const fields = data.fields
                 Object.keys(fields).forEach(fieldName => {
