@@ -532,10 +532,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     'input': (e) => {
                                         const field = e.target
                                         const maxScale = field.closest('form').elements.maxScale.value
-                                        console.log(maxScale && maxScale >= field.value)
+                                        console.log(maxScale >= field.value)
                                         if (maxScale && maxScale >= field.value) field.value = maxScale
 
-                                        if (layer._visibility) layer._visibility = {}
+                                        if (!layer._visibility) layer._visibility = {}
                                         layer._visibility.min = field.value
                                     }
                                 }
