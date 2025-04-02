@@ -303,9 +303,28 @@ const getLeafletLayerContextMenu = (e, layer, {
         remove: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Remove ${typeLabel}`,
             btnCallback: (e) => {
-                console.log(e)
-                group._ch.removeHiddenLayer(layer)
-                group.removeLayer(layer)
+                const removeLayer = () => {
+                    group._ch.removeHiddenLayer(layer)
+                    group.removeLayer(layer)
+                }
+                
+                const confirmRemoval = () => {
+                    const btn = document.createElement('button')
+                    btn.className = 'dropdown-item bg-transparent border-0 btn btn-sm fs-12'
+                    btn.addEventListener('click', removeLayer)
+                    
+                    const label = createSpan(
+                        'Are you sure you want to remove this layer?', 
+                        {className:'pe-none'}
+                    )
+                    btn.appendChild(label)
+                    
+                    const parentElement = e.target.parentElement
+                    parentElement.innerHTML = ''
+                    parentElement.appendChild(btn)
+                }
+
+                confirmRemoval()
             }
         },
 
