@@ -503,7 +503,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
-    select.addEventListener('input', () => {
+    select.addEventListener('change', () => {
         const newSelection = select.options[select.selectedIndex].value
         if (newSelection === currentSelection) return
 
