@@ -465,19 +465,25 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const container = document.createElement('div')
-    container.className = 'd-flex p-3'
+    container.className = 'd-flex p-3 flex-grow-1 flex-column gap-3'
     parent.appendChild(container)
 
-    const select = document.createElement('select')
-    select.className = 'form-select'
-    select.setAttribute('name', 'layer')
-    container.appendChild(select)
+    const select = createFormFloating({
+        parent: container,
+        fieldTag: 'select', 
+        fieldAttrs: {
+            name: 'layer',
+        },
+        labelText: 'Layer'
+    }).querySelector('select')
+
+    const body = document.createElement('div')
+    body.className = 'd-flex flex-column flex-grow-1 overflow-auto'
+    container.appendChild(body)
 
     let currentSelection
     select.addEventListener('focus', () => {
         currentSelection = select.options[select.selectedIndex]?.value
-        console.log('currentSelection', currentSelection)
-        
         select.innerHTML = ''
 
         const mapContainer = map.getContainer()
@@ -495,9 +501,11 @@ const handleLeafletStylePanel = (map, parent) => {
 
     select.addEventListener('change', () => {
         const newSelection = select.options[select.selectedIndex].value
-        console.log('newSelection', newSelection)
+        if (newSelection === currentSelection) return
 
-        console.log(newSelection === currentSelection)
+        body.innerHTML = ''
+
+
     })
 }
 

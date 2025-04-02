@@ -428,7 +428,7 @@ const createObjectTRs = (object, parent, {
     for (const key in object) handler(key, object[key])
 }
 
-const createModel = ({
+const createModal = ({
     titleText,
     parent,
     bodyContent,
@@ -475,4 +475,30 @@ const createModel = ({
     btn.className = `btn btn-${getPreferredTheme()}`
     btn.innerText = footerBtnText
     footer.appendChild(btn)
+
+     return modal
+}
+
+const createFormFloating = ({
+    parent,
+    fieldTag = 'input',
+    fieldAttrs = {},
+    fieldId,
+    labelText = '',
+} = {}) => {
+    const container = document.createElement('div')
+    container.className = `form-floating`
+    parent?.appendChild(container)
+
+    const field = document.createElement(fieldTag)
+    field.id = fieldId || generateRandomString()
+    field.className = `${fieldTag === 'select' ? 'form-select' : 'form-control'}`
+    Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
+    container.appendChild(field)
+
+    const label = document.createElement('label')
+    label.setAttribute('for', field.id)
+    label.innerText = labelText
+    
+    return container
 }
