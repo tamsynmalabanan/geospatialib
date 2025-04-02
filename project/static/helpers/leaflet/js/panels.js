@@ -523,6 +523,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
                 }
                 
+                console.log(layers.querySelectorAll('input.form-check-input'))
                 if (layers.querySelectorAll('input.form-check-input').length) {
                     Array('visibility', 'zoomin').forEach(toolName => {
                         toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false
