@@ -557,11 +557,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 const data = sections[sectionName]
     
                 const section = document.createElement('div')
-                section.className = `d-flex flex-column`
+                section.className = `d-flex flex-column gap-2`
                 categorySections.appendChild(section)
 
                 const sectionHeader = document.createElement('span')
-                sectionHeader.className = 'fs-6'
+                sectionHeader.style.fontSize = '14px'
                 sectionHeader.innerText = sectionName
                 section.appendChild(sectionHeader)
 
