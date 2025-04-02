@@ -543,7 +543,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
-                category.className = `d-flex flex-column gap-2`
+                category.className = `d-flex flex-column gap-2 mt-3`
                 body.appendChild(category)
 
                 const categorySections = document.createElement('div')
