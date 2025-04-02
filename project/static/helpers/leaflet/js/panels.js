@@ -257,7 +257,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                     if (layer._openpopup) {
                         layer._openpopup.openOn(map)
-                        delete map._openpopup
+                        delete layer._openpopup
                     }
                 }
             })
@@ -536,7 +536,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         if (maxScaleValue && maxScaleValue < field.value) field.value = maxScaleValue
 
                                         if (!layer._visibility) layer._visibility = {}
-                                        layer._visibility.min = field.value
+                                        layer._visibility.min = parseInt(field.value)
                                         maxScaleField.setAttribute('min', field.value)
                                     }
                                 }
@@ -559,7 +559,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         if (minScaleValue && minScaleValue > field.value) field.value = minScaleValue
 
                                         if (!layer._visibility) layer._visibility = {}
-                                        layer._visibility.max = field.value
+                                        layer._visibility.max = parseInt(field.value)
                                         minScaleField.setAttribute('max', field.value)
                                     }
                                 }
