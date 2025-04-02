@@ -559,6 +559,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     pane: 'queryPane',
                     geojson: feature, 
                     customStyleParams: queryStyleParams,
+                    group: queryGroup,
                 })
                 queryGroup.addLayer(layer)
     
