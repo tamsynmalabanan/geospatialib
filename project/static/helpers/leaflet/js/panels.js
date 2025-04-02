@@ -327,7 +327,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     
                         if (Math.abs(offset) < 10) return
 
-                        const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
+                        const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         }) 
 
