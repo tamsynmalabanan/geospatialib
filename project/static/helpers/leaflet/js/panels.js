@@ -503,7 +503,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
-    select.addEventListener('change', () => {
+    select.addEventListener('blur', () => {
         const newSelection = select.options[select.selectedIndex].value
         if (newSelection === currentSelection) return
 
@@ -541,7 +541,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
         Object.keys(styleFields).forEach(categoryName => {
             const category = document.createElement('div')
-            category.className = `d-flex flex-column gap-3`
+            category.className = `d-flex flex-column`
             body.appendChild(category)
     
             const categoryHeader = document.createElement('h6')
@@ -557,7 +557,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const data = sections[sectionName]
     
                 const section = document.createElement('div')
-                section.className = `d-flex gap-3 flex-column`
+                section.className = `d-flex flex-column`
                 categorySections.appendChild(section)
 
                 const sectionHeader = document.createElement('h6')
