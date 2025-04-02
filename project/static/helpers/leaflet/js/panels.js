@@ -523,7 +523,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     name:'minScale',
                                     type:'number',
                                     min: '0',
-                                    max: '5000000',
+                                    max: layer._visibility?.max || '5000000',
                                     step: '10',
                                     value: layer._visibility?.min || '',
                                 },
@@ -532,7 +532,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     'input': (e) => {
                                         const field = e.target
                                         const maxScale = field.closest('form').elements.maxScale.value
-                                        console.log(field.value, maxScale)
+                                        console.log(maxScale && maxScale >= field.value)
+                                        if (maxScale && maxScale >= field.value) field.value = maxScale
+
+                                        if (layer._visibility) layer._visibility = {}
+                                        layer._visibility.min = field.value
                                     }
                                 }
                             },
@@ -540,7 +544,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldAttrs: {
                                     name:'maxScale',
                                     type:'number',
-                                    min: '0',
+                                    min: layer._visibility?.min || '0',
                                     max: '5000000',
                                     step: '10',
                                     value: layer._visibility?.max || '',
