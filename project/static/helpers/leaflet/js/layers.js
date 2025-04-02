@@ -201,6 +201,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     })()
     
     const map = group._map
+    const mapContainer = map.getContainer()
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
     
@@ -253,7 +254,8 @@ const getLeafletLayerContextMenu = (e, layer, {
         style: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Style ${typeLabel}`,
             btnCallback: async () => {
-                
+                mapContainer.querySelector(`[data-bs-target="#${mapContainer.id}-panels-accordion-style"]`).click()
+                // mapContainer.querySelector(`#${mapContainer.id}-panels-accordion-style select[name="layers"]`).value()
             }
         },
 
