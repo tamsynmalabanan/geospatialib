@@ -513,8 +513,6 @@ const handleLeafletStylePanel = (map, parent) => {
             if (!layer) return
 
             body.innerHTML = ''
-    
-            console.log(newSelection)
 
             const styleFields = {
                 'Rendering': {
@@ -530,6 +528,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: layer._visibility?.min || '',
                                 },
                                 fieldClassName: 'form-control-sm',
+                                events: {
+                                    'input': (e) => {
+                                        console.log(e)
+                                    }
+                                }
                             },
                             'Maximum scale': {
                                 fieldAttrs: {
