@@ -541,10 +541,10 @@ const handleLeafletStylePanel = (map, parent) => {
         
         Object.keys(styleFields).forEach(categoryName => {
             const category = document.createElement('div')
-            category.className = `d-flex flex-column`
+            category.className = `d-flex flex-column gap-3`
             body.appendChild(category)
     
-            const categoryHeader = document.createElement('h5')
+            const categoryHeader = document.createElement('h6')
             categoryHeader.innerText = categoryName
             category.appendChild(categoryHeader)
 
@@ -557,16 +557,23 @@ const handleLeafletStylePanel = (map, parent) => {
                 const data = sections[sectionName]
     
                 const section = document.createElement('div')
-                section.className = `d-flex gap-3 ${data.className}`
-                section.innerText = sectionName
+                section.className = `d-flex gap-3 flex-column`
                 categorySections.appendChild(section)
+
+                const sectionHeader = document.createElement('h6')
+                sectionHeader.innerText = sectionName
+                section.appendChild(sectionHeader)
+
+                const sectionFields = document.createElement('div')
+                sectionFields.className = `d-flex gap-3 ${data.className}`
+                section.appendChild(sectionFields)
     
                 const fields = data.fields
                 Object.keys(fields).forEach(fieldName => {
                     createFormFloating({
                         ...fields[fieldName], 
                         labelText: fieldName,
-                        parent: section,
+                        parent: sectionFields,
                     })
                 })
             })
