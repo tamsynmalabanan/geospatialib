@@ -464,10 +464,14 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletStylePanel = (map, parent) => {
+    const container = document.createElement('div')
+    container.className = 'd-flex p-3'
+    parent.appendChild(container)
+
     const select = document.createElement('select')
-    select.className = 'm-3 form-select'
+    select.className = 'form-select'
     select.setAttribute('name', 'layer')
-    parent.appendChild(select)
+    container.appendChild(select)
     select.addEventListener('click', () => {
         select.innerHTML = ''
 
