@@ -555,7 +555,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 categorySections.className = 'collapse show'
 
                 const categoryHeader = document.createElement('button')
-                categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()} text-start dropdown-toggle`
+                categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()} text-start d-flex`
                 categoryHeader.setAttribute('type', 'button')
                 categoryHeader.setAttribute('data-bs-toggle', 'collapse')
                 categoryHeader.setAttribute('aria-expanded', 'true')
@@ -580,7 +580,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const data = sections[sectionName]
         
                     const section = document.createElement('div')
-                    section.className = `d-flex flex-column gap-2`
+                    section.className = `d-flex flex-column gap-2 border-start border-2 ps-2`
                     categorySections.appendChild(section)
     
                     const sectionHeader = document.createElement('span')
