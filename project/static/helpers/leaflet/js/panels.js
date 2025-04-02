@@ -465,7 +465,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const select = document.createElement('select')
-    select.className = 'm-3'
+    select.className = 'm-3 form-select'
     select.setAttribute('name', 'layer')
     parent.appendChild(select)
     select.addEventListener('click', () => {
