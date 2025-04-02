@@ -506,7 +506,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
         body.innerHTML = ''
 
-
     })
 }
 
