@@ -589,7 +589,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     section.appendChild(sectionHeader)
     
                     const sectionFields = document.createElement('div')
-                    sectionFields.className = `d-flex gap-3 ${data.className}`
+                    sectionFields.className = `d-flex flex-wrap gap-2 ${data.className}`
                     section.appendChild(sectionFields)
         
                     const fields = data.fields
