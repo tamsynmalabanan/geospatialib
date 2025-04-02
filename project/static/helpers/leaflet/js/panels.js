@@ -465,7 +465,6 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const container = document.createElement('form')
-    container.setAttribute('')
     container.className = 'd-flex p-3 flex-grow-1 flex-column gap-3'
     parent.appendChild(container)
 
