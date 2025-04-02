@@ -315,7 +315,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                     btn.addEventListener('click', removeLayer)
                     
                     const label = createSpan(
-                        'Are you sure you want to remove this layer?', 
+                        'Confirm layer removal', 
                         {className:'pe-none text-wrap'}
                     )
                     btn.appendChild(label)
