@@ -225,9 +225,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             title: 'Clear legend layers',
             disabled: true,
             btnClickHandler: (e) => {
-                // clearLayers(tools)
-                console.log(e)
-                contextMenuHandler(e, {
+                const menuContainer = contextMenuHandler(e, {
                     confirm: {
                         innerText: `Confirm to clear legend`,
                         btnCallback: async () => {
@@ -235,6 +233,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     },            
                 })
+                console.log(menuContainer)
             }
         },
         // divider2: {

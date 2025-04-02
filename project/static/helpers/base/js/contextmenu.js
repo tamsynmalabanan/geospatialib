@@ -38,6 +38,8 @@ const contextMenuHandler = (e, menuItems) => {
 
     menuContainer.style.left = `${(windowWidth-e.x-menuContainerWidth-10) >= 0 ? e.x : e.x-menuContainerWidth}px`
     menuContainer.style.top = `${(windowHeight-e.y-menuContainerHeight-10) >= 0 ? e.y : e.y-menuContainerHeight}px`
+
+    return menuContainer
 }
 
 document.addEventListener('DOMContentLoaded', () => {
