@@ -561,7 +561,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 categoryHeader.setAttribute('aria-expanded', 'true')
                 categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
                 categoryHeader.setAttribute('aria-controls', categorySections.id)
-                categoryHeader.innerText = categoryName
+                
+                const categoryLabel = document.createElement('span')
+                categoryLabel.innerText = categoryName
+                categoryHeader.appendChild(categoryLabel)
+                
+                const categoryDropdown = createIcon({
+                    className:'dropdown-toggle ms-auto', 
+                    parent:categoryHeader, 
+                    peNone:true
+                })
 
                 category.appendChild(categoryHeader)
                 category.appendChild(categorySections)
