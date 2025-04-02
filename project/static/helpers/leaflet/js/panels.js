@@ -547,15 +547,23 @@ const handleLeafletStylePanel = (map, parent) => {
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
-                category.className = `d-flex flex-column`
+                category.className = `d-flex flex-column gap-3`
                 body.appendChild(category)
-        
-                const categoryHeader = document.createElement('h6')
-                categoryHeader.innerText = categoryName
-                category.appendChild(categoryHeader)
-    
+
                 const categorySections = document.createElement('div')
-                categorySections.className = 'd-flex gap-3'
+                categorySections.id =generateRandomString()
+                categorySections.className = 'd-flex gap-3 collapse show'
+
+                const categoryHeader = document.createElement('button')
+                categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()}`
+                categoryHeader.setAttribute('type', 'button')
+                categoryHeader.setAttribute('data-bs-toggle', 'collapse')
+                categoryHeader.setAttribute('aria-expanded', 'true')
+                categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
+                categoryHeader.setAttribute('aria-controls', categorySections.id)
+                categoryHeader.innerText = categoryName
+
+                category.appendChild(categoryHeader)
                 category.appendChild(categorySections)
     
                 const sections = styleFields[categoryName]
