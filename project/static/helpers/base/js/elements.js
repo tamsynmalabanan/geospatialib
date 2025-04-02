@@ -427,3 +427,48 @@ const createObjectTRs = (object, parent, {
 
     for (const key in object) handler(key, object[key])
 }
+
+const createModel = (title, {
+    parent,
+    bodyContent,
+}={}) => {
+    const modal = document.createElement('div')
+    modal.className = 'modal'
+    modal.setAttribute('tabindex', '-1')
+    parent?.appendChild(modal)
+
+    const dialog = document.createElement('div')
+    dialog.className = 'modal-dialog'
+    modal.appendChild(dialog)
+
+    const content = document.createElement('div')
+    content.className = 'modal-content'
+    dialog.appendChild(content)
+
+    const header = document.createElement('div')
+    header.className = 'modal-header'
+    content.appendChild(header)
+
+    const title = document.createElement('h5')
+    title.className = 'modal-title'
+    title.innerText = title
+    header.appendChild(title)
+
+    const close = document.createElement('button')
+    close.className = 'btn-close'
+    close.setAttribute('type', 'button')
+    close.setAttribute('data-bs-dismiss', 'modal')
+    close.setAttribute('aria-label', 'Close')
+    header.appendChild(close)
+
+    const body = document.createElement('div')
+    if (bodyContent) body.innerHTML = bodyContent
+    content.appendChild('body')
+
+    const footer = document.createElement('div')
+    footer.className = 'modal-footer'
+    content.appendChild(footer)
+
+    const 
+
+}

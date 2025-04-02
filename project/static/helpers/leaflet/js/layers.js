@@ -242,14 +242,21 @@ const getLeafletLayerContextMenu = (e, layer, {
                 group.hasLayer(layer) ? removeLayer(layer, isLegendGroup) : addLayer(layer)
             }
         },
-        showProperties: !feature || !Object.keys(feature.properties).length ? null : {
-            innerText: `Show properties`,
+        propertiesTable: !feature || !Object.keys(feature.properties).length ? null : {
+            innerText: `Show properties table`,
             btnCallback: async () => {
                 await zoomToLeafletLayer(layer, map)
                 if (!group.hasLayer(layer)) addLayer(layer)
                 layer.fire('click')
             }
         },
+        style: !isLegendGroup || isLegendFeature ? null : {
+            innerText: `Style ${typeLabel}`,
+            btnCallback: async () => {
+                
+            }
+        },
+
         // refreshData: !isLegendGroup || isLegendFeature ? null : {
         //     innerText: `Refresh ${typeLabel}`,
         //     btnCallback: async () => {

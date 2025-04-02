@@ -516,7 +516,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
 
-                if (layers.querySelectorAll('collapse').length) {
+                if (layers.querySelectorAll('.collapse').length) {
                     toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
                 }
                 
