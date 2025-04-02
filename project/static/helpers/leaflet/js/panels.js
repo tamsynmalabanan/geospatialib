@@ -514,6 +514,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
             body.innerHTML = ''
     
+            console.log(newSelection)
+
             const styleFields = {
                 'Rendering': {
                     'Visibility': {
