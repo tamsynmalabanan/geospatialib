@@ -254,8 +254,9 @@ const getLeafletLayerContextMenu = (e, layer, {
         style: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Style ${typeLabel}`,
             btnCallback: async () => {
-                mapContainer.querySelector(`[data-bs-target="#${mapContainer.id}-panels-accordion-style"]`).click()
-                // mapContainer.querySelector(`#${mapContainer.id}-panels-accordion-style select[name="layers"]`).value()
+                const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
+                mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()
+                mapContainer.querySelector(`${styleAccordionSelector} select[name="layers"]`).click()
             }
         },
 
