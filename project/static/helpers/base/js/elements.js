@@ -493,7 +493,7 @@ const createFormFloating = ({
 
     const field = document.createElement(fieldTag)
     field.id = fieldId || generateRandomString()
-    field.className = `${fieldClassName} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
+    field.className = `flex-grow-1 ${fieldClassName} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     container.appendChild(field)
     
