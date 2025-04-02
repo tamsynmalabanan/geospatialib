@@ -465,12 +465,14 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const select = document.createElement('select')
+    select.className = 'm-3'
+    select.setAttribute('name', 'layer')
     parent.appendChild(select)
     select.addEventListener('click', () => {
         select.innerHTML = ''
 
         const mapContainer = map.getContainer()
-        const legendContainer = mapContainer.querySelectorAll(`#${mapContainer.id}-panels-legend-layers`)
+        const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
         const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
         const layers = Array.from(legends).map(l => map._ch.getLegendLayer(parseInt(l.dataset.layerId)))
         console.log(layers)
