@@ -256,7 +256,10 @@ const getLeafletLayerContextMenu = (e, layer, {
             btnCallback: async () => {
                 const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
                 mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()
-                mapContainer.querySelector(`${styleAccordionSelector} select[name="layers"]`).click()
+
+                const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
+                console.log(styleAccordion)
+                // mapContainer.querySelector(`${styleAccordionSelector} select[name="layers"]`).click()
             }
         },
 
