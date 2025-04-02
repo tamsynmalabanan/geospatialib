@@ -224,29 +224,17 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconClass: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
-            btnClickHandler: () => {
-                console.log(this)
-                clearLayers(tools)
+            btnClickHandler: (e) => {
+                // clearLayers(tools)
 
-                // const confirmRemoval = () => {
-                //     const btn = document.createElement('button')
-                //     btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
-                //     btn.addEventListener('click', () => {
-                //         clearLayers(tools)
-                //     })
-                    
-                //     const label = createSpan(
-                //         'Confirm layer removal', 
-                //         {className:'pe-none text-wrap'}
-                //     )
-                //     btn.appendChild(label)
-                    
-                //     const parentElement = e.target.parentElement
-                //     parentElement.innerHTML = ''
-                //     parentElement.appendChild(btn)
-                // }
-
-                // confirmRemoval()
+                contextMenuHandler(e, {
+                    confirm: {
+                        innerText: `Confirm to clear legend`,
+                        btnCallback: async () => {
+                            clearLayers(tools)
+                        }
+                    },            
+                })
             }
         },
         // divider2: {
