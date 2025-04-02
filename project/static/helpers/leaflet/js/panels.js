@@ -560,7 +560,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 section.className = `d-flex flex-column`
                 categorySections.appendChild(section)
 
-                const sectionHeader = document.createElement('h6')
+                const sectionHeader = document.createElement('span')
+                sectionHeader.className = 'fs-6'
                 sectionHeader.innerText = sectionName
                 section.appendChild(sectionHeader)
 
