@@ -189,7 +189,7 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const updateGeoJSONData = async (layer, {controller}) => {
+const updateGeoJSONData = async (layer, {controller} = {}) => {
     const map = layer._map
     if (!map) return
 
