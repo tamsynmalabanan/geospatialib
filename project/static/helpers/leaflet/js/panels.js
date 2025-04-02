@@ -5,6 +5,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     clearLayersHandler,
     toolHandler,
     excludeToolbar,
+    excludeLayers,
     abortRemark = 'Aborted.'
 } = {}) => {
     const template = {}
@@ -97,12 +98,33 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         }    
     }
 
-    const layers = document.createElement('div')
-    layers.id = `${baseId}-layers`
-    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
-    parent.appendChild(layers)
-    template.layers = layers
+    if (!excludeLayers) {
+        const layers = document.createElement('div')
+        layers.id = `${baseId}-layers`
+        layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
+        parent.appendChild(layers)
+        template.layers = layers
+        
+        template.clearLayers = (tools) => {
+            layers.innerHTML = ''
+            layers.classList.add('d-none')
     
+            if (clearLayersHandler) clearLayersHandler()
+                
+            for (const tool in tools) {
+                const data = tools[tool]
+                if (data.disabled) {
+                    toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
+                }
+            }    
+    
+            if (statusBar) {
+                parent.querySelector(`#${baseId}-status-spinner`).classList.add('d-none')
+                parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
+            }
+        }
+    }
+
     if (statusBar) {
         const status = document.createElement('div')
         status.id = `${baseId}-status`
@@ -140,24 +162,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         error.appendChild(errorRemarkDiv)    
     }
 
-    template.clearLayers = (tools) => {
-        layers.innerHTML = ''
-        layers.classList.add('d-none')
-
-        if (clearLayersHandler) clearLayersHandler()
-            
-        for (const tool in tools) {
-            const data = tools[tool]
-            if (data.disabled) {
-                toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
-            }
-        }    
-
-        if (statusBar) {
-            parent.querySelector(`#${baseId}-status-spinner`).classList.add('d-none')
-            parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
-        }
-    }
     return template
 }
 
@@ -476,6 +480,7 @@ const handleLeafletStylePanel = (map, parent) => {
         clearLayers,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
         excludeToolbar: true,
+        excludeLayers: true,
     })
 }
 
