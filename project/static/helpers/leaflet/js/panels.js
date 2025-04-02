@@ -4,19 +4,11 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     errorRemark = '',
     clearLayersHandler,
     toolHandler,
-    abortRemark = 'Aborted.'
 } = {}) => {
     const template = {}
 
     const mapContainer = map.getContainer()
     const baseId = `${mapContainer.id}-panels-${name}`
-
-    template.resetController = (currentController) => {
-        if (currentController) currentController.abort(abortRemark)
-        const controller = new AbortController()
-        controller.id = generateRandomString()
-        return controller
-    }
 
     const toolbar = document.createElement('div')
     toolbar.id = `${baseId}-toolbar`
@@ -24,6 +16,68 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     parent.appendChild(toolbar)
     template.toolbar = toolbar
     
+    const layers = document.createElement('div')
+    layers.id = `${baseId}-layers`
+    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
+    parent.appendChild(layers)
+    template.layers = layers
+    
+    if (statusBar) {
+        const status = document.createElement('div')
+        status.id = `${baseId}-status`
+        status.className = 'd-flex flex-column'
+        parent.appendChild(status)
+        template.status = status
+        
+        const spinner = document.createElement('div')
+        spinner.id = `${status.id}-spinner`
+        spinner.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
+        status.appendChild(spinner)
+        template.spinner = spinner
+
+        const spinnerIcon = document.createElement('div')
+        spinnerIcon.className = 'spinner-border spinner-border-sm'
+        spinnerIcon.setAttribute('role', 'status')
+        spinner.appendChild(spinnerIcon)
+        
+        const spinnerRemarkDiv = document.createElement('div')
+        spinnerRemarkDiv.innerText = spinnerRemark
+        spinner.appendChild(spinnerRemarkDiv)
+    
+        const error = document.createElement('div')
+        error.id = `${status.id}-error`
+        error.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
+        status.appendChild(error)
+        template.error = error
+
+        const errorIcon = document.createElement('div')
+        errorIcon.className = 'bi bi-exclamation-triangle-fill'
+        error.appendChild(errorIcon)
+        
+        const errorRemarkDiv = document.createElement('div')
+        errorRemarkDiv.innerText = errorRemark
+        error.appendChild(errorRemarkDiv)    
+    }
+
+    template.clearLayers = (tools) => {
+        layers.innerHTML = ''
+        layers.classList.add('d-none')
+
+        if (clearLayersHandler) clearLayersHandler()
+            
+        for (const tool in tools) {
+            const data = tools[tool]
+            if (data.disabled) {
+                toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
+            }
+        }    
+
+        if (statusBar) {
+            parent.querySelector(`#${baseId}-status-spinner`).classList.add('d-none')
+            parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
+        }
+    }
+
     template.toolsHandler = (tools) => {
         Object.keys(tools).forEach(toolId => {
             const data = tools[toolId]
@@ -92,68 +146,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         })
     
         return tools
-    }    
-
-    const layers = document.createElement('div')
-    layers.id = `${baseId}-layers`
-    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
-    parent.appendChild(layers)
-    template.layers = layers
-    
-    template.clearLayers = (tools) => {
-        layers.innerHTML = ''
-        layers.classList.add('d-none')
-
-        if (clearLayersHandler) clearLayersHandler()
-            
-        for (const tool in tools) {
-            const data = tools[tool]
-            if (data.disabled) {
-                toolbar.querySelector(`#${toolbar.id}-${tool}`).disabled = true
-            }
-        }    
-
-        if (statusBar) {
-            parent.querySelector(`#${baseId}-status-spinner`).classList.add('d-none')
-            parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
-        }
-    }
-
-    if (statusBar) {
-        const status = document.createElement('div')
-        status.id = `${baseId}-status`
-        status.className = 'd-flex flex-column'
-        parent.appendChild(status)
-        template.status = status
-        
-        const spinner = document.createElement('div')
-        spinner.id = `${status.id}-spinner`
-        spinner.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
-        status.appendChild(spinner)
-        template.spinner = spinner
-
-        const spinnerIcon = document.createElement('div')
-        spinnerIcon.className = 'spinner-border spinner-border-sm'
-        spinnerIcon.setAttribute('role', 'status')
-        spinner.appendChild(spinnerIcon)
-        
-        const spinnerRemarkDiv = document.createElement('div')
-        spinnerRemarkDiv.innerText = spinnerRemark
-        spinner.appendChild(spinnerRemarkDiv)
-    
-        const error = document.createElement('div')
-        error.id = `${status.id}-error`
-        error.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
-        status.appendChild(error)
-        template.error = error
-
-        const errorIcon = document.createElement('div')
-        errorIcon.className = 'bi bi-exclamation-triangle-fill'
-        error.appendChild(errorIcon)
-        
-        const errorRemarkDiv = document.createElement('div')
-        errorRemarkDiv.innerText = errorRemark
-        error.appendChild(errorRemarkDiv)    
     }
 
     return template
@@ -165,13 +157,18 @@ const handleLeafletLegendPanel = (map, parent) => {
         layers,
         clearLayers,
         toolsHandler,
-        resetController,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
-        abortRemark: 'Map moved or zoomed.',
         clearLayersHandler: () => map._ch.clearLegendLayers()
     })
 
-    let controller = resetController()
+    let controller
+    const resetController = () => {
+        if (controller) controller.abort('Map moved or zoomed.')
+        controller = new AbortController()
+        controller.id = generateRandomString()
+        return controller
+    }
+    resetController()
 
     const tools = toolsHandler({
         zoomin: {
@@ -245,9 +242,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
-    map.on('movestart zoomstart', () => {
-        controller = resetController(controller)
-    })
+    map.on('movestart zoomstart', resetController)
     
     let timeout
     map.on('moveend zoomend', (e) => {
@@ -469,7 +464,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletStylePanel = (map, parent) => {
-    
+
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
@@ -482,12 +477,10 @@ const handleLeafletQueryPanel = (map, parent) => {
         error,
         clearLayers,
         toolsHandler,
-        resetController
     } = createLeafletMapPanelTemplate(map, parent, 'query', {
         statusBar: true,
         spinnerRemark: 'Running query...',
         errorRemark: 'Query was interrupted.',
-        abortRemark: 'New querystarted.',
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
             clearLayers(tools)
@@ -527,7 +520,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
 
-                if (layers.querySelectorAll('.collapse').length) {
+                if (layers.querySelectorAll('collapse').length) {
                     toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
                 }
                 
@@ -549,7 +542,14 @@ const handleLeafletQueryPanel = (map, parent) => {
         // iconGlow: true,
     }
 
-    let controller = resetController()
+    let controller
+    const resetController = () => {
+        if (controller) controller.abort('New query started.')
+        controller = new AbortController()
+        controller.id = generateRandomString()
+        return controller
+    }
+    resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
