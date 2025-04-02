@@ -322,47 +322,70 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                     const mouseMoveHandler = (e2) => {
                         const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
-                        container.style.top =`${newY - startY}px`;
+                        const offset = newY - startY
+                        container.style.top =`${offset}px`;
                     
-                        const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
+                        if (Math.abs(offset) < 10) return
+
+                        const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                        })
+                        }) 
 
-                        const referenceParent = referenceLegend?.parentElement
+                        const parent = referenceLegend?.parentElement || layers
 
-                        console.log(referenceLegend, referenceParent)
+                        if (offset < 0) {
+                            if (referenceLegend) {
+                                parent.insertBefore(container, referenceLegend)
+                            } else {
+                                parent.insertBefore(container, parent.firstChild)
+                            }
+                        } else {
+                            if (referenceLegend && referenceLegend.nextSibling) {
+                                parent.insertBefore(container, referenceLegend.nextSibling)
+                            } else {
+                                parent.appendChild(container)
+                            }
+                        }
+
+                        const layerLegends = Array.from(layers.children).reverse()
+                        for (let i=0; i<layerLegends.length; i++) {
+                            const child = layerLegends[i]
+                            const paneName = child.dataset.layerPane
+                            const pane = map.getPane(paneName)
+                            pane.style.zIndex = i + 200
+                        }
                     }   
                     
                     const mouseUpHandler = (e3) => {
-                        const offset = parseInt(container.style.top)
+                        // const offset = parseInt(container.style.top)
 
-                        if (Math.abs(offset) >= 10) {
-                            const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
-                                if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                            }) 
+                        // if (Math.abs(offset) >= 10) {
+                        //     const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
+                        //         if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
+                        //     }) 
     
-                            if (offset < 0) {
-                                if (referenceLegend) {
-                                    layers.insertBefore(container, referenceLegend)
-                                } else {
-                                    layers.insertBefore(container, layers.firstChild)
-                                }
-                            } else {
-                                if (referenceLegend && referenceLegend.nextSibling) {
-                                    layers.insertBefore(container, referenceLegend.nextSibling)
-                                } else {
-                                    layers.appendChild(container)
-                                }
-                            }
+                        //     if (offset < 0) {
+                        //         if (referenceLegend) {
+                        //             layers.insertBefore(container, referenceLegend)
+                        //         } else {
+                        //             layers.insertBefore(container, layers.firstChild)
+                        //         }
+                        //     } else {
+                        //         if (referenceLegend && referenceLegend.nextSibling) {
+                        //             layers.insertBefore(container, referenceLegend.nextSibling)
+                        //         } else {
+                        //             layers.appendChild(container)
+                        //         }
+                        //     }
     
-                            const layerLegends = Array.from(layers.children).reverse()
-                            for (let i=0; i<layerLegends.length; i++) {
-                                const child = layerLegends[i]
-                                const paneName = child.dataset.layerPane
-                                const pane = map.getPane(paneName)
-                                pane.style.zIndex = i + 200
-                            }
-                        }
+                        //     const layerLegends = Array.from(layers.children).reverse()
+                        //     for (let i=0; i<layerLegends.length; i++) {
+                        //         const child = layerLegends[i]
+                        //         const paneName = child.dataset.layerPane
+                        //         const pane = map.getPane(paneName)
+                        //         pane.style.zIndex = i + 200
+                        //     }
+                        // }
 
                         container.style.top = '0px'
                         container.classList.remove('z-3', 'highlight')
