@@ -503,83 +503,85 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
-    select.addEventListener('change', () => {
-        const newSelection = select.options[select.selectedIndex].value
-        if (newSelection === currentSelection) return
-
-        body.innerHTML = ''
-
-        const styleFields = {
-            'Rendering': {
-                'Visibility': {
-                    fields: {
-                        'Minimum scale': {
-                            fieldAttrs: {
-                                name:'minScale',
-                                type:'number',
-                                min: '10',
-                                max: '5000000',
-                                step: '10',
+    Array('change', 'blur').forEach(trigger => {
+        select.addEventListener(trigger, () => {
+            const newSelection = select.options[select.selectedIndex].value
+            if (newSelection === currentSelection) return
+    
+            body.innerHTML = ''
+    
+            const styleFields = {
+                'Rendering': {
+                    'Visibility': {
+                        fields: {
+                            'Minimum scale': {
+                                fieldAttrs: {
+                                    name:'minScale',
+                                    type:'number',
+                                    min: '10',
+                                    max: '5000000',
+                                    step: '10',
+                                },
+                                fieldClassName: 'form-control-sm',
                             },
-                            fieldClassName: 'form-control-sm',
-                        },
-                        'Maximum scale': {
-                            fieldAttrs: {
-                                name:'maxScale',
-                                type:'number',
-                                min: '10',
-                                max: '5000000',
-                                step: '10',
+                            'Maximum scale': {
+                                fieldAttrs: {
+                                    name:'maxScale',
+                                    type:'number',
+                                    min: '10',
+                                    max: '5000000',
+                                    step: '10',
+                                },
+                                fieldClassName: 'form-control-sm',
                             },
-                            fieldClassName: 'form-control-sm',
                         },
-                    },
-                    className: ''
+                        className: ''
+                    }
                 }
             }
-        }
+            
+            Object.keys(styleFields).forEach(categoryName => {
+                const category = document.createElement('div')
+                category.className = `d-flex flex-column`
+                body.appendChild(category)
         
-        Object.keys(styleFields).forEach(categoryName => {
-            const category = document.createElement('div')
-            category.className = `d-flex flex-column`
-            body.appendChild(category)
+                const categoryHeader = document.createElement('h6')
+                categoryHeader.innerText = categoryName
+                category.appendChild(categoryHeader)
     
-            const categoryHeader = document.createElement('h6')
-            categoryHeader.innerText = categoryName
-            category.appendChild(categoryHeader)
-
-            const categorySections = document.createElement('div')
-            categorySections.className = 'd-flex gap-3'
-            category.appendChild(categorySections)
-
-            const sections = styleFields[categoryName]
-            Object.keys(sections).forEach(sectionName => {
-                const data = sections[sectionName]
+                const categorySections = document.createElement('div')
+                categorySections.className = 'd-flex gap-3'
+                category.appendChild(categorySections)
     
-                const section = document.createElement('div')
-                section.className = `d-flex flex-column gap-2`
-                categorySections.appendChild(section)
-
-                const sectionHeader = document.createElement('span')
-                sectionHeader.style.fontSize = '14px'
-                sectionHeader.innerText = sectionName
-                section.appendChild(sectionHeader)
-
-                const sectionFields = document.createElement('div')
-                sectionFields.className = `d-flex gap-3 ${data.className}`
-                section.appendChild(sectionFields)
+                const sections = styleFields[categoryName]
+                Object.keys(sections).forEach(sectionName => {
+                    const data = sections[sectionName]
+        
+                    const section = document.createElement('div')
+                    section.className = `d-flex flex-column gap-2`
+                    categorySections.appendChild(section)
     
-                const fields = data.fields
-                Object.keys(fields).forEach(fieldName => {
-                    createFormFloating({
-                        ...fields[fieldName], 
-                        labelText: fieldName,
-                        parent: sectionFields,
+                    const sectionHeader = document.createElement('span')
+                    sectionHeader.style.fontSize = '14px'
+                    sectionHeader.innerText = sectionName
+                    section.appendChild(sectionHeader)
+    
+                    const sectionFields = document.createElement('div')
+                    sectionFields.className = `d-flex gap-3 ${data.className}`
+                    section.appendChild(sectionFields)
+        
+                    const fields = data.fields
+                    Object.keys(fields).forEach(fieldName => {
+                        createFormFloating({
+                            ...fields[fieldName], 
+                            labelText: fieldName,
+                            parent: sectionFields,
+                        })
                     })
                 })
             })
         })
-    })
+    }) 
 
 }
 
