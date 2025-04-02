@@ -475,7 +475,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
     let currentSelection
     select.addEventListener('focus', () => {
-        currentSelection = select.options[select.selectedIndex].value
+        currentSelection = select.options[select.selectedIndex]?.value
         console.log(currentSelection)
         
         select.innerHTML = ''
