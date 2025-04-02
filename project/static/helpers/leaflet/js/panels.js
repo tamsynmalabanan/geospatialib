@@ -510,7 +510,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
     Array('change', 'blur').forEach(trigger => {
         select.addEventListener(trigger, () => {
-            const newSelection = select.options[select.selectedIndex].value
+            const newSelection = select.options[select.selectedIndex]?.value
             if (newSelection === currentSelection) return
     
             body.innerHTML = ''
