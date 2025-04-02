@@ -552,7 +552,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const categorySections = document.createElement('div')
                 categorySections.id =generateRandomString()
-                categorySections.className = 'd-flex gap-3 collapse show'
+                categorySections.className = 'collapse show'
 
                 const categoryHeader = document.createElement('button')
                 categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()}`
