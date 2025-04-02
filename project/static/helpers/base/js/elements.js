@@ -34,11 +34,11 @@ const createIcon = ({className='', parent, peNone=true} = {}) => {
     return icon
 }
 
-const createSpan = (innerText, {id, className, parent} = {}) => {
+const createSpan = (innerText, {id, className = '', parent} = {}) => {
     const label = document.createElement('span')
     if (id) label.id = id
     label.innerText = innerText
-    label.className = className || ''
+    label.className = `pe-none ${className}`
     parent?.appendChild(label)
 
     return label
