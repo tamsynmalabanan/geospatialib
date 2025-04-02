@@ -22,7 +22,7 @@ const contextMenuHandler = (e, menuItems) => {
             data.btnCallback = (e) => {
                 L.DomEvent.stopPropagation(e)
                 L.DomEvent.preventDefault(e)
-                menuContainer.remove()
+                if (!data.keepMenuOn) menuContainer.remove()
                 btnCallback(e)
             }
         }

@@ -302,6 +302,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Remove ${typeLabel}`,
+            keepMenuOn: true,
             btnCallback: (e) => {
                 const removeLayer = () => {
                     group._ch.removeHiddenLayer(layer)
