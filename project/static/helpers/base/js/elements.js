@@ -495,10 +495,11 @@ const createFormFloating = ({
     field.className = `${fieldTag === 'select' ? 'form-select' : 'form-control'}`
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     container.appendChild(field)
-
+    
     const label = document.createElement('label')
     label.setAttribute('for', field.id)
     label.innerText = labelText
+    container.appendChild(label)
     
     return container
 }
