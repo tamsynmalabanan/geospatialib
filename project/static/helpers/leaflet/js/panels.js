@@ -482,10 +482,6 @@ const handleLeafletStylePanel = (map, parent) => {
         labelText: 'Layer'
     }).querySelector('select')
 
-    const hr = document.createElement('hr')
-    hr.className = ''
-    container.appendChild(hr)
-
     const body = document.createElement('div')
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
     container.appendChild(body)
@@ -547,7 +543,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
-                category.className = `d-flex flex-column gap-1`
+                category.className = `d-flex flex-column gap-2`
                 body.appendChild(category)
 
                 const categorySections = document.createElement('div')
@@ -555,8 +551,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 categorySections.className = 'collapse show'
 
                 const categoryHeader = document.createElement('div')
-                categoryHeader.className = `d-flex`
-                // categoryHeader.setAttribute('type', 'button')
+                categoryHeader.className = `d-flex fs-6`
                 categoryHeader.setAttribute('data-bs-toggle', 'collapse')
                 categoryHeader.setAttribute('aria-expanded', 'true')
                 categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
