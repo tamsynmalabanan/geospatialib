@@ -471,7 +471,7 @@ const handleLeafletStylePanel = (map, parent) => {
     const select = createFormFloating({
         parent: container,
         fieldTag: 'select', 
-        fieldClassName: 'form-select-sm'
+        fieldClassName: 'form-select-sm',
         fieldAttrs: {
             name: 'layer',
         },
