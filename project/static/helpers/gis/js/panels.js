@@ -15,6 +15,9 @@ const createMapPanels = (container, {} = {}) => {
         'legend': {
             label: `Legend`,
         },
+        'style': {
+            label: `Style`,
+        },
         'query': {
             label: `Query`,
             active: true

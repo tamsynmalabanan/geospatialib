@@ -4,23 +4,104 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     errorRemark = '',
     clearLayersHandler,
     toolHandler,
+    excludeToolbar,
+    abortRemark = 'Aborted.'
 } = {}) => {
     const template = {}
 
     const mapContainer = map.getContainer()
     const baseId = `${mapContainer.id}-panels-${name}`
 
-    const toolbar = document.createElement('div')
-    toolbar.id = `${baseId}-toolbar`
-    toolbar.className = 'd-flex px-3 py-2 flex-wrap'
-    parent.appendChild(toolbar)
-    template.toolbar = toolbar
+    template.resetController = () => {
+        if (controller) controller.abort(abortRemark)
+        controller = new AbortController()
+        controller.id = generateRandomString()
+        return controller
+    }
+
+    if (!excludeToolbar) {
+        const toolbar = document.createElement('div')
+        toolbar.id = `${baseId}-toolbar`
+        toolbar.className = 'd-flex px-3 py-2 flex-wrap'
+        parent.appendChild(toolbar)
+        template.toolbar = toolbar
+        
+        const layers = document.createElement('div')
+        layers.id = `${baseId}-layers`
+        layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
+        parent.appendChild(layers)
+        template.layers = layers
+
+        template.toolsHandler = (tools) => {
+            Object.keys(tools).forEach(toolId => {
+                const data = tools[toolId]
+                if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
+        
+                const tag = data.tag || 'button'
+                const element = tag !== 'button' ?
+                customCreateElement(tag, data) :
+                createButton({...data,
+                    id: `${toolbar.id}-${toolId}`,
+                    className:`btn-sm btn-${getPreferredTheme()}`,
+                    clickHandler: async (event) => {
+                        L.DomEvent.stopPropagation(event);
+                        L.DomEvent.preventDefault(event);        
+                        
+                        const btn = event.target
+                        const [panelName, currentMode] = map._panelMode || []
+                        const activate = currentMode !== toolId
+                        const mapClickHandler = activate ? data.mapClickHandler : null 
+                        const btnClickHandler = activate ? data.btnClickHandler : null     
+                        const skipToolHandler = !toolHandler || data.toolHandler === false
     
-    const layers = document.createElement('div')
-    layers.id = `${baseId}-layers`
-    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
-    parent.appendChild(layers)
-    template.layers = layers
+                        if (activate && currentMode) {
+                            document.querySelector(`#${mapContainer.id}-panels-${panelName}-toolbar-${currentMode}`).click()
+                        }
+                        
+                        btn.classList.toggle('btn-primary', mapClickHandler)
+                        btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
+                        mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
+                        map._panelMode = [name, mapClickHandler ? toolId : undefined]
+        
+                        if (mapClickHandler) {
+                            const panelMapClickHandler = async (e) => {
+                                if (isLeafletControlElement(e.originalEvent.target) || map._panelMode[1] !== toolId) return
+        
+                                map.off('click', panelMapClickHandler)
+                                enableLeafletLayerClick(map)
+                                
+                                skipToolHandler ? await mapClickHandler() : await toolHandler(e, mapClickHandler)
+                                if (btn.classList.contains('btn-primary')) btn.click()
+                            }
+                            
+                            disableLeafletLayerClick(map)
+                            map.on('click', panelMapClickHandler)
+                        } else {
+                            enableLeafletLayerClick(map)
+                            map._events.click = map._events.click?.filter(handler => {
+                                return handler.fn.name !== 'panelMapClickHandler'
+                            })
+                        }
+                        
+                        if (btnClickHandler) {
+                            skipToolHandler ? await btnClickHandler(event) : await toolHandler(event, btnClickHandler)
+                        }
+                    }
+                })
+        
+                if (data.altShortcut) document.addEventListener('keydown', (e) => {
+                    if (e.altKey && e.key === data.altShortcut) {
+                        L.DomEvent.preventDefault(e)
+                        element.click()
+                    }
+                })        
+                
+                toolbar.appendChild(element)
+            })
+        
+            return tools
+        }    
+    }
     
     if (statusBar) {
         const status = document.createElement('div')
@@ -77,77 +158,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             parent.querySelector(`#${baseId}-status-error`).classList.add('d-none')
         }
     }
-
-    template.toolsHandler = (tools) => {
-        Object.keys(tools).forEach(toolId => {
-            const data = tools[toolId]
-            if (data.altShortcut && data.title) data.title = `${data.title} (alt+${data.altShortcut})` 
-    
-            const tag = data.tag || 'button'
-            const element = tag !== 'button' ?
-            customCreateElement(tag, data) :
-            createButton({...data,
-                id: `${toolbar.id}-${toolId}`,
-                className:`btn-sm btn-${getPreferredTheme()}`,
-                clickHandler: async (event) => {
-                    L.DomEvent.stopPropagation(event);
-                    L.DomEvent.preventDefault(event);        
-                    
-                    const btn = event.target
-                    const [panelName, currentMode] = map._panelMode || []
-                    const activate = currentMode !== toolId
-                    const mapClickHandler = activate ? data.mapClickHandler : null 
-                    const btnClickHandler = activate ? data.btnClickHandler : null     
-                    const skipToolHandler = !toolHandler || data.toolHandler === false
-
-                    if (activate && currentMode) {
-                        document.querySelector(`#${mapContainer.id}-panels-${panelName}-toolbar-${currentMode}`).click()
-                    }
-                    
-                    btn.classList.toggle('btn-primary', mapClickHandler)
-                    btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
-                    mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
-                    map._panelMode = [name, mapClickHandler ? toolId : undefined]
-    
-                    if (mapClickHandler) {
-                        const panelMapClickHandler = async (e) => {
-                            if (isLeafletControlElement(e.originalEvent.target) || map._panelMode[1] !== toolId) return
-    
-                            map.off('click', panelMapClickHandler)
-                            enableLeafletLayerClick(map)
-                            
-                            skipToolHandler ? await mapClickHandler() : await toolHandler(e, mapClickHandler)
-                            if (btn.classList.contains('btn-primary')) btn.click()
-                        }
-                        
-                        disableLeafletLayerClick(map)
-                        map.on('click', panelMapClickHandler)
-                    } else {
-                        enableLeafletLayerClick(map)
-                        map._events.click = map._events.click?.filter(handler => {
-                            return handler.fn.name !== 'panelMapClickHandler'
-                        })
-                    }
-                    
-                    if (btnClickHandler) {
-                        skipToolHandler ? await btnClickHandler(event) : await toolHandler(event, btnClickHandler)
-                    }
-                }
-            })
-    
-            if (data.altShortcut) document.addEventListener('keydown', (e) => {
-                if (e.altKey && e.key === data.altShortcut) {
-                    L.DomEvent.preventDefault(e)
-                    element.click()
-                }
-            })        
-            
-            toolbar.appendChild(element)
-        })
-    
-        return tools
-    }
-
     return template
 }
 
@@ -157,18 +167,14 @@ const handleLeafletLegendPanel = (map, parent) => {
         layers,
         clearLayers,
         toolsHandler,
+        resetController,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
+        abortRemark: 'Map moved or zoomed.',
         clearLayersHandler: () => map._ch.clearLegendLayers()
     })
 
     let controller
-    const resetController = () => {
-        if (controller) controller.abort('Map moved or zoomed.')
-        controller = new AbortController()
-        controller.id = generateRandomString()
-        return controller
-    }
-    resetController()
+    controller = resetController()
 
     const tools = toolsHandler({
         zoomin: {
@@ -463,6 +469,15 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 }
 
+const handleLeafletStylePanel = (map, parent) => {
+    const {
+        layers,
+        clearLayers,
+    } = createLeafletMapPanelTemplate(map, parent, 'legend', {
+        excludeToolbar: true,
+    })
+}
+
 const handleLeafletQueryPanel = (map, parent) => {
     const queryGroup = map._ch.getLayerGroups().query
     const {
@@ -473,10 +488,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         error,
         clearLayers,
         toolsHandler,
+        resetController
     } = createLeafletMapPanelTemplate(map, parent, 'query', {
         statusBar: true,
         spinnerRemark: 'Running query...',
         errorRemark: 'Query was interrupted.',
+        abortRemark: 'New querystarted.',
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
             clearLayers(tools)
@@ -539,13 +556,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     let controller
-    const resetController = () => {
-        if (controller) controller.abort('New query started.')
-        controller = new AbortController()
-        controller.id = generateRandomString()
-        return controller
-    }
-    resetController()
+    controller = resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
