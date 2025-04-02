@@ -482,6 +482,9 @@ const handleLeafletStylePanel = (map, parent) => {
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto'
     container.appendChild(body)
 
+    const footer = document.createElement('div')
+    body.className = 'd-flex'
+
     let currentSelection
     select.addEventListener('focus', () => {
         currentSelection = select.options[select.selectedIndex]?.value
@@ -506,8 +509,57 @@ const handleLeafletStylePanel = (map, parent) => {
 
         body.innerHTML = ''
 
-
+        const styleFields = {
+            'Rendering': {
+                'Visibility': {
+                    fields: {
+                        'Minimum scale': {
+                            fieldAttrs: {
+                                name:'minScale',
+                                type:'number',
+                            },
+                            fieldClassName: 'form-control-sm',
+                        },
+                        'Maximum scale': {
+                            fieldAttrs: {
+                                name:'maxScale',
+                                type:'number',
+                            },
+                            fieldClassName: 'form-control-sm',
+                        },
+                    },
+                    className: ''
+                }
+            }
+        }
+        
+        Object.keys(styleFields).forEach(categoryName => {
+            const category = document.createElement('div')
+            category.className = `d-flex gap-3 flex-column`
+            category.innerText = categoryName
+            body.appendChild(category)
+    
+            const sections = styleFields[categoryName]
+            Object.keys(sections).forEach(sectionName => {
+                const data = sections[sectionName]
+    
+                const section = document.createElement('div')
+                section.className = `d-flex gap-3 ${data.className}`
+                section.innerText = sectionName
+                category.appendChild(section)
+    
+                const fields = data.fields
+                Object.keys(fields).forEach(fieldName => {
+                    createFormFloating({
+                        ...fields[fieldName], 
+                        labelText: fieldName,
+                        parent: section,
+                    })
+                })
+            })
+        })
     })
+
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
