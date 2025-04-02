@@ -464,7 +464,17 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletStylePanel = (map, parent) => {
+    const select = document.createElement('select')
+    parent.appendChild(select)
+    select.addEventListener('click', () => {
+        select.innerHTML = ''
 
+        const mapContainer = map.getContainer()
+        const legendContainer = mapContainer.querySelectorAll(`#${mapContainer.id}-panels-legend-layers`)
+        const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
+        const layers = Array.from(legends).map(l => map._ch.getLegendLayer(parseInt(l.dataset.layerId)))
+        console.log(layers)
+    })
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
@@ -682,6 +692,7 @@ const handleLeafletMapPanels = (map) => {
         panel.appendChild(body)
         handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query .accordion-body`))
         handleLeafletLegendPanel(map, body.querySelector(`#${body.id}-accordion-legend .accordion-body`))
+        handleLeafletStylePanel(map, body.querySelector(`#${body.id}-accordion-style .accordion-body`))
         
         return panel
     }
