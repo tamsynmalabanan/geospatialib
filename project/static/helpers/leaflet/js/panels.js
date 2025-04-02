@@ -509,6 +509,9 @@ const handleLeafletStylePanel = (map, parent) => {
             const newSelection = select.options[select.selectedIndex]?.value
             if (newSelection === currentSelection) return
     
+            const layer = map._ch.getLegendLayer(newSelection)
+            if (!layer) return
+
             body.innerHTML = ''
     
             const styleFields = {
@@ -522,6 +525,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     min: '10',
                                     max: '5000000',
                                     step: '10',
+                                    value: layer._visibility?.min || '10',
                                 },
                                 fieldClassName: 'form-control-sm',
                             },
@@ -532,6 +536,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     min: '10',
                                     max: '5000000',
                                     step: '10',
+                                    value: layer._visibility?.max || '5000000',
                                 },
                                 fieldClassName: 'form-control-sm',
                             },
@@ -556,6 +561,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 categoryHeader.setAttribute('aria-expanded', 'true')
                 categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
                 categoryHeader.setAttribute('aria-controls', categorySections.id)
+                categoryHeader.style.cursor = 'pointer'
                 
                 const categoryLabel = document.createElement('span')
                 categoryLabel.innerText = categoryName
