@@ -503,7 +503,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
-    select.addEventListener('blur', () => {
+    select.addEventListener('input', () => {
         const newSelection = select.options[select.selectedIndex].value
         if (newSelection === currentSelection) return
 
