@@ -489,6 +489,7 @@ const handleLeafletStylePanel = (map, parent) => {
             const option = document.createElement('option')
             option.value = l._leaflet_id
             option.text = l._title
+            select.appendChild(option)
         })
     })
 
