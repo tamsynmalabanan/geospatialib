@@ -233,9 +233,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     },            
                 })
-                const btn = menuContainer.querySelector('button')
-                btn.classList.remove('bg-transparent')
-                btn.classList.add('bg-danger')
+                menuContainer.classList.add('bg-danger')
             }
         },
         // divider2: {
