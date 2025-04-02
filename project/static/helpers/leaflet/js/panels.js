@@ -551,6 +551,18 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: layer._visibility?.max || '',
                                 },
                                 fieldClassName: 'form-control-sm',
+                                events: {
+                                    'input': (e) => {
+                                        const field = e.target
+                                        const minScaleField = field.closest('form').elements.minScale
+                                        const minScaleValue = minScaleField.value
+                                        if (minScaleValue && minScaleValue > field.value) field.value = minScaleValue
+
+                                        if (!layer._visibility) layer._visibility = {}
+                                        layer._visibility.max = field.value
+                                        minScaleField.setAttribute('max', field.value)
+                                    }
+                                }
                             },
                         },
                         className: ''
