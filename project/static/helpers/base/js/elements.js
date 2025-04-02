@@ -38,7 +38,7 @@ const createSpan = (innerText, {id, className = '', parent} = {}) => {
     const label = document.createElement('span')
     if (id) label.id = id
     label.innerText = innerText
-    label.className = `pe-none ${className}`
+    label.className = `${className}`
     parent?.appendChild(label)
 
     return label
@@ -298,7 +298,7 @@ const createDropdownMenuLi = ({
         element.className = 'dropdown-item bg-transparent border-0 btn btn-sm fs-12'
         if (btnCallback) element.addEventListener('click', btnCallback)
             
-        const label = createSpan(innerText)
+        const label = createSpan(innerText, {className:'pe-none'})
         element.appendChild(label)
     }
     
