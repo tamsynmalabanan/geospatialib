@@ -453,7 +453,7 @@ const createModel = ({
 
     const title = document.createElement('h5')
     title.className = 'modal-title'
-    title.innerText = titleText
+    if (titleText) title.innerText = titleText
     header.appendChild(title)
 
     const close = document.createElement('button')
