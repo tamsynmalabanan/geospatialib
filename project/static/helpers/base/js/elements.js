@@ -431,6 +431,7 @@ const createObjectTRs = (object, parent, {
 const createModel = (title, {
     parent,
     bodyContent,
+    footerBtnText = 'Save',
 }={}) => {
     const modal = document.createElement('div')
     modal.className = 'modal'
@@ -469,6 +470,8 @@ const createModel = (title, {
     footer.className = 'modal-footer'
     content.appendChild(footer)
 
-    const 
-
+    const btn = document.createElement('div')
+    btn.className = `btn btn-${getPreferredTheme()}`
+    btn.innerText = footerBtnText
+    footer.appendChild(btn)
 }
