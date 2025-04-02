@@ -488,12 +488,12 @@ const createFormFloating = ({
     labelText = '',
 } = {}) => {
     const container = document.createElement('div')
-    container.className = `form-floating`
+    container.className = `form-floating flex-grow-1`
     parent?.appendChild(container)
 
     const field = document.createElement(fieldTag)
     field.id = fieldId || generateRandomString()
-    field.className = `flex-grow-1 ${fieldClassName} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
+    field.className = `${fieldClassName} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     container.appendChild(field)
     
