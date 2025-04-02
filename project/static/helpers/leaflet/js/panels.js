@@ -478,7 +478,7 @@ const handleLeafletStylePanel = (map, parent) => {
         labelText: 'Layer'
     }).querySelector('select')
 
-    parent.appendChild(document.createElement('hr'))
+    container.appendChild(document.createElement('hr'))
 
     const body = document.createElement('div')
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto'
