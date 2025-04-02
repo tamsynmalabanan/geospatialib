@@ -26,12 +26,6 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         parent.appendChild(toolbar)
         template.toolbar = toolbar
         
-        const layers = document.createElement('div')
-        layers.id = `${baseId}-layers`
-        layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
-        parent.appendChild(layers)
-        template.layers = layers
-
         template.toolsHandler = (tools) => {
             Object.keys(tools).forEach(toolId => {
                 const data = tools[toolId]
@@ -102,6 +96,12 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             return tools
         }    
     }
+
+    const layers = document.createElement('div')
+    layers.id = `${baseId}-layers`
+    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
+    parent.appendChild(layers)
+    template.layers = layers
     
     if (statusBar) {
         const status = document.createElement('div')
