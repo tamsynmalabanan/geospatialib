@@ -130,7 +130,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                     }
                     
                     if (btnClickHandler) {
-                        skipToolHandler ? await btnClickHandler() : await toolHandler(event, btnClickHandler)
+                        skipToolHandler ? await btnClickHandler(event) : await toolHandler(event, btnClickHandler)
                     }
                 }
             })
@@ -226,7 +226,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             disabled: true,
             btnClickHandler: (e) => {
                 // clearLayers(tools)
-
+                console.log(e)
                 contextMenuHandler(e, {
                     confirm: {
                         innerText: `Confirm to clear legend`,
