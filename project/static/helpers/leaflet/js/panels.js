@@ -12,9 +12,9 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     const mapContainer = map.getContainer()
     const baseId = `${mapContainer.id}-panels-${name}`
 
-    template.resetController = () => {
-        if (controller) controller.abort(abortRemark)
-        controller = new AbortController()
+    template.resetController = (currentController) => {
+        if (currentController) currentController.abort(abortRemark)
+        const controller = new AbortController()
         controller.id = generateRandomString()
         return controller
     }
@@ -173,8 +173,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayersHandler: () => map._ch.clearLegendLayers()
     })
 
-    let controller
-    controller = resetController()
+    let controller = resetController()
 
     const tools = toolsHandler({
         zoomin: {
@@ -248,7 +247,9 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
-    map.on('movestart zoomstart', resetController)
+    map.on('movestart zoomstart', () => {
+        controller = resetController(controller)
+    })
     
     let timeout
     map.on('moveend zoomend', (e) => {
@@ -555,8 +556,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         // iconGlow: true,
     }
 
-    let controller
-    controller = resetController()
+    let controller = resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
