@@ -472,14 +472,32 @@ const handleLeafletStylePanel = (map, parent) => {
     select.className = 'form-select'
     select.setAttribute('name', 'layer')
     container.appendChild(select)
-    select.addEventListener('click', () => {
+
+    let currentSelection
+    select.addEventListener('focus', () => {
+        currentSelection = select.options[select.selectedIndex].value
+        console.log(currentSelection)
+        
         select.innerHTML = ''
 
         const mapContainer = map.getContainer()
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
         const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
         const layers = Array.from(legends).map(l => map._ch.getLegendLayer(parseInt(l.dataset.layerId)))
-        console.log(layers)
+        
+        layers.forEach(l => {
+            const option = document.createElement('option')
+            option.value = l._leaflet_id
+            option.text = l._title
+        })
+    })
+
+    select.addEventListener('change', () => {
+        console.log(currentSelection)
+
+        const newSelection = select.options[select.selectedIndex].value
+
+        console.log(newSelection === currentSelection)
     })
 }
 
