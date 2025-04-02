@@ -330,7 +330,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                         const referenceParent = referenceLegend?.parentElement
 
-
+                        console.log(referenceLegend, referenceParent)
                     }   
                     
                     const mouseUpHandler = (e3) => {
