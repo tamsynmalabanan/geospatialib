@@ -316,30 +316,27 @@ const handleLeafletLegendPanel = (map, parent) => {
             Array('mousedown', 'touchstart').forEach(t1 => {
                 moveToggle.addEventListener(t1, (e1) => {
                     const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
-                    container.classList.add('highlight')
-                    container.classList.add('z-3')
+
+                    container.classList.add('z-3', 'highlight')
+                    document.body.classList.add('user-select-none')
 
                     const mouseMoveHandler = (e2) => {
-                        document.body.classList.add('user-select-none')
-                        
                         const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
                         container.style.top =`${newY - startY}px`;
                     
                         const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         })
+
+                        const referenceParent = referenceLegend.parentElement
+
                         
-                        Array.from(layers.children).forEach(c => c.classList.toggle(
-                            'highlight', 
-                            Array(referenceLegend, container).includes(c)
-                        )) 
                     }   
                     
                     const mouseUpHandler = (e3) => {
                         const offset = parseInt(container.style.top)
-                        if (Math.abs(offset) < 10) {
-                            container.style.top = '0px'
-                        } else {
+
+                        if (Math.abs(offset) >= 10) {
                             const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
                                 if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                             }) 
@@ -361,16 +358,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                             const layerLegends = Array.from(layers.children).reverse()
                             for (let i=0; i<layerLegends.length; i++) {
                                 const child = layerLegends[i]
-                                child.style.top = '0px'
-                                
                                 const paneName = child.dataset.layerPane
                                 const pane = map.getPane(paneName)
                                 pane.style.zIndex = i + 200
                             }
                         }
 
-                        container.classList.remove('z-3')
-                        Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
+                        container.style.top = '0px'
+                        container.classList.remove('z-3', 'highlight')
                         document.body.classList.remove('user-select-none')
                     }                
 
