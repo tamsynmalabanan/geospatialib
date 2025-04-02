@@ -428,7 +428,8 @@ const createObjectTRs = (object, parent, {
     for (const key in object) handler(key, object[key])
 }
 
-const createModel = (title, {
+const createModel = ({
+    titleText,
     parent,
     bodyContent,
     footerBtnText = 'Save',
@@ -452,7 +453,7 @@ const createModel = (title, {
 
     const title = document.createElement('h5')
     title.className = 'modal-title'
-    title.innerText = title
+    title.innerText = titleText
     header.appendChild(title)
 
     const close = document.createElement('button')
