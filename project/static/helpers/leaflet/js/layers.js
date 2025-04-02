@@ -259,7 +259,7 @@ const getLeafletLayerContextMenu = (e, layer, {
 
                 const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
                 console.log(styleAccordion)
-                // mapContainer.querySelector(`${styleAccordionSelector} select[name="layers"]`).click()
+                styleAccordion.querySelector(`select[name="layer"]`).click()
             }
         },
 
