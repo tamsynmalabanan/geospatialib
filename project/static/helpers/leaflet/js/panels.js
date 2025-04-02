@@ -328,9 +328,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                             if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
                         })
 
-                        const referenceParent = referenceLegend.parentElement
+                        const referenceParent = referenceLegend?.parentElement
 
-                        
+
                     }   
                     
                     const mouseUpHandler = (e3) => {
