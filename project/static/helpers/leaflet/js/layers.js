@@ -304,15 +304,13 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Remove ${typeLabel}`,
             keepMenuOn: true,
             btnCallback: (e) => {
-                const removeLayer = () => {
-                    group._ch.removeHiddenLayer(layer)
-                    group.removeLayer(layer)
-                }
-                
                 const confirmRemoval = () => {
                     const btn = document.createElement('button')
                     btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
-                    btn.addEventListener('click', removeLayer)
+                    btn.addEventListener('click', () => {
+                        group._ch.removeHiddenLayer(layer)
+                        group.removeLayer(layer)
+                    })
                     
                     const label = createSpan(
                         'Confirm layer removal', 
