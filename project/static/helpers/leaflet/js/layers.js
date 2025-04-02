@@ -311,12 +311,12 @@ const getLeafletLayerContextMenu = (e, layer, {
                 
                 const confirmRemoval = () => {
                     const btn = document.createElement('button')
-                    btn.className = 'dropdown-item bg-transparent border-0 btn btn-sm fs-12'
+                    btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
                     btn.addEventListener('click', removeLayer)
                     
                     const label = createSpan(
                         'Are you sure you want to remove this layer?', 
-                        {className:'pe-none'}
+                        {className:'pe-none text-wrap'}
                     )
                     btn.appendChild(label)
                     
