@@ -555,7 +555,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 categorySections.className = 'collapse show'
 
                 const categoryHeader = document.createElement('button')
-                categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()}`
+                categoryHeader.className = `btn btn-sm btn-${getPreferredTheme()} text-start dropdown-toggle`
                 categoryHeader.setAttribute('type', 'button')
                 categoryHeader.setAttribute('data-bs-toggle', 'collapse')
                 categoryHeader.setAttribute('aria-expanded', 'true')
