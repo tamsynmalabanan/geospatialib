@@ -249,6 +249,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
             Array.from(layers.children).reverse().forEach(async legend => {
+                console.log(map._ch.getLegendLayers(), legend.dataset.layerId)
                 const layer = map._ch.getLegendLayer(legend.dataset.layerId)
                 if (map._ch.hasHiddenLegendLayer(layer) || !layerIsVisible(layer)) return
                 
