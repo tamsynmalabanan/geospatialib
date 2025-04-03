@@ -277,7 +277,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (disable) {
             layerSelect.innerHTML = ''
-            styleAccordion.querySelector(`${mapContainer.id}-panels-style-body`).innerHTML = ''
+            styleAccordion.querySelector(`#${mapContainer.id}-panels-style-body`).innerHTML = ''
         }
     }
 
