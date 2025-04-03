@@ -217,8 +217,8 @@ const getLeafletLayerContextMenu = (e, layer, {
     
     const typeLabel = type === 'feature' ? type : 'layer'
     
-    const addLayer = (l) => group._ch.showLayer(l)
-    const removeLayer = (l, hidden=false) => hidden ? group._ch.hideLayer(l) : group.removeLayer(l)
+    const addLayer = (l) => group._ch.removeHiddenLayer(l)
+    const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
     
     return contextMenuHandler(e, {
         zoomin: {
@@ -373,4 +373,22 @@ const getLeafletLayerContextMenu = (e, layer, {
             }
         },
     })
+}
+
+const layerIsVisible = (layer) => {
+    const map = layer._map
+    const group = layer._group
+    if (!map || !group) return
+
+    const mapScale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
+    const layerMinScale = layer._visibility?.min || 0
+    const layerMaxScale = layer._visibility?.max || 5000000
+    const layerIsVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
+
+    if (layerIsVisible) {
+    } else {
+        group._ch.addInvisibleLayer(layer)
+    }
+
+    return layerIsVisible
 }

@@ -250,7 +250,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         timeout = setTimeout(async () => {
             Array.from(layers.children).reverse().forEach(async legend => {
                 const layer = map._ch.getLegendLayer(legend.dataset.layerId)
-                if (map._ch.hasHiddenLegendLayer(layer)) return
+                if (map._ch.hasHiddenLegendLayer(layer) || map._ch.hasInvisibleLegendLayer(layer)) return
                 
                 if (layer instanceof L.GeoJSON) {
                     await updateGeoJSONData(layer, {controller})
@@ -269,7 +269,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
         
-        if (map._ch.hasHiddenLegendLayer(layer)) {
+        if (map._ch.hasHiddenLegendLayer(layer) || map._ch.hasInvisibleLegendLayer(layer)) {
             layerLegend.querySelector(`#${layerLegend.id}-details`).classList.add('d-none')
         } else {
             layerLegend.remove()
@@ -449,7 +449,9 @@ const handleLeafletLegendPanel = (map, parent) => {
             container.querySelector(`#${container.id}-details`).classList.remove('d-none')
         }
 
-        if (layer instanceof L.GeoJSON) updateGeoJSONData(layer, {controller})
+        if (layer instanceof L.GeoJSON) {
+            updateGeoJSONData(layer, {controller})
+        }
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')

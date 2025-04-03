@@ -190,15 +190,7 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const updateGeoJSONData = async (layer, {controller} = {}) => {
-    const map = layer._map
-    if (!map) return
-
-    const mapScale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
-    const layerMinScale = layer._visibility?.min || 0
-    const layerMaxScale = layer._visibility?.max || 5000000
-    const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
-
-    const data = isVisible ? await layer._fetcher({controller}) : null
+    const data = await layer._fetcher({controller})
 
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {
