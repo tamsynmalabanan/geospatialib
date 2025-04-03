@@ -16,7 +16,6 @@ const handleLeafletLayerGroups = (map) => {
             },
             addHiddenLayer: (layer) => {
                 group._hiddenLayers.push(layer)
-                console.log(layer, group._ch.getHiddenLayers(), group.hasLayer(layer))
                 if (group.hasLayer(layer)) {
                     group.removeLayer(layer)
                 } else {
@@ -41,9 +40,7 @@ const handleLeafletLayerGroups = (map) => {
                 
                 if (layerIsVisible(layer) && addLayer) {
                     group.addLayer(layer)
-                }
-
-                if (!addLayer && match) {
+                } else if (match) {
                     map.fire('layerremove', {layer})
                 }
             },
@@ -80,9 +77,7 @@ const handleLeafletLayerGroups = (map) => {
                 
                 if (addLayer && !group._ch.hasHiddenLayer(layer)) {
                     group.addLayer(layer)
-                }
-                 
-                if (!addLayer && match) {
+                } else if (match) {
                     map.fire('layerremove', {layer})
                 }
             },
@@ -90,7 +85,8 @@ const handleLeafletLayerGroups = (map) => {
             getAllLayers: () => {
                 return [
                     ...group.getLayers(),
-                    ...group._ch.getHiddenLayers()
+                    ...group._ch.getHiddenLayers(),
+                    ...group._ch.getInvisibleLayers()
                 ]
             },
             findLayer: (id) => {
@@ -117,11 +113,10 @@ const handleLeafletLayerGroups = (map) => {
                     ...group.getLayers(),
                     ...group._ch.getInvisibleLayers(),
                 ).forEach(l => {
-                    console.log(l)
                     group._ch.addHiddenLayer(l)
                 })
             },
-            showAllLayers: () => {
+            removeAllHiddenLayers: () => {
                 group._ch.getHiddenLayers().forEach(l => group._ch.removeHiddenLayer(l))
             },
         }
@@ -142,7 +137,7 @@ const handleLeafletLayerGroups = (map) => {
         },
         hasLegendLayer: (layer) => {
             for (const group of map._legendLayerGroups) {
-                if (group.hasLayer(layer) || group._ch.hasHiddenLayer(layer)) {
+                if (group._ch.getAllLayers().includes(layer)) {
                     return group
                 }
             }
@@ -173,9 +168,7 @@ const handleLeafletLayerGroups = (map) => {
             for (const group of map._legendLayerGroups) {
                 layers = [
                     ...layers,
-                    ...group.getLayers(),
-                    ...group._ch.getHiddenLayers(),
-                    ...group._ch.getInvisibleLayers(),
+                    ... group._ch.getAllLayers(),
                 ]
             }
             return layers
@@ -185,22 +178,18 @@ const handleLeafletLayerGroups = (map) => {
         },
         hideLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
-                console.log(group)
                 group._ch.hideAllLayers()
             }
         },
         showLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
-                group._ch.showAllLayers()
+                group._ch.removeAllHiddenLayers()
             }
         },
         zoomToLegendLayers: async () => {
             let layers = []
             map._legendLayerGroups.forEach(group => {
-                layers = layers.concat([
-                    ...group.getLayers(), 
-                    ...group._ch.getHiddenLayers()
-                ]) 
+                layers = layers.concat(group._ch.getAllLayers()) 
             })
 
             const bounds = await Promise.all(
