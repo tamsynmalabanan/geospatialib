@@ -182,7 +182,6 @@ const handleLeafletLegendPanel = (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                console.log(map._ch.hasHiddenLegendLayers())
                 map._ch.hasHiddenLegendLayers() ? 
                 map._ch.showLegendLayers() : 
                 map._ch.hideLegendLayers()
@@ -268,7 +267,6 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 
     map.on('layerremove', (event) => {
-        console.log(event)
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
