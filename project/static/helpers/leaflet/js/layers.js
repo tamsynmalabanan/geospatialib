@@ -240,9 +240,9 @@ const getLeafletLayerContextMenu = (e, layer, {
         visibility: isLegendFeature || disabledCheckbox ? null : {
             innerText: `Toggle visibility`,
             btnCallback: () => {
-                group.hasLayer(layer) || group._ch.hasInvisibleLayer(layer) 
-                ? removeLayer(layer, isLegendGroup) 
-                : addLayer(layer)
+                group._ch.hasHiddenLayer(layer) 
+                ? addLayer(layer)
+                : removeLayer(layer, isLegendGroup) 
             }
         },
         propertiesTable: !feature || !Object.keys(feature.properties).length ? null : {
