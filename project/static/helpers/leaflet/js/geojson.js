@@ -23,11 +23,10 @@ const getLeafletGeoJSONLayer = async ({
     const map = group?._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
 
-    if (!fetcher) {
+    if (!fetcher && geojson) {
         const mapKey = generateRandomString()
-        fetcher = defaultFetcher = async ({filter=true, controller}) => {
-            if (!geojson) return 
-            if (!filter) return geojson
+        fetcher = defaultFetcher = async ({map, controller}) => {
+            if (!map) return geojson
             
             const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
             return await filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
@@ -189,7 +188,10 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const updateGeoJSONData = async (layer, {controller} = {}) => {
-    const data = await layer._fetcher({controller})
+    const data = layer._fetcher ? await layer._fetcher({
+        map: layer._group?._map,
+        controller,
+    }) : null
 
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {

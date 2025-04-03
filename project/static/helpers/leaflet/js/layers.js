@@ -98,7 +98,7 @@ const getLeafletLayerBounds = async (layer) => {
     }
 
     if (layer instanceof L.GeoJSON && layer._fetcher) {
-        const geojson = await layer._fetcher({filter:false})
+        const geojson = await layer._fetcher()
         return L.geoJSON(geojson).getBounds()
     }
 
@@ -195,7 +195,7 @@ const getLeafletLayerContextMenu = (e, layer, {
         try {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
-            if (layer._fetcher?.name === 'defaultFetcher') return layer._fetcher({filter:false})
+            if (layer._fetcher?.name === 'defaultFetcher') return layer._fetcher()
         }
     })()
     
