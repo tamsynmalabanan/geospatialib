@@ -383,7 +383,6 @@ const layerIsVisible = (layer) => {
     const layerMinScale = layer._visibility?.min || 0
     const layerMaxScale = layer._visibility?.max || 5000000
     const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
-    console.log(mapScale, layerMinScale, layerMaxScale, isVisible)
 
     if (isVisible && group._ch.hasInvisibleLayer(layer)) {
         group._ch.removeInvisibleLayer(layer)
