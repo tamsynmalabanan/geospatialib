@@ -329,7 +329,8 @@ const handleLeafletLegendPanel = (map, parent) => {
             if (layers.innerHTML === '') clearLayers(tools)
 
             const styleBody = mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`)
-            if (styleBody.getAttribute('data-layer-id') === layer._leaflet_id) {
+            const styleLayerId = parseInt(styleBody.getAttribute('data-layer-id') || -1)
+            if (styleLayerId === layer._leaflet_id) {
                 styleBody.innerHTML = ''
                 styleBody.removeAttribute('data-layer-id')
             }
