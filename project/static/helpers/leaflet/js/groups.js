@@ -45,6 +45,9 @@ const handleLeafletLayerGroups = (map) => {
             getInvisibleLayers: () => {
                 return group._invisibileLayers
             },
+            getInvisibleLayer: (id) => {
+                return group._ch.getInvisibleLayers().find(l => l._leaflet_id === id)
+            },
             setInvisibleLayers: (invisibleLayers=[]) => {
                 group._invisibileLayers = invisibleLayers
             },
@@ -73,6 +76,11 @@ const handleLeafletLayerGroups = (map) => {
                     ...group.getLayers(),
                     ...group._ch.getHiddenLayers()
                 ]
+            },
+            findLayer: (id) => {
+                return group.getLayer(id) 
+                || group._ch.getHiddenLayer(id) 
+                || group._ch.getInvisibleLayer(id) 
             },
                     
             clearLayer: (layer) => {
@@ -134,7 +142,7 @@ const handleLeafletLayerGroups = (map) => {
         },
         getLegendLayer: (id) => {
             for (const group of map._legendLayerGroups) {
-                const layer = group.getLayer(id) || group._ch.getHiddenLayer(id)
+                const layer = group._ch.findLayer(id)
                 if (layer) return layer
             }
         },
