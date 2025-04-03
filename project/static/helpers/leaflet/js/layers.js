@@ -196,7 +196,6 @@ const getLeafletLayerContextMenu = (e, layer, {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
             if (layer._fetcher?.name === 'defaultFetcher') return layer._fetcher({filter:false})
-            return
         }
     })()
     
@@ -361,7 +360,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                         attribution,
                         pane,
                         group: targetGroup,
-                        fetcher: layer._fetcher 
+                        fetcher: layer._fetcher
                     })
                 }
                 if (newLayer) targetGroup.addLayer(newLayer)
