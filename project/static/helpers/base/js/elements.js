@@ -27,10 +27,11 @@ const createButton = ({
     return btn
 }
 
-const createIcon = ({className='', parent, peNone=true} = {}) => {
+const createIcon = ({className='', parent, peNone=true, title} = {}) => {
     const icon = document.createElement('i')
     icon.className = `${className} ${peNone ? 'pe-none' : ''}`
     if (!peNone) icon.style.cursor = 'pointer'
+    if (title) icon.setAttribute('title', title)
     parent?.appendChild(icon)
 
     return icon

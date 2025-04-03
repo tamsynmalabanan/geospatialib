@@ -271,14 +271,31 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
         
-        if (map._ch.hasHiddenLegendLayer(layer) || map._ch.hasInvisibleLegendLayer(layer)) {
-            layerLegend.querySelector(`#${layerLegend.id}-details`).classList.add('d-none')
+        const isHidden = map._ch.hasHiddenLegendLayer(layer)
+        const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
+        if (isHidden || isInvisible) {
+            const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
+            legendDetails.innerHTML = ''
+
+            if (isHidden) {
+                createIcon({
+                    className: 'bi bi-eye-slash',
+                    parent: legendDetails,
+                    peNone: true,
+                    title: 'Hidden',
+                })
+            }
+            
+            if (isInvisible) {
+                createIcon({
+                    className: 'bi bi-arrows-expand',
+                    parent: legendDetails,
+                    peNone: true,
+                    title: 'Beyond visibility range',
+                })
+            }
         } else {
             layerLegend.remove()
-
-            // const paneName = layer.options.pane
-            // deletePane(map, paneName)
-
             if (layers.innerHTML === '') clearLayers(tools)
         }
 
@@ -447,8 +464,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                     )
                 })
             }
-        } else {
-            container.querySelector(`#${container.id}-details`).classList.remove('d-none')
         }
 
         if (layerIsVisible(layer)) {
@@ -524,7 +539,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const styleFields = {
                 'Rendering': {
-                    'Visibility': {
+                    'Range of visibility': {
                         fields: {
                             'Minimum scale': {
                                 fieldAttrs: {

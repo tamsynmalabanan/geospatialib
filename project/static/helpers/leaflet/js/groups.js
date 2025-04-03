@@ -103,7 +103,6 @@ const handleLeafletLayerGroups = (map) => {
                 const paneName = layer.options.pane
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
-                    console.log('pane deleted')
                 }
             },
             clearAllLayers: () => {
