@@ -34,13 +34,13 @@ const handleLeafletLayerGroups = (map) => {
                 })
                 group._ch.setHiddenLayers(hiddenLayers)
                 
-                if (layerIsVisible) {
-                    if (addLayer) {
-                        group.addLayer(layer)
-                    } else if (match) {
-                        map.fire('layerremove', {layer})
-                    }
-                } 
+                if (layerIsVisible(layer) && addLayer) {
+                    group.addLayer(layer)
+                }
+
+                if (!addLayer && match) {
+                    map.fire('layerremove', {layer})
+                }
             },
             clearHiddenLayers: ({silent=false}={}) => {
                 const hiddenLayers = [...new group._ch.getHiddenLayers()]
@@ -74,13 +74,13 @@ const handleLeafletLayerGroups = (map) => {
                 })
                 group._ch.setInvisibleLayers(invisibleLayers)
                 
-                if (!group._ch.hasHiddenLayer(layer)) {
-                    if (addLayer) {
-                        group.addLayer(layer)
-                    } else if (match) {
-                        map.fire('layerremove', {layer})
-                    }
-                } 
+                if (addLayer && !group._ch.hasHiddenLayer(layer)) {
+                    group.addLayer(layer)
+                }
+                 
+                if (!addLayer && match) {
+                    map.fire('layerremove', {layer})
+                }
             },
                 
             getAllLayers: () => {
@@ -103,6 +103,7 @@ const handleLeafletLayerGroups = (map) => {
                 const paneName = layer.options.pane
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
+                    console.log('pane deleted')
                 }
             },
             clearAllLayers: () => {

@@ -276,8 +276,8 @@ const handleLeafletLegendPanel = (map, parent) => {
         } else {
             layerLegend.remove()
 
-            const paneName = layer.options.pane
-            deletePane(map, paneName)
+            // const paneName = layer.options.pane
+            // deletePane(map, paneName)
 
             if (layers.innerHTML === '') clearLayers(tools)
         }
