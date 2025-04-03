@@ -250,8 +250,8 @@ const handleLeafletLegendPanel = (map, parent) => {
         timeout = setTimeout(async () => {
             Array.from(layers.children).reverse().forEach(async legend => {
                 const leafletId = parseInt(legend.dataset.layerId)
-                console.log(leafletId)
                 const layer = map._ch.getLegendLayer(leafletId)
+                console.log(layer)
                 if (map._ch.hasHiddenLegendLayer(layer) || !layerIsVisible(layer)) return
                 
                 if (layer instanceof L.GeoJSON) {
