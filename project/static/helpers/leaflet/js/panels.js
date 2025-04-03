@@ -486,9 +486,9 @@ const handleLeafletStylePanel = (map, parent) => {
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
     container.appendChild(body)
 
-    let currentSelection
+    let layer
+
     select.addEventListener('focus', () => {
-        currentSelection = select.options[select.selectedIndex]?.value
         select.innerHTML = ''
 
         const mapContainer = map.getContainer()
@@ -504,75 +504,74 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
+    const styleFields = {
+        'Rendering': {
+            'Visibility': {
+                fields: {
+                    'Minimum scale': {
+                        fieldAttrs: {
+                            name:'minScale',
+                            type:'number',
+                            min: '0',
+                            max: layer._visibility?.max || '5000000',
+                            step: '10',
+                            value: layer._visibility?.min || '',
+                        },
+                        fieldClassName: 'form-control-sm',
+                        events: {
+                            'input': (e) => {
+                                const field = e.target
+                                const maxScaleField = field.closest('form').elements.maxScale
+                                const maxScaleValue = maxScaleField.value
+                                if (maxScaleValue && maxScaleValue < field.value) field.value = maxScaleValue
+
+                                if (!layer._visibility) layer._visibility = {}
+                                layer._visibility.min = parseInt(field.value)
+                                maxScaleField.setAttribute('min', field.value)
+
+                                updateGeoJSONData(layer)
+                            }
+                        }
+                    },
+                    'Maximum scale': {
+                        fieldAttrs: {
+                            name:'maxScale',
+                            type:'number',
+                            min: layer._visibility?.min || '0',
+                            max: '5000000',
+                            step: '10',
+                            value: layer._visibility?.max || '',
+                        },
+                        fieldClassName: 'form-control-sm',
+                        events: {
+                            'input': (e) => {
+                                const field = e.target
+                                const minScaleField = field.closest('form').elements.minScale
+                                const minScaleValue = minScaleField.value
+                                if (minScaleValue && minScaleValue > field.value) field.value = minScaleValue
+                                
+                                if (!layer._visibility) layer._visibility = {}
+                                layer._visibility.max = parseInt(field.value)
+                                minScaleField.setAttribute('max', field.value)
+                                
+                                updateGeoJSONData(layer)
+                            }
+                        }
+                    },
+                },
+                className: ''
+            }
+        }
+    }
+
     Array('change', 'blur').forEach(trigger => {
         select.addEventListener(trigger, () => {
-            const newSelection = select.options[select.selectedIndex]?.value
-            if (newSelection === currentSelection) return
+            const newLayerId = select.options[select.selectedIndex]?.value
+            if (layer && newLayerId && newLayerId === layer._leaflet_id) return
     
-            const layer = map._ch.getLegendLayer(newSelection)
-            if (!layer) return
-
             body.innerHTML = ''
-
-            const styleFields = {
-                'Rendering': {
-                    'Visibility': {
-                        fields: {
-                            'Minimum scale': {
-                                fieldAttrs: {
-                                    name:'minScale',
-                                    type:'number',
-                                    min: '0',
-                                    max: layer._visibility?.max || '5000000',
-                                    step: '10',
-                                    value: layer._visibility?.min || '',
-                                },
-                                fieldClassName: 'form-control-sm',
-                                events: {
-                                    'input': (e) => {
-                                        const field = e.target
-                                        const maxScaleField = field.closest('form').elements.maxScale
-                                        const maxScaleValue = maxScaleField.value
-                                        if (maxScaleValue && maxScaleValue < field.value) field.value = maxScaleValue
-
-                                        if (!layer._visibility) layer._visibility = {}
-                                        layer._visibility.min = parseInt(field.value)
-                                        maxScaleField.setAttribute('min', field.value)
-
-                                        updateGeoJSONData(layer)
-                                    }
-                                }
-                            },
-                            'Maximum scale': {
-                                fieldAttrs: {
-                                    name:'maxScale',
-                                    type:'number',
-                                    min: layer._visibility?.min || '0',
-                                    max: '5000000',
-                                    step: '10',
-                                    value: layer._visibility?.max || '',
-                                },
-                                fieldClassName: 'form-control-sm',
-                                events: {
-                                    'input': (e) => {
-                                        const field = e.target
-                                        const minScaleField = field.closest('form').elements.minScale
-                                        const minScaleValue = minScaleField.value
-                                        if (minScaleValue && minScaleValue > field.value) field.value = minScaleValue
-                                        
-                                        if (!layer._visibility) layer._visibility = {}
-                                        layer._visibility.max = parseInt(field.value)
-                                        minScaleField.setAttribute('max', field.value)
-                                        
-                                        updateGeoJSONData(layer)
-                                    }
-                                }
-                            },
-                        },
-                        className: ''
-                    }
-                }
-            }
+            layer = map._ch.getLegendLayer(newLayerId)
+            if (!layer) return
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
