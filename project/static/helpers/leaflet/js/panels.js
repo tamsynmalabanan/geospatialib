@@ -158,7 +158,10 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayers,
         toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
-        clearLayersHandler: () => map._ch.clearLegendLayers()
+        clearLayersHandler: () => {
+            map._ch.clearLegendLayers()
+            disableStyleLayerSelect()
+        }
     })
 
     let controller
@@ -263,6 +266,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                 title: 'Beyond range of visibility',
             })
         }
+    }
+
+    const disableStyleLayerSelect = (disable=true) => {
+        const mapContainer = map.getContainer()
+        const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
+        const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
+        const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
+        layerSelect.disabled = disable
     }
 
     map.on('movestart zoomstart', resetController)
@@ -486,6 +497,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')
+            disableStyleLayerSelect(false)
             for (const tool in tools) {
                 const data = tools[tool]
                 if (data.disabled) {
@@ -514,6 +526,7 @@ const handleLeafletStylePanel = (map, parent) => {
         },
         labelText: 'Layer'
     }).querySelector('select')
+    select.disabled = true
 
     const body = document.createElement('div')
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
