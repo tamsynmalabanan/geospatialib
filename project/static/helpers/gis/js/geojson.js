@@ -474,17 +474,20 @@ const fetchGeoJSONs = async (fetchers, {
     return geojsons
 }
 
-const mapForFetchStaticGeoJSON = new Map()
-const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
+const mapForFetchGeoJSONInMap = new Map()
+const fetchGeoJSONInMap = async (geojson, cacheId, map, {
     controller,
 } = {}) => {
-    if (mapForFetchStaticGeoJSON.has(mapKey)) {
-        return await mapForFetchStaticGeoJSON.get(mapKey)
+    const mapKey = `${cacheId};${map.getContainer().id}`
+    if (mapForFetchGeoJSONInMap.has(mapKey)) {
+        return await mapForFetchGeoJSONInMap.get(mapKey)
     }
 
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
+            const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
+            console.log(turf.area(turf.bboxPolygon(turf.bbox(geojson))))
             const dataBbox = turf.buffer(turf.bboxPolygon(turf.bbox(geojson)), 1/100000)
             const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
             if (!filterBbox) return
@@ -502,11 +505,11 @@ const filterGeoJSONByExtent = async (geojson, queryBbox, mapKey, {
         } catch (error) {
             throw error
         } finally {
-            setTimeout(() => mapForFetchStaticGeoJSON.delete(mapKey), 1000)
+            setTimeout(() => mapForFetchGeoJSONInMap.delete(mapKey), 1000)
         }
     })()
 
-    mapForFetchStaticGeoJSON.set(mapKey, geojsonClone)
+    mapForFetchGeoJSONInMap.set(mapKey, geojsonClone)
     return geojsonClone
 }
 

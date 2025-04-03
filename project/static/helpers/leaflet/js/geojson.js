@@ -24,12 +24,14 @@ const getLeafletGeoJSONLayer = async ({
     const isLegendGroup = map._legendLayerGroups.includes(group)
 
     if (!fetcher && geojson) {
-        const mapKey = generateRandomString()
+        const cacheId = generateRandomString()
+        // cache geojson in indexdb with _queryExtent = geojson bbox, shorter expiration
+        // remove geojson from fetchGeoJSONInMap fn
+
+
         fetcher = defaultFetcher = async ({map, controller}={}) => {
             if (!map) return geojson
-            
-            const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
-            return await filterGeoJSONByExtent(geojson, queryBbox, mapKey, {controller})
+            return await fetchGeoJSONInMap(geojson, cacheId, map, {controller})
         }
     }
     geojsonLayer._fetcher = fetcher
