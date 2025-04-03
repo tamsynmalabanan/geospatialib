@@ -268,8 +268,9 @@ const handleLeafletLegendPanel = (map, parent) => {
         }
     }
 
+    const mapContainer = map.getContainer()
+
     const disableStyleLayerSelect = (disable=true) => {
-        const mapContainer = map.getContainer()
         const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
         const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
         const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
@@ -277,7 +278,9 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (disable) {
             layerSelect.innerHTML = ''
-            styleAccordion.querySelector(`#${mapContainer.id}-panels-style-body`).innerHTML = ''
+            const styleBody = styleAccordion.querySelector(`#${mapContainer.id}-panels-style-body`)
+            styleBody.innerHTML = ''
+            styleBody.removeAttribute('data-layer-id')
         }
     }
 
@@ -324,6 +327,12 @@ const handleLeafletLegendPanel = (map, parent) => {
         } else {
             layerLegend.remove()
             if (layers.innerHTML === '') clearLayers(tools)
+
+            const styleBody = mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`)
+            if (styleBody.getAttribute('data-layer-id') === layer._leaflet_id) {
+                styleBody.innerHTML = ''
+                styleBody.removeAttribute('data-layer-id')
+            }
         }
 
         if (layer instanceof L.GeoJSON) layer.clearLayers()
@@ -567,6 +576,8 @@ const handleLeafletStylePanel = (map, parent) => {
             body.innerHTML = ''
             layer = map._ch.getLegendLayer(newLayerId)
             if (!layer) return
+
+            body.setAttribute('data-layer-id', newLayerId)
 
             const styleFields = {
                 'Rendering': {
