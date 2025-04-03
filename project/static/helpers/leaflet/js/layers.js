@@ -382,15 +382,16 @@ const layerIsVisible = (layer) => {
     const mapScale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
     const layerMinScale = layer._visibility?.min || 0
     const layerMaxScale = layer._visibility?.max || 5000000
-    const layerIsVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
+    const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
+    console.log(mapScale, layerMinScale, layerMaxScale, isVisible)
 
-    if (layerIsVisible && group._ch.hasInvisibleLayer(layer)) {
+    if (isVisible && group._ch.hasInvisibleLayer(layer)) {
         group._ch.removeInvisibleLayer(layer)
     }
     
-    if (!layerIsVisible && group.hasLayer(layer)) {
+    if (!isVisible && group.hasLayer(layer)) {
         group._ch.addInvisibleLayer(layer)
     }
 
-    return layerIsVisible
+    return isVisible
 }
