@@ -34,7 +34,13 @@ const handleLeafletLayerGroups = (map) => {
                 })
                 group._ch.setHiddenLayers(hiddenLayers)
                 
-                addLayer ? group.addLayer(layer) : match ? map.fire('layerremove', {layer}) : null
+                if (layerIsVisible) {
+                    if (addLayer) {
+                        group.addLayer(layer)
+                    } else if (match) {
+                        map.fire('layerremove', {layer})
+                    }
+                } 
             },
             clearHiddenLayers: ({silent=false}={}) => {
                 const hiddenLayers = [...new group._ch.getHiddenLayers()]
@@ -58,17 +64,23 @@ const handleLeafletLayerGroups = (map) => {
                 group._invisibileLayers.push(layer)
                 group.removeLayer(layer)
             },
-            removeInvisibleLayer: (layer, {addLayer=true}={}) => {
+            removeInvisibleLayer: (layer, {addLayer=true}) => {
                 let match
                 
                 const invisibleLayers = group._ch.getInvisibleLayers().filter(l => {
                     const matched = l === layer
                     if (matched) match = l
-                    return matched
+                    return !matched
                 })
                 group._ch.setInvisibleLayers(invisibleLayers)
                 
-                addLayer ? group.addLayer(layer) : match ? map.fire('layerremove', {layer}) : null
+                if (!group._ch.hasHiddenLayer(layer)) {
+                    if (addLayer) {
+                        group.addLayer(layer)
+                    } else if (match) {
+                        map.fire('layerremove', {layer})
+                    }
+                } 
             },
                 
             getAllLayers: () => {
