@@ -289,7 +289,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             if (isInvisible) {
                 createIcon({
-                    className: 'bi bi-arrows-expand',
+                    className: 'bi-exclamation-circle',
                     parent: legendDetails,
                     peNone: false,
                     title: 'Beyond range of visibility',
