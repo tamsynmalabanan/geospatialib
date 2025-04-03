@@ -242,6 +242,29 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
+    const clearLegend = (layerLegend, isHidden, isInvisible) => {
+        const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
+        legendDetails.innerHTML = ''
+
+        if (isHidden) {
+            createIcon({
+                className: 'bi bi-eye-slash ms-2',
+                parent: legendDetails,
+                peNone: false,
+                title: 'Hidden',
+            })
+        }
+        
+        if (isInvisible) {
+            createIcon({
+                className: 'bi-exclamation-circle ms-2',
+                parent: legendDetails,
+                peNone: false,
+                title: 'Beyond range of visibility',
+            })
+        }
+    }
+
     map.on('movestart zoomstart', resetController)
     
     let timeout
@@ -251,7 +274,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             Array.from(layers.children).reverse().forEach(async legend => {
                 const leafletId = parseInt(legend.dataset.layerId)
                 const layer = map._ch.getLegendLayer(leafletId)
-                if (map._ch.hasHiddenLegendLayer(layer) || !layerIsVisible(layer)) return
+                if (!layer) return
+
+                const isHidden = map._ch.hasHiddenLegendLayer(layer)
+                const isInvisible = !layerIsVisible(layer)
+                if (isHidden || isInvisible) {
+                    clearLegend(layerLegend, isHidden, isInvisible)
+                    return
+                }
                 
                 if (layer instanceof L.GeoJSON) {
                     await updateGeoJSONData(layer, {controller})
@@ -275,26 +305,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const isHidden = map._ch.hasHiddenLegendLayer(layer)
         const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
         if (isHidden || isInvisible) {
-            const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
-            legendDetails.innerHTML = ''
-
-            if (isHidden) {
-                createIcon({
-                    className: 'bi bi-eye-slash',
-                    parent: legendDetails,
-                    peNone: false,
-                    title: 'Hidden',
-                })
-            }
-            
-            if (isInvisible) {
-                createIcon({
-                    className: 'bi-exclamation-circle',
-                    parent: legendDetails,
-                    peNone: false,
-                    title: 'Beyond range of visibility',
-                })
-            }
+            clearLegend(layerLegend, isHidden, isInvisible)
         } else {
             layerLegend.remove()
             if (layers.innerHTML === '') clearLayers(tools)
