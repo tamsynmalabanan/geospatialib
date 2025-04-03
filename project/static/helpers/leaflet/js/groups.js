@@ -1,10 +1,10 @@
 const handleLeafletLayerGroups = (map) => {
     map._layerGroups = {}
-    Array('library', 'client', 'query').forEach(group => {
+    Array('library', 'client', 'query').forEach(groupName => {
         const group = L.layerGroup()
-        map._layerGroups[group] = group
+        map._layerGroups[groupName] = group
         
-        group._name = group
+        group._name = groupName
         group._hiddenLayers = []
         group._invisibileLayers = []
         group._ch = {
