@@ -279,7 +279,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !layerIsVisible(layer)
                 if (isHidden || isInvisible) {
-                    clearLegend(layerLegend, isHidden, isInvisible)
+                    clearLegend(legend, isHidden, isInvisible)
                     return
                 }
                 
