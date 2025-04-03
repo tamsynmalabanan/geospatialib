@@ -25,7 +25,8 @@ const getLeafletGeoJSONLayer = async ({
 
     if (!fetcher && geojson) {
         const cacheId = generateRandomString()
-        // cache geojson in indexdb with _queryExtent = geojson bbox, shorter expiration
+        // cache geojson in indexdb with _queryExtent = geojson bbox -- 
+        // use turf.area to determinse if its needs buffer to be polygon, shorter expiration
         // remove geojson from fetchGeoJSONInMap fn
 
 
