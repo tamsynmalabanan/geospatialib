@@ -249,7 +249,9 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
             Array.from(layers.children).reverse().forEach(async legend => {
-                const layer = map._ch.getLegendLayer(parseInt(legend.dataset.layerId))
+                const leafletId = parseInt(legend.dataset.layerId)
+                console.log(leafletId)
+                const layer = map._ch.getLegendLayer(leafletId)
                 if (map._ch.hasHiddenLegendLayer(layer) || !layerIsVisible(layer)) return
                 
                 if (layer instanceof L.GeoJSON) {
@@ -499,7 +501,11 @@ const handleLeafletStylePanel = (map, parent) => {
         const mapContainer = map.getContainer()
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
         const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
-        const layers = Array.from(legends).map(l => map._ch.getLegendLayer(parseInt(l.dataset.layerId)))
+        const layers = Array.from(legends).map(l => {
+            const leafletId = parseInt(l.dataset.layerId)
+            console.log(leafletId)
+            return map._ch.getLegendLayer(leafletId)
+        })
         
         layers.forEach(l => {
             const option = document.createElement('option')
