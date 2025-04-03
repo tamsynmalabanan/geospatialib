@@ -450,7 +450,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             container.querySelector(`#${container.id}-details`).classList.remove('d-none')
         }
 
-        if (!layerIsVisible(layer)) {
+        if (layerIsVisible(layer)) {
             if (layer instanceof L.GeoJSON) {
                 updateGeoJSONData(layer, {controller})
             }
