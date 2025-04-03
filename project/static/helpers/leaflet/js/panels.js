@@ -322,6 +322,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         if (!container) {
             const paneName = layer.options.pane
             const pane = map.getPane(paneName)
+            if (!pane) return
             pane.style.zIndex = layers.children.length + 200
 
             container = document.createElement('div')
