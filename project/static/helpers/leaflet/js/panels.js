@@ -515,7 +515,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (layer && newLayerId && newLayerId === layer._leaflet_id) return
     
             body.innerHTML = ''
-            layer = map._ch.getLegendLayer(newLayerId)
+            layer = map._ch.getLegendLayer(parseInt(newLayerId))
             if (!layer) return
 
             const styleFields = {
