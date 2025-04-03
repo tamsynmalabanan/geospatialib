@@ -323,8 +323,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                     const btn = document.createElement('button')
                     btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
                     btn.addEventListener('click', () => {
-                        group._ch.removeHiddenLayer(layer)
-                        group.removeLayer(layer)
+                        group._ch.clearLayer(layer)
                     })
                     
                     const label = createSpan(
