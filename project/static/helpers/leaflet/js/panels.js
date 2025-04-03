@@ -537,7 +537,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 },
                                 fieldClassName: 'form-control-sm',
                                 events: {
-                                    'input': (e) => {
+                                    'change': (e) => {
                                         const field = e.target
                                         const maxScaleField = field.closest('form').elements.maxScale
                                         const maxScaleValue = maxScaleField.value
@@ -562,7 +562,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 },
                                 fieldClassName: 'form-control-sm',
                                 events: {
-                                    'input': (e) => {
+                                    'change': (e) => {
                                         const field = e.target
                                         const minScaleField = field.closest('form').elements.minScale
                                         const minScaleValue = minScaleField.value
