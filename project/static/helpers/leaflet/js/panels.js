@@ -250,7 +250,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         timeout = setTimeout(async () => {
             Array.from(layers.children).reverse().forEach(async legend => {
                 const layer = map._ch.getLegendLayer(legend.dataset.layerId)
-                if (map._ch.hasHiddenLegendLayer(layer) || map._ch.hasInvisibleLegendLayer(layer)) return
+                if (map._ch.hasHiddenLegendLayer(layer) || !layerIsVisible(layer)) return
                 
                 if (layer instanceof L.GeoJSON) {
                     await updateGeoJSONData(layer, {controller})
@@ -260,6 +260,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         delete layer._openpopup
                     }
                 }
+
             })
         }, 100)
     })
@@ -449,8 +450,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             container.querySelector(`#${container.id}-details`).classList.remove('d-none')
         }
 
-        if (layer instanceof L.GeoJSON) {
-            updateGeoJSONData(layer, {controller})
+        if (!layerIsVisible(layer)) {
+            if (layer instanceof L.GeoJSON) {
+                updateGeoJSONData(layer, {controller})
+            }
         }
 
         if (layers.innerHTML !== '') {

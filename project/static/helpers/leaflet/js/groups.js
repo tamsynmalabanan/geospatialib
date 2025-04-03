@@ -45,12 +45,27 @@ const handleLeafletLayerGroups = (map) => {
             getInvisibleLayers: () => {
                 return group._invisibileLayers
             },
+            setInvisibleLayers: (invisibleLayers=[]) => {
+                group._invisibileLayers = invisibleLayers
+            },
             hasInvisibleLayer: (layer) => {
                 return group._ch.getInvisibleLayers().includes(layer)
             },
             addInvisibleLayer: (layer) => {
                 group._invisibileLayers.push(layer)
                 group.removeLayer(layer)
+            },
+            removeInvisibleLayer: (layer, {addLayer=true}={}) => {
+                let match
+                
+                const invisibleLayers = group._ch.getInvisibleLayers().filter(l => {
+                    const matched = l === layer
+                    if (matched) match = l
+                    return matched
+                })
+                group._ch.setInvisibleLayers(invisibleLayers)
+                
+                addLayer ? group.addLayer(layer) : match ? map.fire('layerremove', {layer}) : null
             },
                 
             getAllLayers: () => {
@@ -63,6 +78,7 @@ const handleLeafletLayerGroups = (map) => {
             clearLayer: (layer) => {
                 group.removeLayer(layer)
                 group._ch.removeHiddenLayer(layer, {addLayer:false})
+                group._ch.removeInvisibleLayer(layer, {addLayer:false})
                 
                 const paneName = layer.options.pane
                 if (paneName.startsWith('custom')) {

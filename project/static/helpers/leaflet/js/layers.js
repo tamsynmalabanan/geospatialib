@@ -384,8 +384,11 @@ const layerIsVisible = (layer) => {
     const layerMaxScale = layer._visibility?.max || 5000000
     const layerIsVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
 
-    if (layerIsVisible) {
-    } else {
+    if (layerIsVisible && group._ch.hasInvisibleLayer(layer)) {
+        group._ch.removeInvisibleLayer(layer)
+    }
+    
+    if (!layerIsVisible && group.hasLayer(layer)) {
         group._ch.addInvisibleLayer(layer)
     }
 
