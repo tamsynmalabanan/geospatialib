@@ -6,9 +6,16 @@ const handleLeafletLayerGroups = (map) => {
         
         layerGroup._name = group
         layerGroup._hiddenLayers = []
+        layerGroup._invisibileLayers = []
         layerGroup._ch = {
             getHiddenLayers: () => {
                 return layerGroup._hiddenLayers
+            },
+            setHiddenLayers: (hiddenLayers=[]) => {
+                layerGroup._hiddenLayers = hiddenLayers
+            },
+            addHiddenLayer: (layer) => {
+                layerGroup._hiddenLayers.push(layer)
             },
             getHiddenLayer: (id) => {
                 return layerGroup._ch.getHiddenLayers().find(l => l._leaflet_id === id)
@@ -18,15 +25,15 @@ const handleLeafletLayerGroups = (map) => {
             },
             removeHiddenLayer: (layer, {silent=false}={}) => {
                 let match
-                layerGroup._hiddenLayers = layerGroup._ch.getHiddenLayers().filter(l => {
+                layerGroup._ch.setHiddenLayers(layerGroup._ch.getHiddenLayers().filter(l => {
                     if (l === layer) match = l
                     return l !== layer
-                })
+                }))
                 if (match && !silent) map.fire('layerremove', {layer})
             },
             clearHiddenLayers: ({silent=false}={}) => {
                 const hiddenLayers = [...new layerGroup._ch.getHiddenLayers()]
-                layerGroup._hiddenLayers = []
+                layerGroup._ch.setHiddenLayers()
                 if (!silent) hiddenLayers.forEach(layer => map.fire('layerremove', {layer}))
             },
                 
@@ -50,7 +57,7 @@ const handleLeafletLayerGroups = (map) => {
                 layerGroup._ch.getAllLayers().forEach(l => layerGroup._ch.clearLayer(l))
             },
             hideLayer: (layer) => {
-                layerGroup._hiddenLayers.push(layer)
+                layerGroup._ch.addHiddenLayer(layer)
                 layerGroup.removeLayer(layer)
             },
             hideAllLayers: () => {
