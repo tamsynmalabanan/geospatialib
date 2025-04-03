@@ -268,6 +268,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (event) => {
         const layer = event.layer
+        console.log(layer)
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
         
@@ -291,7 +292,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     className: 'bi bi-arrows-expand',
                     parent: legendDetails,
                     peNone: false,
-                    title: 'Beyond visibility range',
+                    title: 'Beyond range of visibility',
                 })
             }
         } else {

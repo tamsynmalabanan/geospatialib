@@ -42,11 +42,6 @@ const handleLeafletLayerGroups = (map) => {
                     map.fire('layerremove', {layer})
                 }
             },
-            clearHiddenLayers: ({silent=false}={}) => {
-                const hiddenLayers = [...new group._ch.getHiddenLayers()]
-                group._ch.setHiddenLayers()
-                if (!silent) hiddenLayers.forEach(layer => map.fire('layerremove', {layer}))
-            },
 
             getInvisibleLayers: () => {
                 return group._invisibileLayers
