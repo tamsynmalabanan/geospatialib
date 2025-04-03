@@ -268,6 +268,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 
     map.on('layerremove', (event) => {
+        console.log(event)
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
