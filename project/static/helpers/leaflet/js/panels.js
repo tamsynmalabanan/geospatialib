@@ -540,9 +540,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     'change': (e) => {
                                         const field = e.target
                                         const maxScaleField = field.closest('form').elements.maxScale
-                                        const maxScaleValue = maxScaleField.value
-                                        console.log(maxScaleValue, field.value, maxScaleValue < field.value)
-                                        if (maxScaleValue && maxScaleValue < field.value) field.value = maxScaleValue
+                                        const maxScaleValue = parseInt(maxScaleField.value || 5000000)
+                                        console.log(maxScaleValue, fieldValue, maxScaleValue < fieldValue)
+                                        if (maxScaleValue && maxScaleValue < parseInt(field.value || 0)) field.value = maxScaleValue
         
                                         if (!layer._visibility) layer._visibility = {}
                                         layer._visibility.min = parseInt(field.value)
