@@ -32,6 +32,7 @@ const handleLeafletLayerGroups = (map) => {
                     if (matched) match = l
                     return matched
                 })
+                console.log(hiddenLayers)
                 group._ch.setHiddenLayers(hiddenLayers)
                 
                 addLayer ? group.addLayer(layer) : match ? map.fire('layerremove', {layer}) : null
