@@ -503,7 +503,6 @@ const handleLeafletStylePanel = (map, parent) => {
         const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
         const layers = Array.from(legends).map(l => {
             const leafletId = parseInt(l.dataset.layerId)
-            console.log(leafletId)
             return map._ch.getLegendLayer(leafletId)
         })
         
@@ -517,11 +516,11 @@ const handleLeafletStylePanel = (map, parent) => {
 
     Array('change', 'blur').forEach(trigger => {
         select.addEventListener(trigger, () => {
-            const newLayerId = select.options[select.selectedIndex]?.value
+            const newLayerId = parseInt(select.options[select.selectedIndex]?.value || -1)
             if (layer && newLayerId && newLayerId === layer._leaflet_id) return
     
             body.innerHTML = ''
-            layer = map._ch.getLegendLayer(parseInt(newLayerId))
+            layer = map._ch.getLegendLayer(newLayerId)
             if (!layer) return
 
             const styleFields = {
