@@ -278,19 +278,21 @@ const handleLeafletLegendPanel = (map, parent) => {
             legendDetails.innerHTML = ''
 
             if (isHidden) {
-                titleToTooltip(createIcon({
+                createIcon({
                     className: 'bi bi-eye-slash',
                     parent: legendDetails,
-                    peNone: true,
-                }), 'Hidden')
+                    peNone: false,
+                    title: 'Hidden',
+                })
             }
             
             if (isInvisible) {
-                titleToTooltip(createIcon({
+                createIcon({
                     className: 'bi bi-arrows-expand',
                     parent: legendDetails,
-                    peNone: true,
-                }), 'Beyond visibility range')
+                    peNone: false,
+                    title: 'Beyond visibility range',
+                })
             }
         } else {
             layerLegend.remove()
