@@ -64,7 +64,7 @@ const handleLeafletLayerGroups = (map) => {
                 group._invisibileLayers.push(layer)
                 group.removeLayer(layer)
             },
-            removeInvisibleLayer: (layer, {addLayer=true}) => {
+            removeInvisibleLayer: (layer, {addLayer=true}={}) => {
                 let match
                 
                 const invisibleLayers = group._ch.getInvisibleLayers().filter(l => {
