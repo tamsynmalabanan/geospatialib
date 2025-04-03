@@ -274,6 +274,11 @@ const handleLeafletLegendPanel = (map, parent) => {
         const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
         const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
         layerSelect.disabled = disable
+        
+        if (disable) {
+            layerSelect.innerHTML = ''
+            styleAccordion.querySelector(`${mapContainer.id}-panels-style-body`).innerHTML = ''
+        }
     }
 
     map.on('movestart zoomstart', resetController)
@@ -529,6 +534,7 @@ const handleLeafletStylePanel = (map, parent) => {
     select.disabled = true
 
     const body = document.createElement('div')
+    body.id = `${map.getContainer().id}-panels-style-body`
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
     container.appendChild(body)
 
