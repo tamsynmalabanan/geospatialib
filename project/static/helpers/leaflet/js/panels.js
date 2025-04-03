@@ -268,10 +268,10 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (event) => {
         const layer = event.layer
-        console.log(layer)
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
         
+        console.log(layer)
         const isHidden = map._ch.hasHiddenLegendLayer(layer)
         const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
         if (isHidden || isInvisible) {
