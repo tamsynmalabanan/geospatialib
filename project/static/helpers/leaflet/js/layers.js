@@ -375,12 +375,10 @@ const getLeafletLayerContextMenu = (e, layer, {
 }
 
 const layerIsVisible = (layer) => {
-    console.log(layer)
     if (!layer) return
 
     const group = layer._group
     const map = group._map
-    console.log(map, group)
     if (!map || !group) return
 
     if (!layer._visibility) return true
@@ -389,7 +387,6 @@ const layerIsVisible = (layer) => {
     const layerMinScale = layer._visibility?.min || 0
     const layerMaxScale = layer._visibility?.max || 5000000
     const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
-    console.log(mapScale, layerMinScale, layerMaxScale, isVisible)
 
     isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
 
