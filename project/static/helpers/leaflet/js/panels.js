@@ -454,6 +454,8 @@ const handleLeafletLegendPanel = (map, parent) => {
             if (layer instanceof L.GeoJSON) {
                 updateGeoJSONData(layer, {controller})
             }
+        } else {
+            console.log('invisible')
         }
 
         if (layers.innerHTML !== '') {
