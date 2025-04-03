@@ -251,7 +251,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (isHidden) {
             createIcon({
-                className: 'bi bi-eye-slash m-2',
+                className: 'bi bi-eye-slash m-1',
                 parent: legendDetails,
                 peNone: false,
                 title: 'Hidden',
@@ -260,7 +260,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (isInvisible) {
             createIcon({
-                className: 'bi-exclamation-circle m-2',
+                className: 'bi-exclamation-circle m-1',
                 parent: legendDetails,
                 peNone: false,
                 title: 'Beyond range of visibility',
