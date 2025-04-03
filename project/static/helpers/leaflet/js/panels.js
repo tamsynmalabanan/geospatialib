@@ -547,7 +547,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         layer._visibility.min = parseInt(field.value)
                                         maxScaleField.setAttribute('min', field.value)
         
-                                        updateGeoJSONData(layer)
+                                        layerIsVisible(layer)
                                     }
                                 }
                             },
@@ -565,14 +565,14 @@ const handleLeafletStylePanel = (map, parent) => {
                                     'change': (e) => {
                                         const field = e.target
                                         const minScaleField = field.closest('form').elements.minScale
-                                        const minScaleValue = minScaleField.value
-                                        if (minScaleValue && minScaleValue > field.value) field.value = minScaleValue
+                                        const minScaleValue = parseInt(minScaleField.value || 0)
+                                        if (minScaleValue && minScaleValue > parseInt(field.value || 5000000)) field.value = minScaleValue
                                         
                                         if (!layer._visibility) layer._visibility = {}
                                         layer._visibility.max = parseInt(field.value)
                                         minScaleField.setAttribute('max', field.value)
                                         
-                                        updateGeoJSONData(layer)
+                                        layerIsVisible(layer)
                                     }
                                 }
                             },
