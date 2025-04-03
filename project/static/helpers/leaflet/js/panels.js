@@ -344,8 +344,6 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (!map._ch.hasLegendLayer(layer)) return
 
-        console.log(layer)
-        
         const paneName = layer.options.pane
         const pane = map.getPane(paneName)
         // if (!pane) return

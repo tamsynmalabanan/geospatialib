@@ -25,7 +25,7 @@ const getLeafletGeoJSONLayer = async ({
 
     if (!fetcher && geojson) {
         const mapKey = generateRandomString()
-        fetcher = defaultFetcher = async ({map, controller}) => {
+        fetcher = defaultFetcher = async ({map, controller}={}) => {
             if (!map) return geojson
             
             const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
