@@ -113,7 +113,10 @@ const handleLeafletLayerGroups = (map) => {
                 group._ch.getAllLayers().forEach(l => group._ch.clearLayer(l))
             },
             hideAllLayers: () => {
-                group.eachLayer(l => {
+                Array(
+                    ...group.getLayers(),
+                    ...group._ch.getInvisibleLayers(),
+                ).forEach(l => {
                     console.log(l)
                     group._ch.addHiddenLayer(l)
                 })
