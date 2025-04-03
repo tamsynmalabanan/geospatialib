@@ -469,7 +469,7 @@ const handleLeafletStylePanel = (map, parent) => {
     parent.appendChild(container)
 
     const selectContainer = document.createElement('div')
-    selectContainer.className = 'd-flex px-3 flex-grow-1 flex-column'
+    selectContainer.className = 'd-flex px-3 flex-column'
     container.appendChild(selectContainer)
 
     const select = createFormFloating({
