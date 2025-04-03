@@ -343,12 +343,15 @@ const handleLeafletLegendPanel = (map, parent) => {
         const layer = event.layer
         
         if (!map._ch.hasLegendLayer(layer)) return
+
+        console.log(layer)
+        
+        const paneName = layer.options.pane
+        const pane = map.getPane(paneName)
+        // if (!pane) return
         
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
-            const paneName = layer.options.pane
-            const pane = map.getPane(paneName)
-            if (!pane) return
             pane.style.zIndex = layers.children.length + 200
 
             container = document.createElement('div')
