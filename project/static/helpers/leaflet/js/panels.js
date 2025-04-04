@@ -263,7 +263,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 className: 'bi-exclamation-circle m-1',
                 parent: legendDetails,
                 peNone: false,
-                title: 'Beyond range of visibility',
+                title: 'Beyond visible range',
             })
         }
     }
@@ -585,7 +585,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             const styleFields = {
                 'Rendering': {
-                    'Range of visibility': {
+                    'Visibility': {
                         fields: {
                             'Minimum scale': {
                                 fieldAttrs: {

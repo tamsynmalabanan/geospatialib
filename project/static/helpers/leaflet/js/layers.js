@@ -321,25 +321,19 @@ const getLeafletLayerContextMenu = (e, layer, {
             innerText: `Remove ${typeLabel}`,
             keepMenuOn: true,
             btnCallback: (e) => {
-                const confirmRemoval = () => {
-                    const btn = document.createElement('button')
-                    btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
-                    btn.addEventListener('click', () => {
-                        group._ch.clearLayer(layer)
-                    })
-                    
-                    const label = createSpan(
-                        'Confirm to remove layer', 
-                        {className:'pe-none text-wrap'}
-                    )
-                    btn.appendChild(label)
-                    
-                    const parentElement = e.target.parentElement
-                    parentElement.innerHTML = ''
-                    parentElement.appendChild(btn)
-                }
-
-                confirmRemoval()
+                const parentElement = e.target.parentElement
+                parentElement.innerHTML = ''
+                
+                const btn = document.createElement('button')
+                btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
+                btn.addEventListener('click', () => group._ch.clearLayer(layer))
+                parentElement.appendChild(btn)
+                
+                const label = createSpan(
+                    'Confirm to remove layer', 
+                    {className:'pe-none text-wrap'}
+                )
+                btn.appendChild(label)
             }
         },
 
