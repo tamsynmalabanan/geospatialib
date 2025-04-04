@@ -77,7 +77,8 @@ const getLeafletGeoJSONLayer = async ({
         // },
         default: {
             label: '',
-            styleParams: getLeafletStyleParams(customStyleParams),
+            styleParams: getLeafletStyleParams({iconClass:'bi bi-exclamation-circle'}),
+            // styleParams: getLeafletStyleParams(customStyleParams),
         },
         visibility: {
             min: 0,
