@@ -194,6 +194,7 @@ const getLeafletLayerContextMenu = (e, layer, {
             console.log('fetcher')
             if (layer._fetcher?.name === 'defaultFetcher') geojson = layer._fetcher()
         }
+        console.log(geojson)
         return geojson
     })()
     
