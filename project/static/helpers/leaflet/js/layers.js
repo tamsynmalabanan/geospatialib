@@ -370,7 +370,7 @@ const getLeafletLayerContextMenu = (e, layer, {
     })
 }
 
-const layerIsVisible = (layer) => {
+const layerIsVisible = (layer, {addLayer=true}={}) => {
     if (!layer) return
 
     const group = layer._group
@@ -385,7 +385,9 @@ const layerIsVisible = (layer) => {
     const layerMaxScale = visibility.max || 5000000
     const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
 
-    isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
+    if (addLayer) {
+        isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
+    }
 
     return isVisible
 }
