@@ -160,7 +160,8 @@ const assignFeatureLayerTitle = (layer) => {
 
 const getGeoJSONLayerStyles = (layer) => {
     const styles = {}
-    const layerLegend = layer._styles
+    const layerStyles = layer._styles
+    console.log(layerStyles)
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
@@ -172,7 +173,7 @@ const getGeoJSONLayerStyles = (layer) => {
         if (group) {
             group.types[type].count +=1
         } else {
-            const featureLegend = layerLegend.groups && layerLegend.groups[groupId] ? layerLegend.groups[groupId] : layerLegend.default 
+            const featureLegend = layerStyles.groups && layerStyles.groups[groupId] ? layerStyles.groups[groupId] : layerStyles.default 
             const styleHandler = featureLegend.style
             styles[groupId] = {
                 label: featureLegend.label || '', 
