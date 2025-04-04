@@ -30,7 +30,7 @@ const getLeafletGeoJSONLayer = async ({
         // use turf.area to determinse if its needs buffer to be polygon, shorter expiration
         // remove geojson from fetchGeoJSONInMap fn
 
-        fetcher = defaultFetcher = async ({map, controller}={}) => {
+        fetcher = fetchStaticGeoJSON = async ({map, controller}={}) => {
             if (!map) return geojson
             return await fetchGeoJSONInMap(geojson, cacheId, map, {controller})
         }
