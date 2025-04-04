@@ -628,7 +628,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             innerText: `Use current scale`,
                                             btnCallback: async () => {
                                                 const scale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
-                                                console.log(e)
+                                                e.target.value = scale
                                             }
                                         },
                                     })
