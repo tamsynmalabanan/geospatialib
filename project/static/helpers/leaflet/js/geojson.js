@@ -61,26 +61,23 @@ const getLeafletGeoJSONLayer = async ({
         ))
     }
  
-    const styleParams = getLeafletStyleParams(customStyleParams)
     geojsonLayer._styles = styles || {
         // groups: {
         //     id: {
-        //         label: 'Label
+        //         label: 'Label',
         //         validators: [
         //             (feature) => ['property', 'values'].contains(feature.properties['key'])
-        //             // array of functions that return true or false
+        //             // array of functions that return true or false - refine this, not functions, just
+        //             // field: type {range/category} values
         //         ],
-        //         style: (feature) => getLeafletLayerStyle(feature.geometry.type, {
-        //             customStyleParams: 'here'
-        //         }),
+        //         styleParams: {
+
+        //         }, // getLeafletLayerStyle(feature.geometry.type, styleParams)
         //     },
         // },
         default: {
             label: '',
-            style: (feature) => getLeafletLayerStyle(
-                feature.geometry.type, 
-                styleParams
-            )
+            styleParams: getLeafletStyleParams(customStyleParams),
         },
         visibility: {
             min: 0,
@@ -89,27 +86,30 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     const getStyle = (feature) => {
-        const legend = geojsonLayer._styles
-        if (legend?.groups) {
-            for (const id in legend.groups) {
-                const group = legend.groups[id]
+        const type = feature.geometry.type
+        const styles = geojsonLayer._styles
+        if (styles?.groups) {
+            for (const id in styles.groups) {
+                const group = styles.groups[id]
                 let valid = true
+                
                 for (const validator in group.validators) {
                     if (!validator(feature)) {
                         valid = false
                         break
                     }
                 }
+
                 if (valid) {
                     feature._groupId = id
-                    return group.style(feature)
+                    return getLeafletLayerStyle(type, group.styleParams)
                 }
             }
         }
         feature._groupId = ''
-        return legend?.default?.style(feature) || getLeafletLayerStyle(
-            feature.geometry.type, 
-            styleParams
+        return getLeafletLayerStyle(
+            type, 
+            styles?.default?.styleParams || getLeafletStyleParams()
         )
     }
 
