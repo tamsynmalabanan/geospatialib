@@ -356,7 +356,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                         pane,
                         group: targetGroup,
                         fetcher: layer._fetcher,
-                        styles: layer._styles
+                        styles: Object.assign({}, layer._styles)
                     })
                 }
                 if (newLayer) targetGroup.addLayer(newLayer)
