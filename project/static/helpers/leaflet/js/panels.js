@@ -603,7 +603,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: visibility.min,
                                     placeholder: 'Minimum scale',
                                 },
-                                prefixText: '1:',
+                                prefixHTML: '1:',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
@@ -635,7 +635,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: visibility.max,
                                     placeholder: 'Maximum scale',
                                 },
-                                prefixText: '1:',
+                                prefixHTML: '1:',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
@@ -657,7 +657,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: ''
+                        className: 'flex-nowrap'
                     }
                 }
             }        
@@ -705,7 +705,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     section.appendChild(sectionHeader)
     
                     const sectionFields = document.createElement('div')
-                    sectionFields.className = `d-flex flex-wrap gap-2 ${data.className}`
+                    sectionFields.className = `d-flex gap-2 ${data.className}`
                     section.appendChild(sectionFields)
         
                     const fields = data.fields

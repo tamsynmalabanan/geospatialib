@@ -515,10 +515,10 @@ const createFormFloating = ({
 
 const createInputGroup = ({
     parent,
-    prefixText,
+    prefixHTML,
     inputTag = 'input',
     fieldClass = '',
-    suffixText,
+    suffixHTML,
     events = {},
     fieldAttrs = {},
 }={}) => {
@@ -529,11 +529,11 @@ const createInputGroup = ({
     let prefix
     let suffix
 
-    if (prefixText) {
-        prefix = document.createElement('span')
+    if (prefixHTML) {
+        prefix = document.createElement('div')
         prefix.className = `input-group-text`
         prefix.id = generateRandomString()
-        prefix.innerText = prefixText
+        prefix.innerHTML = prefixHTML
         inputGroup.appendChild(prefix)
     }
 
@@ -546,11 +546,11 @@ const createInputGroup = ({
         field.addEventListener(trigger, events[trigger])
     })
 
-    if (suffixText) {
-        suffix = document.createElement('span')
+    if (suffixHTML) {
+        suffix = document.createElement('div')
         suffix.className = `input-group-text`
         suffix.id = generateRandomString()
-        suffix.innerText = suffixText
+        suffix.innerHTML = suffixHTML
         inputGroup.appendChild(suffix)
     }
 
