@@ -46,7 +46,7 @@ const zoomLeafletMapToScale = (map, scale) => {
         }
     }
 
-    const newZoom = diff[Math.min(...Object.keys(diff))]
+    const newZoom = diff[Math.min(...Object.keys(diff))]+1
     map.setZoom(newZoom)
     console.log(scale, leafletZoomToMeter(newZoom), newZoom, map.getZoom())
 
