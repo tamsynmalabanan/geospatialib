@@ -592,7 +592,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 'Rendering': {
                     'Visibility': {
                         fields: {
-                            'Minimum scale': {
+                            'minScale': {
                                 handler: createInputGroup,
                                 fieldAttrs: {
                                     name:'minScale',
@@ -601,7 +601,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     max: visibility.max,
                                     step: '100',
                                     value: visibility.min,
+                                    placeholder: 'Minimum scale',
                                 },
+                                prefixText: '1:',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
@@ -622,8 +624,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
-                            'Maximum scale': {
-                                handler: createFormFloating,
+                            'maxScale': {
+                                handler: createInputGroup,
                                 fieldAttrs: {
                                     name:'maxScale',
                                     type:'number',
@@ -631,7 +633,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     max: '5000000',
                                     step: '100',
                                     value: visibility.max,
+                                    placeholder: 'Maximum scale',
                                 },
+                                prefixText: '1:',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
@@ -709,7 +713,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         const params = fields[fieldName]
                         params.handler({
                             ...params, 
-                            labelText: fieldName,
                             parent: sectionFields,
                         })
                     })

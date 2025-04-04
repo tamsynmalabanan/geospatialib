@@ -518,7 +518,6 @@ const createInputGroup = ({
     prefixText,
     inputTag = 'input',
     fieldClass = '',
-    placeholder = '',
     suffixText,
     events = {},
     fieldAttrs = {},
