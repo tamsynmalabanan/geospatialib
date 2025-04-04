@@ -111,12 +111,10 @@ const getLeafletGeoJSONLayer = async ({
             }
         }
 
-        const type = circleMarker ? 'Polygon' : feature.geometry.type
+        const circleIcon = styleParams.iconClass === 'bi bi-circle-fill'
+        const type = circleMarker && circleIcon ? 'Polygon' : feature.geometry.type
         const layerStyle =  getLeafletLayerStyle(type, styleParams)
-        if (circleMarker) {
-            layerStyle.radius = styleParams.iconSize/2 
-            layerStyle.isCircle = styleParams.iconClass === 'bi bi-circle-fill'
-        }
+        if (circleMarker && circleIcon) layerStyle.radius = styleParams.iconSize/2 
         return layerStyle
     }
 
@@ -126,15 +124,10 @@ const getLeafletGeoJSONLayer = async ({
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature, {circleMarker:isCanvas})
 
-        // return isCanvas && styleParams.isCircle ? L.circleMarker(latlng, {
-        //     ...styleParams,
-        //     renderer,
-        // }) : L.marker(latlng, {icon: styleParams})
-
-        console.log(styleParams)
-        console.log(L.marker(latlng, {icon: styleParams}))
-        
-        return L.marker(latlng, {icon: styleParams})
+        return isCanvas && styleParams.isCircle ? L.circleMarker(latlng, {
+            ...styleParams,
+            renderer,
+        }) : L.marker(latlng, {icon: styleParams})
     }
     
     geojsonLayer._renderers = [
