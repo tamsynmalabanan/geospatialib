@@ -587,7 +587,32 @@ const handleLeafletStylePanel = (map, parent) => {
             body.setAttribute('data-layer-id', newLayerId)
 
             const visibility = layer._styles.visibility
-            
+            const visibilityFieldsClick = (e) => {
+                const field = e.target
+                contextMenuHandler(e, {
+                    useCurrent: {
+                        innerText: `Use current map scale`,
+                        btnCallback: async () => {
+                            const scale = getLeafletMeterScale(map)
+                            field.value = scale
+
+                            const changeEvent = new Event('change', {
+                                bubbles: true,
+                                cancelable: true,
+                            })
+                            field.dispatchEvent(changeEvent)
+                        }
+                    },
+                    zoomCurrent: {
+                        innerText: `Zoom to nearest scale`,
+                        btnCallback: async () => {
+                            const scale = field.value
+                            zoomLeafletMapToScale(map, scale)
+                        }
+                    },
+                })
+            }
+
             const styleFields = {
                 'Rendering': {
                     'Minimum and maximum visible scale range': {
@@ -623,31 +648,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
                                         layerIsVisible(layer)
                                     },
-                                    'click': (e) => {
-                                        const field = e.target
-                                        contextMenuHandler(e, {
-                                            useCurrent: {
-                                                innerText: `Use current map scale`,
-                                                btnCallback: async () => {
-                                                    const scale = getLeafletMeterScale(map)
-                                                    field.value = scale
-    
-                                                    const changeEvent = new Event('change', {
-                                                        bubbles: true,
-                                                        cancelable: true,
-                                                    })
-                                                    field.dispatchEvent(changeEvent)
-                                                }
-                                            },
-                                            zoomCurrent: {
-                                                innerText: `Zoom to nearest scale`,
-                                                btnCallback: async () => {
-                                                    const scale = field.value
-                                                    zoomLeafletMapToScale(map, scale)
-                                                }
-                                            },
-                                        })
-                                    }
+                                    'click': visibilityFieldsClick,
                                 }
                             },
                             'maxScale': {
@@ -680,7 +681,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                         minScaleField.setAttribute('max', field.value)
                                         
                                         layerIsVisible(layer)
-                                    }
+                                    },
+                                    'click': visibilityFieldsClick,
                                 }
                             },
                         },
