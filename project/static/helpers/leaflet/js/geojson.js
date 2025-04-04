@@ -77,7 +77,7 @@ const getLeafletGeoJSONLayer = async ({
         // },
         default: {
             label: '',
-            styleParams: getLeafletStyleParams({...customStyleParams, iconClass:'bi bi-circle-fill'}),
+            styleParams: getLeafletStyleParams({...customStyleParams, iconClass:'bi bi-exclamation-circle'}),
             // styleParams: getLeafletStyleParams(customStyleParams),
         },
         visibility: {
@@ -126,10 +126,11 @@ const getLeafletGeoJSONLayer = async ({
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature, {circleMarker:isCanvas})
 
-        return isCanvas && styleParams.isCircle ? L.circleMarker(latlng, {
-            ...styleParams,
-            renderer,
-        }) : L.marker(latlng, {icon: styleParams})
+        // return isCanvas && styleParams.isCircle ? L.circleMarker(latlng, {
+        //     ...styleParams,
+        //     renderer,
+        // }) : L.marker(latlng, {icon: styleParams})
+        return L.marker(latlng, {icon: styleParams})
     }
     
     geojsonLayer._renderers = [
