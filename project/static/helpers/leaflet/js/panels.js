@@ -603,7 +603,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: visibility.min,
                                     placeholder: 'Minimum scale',
                                 },
-                                prefixHTML: '1:',
+                                prefixHTML: '<button>test</button>',
+                                // prefixHTML: '1:',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
