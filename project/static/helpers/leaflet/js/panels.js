@@ -536,7 +536,7 @@ const handleLeafletStylePanel = (map, parent) => {
     const select = createFormFloating({
         parent: selectContainer,
         fieldTag: 'select', 
-        fieldClassName: 'form-select-sm',
+        fieldClass: 'form-select-sm',
         fieldAttrs: {
             name: 'layer',
         },
@@ -593,6 +593,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     'Visibility': {
                         fields: {
                             'Minimum scale': {
+                                handler: createInputGroup,
                                 fieldAttrs: {
                                     name:'minScale',
                                     type:'number',
@@ -601,7 +602,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     step: '100',
                                     value: visibility.min,
                                 },
-                                fieldClassName: 'form-control-sm',
+                                fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
@@ -622,6 +623,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                             'Maximum scale': {
+                                handler: createFormFloating,
                                 fieldAttrs: {
                                     name:'maxScale',
                                     type:'number',
@@ -630,7 +632,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     step: '100',
                                     value: visibility.max,
                                 },
-                                fieldClassName: 'form-control-sm',
+                                fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
@@ -666,7 +668,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 categorySections.className = 'collapse show'
 
                 const categoryHeader = document.createElement('div')
-                categoryHeader.className = `d-flex fs-6`
+                categoryHeader.className = `d-flex fw-medium`
                 categoryHeader.setAttribute('data-bs-toggle', 'collapse')
                 categoryHeader.setAttribute('aria-expanded', 'true')
                 categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
@@ -695,7 +697,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     categorySections.appendChild(section)
     
                     const sectionHeader = document.createElement('span')
-                    sectionHeader.style.fontSize = '14px'
                     sectionHeader.innerText = sectionName
                     section.appendChild(sectionHeader)
     
@@ -705,8 +706,9 @@ const handleLeafletStylePanel = (map, parent) => {
         
                     const fields = data.fields
                     Object.keys(fields).forEach(fieldName => {
-                        createFormFloating({
-                            ...fields[fieldName], 
+                        const params = fields[fieldName]
+                        params.handler({
+                            ...params, 
                             labelText: fieldName,
                             parent: sectionFields,
                         })

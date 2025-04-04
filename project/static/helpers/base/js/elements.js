@@ -377,7 +377,7 @@ const createFormCheck = ({
     inputValue = '',
     inputId =  generateRandomString(),
     labelInnerText = '',
-    inputClass = '',
+    fieldClass = '',
     formCheckClass = '',
     disabled=false,
 } = {}) => {
@@ -387,7 +387,7 @@ const createFormCheck = ({
     
     const input = document.createElement('input')
     input.id = inputId
-    input.className = `form-check-input ${inputClass}`
+    input.className = `form-check-input ${fieldClass}`
     input.setAttribute('type', 'checkbox')
     input.value = inputValue
     input.disabled = disabled
@@ -487,7 +487,7 @@ const createFormFloating = ({
     fieldTag = 'input',
     fieldAttrs = {},
     fieldId,
-    fieldClassName = '',
+    fieldClass = '',
     labelText = '',
     events = {}
 } = {}) => {
@@ -497,7 +497,7 @@ const createFormFloating = ({
 
     const field = document.createElement(fieldTag)
     field.id = fieldId || generateRandomString()
-    field.className = `${fieldClassName} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
+    field.className = `${fieldClass} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     container.appendChild(field)
 
@@ -511,4 +511,51 @@ const createFormFloating = ({
     container.appendChild(label)
     
     return container
+}
+
+const createInputGroup = ({
+    parent,
+    prefixText,
+    inputTag = 'input',
+    fieldClass = '',
+    placeholder = '',
+    suffixText,
+    events = {},
+    fieldAttrs = {},
+}={}) => {
+    const inputGroup = document.createElement('div')
+    inputGroup.className = `input-group`
+    parent?.appendChild(inputGroup)
+
+    let prefix
+    let suffix
+
+    if (prefixText) {
+        prefix = document.createElement('span')
+        prefix.className = `input-group-text`
+        prefix.id = generateRandomString()
+        prefix.innerText = prefixText
+        inputGroup.appendChild(prefix)
+    }
+
+    const field = document.createElement(inputTag)
+    Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
+    field.className = `${inputTag === 'select' ? 'form-select' : 'form-control'} ${fieldClass}`
+    inputGroup.appendChild(field)
+
+    Object.keys(events).forEach(trigger => {
+        field.addEventListener(trigger, events[trigger])
+    })
+
+    if (suffixText) {
+        suffix = document.createElement('span')
+        suffix.className = `input-group-text`
+        suffix.id = generateRandomString()
+        suffix.innerText = suffixText
+        inputGroup.appendChild(suffix)
+    }
+
+    field.setAttribute('aria-describedby', prefix?.id || suffix?.id)
+
+    return inputGroup
 }
