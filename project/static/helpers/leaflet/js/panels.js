@@ -608,6 +608,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
+                                        console.log(e)
                                         const field = e.target
                                         const maxScaleField = field.closest('form').elements.maxScale
                                         
@@ -629,6 +630,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             btnCallback: async (e) => {
                                                 const scale = getLeafletMeterScale(map)
                                                 e.target.value = scale
+                                                console.log(e.target.value)
 
                                                 const changeEvent = new Event('change', {
                                                     bubbles: true,
