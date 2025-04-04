@@ -114,7 +114,7 @@ const getLeafletGeoJSONLayer = async ({
         const layerStyle =  getLeafletLayerStyle(type, styleParams)
         if (circleMarker) {
             layerStyle.radius = styleParams.iconSize/2 
-            layerStyle.isCircle = iconClass === 'bi bi-circle-fill'
+            layerStyle.isCircle = styleParams.iconClass === 'bi bi-circle-fill'
         }
         return layerStyle
     }
