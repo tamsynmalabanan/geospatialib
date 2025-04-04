@@ -14,7 +14,7 @@ const getLeafletStyleParams = ({
     fillOpacity=0.5,
     
     iconClass='bi bi-circle-fill',
-    radius=10,
+    iconSize=10,
     iconShadow=false,
     iconGlow=false,
 } = {}) => {
@@ -27,7 +27,7 @@ const getLeafletStyleParams = ({
         fillColor,
         fillOpacity,
         iconClass,
-        radius,
+        iconSize,
         iconShadow,
         iconGlow,
     }    
@@ -43,7 +43,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         fillColor,
         fillOpacity,
         iconClass,
-        radius,
+        iconSize,
         iconShadow,
         iconGlow,
 
@@ -57,7 +57,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     if (type === 'point') {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
-        div.style.fontSize = `${radius}px`
+        div.style.fontSize = `${iconSize}px`
         div.style.color = fillColorVal
         div.style.WebkitTextStroke = `${strokeWidth}px ${strokeColorVal}`
         div.style.textShadow = Array(
