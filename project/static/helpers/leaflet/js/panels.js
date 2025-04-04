@@ -608,7 +608,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
-                                        console.log(e)
                                         const field = e.target
                                         const maxScaleField = field.closest('form').elements.maxScale
                                         
@@ -624,29 +623,31 @@ const handleLeafletStylePanel = (map, parent) => {
         
                                         layerIsVisible(layer)
                                     },
-                                    'click': (e) => contextMenuHandler(e, {
-                                        useCurrent: {
-                                            innerText: `Use current map scale`,
-                                            btnCallback: async (e) => {
-                                                const scale = getLeafletMeterScale(map)
-                                                e.target.value = scale
-                                                console.log(e.target)
-
-                                                const changeEvent = new Event('change', {
-                                                    bubbles: true,
-                                                    cancelable: true,
-                                                })
-                                                e.target.dispatchEvent(changeEvent)
-                                            }
-                                        },
-                                        zoomCurrent: {
-                                            innerText: `Zoom to nearest scale`,
-                                            btnCallback: async (e) => {
-                                                const scale = e.target.value
-                                                zoomLeafletMapToScale(map, scale)
-                                            }
-                                        },
-                                    })
+                                    'click': (e) => {
+                                        const field = e.target
+                                        contextMenuHandler(e, {
+                                            useCurrent: {
+                                                innerText: `Use current map scale`,
+                                                btnCallback: async () => {
+                                                    const scale = getLeafletMeterScale(map)
+                                                    field.value = scale
+    
+                                                    const changeEvent = new Event('change', {
+                                                        bubbles: true,
+                                                        cancelable: true,
+                                                    })
+                                                    field.dispatchEvent(changeEvent)
+                                                }
+                                            },
+                                            zoomCurrent: {
+                                                innerText: `Zoom to nearest scale`,
+                                                btnCallback: async () => {
+                                                    const scale = field.value
+                                                    zoomLeafletMapToScale(map, scale)
+                                                }
+                                            },
+                                        })
+                                    }
                                 }
                             },
                             'maxScale': {
