@@ -625,7 +625,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     },
                                     'click': (e) => contextMenuHandler(e, {
                                         useCurrent: {
-                                            innerText: `Use map scale`,
+                                            innerText: `Use current map scale`,
                                             btnCallback: async (e) => {
                                                 const scale = getLeafletMeterScale(map)
                                                 e.target.value = scale
@@ -638,10 +638,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                             }
                                         },
                                         zoomCurrent: {
-                                            innerText: `Zoom to scale`,
+                                            innerText: `Zoom to nearest scale`,
                                             btnCallback: async (e) => {
                                                 const scale = e.target.value
-
+                                                zoomLeafletMapToScale(map, scale)
                                             }
                                         },
                                     })
