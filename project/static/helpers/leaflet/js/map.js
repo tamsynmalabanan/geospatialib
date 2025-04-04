@@ -38,11 +38,11 @@ const zoomLeafletMapToScale = (map, scale) => {
     const diff = {}
     if (mapScale > scale) {
         for (let i=mapZoom; i <= 20; i++) {
-            diff[abs(scale-leafletZoomToMeter(i))] = i
+            diff[Math.abs(scale-leafletZoomToMeter(i))] = i
         }
     } else {
         for (let i=1; i <= mapZoom; i++) {
-            diff[abs(scale-leafletZoomToMeter(i))] = i
+            diff[Math.abs(scale-leafletZoomToMeter(i))] = i
         }
     }
 
