@@ -161,7 +161,6 @@ const assignFeatureLayerTitle = (layer) => {
 const getGeoJSONLayerStyles = (layer) => {
     const styles = {}
     const layerStyles = layer._styles
-    console.log(layerStyles)
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
