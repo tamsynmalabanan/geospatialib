@@ -6,6 +6,7 @@ const getLeafletGeoJSONLayer = async ({
     attribution = '',
     group,
     fetcher,
+    styles,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         // filter: (feature) => {
@@ -61,7 +62,7 @@ const getLeafletGeoJSONLayer = async ({
     }
  
     const styleParams = getLeafletStyleParams(customStyleParams)
-    geojsonLayer._styles = {
+    geojsonLayer._styles = styles || {
         // groups: {
         //     id: {
         //         label: 'Label
