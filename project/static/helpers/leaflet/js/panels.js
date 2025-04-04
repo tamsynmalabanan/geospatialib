@@ -324,6 +324,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
         if (isHidden || isInvisible) {
             clearLegend(layerLegend, isHidden, isInvisible)
+            console.log(layer.options.renderer)
         } else {
             layerLegend.remove()
             if (layers.innerHTML === '') clearLayers(tools)
@@ -344,12 +345,11 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (!map._ch.hasLegendLayer(layer)) return
 
-        const paneName = layer.options.pane
-        const pane = map.getPane(paneName)
-        // if (!pane) return
         
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
+            const paneName = layer.options.pane
+            const pane = map.getPane(paneName)
             pane.style.zIndex = layers.children.length + 200
 
             container = document.createElement('div')
