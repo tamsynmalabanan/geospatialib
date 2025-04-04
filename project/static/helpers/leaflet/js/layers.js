@@ -186,9 +186,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const group = layer._group || geojsonLayer?._group
     if (!group) return
     
-    const layerGeoJSON = await (async () => {
-        if (layer._fetcher?.name === 'fetchStaticGeoJSON') return await layer._fetcher()
-        
+    const layerGeoJSON = Array('feature', 'geojson').includes(type) ? await (async () => {
         try {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
@@ -196,9 +194,11 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 if (layer instanceof L.GeoJSON) {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
-            } catch {}
+            } catch {
+                if (layer._fetcher?.name === 'fetchStaticGeoJSON') return await layer._fetcher()
+            }
         }
-    })()
+    })() : null
     
     const map = group._map
     const mapContainer = map.getContainer()
