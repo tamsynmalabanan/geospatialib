@@ -634,7 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                                     bubbles: true,
                                                     cancelable: true,
                                                 })
-                                                e.target.value.dispatchEvent(changeEvent)
+                                                e.target.dispatchEvent(changeEvent)
                                             }
                                         },
                                     })
