@@ -183,6 +183,7 @@ const findLeafletFeatureLayerParent = (layer) => {
 const getLeafletLayerContextMenu = (e, layer, {
 
 } = {}) => {
+    if (!layer) return 
     const type = getLeafletLayerType(layer)
 
     const feature = layer.feature
