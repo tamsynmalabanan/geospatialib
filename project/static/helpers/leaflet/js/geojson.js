@@ -174,7 +174,7 @@ const getGeoJSONLayerStyles = (layer) => {
             group.types[type].count +=1
         } else {
             const featureLegend = layerStyles.groups && layerStyles.groups[groupId] ? layerStyles.groups[groupId] : layerStyles.default 
-            const styleHandler = featureLegend.style
+            const styleParams = featureLegend.styleParams
             styles[groupId] = {
                 label: featureLegend.label || '', 
                 types: {}
@@ -183,7 +183,7 @@ const getGeoJSONLayerStyles = (layer) => {
                 styles[groupId].types[typeName] = {
                     count: 0,
                     html: leafletLayerStyleToHTML(
-                        styleHandler({geometry:{type:typeName}}),
+                        getLeafletLayerStyle(typeName, styleParams),
                         typeName
                     )
                 }
