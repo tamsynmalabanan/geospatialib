@@ -562,6 +562,11 @@ const handleLeafletStylePanel = (map, parent) => {
             return map._ch.getLegendLayer(leafletId)
         })
         
+        const option = document.createElement('option')
+        option.value = ''
+        option.text = ''
+        select.appendChild(option)
+        
         layers.forEach(l => {
             const option = document.createElement('option')
             option.value = l._leaflet_id
