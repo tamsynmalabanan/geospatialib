@@ -348,7 +348,7 @@ const getLeafletLayerContextMenu = (e, layer, {
 
                 const geojsonLayer = findLeafletFeatureLayerParent(layer)
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
-                const styles = feature ? geojsonLayer._styles : layer._styles 
+                const styles = feature ? geojsonLayer._styles : layer._styles
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
@@ -359,7 +359,7 @@ const getLeafletLayerContextMenu = (e, layer, {
                         pane,
                         group: targetGroup,
                         fetcher: layer._fetcher,
-                        styles: structuredClone(styles)
+                        styles: isLegendGroup ? structuredClone(styles) : null
                     })
                 }
                 if (newLayer) targetGroup.addLayer(newLayer)
