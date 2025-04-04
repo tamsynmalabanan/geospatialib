@@ -130,6 +130,10 @@ const getLeafletGeoJSONLayer = async ({
         //     ...styleParams,
         //     renderer,
         // }) : L.marker(latlng, {icon: styleParams})
+
+        console.log(styleParams)
+        console.log(L.marker(latlng, {icon: styleParams}))
+        
         return L.marker(latlng, {icon: styleParams})
     }
     
