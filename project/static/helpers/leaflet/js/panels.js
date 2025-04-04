@@ -622,7 +622,16 @@ const handleLeafletStylePanel = (map, parent) => {
                                         maxScaleField.setAttribute('min', field.value)
         
                                         layerIsVisible(layer)
-                                    }
+                                    },
+                                    'click': (e) => contextMenuHandler(e, {
+                                        useCurrent: {
+                                            innerText: `Use current scale`,
+                                            btnCallback: async () => {
+                                                const scale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
+                                                console.log(e)
+                                            }
+                                        },
+                                    })
                                 }
                             },
                             'maxScale': {
