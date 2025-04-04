@@ -603,8 +603,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: visibility.min,
                                     placeholder: 'Minimum scale',
                                 },
-                                prefixHTML: '<button>test</button>',
-                                // prefixHTML: '1:',
+                                prefixHTML: '1:',
+                                suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
@@ -637,6 +637,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     placeholder: 'Maximum scale',
                                 },
                                 prefixHTML: '1:',
+                                suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
