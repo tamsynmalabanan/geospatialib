@@ -123,7 +123,7 @@ const getLeafletGeoJSONLayer = async ({
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature, {circleMarker:isCanvas})
 
-        return isCanvas && styleParams.isCircle ? L.circleMarker(latlng, {
+        return isCanvas ? L.circleMarker(latlng, {
             ...styleParams,
             renderer,
         }) : L.marker(latlng, {icon: styleParams})
