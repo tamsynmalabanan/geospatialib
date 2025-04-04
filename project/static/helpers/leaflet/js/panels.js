@@ -630,7 +630,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             btnCallback: async (e) => {
                                                 const scale = getLeafletMeterScale(map)
                                                 e.target.value = scale
-                                                console.log(e.target.value)
+                                                console.log(e.target)
 
                                                 const changeEvent = new Event('change', {
                                                     bubbles: true,
