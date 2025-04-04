@@ -47,7 +47,10 @@ const zoomLeafletMapToScale = (map, scale) => {
     }
 
     console.log(diff)
-    map.setZoom(diff[Math.min(...Object.keys(diff))])
+    const newZoom = diff[Math.min(...Object.keys(diff))]
+    map.setZoom(newZoom)
+
+    return newZoom
 }
 
 const disableLeafletLayerClick = (map) => {
