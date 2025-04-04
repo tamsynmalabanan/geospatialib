@@ -114,7 +114,10 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer.options.style = (feature) => getStyle(feature)
-    geojsonLayer.options.pointToLayer = (feature, latlng) => L.marker(latlng, {icon: getStyle(feature)})
+    geojsonLayer.options.pointToLayer = (feature, latlng) => {
+        console.log(geojsonLayer.options.renderer)
+        return L.marker(latlng, {icon: getStyle(feature)})
+    }
     
     geojsonLayer._renderers = [
         geojsonLayer.options.renderer,
