@@ -486,6 +486,8 @@ const fetchGeoJSONInMap = async (geojson, cacheId, map, {
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
+            // fetch cached geojson
+
             const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
             const dataExtent = turf.bboxPolygon(turf.bbox(geojson))
             const dataBbox = turf.area(dataExtent) === 0 ? turf.buffer(dataExtent, 1/100000) : dataExtent

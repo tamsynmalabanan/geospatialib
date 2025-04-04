@@ -29,7 +29,6 @@ const getLeafletGeoJSONLayer = async ({
         // use turf.area to determinse if its needs buffer to be polygon, shorter expiration
         // remove geojson from fetchGeoJSONInMap fn
 
-
         fetcher = defaultFetcher = async ({map, controller}={}) => {
             if (!map) return geojson
             return await fetchGeoJSONInMap(geojson, cacheId, map, {controller})
@@ -62,7 +61,7 @@ const getLeafletGeoJSONLayer = async ({
     }
  
     const styleParams = getLeafletStyleParams(customStyleParams)
-    geojsonLayer._legend = {
+    geojsonLayer._styles = {
         // groups: {
         //     id: {
         //         label: 'Label
@@ -81,11 +80,15 @@ const getLeafletGeoJSONLayer = async ({
                 feature.geometry.type, 
                 styleParams
             )
+        },
+        visibility: {
+            min: 0,
+            max: 5000000,
         }
     }
 
     const getStyle = (feature) => {
-        const legend = geojsonLayer._legend
+        const legend = geojsonLayer._styles
         if (legend?.groups) {
             for (const id in legend.groups) {
                 const group = legend.groups[id]
@@ -156,7 +159,7 @@ const assignFeatureLayerTitle = (layer) => {
 
 const getGeoJSONLayerStyles = (layer) => {
     const styles = {}
-    const layerLegend = layer._legend
+    const layerLegend = layer._styles
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()

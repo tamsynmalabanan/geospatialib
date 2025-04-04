@@ -581,6 +581,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
             body.setAttribute('data-layer-id', newLayerId)
 
+            const visibility = layer._styles.visibility
+            
             const styleFields = {
                 'Rendering': {
                     'Range of visibility': {
@@ -590,20 +592,23 @@ const handleLeafletStylePanel = (map, parent) => {
                                     name:'minScale',
                                     type:'number',
                                     min: '0',
-                                    max: layer._visibility?.max || '5000000',
+                                    max: visibility.max,
                                     step: '10',
-                                    value: layer._visibility?.min || '',
+                                    value: visibility.min,
                                 },
                                 fieldClassName: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
-                                        const maxScaleField = field.closest('form').elements.maxScale
-                                        const maxScaleValue = parseInt(maxScaleField.value || 5000000)
-                                        if (maxScaleValue && maxScaleValue < parseInt(field.value || 0)) field.value = maxScaleValue
+                                        if (!field.value) {
+                                            field.value = 0
+                                        } else {
+                                            const maxScaleField = field.closest('form').elements.maxScale
+                                            const maxScaleValue = parseInt(maxScaleField.value)
+                                            if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
+                                        }
         
-                                        if (!layer._visibility) layer._visibility = {}
-                                        layer._visibility.min = parseInt(field.value)
+                                        visibility.min = parseInt(field.value)
                                         maxScaleField.setAttribute('min', field.value)
         
                                         layerIsVisible(layer)
@@ -614,21 +619,24 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldAttrs: {
                                     name:'maxScale',
                                     type:'number',
-                                    min: layer._visibility?.min || '0',
+                                    min: visibility.min,
                                     max: '5000000',
                                     step: '10',
-                                    value: layer._visibility?.max || '',
+                                    value: visibility.max,
                                 },
                                 fieldClassName: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
-                                        const minScaleField = field.closest('form').elements.minScale
-                                        const minScaleValue = parseInt(minScaleField.value || 0)
-                                        if (minScaleValue && minScaleValue > parseInt(field.value || 5000000)) field.value = minScaleValue
+                                        if (!field.value) {
+                                            field.value = 5000000
+                                        } else {
+                                            const minScaleField = field.closest('form').elements.minScale
+                                            const minScaleValue = parseInt(minScaleField.value)
+                                            if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
+                                        }
                                         
-                                        if (!layer._visibility) layer._visibility = {}
-                                        layer._visibility.max = parseInt(field.value)
+                                        visibility.max = parseInt(field.value)
                                         minScaleField.setAttribute('max', field.value)
                                         
                                         layerIsVisible(layer)
