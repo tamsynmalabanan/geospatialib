@@ -770,10 +770,12 @@ const handleLeafletQueryPanel = (map, parent) => {
                     toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
                 }
                 
-                if (layers.querySelectorAll('input.form-check-input[type="checkbox"]').length) {
-                    Array('visibility', 'zoomin').forEach(toolName => {
-                        toolbar.querySelector(`#${toolbar.id}-${toolName}`).disabled = false
-                    })
+                const checkboxes = layers.querySelectorAll('input.form-check-input[type="checkbox"]')
+                if (checkboxes.length) {
+                    toolbar.querySelector(`#${toolbar.id}-zoomin`).disabled = false
+                    if (checkboxes.some(c => !c.disabled)) {
+                        toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
+                    }
                 }
             } else {
                 error.classList.remove('d-none')
