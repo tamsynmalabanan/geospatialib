@@ -590,7 +590,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             const styleFields = {
                 'Rendering': {
-                    'Visibility': {
+                    'Minimum and maximum visible scale range': {
                         fields: {
                             'minScale': {
                                 handler: createInputGroup,
@@ -601,7 +601,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     max: visibility.max,
                                     step: '100',
                                     value: visibility.min,
-                                    placeholder: 'Minimum scale',
+                                    placeholder: 'Minimum',
                                 },
                                 prefixHTML: '1:',
                                 suffixHTML: 'm',
@@ -634,7 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     max: '5000000',
                                     step: '100',
                                     value: visibility.max,
-                                    placeholder: 'Maximum scale',
+                                    placeholder: 'Maximum',
                                 },
                                 prefixHTML: '1:',
                                 suffixHTML: 'm',
