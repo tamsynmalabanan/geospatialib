@@ -384,7 +384,7 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
     const visibility = layer._styles.visibility
     if (!visibility) return true
 
-    const mapScale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
+    const mapScale = getLeafletMeterScale(map)
     const layerMinScale = visibility.min || 0
     const layerMaxScale = visibility.max || 5000000
     const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale

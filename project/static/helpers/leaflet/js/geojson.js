@@ -80,7 +80,7 @@ const getLeafletGeoJSONLayer = async ({
             styleParams: getLeafletStyleParams(customStyleParams),
         },
         visibility: {
-            min: 0,
+            min: 10,
             max: 5000000,
         }
     }

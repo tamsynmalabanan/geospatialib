@@ -38,7 +38,7 @@ const getOverpassRequestBody = (latlng, map) => {
 
     let params
     if (latlng) {
-        const buffer = (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2
+        const buffer = getLeafletMeterScale(map)/2
         params = `around:${buffer},${latlng.lat},${latlng.lng}`
     } else {
         const [w,s,e,n] = getLeafletMapBbox(map)

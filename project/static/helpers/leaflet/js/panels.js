@@ -597,7 +597,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldAttrs: {
                                     name:'minScale',
                                     type:'number',
-                                    min: '0',
+                                    min: '10',
                                     max: visibility.max,
                                     step: '100',
                                     value: visibility.min,
@@ -612,7 +612,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const maxScaleField = field.closest('form').elements.maxScale
                                         
                                         if (!field.value) {
-                                            field.value = 0
+                                            field.value = 10
                                         } else {
                                             const maxScaleValue = parseInt(maxScaleField.value)
                                             if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
@@ -625,9 +625,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     },
                                     'click': (e) => contextMenuHandler(e, {
                                         useCurrent: {
-                                            innerText: `Use current scale`,
-                                            btnCallback: async () => {
-                                                const scale = getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom())
+                                            innerText: `Use map scale`,
+                                            btnCallback: async (e) => {
+                                                const scale = getLeafletMeterScale(map)
                                                 e.target.value = scale
 
                                                 const changeEvent = new Event('change', {
@@ -635,6 +635,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                                     cancelable: true,
                                                 })
                                                 e.target.dispatchEvent(changeEvent)
+                                            }
+                                        },
+                                        zoomCurrent: {
+                                            innerText: `Zoom to scale`,
+                                            btnCallback: async (e) => {
+                                                const scale = e.target.value
+
                                             }
                                         },
                                     })

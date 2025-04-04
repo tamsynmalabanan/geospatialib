@@ -399,7 +399,7 @@ const fetchGeoJSON = async ({
             
             const queryExtent = latlng ? turf.buffer(
                 queryGeom, 
-                (getLeafletMeterScale(map) || leafletZoomToMeter(map.getZoom()))/2/1000
+                getLeafletMeterScale(map)/2/1000
             ) : queryGeom
 
             geojson = await (async () => {

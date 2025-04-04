@@ -28,6 +28,26 @@ const getLeafletMeterScale = (map) => {
             return text.includes('km') ? (value * 1000) : value
         }
     }
+    return leafletZoomToMeter(map.getZoom())
+}
+
+const zoomLeafletMapToScale = (map, scale) => {
+    const mapZoom = map.getZoom()
+    const mapScale = leafletZoomToMeter(mapZoom)
+
+    const diff = {}
+    if (mapScale > scale) {
+        for (let i=mapZoom; i <= 20; i++) {
+            diff[abs(scale-leafletZoomToMeter(i))] = i
+        }
+    } else {
+        for (let i=1; i <= mapZoom; i++) {
+            diff[abs(scale-leafletZoomToMeter(i))] = i
+        }
+    }
+
+    console.log(diff)
+    map.setZoom(Math.min(...Object.keys(diff)))
 }
 
 const disableLeafletLayerClick = (map) => {
