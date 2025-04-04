@@ -121,7 +121,7 @@ const getLeafletGeoJSONLayer = async ({
             ...styleParams,
             renderer,
             radius: 5,
-        }) : L.marker(latlng, {icon: getStyle(feature)})
+        }) : L.marker(latlng, {icon: styleParams})
     }
     
     geojsonLayer._renderers = [
