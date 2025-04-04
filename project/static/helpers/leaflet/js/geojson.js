@@ -113,9 +113,9 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.style = (feature) => getStyle(feature)
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const renderer = geojsonLayer.options.renderer
+        console.log(renderer)
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature, {circleMarker:isCanvas})
-        console.log(styleParams)
 
         return L.circleMarker(latlng, {
             ...styleParams,
