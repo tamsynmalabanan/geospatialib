@@ -187,11 +187,14 @@ const getLeafletLayerContextMenu = (e, layer, {
     if (!group) return
     
     const layerGeoJSON = (() => {
+        let geojson
         try {
-            return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
+            geojson = feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
-            if (layer._fetcher?.name === 'defaultFetcher') return layer._fetcher()
+            console.log('fetcher')
+            if (layer._fetcher?.name === 'defaultFetcher') geojson = layer._fetcher()
         }
+        return geojson
     })()
     
     const map = group._map

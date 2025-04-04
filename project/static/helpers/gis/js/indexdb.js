@@ -11,14 +11,14 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (id, geojson, expiration=1000*60*60*24) => {
+const saveToGeoJSONDB = (id, geojson, expirationDays=1) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (e) => {
         const db = e.target.result
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
 
-        const expirationTime = Date.now() + expiration
+        const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
         objectStore.put({id, geojson, expirationTime})
     }
 }
