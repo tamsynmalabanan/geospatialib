@@ -86,7 +86,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     const getStyle = (feature, {circleMarker=false}={}) => {
-        const type = circleMarker ? 'Point' : feature.geometry.type
+        const type = circleMarker ? 'Polygon' : feature.geometry.type
         const styles = geojsonLayer._styles
         if (styles?.groups) {
             for (const id in styles.groups) {
@@ -116,7 +116,8 @@ const getLeafletGeoJSONLayer = async ({
             latlng, {
                 ...getStyle(feature, {forcedType:'Polygon'}),
                 renderer: geojsonLayer.options.renderer,
-            })
+            }
+        )
         // return L.marker(latlng, {icon: getStyle(feature)})
     }
     
