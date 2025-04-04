@@ -174,7 +174,7 @@ const findLeafletFeatureLayerParent = (layer) => {
     }
 }
 
-const getLeafletLayerContextMenu = (e, layer, {
+const getLeafletLayerContextMenu = async (e, layer, {
 
 } = {}) => {
     if (!layer) return 
