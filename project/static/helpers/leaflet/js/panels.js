@@ -589,17 +589,18 @@ const handleLeafletStylePanel = (map, parent) => {
             const visibility = layer._styles.visibility
             const visibilityFieldsClick = (e) => {
                 const field = e.target
+
+                const changeEvent = new Event('change', {
+                    bubbles: true,
+                    cancelable: true,
+                })
+
                 contextMenuHandler(e, {
                     useCurrent: {
                         innerText: `Use current map scale`,
                         btnCallback: async () => {
                             const scale = getLeafletMeterScale(map)
                             field.value = scale
-
-                            const changeEvent = new Event('change', {
-                                bubbles: true,
-                                cancelable: true,
-                            })
                             field.dispatchEvent(changeEvent)
                         }
                     },
@@ -611,9 +612,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                     },
                     useDefault: {
-                        innerText: `Zoom to nearest scale`,
+                        innerText: `Use default scale`,
                         btnCallback: async () => {
                             field.value = field.name === 'minScale' ? 10 : 5000000
+                            field.dispatchEvent(changeEvent)
                         }
                     },
                 })
