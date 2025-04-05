@@ -610,6 +610,12 @@ const handleLeafletStylePanel = (map, parent) => {
                             zoomLeafletMapToScale(map, scale)
                         }
                     },
+                    useDefault: {
+                        innerText: `Zoom to nearest scale`,
+                        btnCallback: async () => {
+                            field.value = field.name === 'minScale' ? 10 : 5000000
+                        }
+                    },
                 })
             }
 
@@ -628,7 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: visibility.min,
                                     placeholder: 'Minimum',
                                 },
-                                prefixHTML: '1:',
+                                prefixHTML: '1 :',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 events: {
@@ -662,7 +668,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     value: visibility.max,
                                     placeholder: 'Maximum',
                                 },
-                                prefixHTML: '1:',
+                                prefixHTML: '1 :',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 events: {
