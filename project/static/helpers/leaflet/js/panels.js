@@ -657,18 +657,19 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass:'form-select-sm',
                                 events: {
                                     change: (e) => {
-                                        const field = e.field
-                                        symbologyMethod = field.value
+                                        console.log(e)
+                                        // const field = e.field
+                                        // symbologyMethod = field.value
                                         
-                                        const container = field.parentElement.nextSiblingElement()
-                                        console.log(container)
+                                        // const container = field.parentElement.nextSiblingElement()
+                                        // console.log(container)
                                     }
                                 }
                             },
                             methodDetails: {
-                                handler: () => {
+                                handler: ({parent}={}) => {
                                     const container = document.createElement('div')
-                                    return container
+                                    parent?.appendChild(container)
                                 }
                             }
                         },
