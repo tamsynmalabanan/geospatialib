@@ -111,7 +111,7 @@ const getLeafletGeoJSONLayer = async ({
             }
         }
 
-        // const circleIcon = styleParams.iconClass === 'bi bi-circle-fill'
+        // const circleIcon = styleParams.iconClass === 'circle-fill'
         const type = circleMarker ? 'Polygon' : feature.geometry.type
         // const type = circleMarker && circleIcon ? 'Polygon' : feature.geometry.type
         const layerStyle =  getLeafletLayerStyle(type, styleParams)

@@ -663,7 +663,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             name:`${id}-iconClass`,
                             type: 'text',
                             value: styleParams.iconClass,
-                            list: bootstrapIConsDatalist.id
                         },
                         fieldClass: 'form-control-sm',
                         labelText: 'Icon class'
@@ -1231,7 +1230,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIConsDatalist = customCreateElement('datalist', {parent:document.body})
+const bootstrapIconUL = customCreateElement('ul', {className: 'list-group'})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
@@ -1239,12 +1238,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.text()
     })
     .then(text => {
-        const iconNames = text.split('.bi-').map(i => 'bi-' + i.split('::before')[0]).slice(1)
+        const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
         iconNames.forEach(i => {
-            const option = document.createElement('option')
-            option.value = `bi ${i}`
-            option.className = option.value
-            bootstrapIConsDatalist.appendChild(option)
+            const li = document.createElement('li')
+            li.className = `list-group-item bi bi-${i}`
+            li.innerText = i
+            bootstrapIconUL.appendChild(li)
         })
     })
     .catch(error => {

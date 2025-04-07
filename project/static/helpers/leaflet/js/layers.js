@@ -11,11 +11,11 @@ const getLeafletStyleParams = ({
     strokeOpacity=1,
     strokeWidth=1,
     
-    iconClass='bi bi-circle-fill',
+    iconClass='circle-fill',
     iconSize=10,
     iconShadow=false,
     iconGlow=false,
-    
+
     dashArray,
     dashOffset,
 } = {}) => {
@@ -62,7 +62,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
 
     if (type === 'point') {
         const div = document.createElement('div')
-        div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
+        div.className = `h-100 w-100 d-flex justify-content-center align-items-center bi bi-${iconClass}`
         div.style.fontSize = `${iconSize}px`
         div.style.color = manageHSLAColor(fillColor)?.toString({a:fillOpacity}) || fillColor
         div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
