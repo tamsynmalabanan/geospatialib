@@ -1,10 +1,12 @@
 const customCreateElement = (tag, {
     id,
-    className = ''
+    className = '',
+    parent
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
     element.className = className
+    parent?.appendChild(element)
     return element
 }
 

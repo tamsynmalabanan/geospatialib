@@ -663,6 +663,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             name:`${id}-iconClass`,
                             type: 'text',
                             value: styleParams.iconClass,
+                            list: bootstrapIConsDatalist.id
                         },
                         fieldClass: 'form-control-sm',
                         labelText: 'Icon class'
@@ -1230,7 +1231,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIConsDatalist = customCreateElement('datalist')
+const bootstrapIConsDatalist = customCreateElement('datalist', {parent:document.body})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
