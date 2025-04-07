@@ -249,7 +249,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         
         const tr = document.createElement('tr')
         tr.id = `${table.id}-${id}`
-        tr.className = 'd-flex flex-nowrap'
+        tr.className = 'd-flex flex-nowrap align-items-center'
         tbody.appendChild(tr)
 
         const icon = document.createElement('td')
