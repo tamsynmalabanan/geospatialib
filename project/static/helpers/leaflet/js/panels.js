@@ -643,6 +643,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const label = createFormFloating({
                         parent,
                         fieldAttrs: {
+                            name: `${id}-label`,
                             type: 'text',
                             value: style.label
                         },
@@ -666,6 +667,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const fillColor = createFormFloating({
                         parent:design,
                         fieldAttrs: {
+                            name:`${id}-fillColor`,
                             type: 'color',
                             value: hslToHex(manageHSLAColor(styleParams.fillColor)),
                         },
@@ -680,6 +682,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const fillOpacity = createInputGroup({
                         parent:design,
                         fieldAttrs: {
+                            name: `${id}-fillOpacity`,
                             type: 'number',
                             min: '0',
                             max: '100',
