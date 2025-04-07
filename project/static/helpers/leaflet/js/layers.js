@@ -15,6 +15,7 @@ const getLeafletStyleParams = ({
     iconSize=10,
     iconShadow=false,
     iconGlow=false,
+    
     dashArray,
     dashOffset,
 } = {}) => {

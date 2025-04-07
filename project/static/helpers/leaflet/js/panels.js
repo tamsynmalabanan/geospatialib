@@ -653,6 +653,24 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     const styleParams = style.styleParams
                     
+                    const iconFields = document.createElement('div')
+                    iconFields.className = 'd-flex gap-2'
+                    parent.appendChild(iconFields)
+                    
+                    const iconClass = createFormFloating({
+                        parent:iconFields,
+                        fieldAttrs: {
+                            name:`${id}-iconClass`,
+                            type: 'text',
+                            value: styleParams.iconClass,
+                        },
+                        fieldClass: 'form-control-sm',
+                        labelText: 'Icon class'
+                    }).querySelector('input')
+                    iconClass.addEventListener('blur', (e) => {
+                        styleParams.iconClass = iconClass.value
+                        updateGeoJSONData(layer)
+                    })
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
@@ -692,7 +710,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         styleParams.fillOpacity = parseInt(fillOpacity.value)/100
                         updateGeoJSONData(layer)
                     })
-
                     
                     const strokeFields = document.createElement('div')
                     strokeFields.className = 'd-flex gap-2'
