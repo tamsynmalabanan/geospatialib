@@ -634,7 +634,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const handler = (id) => {
                     const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
+                    
                     const parent = document.createElement('div')
+                    parent.className = 'd-flex gap-2'
 
                     const label = createFormFloating({
                         parent,
@@ -646,7 +648,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     label.addEventListener('input', () => {
                         style.label = label.value
-                        detailsTable.querySelector(`#${detailsTable.id}-${id}-title`).innerText = label.value
+
+                        const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
+                        console.log(element)
+                        if (element) element.innerText = label.value
                     })
 
                     return parent
