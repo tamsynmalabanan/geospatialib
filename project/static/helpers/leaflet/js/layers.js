@@ -4,8 +4,7 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 }).addTo(map)
 
 const getLeafletStyleParams = ({
-    color=generateRandomColor(),
-    fillColor=true,
+    fillColor=generateRandomColor(),
     fillOpacity=0.5,
     strokeColor=true,
     strokeOpacity=1,
@@ -19,12 +18,10 @@ const getLeafletStyleParams = ({
     dashArray,
     dashOffset,
 } = {}) => {
-    const hslaColor = manageHSLAColor(color)
-    strokeColor = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2}) || color : strokeColor || 'transparent'
-    fillColor = fillColor === true ? color : fillColor || 'transparent'
+    const hslaColor = manageHSLAColor(fillColor)
+    strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
     return  {
-        color,
         strokeWidth,
         strokeColor,
         strokeOpacity,
@@ -41,7 +38,6 @@ const getLeafletStyleParams = ({
 
 const getLeafletLayerStyle = (featureType, styleParams={}) => {
     const {
-        color,
         fillColor,
         fillOpacity,
         strokeColor,
@@ -64,9 +60,9 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center bi bi-${iconClass}`
         div.style.fontSize = `${iconSize}px`
-        div.style.color = manageHSLAColor(fillColor)?.toString({a:fillOpacity}) || fillColor
+        div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
         div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
-        const glow = hslaColor?.toString({a:fillOpacity}) || color
+        const glow = hslaColor?.toString({a:fillOpacity}) || `white`
         div.style.textShadow = Array(
             iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
             iconGlow ? `0 0 ${iconSize/2*1}px ${glow}, 0 0 ${iconSize/2*2}px ${glow}, 0 0 ${iconSize/2*3}px ${glow}, 0 0 ${iconSize/2*4}px ${glow}` : ''
