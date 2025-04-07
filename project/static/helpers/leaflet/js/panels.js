@@ -656,6 +656,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldTag: 'textarea',
                                 fieldInnerText: layer._attribution,
                                 value: 'Attribution',
+                                fieldStyle: {
+                                    minHeight: '150px', 
+                                },
                                 events: {
                                     input: (e) => {
                                         const field = e.target
