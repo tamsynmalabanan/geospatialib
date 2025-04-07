@@ -1,7 +1,9 @@
 const customCreateElement = (tag, {
+    id,
     className = ''
 } = {}) => {
     const element = document.createElement(tag)
+    element.id = id || generateRandomString()
     element.className = className
     return element
 }

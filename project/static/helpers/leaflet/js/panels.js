@@ -1213,7 +1213,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-let bootstrapICons
+const bootstrapIConsDatalist = customCreateElement('datalist')
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
@@ -1221,7 +1221,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.text()
     })
     .then(text => {
-        bootstrapICons = text.split('.bi-').map(i => 'bi-' + i.split('::before')[0]).slice(1)
+        const iconNames = text.split('.bi-').map(i => 'bi-' + i.split('::before')[0]).slice(1)
+        iconNames.forEach(i => {
+            const option = document.createElement('option')
+            option.value = `bi ${i}`
+            option.className = option.value
+            bootstrapIConsDatalist.appendChild(option)
+        })
     })
     .catch(error => {
         console.log(error)
