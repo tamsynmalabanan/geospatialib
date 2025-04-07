@@ -492,6 +492,7 @@ const createFormFloating = ({
     events = {},
     options,
     selectedValue = '',
+    value,
 } = {}) => {
     const container = document.createElement('div')
     container.className = `form-floating flex-grow-1`
@@ -512,6 +513,8 @@ const createFormFloating = ({
             field.appendChild(option)
         }
     }
+
+    if (value) field.value = value
 
     Object.keys(events).forEach(trigger => {
         field.addEventListener(trigger, events[trigger])
