@@ -646,10 +646,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         labelText: 'Label'
                     }).querySelector('input')
-                    
+                    let labelTimeout
                     label.addEventListener('input', (e) => {
-                        style.label = label.value
-                        updateGeoJSONData(layer)
+                        clearTimeout(labelTimeout)
+                        labelTimeout = setTimeout(() => {
+                            style.label = label.value
+                            updateGeoJSONData(layer)
+                        }, 1000);
                     })
 
                     const design = document.createElement('div')
@@ -668,9 +671,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     fillColor.addEventListener('input', (e) => {
                         styleParams.fillColor = hexToHSLA(fillColor.value)
                         updateGeoJSONData(layer)
-                        // style.label = label.value
-                        // const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
-                        // if (element) element.innerText = label.value
                     })
 
 
