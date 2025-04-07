@@ -526,11 +526,6 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 }
 
-fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
-.then(response => {
-    console.log(response.text)
-})
-
 const handleLeafletStylePanel = (map, parent) => {
     const form = document.createElement('form')
     form.className = `d-flex flex-grow-1 flex-column py-3 text-bg${getPreferredTheme()}`
@@ -1217,3 +1212,17 @@ const handleLeafletMapPanels = (map) => {
     
     control.addTo(map)
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
+    .then(response => {
+        if (!response.ok) throw new Error('Response not ok.')
+        return response.text()
+    })
+    .then(text => {
+        console.log(text)
+    })
+    .catch(error => {
+        console.log(error)
+    })
+})
