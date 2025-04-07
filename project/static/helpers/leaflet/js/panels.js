@@ -657,6 +657,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent.appendChild(design)
 
                     const styleParams = style.styleParams
+                    console.log(manageHSLAColor(styleParams.fillColor))
                     const fillColor = createFormFloating({
                         parent:design,
                         fieldAttrs: {
