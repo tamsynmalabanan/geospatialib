@@ -528,7 +528,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const form = document.createElement('form')
-    form.className = 'd-flex flex-grow-1 flex-column py-3'
+    form.className = `d-flex flex-grow-1 flex-column py-3 text-bg${getPreferredTheme()}`
     parent.appendChild(form)
 
     const selectContainer = document.createElement('div')
