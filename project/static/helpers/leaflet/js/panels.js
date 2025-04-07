@@ -655,7 +655,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
                             console.log(element)
                             if (element) element.innerText = label.value
-                        }, 100);
+                        }, 1000);
                     })
 
                     const design = document.createElement('div')
