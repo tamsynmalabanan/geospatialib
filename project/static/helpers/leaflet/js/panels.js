@@ -698,7 +698,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         timeout = setTimeout(() => {
                             styleParams.fillOpacity = parseInt(fillOpacity.value)/100
                             updateGeoJSONData(layer)
-                        }, 100);
+                        }, 250);
                     })
 
                     return parent
