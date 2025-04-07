@@ -628,17 +628,17 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const styleFields = {
                 'Legend': {
-                    // 'Identification': {
-                    //     fields: {
-                    //         title: {
+                    'Identification': {
+                        fields: {
+                            title: {
 
-                    //         },
-                    //         attribution: {
+                            },
+                            attribution: {
 
-                    //         },
-                    //     },
-                    //     className: ''
-                    // },
+                            },
+                        },
+                        className: ''
+                    },
                     'Symbology': {
                         fields: {   
                             method: {
