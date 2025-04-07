@@ -654,8 +654,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const container = document.createElement('div')
                                     parent?.appendChild(container)
 
-                                    console.log(layer._attribution)
-
+                                    const attributionTable = document.querySelector(
+                                        `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-attribution`
+                                    )?.querySelector('table')
+                                    const attributions = attributionTableToJSON(attributionTable)
+                                    console.log(attributions)
                                 }
                             },
                         },

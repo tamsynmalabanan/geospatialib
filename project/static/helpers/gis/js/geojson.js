@@ -94,6 +94,13 @@ const createAttributionTable = (geojson) => {
     }
 }
 
+const attributionTableToJSON = (table) => {
+    const attributions = {}
+    console.log(table)
+
+    return attributions
+}
+
 const createGeoJSONChecklist = async (geojsonList, group, {
     pane,
     controller,
