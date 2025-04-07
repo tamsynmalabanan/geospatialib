@@ -646,9 +646,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         labelText: 'Label'
                     }).querySelector('input')
-                    label.addEventListener('input', () => {
+                    label.addEventListener('input', (e) => {
                         style.label = label.value
                         const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
+                        console.log(style.label, element)
                         if (element) element.innerText = label.value
                     })
 
@@ -666,8 +667,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Fill color'
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
-                        console.log(e.target.value, hexToHSLA(e.target.value))
-                        styleParams.fillColor = hexToHSLA(e.target.value)
+                        styleParams.fillColor = hexToHSLA(fillColor.value)
                         updateGeoJSONData(layer)
                         // style.label = label.value
                         // const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
