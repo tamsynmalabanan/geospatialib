@@ -526,6 +526,11 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 }
 
+fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
+.then(response => {
+    console.log(response.text)
+})
+
 const handleLeafletStylePanel = (map, parent) => {
     const form = document.createElement('form')
     form.className = `d-flex flex-grow-1 flex-column py-3 text-bg${getPreferredTheme()}`
@@ -672,6 +677,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         styleParams.fillColor = hexToHSLA(fillColor.value)
                         updateGeoJSONData(layer)
                     })
+
                     const fillOpacity = createInputGroup({
                         parent:fillFields,
                         fieldAttrs: {
@@ -711,6 +717,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         styleParams.strokeColor = hexToHSLA(strokeColor.value)
                         updateGeoJSONData(layer)
                     })
+
                     const strokeOpacity = createInputGroup({
                         parent:strokeFields,
                         fieldAttrs: {
@@ -730,6 +737,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
                         updateGeoJSONData(layer)
                     })
+
                     const strokeWidth = createInputGroup({
                         parent:strokeFields,
                         fieldAttrs: {
@@ -737,7 +745,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             type: 'number',
                             min: '0',
                             max: '10',
-                            step: '0.1',
+                            step: '1',
                             value: styleParams.strokeWidth,
                             placeholder: 'Stroke width',
                         },
@@ -983,8 +991,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
             })
         })
-    }) 
-
+    })
 }
 
 const handleLeafletQueryPanel = (map, parent) => {

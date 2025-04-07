@@ -5,19 +5,18 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 
 const getLeafletStyleParams = ({
     color=generateRandomColor(),
-    strokeWidth=1,
-    strokeColor=true,
-    strokeOpacity=1,
-    
     fillColor=true,
     fillOpacity=0.5,
-    dashArray,
-    dashOffset,
+    strokeColor=true,
+    strokeOpacity=1,
+    strokeWidth=1,
     
     iconClass='bi bi-circle-fill',
     iconSize=10,
     iconShadow=false,
     iconGlow=false,
+    dashArray,
+    dashOffset,
 } = {}) => {
     const hslaColor = manageHSLAColor(color)
     strokeColor = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2}) || color : strokeColor || 'transparent'
@@ -46,8 +45,8 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         fillOpacity,
         strokeColor,
         strokeOpacity,
-        
         strokeWidth,
+
         dashArray,
         dashOffset,
         iconClass,
