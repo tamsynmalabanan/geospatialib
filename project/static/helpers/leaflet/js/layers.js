@@ -253,6 +253,17 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 layer.fire('click')
             }
         },
+        
+        // refreshData: !isLegendGroup || isLegendFeature ? null : {
+            //     innerText: `Refresh ${typeLabel}`,
+            //     btnCallback: async () => {
+                
+                //     }
+                // },
+                
+        divider1: !feature ? null : {
+            divider: true,
+        },
         style: !isLegendGroup || isLegendFeature ? null : {
             innerText: `Style ${typeLabel}`,
             btnCallback: async () => {
@@ -265,17 +276,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 layerSelect.value = layer._leaflet_id
                 layerSelect.blur()
             }
-        },
-
-        // refreshData: !isLegendGroup || isLegendFeature ? null : {
-        //     innerText: `Refresh ${typeLabel}`,
-        //     btnCallback: async () => {
-                
-        //     }
-        // },
-
-        divider1: !feature ? null : {
-            divider: true,
         },
         copyFeature: !feature ? null : {
             innerText: 'Copy feature',

@@ -642,6 +642,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     name:'method',
                                 },
                                 fieldTag:'select',
+                                labelText: 'Method',
                                 options:{
                                     '':'No symbology',
                                     'uniform':'Uniform symbol',
@@ -651,7 +652,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass:'form-select-sm',
                                 events: {
                                     change: (e) => {
-                                        
+
                                     }
                                 }
                             },
