@@ -112,10 +112,9 @@ const getLeafletGeoJSONLayer = async ({
         }
 
         const circleIcon = styleParams.iconClass.includes('circle')
-        // const type = circleMarker ? 'Polygon' : feature.geometry.type
         const type = circleMarker && circleIcon ? 'Polygon' : feature.geometry.type
         const layerStyle =  getLeafletLayerStyle(type, styleParams)
-        // if (circleMarker) layerStyle.radius = styleParams.iconSize/2 
+        console.log(circleMarker, circleIcon, type, layerStyle)
         if (circleMarker && circleIcon) layerStyle.radius = styleParams.iconSize/2 
         return layerStyle
     }
