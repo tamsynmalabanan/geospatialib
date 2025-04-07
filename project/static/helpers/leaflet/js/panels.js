@@ -670,8 +670,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     iconClass.addEventListener('blur', (e) => {
                         Array.from(iconOptions.querySelectorAll('li')).forEach(li => {
                             li.classList.toggle('d-none', (
-                                !iconClass.value ||
-                                li.querySelector('span')
+                                iconClass.value &&
+                                !li.querySelector('span')
                                 .innerText.includes(iconClass.value)
                             ))
                         })
