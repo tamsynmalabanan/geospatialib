@@ -674,10 +674,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const iconOptions = customCreateElement({
                         parent:iconFields,
-                        style: {
-                            maxHeight: '200px',
-                            overflow: 'auto',
-                        }
+                        className: 'overflow-auto border rounded',
+                        style: {maxHeight: '200px'}
                     })
                     iconOptions.innerHTML = bootstrapIconUL.outerHTML
 
@@ -1239,7 +1237,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIconUL = customCreateElement({tag:'ul', className: 'list-group'})
+const bootstrapIconUL = customCreateElement({tag:'ul', className: 'list-group border-0'})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
@@ -1250,7 +1248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
         iconNames.forEach(i => {
             const li = document.createElement('li')
-            li.className = `list-group-item`
+            li.className = `list-group-item d-flex flex-nowrap gap-2 border-0`
             createIcon({className:`bi bi-${i}`, parent:li})
             createSpan(i, {parent:li})
             bootstrapIconUL.appendChild(li)
