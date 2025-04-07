@@ -123,6 +123,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         })
 
         const featureLayers = geojsonLayer.getLayers()
+        if (!featureLayers.length) continue
+
         const listFeatures = featureLayers.length <= 100
         const disableCheck = featureLayers.length > 1000
 
