@@ -657,15 +657,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             updateGeoJSONData(layer)
                         }, 1000);
                     })
-
-                    const design = document.createElement('div')
-                    design.className = 'd-flex gap-2'
-                    parent.appendChild(design)
-
+                    
                     const styleParams = style.styleParams
                     
+
+                    const fillFields = document.createElement('div')
+                    fillFields.className = 'd-flex gap-2'
+                    parent.appendChild(fillFields)
+
                     const fillColor = createFormFloating({
-                        parent:design,
+                        parent:fillFields,
                         fieldAttrs: {
                             name:`${id}-fillColor`,
                             type: 'color',
@@ -680,7 +681,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
 
                     const fillOpacity = createInputGroup({
-                        parent:design,
+                        parent:fillFields,
                         fieldAttrs: {
                             name: `${id}-fillOpacity`,
                             type: 'number',
@@ -688,10 +689,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             max: '100',
                             step: '10',
                             value: styleParams.fillOpacity * 100,
+                            placeholder: 'Fill opacity',
                         },
                         suffixHTML: '%',
                         fieldClass: 'form-control-sm',
-                        labelText: 'Fill opacity'
                     }).querySelector('input')
                     fillOpacity.addEventListener('input', (e) => {
                         clearTimeout(timeout)
@@ -700,9 +701,14 @@ const handleLeafletStylePanel = (map, parent) => {
                             updateGeoJSONData(layer)
                         }, 250);
                     })
+
+                    
+                    const strokeFields = document.createElement('div')
+                    strokeFields.className = 'd-flex gap-2'
+                    parent.appendChild(strokeFields)
                     
                     const strokeColor = createFormFloating({
-                        parent:design,
+                        parent:strokeFields,
                         fieldAttrs: {
                             name:`${id}-strokeColor`,
                             type: 'color',
@@ -717,7 +723,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
 
                     const strokeOpacity = createInputGroup({
-                        parent:design,
+                        parent:strokeFields,
                         fieldAttrs: {
                             name: `${id}-strokeOpacity`,
                             type: 'number',
@@ -725,10 +731,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             max: '100',
                             step: '10',
                             value: styleParams.strokeOpacity * 100,
+                            placeholder: 'String opacity',
                         },
                         suffixHTML: '%',
                         fieldClass: 'form-control-sm',
-                        labelText: 'Fill opacity'
                     }).querySelector('input')
                     strokeOpacity.addEventListener('input', (e) => {
                         clearTimeout(timeout)
