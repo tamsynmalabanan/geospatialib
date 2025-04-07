@@ -657,7 +657,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent.appendChild(design)
 
                     const styleParams = style.styleParams
-                    console.log(manageHSLAColor(styleParams.fillColor))
                     const fillColor = createFormFloating({
                         parent:design,
                         fieldAttrs: {
@@ -668,6 +667,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
                         console.log(e.target.value, hexToHSLA(e.target.value))
+                        styleParams.fillColor = hexToHSLA(e.target.value)
+                        updateGeoJSONData(layer)
                         // style.label = label.value
                         // const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
                         // if (element) element.innerText = label.value
