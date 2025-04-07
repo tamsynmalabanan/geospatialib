@@ -111,7 +111,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const features = geojson.features
         if (!features?.length) continue
 
-        if (features.length <= 100) sortGeoJSONFeaturesByType(geojson)        
+        sortGeoJSONFeaturesByType(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
