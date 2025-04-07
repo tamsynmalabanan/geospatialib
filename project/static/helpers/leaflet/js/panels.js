@@ -667,7 +667,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             methodDetails: {
                                 handler: ({parent}={}) => {
-                                    const container = document.createElement('div')
+                                    const container = customCreateElement('div')
                                     parent?.appendChild(container)
                                 }
                             }
