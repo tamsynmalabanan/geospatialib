@@ -647,18 +647,14 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Label'
                     }).querySelector('input')
                     
-                    let labelTimeout
                     label.addEventListener('input', (e) => {
-                        clearTimeout(labelTimeout)
-                        labelTimeout = setTimeout(() => {
-                            style.label = label.value
-                            const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
-                            if (element) {
-                                while (element.innerText !== label.value) {
-                                    element.innerText = label.value
-                                }
+                        style.label = label.value
+                        const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
+                        if (element) {
+                            while (element.innerText !== label.value) {
+                                element.innerText = label.value
                             }
-                        }, 1000);
+                        }
                     })
 
                     const design = document.createElement('div')
