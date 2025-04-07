@@ -654,7 +654,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const container = customCreateElement('div')
 
-                container.appendChild(handler())
+                container.appendChild(handler(''))
                 
 
                 parent?.appendChild(container)
