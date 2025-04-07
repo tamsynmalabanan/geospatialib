@@ -6,12 +6,13 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 const getLeafletStyleParams = ({
     color=generateRandomColor(),
     strokeWidth=1,
-    strokePattern='solid',
     strokeColor=true,
     strokeOpacity=1,
     
     fillColor=true,
     fillOpacity=0.5,
+    dashArray,
+    dashOffset,
     
     iconClass='bi bi-circle-fill',
     iconSize=10,
@@ -25,7 +26,6 @@ const getLeafletStyleParams = ({
     return  {
         color,
         strokeWidth,
-        strokePattern,
         strokeColor,
         strokeOpacity,
         fillColor,
@@ -34,18 +34,22 @@ const getLeafletStyleParams = ({
         iconSize,
         iconShadow,
         iconGlow,
+        dashArray,
+        dashOffset,
     }    
 }
 
 const getLeafletLayerStyle = (featureType, styleParams={}) => {
     const {
         color,
-        strokeWidth,
-        strokePattern,
-        strokeColor,
-        strokeOpacity,
         fillColor,
         fillOpacity,
+        strokeColor,
+        strokeOpacity,
+        
+        strokeWidth,
+        dashArray,
+        dashOffset,
         iconClass,
         iconSize,
         iconShadow,
@@ -76,6 +80,8 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
             color: type === 'polygon' ? strokeColor : fillColor,
             weight: strokeWidth,
             opacity: strokeOpacity,
+            dashArray,
+            dashOffset,    
         } 
         
         if (type === 'polygon') {

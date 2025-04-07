@@ -720,7 +720,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             max: '100',
                             step: '10',
                             value: styleParams.strokeOpacity * 100,
-                            placeholder: 'String opacity',
+                            placeholder: 'Stroke opacity',
                         },
                         suffixHTML: '%',
                         fieldClass: 'form-control-sm',
@@ -728,6 +728,25 @@ const handleLeafletStylePanel = (map, parent) => {
                     strokeOpacity.addEventListener('blur', (e) => {
                         if (!strokeOpacity.value) strokeOpacity.value = 100
                         styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
+                        updateGeoJSONData(layer)
+                    })
+                    const strokeWidth = createInputGroup({
+                        parent:strokeFields,
+                        fieldAttrs: {
+                            name: `${id}-strokeWidth`,
+                            type: 'number',
+                            min: '0',
+                            max: '10',
+                            step: '0.1',
+                            value: styleParams.strokeWidth,
+                            placeholder: 'Stroke width',
+                        },
+                        suffixHTML: 'px',
+                        fieldClass: 'form-control-sm',
+                    }).querySelector('input')
+                    strokeWidth.addEventListener('blur', (e) => {
+                        if (!strokeWidth.value) strokeWidth.value = 1
+                        styleParams.strokeWidth = parseInt(strokeWidth.value)
                         updateGeoJSONData(layer)
                     })
 
