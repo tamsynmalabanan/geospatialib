@@ -127,3 +127,46 @@ const hslToHex = ({h, s, l}) => {
     }
     return `#${f(0)}${f(8)}${f(4)}`
 }
+
+const hexToHSL = (hex) => {
+    // Convert hex to RGB
+    let r = parseInt(hex.substring(1, 3), 16) / 255;
+    let g = parseInt(hex.substring(3, 5), 16) / 255;
+    let b = parseInt(hex.substring(5, 7), 16) / 255;
+  
+    // Find max and min values of RGB
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+    let delta = max - min;
+  
+    // Calculate Lightness
+    let l = (max + min) / 2;
+  
+    // Calculate Saturation
+    let s = 0;
+    if (delta !== 0) {
+      s = l < 0.5 ? delta / (max + min) : delta / (2 - max - min);
+    }
+  
+    // Calculate Hue
+    let h = 0;
+    if (delta !== 0) {
+      if (max === r) {
+        h = (g - b) / delta;
+      } else if (max === g) {
+        h = 2 + (b - r) / delta;
+      } else if (max === b) {
+        h = 4 + (r - g) / delta;
+      }
+    }
+    h = Math.round(h * 60);
+    if (h < 0) {
+      h += 360;
+    }
+  
+    // Convert to percentages
+    s = +(s * 100).toFixed(1);
+    l = +(l * 100).toFixed(1);
+  
+    return `hsl(${h}, ${s}%, ${l}%)`;
+}
