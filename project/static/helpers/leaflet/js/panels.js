@@ -628,17 +628,17 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const styleFields = {
                 'Legend': {
-                    'Identification': {
-                        fields: {
-                            title: {
+                    // 'Identification': {
+                    //     fields: {
+                    //         title: {
 
-                            },
-                            attribution: {
+                    //         },
+                    //         attribution: {
 
-                            },
-                        },
-                        className: ''
-                    },
+                    //         },
+                    //     },
+                    //     className: ''
+                    // },
                     'Symbology': {
                         fields: {   
                             method: {
@@ -675,7 +675,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        className: 'flex-column'
+                        className: ''
                     },
                 },
                 'Rendering': {
@@ -754,7 +754,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     'Filter': {
                         fields: {
-
+                            
                         }
                     }
                 }
@@ -809,7 +809,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const fields = data.fields
                     Object.keys(fields).forEach(fieldName => {
                         const params = fields[fieldName]
-                        params.handler({
+                        if (params?.handler) params.handler({
                             ...params, 
                             parent: sectionFields,
                         })
