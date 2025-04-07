@@ -672,8 +672,14 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
-                    const iconOptions = customCreateElement({parent:iconFields})
-                    iconOptions.outerHTML = bootstrapIconUL.outerHTML
+                    const iconOptions = customCreateElement({
+                        parent:iconFields,
+                        style: {
+                            maxHeight: '200px',
+                            overflow: 'auto',
+                        }
+                    })
+                    iconOptions.innerHTML = bootstrapIconUL.outerHTML
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
@@ -1233,14 +1239,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIconUL = customCreateElement({
-    tag:'ul', 
-    className: 'list-group',
-    style: {
-        maxHeight: '200px',
-        overflow: 'auto',
-    }
-})
+const bootstrapIconUL = customCreateElement({tag:'ul', className: 'list-group'})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
@@ -1253,7 +1252,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li')
             li.className = `list-group-item`
             createIcon({className:`bi bi-${i}`, parent:li})
-            createSpan({innerText:i, parent:li})
+            createSpan(i, {parent:li})
             bootstrapIconUL.appendChild(li)
         })
     })
