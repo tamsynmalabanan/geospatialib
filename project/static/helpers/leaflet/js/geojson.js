@@ -137,6 +137,7 @@ const getLeafletGeoJSONLayer = async ({
 
     if (geojson && !isLegendGroup) geojsonLayer.addData(geojson)
 
+    console.log(geojsonLayer)
     return geojsonLayer
 }
 
