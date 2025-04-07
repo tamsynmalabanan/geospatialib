@@ -10,9 +10,9 @@ const getLeafletStyleParams = ({
     strokeColor=true,
     strokeOpacity=1,
     strokeWidth=1,
-    
     iconClass='circle-fill',
     iconSize=10,
+    
     iconShadow=false,
     iconGlow=false,
 

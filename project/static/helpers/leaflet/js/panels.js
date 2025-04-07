@@ -672,6 +672,27 @@ const handleLeafletStylePanel = (map, parent) => {
                         styleParams.iconClass = iconClass.value
                         updateGeoJSONData(layer)
                     })
+                    
+                    const iconSize = createInputGroup({
+                        parent:iconFields,
+                        fieldAttrs: {
+                            name: `${id}-iconSize`,
+                            type: 'number',
+                            min: '0',
+                            max: '100',
+                            step: '1',
+                            value: styleParams.iconSize,
+                            placeholder: 'Icon size',
+                        },
+                        suffixHTML: 'px',
+                        fieldClass: 'form-control-sm',
+                    }).querySelector('input')
+                    iconSize.addEventListener('blur', (e) => {
+                        if (!iconSize.value) iconSize.value = 10
+                        styleParams.iconSize = parseInt(iconSize.value)
+                        updateGeoJSONData(layer)
+                    })
+
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
