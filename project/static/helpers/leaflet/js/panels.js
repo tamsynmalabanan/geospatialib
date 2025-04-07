@@ -549,12 +549,12 @@ const handleLeafletStylePanel = (map, parent) => {
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
     form.appendChild(body)
 
+    const mapContainer = map.getContainer()
     let layer
 
     select.addEventListener('focus', () => {
         select.innerHTML = ''
 
-        const mapContainer = map.getContainer()
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
         const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
         
@@ -631,7 +631,20 @@ const handleLeafletStylePanel = (map, parent) => {
                     'Identification': {
                         fields: {
                             title: {
-
+                                handler: createFormFloating,
+                                fieldAttrs: {
+                                    type: 'text',
+                                },
+                                labelText: 'Title',
+                                events: {
+                                    input: (e) => {
+                                        const field = e.target
+                                        layer._title = field.value
+                                        
+                                        const titleElement = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-title`)
+                                        titleElement?.querySelector('span')?.innerText = field.value
+                                    }
+                                }
                             },
                             attribution: {
 
@@ -639,44 +652,41 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         className: ''
                     },
-                    'Symbology': {
-                        fields: {   
-                            method: {
-                                handler: createFormFloating,
-                                fieldAttrs: {
-                                    name:'method',
-                                },
-                                fieldTag:'select',
-                                labelText: 'Method',
-                                options:{
-                                    'uniform':'Uniform symbol',
-                                    'categorized':'Categorized symbols',
-                                    'ranged':'Ranged symbols',
-                                },
-                                selectedValue: symbologyMethod,
-                                fieldClass:'form-select-sm',
-                                events: {
-                                    change: (e) => {
-                                        const field = e.target
-                                        layerStyles.method = field.value
+                    // 'Symbology': {
+                    //     fields: {   
+                    //         method: {
+                    //             handler: createFormFloating,
+                    //             fieldAttrs: {
+                    //                 name:'method',
+                    //             },
+                    //             fieldTag:'select',
+                    //             labelText: 'Method',
+                    //             options:{
+                    //                 'uniform':'Uniform symbol',
+                    //                 'categorized':'Categorized symbols',
+                    //                 'ranged':'Ranged symbols',
+                    //             },
+                    //             selectedValue: symbologyMethod,
+                    //             fieldClass:'form-select-sm',
+                    //             events: {
+                    //                 change: (e) => {
+                    //                     const field = e.target
+                    //                     layerStyles.method = field.value
                                         
-                                        const container = field.parentElement.nextSibling
-                                        container.innerHTML = ''
-                                    }
-                                }
-                            },
-                            methodDetails: {
-                                handler: ({parent}={}) => {
-                                    const container = customCreateElement('div')
-
-                                    
-
-                                    parent?.appendChild(container)
-                                }
-                            }
-                        },
-                        className: ''
-                    },
+                    //                     const container = field.parentElement.nextSibling
+                    //                     container.innerHTML = ''
+                    //                 }
+                    //             }
+                    //         },
+                    //         methodDetails: {
+                    //             handler: ({parent}={}) => {
+                    //                 const container = customCreateElement('div')
+                    //                 parent?.appendChild(container)
+                    //             }
+                    //         }
+                    //     },
+                    //     className: ''
+                    // },
                 },
                 'Rendering': {
                     'Visibility': {

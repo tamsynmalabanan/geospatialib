@@ -347,19 +347,20 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const pane = createCustomPane(map)
 
                 const geojsonLayer = findLeafletFeatureLayerParent(layer)
-                const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const styles = feature ? geojsonLayer._styles : layer._styles
+                const title = styles.title
+                const attribution = styles.attribution
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
                     newLayer = await getLeafletGeoJSONLayer({
                         geojson: layerGeoJSON,
-                        title: layer._title,
-                        attribution,
                         pane,
                         group: targetGroup,
                         fetcher: layer._fetcher,
-                        styles: isLegendGroup ? structuredClone(styles) : null
+                        styles: isLegendGroup ? structuredClone(styles) : null,
+                        title,
+                        attribution,
                     })
                 }
                 if (newLayer) targetGroup.addLayer(newLayer)
