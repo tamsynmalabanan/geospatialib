@@ -668,8 +668,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Icon class'
                     }).querySelector('input')
                     iconClass.addEventListener('blur', (e) => {
-                        styleParams.iconClass = iconClass.value
-                        updateGeoJSONData(layer)
+                        console.log(iconOptions)
                     })
 
                     const iconOptions = customCreateElement({
@@ -1248,7 +1247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
         iconNames.forEach(i => {
             const li = document.createElement('li')
-            li.className = `list-group-item d-flex flex-nowrap gap-2 border-0`
+            li.className = `list-group-item d-flex flex-nowrap gap-2 border-0 user-select-none`
             createIcon({className:`bi bi-${i}`, parent:li})
             createSpan(i, {parent:li})
             bootstrapIconUL.appendChild(li)
