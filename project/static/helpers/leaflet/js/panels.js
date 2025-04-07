@@ -528,7 +528,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const form = document.createElement('form')
-    form.className = `d-flex flex-grow-1 flex-column py-3 text-bg${getPreferredTheme()}`
+    form.className = `d-flex flex-grow-1 flex-column py-3 text-bg-${getPreferredTheme()}`
     parent.appendChild(form)
 
     const selectContainer = document.createElement('div')
@@ -693,13 +693,21 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
+                    const iconSub = customCreateElement({
+                        className:'d-flex flex-column', 
+                        parent:iconFields
+                    })
+
                     const iconShadow = createFormCheck({
-                        parent:iconFields,
+                        parent:iconSub,
                         labelInnerText: 'Icon shadow',
                         checked: styleParams.iconShadow,
                         labelClass: 'text-nowrap'
+                    }).querySelector('input')
+                    iconShadow.addEventListener('click', (e) => {
+                        styleParams.iconShadow = iconShadow.checked
+                        updateGeoJSONData(layer)
                     })
-
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
