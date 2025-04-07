@@ -660,7 +660,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const field = e.target
                                         layerStyles.method = field.value
                                         
-                                        const container = field.parentElement.nextSiblingElement()
+                                        const container = field.parentElement.nextSibling
                                         console.log(container)
                                     }
                                 }
