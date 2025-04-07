@@ -633,7 +633,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const detailsTable = document.querySelector(`#${layerLegend.id}-details-table`)
 
                 const handler = (id) => {
-                    const style = layerStyles.groups[id] || layerStyles.default
+                    const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
                     const parent = document.createElement('div')
 
                     const label = createFormFloating({
