@@ -648,11 +648,26 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     label.addEventListener('input', () => {
                         style.label = label.value
-
                         const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
-                        console.log(element)
                         if (element) element.innerText = label.value
                     })
+
+                    const fillColor = createFormFloating({
+                        parent,
+                        fieldAttrs: {
+                            type: 'color',
+                            // value: style.styleParams
+                        },
+                        labelText: 'Fill color'
+                    }).querySelector('input')
+                    fillColor.addEventListener('input', (e) => {
+                        console.log(e)
+                        // style.label = label.value
+                        // const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
+                        // if (element) element.innerText = label.value
+                    })
+
+
 
                     return parent
                 }
@@ -963,7 +978,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const queryStyleParams = {
         color: 'hsla(111, 100%, 54%, 1)',
         strokeWidth: 1,
-        // iconGlow: true,
+        iconGlow: true,
     }
 
     let controller
