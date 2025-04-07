@@ -644,7 +644,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             type: 'text',
                             value: style.label
                         },
-                        labelText: 'Label'
+                        labelText: 'Label',
+                        fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     let labelTimeout
                     label.addEventListener('input', (e) => {
@@ -666,6 +667,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             type: 'color',
                             value: hslToHex(manageHSLAColor(styleParams.fillColor)),
                         },
+                        fieldClass: 'form-control-sm',
                         labelText: 'Fill color'
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
@@ -696,6 +698,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     type: 'text',
                                     value: layer._title,
                                 },
+                                fieldClass: 'form-control-sm',
                                 labelText: 'Title',
                                 events: {
                                     input: (e) => {
