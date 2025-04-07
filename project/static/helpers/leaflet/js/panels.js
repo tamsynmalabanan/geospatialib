@@ -676,10 +676,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Fill color'
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
-                        styleParams.fillColor = hexToHSLA(fillColor.value)
-                        updateGeoJSONData(layer)
+                        clearTimeout(timeout)
+                        timeout = setTimeout(() => {
+                            styleParams.fillColor = hexToHSLA(fillColor.value)
+                            updateGeoJSONData(layer)
+                        }, 1000)
                     })
-
                     const fillOpacity = createInputGroup({
                         parent:fillFields,
                         fieldAttrs: {
@@ -700,7 +702,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             if (!fillOpacity.value) fillOpacity.value = 100
                             styleParams.fillOpacity = parseInt(fillOpacity.value)/100
                             updateGeoJSONData(layer)
-                        }, 250);
+                        }, 1000);
                     })
 
                     
@@ -719,8 +721,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Stroke color'
                     }).querySelector('input')
                     strokeColor.addEventListener('input', (e) => {
-                        styleParams.strokeColor = hexToHSLA(strokeColor.value)
-                        updateGeoJSONData(layer)
+                        clearTimeout(timeout)
+                        timeout = setTimeout(() => {
+                            styleParams.strokeColor = hexToHSLA(strokeColor.value)
+                            updateGeoJSONData(layer)
+                        }, 1000);
                     })
                     const strokeOpacity = createInputGroup({
                         parent:strokeFields,
@@ -742,7 +747,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             if (!strokeOpacity.value) strokeOpacity.value = 100
                             styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
                             updateGeoJSONData(layer)
-                        }, 250);
+                        }, 1000);
                     })
 
                     return parent
