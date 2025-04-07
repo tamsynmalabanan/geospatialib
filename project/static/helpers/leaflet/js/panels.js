@@ -650,8 +650,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                 labelText: 'Method',
                                 options:{
                                     'uniform':'Uniform symbol',
-                                    // 'categorized':'Categorized symbols',
-                                    // 'ranged':'Ranged symbols',
+                                    'categorized':'Categorized symbols',
+                                    'ranged':'Ranged symbols',
                                 },
                                 selectedValue: symbologyMethod,
                                 fieldClass:'form-select-sm',
