@@ -649,19 +649,28 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldTag:'select',
                                 labelText: 'Method',
                                 options:{
-                                    '':'No symbology',
                                     'uniform':'Uniform symbol',
-                                    'categorized':'Categorized symbols',
-                                    'ranged':'Ranged symbols',
+                                    // 'categorized':'Categorized symbols',
+                                    // 'ranged':'Ranged symbols',
                                 },
                                 selectedValue: symbologyMethod,
                                 fieldClass:'form-select-sm',
                                 events: {
                                     change: (e) => {
-
+                                        const field = e.field
+                                        symbologyMethod = field.value
+                                        
+                                        const container = field.parentElement.nextSiblingElement()
+                                        console.log(container)
                                     }
                                 }
                             },
+                            methodDetails: {
+                                handler: () => {
+                                    const container = document.createElement('div')
+                                    return container
+                                }
+                            }
                         },
                         className: ''
                     },
