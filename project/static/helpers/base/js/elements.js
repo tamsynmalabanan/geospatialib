@@ -494,9 +494,10 @@ const createFormFloating = ({
     selectedValue = '',
     value,
     fieldStyle = {},
+    containerClass = '',
 } = {}) => {
     const container = document.createElement('div')
-    container.className = `form-floating`
+    container.className = `form-floating flex-grow-1 w-100 ${containerClass}`
     parent?.appendChild(container)
 
     const field = document.createElement(fieldTag)
