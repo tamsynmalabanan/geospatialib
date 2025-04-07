@@ -642,25 +642,32 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const field = e.target
                                         layer._title = field.value
                                         
-                                        const titleElement = document.querySelector(
+                                        const element = document.querySelector(
                                             `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-title`
                                         )?.querySelector('span')
-                                        if (titleElement) titleElement.innerText = field.value
+                                        if (element) element.innerText = field.value
 
                                         select.options[select.selectedIndex].text = field.value
                                     }
                                 }
                             },
                             attribution: {
-                                handler: ({parent}={}) => {
-                                    const container = document.createElement('div')
-                                    parent?.appendChild(container)
-
-                                    const attributionTable = document.querySelector(
-                                        `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-attribution`
-                                    )?.querySelector('table')
-                                    const attributions = attributionTableToJSON(attributionTable)
-                                    console.log(attributions)
+                                handler: createFormFloating,
+                                fieldTag: 'textarea',
+                                fieldAttrs: {
+                                    value: layer._attribution,
+                                },
+                                labelText: 'Attribution',
+                                events: {
+                                    input: (e) => {
+                                        const field = e.target
+                                        layer._attribution = field.value
+                                        
+                                        const element = document.querySelector(
+                                            `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-attribution`
+                                        )
+                                        element.innerHTML = field.value
+                                    }
                                 }
                             },
                         },
