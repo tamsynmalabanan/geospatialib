@@ -387,6 +387,7 @@ const createFormCheck = ({
     fieldClass = '',
     formCheckClass = '',
     disabled=false,
+    checked = false,
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check ${formCheckClass}`
@@ -398,6 +399,7 @@ const createFormCheck = ({
     input.setAttribute('type', 'checkbox')
     input.value = inputValue
     input.disabled = disabled
+    input.checked = checked
     formCheck.appendChild(input)
 
     const label = document.createElement('label')

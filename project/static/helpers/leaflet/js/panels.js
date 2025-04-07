@@ -693,6 +693,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
+                    const iconShadow = createFormCheck({
+                        parent:iconFields,
+                        labelInnerText: 'Icon shadow',
+                        checked: styleParams.iconShadow
+                    })
+
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
