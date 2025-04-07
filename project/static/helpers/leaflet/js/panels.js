@@ -697,6 +697,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fillOpacity.addEventListener('input', (e) => {
                         clearTimeout(timeout)
                         timeout = setTimeout(() => {
+                            if (!fillOpacity.value) fillOpacity.value = 100
                             styleParams.fillOpacity = parseInt(fillOpacity.value)/100
                             updateGeoJSONData(layer)
                         }, 250);
@@ -721,7 +722,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         styleParams.strokeColor = hexToHSLA(strokeColor.value)
                         updateGeoJSONData(layer)
                     })
-
                     const strokeOpacity = createInputGroup({
                         parent:strokeFields,
                         fieldAttrs: {
@@ -739,6 +739,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     strokeOpacity.addEventListener('input', (e) => {
                         clearTimeout(timeout)
                         timeout = setTimeout(() => {
+                            if (!strokeOpacity.value) strokeOpacity.value = 100
                             styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
                             updateGeoJSONData(layer)
                         }, 250);
