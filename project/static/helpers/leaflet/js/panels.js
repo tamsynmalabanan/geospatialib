@@ -1247,8 +1247,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
         iconNames.forEach(i => {
             const li = document.createElement('li')
-            li.className = `list-group-item bi bi-${i}`
-            li.innerText = i
+            li.className = `list-group-item`
+            createIcon({className:`bi bi-${i}`, parent:li})
+            createSpan({innerText:i, parent:li})
             bootstrapIconUL.appendChild(li)
         })
     })
