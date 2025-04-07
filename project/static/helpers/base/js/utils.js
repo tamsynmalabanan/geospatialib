@@ -117,11 +117,13 @@ const toggleCollapseElements = (parent) => {
     })
 }
 
-const hslToHex = ({h, s, l, a}) => {
-    l /= 100;
-    const aPercent = Math.round(a * 255);
-    const k = n => (n + h / 30) % 12;
-    const f = n => l - s * Math.min(l, 1 - l) * Math.max(Math.min(k(n) - 3, 9 - k(n), 1), -1);
-    const toHex = x => Math.round(x * 255).toString(16).padStart(2, '0');
-    return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}${a < 1 ? toHex(aPercent) : ''}`;
+const hslToHex = ({h, s, l}) => {
+    l /= 100
+    const a = s * Math.min(l, 1 - l) / 100
+    const f = n => {
+      const k = (n + h / 30) % 12
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+      return Math.round(255 * color).toString(16).padStart(2, '0')
+    }
+    return `#${f(0)}${f(8)}${f(4)}`
 }
