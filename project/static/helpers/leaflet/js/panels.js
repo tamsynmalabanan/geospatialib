@@ -634,6 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormFloating,
                                 fieldAttrs: {
                                     type: 'text',
+                                    value: layer._title,
                                 },
                                 labelText: 'Title',
                                 events: {
