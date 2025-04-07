@@ -525,13 +525,13 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletStylePanel = (map, parent) => {
-    const container = document.createElement('form')
-    container.className = 'd-flex flex-grow-1 flex-column py-3'
-    parent.appendChild(container)
+    const form = document.createElement('form')
+    form.className = 'd-flex flex-grow-1 flex-column py-3'
+    parent.appendChild(form)
 
     const selectContainer = document.createElement('div')
     selectContainer.className = 'd-flex px-3 flex-column'
-    container.appendChild(selectContainer)
+    form.appendChild(selectContainer)
 
     const select = createFormFloating({
         parent: selectContainer,
@@ -547,7 +547,7 @@ const handleLeafletStylePanel = (map, parent) => {
     const body = document.createElement('div')
     body.id = `${map.getContainer().id}-panels-style-body`
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
-    container.appendChild(body)
+    form.appendChild(body)
 
     let layer
 
@@ -557,17 +557,16 @@ const handleLeafletStylePanel = (map, parent) => {
         const mapContainer = map.getContainer()
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
         const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
-        const layers = Array.from(legends).map(l => {
-            const leafletId = parseInt(l.dataset.layerId)
-            return map._ch.getLegendLayer(leafletId)
-        })
         
         const option = document.createElement('option')
         option.value = ''
         option.text = ''
         select.appendChild(option)
         
-        layers.forEach(l => {
+        Array.from(legends).map(l => {
+            const leafletId = parseInt(l.dataset.layerId)
+            return map._ch.getLegendLayer(leafletId)
+        }).forEach(l => {
             const option = document.createElement('option')
             option.value = l._leaflet_id
             option.text = l._title
@@ -580,6 +579,7 @@ const handleLeafletStylePanel = (map, parent) => {
             const newLayerId = parseInt(select.options[select.selectedIndex]?.value || -1)
             if (layer && newLayerId && newLayerId === layer._leaflet_id) return
     
+            body.removeAttribute('data-layer-id')
             body.innerHTML = ''
             layer = map._ch.getLegendLayer(newLayerId)
             if (!layer) return
@@ -621,45 +621,48 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
             }
 
+            const minScaleField = form.elements.minScale
+            const maxScaleField = form.elements.maxScale
+
             const styleFields = {
-                'Legend': {
-                    // 'Identification': {
-                    //     fields: {
-                    //         title: {
+                // 'Legend': {
+                //     // 'Identification': {
+                //     //     fields: {
+                //     //         title: {
 
-                    //         },
-                    //         attribution: {
+                //     //         },
+                //     //         attribution: {
 
-                    //         },
-                    //     },
-                    //     className: ''
-                    // },
-                    'Symbology': {
-                        fields: {   
-                            method: {
-                                handler: createFormFloating,
-                                fieldAttrs: {
-                                    name:'method',
-                                },
-                                fieldTag:'select',
-                                labelText: 'Method',
-                                options:{
-                                    '':'No symbology',
-                                    'uniform':'Uniform symbol',
-                                    'categorized':'Categorized symbols',
-                                    'ranged':'Ranged symbols',
-                                },
-                                fieldClass:'form-select-sm',
-                                events: {
-                                    change: (e) => {
+                //     //         },
+                //     //     },
+                //     //     className: ''
+                //     // },
+                //     'Symbology': {
+                //         fields: {   
+                //             method: {
+                //                 handler: createFormFloating,
+                //                 fieldAttrs: {
+                //                     name:'method',
+                //                 },
+                //                 fieldTag:'select',
+                //                 labelText: 'Method',
+                //                 options:{
+                //                     'uniform':'Uniform symbol',
+                //                     'categorized':'Categorized symbols',
+                //                     'ranged':'Ranged symbols',
+                //                     '':'No symbology',
+                //                 },
+                //                 fieldClass:'form-select-sm',
+                //                 events: {
+                //                     change: (e) => {
 
-                                    }
-                                }
-                            },
-                        },
-                        className: ''
-                    },
-                },
+                //                     }
+                //                 }
+                //             },
+                //         },
+                //         className: ''
+                //     },
+                // },
                 'Rendering': {
                     'Visibility': {
                         fields: {
@@ -679,18 +682,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
-                                        const field = e.target
-                                        const maxScaleField = field.closest('form').elements.maxScale
-                                        
-                                        if (!field.value) {
-                                            field.value = 10
+                                        if (!minScaleField.value) {
+                                            minScaleField.value = 10
                                         } else {
                                             const maxScaleValue = parseInt(maxScaleField.value)
-                                            if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
+                                            if (maxScaleValue < parseInt(minScaleField.value)) minScaleField.value = maxScaleValue
                                         }
         
-                                        visibility.min = parseInt(field.value)
-                                        maxScaleField.setAttribute('min', field.value)
+                                        visibility.min = parseInt(minScaleField.value)
+                                        maxScaleField.setAttribute('min', minScaleField.value)
         
                                         layerIsVisible(layer)
                                     },
@@ -713,18 +713,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
-                                        const field = e.target
-                                        const minScaleField = field.closest('form').elements.minScale
-                                        
-                                        if (!field.value) {
-                                            field.value = 5000000
+                                        if (!maxScaleField.value) {
+                                            maxScaleField.value = 5000000
                                         } else {
                                             const minScaleValue = parseInt(minScaleField.value)
-                                            if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
+                                            if (minScaleValue > parseInt(maxScaleField.value)) maxScaleField.value = minScaleValue
                                         }
                                         
-                                        visibility.max = parseInt(field.value)
-                                        minScaleField.setAttribute('max', field.value)
+                                        visibility.max = parseInt(maxScaleField.value)
+                                        minScaleField.setAttribute('max', maxScaleField.value)
                                         
                                         layerIsVisible(layer)
                                     },
