@@ -661,7 +661,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         parent:design,
                         fieldAttrs: {
                             type: 'color',
-                            value: styleParams.fillColor,
+                            value: 'red',
                         },
                         labelText: 'Fill color'
                     }).querySelector('input')
