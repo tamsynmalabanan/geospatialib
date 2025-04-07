@@ -628,17 +628,17 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const styleFields = {
                 'Legend': {
-                    // 'Identification': {
-                    //     fields: {
-                    //         title: {
+                    'Identification': {
+                        fields: {
+                            title: {
 
-                    //         },
-                    //         attribution: {
+                            },
+                            attribution: {
 
-                    //         },
-                    //     },
-                    //     className: ''
-                    // },
+                            },
+                        },
+                        className: ''
+                    },
                     'Symbology': {
                         fields: {   
                             method: {
@@ -675,7 +675,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        className: ''
+                        className: 'flex-column'
                     },
                 },
                 'Rendering': {
@@ -752,6 +752,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         className: 'flex-nowrap'
                     },
+                    'Filter': {
+                        fields: {
+
+                        }
+                    }
                 }
             }        
             
