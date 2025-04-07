@@ -111,10 +111,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const features = geojson.features
         if (!features?.length) continue
 
-        const listFeatures = features.length <= 100
-        const disableCheck = features.length > 1000
-
-        if (listFeatures) sortGeoJSONFeaturesByType(geojson)        
+        if (features.length <= 100) sortGeoJSONFeaturesByType(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             pane,
@@ -124,6 +121,10 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             group,
             attribution: createAttributionTable(geojson)?.outerHTML,
         })
+
+        const featureLayers = geojsonLayer.getLayers()
+        const listFeatures = featureLayers.length <= 100
+        const disableCheck = featureLayers.length > 1000
 
         const geojsonContainer = document.createElement('div')
         container.appendChild(geojsonContainer)
@@ -144,7 +145,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
 
-            for (const featureLayer of geojsonLayer.getLayers()) {
+            for (const featureLayer of featureLayers) {
                 if (controller?.signal.aborted) return
                 
                 featureLayer._checkbox = createFormCheck({
@@ -156,7 +157,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         }
 
         try {
-            for (const layer of Array(geojsonLayer, ...geojsonLayer.getLayers())) {
+            for (const layer of Array(geojsonLayer, ...featureLayers)) {
                 if (controller?.signal.aborted) return
         
                 const checkbox = layer._checkbox
