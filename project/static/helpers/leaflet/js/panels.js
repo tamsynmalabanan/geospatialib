@@ -765,16 +765,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 category.className = `d-flex flex-column gap-2 mt-3`
                 body.appendChild(category)
 
-                const categorySections = document.createElement('div')
-                categorySections.id =generateRandomString()
-                categorySections.className = 'collapse show'
+                const categoryCollase = document.createElement('div')
+                categoryCollase.id =generateRandomString()
+                categoryCollase.className = 'collapse show'
 
                 const categoryHeader = document.createElement('div')
                 categoryHeader.className = `d-flex fw-medium`
                 categoryHeader.setAttribute('data-bs-toggle', 'collapse')
                 categoryHeader.setAttribute('aria-expanded', 'true')
-                categoryHeader.setAttribute('data-bs-target', `#${categorySections.id}`)
-                categoryHeader.setAttribute('aria-controls', categorySections.id)
+                categoryHeader.setAttribute('data-bs-target', `#${categoryCollase.id}`)
+                categoryHeader.setAttribute('aria-controls', categoryCollase.id)
                 categoryHeader.style.cursor = 'pointer'
                 
                 const categoryLabel = document.createElement('span')
@@ -788,7 +788,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 category.appendChild(categoryHeader)
-                category.appendChild(categorySections)
+                category.appendChild(categoryCollase)
+
+                const categorySections = document.createElement('div')
+                categorySections.className = 'd-flex flex-column gap-2'
+                categoryCollase.appendChild(categorySections)
     
                 const sections = styleFields[categoryName]
                 Object.keys(sections).forEach(sectionName => {
