@@ -676,6 +676,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
+                    let fillOpacityTimeout
                     const fillOpacity = createInputGroup({
                         parent:design,
                         fieldAttrs: {
@@ -690,8 +691,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Fill opacity'
                     }).querySelector('input')
                     fillOpacity.addEventListener('input', (e) => {
-                        styleParams.fillOpacity = parseInt(fillOpacity.value)/100
-                        updateGeoJSONData(layer)
+                        clearTimeout(fillOpacityTimeout)
+                        fillOpacityTimeout = setTimeout(() => {
+                            styleParams.fillOpacity = parseInt(fillOpacity.value)/100
+                            updateGeoJSONData(layer)
+                        }, 100);
                     })
 
 
