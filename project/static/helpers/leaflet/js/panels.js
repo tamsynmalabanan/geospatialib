@@ -638,6 +638,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const parent = document.createElement('div')
                     parent.className = 'd-flex gap-2 flex-column'
 
+                    let timeout
+
                     const label = createFormFloating({
                         parent,
                         fieldAttrs: {
@@ -647,10 +649,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Label',
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
-                    let labelTimeout
                     label.addEventListener('input', (e) => {
-                        clearTimeout(labelTimeout)
-                        labelTimeout = setTimeout(() => {
+                        clearTimeout(timeout)
+                        timeout = setTimeout(() => {
                             style.label = label.value
                             updateGeoJSONData(layer)
                         }, 1000);
@@ -676,7 +677,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
-                    let fillOpacityTimeout
                     const fillOpacity = createInputGroup({
                         parent:design,
                         fieldAttrs: {
@@ -691,14 +691,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Fill opacity'
                     }).querySelector('input')
                     fillOpacity.addEventListener('input', (e) => {
-                        clearTimeout(fillOpacityTimeout)
-                        fillOpacityTimeout = setTimeout(() => {
+                        clearTimeout(timeout)
+                        timeout = setTimeout(() => {
                             styleParams.fillOpacity = parseInt(fillOpacity.value)/100
                             updateGeoJSONData(layer)
                         }, 100);
                     })
-
-
 
                     return parent
                 }
