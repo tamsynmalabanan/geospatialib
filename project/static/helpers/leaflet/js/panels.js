@@ -628,6 +628,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
             }
 
+            const createSymbologyForm = ({parent}={}) => {
+                const container = customCreateElement('div')
+
+                
+                
+
+                parent?.appendChild(container)
+            }
+
             const styleFields = {
                 'Legend': {
                     'Identification': {
@@ -704,16 +713,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                             methodDetails: {
-                                handler: ({parent}={}) => {
-                                    const container = customCreateElement('div')
-
-                                    container.innerText = symbologyMethod
-
-                                    parent?.appendChild(container)
-                                }
+                                handler: createSymbologyForm
                             }
                         },
-                        className: ''
+                        className: 'flex-column'
                     },
                 },
                 'Rendering': {
@@ -829,7 +832,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 category.appendChild(categoryCollase)
 
                 const categorySections = document.createElement('div')
-                categorySections.className = 'd-flex flex-column gap-2'
+                categorySections.className = 'd-flex flex-column gap-3'
                 categoryCollase.appendChild(categorySections)
     
                 const sections = styleFields[categoryName]
