@@ -646,7 +646,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     label.addEventListener('input', () => {
                         style.label = label.value
-                        detailsTable.querySelector(`#${detailsTable}-${id}-title`).innerText = label.value
+                        detailsTable.querySelector(`#${detailsTable.id}-${id}-title`).innerText = label.value
                     })
 
                     return parent
