@@ -659,7 +659,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 value: layer._attribution,
                                 labelText: 'Attribution (HTML-frieldly)',
                                 fieldStyle: {
-                                    minHeight: '150px', 
+                                    minHeight: '100px', 
                                 },
                                 events: {
                                     input: (e) => {
@@ -677,41 +677,44 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         className: 'flex-column'
                     },
-                    // 'Symbology': {
-                    //     fields: {   
-                    //         method: {
-                    //             handler: createFormFloating,
-                    //             fieldAttrs: {
-                    //                 name:'method',
-                    //             },
-                    //             fieldTag:'select',
-                    //             labelText: 'Method',
-                    //             options:{
-                    //                 'uniform':'Uniform symbol',
-                    //                 'categorized':'Categorized symbols',
-                    //                 'ranged':'Ranged symbols',
-                    //             },
-                    //             selectedValue: symbologyMethod,
-                    //             fieldClass:'form-select-sm',
-                    //             events: {
-                    //                 change: (e) => {
-                    //                     const field = e.target
-                    //                     layerStyles.method = field.value
+                    'Symbology': {
+                        fields: {   
+                            method: {
+                                handler: createFormFloating,
+                                fieldAttrs: {
+                                    name:'method',
+                                },
+                                fieldTag:'select',
+                                labelText: 'Method',
+                                options:{
+                                    'uniform':'Uniform symbol',
+                                    // 'categorized':'Categorized symbols',
+                                    // 'ranged':'Ranged symbols',
+                                },
+                                selectedValue: symbologyMethod,
+                                fieldClass:'form-select-sm',
+                                events: {
+                                    change: (e) => {
+                                        const field = e.target
+                                        layerStyles.method = field.value
                                         
-                    //                     const container = field.parentElement.nextSibling
-                    //                     container.innerHTML = ''
-                    //                 }
-                    //             }
-                    //         },
-                    //         methodDetails: {
-                    //             handler: ({parent}={}) => {
-                    //                 const container = customCreateElement('div')
-                    //                 parent?.appendChild(container)
-                    //             }
-                    //         }
-                    //     },
-                    //     className: ''
-                    // },
+                                        const container = field.parentElement.nextSibling
+                                        container.innerHTML = ''
+                                    }
+                                }
+                            },
+                            methodDetails: {
+                                handler: ({parent}={}) => {
+                                    const container = customCreateElement('div')
+
+                                    container.innerText = symbologyMethod
+
+                                    parent?.appendChild(container)
+                                }
+                            }
+                        },
+                        className: ''
+                    },
                 },
                 'Rendering': {
                     'Visibility': {
