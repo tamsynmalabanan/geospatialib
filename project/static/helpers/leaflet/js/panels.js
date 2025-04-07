@@ -661,6 +661,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent.appendChild(design)
 
                     const styleParams = style.styleParams
+                    
                     const fillColor = createFormFloating({
                         parent:design,
                         fieldAttrs: {
@@ -672,6 +673,24 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
                         styleParams.fillColor = hexToHSLA(fillColor.value)
+                        updateGeoJSONData(layer)
+                    })
+
+                    const fillOpacity = createInputGroup({
+                        parent:design,
+                        fieldAttrs: {
+                            type: 'number',
+                            min: '0',
+                            max: '100',
+                            step: '10',
+                            value: styleParams.fillOpacity * 100,
+                        },
+                        suffixHTML: '%',
+                        fieldClass: 'form-control-sm',
+                        labelText: 'Fill opacity'
+                    }).querySelector('input')
+                    fillOpacity.addEventListener('input', (e) => {
+                        styleParams.fillOpacity = parseInt(fillOpacity.value)/100
                         updateGeoJSONData(layer)
                     })
 
