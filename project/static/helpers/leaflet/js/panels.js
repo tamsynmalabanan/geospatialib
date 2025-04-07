@@ -696,7 +696,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const iconShadow = createFormCheck({
                         parent:iconFields,
                         labelInnerText: 'Icon shadow',
-                        checked: styleParams.iconShadow
+                        checked: styleParams.iconShadow,
+                        labelClass: 'text-nowrap'
                     })
 
 

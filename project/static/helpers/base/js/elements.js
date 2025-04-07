@@ -388,6 +388,7 @@ const createFormCheck = ({
     formCheckClass = '',
     disabled=false,
     checked = false,
+    labelClass = '',
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check ${formCheckClass}`
@@ -403,7 +404,7 @@ const createFormCheck = ({
     formCheck.appendChild(input)
 
     const label = document.createElement('label')
-    label.className = 'form-check-label'
+    label.className =  `form-check-label ${labelClass}`
     label.setAttribute('for', input.id)
     label.innerText = labelInnerText
     formCheck.appendChild(label)
