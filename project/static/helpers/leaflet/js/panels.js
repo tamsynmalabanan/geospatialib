@@ -654,8 +654,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             attribution: {
                                 handler: createFormFloating,
                                 fieldTag: 'textarea',
-                                fieldInnerText: layer._attribution,
-                                value: 'Attribution',
+                                value: layer._attribution,
+                                labelText: 'Attribution',
                                 fieldStyle: {
                                     minHeight: '150px', 
                                 },
