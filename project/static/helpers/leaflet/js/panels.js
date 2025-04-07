@@ -622,21 +622,58 @@ const handleLeafletStylePanel = (map, parent) => {
             }
 
             const styleFields = {
+                'Legend': {
+                    // 'Identification': {
+                    //     fields: {
+                    //         title: {
+
+                    //         },
+                    //         attribution: {
+
+                    //         },
+                    //     },
+                    //     className: ''
+                    // },
+                    'Symbology': {
+                        fields: {   
+                            method: {
+                                handler: createFormFloating,
+                                fieldAttrs: {
+                                    name:'method',
+                                },
+                                fieldTag:'select',
+                                options:{
+                                    '':'No symbology',
+                                    'uniform':'Uniform symbol',
+                                    'categorized':'Categorized symbols',
+                                    'ranged':'Ranged symbols',
+                                },
+                                fieldClass:'form-select-sm',
+                                events: {
+                                    change: (e) => {
+                                        
+                                    }
+                                }
+                            },
+                        },
+                        className: ''
+                    },
+                },
                 'Rendering': {
-                    'Minimum and maximum visible scale range': {
+                    'Visibility': {
                         fields: {
-                            'minScale': {
+                            minScale: {
                                 handler: createInputGroup,
                                 fieldAttrs: {
                                     name:'minScale',
                                     type:'number',
                                     min: '10',
                                     max: visibility.max,
-                                    step: '100',
+                                    step: '10',
                                     value: visibility.min,
-                                    placeholder: 'Minimum',
+                                    placeholder: 'Maximum',
                                 },
-                                prefixHTML: '1 :',
+                                prefixHTML: '1:',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 events: {
@@ -659,18 +696,18 @@ const handleLeafletStylePanel = (map, parent) => {
                                     'click': visibilityFieldsClick,
                                 }
                             },
-                            'maxScale': {
+                            maxScale: {
                                 handler: createInputGroup,
                                 fieldAttrs: {
                                     name:'maxScale',
                                     type:'number',
                                     min: visibility.min,
                                     max: '5000000',
-                                    step: '100',
+                                    step: '10',
                                     value: visibility.max,
-                                    placeholder: 'Maximum',
+                                    placeholder: 'Minimum',
                                 },
-                                prefixHTML: '1 :',
+                                prefixHTML: '1:',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 events: {
@@ -695,7 +732,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                         },
                         className: 'flex-nowrap'
-                    }
+                    },
                 }
             }        
             

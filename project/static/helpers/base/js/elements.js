@@ -489,7 +489,8 @@ const createFormFloating = ({
     fieldId,
     fieldClass = '',
     labelText = '',
-    events = {}
+    events = {},
+    options,
 } = {}) => {
     const container = document.createElement('div')
     container.className = `form-floating flex-grow-1`
@@ -500,6 +501,15 @@ const createFormFloating = ({
     field.className = `${fieldClass} ${fieldTag === 'select' ? 'form-select' : 'form-control'}`
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     container.appendChild(field)
+
+    if (fieldTag === 'select' && options) {
+        for (const value in options) {
+            const option = document.createElement('option')
+            option.value = value
+            option.text = options[value]
+            field.appendChild(option)
+        }
+    }
 
     Object.keys(events).forEach(trigger => {
         field.addEventListener(trigger, events[trigger])
