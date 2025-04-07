@@ -630,15 +630,11 @@ const handleLeafletStylePanel = (map, parent) => {
             }
 
             const createSymbologyForm = ({parent}={}) => {
-                const detailsTable = document.querySelector(`#${layerLegend.id}-details-table`)
-
                 const handler = (id) => {
                     const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
                     
                     const parent = document.createElement('div')
                     parent.className = 'd-flex gap-2 flex-column'
-
-                    let timeout
 
                     const label = createFormFloating({
                         parent,
@@ -651,11 +647,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     label.addEventListener('blur', (e) => {
-                        clearTimeout(timeout)
-                        timeout = setTimeout(() => {
-                            style.label = label.value
-                            updateGeoJSONData(layer)
-                        }, 1000);
+                        style.label = label.value
+                        updateGeoJSONData(layer)
                     })
                     
                     const styleParams = style.styleParams
@@ -675,12 +668,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                         labelText: 'Fill color'
                     }).querySelector('input')
-                    fillColor.addEventListener('input', (e) => {
-                        clearTimeout(timeout)
-                        timeout = setTimeout(() => {
-                            styleParams.fillColor = hexToHSLA(fillColor.value)
-                            updateGeoJSONData(layer)
-                        }, 1000)
+                    fillColor.addEventListener('blur', (e) => {
+                        styleParams.fillColor = hexToHSLA(fillColor.value)
+                        updateGeoJSONData(layer)
                     })
                     const fillOpacity = createInputGroup({
                         parent:fillFields,
@@ -696,13 +686,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         suffixHTML: '%',
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
-                    fillOpacity.addEventListener('input', (e) => {
-                        clearTimeout(timeout)
-                        timeout = setTimeout(() => {
-                            if (!fillOpacity.value) fillOpacity.value = 100
-                            styleParams.fillOpacity = parseInt(fillOpacity.value)/100
-                            updateGeoJSONData(layer)
-                        }, 1000);
+                    fillOpacity.addEventListener('blur', (e) => {
+                        if (!fillOpacity.value) fillOpacity.value = 100
+                        styleParams.fillOpacity = parseInt(fillOpacity.value)/100
+                        updateGeoJSONData(layer)
                     })
 
                     
@@ -720,12 +707,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                         labelText: 'Stroke color'
                     }).querySelector('input')
-                    strokeColor.addEventListener('input', (e) => {
-                        clearTimeout(timeout)
-                        timeout = setTimeout(() => {
-                            styleParams.strokeColor = hexToHSLA(strokeColor.value)
-                            updateGeoJSONData(layer)
-                        }, 1000);
+                    strokeColor.addEventListener('blur', (e) => {
+                        styleParams.strokeColor = hexToHSLA(strokeColor.value)
+                        updateGeoJSONData(layer)
                     })
                     const strokeOpacity = createInputGroup({
                         parent:strokeFields,
@@ -741,13 +725,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         suffixHTML: '%',
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
-                    strokeOpacity.addEventListener('input', (e) => {
-                        clearTimeout(timeout)
-                        timeout = setTimeout(() => {
-                            if (!strokeOpacity.value) strokeOpacity.value = 100
-                            styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
-                            updateGeoJSONData(layer)
-                        }, 1000);
+                    strokeOpacity.addEventListener('blur', (e) => {
+                        if (!strokeOpacity.value) strokeOpacity.value = 100
+                        styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
+                        updateGeoJSONData(layer)
                     })
 
                     return parent
