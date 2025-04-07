@@ -570,6 +570,9 @@ const handleLeafletStylePanel = (map, parent) => {
             const option = document.createElement('option')
             option.value = l._leaflet_id
             option.text = l._title
+            if (layer && layer._leaflet_id === l._leaflet_id) {
+                option.setAttribute('selected', true)
+            }
             select.appendChild(option)
         })
     })
