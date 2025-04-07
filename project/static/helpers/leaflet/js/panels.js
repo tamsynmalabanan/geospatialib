@@ -641,8 +641,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const field = e.target
                                         layer._title = field.value
                                         
-                                        const titleElement = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-title`)
-                                        titleElement?.querySelector('span')?.innerText = field.value
+                                        const titleElement = document.querySelector(
+                                            `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-title`
+                                        )?.querySelector('span')
+                                        if (titleElement) titleElement.innerText = field.value
                                     }
                                 }
                             },
