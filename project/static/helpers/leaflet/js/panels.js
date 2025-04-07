@@ -468,6 +468,8 @@ const handleLeafletLegendPanel = (map, parent) => {
             legendAttribution.className = 'd-flex'
             legendAttribution.innerHTML = layer._attribution || ''
             legendCollapse.appendChild(legendAttribution)
+
+            Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
     
             const collapseToggle = createIcon({
                 parent: toggleContainer,
@@ -655,7 +657,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormFloating,
                                 fieldTag: 'textarea',
                                 value: layer._attribution,
-                                labelText: 'Attribution',
+                                labelText: 'Attribution (HTML-frieldly)',
                                 fieldStyle: {
                                     minHeight: '150px', 
                                 },
@@ -668,6 +670,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-attribution`
                                         )
                                         element.innerHTML = field.value
+                                        Array.from(element.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
                                     }
                                 }
                             },
