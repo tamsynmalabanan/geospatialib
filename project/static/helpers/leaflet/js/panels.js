@@ -647,7 +647,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         )?.querySelector('span')
                                         if (titleElement) titleElement.innerText = field.value
 
-                                        select.options[select.selectedIndex]?.text = field.value
+                                        select.options[select.selectedIndex].text = field.value
                                     }
                                 }
                             },
