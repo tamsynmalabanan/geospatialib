@@ -18,6 +18,10 @@ const getLeafletStyleParams = ({
     iconShadow=false,
     iconGlow=false,
 } = {}) => {
+    const hslaColor = manageHSLAColor(color)
+    strokeColor = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2}) || color : strokeColor || 'transparent'
+    fillColor = fillColor === true ? color : fillColor || 'transparent'
+
     return  {
         color,
         strokeWidth,
@@ -51,15 +55,13 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
     const hslaColor = manageHSLAColor(color)
-    const strokeColorVal = strokeColor === true ? hslaColor?.toString({l:hslaColor.l/2, a:(type === 'point' ? strokeOpacity: 1)}) || color : strokeColor || 'transparent'
-    const fillColorVal = fillColor === true ? hslaColor?.toString({a:(type === 'point' ? fillOpacity : 1)}) || color : fillColor || 'transparent'
 
     if (type === 'point') {
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center ${iconClass}`
         div.style.fontSize = `${iconSize}px`
-        div.style.color = fillColorVal
-        div.style.WebkitTextStroke = `${strokeWidth}px ${strokeColorVal}`
+        div.style.color = manageHSLAColor(fillColor)?.toString({a:fillOpacity}) || fillColor
+        div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
         div.style.textShadow = Array(
             iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10}) || 'black'}` : '',
             iconGlow ? `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''
@@ -71,14 +73,14 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         });
     } else {
         const params = {
-            color: type === 'polygon' ? strokeColorVal : fillColorVal,
+            color: type === 'polygon' ? strokeColor : fillColor,
             weight: strokeWidth,
             opacity: strokeOpacity,
         } 
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillColorVal
+            params.fillColor = fillColor
         }
         
         return params

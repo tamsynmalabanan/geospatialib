@@ -636,7 +636,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
                     
                     const parent = document.createElement('div')
-                    parent.className = 'd-flex gap-2'
+                    parent.className = 'd-flex gap-2 flex-column'
 
                     const label = createFormFloating({
                         parent,
@@ -652,16 +652,21 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (element) element.innerText = label.value
                     })
 
+                    const design = document.createElement('div')
+                    design.className = 'd-flex gap-2'
+                    parent.appendChild(design)
+
+                    const styleParams = style.styleParams
                     const fillColor = createFormFloating({
-                        parent,
+                        design,
                         fieldAttrs: {
                             type: 'color',
-                            // value: style.styleParams
+                            value: styleParams.fillColor,
                         },
                         labelText: 'Fill color'
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
-                        console.log(e)
+                        console.log(e.target.value)
                         // style.label = label.value
                         // const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
                         // if (element) element.innerText = label.value
