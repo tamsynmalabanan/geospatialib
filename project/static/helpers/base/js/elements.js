@@ -491,6 +491,7 @@ const createFormFloating = ({
     labelText = '',
     events = {},
     options,
+    selectedValue = '',
 } = {}) => {
     const container = document.createElement('div')
     container.className = `form-floating flex-grow-1`
@@ -507,6 +508,7 @@ const createFormFloating = ({
             const option = document.createElement('option')
             option.value = value
             option.text = options[value]
+            if (value === selectedValue) option.setAttribute('selected', true)
             field.appendChild(option)
         }
     }

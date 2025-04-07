@@ -586,7 +586,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
             body.setAttribute('data-layer-id', newLayerId)
 
-            const visibility = layer._styles.visibility
+            const layerStyles = layer._styles
+            const symbologyMethod = layerStyles.method
+            const visibility = layerStyles.visibility
             const visibilityFieldsClick = (e) => {
                 const field = e.target
 
@@ -622,44 +624,45 @@ const handleLeafletStylePanel = (map, parent) => {
             }
 
             const styleFields = {
-                // 'Legend': {
-                //     // 'Identification': {
-                //     //     fields: {
-                //     //         title: {
+                'Legend': {
+                    // 'Identification': {
+                    //     fields: {
+                    //         title: {
 
-                //     //         },
-                //     //         attribution: {
+                    //         },
+                    //         attribution: {
 
-                //     //         },
-                //     //     },
-                //     //     className: ''
-                //     // },
-                //     'Symbology': {
-                //         fields: {   
-                //             method: {
-                //                 handler: createFormFloating,
-                //                 fieldAttrs: {
-                //                     name:'method',
-                //                 },
-                //                 fieldTag:'select',
-                //                 labelText: 'Method',
-                //                 options:{
-                //                     'uniform':'Uniform symbol',
-                //                     'categorized':'Categorized symbols',
-                //                     'ranged':'Ranged symbols',
-                //                     '':'No symbology',
-                //                 },
-                //                 fieldClass:'form-select-sm',
-                //                 events: {
-                //                     change: (e) => {
+                    //         },
+                    //     },
+                    //     className: ''
+                    // },
+                    'Symbology': {
+                        fields: {   
+                            symbologyMethod: {
+                                handler: createFormFloating,
+                                fieldAttrs: {
+                                    name:'method',
+                                },
+                                fieldTag:'select',
+                                labelText: 'Method',
+                                options:{
+                                    'uniform':'Uniform symbol',
+                                    'categorized':'Categorized symbols',
+                                    'ranged':'Ranged symbols',
+                                    '':'No symbology',
+                                },
+                                selectedValue: symbologyMethod,
+                                fieldClass:'form-select-sm',
+                                events: {
+                                    change: (e) => {
 
-                //                     }
-                //                 }
-                //             },
-                //         },
-                //         className: ''
-                //     },
-                // },
+                                    }
+                                }
+                            },
+                        },
+                        className: ''
+                    },
+                },
                 'Rendering': {
                     'Visibility': {
                         fields: {

@@ -79,6 +79,7 @@ const getLeafletGeoJSONLayer = async ({
             label: '',
             styleParams: getLeafletStyleParams(customStyleParams),
         },
+        method: 'uniform',
         visibility: {
             min: 10,
             max: 5000000,
