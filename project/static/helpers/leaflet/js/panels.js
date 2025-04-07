@@ -1220,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.text()
     })
     .then(text => {
-        const iconNames = text.split('.bi-').map(i => i.split('::before')[0])
+        const iconNames = text.split('.bi-').map(i => 'bi-' + i.split('::before')[0]).slice(1)
         console.log(iconNames)
     })
     .catch(error => {
