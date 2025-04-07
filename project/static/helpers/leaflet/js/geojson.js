@@ -279,8 +279,8 @@ const createGeoJSONLayerLegend = (layer, parent) => {
             
             const typeIcon = document.createElement('div')
             typeIcon.className = 'd-flex align-items-center'
-            // typeIcon.style.height = '10px'
-            typeIcon.style.width = type === 'point' ? '10px' : '16px'
+            typeIcon.style.minHeight = '10px'
+            typeIcon.style.minWidth = type === 'point' ? '10px' : '16px'
             typeIcon.innerHTML = style.types[type].html
             titleToTooltip(typeIcon, `${formatNumberWithCommas(typeCount)} ${type}${typeCount > 1 ? 's' : ''}`)
             icon.appendChild(typeIcon) 
