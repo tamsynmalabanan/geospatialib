@@ -649,12 +649,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     label.addEventListener('input', (e) => {
                         style.label = label.value
-                        const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
-                        if (element) {
-                            while (element.innerText !== label.value) {
-                                element.innerText = label.value
-                            }
-                        }
+                        updateGeoJSONData(layer)
                     })
 
                     const design = document.createElement('div')
