@@ -653,8 +653,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelTimeout = setTimeout(() => {
                             style.label = label.value
                             const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
-                            console.log(element)
-                            if (element) element.innerText = label.value
+                            if (element) {
+                                while (element.innerText !== label.value) {
+                                    element.innerText = label.value
+                                }
+                            }
                         }, 1000);
                     })
 
