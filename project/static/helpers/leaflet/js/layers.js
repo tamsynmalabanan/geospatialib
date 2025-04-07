@@ -264,19 +264,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
         divider1: !feature ? null : {
             divider: true,
         },
-        style: !isLegendGroup || isLegendFeature ? null : {
-            innerText: `Style ${typeLabel}`,
-            btnCallback: async () => {
-                const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
-                mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()
-
-                const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
-                const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
-                layerSelect.focus()
-                layerSelect.value = layer._leaflet_id
-                layerSelect.blur()
-            }
-        },
         copyFeature: !feature ? null : {
             innerText: 'Copy feature',
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature))
@@ -292,6 +279,19 @@ const getLeafletLayerContextMenu = async (e, layer, {
         
         divider2: !isLegendGroup? null : {
             divider: true,
+        },
+        style: !isLegendGroup || isLegendFeature ? null : {
+            innerText: `Style ${typeLabel}`,
+            btnCallback: async () => {
+                const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
+                mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()
+
+                const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
+                const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
+                layerSelect.focus()
+                layerSelect.value = layer._leaflet_id
+                layerSelect.blur()
+            }
         },
         toggleLegend: !isLegendGroup? null : {
             innerText: `Toggle legend`,
