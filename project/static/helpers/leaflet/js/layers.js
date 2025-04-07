@@ -77,7 +77,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         });
     } else {
         const params = {
-            color: type === 'polygon' ? strokeColor : fillColor,
+            color: strokeColor, //type === 'polygon' ? strokeColor : fillColor,
             weight: strokeWidth,
             opacity: strokeOpacity,
             dashArray,
