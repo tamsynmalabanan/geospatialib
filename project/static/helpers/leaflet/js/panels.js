@@ -621,9 +621,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
             }
 
-            const minScaleField = form.elements.minScale
-            const maxScaleField = form.elements.maxScale
-
             const styleFields = {
                 // 'Legend': {
                 //     // 'Identification': {
@@ -682,15 +679,18 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
-                                        if (!minScaleField.value) {
-                                            minScaleField.value = 10
+                                        const field = e.target
+                                        const maxScaleField = field.closest('form').elements.maxScale
+                                        
+                                        if (!field.value) {
+                                            field.value = 10
                                         } else {
                                             const maxScaleValue = parseInt(maxScaleField.value)
-                                            if (maxScaleValue < parseInt(minScaleField.value)) minScaleField.value = maxScaleValue
+                                            if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
                                         }
         
-                                        visibility.min = parseInt(minScaleField.value)
-                                        maxScaleField.setAttribute('min', minScaleField.value)
+                                        visibility.min = parseInt(field.value)
+                                        maxScaleField.setAttribute('min', field.value)
         
                                         layerIsVisible(layer)
                                     },
@@ -713,15 +713,18 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldClass: 'form-control-sm',
                                 events: {
                                     'change': (e) => {
-                                        if (!maxScaleField.value) {
-                                            maxScaleField.value = 5000000
+                                        const field = e.target
+                                        const minScaleField = field.closest('form').elements.minScale
+                                        
+                                        if (!field.value) {
+                                            field.value = 5000000
                                         } else {
                                             const minScaleValue = parseInt(minScaleField.value)
-                                            if (minScaleValue > parseInt(maxScaleField.value)) maxScaleField.value = minScaleValue
+                                            if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
                                         }
                                         
-                                        visibility.max = parseInt(maxScaleField.value)
-                                        minScaleField.setAttribute('max', maxScaleField.value)
+                                        visibility.max = parseInt(field.value)
+                                        minScaleField.setAttribute('max', field.value)
                                         
                                         layerIsVisible(layer)
                                     },
