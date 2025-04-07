@@ -668,7 +668,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Icon class'
                     }).querySelector('input')
                     iconClass.addEventListener('blur', (e) => {
-                        console.log(iconOptions)
+                        Array.from(iconOptions.querySelectorAll('li')).forEach(li => {
+                            li.classList.toggle('d-none', (
+                                !iconClass.value ||
+                                li.querySelector('span')
+                                .innerText.includes(iconClass.value)
+                            ))
+                        })
                     })
 
                     const iconOptions = customCreateElement({
