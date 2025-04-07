@@ -650,7 +650,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Label',
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
-                    label.addEventListener('input', (e) => {
+                    label.addEventListener('blur', (e) => {
                         clearTimeout(timeout)
                         timeout = setTimeout(() => {
                             style.label = label.value
@@ -697,6 +697,43 @@ const handleLeafletStylePanel = (map, parent) => {
                         clearTimeout(timeout)
                         timeout = setTimeout(() => {
                             styleParams.fillOpacity = parseInt(fillOpacity.value)/100
+                            updateGeoJSONData(layer)
+                        }, 250);
+                    })
+                    
+                    const strokeColor = createFormFloating({
+                        parent:design,
+                        fieldAttrs: {
+                            name:`${id}-strokeColor`,
+                            type: 'color',
+                            value: hslToHex(manageHSLAColor(styleParams.strokeColor)),
+                        },
+                        fieldClass: 'form-control-sm',
+                        labelText: 'Stroke color'
+                    }).querySelector('input')
+                    strokeColor.addEventListener('input', (e) => {
+                        styleParams.strokeColor = hexToHSLA(strokeColor.value)
+                        updateGeoJSONData(layer)
+                    })
+
+                    const strokeOpacity = createInputGroup({
+                        parent:design,
+                        fieldAttrs: {
+                            name: `${id}-strokeOpacity`,
+                            type: 'number',
+                            min: '0',
+                            max: '100',
+                            step: '10',
+                            value: styleParams.strokeOpacity * 100,
+                        },
+                        suffixHTML: '%',
+                        fieldClass: 'form-control-sm',
+                        labelText: 'Fill opacity'
+                    }).querySelector('input')
+                    strokeOpacity.addEventListener('input', (e) => {
+                        clearTimeout(timeout)
+                        timeout = setTimeout(() => {
+                            styleParams.strokeOpacity = parseInt(strokeOpacity.value)/100
                             updateGeoJSONData(layer)
                         }, 250);
                     })
