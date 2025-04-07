@@ -85,7 +85,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
             const tag = data.tag || 'button'
             const element = tag !== 'button' ?
-            customCreateElement({tag, ...data}) :
+            customCreateElement(tag, data) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
@@ -528,7 +528,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
 const handleLeafletStylePanel = (map, parent) => {
     const form = document.createElement('form')
-    form.className = `d-flex flex-grow-1 flex-column py-3 text-bg-${getPreferredTheme()}`
+    form.className = `d-flex flex-grow-1 flex-column py-3 text-bg${getPreferredTheme()}`
     parent.appendChild(form)
 
     const selectContainer = document.createElement('div')
@@ -654,7 +654,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const styleParams = style.styleParams
                     
                     const iconFields = document.createElement('div')
-                    iconFields.className = 'd-flex gap-2 flex-column'
+                    iconFields.className = 'd-flex gap-2'
                     parent.appendChild(iconFields)
                     
                     const iconClass = createFormFloating({
@@ -663,33 +663,15 @@ const handleLeafletStylePanel = (map, parent) => {
                             name:`${id}-iconClass`,
                             type: 'text',
                             value: styleParams.iconClass,
+                            list: bootstrapIConsDatalist.id
                         },
                         fieldClass: 'form-control-sm',
                         labelText: 'Icon class'
                     }).querySelector('input')
                     iconClass.addEventListener('blur', (e) => {
-                        const value = iconClass.value.toLowerCase()
-                        
-                        if (!value) {
-                            Array.from(iconOptions.querySelectorAll('li.d-none')).forEach(li => {
-                                li.classList.remove('d-none')
-                            })
-                        } else {
-                            Array.from(iconOptions.querySelectorAll('li')).forEach(li => {
-                                li.classList.toggle('d-none', (
-                                    !li.querySelector('span')
-                                    .innerText.includes(value)
-                                ))
-                            })
-                        }
+                        styleParams.iconClass = iconClass.value
+                        updateGeoJSONData(layer)
                     })
-
-                    const iconOptions = customCreateElement({
-                        parent:iconFields,
-                        className: 'overflow-auto border rounded',
-                        style: {maxHeight: '200px'}
-                    })
-                    iconOptions.innerHTML = bootstrapIconUL.outerHTML
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
@@ -792,7 +774,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     return parent
                 }
                 
-                const container = customCreateElement()
+                const container = customCreateElement('div')
 
                 container.appendChild(handler(''))
                 
@@ -1249,7 +1231,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIconUL = customCreateElement({tag:'ul', className: 'list-group border-0'})
+const bootstrapIConsDatalist = customCreateElement('select', {parent:document.body})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
@@ -1259,11 +1241,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(text => {
         const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
         iconNames.forEach(i => {
-            const li = document.createElement('li')
-            li.className = `list-group-item d-flex flex-nowrap gap-2 border-0 user-select-none`
-            createIcon({className:`bi bi-${i}`, parent:li})
-            createSpan(i, {parent:li})
-            bootstrapIconUL.appendChild(li)
+            const option = document.createElement('option')
+            option.value = `bi bi-${i}`
+            option.text = i
+            option.className = option.value
+            bootstrapIConsDatalist.appendChild(option)
         })
     })
     .catch(error => {
