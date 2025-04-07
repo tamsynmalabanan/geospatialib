@@ -66,9 +66,10 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         div.style.fontSize = `${iconSize}px`
         div.style.color = manageHSLAColor(fillColor)?.toString({a:fillOpacity}) || fillColor
         div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+        const glow = hslaColor?.toString({a:fillOpacity}) || 'white'
         div.style.textShadow = Array(
             iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
-            iconGlow ? `0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color}` : ''
+            iconGlow ? `0 0 5px ${glow}, 0 0 10px ${glow}, 0 0 15px ${glow}, 0 0 20px ${glow}` : ''
         ).filter(style => style !== '').join(',')
 
         return L.divIcon({
