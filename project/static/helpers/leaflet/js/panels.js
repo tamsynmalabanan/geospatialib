@@ -661,7 +661,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         parent:design,
                         fieldAttrs: {
                             type: 'color',
-                            value: 'red',
+                            value: hslToHex(...manageHSLAColor(styleParams.fillColor)),
                         },
                         labelText: 'Fill color'
                     }).querySelector('input')
