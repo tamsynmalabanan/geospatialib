@@ -672,10 +672,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
-                    const iconOptions = customCreateElement({
-                        parent:iconFields,
-                        outerHTML:bootstrapIconUL.outerHTML
-                    })
+                    const iconOptions = customCreateElement({parent:iconFields})
+                    iconOptions.outerHTML = bootstrapIconUL.outerHTML
 
 
                     const fillFields = document.createElement('div')
