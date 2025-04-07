@@ -632,7 +632,8 @@ const handleLeafletStylePanel = (map, parent) => {
             const createSymbologyForm = ({parent}={}) => {
                 const detailsTable = document.querySelector(`#${layerLegend.id}-details-table`)
 
-                const handler = (id, style) => {
+                const handler = (id) => {
+                    const style = layerStyles.groups[id] || layerStyles.default
                     const parent = document.createElement('div')
 
                     const label = createFormFloating({
@@ -653,7 +654,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const container = customCreateElement('div')
 
-                
+                container.appendChild(handler())
                 
 
                 parent?.appendChild(container)
