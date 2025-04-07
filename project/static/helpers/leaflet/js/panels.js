@@ -650,7 +650,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                             attribution: {
+                                handler: ({parent}={}) => {
+                                    const container = document.createElement('div')
+                                    parent?.appendChild(container)
 
+                                    console.log(layer._attribution)
+
+                                }
                             },
                         },
                         className: ''
