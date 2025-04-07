@@ -638,7 +638,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     // },
                     'Symbology': {
                         fields: {   
-                            symbologyMethod: {
+                            method: {
                                 handler: createFormFloating,
                                 fieldAttrs: {
                                     name:'method',
