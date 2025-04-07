@@ -3,11 +3,13 @@ const customCreateElement = ({
     id,
     className = '',
     parent,
+    style = {}
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
     element.className = className
     parent?.appendChild(element)
+    Object.keys(style).forEach(k => element.style[k] = style[k])
     return element
 }
 

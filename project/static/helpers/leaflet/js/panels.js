@@ -674,9 +674,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const iconOptions = customCreateElement({parent:iconFields})
                     iconOptions.outerHTML = bootstrapIconUL.outerHTML
-                    iconOptions.className = 'overflow-auto'
-                    iconOptions.style.maxHeight = '200px'
-
 
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
@@ -1236,7 +1233,14 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIconUL = customCreateElement({tag:'ul', className: 'list-group'})
+const bootstrapIconUL = customCreateElement({
+    tag:'ul', 
+    className: 'list-group',
+    style: {
+        maxHeight: '200px',
+        overflow: 'auto',
+    }
+})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
