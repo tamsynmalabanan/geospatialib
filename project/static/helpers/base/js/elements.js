@@ -1,11 +1,14 @@
-const customCreateElement = (tag, {
+const customCreateElement = ({
+    tag = 'div',
     id,
     className = '',
-    parent
+    parent,
+    outerHTML,
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
     element.className = className
+    if (outerHTML) element.outerHTML = outerHTML
     parent?.appendChild(element)
     return element
 }

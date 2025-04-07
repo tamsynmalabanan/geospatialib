@@ -85,7 +85,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
             const tag = data.tag || 'button'
             const element = tag !== 'button' ?
-            customCreateElement(tag, data) :
+            customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
@@ -672,6 +672,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
+                    const iconOptions = customCreateElement({
+                        parent:iconFields,
+                        outerHTML:bootstrapIconUL.outerHTML
+                    })
+
+
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
                     parent.appendChild(fillFields)
@@ -773,7 +779,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     return parent
                 }
                 
-                const container = customCreateElement('div')
+                const container = customCreateElement()
 
                 container.appendChild(handler(''))
                 
@@ -1230,7 +1236,7 @@ const handleLeafletMapPanels = (map) => {
     control.addTo(map)
 }
 
-const bootstrapIconUL = customCreateElement('ul', {className: 'list-group'})
+const bootstrapIconUL = customCreateElement({tag:'ul', className: 'list-group'})
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
