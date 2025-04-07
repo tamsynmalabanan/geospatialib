@@ -671,7 +671,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: ''
+                        className: 'flex-column'
                     },
                     // 'Symbology': {
                     //     fields: {   
