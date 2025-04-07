@@ -654,7 +654,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const styleParams = style.styleParams
                     
                     const iconFields = document.createElement('div')
-                    iconFields.className = 'd-flex gap-2'
+                    iconFields.className = 'd-flex gap-2 flex-column'
                     parent.appendChild(iconFields)
                     
                     const iconClass = createFormFloating({
@@ -674,6 +674,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const iconOptions = customCreateElement({parent:iconFields})
                     iconOptions.outerHTML = bootstrapIconUL.outerHTML
+                    iconOptions.className = 'overflow-auto'
+                    iconOptions.style.maxHeight = '200px'
 
 
                     const fillFields = document.createElement('div')
