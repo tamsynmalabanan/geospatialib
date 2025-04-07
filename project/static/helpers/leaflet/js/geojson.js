@@ -9,9 +9,9 @@ const getLeafletGeoJSONLayer = async ({
     styles,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        // filter: (feature) => {
-        //     return true
-        // },
+        filter: (feature) => {
+            return feature.geometry.type.endsWith('Polygon')
+        },
         pane,
         renderer: new L.SVG({pane}),
         markersInheritOptions: true,

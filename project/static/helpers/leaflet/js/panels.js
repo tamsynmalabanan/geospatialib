@@ -661,13 +661,16 @@ const handleLeafletStylePanel = (map, parent) => {
                                         layerStyles.method = field.value
                                         
                                         const container = field.parentElement.nextSibling
-                                        console.log(container)
+                                        container.innerHTML = ''
                                     }
                                 }
                             },
                             methodDetails: {
                                 handler: ({parent}={}) => {
                                     const container = customCreateElement('div')
+
+                                    
+
                                     parent?.appendChild(container)
                                 }
                             }
