@@ -646,10 +646,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldTag:'select',
                                 labelText: 'Method',
                                 options:{
+                                    '':'No symbology',
                                     'uniform':'Uniform symbol',
                                     'categorized':'Categorized symbols',
                                     'ranged':'Ranged symbols',
-                                    '':'No symbology',
                                 },
                                 selectedValue: symbologyMethod,
                                 fieldClass:'form-select-sm',
