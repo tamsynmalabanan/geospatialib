@@ -658,7 +658,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 events: {
                                     change: (e) => {
                                         const field = e.target
-                                        symbologyMethod = field.value
+                                        layerStyles.method = field.value
                                         
                                         const methodcontainer = field.parentElement.nextSiblingElement()
                                         console.log(methodcontainer)
