@@ -660,8 +660,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const field = e.target
                                         symbologyMethod = field.value
                                         
-                                        const container = field.parentElement.nextSiblingElement()
-                                        console.log(container)
+                                        const methodcontainer = field.parentElement.nextSiblingElement()
+                                        console.log(methodcontainer)
                                     }
                                 }
                             },
