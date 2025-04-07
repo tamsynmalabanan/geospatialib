@@ -709,6 +709,17 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateGeoJSONData(layer)
                     })
 
+                    const iconGlow = createFormCheck({
+                        parent:iconSub,
+                        labelInnerText: 'Icon glow',
+                        checked: styleParams.iconGlow,
+                        labelClass: 'text-nowrap'
+                    }).querySelector('input')
+                    iconGlow.addEventListener('click', (e) => {
+                        styleParams.iconGlow = iconGlow.checked
+                        updateGeoJSONData(layer)
+                    })
+
                     const fillFields = document.createElement('div')
                     fillFields.className = 'd-flex gap-2'
                     parent.appendChild(fillFields)
