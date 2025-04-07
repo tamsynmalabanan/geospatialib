@@ -128,7 +128,7 @@ const hslToHex = ({h, s, l}) => {
     return `#${f(0)}${f(8)}${f(4)}`
 }
 
-const hexToHSL = (hex) => {
+const hexToHSLA = (hex) => {
     // Convert hex to RGB
     let r = parseInt(hex.substring(1, 3), 16) / 255;
     let g = parseInt(hex.substring(3, 5), 16) / 255;
@@ -168,5 +168,5 @@ const hexToHSL = (hex) => {
     s = +(s * 100).toFixed(1);
     l = +(l * 100).toFixed(1);
   
-    return `hsl(${h}, ${s}%, ${l}%)`;
+    return `hsla(${h}, ${s}%, ${l}%, 1)`;
 }

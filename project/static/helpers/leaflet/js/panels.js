@@ -667,7 +667,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         labelText: 'Fill color'
                     }).querySelector('input')
                     fillColor.addEventListener('input', (e) => {
-                        console.log(e.target.value)
+                        console.log(e.target.value, hexToHSLA(e.target.value))
                         // style.label = label.value
                         // const element = detailsTable.querySelector(`#${detailsTable.id}-${id}-title`)
                         // if (element) element.innerText = label.value
