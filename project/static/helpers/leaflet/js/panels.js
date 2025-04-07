@@ -658,7 +658,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const styleParams = style.styleParams
                     const fillColor = createFormFloating({
-                        design,
+                        parent:design,
                         fieldAttrs: {
                             type: 'color',
                             value: styleParams.fillColor,
