@@ -8,6 +8,7 @@ const customCreateElement = ({
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
     element.className = className
+    console.log(parent)
     parent?.appendChild(element)
     Object.keys(style).forEach(k => element.style[k] = style[k])
     return element

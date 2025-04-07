@@ -1232,7 +1232,6 @@ const handleLeafletMapPanels = (map) => {
 }
 
 const bootstrapIConsDatalist = customCreateElement('datalist', {parent:document.body})
-console.log(bootstrapIConsDatalist.parentElement)
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
