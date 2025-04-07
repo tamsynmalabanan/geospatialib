@@ -680,7 +680,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
-                                        const maxScaleField = field.closest('form').elements.maxScale
+                                        const maxScaleField = form.elements.maxScale
                                         
                                         if (!field.value) {
                                             field.value = 10
@@ -714,7 +714,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
-                                        const minScaleField = field.closest('form').elements.minScale
+                                        const minScaleField = form.elements.minScale
                                         
                                         if (!field.value) {
                                             field.value = 5000000
