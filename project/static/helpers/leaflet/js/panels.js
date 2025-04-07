@@ -591,6 +591,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
             body.setAttribute('data-layer-id', newLayerId)
 
+            const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
             const layerStyles = layer._styles
             const symbologyMethod = layerStyles.method
             const visibility = layerStyles.visibility
@@ -629,6 +630,27 @@ const handleLeafletStylePanel = (map, parent) => {
             }
 
             const createSymbologyForm = ({parent}={}) => {
+                const detailsTable = document.querySelector(`#${layerLegend.id}-details-table`)
+
+                const handler = (id, style) => {
+                    const parent = document.createElement('div')
+
+                    const label = createFormFloating({
+                        parent,
+                        fieldAttrs: {
+                            type: 'text',
+                            value: style.label
+                        },
+                        labelText: 'Label'
+                    }).querySelector('input')
+                    label.addEventListener('input', () => {
+                        style.label = label.value
+                        detailsTable.querySelector(`#${detailsTable}-${id}-title`).innerText = label.value
+                    })
+
+                    return parent
+                }
+                
                 const container = customCreateElement('div')
 
                 
@@ -653,9 +675,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const field = e.target
                                         layer._title = field.value
                                         
-                                        const element = document.querySelector(
-                                            `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-title`
-                                        )?.querySelector('span')
+                                        const element = document.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
                                         if (element) element.innerText = field.value
 
                                         select.options[select.selectedIndex].text = field.value
@@ -675,9 +695,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const field = e.target
                                         layer._attribution = field.value
                                         
-                                        const element = document.querySelector(
-                                            `#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}-attribution`
-                                        )
+                                        const element = document.querySelector(`#${layerLegend.id}-attribution`)
                                         element.innerHTML = field.value
                                         Array.from(element.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
                                     }
