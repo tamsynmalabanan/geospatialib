@@ -548,7 +548,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const body = document.createElement('div')
     body.id = `${map.getContainer().id}-panels-style-body`
-    body.className = 'd-flex flex-column flex-grow-1 overflow-auto p-3'
+    body.className = 'd-flex flex-column flex-grow-1 overflow-auto p-3 d-none'
     form.appendChild(body)
 
     const mapContainer = map.getContainer()
@@ -584,12 +584,16 @@ const handleLeafletStylePanel = (map, parent) => {
             const newLayerId = parseInt(select.options[select.selectedIndex]?.value || -1)
             if (layer && newLayerId && newLayerId === layer._leaflet_id) return
     
-            body.removeAttribute('data-layer-id')
             body.innerHTML = ''
             layer = map._ch.getLegendLayer(newLayerId)
-            if (!layer) return
+            if (!layer) {
+                body.removeAttribute('data-layer-id')
+                body.classList.add('d-none')
+                return
+            }
 
             body.setAttribute('data-layer-id', newLayerId)
+            body.classList.remove('d-none')
 
             const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
             const layerStyles = layer._styles
