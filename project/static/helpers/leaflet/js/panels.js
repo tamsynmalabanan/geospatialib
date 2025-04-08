@@ -975,21 +975,21 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent,
                 })
 
-                // const iconShadow = createFormCheck({
-                //     parent:fields,
-                //     checked: filter.active,
-                //     labelInnerText: 'Active',
-                //     labelClass: 'text-nowrap',
-                //     events: {
-                //         click: (e) => {
-                //             const value = e.target.checked
-                //             if (value === styleParams.iconShadow) return
+                const active = createFormCheck({
+                    parent:fields,
+                    checked: filter.active,
+                    labelInnerText: 'Active',
+                    labelClass: 'text-nowrap',
+                    events: {
+                        click: (e) => {
+                            const value = e.target.checked
+                            if (value === filter.active) return
         
-                //             styleParams.iconShadow = value
-                //             updateGeoJSONData(layer)
-                //         }
-                //     }
-                // })
+                            filter.active = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
 
                 return parent
             }
