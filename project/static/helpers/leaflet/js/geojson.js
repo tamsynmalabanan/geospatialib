@@ -83,11 +83,11 @@ const getLeafletGeoJSONLayer = async ({
             max: 5000000,
         },
         filters: {
-            // id: {
-            //     property: '__type__',
-            //     inclusions: ['linestring'],
-            //     exclusions: [],
-            // },
+            id: {
+                property: '__type__',
+                inclusions: ['polygon'],
+                exclusions: [],
+            },
             // id2: {
             //     property: 'access',
             //     inclusions: [],
