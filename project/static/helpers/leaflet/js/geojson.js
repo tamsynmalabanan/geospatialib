@@ -111,6 +111,7 @@ const getLeafletGeoJSONLayer = async ({
             if (isGeom) {
                 
             } else {
+                console.log(value, inclusions, exclusions)
                 if (inclusions.length && !inclusions.includes(value)) return false
                 if (exclusions.length && exclusions.includes(value)) return false
             }
