@@ -142,7 +142,7 @@ const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
         console.log(style)
 
-        const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
+        const borderStyle = `${style.weight}px ${style.lineBreak || 'solid'} ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
         const div = document.createElement('div')
         div.className = removeWhitespace(`
