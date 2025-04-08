@@ -1020,7 +1020,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             })
 
-                            const withFilters = Object.keys(layerStyles.filters).filter(i => i !== filter.property)
+                            const withFilters = Object.values(layerStyles.filters).map(i => i.property).filter(i => i !== filter.property)
                             for (const p in properties) {
                                 if (withFilters.includes(p)) continue
 
@@ -1033,11 +1033,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         change: (e) => {
                             const value = e.target.options[e.target.selectedIndex]?.value
-                            console.log(value, filter.property)
                             if (value === filter.property) return
                             
                             filter.property = value
-                            console.log(layerStyles.filters[id])
                             updateGeoJSONData(layer)
                         }
                     }
