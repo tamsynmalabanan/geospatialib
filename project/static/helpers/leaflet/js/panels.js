@@ -1205,7 +1205,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             filterDEtails: {
                                 handler: ({parent}={}) => {
-                                    const container = customCreateElement({className='d-flex flex-column gap-2'})
+                                    const container = customCreateElement({className:'d-flex flex-column gap-2'})
 
                                     for (const property in layerStyles.filters) {
                                         container.appendChild(getFilterForm(property))
