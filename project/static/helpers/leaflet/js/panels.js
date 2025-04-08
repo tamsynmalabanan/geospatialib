@@ -1031,7 +1031,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 e.target.appendChild(option)
                             }
                         },
-                        blur: (e) => {
+                        change: (e) => {
                             const value = e.target.options[e.target.selectedIndex]?.value
                             console.log(value, filter.property)
                             if (value === filter.property) return
