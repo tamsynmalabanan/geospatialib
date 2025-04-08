@@ -1027,6 +1027,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         blur: (e) => {
+                            console.log(e)
                             const value = e.target.options[e.target.selectedIndex]?.value
                             if (value === id) return
                             
