@@ -92,7 +92,7 @@ const getLeafletGeoJSONLayer = async ({
             id2: {
                 rank: 2,
                 property: 'access', // propertyName // '__geom__'
-                inclusions: ['private'],
+                inclusions: [],
                 exclusions: ['private'],
             },
         }
