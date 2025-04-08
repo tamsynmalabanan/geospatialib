@@ -778,11 +778,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     fillOpacity.addEventListener('blur', (e) => {
                         const value = (parseInt(fillOpacity.value) / 100) || 0
-                        console.log(value, styleParams.fillOpacity)
                         if (value === styleParams.fillOpacity) return
                         
                         styleParams.fillOpacity = value
-                        console.log(styleParams.fillOpacity)
                         updateGeoJSONData(layer)
                     })
                     
