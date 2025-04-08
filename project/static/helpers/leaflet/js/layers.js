@@ -26,7 +26,6 @@ const getLeafletStyleParams = ({
         dashArray = lineDash === 'dash' 
         ? `${strokeWidth * 5} ${strokeWidth * 5}`
         : `${strokeWidth} ${strokeWidth*2}`
-        console.log(lineDash, dashArray)
     }
 
     return  {
@@ -138,6 +137,7 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
+        console.log(style)
         const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
         const div = document.createElement('div')
