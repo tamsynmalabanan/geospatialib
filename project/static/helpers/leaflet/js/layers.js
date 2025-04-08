@@ -23,7 +23,7 @@ const getLeafletStyleParams = ({
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
     if (!dashArray && lineBreak !== 'solid') {
-        dashArray = lineBreak === 'dash' 
+        dashArray = lineBreak === 'dashed' 
         ? `${strokeWidth * 5} ${strokeWidth * 5}`
         : `${strokeWidth} ${strokeWidth*2}`
     }
@@ -137,7 +137,7 @@ const zoomToLeafletLayer = async (layer, map, {
 const leafletLayerStyleToHTML = (style, type) => {
     console.log(style)
     return type === 'point' ? style.options?.html : (() => {
-        const borderStyle = `${style.weight}px ${style.lineBreak || 'solid'} ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
+        const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
         const div = document.createElement('div')
         div.className = removeWhitespace(`
