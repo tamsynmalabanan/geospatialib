@@ -997,6 +997,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     labelText: 'Property',
                     events: {
                         click: (e) => {
+                            e.target.innerHTML = ''
+                            
                             const properties = {
                                 '__type__': 'Feature Type',
                                 '__geom__': 'Geometry',
@@ -1011,13 +1013,16 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             })
 
-                            const withFilters = Object.keys(layerStyles.filters)
-                            // for (const p in properties) {
-                            //     if (withFilters.includes(p)) continue
+                            const withFilters = Object.keys(layerStyles.filters).filter(i => i !== id)
+                            for (const p in properties) {
+                                if (withFilters.includes(p)) continue
 
-                            // }
-
-                            console.log(properties, withFilters)
+                                const option = document.createElement('option')
+                                option.value = p
+                                option.text = properties[p]
+                                if (p === id) option.setAttribute('selected', true)
+                                e.target.appendChild()
+                            }
                         },
                         blur: (e) => {
                             const value = e.target.options[e.target.selectedIndex]?.value
