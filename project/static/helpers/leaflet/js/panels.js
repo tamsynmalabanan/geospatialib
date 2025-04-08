@@ -1027,8 +1027,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         blur: (e) => {
-                            console.log(e)
                             const value = e.target.options[e.target.selectedIndex]?.value
+                            console.log(value)
                             if (value === id) return
                             
                             layerStyles.filters[value] = structuredClone(filter)
