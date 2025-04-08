@@ -841,7 +841,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     strokeWidth.addEventListener('blur', (e) => {
                         const value = parseInt(strokeWidth.value) || 0
-                        if (!value || value === styleParams.strokeWidth) return
+                        if (value === styleParams.strokeWidth) return
 
                         styleParams.strokeWidth = value
                         updateGeoJSONData(layer)
