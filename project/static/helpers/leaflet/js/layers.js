@@ -145,22 +145,36 @@ const leafletLayerStyleToHTML = (style, type) => {
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.style.display = 'block'
         
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.setAttribute('x', 0)
-        rect.setAttribute('y', 0)
-        rect.setAttribute('width', width)
-        rect.setAttribute('height', height)
-        rect.setAttribute('fill-rule', 'evenodd')
-        rect.setAttribute('stroke', style.color)
-        rect.setAttribute('stroke-opacity', style.opacity)
-        rect.setAttribute('stroke-width', style.weight)
-        rect.setAttribute('stroke-linecap', style.lineCap)
-        rect.setAttribute('stroke-linejoin', style.lineJoin)
-        rect.setAttribute('stroke-dasharray', style.dashArray)
-        rect.setAttribute('stroke-dashoffset', style.dashOffset)
-        rect.setAttribute('fill', style.fillColor)
-        rect.setAttribute('fill-opacity', style.fillOpacity)
-        svg.appendChild(rect)
+        const isPolygon = type === 'polygon'
+        const symbol = document.createElementNS(
+            'http://www.w3.org/2000/svg', 
+            `${isPolygon ? 'rect' : 'line'}`
+        )
+
+        if (isPolygon) {
+            symbol.setAttribute('x', 0)
+            symbol.setAttribute('y', 0)
+            symbol.setAttribute('width', width)
+            symbol.setAttribute('height', height)
+            symbol.setAttribute('fill-rule', 'evenodd')
+            symbol.setAttribute('fill', style.fillColor)
+            symbol.setAttribute('fill-opacity', style.fillOpacity)
+        } else {
+            symbol.setAttribute('x1', 0)
+            symbol.setAttribute('y1', height/2)
+            symbol.setAttribute('x2', width)
+            symbol.setAttribute('y2', height/2)
+        }
+
+        symbol.setAttribute('stroke', style.color)
+        symbol.setAttribute('stroke-opacity', style.opacity)
+        symbol.setAttribute('stroke-width', style.weight)
+        symbol.setAttribute('stroke-linecap', style.lineCap)
+        symbol.setAttribute('stroke-linejoin', style.lineJoin)
+        symbol.setAttribute('stroke-dasharray', style.dashArray)
+        symbol.setAttribute('stroke-dashoffset', style.dashOffset)
+        
+        svg.appendChild(symbol)
 
         return svg.outerHTML
     })()
