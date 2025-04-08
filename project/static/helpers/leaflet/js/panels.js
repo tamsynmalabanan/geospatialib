@@ -697,8 +697,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     iconSize.addEventListener('blur', (e) => {
-                        const value = parseInt(iconSize.value) || 1
-                        if (value === styleParams.iconSize) return
+                        const value = parseInt(iconSize.value)
+                        if (!value || value === styleParams.iconSize) {
+                            iconSize.value = styleParams.iconSize
+                            return
+                        }
 
                         styleParams.iconSize = value
                         updateGeoJSONData(layer)
