@@ -677,11 +677,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     labelText: 'Icon class',
                     events: {
                         blur: (e) => {
-                            const value = e.target.value.trim()
-                            if (!value || value === styleParams.iconClass) {
-                                e.target.value = styleParams.iconClass
-                                return
-                            }
+                            let value = e.target.value.trim()
+                            if (!value) value = e.target.value = 'circle-fill'
+                            if (value === styleParams.iconClass) return
                             
                             styleParams.iconClass = value
                             updateGeoJSONData(layer)
