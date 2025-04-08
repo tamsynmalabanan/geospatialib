@@ -534,7 +534,7 @@ const handleLeafletStylePanel = (map, parent) => {
     parent.appendChild(form)
 
     const toolbar = document.createElement('div')
-    toolbar.className = 'd-flex p-3 flex-column'
+    toolbar.className = 'd-flex p-3 flex-column gap-3'
     form.appendChild(toolbar)
 
     const select = createInputGroup({
@@ -650,15 +650,17 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     labelText: 'Label',
                     fieldClass: 'form-control-sm',
-                }).querySelector('input')
-                label.addEventListener('blur', (e) => {
-                    const value = label.value.trim() 
-                    if (value === style.label) return
-
-                    style.label = value
-                    updateGeoJSONData(layer)
+                    events: {
+                        'blur': (e) => {
+                            const value = e.target.value.trim() 
+                            if (value === style.label) return
+        
+                            style.label = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
-                 
+
                 const iconFields = document.createElement('div')
                 iconFields.className = 'd-flex gap-2'
                 parent.appendChild(iconFields)
@@ -672,19 +674,21 @@ const handleLeafletStylePanel = (map, parent) => {
                         list: bootstrapIConsDatalist.id
                     },
                     fieldClass: 'form-control-sm',
-                    labelText: 'Icon class'
-                }).querySelector('input')
-                iconClass.addEventListener('blur', (e) => {
-                    const value = iconClass.value.trim()
-                    if (!value || value === styleParams.iconClass) {
-                        iconClass.value = styleParams.iconClass
-                        return
+                    labelText: 'Icon class',
+                    events: {
+                        'blur': (e) => {
+                            const value = e.target.value.trim()
+                            if (!value || value === styleParams.iconClass) {
+                                e.target.value = styleParams.iconClass
+                                return
+                            }
+                            
+                            styleParams.iconClass = value
+                            updateGeoJSONData(layer)
+                        }
                     }
-                    
-                    styleParams.iconClass = value
-                    updateGeoJSONData(layer)
                 })
-                
+
                 const iconSize = createInputGroup({
                     parent:iconFields,
                     fieldAttrs: {
@@ -853,19 +857,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     updateGeoJSONData(layer)
                 })
 
-                // const strokeWidth = createInputGroup({
+                // const lineCap = createFormFloating({
                 //     parent:strokeFields,
-                //     fieldAttrs: {
-                //         name: `${id}-strokeWidth`,
-                //         type: 'number',
-                //         min: '0',
-                //         max: '10',
-                //         step: '1',
-                //         value: styleParams.strokeWidth,
-                //         placeholder: 'Stroke width',
-                //     },
-                //     suffixHTML: 'px',
-                //     fieldClass: 'form-control-sm',
+                //     fieldTag: 'select',
+                //     fieldAttrs: {name: `${id}-lineCap`},
+                //     fieldClass: 'form-select-sm',
+                //     labelText: 'Line cap'
                 // }).querySelector('input')
                 // strokeWidth.addEventListener('blur', (e) => {
                 //     const value = parseFloat(strokeWidth.value) || 0
