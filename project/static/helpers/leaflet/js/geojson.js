@@ -116,15 +116,19 @@ const getLeafletGeoJSONLayer = async ({
             
             if (property === '__geom__') {
                 if (inclusions.length && !inclusions.some(i => {
-                    const filterFeature = JSON.parse(i)
-                    if (!turf.booleanValid(filterFeature)) return true
-                    return turf.booleanIntersects(filterFeature, feature)
+                    try {
+                        const filterFeature = JSON.parse(i)
+                        if (!turf.booleanValid(filterFeature)) return true
+                        return turf.booleanIntersects(filterFeature, feature)
+                    } catch {return true}
                 })) return false
                 
                 if (exclusions.length && exclusions.some(i => {
-                    const filterFeature = JSON.parse(i)
-                    if (!turf.booleanValid(filterFeature)) return false
-                    return turf.booleanIntersects(filterFeature, feature)
+                    try {
+                        const filterFeature = JSON.parse(i)
+                        if (!turf.booleanValid(filterFeature)) return false
+                        return turf.booleanIntersects(filterFeature, feature)
+                    } catch {return false}
                 })) return false
             } else {
                 const value = property === '__type__' ? feature.geometry.type : feature.properties[property] || 'null'
