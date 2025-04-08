@@ -93,6 +93,11 @@ const getLeafletGeoJSONLayer = async ({
                 inclusions: [],
                 exclusions: ['private'],
             },
+            id3: {
+                property: '__geom__', // propertyName // '__geom__'
+                inclusions: ['{"type":"Feature","properties":{"landuse":"residential","osm_id":630191618,"osm_type":"way"},"geometry":{"type":"Polygon","coordinates":[[[77.4240854,28.6192734],[77.4239929,28.6189705],[77.4237033,28.6185648],[77.4231857,28.6182511],[77.4240237,28.6169312],[77.4250405,28.6174181],[77.4256699,28.6164021],[77.4259618,28.6159057],[77.4259402,28.6158439],[77.4279983,28.6167744],[77.4265502,28.6191707],[77.4254349,28.6192194],[77.4241223,28.6193438],[77.4240854,28.6192734]]]},"_groupId":""}'],
+                exclusions: [],
+            },
         }
     }
 
@@ -100,22 +105,27 @@ const getLeafletGeoJSONLayer = async ({
         const filters = Object.values(geojsonLayer._styles.filters)//.sort((a, b) => a.rank - b.rank)
         for (const filter of filters) {
             const property = filter.property
-            const isType = property === '__type__'
-            const isGeom = property === '__geom__'
-            
-            const properties = feature.properties
-            const geometry = feature.geometry
-            
-            const value = isGeom ? geometry 
-            : isType ? geometry.type.toLowerCase().replace('multi', '')
-            : properties[property]
-            
             const inclusions = filter.inclusions
             const exclusions = filter.exclusions
-
+            
+            const isGeom = property === '__geom__'
             if (isGeom) {
+                if (inclusions.length && !inclusions.some(i => {
+                    const filterFeature = JSON.parse(i)
+                    if (!turf.booleanValid(filterFeature)) return true
+                    return turf.intersect(turf.featureCollection([filterFeature, feature]))
+                })) return false
                 
+                if (exclusions.length && exclusions.some(i => {
+                    const filterFeature = JSON.parse(i)
+                    if (!turf.booleanValid(filterFeature)) return false
+                    return turf.intersect(turf.featureCollection([filterFeature, feature]))
+                })) return false
             } else {
+                const isType = property === '__type__'
+                const value = isType 
+                ? feature.geometry.type.toLowerCase().replace('multi', '') 
+                : feature.properties[property]
                 if (inclusions.length && !inclusions.includes(value)) return false
                 if (exclusions.length && exclusions.includes(value)) return false
             }
