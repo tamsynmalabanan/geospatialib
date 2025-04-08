@@ -85,7 +85,7 @@ const getLeafletGeoJSONLayer = async ({
         filters: {
             id: {
                 property: '__type__',
-                inclusions: ['point'],
+                inclusions: ['linestring'],
                 exclusions: [],
             },
             id2: {
