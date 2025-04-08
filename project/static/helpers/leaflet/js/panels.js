@@ -777,11 +777,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     fillOpacity.addEventListener('blur', (e) => {
-                        const value = parseInt(fillOpacity.value) / 100
-                        if (!value || value === styleParams.fillOpacity) {
-                            fillOpacity.value = styleParams.fillOpacity * 100
-                            return
-                        }
+                        const value = parseInt(fillOpacity.value) / 100 || 0
+                        if (value === styleParams.fillOpacity) return
 
                         styleParams.fillOpacity = value
                         updateGeoJSONData(layer)
@@ -824,11 +821,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     strokeOpacity.addEventListener('blur', (e) => {
-                        const value = parseInt(strokeOpacity.value) / 100
-                        if (!value || value === styleParams.strokeOpacity) {
-                            strokeOpacity.value = styleParams.strokeOpacity * 100
-                            return
-                        }
+                        const value = parseInt(strokeOpacity.value) / 100 || 0
+                        if (value === styleParams.strokeOpacity) return
 
                         styleParams.strokeOpacity = value
                         updateGeoJSONData(layer)
