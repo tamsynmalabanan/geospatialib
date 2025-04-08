@@ -91,7 +91,7 @@ const getLeafletGeoJSONLayer = async ({
         }
     }
 
-    geojsonLayer.filter = (feature) => {
+    geojsonLayer.options.filter = (feature) => {
         const filters = Object.values(geojsonLayer._styles.filters)
         for (const filter of filters) {
             const property = filter.property
@@ -111,7 +111,6 @@ const getLeafletGeoJSONLayer = async ({
             if (isGeom) {
                 
             } else {
-                console.log(value, inclusions, exclusions)
                 if (inclusions.length && !inclusions.includes(value)) return false
                 if (exclusions.length && exclusions.includes(value)) return false
             }
