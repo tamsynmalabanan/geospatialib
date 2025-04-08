@@ -83,18 +83,21 @@ const getLeafletGeoJSONLayer = async ({
             max: 5000000,
         },
         filters: {
-            // '__type__': {
-            //     inclusions: ['MultiPolygon'],
-            //     exclusions: [],
-            // },
-            // '__geom__': {
-            //     inclusions: [],
-            //     exclusions: ['{"type":"Polygon","coordinates":[[[77.4240854,28.6192734],[77.4239929,28.6189705],[77.4237033,28.6185648],[77.4231857,28.6182511],[77.4240237,28.6169312],[77.4250405,28.6174181],[77.4256699,28.6164021],[77.4259618,28.6159057],[77.4259402,28.6158439],[77.4279983,28.6167744],[77.4265502,28.6191707],[77.4254349,28.6192194],[77.4241223,28.6193438],[77.4240854,28.6192734]]]}'],
-            // },
-            // 'access': {
-            //     inclusions: [],
-            //     exclusions: ['private'],
-            // },
+            '__type__': {
+                active: true,
+                inclusions: ['MultiPolygon'],
+                exclusions: [],
+            },
+            '__geom__': {
+                active: true,
+                inclusions: [],
+                exclusions: ['{"type":"Polygon","coordinates":[[[77.4240854,28.6192734],[77.4239929,28.6189705],[77.4237033,28.6185648],[77.4231857,28.6182511],[77.4240237,28.6169312],[77.4250405,28.6174181],[77.4256699,28.6164021],[77.4259618,28.6159057],[77.4259402,28.6158439],[77.4279983,28.6167744],[77.4265502,28.6191707],[77.4254349,28.6192194],[77.4241223,28.6193438],[77.4240854,28.6192734]]]}'],
+            },
+            'access': {
+                active: true,
+                inclusions: [],
+                exclusions: ['private'],
+            },
         }
     }
 
@@ -102,6 +105,8 @@ const getLeafletGeoJSONLayer = async ({
         const filters = geojsonLayer._styles.filters//.sort((a, b) => a.rank - b.rank)
         for (const property in filters) {
             const filter = filters[property]
+            if (!filter.active) continue
+            
             const inclusions = filter.inclusions
             const exclusions = filter.exclusions
             

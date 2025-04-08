@@ -965,33 +965,33 @@ const handleLeafletStylePanel = (map, parent) => {
                 return parent
             }
 
-            const getFilterForm = () => {
+            const getFilterForm = (property) => {
+                const filter = layerStyles.filters[property]
+
                 const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
-                const groupFields = customCreateElement({
+                const fields = customCreateElement({
                     className:'d-flex gap-2',
                     parent,
                 })
 
-                const label = createFormFloating({
-                    parent:groupFields,
-                    fieldAttrs: {
-                        name: `${id}-label`,
-                        type: 'text',
-                        value: style.label
-                    },
-                    labelText: 'Label',
-                    fieldClass: 'form-control-sm',
-                    events: {
-                        blur: (e) => {
-                            const value = e.target.value.trim() 
-                            if (value === style.label) return
+                // const iconShadow = createFormCheck({
+                //     parent:fields,
+                //     checked: filter.active,
+                //     labelInnerText: 'Active',
+                //     labelClass: 'text-nowrap',
+                //     events: {
+                //         click: (e) => {
+                //             const value = e.target.checked
+                //             if (value === styleParams.iconShadow) return
         
-                            style.label = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
+                //             styleParams.iconShadow = value
+                //             updateGeoJSONData(layer)
+                //         }
+                //     }
+                // })
+
+                return parent
             }
 
             const styleFields = {
@@ -1153,7 +1153,20 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     'Filter': {
                         fields: {
+                            filterTools: {
                             
+                            },
+                            filterDEtails: {
+                                handler: ({parent}={}) => {
+                                    const container = customCreateElement()
+
+                                    for (const property in layerStyles.filters) {
+                                        container.appendChild(getFilterForm(property))
+                                    }
+
+                                    parent?.appendChild(container)
+                                }
+                            }
                         }
                     }
                 }
