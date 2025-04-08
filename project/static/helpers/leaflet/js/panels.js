@@ -537,14 +537,13 @@ const handleLeafletStylePanel = (map, parent) => {
     toolbar.className = 'd-flex p-3 flex-column'
     form.appendChild(toolbar)
 
-    const select = createFormFloating({
+    const select = createInputGroup({
         parent: toolbar,
+        prefixHTML: 'Layer',
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
-        fieldAttrs: {
-            name: 'layer',
-        },
-        labelText: 'Layer'
+        fieldAttrs: {name: 'layer'},
+        // labelText: 'Layer'
     }).querySelector('select')
     select.disabled = true
 
@@ -853,6 +852,28 @@ const handleLeafletStylePanel = (map, parent) => {
                     styleParams.strokeWidth = value
                     updateGeoJSONData(layer)
                 })
+
+                // const strokeWidth = createInputGroup({
+                //     parent:strokeFields,
+                //     fieldAttrs: {
+                //         name: `${id}-strokeWidth`,
+                //         type: 'number',
+                //         min: '0',
+                //         max: '10',
+                //         step: '1',
+                //         value: styleParams.strokeWidth,
+                //         placeholder: 'Stroke width',
+                //     },
+                //     suffixHTML: 'px',
+                //     fieldClass: 'form-control-sm',
+                // }).querySelector('input')
+                // strokeWidth.addEventListener('blur', (e) => {
+                //     const value = parseFloat(strokeWidth.value) || 0
+                //     if (value === styleParams.strokeWidth) return
+
+                //     styleParams.strokeWidth = value
+                //     updateGeoJSONData(layer)
+                // })
 
                 return parent
             }
