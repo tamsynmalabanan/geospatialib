@@ -15,15 +15,15 @@ const getLeafletStyleParams = ({
     iconGlow=false,
     lineCap='round',
     lineJoin='round',
-    lineDash='solid',
+    lineBreak='solid',
     dashArray,
     dashOffset,
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
-    if (!dashArray && lineDash !== 'solid') {
-        dashArray = lineDash === 'dash' 
+    if (!dashArray && lineBreak !== 'solid') {
+        dashArray = lineBreak === 'dash' 
         ? `${strokeWidth * 5} ${strokeWidth * 5}`
         : `${strokeWidth} ${strokeWidth*2}`
     }
@@ -42,6 +42,7 @@ const getLeafletStyleParams = ({
         dashOffset,
         lineCap,
         lineJoin,
+        lineBreak,
     }    
 }
 
@@ -60,6 +61,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         lineJoin,
         dashArray,
         dashOffset,
+        lineBreak,
     } = getLeafletStyleParams(styleParams)
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
@@ -91,6 +93,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
             lineJoin,
             dashArray,
             dashOffset,    
+            lineBreak,
         } 
         
         if (type === 'polygon') {

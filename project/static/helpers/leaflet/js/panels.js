@@ -928,24 +928,24 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
-                const lineDash = createFormFloating({
+                const lineBreak = createFormFloating({
                     parent: lineFields,
                     fieldTag: 'select',
-                    fieldAttrs: {name: `${id}-lineDash`},
+                    fieldAttrs: {name: `${id}-lineBreak`},
                     fieldClass: 'form-select-sm',
                     labelText: 'Line dash',
                     options: {
                         'solid': 'solid',
-                        'dash': 'dash',
-                        'dot': 'dot',
+                        'dashed': 'dashed',
+                        'dotted': 'dotted',
                     },
-                    currentValue: styleParams.lineDash,
+                    currentValue: styleParams.lineBreak,
                     events: {
                         blur: (e) => {
                             const value = e.target.options[e.target.selectedIndex]?.value
-                            if (value === styleParams.lineDash) return
+                            if (value === styleParams.lineBreak) return
         
-                            styleParams.lineDash = value
+                            styleParams.lineBreak = value
                             updateGeoJSONData(layer)
                         }
                     }
