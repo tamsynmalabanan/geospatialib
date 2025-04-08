@@ -533,12 +533,12 @@ const handleLeafletStylePanel = (map, parent) => {
     form.className = `d-flex flex-grow-1 flex-column text-bg-${getPreferredTheme()} rounded h-100`
     parent.appendChild(form)
 
-    const selectContainer = document.createElement('div')
-    selectContainer.className = 'd-flex p-3 flex-column'
-    form.appendChild(selectContainer)
+    const toolbar = document.createElement('div')
+    toolbar.className = 'd-flex p-3 flex-column'
+    form.appendChild(toolbar)
 
     const select = createFormFloating({
-        parent: selectContainer,
+        parent: toolbar,
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
         fieldAttrs: {
@@ -635,234 +635,226 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
             }
 
-            const createSymbologyForm = ({parent}={}) => {
-                const handler = (id) => {
-                    const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
-                    const styleParams = style.styleParams
+            const getSymbologyForm = (id) => {
+                const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
+                const styleParams = style.styleParams
 
-                    const parent = document.createElement('div')
-                    parent.className = 'd-flex gap-2 flex-column'
+                const parent = document.createElement('div')
+                parent.className = 'd-flex gap-2 flex-column'
 
-                    const label = createFormFloating({
-                        parent,
-                        fieldAttrs: {
-                            name: `${id}-label`,
-                            type: 'text',
-                            value: style.label
-                        },
-                        labelText: 'Label',
-                        fieldClass: 'form-control-sm',
-                    }).querySelector('input')
-                    label.addEventListener('blur', (e) => {
-                        const value = label.value.trim() 
-                        if (value === style.label) return
+                const label = createFormFloating({
+                    parent,
+                    fieldAttrs: {
+                        name: `${id}-label`,
+                        type: 'text',
+                        value: style.label
+                    },
+                    labelText: 'Label',
+                    fieldClass: 'form-control-sm',
+                }).querySelector('input')
+                label.addEventListener('blur', (e) => {
+                    const value = label.value.trim() 
+                    if (value === style.label) return
 
-                        style.label = value
-                        updateGeoJSONData(layer)
-                    })
-                     
-                    const iconFields = document.createElement('div')
-                    iconFields.className = 'd-flex gap-2'
-                    parent.appendChild(iconFields)
-                    
-                    const iconClass = createFormFloating({
-                        parent:iconFields,
-                        fieldAttrs: {
-                            name:`${id}-iconClass`,
-                            type: 'text',
-                            value: styleParams.iconClass,
-                            list: bootstrapIConsDatalist.id
-                        },
-                        fieldClass: 'form-control-sm',
-                        labelText: 'Icon class'
-                    }).querySelector('input')
-                    iconClass.addEventListener('blur', (e) => {
-                        const value = iconClass.value.trim()
-                        if (!value || value === styleParams.iconClass) {
-                            iconClass.value = styleParams.iconClass
-                            return
-                        }
-                        
-                        styleParams.iconClass = value
-                        updateGeoJSONData(layer)
-                    })
-                    
-                    const iconSize = createInputGroup({
-                        parent:iconFields,
-                        fieldAttrs: {
-                            name: `${id}-iconSize`,
-                            type: 'number',
-                            min: '1',
-                            max: '100',
-                            step: '1',
-                            value: styleParams.iconSize,
-                            placeholder: 'Icon size',
-                        },
-                        suffixHTML: 'px',
-                        fieldClass: 'form-control-sm',
-                    }).querySelector('input')
-                    iconSize.addEventListener('blur', (e) => {
-                        const value = parseFloat(iconSize.value)
-                        if (!value || value === styleParams.iconSize) {
-                            iconSize.value = styleParams.iconSize
-                            return
-                        }
-
-                        styleParams.iconSize = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    const iconCheckboxes = customCreateElement({
-                        className:'d-flex flex-column', 
-                        parent:iconFields
-                    })
-
-                    const iconShadow = createFormCheck({
-                        parent:iconCheckboxes,
-                        labelInnerText: 'Icon shadow',
-                        checked: styleParams.iconShadow,
-                        labelClass: 'text-nowrap'
-                    }).querySelector('input')
-                    iconShadow.addEventListener('click', (e) => {
-                        const value = iconShadow.checked
-                        if (value === styleParams.iconShadow) return
-
-                        styleParams.iconShadow = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    const iconGlow = createFormCheck({
-                        parent:iconCheckboxes,
-                        labelInnerText: 'Icon glow',
-                        checked: styleParams.iconGlow,
-                        labelClass: 'text-nowrap'
-                    }).querySelector('input')
-                    iconGlow.addEventListener('click', (e) => {
-                        const value = iconGlow.checked
-                        if (value === styleParams.iconGlow) return
-
-                        styleParams.iconGlow = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    const fillFields = document.createElement('div')
-                    fillFields.className = 'd-flex gap-2'
-                    parent.appendChild(fillFields)
-
-                    const fillColor = createFormFloating({
-                        parent:fillFields,
-                        fieldAttrs: {
-                            name:`${id}-fillColor`,
-                            type: 'color',
-                            value: hslToHex(manageHSLAColor(styleParams.fillColor)),
-                        },
-                        fieldClass: 'form-control-sm',
-                        labelText: 'Fill color'
-                    }).querySelector('input')
-                    fillColor.addEventListener('blur', (e) => {
-                        const value = hexToHSLA(fillColor.value)
-                        if (value === styleParams.fillColor) return
-
-                        styleParams.fillColor = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    const fillOpacity = createInputGroup({
-                        parent:fillFields,
-                        fieldAttrs: {
-                            name: `${id}-fillOpacity`,
-                            type: 'number',
-                            min: '0',
-                            max: '100',
-                            step: '10',
-                            value: styleParams.fillOpacity * 100,
-                            placeholder: 'Fill opacity',
-                        },
-                        suffixHTML: '%',
-                        fieldClass: 'form-control-sm',
-                    }).querySelector('input')
-                    fillOpacity.addEventListener('blur', (e) => {
-                        const value = (parseFloat(fillOpacity.value) / 100) || 0
-                        if (value === styleParams.fillOpacity) return
-                        
-                        styleParams.fillOpacity = value
-                        updateGeoJSONData(layer)
-                    })
-                    
-                    const strokeFields = document.createElement('div')
-                    strokeFields.className = 'd-flex gap-2'
-                    parent.appendChild(strokeFields)
-                    
-                    const strokeColor = createFormFloating({
-                        parent:strokeFields,
-                        fieldAttrs: {
-                            name:`${id}-strokeColor`,
-                            type: 'color',
-                            value: hslToHex(manageHSLAColor(styleParams.strokeColor)),
-                        },
-                        fieldClass: 'form-control-sm',
-                        labelText: 'Stroke color'
-                    }).querySelector('input')
-                    strokeColor.addEventListener('blur', (e) => {
-                        const value = hexToHSLA(strokeColor.value)
-                        if (value === styleParams.strokeColor) return
-
-                        styleParams.strokeColor = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    const strokeOpacity = createInputGroup({
-                        parent:strokeFields,
-                        fieldAttrs: {
-                            name: `${id}-strokeOpacity`,
-                            type: 'number',
-                            min: '0',
-                            max: '100',
-                            step: '10',
-                            value: styleParams.strokeOpacity * 100,
-                            placeholder: 'Stroke opacity',
-                        },
-                        suffixHTML: '%',
-                        fieldClass: 'form-control-sm',
-                    }).querySelector('input')
-                    strokeOpacity.addEventListener('blur', (e) => {
-                        const value = (parseFloat(strokeOpacity.value) / 100) || 0
-                        if (value === styleParams.strokeOpacity) return
-
-                        styleParams.strokeOpacity = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    const strokeWidth = createInputGroup({
-                        parent:strokeFields,
-                        fieldAttrs: {
-                            name: `${id}-strokeWidth`,
-                            type: 'number',
-                            min: '0',
-                            max: '10',
-                            step: '1',
-                            value: styleParams.strokeWidth,
-                            placeholder: 'Stroke width',
-                        },
-                        suffixHTML: 'px',
-                        fieldClass: 'form-control-sm',
-                    }).querySelector('input')
-                    strokeWidth.addEventListener('blur', (e) => {
-                        const value = parseFloat(strokeWidth.value) || 0
-                        if (value === styleParams.strokeWidth) return
-
-                        styleParams.strokeWidth = value
-                        updateGeoJSONData(layer)
-                    })
-
-                    return parent
-                }
+                    style.label = value
+                    updateGeoJSONData(layer)
+                })
+                 
+                const iconFields = document.createElement('div')
+                iconFields.className = 'd-flex gap-2'
+                parent.appendChild(iconFields)
                 
-                const container = customCreateElement()
-
-                container.appendChild(handler(''))
+                const iconClass = createFormFloating({
+                    parent:iconFields,
+                    fieldAttrs: {
+                        name:`${id}-iconClass`,
+                        type: 'text',
+                        value: styleParams.iconClass,
+                        list: bootstrapIConsDatalist.id
+                    },
+                    fieldClass: 'form-control-sm',
+                    labelText: 'Icon class'
+                }).querySelector('input')
+                iconClass.addEventListener('blur', (e) => {
+                    const value = iconClass.value.trim()
+                    if (!value || value === styleParams.iconClass) {
+                        iconClass.value = styleParams.iconClass
+                        return
+                    }
+                    
+                    styleParams.iconClass = value
+                    updateGeoJSONData(layer)
+                })
                 
-                parent?.appendChild(container)
+                const iconSize = createInputGroup({
+                    parent:iconFields,
+                    fieldAttrs: {
+                        name: `${id}-iconSize`,
+                        type: 'number',
+                        min: '1',
+                        max: '100',
+                        step: '1',
+                        value: styleParams.iconSize,
+                        placeholder: 'Icon size',
+                    },
+                    suffixHTML: 'px',
+                    fieldClass: 'form-control-sm',
+                }).querySelector('input')
+                iconSize.addEventListener('blur', (e) => {
+                    const value = parseFloat(iconSize.value)
+                    if (!value || value === styleParams.iconSize) {
+                        iconSize.value = styleParams.iconSize
+                        return
+                    }
+
+                    styleParams.iconSize = value
+                    updateGeoJSONData(layer)
+                })
+
+                const iconCheckboxes = customCreateElement({
+                    className:'d-flex flex-column', 
+                    parent:iconFields
+                })
+
+                const iconShadow = createFormCheck({
+                    parent:iconCheckboxes,
+                    labelInnerText: 'Icon shadow',
+                    checked: styleParams.iconShadow,
+                    labelClass: 'text-nowrap'
+                }).querySelector('input')
+                iconShadow.addEventListener('click', (e) => {
+                    const value = iconShadow.checked
+                    if (value === styleParams.iconShadow) return
+
+                    styleParams.iconShadow = value
+                    updateGeoJSONData(layer)
+                })
+
+                const iconGlow = createFormCheck({
+                    parent:iconCheckboxes,
+                    labelInnerText: 'Icon glow',
+                    checked: styleParams.iconGlow,
+                    labelClass: 'text-nowrap'
+                }).querySelector('input')
+                iconGlow.addEventListener('click', (e) => {
+                    const value = iconGlow.checked
+                    if (value === styleParams.iconGlow) return
+
+                    styleParams.iconGlow = value
+                    updateGeoJSONData(layer)
+                })
+
+                const fillFields = document.createElement('div')
+                fillFields.className = 'd-flex gap-2'
+                parent.appendChild(fillFields)
+
+                const fillColor = createFormFloating({
+                    parent:fillFields,
+                    fieldAttrs: {
+                        name:`${id}-fillColor`,
+                        type: 'color',
+                        value: hslToHex(manageHSLAColor(styleParams.fillColor)),
+                    },
+                    fieldClass: 'form-control-sm',
+                    labelText: 'Fill color'
+                }).querySelector('input')
+                fillColor.addEventListener('blur', (e) => {
+                    const value = hexToHSLA(fillColor.value)
+                    if (value === styleParams.fillColor) return
+
+                    styleParams.fillColor = value
+                    updateGeoJSONData(layer)
+                })
+
+                const fillOpacity = createInputGroup({
+                    parent:fillFields,
+                    fieldAttrs: {
+                        name: `${id}-fillOpacity`,
+                        type: 'number',
+                        min: '0',
+                        max: '100',
+                        step: '10',
+                        value: styleParams.fillOpacity * 100,
+                        placeholder: 'Fill opacity',
+                    },
+                    suffixHTML: '%',
+                    fieldClass: 'form-control-sm',
+                }).querySelector('input')
+                fillOpacity.addEventListener('blur', (e) => {
+                    const value = (parseFloat(fillOpacity.value) / 100) || 0
+                    if (value === styleParams.fillOpacity) return
+                    
+                    styleParams.fillOpacity = value
+                    updateGeoJSONData(layer)
+                })
+                
+                const strokeFields = document.createElement('div')
+                strokeFields.className = 'd-flex gap-2'
+                parent.appendChild(strokeFields)
+                
+                const strokeColor = createFormFloating({
+                    parent:strokeFields,
+                    fieldAttrs: {
+                        name:`${id}-strokeColor`,
+                        type: 'color',
+                        value: hslToHex(manageHSLAColor(styleParams.strokeColor)),
+                    },
+                    fieldClass: 'form-control-sm',
+                    labelText: 'Stroke color'
+                }).querySelector('input')
+                strokeColor.addEventListener('blur', (e) => {
+                    const value = hexToHSLA(strokeColor.value)
+                    if (value === styleParams.strokeColor) return
+
+                    styleParams.strokeColor = value
+                    updateGeoJSONData(layer)
+                })
+
+                const strokeOpacity = createInputGroup({
+                    parent:strokeFields,
+                    fieldAttrs: {
+                        name: `${id}-strokeOpacity`,
+                        type: 'number',
+                        min: '0',
+                        max: '100',
+                        step: '10',
+                        value: styleParams.strokeOpacity * 100,
+                        placeholder: 'Stroke opacity',
+                    },
+                    suffixHTML: '%',
+                    fieldClass: 'form-control-sm',
+                }).querySelector('input')
+                strokeOpacity.addEventListener('blur', (e) => {
+                    const value = (parseFloat(strokeOpacity.value) / 100) || 0
+                    if (value === styleParams.strokeOpacity) return
+
+                    styleParams.strokeOpacity = value
+                    updateGeoJSONData(layer)
+                })
+
+                const strokeWidth = createInputGroup({
+                    parent:strokeFields,
+                    fieldAttrs: {
+                        name: `${id}-strokeWidth`,
+                        type: 'number',
+                        min: '0',
+                        max: '10',
+                        step: '1',
+                        value: styleParams.strokeWidth,
+                        placeholder: 'Stroke width',
+                    },
+                    suffixHTML: 'px',
+                    fieldClass: 'form-control-sm',
+                }).querySelector('input')
+                strokeWidth.addEventListener('blur', (e) => {
+                    const value = parseFloat(strokeWidth.value) || 0
+                    if (value === styleParams.strokeWidth) return
+
+                    styleParams.strokeWidth = value
+                    updateGeoJSONData(layer)
+                })
+
+                return parent
             }
 
             const styleFields = {
@@ -938,7 +930,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                             methodDetails: {
-                                handler: createSymbologyForm
+                                handler: ({parent}={}) => {
+                                    const container = customCreateElement()
+                                    container.appendChild(getSymbologyForm(''))
+                                    parent?.appendChild(container)
+                                }
                             }
                         },
                         className: 'flex-column'
