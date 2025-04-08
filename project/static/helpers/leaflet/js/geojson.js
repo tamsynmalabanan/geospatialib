@@ -123,7 +123,7 @@ const getLeafletGeoJSONLayer = async ({
                     return turf.booleanIntersects(filterFeature, feature)
                 })) return false
             } else {
-                const value = property === '__type__' ? feature.geometry.type : feature.properties[property]
+                const value = property === '__type__' ? feature.geometry.type : feature.properties[property] || 'null'
                 if (inclusions.length && !inclusions.includes(value)) return false
                 if (exclusions.length && exclusions.includes(value)) return false
             }

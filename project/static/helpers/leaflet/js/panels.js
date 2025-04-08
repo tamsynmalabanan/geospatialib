@@ -965,8 +965,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 return parent
             }
 
-            const getFilterForm = (property) => {
-                const filter = layerStyles.filters[property]
+            const getFilterForm = (id) => {
+                const filter = layerStyles.filters[id]
 
                 const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
@@ -978,14 +978,54 @@ const handleLeafletStylePanel = (map, parent) => {
                 const active = createFormCheck({
                     parent:fields,
                     checked: filter.active,
-                    labelInnerText: 'Active',
-                    labelClass: 'text-nowrap',
                     events: {
                         click: (e) => {
                             const value = e.target.checked
                             if (value === filter.active) return
         
                             filter.active = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
+                const property = createFormFloating({
+                    parent: fields,
+                    fieldTag: 'select',
+                    fieldAttrs: {name: generateRandomString()},
+                    fieldClass: 'form-select-sm',
+                    labelText: 'Property',
+                    events: {
+                        click: (e) => {
+                            const properties = {
+                                '__type__': 'Feature Type',
+                                '__geom__': 'Geometry',
+                            }
+
+                            layer.eachLayer(l => {
+                                const p = l.feature?.properties
+                                if (!p) return
+
+                                for (const k in p) {
+                                    properties[k] = k
+                                }
+                            })
+
+                            const withFilters = Object.keys(layerStyles.filters)
+                            // for (const p in properties) {
+                            //     if (withFilters.includes(p)) continue
+
+                            // }
+
+                            console.log(properties, withFilters)
+                        },
+                        blur: (e) => {
+                            const value = e.target.options[e.target.selectedIndex]?.value
+                            if (value === id) return
+                            
+                            layerStyles.filters[value] = structuredClone(filter)
+                            delete layerStyles.filters[id]
+                            id = value
                             updateGeoJSONData(layer)
                         }
                     }
