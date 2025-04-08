@@ -696,7 +696,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     iconSize.addEventListener('blur', (e) => {
-                        const value = parseInt(iconSize.value)
+                        const value = parseFloat(iconSize.value)
                         if (!value || value === styleParams.iconSize) {
                             iconSize.value = styleParams.iconSize
                             return
@@ -776,7 +776,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     fillOpacity.addEventListener('blur', (e) => {
-                        const value = (parseInt(fillOpacity.value) / 100) || 0
+                        const value = (parseFloat(fillOpacity.value) / 100) || 0
                         if (value === styleParams.fillOpacity) return
                         
                         styleParams.fillOpacity = value
@@ -820,7 +820,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     strokeOpacity.addEventListener('blur', (e) => {
-                        const value = (parseInt(strokeOpacity.value) / 100) || 0
+                        const value = (parseFloat(strokeOpacity.value) / 100) || 0
                         if (value === styleParams.strokeOpacity) return
 
                         styleParams.strokeOpacity = value
@@ -842,7 +842,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     strokeWidth.addEventListener('blur', (e) => {
-                        const value = parseInt(strokeWidth.value) || 0
+                        const value = parseFloat(strokeWidth.value) || 0
                         if (value === styleParams.strokeWidth) return
 
                         styleParams.strokeWidth = value
