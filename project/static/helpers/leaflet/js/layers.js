@@ -136,17 +136,20 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
+        const width = 20
+        const height = 14
+
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-        svg.setAttribute('width', 16)
-        svg.setAttribute('height', 10)
+        svg.setAttribute('width', width)
+        svg.setAttribute('height', height)
         svg.setAttribute('viewBox', `0 0 16 10`);
         svg.style.display = 'block'
         
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
         rect.setAttribute('x', 0)
         rect.setAttribute('y', 0)
-        rect.setAttribute('width', 16)
-        rect.setAttribute('height', 10)
+        rect.setAttribute('width', width)
+        rect.setAttribute('height', height)
         rect.setAttribute('fill-rule', 'evenodd')
         rect.setAttribute('stroke', style.color)
         rect.setAttribute('stroke-opacity', style.opacity)
