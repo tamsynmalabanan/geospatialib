@@ -93,7 +93,7 @@ const getLeafletGeoJSONLayer = async ({
                 rank: 2,
                 property: 'access', // propertyName // '__geom__'
                 inclusions: ['private'],
-                exclusions: [],
+                exclusions: ['private'],
             },
         }
     }
@@ -101,8 +101,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.filter = (feature) => {
         const filters = Object.values(geojsonLayer._styles.filters).sort((a, b) => a.rank - b.rank)
         for (const filter of filters) {
-            console.log(filter.rank)
-
             const property = filter.property
             const isType = property === '__type__'
             const isGeom = property === '__geom__'
