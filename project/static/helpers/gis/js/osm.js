@@ -168,7 +168,7 @@ const overpassToGeoJSON = async (data, {
                 const featureMp = turf.clone(feature)
                 featureMp.geometry = {
                     type: 'MultiPolygon',
-                    coordinates: [outerGeoms, innerGeoms]
+                    coordinates: [outerGeoms, innerGeoms].filter(i => i.length)
                 }
                 geojson.features.push(featureMp)
             }
