@@ -1033,13 +1033,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         blur: (e) => {
                             const value = e.target.options[e.target.selectedIndex]?.value
-                            console.log(value, id)
-                            if (value === id) return
+                            console.log(value, filter.property)
+                            if (value === filter.property) return
                             
-                            layerStyles.filters[value] = structuredClone(filter)
-                            delete layerStyles.filters[id]
-                            id = value
-                            console.log(layerStyles.filters, id)
+                            filter.property = value
+                            console.log(layerStyles.filters[id])
                             updateGeoJSONData(layer)
                         }
                     }
