@@ -42,7 +42,6 @@ const getLeafletStyleParams = ({
         dashOffset,
         lineCap,
         lineJoin,
-        lineBreak,
     }    
 }
 
@@ -61,7 +60,6 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         lineJoin,
         dashArray,
         dashOffset,
-        lineBreak,
     } = getLeafletStyleParams(styleParams)
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
@@ -85,15 +83,13 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         });
     } else {
         const params = {
-            color: strokeColor, //type === 'polygon' ? strokeColor : fillColor,
+            color: strokeColor,
             weight: strokeWidth,
             opacity: strokeOpacity,
-            dashOffset,
             lineCap,
             lineJoin,
             dashArray,
             dashOffset,    
-            lineBreak,
         } 
         
         if (type === 'polygon') {
@@ -140,6 +136,8 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
+        console.log(style)
+        
         const borderStyle = `${style.weight}px ${style.lineBreak || 'solid'} ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
         const div = document.createElement('div')

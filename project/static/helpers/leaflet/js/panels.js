@@ -933,7 +933,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineBreak`},
                     fieldClass: 'form-select-sm',
-                    labelText: 'Line dash',
+                    labelText: 'Line break',
                     options: {
                         'solid': 'solid',
                         'dashed': 'dashed',
