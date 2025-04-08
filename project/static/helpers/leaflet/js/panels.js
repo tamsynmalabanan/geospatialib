@@ -1020,14 +1020,14 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             })
 
-                            const withFilters = Object.keys(layerStyles.filters).filter(i => i !== id)
+                            const withFilters = Object.keys(layerStyles.filters).filter(i => i !== filter.property)
                             for (const p in properties) {
                                 if (withFilters.includes(p)) continue
 
                                 const option = document.createElement('option')
                                 option.value = p
                                 option.text = properties[p]
-                                if (p === id) option.selected = true
+                                if (p === filter.property) option.selected = true
                                 e.target.appendChild(option)
                             }
                         },
