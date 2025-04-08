@@ -874,7 +874,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                     }
                 })
-
+                
                 const lineFields = customCreateElement({
                     className:'d-flex gap-2',
                     parent,
@@ -923,6 +923,29 @@ const handleLeafletStylePanel = (map, parent) => {
                             if (value === styleParams.lineJoin) return
         
                             styleParams.lineJoin = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
+                const lineDash = createFormFloating({
+                    parent: lineFields,
+                    fieldTag: 'select',
+                    fieldAttrs: {name: `${id}-lineDash`},
+                    fieldClass: 'form-select-sm',
+                    labelText: 'Line dash',
+                    options: {
+                        'solid': 'solid',
+                        'dash': 'dash',
+                        'dot': 'dot',
+                    },
+                    currentValue: styleParams.lineDash,
+                    events: {
+                        blur: (e) => {
+                            const value = e.target.options[e.target.selectedIndex]?.value
+                            if (value === styleParams.lineDash) return
+        
+                            styleParams.lineDash = value
                             updateGeoJSONData(layer)
                         }
                     }
