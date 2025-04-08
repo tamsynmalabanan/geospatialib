@@ -638,8 +638,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
                 const styleParams = style.styleParams
 
-                const parent = document.createElement('div')
-                parent.className = 'd-flex gap-2 flex-column'
+                const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
                 const label = createFormFloating({
                     parent,
@@ -661,9 +660,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
-                const iconFields = document.createElement('div')
-                iconFields.className = 'd-flex gap-2'
-                parent.appendChild(iconFields)
+                const iconFields = customCreateElement({
+                    className:'d-flex gap-2',
+                    parent,
+                })
                 
                 const iconClass = createFormFloating({
                     parent:iconFields,
@@ -717,7 +717,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const iconCheckboxes = customCreateElement({
-                    className:'d-flex flex-column', 
+                    className:'d-flex flex-column justify-content-center', 
                     parent:iconFields
                 })
 
