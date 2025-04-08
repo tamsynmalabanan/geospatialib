@@ -389,6 +389,7 @@ const createFormCheck = ({
     disabled=false,
     checked = false,
     labelClass = '',
+    events = {},
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check ${formCheckClass}`
@@ -402,6 +403,7 @@ const createFormCheck = ({
     input.disabled = disabled
     input.checked = checked
     formCheck.appendChild(input)
+    Object.keys(events).forEach(k => input.addEventListener(k, events[k]))
 
     const label = document.createElement('label')
     label.className =  `form-check-label ${labelClass}`
