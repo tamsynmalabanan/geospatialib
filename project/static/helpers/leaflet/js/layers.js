@@ -137,29 +137,23 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
-        // const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
+        console.log(style)
+
+        const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
-        // const div = document.createElement('div')
-        // div.className = removeWhitespace(`
-        //     ${type === 'linestring' ? 'h-0' : 'h-100'}
-        //     w-100
-        // `)
-        // if (type === 'polygon') {
-        //     div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
-        //     div.style.border = borderStyle
-        // } else {
-        //     div.style.borderTop = borderStyle
-        // }
-
-        // return div.outerHTML
-
-        const path = document.createElement('path')
-        for (const k in style) {
-            path.setAttribute(k, style[k])
+        const div = document.createElement('div')
+        div.className = removeWhitespace(`
+            ${type === 'linestring' ? 'h-0' : 'h-100'}
+            w-100
+        `)
+        if (type === 'polygon') {
+            div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
+            div.style.border = borderStyle
+        } else {
+            div.style.borderTop = borderStyle
         }
-        
-        console.log(style, path)
-        return path.outerHTML
+
+        return div.outerHTML
     })()
 }
 
