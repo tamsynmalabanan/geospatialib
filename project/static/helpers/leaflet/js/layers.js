@@ -137,7 +137,6 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
-        console.log(style)
         // const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
         
         // const div = document.createElement('div')
@@ -158,6 +157,8 @@ const leafletLayerStyleToHTML = (style, type) => {
         for (const k in style) {
             path.setAttribute(k, style[k])
         }
+        
+        console.log(style, path)
         return path.outerHTML
     })()
 }
