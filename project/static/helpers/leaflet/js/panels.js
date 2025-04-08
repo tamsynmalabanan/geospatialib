@@ -698,6 +698,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     iconSize.addEventListener('blur', (e) => {
                         const value = parseInt(iconSize.value) || 0
+                        console.log(value)
                         if (value === styleParams.iconSize) return
 
                         styleParams.iconSize = value
