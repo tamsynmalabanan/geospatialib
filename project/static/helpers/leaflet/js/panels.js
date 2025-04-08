@@ -697,11 +697,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     iconSize.addEventListener('blur', (e) => {
-                        const value = parseInt(iconSize.value)
-                        if (!value || value === styleParams.iconSize) {
-                            iconSize.value = styleParams.iconSize
-                            return
-                        }
+                        const value = parseInt(iconSize.value) || 0
+                        if (value === styleParams.iconSize) return
 
                         styleParams.iconSize = value
                         updateGeoJSONData(layer)
@@ -843,11 +840,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     strokeWidth.addEventListener('blur', (e) => {
-                        const value = parseInt(strokeWidth.value)
-                        if (!value || value === styleParams.strokeWidth) {
-                            strokeWidth.value = styleParams.strokeWidth
-                            return
-                        }
+                        const value = parseInt(strokeWidth.value) || 0
+                        if (!value || value === styleParams.strokeWidth) return
 
                         styleParams.strokeWidth = value
                         updateGeoJSONData(layer)
