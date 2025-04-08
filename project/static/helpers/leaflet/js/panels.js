@@ -537,14 +537,14 @@ const handleLeafletStylePanel = (map, parent) => {
     selectContainer.className = 'd-flex p-3 flex-column'
     form.appendChild(selectContainer)
 
-    const select = createInputGroup({
+    const select = createFormFloating({
         parent: selectContainer,
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
         fieldAttrs: {
             name: 'layer',
-            placeholder: 'Layer'
         },
+        labelText: 'Layer'
     }).querySelector('select')
     select.disabled = true
 
