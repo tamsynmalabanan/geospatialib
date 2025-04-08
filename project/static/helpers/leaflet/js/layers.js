@@ -169,6 +169,7 @@ const leafletLayerStyleToHTML = (style, type) => {
         Object.keys(style).forEach(k => rect.setAttribute(k, style[k]))
         svg.appendChild(rect)
 
+        console.log(rect)
         return svg.outerHTML
     })()
 }
