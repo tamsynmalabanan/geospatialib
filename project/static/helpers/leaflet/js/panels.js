@@ -1319,8 +1319,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
                 
                 const layer = await getLeafletGeoJSONLayer({
-                    pane: 'queryPane',
                     geojson: feature, 
+                    pane: 'queryPane',
                     customStyleParams: queryStyleParams,
                     group: queryGroup,
                 })
