@@ -532,7 +532,7 @@ const handleLeafletStylePanel = (map, parent) => {
     parent.appendChild(form)
 
     const selectContainer = document.createElement('div')
-    selectContainer.className = 'd-flex p-3 border-bottom border-2 flex-column'
+    selectContainer.className = 'd-flex p-3 border-bottom flex-column'
     form.appendChild(selectContainer)
 
     const select = createFormFloating({
@@ -548,7 +548,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const body = document.createElement('div')
     body.id = `${map.getContainer().id}-panels-style-body`
-    body.className = 'd-flex flex-column flex-grow-1 overflow-auto px-3'
+    body.className = 'd-flex flex-column flex-grow-1 overflow-auto p-3'
     form.appendChild(body)
 
     const mapContainer = map.getContainer()
@@ -1022,7 +1022,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
-                category.className = `d-flex flex-column gap-2 mt-3`
+                category.className = `d-flex flex-column gap-2`
                 body.appendChild(category)
 
                 const categoryCollase = document.createElement('div')
