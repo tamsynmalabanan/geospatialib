@@ -992,13 +992,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 const property = createFormFloating({
                     parent: fields,
                     fieldTag: 'select',
-                    fieldAttrs: {name: generateRandomString()},
+                    fieldAttrs: {
+                        name: generateRandomString(), 
+                        disabled: Array('__type__', '__geom__').includes(filter.property)
+                    },
                     fieldClass: 'form-select-sm',
                     labelText: 'Property',
                     options: (() => {
                         const options = {}
                         const p = filter.property
-                        options[p] = p === '__type__' ? 'Feature Type' : p === '__geom__' ? 'Geometry' : p
+                        options[p] = p === '__type__' ? 'geometry type' : p === '__geom__' ? 'geometry filters' : p
                         return options
                     })(),
                     currentValue: filter.property,
@@ -1006,10 +1009,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         click: (e) => {
                             e.target.innerHTML = ''
 
-                            const properties = {
-                                '__type__': 'Feature Type',
-                                '__geom__': 'Geometry',
-                            }
+                            const properties = {}
 
                             layer.eachLayer(l => {
                                 const p = l.feature?.properties
