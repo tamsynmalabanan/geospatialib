@@ -998,7 +998,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     events: {
                         click: (e) => {
                             e.target.innerHTML = ''
-                            
+
                             const properties = {
                                 '__type__': 'Feature Type',
                                 '__geom__': 'Geometry',
@@ -1021,7 +1021,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 option.value = p
                                 option.text = properties[p]
                                 if (p === id) option.setAttribute('selected', true)
-                                e.target.appendChild()
+                                e.target.appendChild(option)
                             }
                         },
                         blur: (e) => {
