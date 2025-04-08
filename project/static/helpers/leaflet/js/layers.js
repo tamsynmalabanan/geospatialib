@@ -158,7 +158,7 @@ const leafletLayerStyleToHTML = (style, type) => {
         for (const k in style) {
             path.setAttribute(k, style[k])
         }
-        return path
+        return path.outerHTML
     })()
 }
 
