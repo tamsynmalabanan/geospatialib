@@ -503,8 +503,7 @@ const createFormFloating = ({
     labelText = '',
     events = {},
     options,
-    selectedValue = '',
-    value,
+    currentValue = '',
     fieldStyle = {},
     containerClass = '',
 } = {}) => {
@@ -524,13 +523,13 @@ const createFormFloating = ({
             const option = document.createElement('option')
             option.value = value
             option.text = options[value]
-            if (value === selectedValue) option.setAttribute('selected', true)
+            if (value === currentValue) option.setAttribute('selected', true)
             field.appendChild(option)
         }
+    } else {
+        if (currentValue) field.value = currentValue
     }
     
-
-    if (value) field.value = value
 
     Object.keys(events).forEach(trigger => {
         field.addEventListener(trigger, events[trigger])

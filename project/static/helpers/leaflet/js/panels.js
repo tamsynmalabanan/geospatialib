@@ -873,6 +873,29 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                const lineCap = createFormFloating({
+                    parent: strokeFields,
+                    fieldTag: 'select',
+                    fieldAttrs: {name: `${id}-lineCap`},
+                    fieldClass: 'form-select-sm',
+                    labelText: 'Line cap',
+                    options: {
+                        'round': 'round',
+                        'butt': 'butt',
+                        'square': 'square',
+                    },
+                    currentValue: styleParams.lineCap,
+                    events: {
+                        blur: (e) => {
+                            const value = e.target.options[e.target.selectedIndex]?.value
+                            if (value === styleParams.lineCap) return
+        
+                            styleParams.lineCap = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
 
                 return parent
             }
@@ -904,7 +927,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             attribution: {
                                 handler: createFormFloating,
                                 fieldTag: 'textarea',
-                                value: layer._attribution,
+                                currentValue: layer._attribution,
                                 labelText: 'Attribution (HTML-frieldly)',
                                 fieldStyle: {
                                     minHeight: '100px', 
@@ -937,7 +960,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     // 'categorized':'Categorized symbols',
                                     // 'ranged':'Ranged symbols',
                                 },
-                                selectedValue: symbologyMethod,
+                                currentValue: symbologyMethod,
                                 fieldClass:'form-select-sm',
                                 events: {
                                     change: (e) => {
