@@ -753,9 +753,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
-                const fillFields = document.createElement('div')
-                fillFields.className = 'd-flex gap-2'
-                parent.appendChild(fillFields)
+                const fillFields = customCreateElement({
+                    className:'d-flex gap-2',
+                    parent,
+                })
 
                 const fillColor = createFormFloating({
                     parent:fillFields,
@@ -801,9 +802,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
                 
-                const strokeFields = document.createElement('div')
-                strokeFields.className = 'd-flex gap-2'
-                parent.appendChild(strokeFields)
+                const strokeFields = customCreateElement({
+                    className:'d-flex gap-2',
+                    parent,
+                })
                 
                 const strokeColor = createFormFloating({
                     parent:strokeFields,
@@ -873,9 +875,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
-                const lineFields = document.createElement('div')
-                lineFields.className = 'd-flex gap-2'
-                parent.appendChild(lineFields)
+                const lineFields = customCreateElement({
+                    className:'d-flex gap-2',
+                    parent,
+                })
 
                 const lineCap = createFormFloating({
                     parent: lineFields,
