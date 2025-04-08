@@ -85,7 +85,7 @@ const getLeafletGeoJSONLayer = async ({
         filters: {
             id: {
                 property: '__type__',
-                inclusions: ['polygon'],
+                inclusions: ['MultiPolygon'],
                 exclusions: [],
             },
             // id2: {
@@ -108,8 +108,7 @@ const getLeafletGeoJSONLayer = async ({
             const inclusions = filter.inclusions
             const exclusions = filter.exclusions
             
-            const isGeom = property === '__geom__'
-            if (isGeom) {
+            if (property === '__geom__') {
                 if (inclusions.length && !inclusions.some(i => {
                     const filterFeature = JSON.parse(i)
                     if (!turf.booleanValid(filterFeature)) return true
@@ -122,9 +121,8 @@ const getLeafletGeoJSONLayer = async ({
                     return turf.booleanIntersects(filterFeature, feature)
                 })) return false
             } else {
-                const isType = property === '__type__'
-                const value = isType 
-                ? feature.geometry.type.toLowerCase().replace('multi', '') 
+                const value = property === '__type__' 
+                ? feature.geometry.type
                 : feature.properties[property]
                 if (inclusions.length && !inclusions.includes(value)) return false
                 if (exclusions.length && exclusions.includes(value)) return false
