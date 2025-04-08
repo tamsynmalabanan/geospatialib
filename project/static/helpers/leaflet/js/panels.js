@@ -989,6 +989,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                console.log(filter.property, Array('__type__', '__geom__').includes(filter.property))
                 const property = createFormFloating({
                     parent: fields,
                     fieldTag: 'select',
