@@ -56,13 +56,10 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     const hslaColor = manageHSLAColor(fillColor)
 
     if (type === 'point') {
-        console.log(fillOpacity, strokeOpacity)
-
         const div = document.createElement('div')
         div.className = `h-100 w-100 d-flex justify-content-center align-items-center bi bi-${iconClass}`
         div.style.fontSize = `${iconSize}px`
         div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
-        console.log(hslaColor?.toString({a:fillOpacity}) || fillColor)
         div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
         const glow = hslaColor?.toString({a:fillOpacity}) || `white`
         div.style.textShadow = Array(
