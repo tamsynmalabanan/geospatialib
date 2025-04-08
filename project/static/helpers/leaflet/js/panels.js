@@ -777,7 +777,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     fillOpacity.addEventListener('blur', (e) => {
-                        const value = (parseInt(fillOpacity.value) / 100) || 0
+                        const value = (parseInt(fillOpacity.value) / 100)
+                        if (!value) fillOpacity.value = 0
                         if (value === styleParams.fillOpacity) return
                         
                         styleParams.fillOpacity = value
@@ -821,7 +822,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldClass: 'form-control-sm',
                     }).querySelector('input')
                     strokeOpacity.addEventListener('blur', (e) => {
-                        const value = (parseInt(strokeOpacity.value) / 100) || 0
+                        const value = (parseInt(strokeOpacity.value) / 100)
+                        if (!value) strokeOpacity.value = 0
                         if (value === styleParams.strokeOpacity) return
 
                         styleParams.strokeOpacity = value
