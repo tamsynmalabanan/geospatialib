@@ -506,6 +506,7 @@ const createFormFloating = ({
     currentValue = '',
     fieldStyle = {},
     containerClass = '',
+    fieldDisabled = false,
 } = {}) => {
     const container = document.createElement('div')
     container.className = `form-floating flex-grow-1 w-100 ${containerClass}`
@@ -517,6 +518,7 @@ const createFormFloating = ({
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     Object.keys(fieldStyle).forEach(k => field.style[k] = fieldStyle[k])
     container.appendChild(field)
+    fieldDisabled.disabled = fieldDisabled
 
     if (fieldTag === 'select' && options) {
         for (const value in options) {
