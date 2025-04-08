@@ -83,6 +83,9 @@ const getLeafletGeoJSONLayer = async ({
         visibility: {
             min: 10,
             max: 5000000,
+        },
+        filters: {
+            
         }
     }
 

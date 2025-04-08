@@ -598,7 +598,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
             const layerStyles = layer._styles
-            const symbologyMethod = layerStyles.method
             const visibility = layerStyles.visibility
             const visibilityFieldsClick = (e) => {
                 const field = e.target
@@ -640,8 +639,13 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
-                const label = createFormFloating({
+                const groupFields = customCreateElement({
+                    className:'d-flex gap-2',
                     parent,
+                })
+
+                const label = createFormFloating({
+                    parent:groupFields,
                     fieldAttrs: {
                         name: `${id}-label`,
                         type: 'text',
@@ -659,6 +663,15 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                     }
                 })
+
+                // add remove button if id !== ''
+
+                const conditionsFields = customCreateElement({
+                    className:'d-flex gap-2',
+                    parent,
+                })
+
+                // add contitiones if id !== '
 
                 const iconFields = customCreateElement({
                     className:'d-flex gap-2',
@@ -721,7 +734,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const iconShadow = createFormCheck({
                     parent:iconCheckboxes,
-                    labelInnerText: 'Icon shadow',
+                    labelInnerText: 'Shadow effect',
                     checked: styleParams.iconShadow,
                     labelClass: 'text-nowrap',
                     events: {
@@ -737,7 +750,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const iconGlow = createFormCheck({
                     parent:iconCheckboxes,
-                    labelInnerText: 'Icon glow',
+                    labelInnerText: 'Glow effect',
                     checked: styleParams.iconGlow,
                     labelClass: 'text-nowrap',
                     events: {
@@ -952,6 +965,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 return parent
             }
 
+            const getFilterForm = () => {
+
+            }
+
             const styleFields = {
                 'Legend': {
                     'Identification': {
@@ -1012,7 +1029,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     // 'categorized':'Categorized symbols',
                                     // 'ranged':'Ranged symbols',
                                 },
-                                currentValue: symbologyMethod,
+                                currentValue: layerStyles.method,
                                 fieldClass:'form-select-sm',
                                 events: {
                                     change: (e) => {
