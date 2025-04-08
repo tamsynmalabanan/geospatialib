@@ -86,7 +86,7 @@ const getLeafletGeoJSONLayer = async ({
             id: {
                 property: '__type__', // propertyName // '__geom__'
                 inclusions: ['point'],
-                exclusions: ['point'],
+                exclusions: [],
             },
         }
     }
