@@ -900,6 +900,31 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                const lineJoin = createFormFloating({
+                    parent: lineFields,
+                    fieldTag: 'select',
+                    fieldAttrs: {name: `${id}-lineJoin`},
+                    fieldClass: 'form-select-sm',
+                    labelText: 'Line join',
+                    options: {
+                        'round': 'round',
+                        'arcs': 'arcs',
+                        'bevel': 'bevel',
+                        'miter': 'miter',
+                        'miter-clip': 'miter-clip',
+                    },
+                    currentValue: styleParams.lineJoin,
+                    events: {
+                        blur: (e) => {
+                            const value = e.target.options[e.target.selectedIndex]?.value
+                            if (value === styleParams.lineJoin) return
+        
+                            styleParams.lineJoin = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
                 return parent
             }
 

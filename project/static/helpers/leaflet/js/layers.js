@@ -14,6 +14,7 @@ const getLeafletStyleParams = ({
     iconShadow=false,
     iconGlow=false,
     lineCap='round',
+    lineJoin='round',
 
     dashArray,
     dashOffset,
@@ -34,6 +35,7 @@ const getLeafletStyleParams = ({
         dashArray,
         dashOffset,
         lineCap,
+        lineJoin
     }    
 }
 
@@ -52,6 +54,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         iconShadow,
         iconGlow,
         lineCap,
+        lineJoin,
 
     } = getLeafletStyleParams(styleParams)
     if (!featureType) return
@@ -82,6 +85,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
             dashArray,
             dashOffset,
             lineCap,
+            lineJoin,
         } 
         
         if (type === 'polygon') {
