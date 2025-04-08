@@ -182,6 +182,7 @@ const getLeafletGeoJSONLayer = async ({
         new L.Canvas({pane})
     ]
 
+    console.log(geojson && !isLegendGroup, geojson)
     if (geojson && !isLegendGroup) geojsonLayer.addData(geojson)
 
     return geojsonLayer
