@@ -161,12 +161,21 @@ const leafletLayerStyleToHTML = (style, type) => {
         svg.style.display = 'block'
         
         // Add a rectangle for demonstration
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', 0);
-        rect.setAttribute('y', 0);
-        rect.setAttribute('width', 16);
-        rect.setAttribute('height', 10);
-        Object.keys(style).forEach(k => rect.setAttribute(k, style[k]))
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+        rect.setAttribute('x', 0)
+        rect.setAttribute('y', 0)
+        rect.setAttribute('width', 16)
+        rect.setAttribute('height', 10)
+        
+        rect.setAttribute('stroke', style.color)
+        rect.setAttribute('stroke-opacity', style.opacity)
+        rect.setAttribute('stroke-width', style.weight)
+        rect.setAttribute('stroke-linecap', style.lineCap)
+        rect.setAttribute('stroke-linejoin', style.lineJoin)
+        rect.setAttribute('fill', style.fillColor)
+        rect.setAttribute('fill-opacity', style.fillOpacity)
+        rect.setAttribute('fill-rule', 'evenodd')
+        
         svg.appendChild(rect)
 
         console.log(rect)
