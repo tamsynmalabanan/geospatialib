@@ -995,8 +995,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     fieldAttrs: {name: generateRandomString()},
                     fieldClass: 'form-select-sm',
                     labelText: 'Property',
-                    options: {id: `${id === '__type__' ? 'Feature Type' : id === '__geom__' ? 'Geometry' : id}`},
-                    currentValue: id,
+                    options: (() => {
+                        const options = {}
+                        const p = filter.property
+                        options[p] = p === '__type__' ? 'Feature Type' : p === '__geom__' ? 'Geometry' : p
+                        return options
+                    })(),
+                    currentValue: filter.property,
                     events: {
                         click: (e) => {
                             e.target.innerHTML = ''
@@ -1209,8 +1214,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: ({parent}={}) => {
                                     const container = customCreateElement({className:'d-flex flex-column gap-2'})
 
-                                    for (const property in layerStyles.filters) {
-                                        container.appendChild(getFilterForm(property))
+                                    for (const id in layerStyles.filters) {
+                                        container.appendChild(getFilterForm(id))
                                     }
 
                                     parent?.appendChild(container)
