@@ -112,6 +112,7 @@ const getLeafletGeoJSONLayer = async ({
             if (isGeom) {
                 if (inclusions.length && !inclusions.some(i => {
                     const filterFeature = JSON.parse(i)
+                    console.log(filterFeature)
                     if (!turf.booleanValid(filterFeature)) return true
                     return turf.intersect(turf.featureCollection([filterFeature, feature]))
                 })) return false
