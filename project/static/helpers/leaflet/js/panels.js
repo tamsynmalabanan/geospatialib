@@ -687,7 +687,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fieldAttrs: {
                             name: `${id}-iconSize`,
                             type: 'number',
-                            min: '0',
+                            min: '1',
                             max: '100',
                             step: '1',
                             value: styleParams.iconSize,
@@ -698,7 +698,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     }).querySelector('input')
                     iconSize.addEventListener('blur', (e) => {
                         const value = parseInt(iconSize.value) || 1
-                        console.log(value)
                         if (value === styleParams.iconSize) return
 
                         styleParams.iconSize = value
