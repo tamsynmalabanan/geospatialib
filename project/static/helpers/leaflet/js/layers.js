@@ -172,6 +172,8 @@ const leafletLayerStyleToHTML = (style, type) => {
         rect.setAttribute('stroke-width', style.weight)
         rect.setAttribute('stroke-linecap', style.lineCap)
         rect.setAttribute('stroke-linejoin', style.lineJoin)
+        rect.setAttribute('stroke-dasharray', style.dashArray)
+        rect.setAttribute('stroke-dashoffset', style.dashOffset)
         rect.setAttribute('fill', style.fillColor)
         rect.setAttribute('fill-opacity', style.fillOpacity)
         rect.setAttribute('fill-rule', 'evenodd')
