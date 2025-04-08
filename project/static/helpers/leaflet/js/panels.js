@@ -873,8 +873,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                const lineFields = document.createElement('div')
+                lineFields.className = 'd-flex gap-2'
+                parent.appendChild(lineFields)
+
                 const lineCap = createFormFloating({
-                    parent: strokeFields,
+                    parent: lineFields,
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineCap`},
                     fieldClass: 'form-select-sm',
@@ -895,7 +899,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                     }
                 })
-
 
                 return parent
             }
