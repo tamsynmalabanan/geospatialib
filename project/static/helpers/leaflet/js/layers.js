@@ -136,37 +136,18 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return type === 'point' ? style.options?.html : (() => {
-        console.log(style)
-
-        // const borderStyle = `${style.weight}px solid ${manageHSLAColor(style.color)?.toString({a:style.opacity}) || style.color}`
-        
-        // const div = document.createElement('div')
-        // div.className = removeWhitespace(`
-        //     ${type === 'linestring' ? 'h-0' : 'h-100'}
-        //     w-100
-        // `)
-        // if (type === 'polygon') {
-        //     div.style.backgroundColor = manageHSLAColor(style.fillColor)?.toString({a:style.fillOpacity}) || style.fillColor
-        //     div.style.border = borderStyle
-        // } else {
-        //     div.style.borderTop = borderStyle
-        // }
-
-        // return div.outerHTML
-
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         svg.setAttribute('width', 16)
         svg.setAttribute('height', 10)
         svg.setAttribute('viewBox', `0 0 16 10`);
         svg.style.display = 'block'
         
-        // Add a rectangle for demonstration
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
         rect.setAttribute('x', 0)
         rect.setAttribute('y', 0)
         rect.setAttribute('width', 16)
         rect.setAttribute('height', 10)
-        
+        rect.setAttribute('fill-rule', 'evenodd')
         rect.setAttribute('stroke', style.color)
         rect.setAttribute('stroke-opacity', style.opacity)
         rect.setAttribute('stroke-width', style.weight)
@@ -176,11 +157,8 @@ const leafletLayerStyleToHTML = (style, type) => {
         rect.setAttribute('stroke-dashoffset', style.dashOffset)
         rect.setAttribute('fill', style.fillColor)
         rect.setAttribute('fill-opacity', style.fillOpacity)
-        rect.setAttribute('fill-rule', 'evenodd')
-        
         svg.appendChild(rect)
 
-        console.log(rect)
         return svg.outerHTML
     })()
 }
