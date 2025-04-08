@@ -995,6 +995,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     fieldAttrs: {name: generateRandomString()},
                     fieldClass: 'form-select-sm',
                     labelText: 'Property',
+                    options: {id: `${id === '__type__' ? 'Feature Type' : id === '__geom__' ? 'Geometry' : id}`},
+                    currentValue: id,
                     events: {
                         click: (e) => {
                             e.target.innerHTML = ''
