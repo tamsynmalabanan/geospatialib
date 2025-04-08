@@ -85,7 +85,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
             const tag = data.tag || 'button'
             const element = tag !== 'button' ?
-            customCreateElement(tag, data) :
+            customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
@@ -862,7 +862,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     return parent
                 }
                 
-                const container = customCreateElement('div')
+                const container = customCreateElement()
 
                 container.appendChild(handler(''))
                 
