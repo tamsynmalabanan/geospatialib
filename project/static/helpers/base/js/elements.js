@@ -545,7 +545,7 @@ const createFormFloating = ({
 const createInputGroup = ({
     parent,
     prefixHTML,
-    inputTag = 'input',
+    fieldTag = 'input',
     fieldClass = '',
     suffixHTML,
     events = {},
@@ -566,9 +566,9 @@ const createInputGroup = ({
         inputGroup.appendChild(prefix)
     }
 
-    const field = document.createElement(inputTag)
+    const field = document.createElement(fieldTag)
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
-    field.className = `${inputTag === 'select' ? 'form-select' : 'form-control'} ${fieldClass}`
+    field.className = `${fieldTag === 'select' ? 'form-select' : 'form-control'} ${fieldClass}`
     inputGroup.appendChild(field)
 
     Object.keys(events).forEach(trigger => {
