@@ -651,7 +651,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     labelText: 'Label',
                     fieldClass: 'form-control-sm',
                     events: {
-                        'blur': (e) => {
+                        blur: (e) => {
                             const value = e.target.value.trim() 
                             if (value === style.label) return
         
@@ -676,7 +676,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fieldClass: 'form-control-sm',
                     labelText: 'Icon class',
                     events: {
-                        'blur': (e) => {
+                        blur: (e) => {
                             const value = e.target.value.trim()
                             if (!value || value === styleParams.iconClass) {
                                 e.target.value = styleParams.iconClass
@@ -702,16 +702,18 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     suffixHTML: 'px',
                     fieldClass: 'form-control-sm',
-                }).querySelector('input')
-                iconSize.addEventListener('blur', (e) => {
-                    const value = parseFloat(iconSize.value)
-                    if (!value || value === styleParams.iconSize) {
-                        iconSize.value = styleParams.iconSize
-                        return
+                    events: {
+                        blur: (e) => {
+                            const value = parseFloat(e.target.value)
+                            if (!value || value === styleParams.iconSize) {
+                                e.target.value = styleParams.iconSize
+                                return
+                            }
+        
+                            styleParams.iconSize = value
+                            updateGeoJSONData(layer)
+                        }
                     }
-
-                    styleParams.iconSize = value
-                    updateGeoJSONData(layer)
                 })
 
                 const iconCheckboxes = customCreateElement({
@@ -723,28 +725,32 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent:iconCheckboxes,
                     labelInnerText: 'Icon shadow',
                     checked: styleParams.iconShadow,
-                    labelClass: 'text-nowrap'
-                }).querySelector('input')
-                iconShadow.addEventListener('click', (e) => {
-                    const value = iconShadow.checked
-                    if (value === styleParams.iconShadow) return
-
-                    styleParams.iconShadow = value
-                    updateGeoJSONData(layer)
+                    labelClass: 'text-nowrap',
+                    events: {
+                        click: (e) => {
+                            const value = e.target.checked
+                            if (value === styleParams.iconShadow) return
+        
+                            styleParams.iconShadow = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
 
                 const iconGlow = createFormCheck({
                     parent:iconCheckboxes,
                     labelInnerText: 'Icon glow',
                     checked: styleParams.iconGlow,
-                    labelClass: 'text-nowrap'
-                }).querySelector('input')
-                iconGlow.addEventListener('click', (e) => {
-                    const value = iconGlow.checked
-                    if (value === styleParams.iconGlow) return
-
-                    styleParams.iconGlow = value
-                    updateGeoJSONData(layer)
+                    labelClass: 'text-nowrap',
+                    events: {
+                        click: (e) => {
+                            const value = e.target.checked
+                            if (value === styleParams.iconGlow) return
+        
+                            styleParams.iconGlow = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
 
                 const fillFields = document.createElement('div')
@@ -759,14 +765,16 @@ const handleLeafletStylePanel = (map, parent) => {
                         value: hslToHex(manageHSLAColor(styleParams.fillColor)),
                     },
                     fieldClass: 'form-control-sm',
-                    labelText: 'Fill color'
-                }).querySelector('input')
-                fillColor.addEventListener('blur', (e) => {
-                    const value = hexToHSLA(fillColor.value)
-                    if (value === styleParams.fillColor) return
-
-                    styleParams.fillColor = value
-                    updateGeoJSONData(layer)
+                    labelText: 'Fill color',
+                    events: {
+                        blur: (e) => {
+                            const value = hexToHSLA(e.target.value)
+                            if (value === styleParams.fillColor) return
+        
+                            styleParams.fillColor = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
 
                 const fillOpacity = createInputGroup({
@@ -782,13 +790,15 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     suffixHTML: '%',
                     fieldClass: 'form-control-sm',
-                }).querySelector('input')
-                fillOpacity.addEventListener('blur', (e) => {
-                    const value = (parseFloat(fillOpacity.value) / 100) || 0
-                    if (value === styleParams.fillOpacity) return
-                    
-                    styleParams.fillOpacity = value
-                    updateGeoJSONData(layer)
+                    events: {
+                        blur: (e) => {
+                            const value = (parseFloat(e.target.value) / 100) || 0
+                            if (value === styleParams.fillOpacity) return
+                            
+                            styleParams.fillOpacity = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
                 
                 const strokeFields = document.createElement('div')
@@ -803,14 +813,16 @@ const handleLeafletStylePanel = (map, parent) => {
                         value: hslToHex(manageHSLAColor(styleParams.strokeColor)),
                     },
                     fieldClass: 'form-control-sm',
-                    labelText: 'Stroke color'
-                }).querySelector('input')
-                strokeColor.addEventListener('blur', (e) => {
-                    const value = hexToHSLA(strokeColor.value)
-                    if (value === styleParams.strokeColor) return
-
-                    styleParams.strokeColor = value
-                    updateGeoJSONData(layer)
+                    labelText: 'Stroke color',
+                    events: {
+                        blur: (e) => {
+                            const value = hexToHSLA(e.target.value)
+                            if (value === styleParams.strokeColor) return
+        
+                            styleParams.strokeColor = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
 
                 const strokeOpacity = createInputGroup({
@@ -826,13 +838,15 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     suffixHTML: '%',
                     fieldClass: 'form-control-sm',
-                }).querySelector('input')
-                strokeOpacity.addEventListener('blur', (e) => {
-                    const value = (parseFloat(strokeOpacity.value) / 100) || 0
-                    if (value === styleParams.strokeOpacity) return
-
-                    styleParams.strokeOpacity = value
-                    updateGeoJSONData(layer)
+                    events: {
+                        blur: (e) => {
+                            const value = (parseFloat(e.target.value) / 100) || 0
+                            if (value === styleParams.strokeOpacity) return
+        
+                            styleParams.strokeOpacity = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
 
                 const strokeWidth = createInputGroup({
@@ -848,29 +862,17 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     suffixHTML: 'px',
                     fieldClass: 'form-control-sm',
-                }).querySelector('input')
-                strokeWidth.addEventListener('blur', (e) => {
-                    const value = parseFloat(strokeWidth.value) || 0
-                    if (value === styleParams.strokeWidth) return
-
-                    styleParams.strokeWidth = value
-                    updateGeoJSONData(layer)
+                    events: {
+                        blur: (e) => {
+                            const value = parseFloat(e.target.value) || 0
+                            if (value === styleParams.strokeWidth) return
+        
+                            styleParams.strokeWidth = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
                 })
 
-                // const lineCap = createFormFloating({
-                //     parent:strokeFields,
-                //     fieldTag: 'select',
-                //     fieldAttrs: {name: `${id}-lineCap`},
-                //     fieldClass: 'form-select-sm',
-                //     labelText: 'Line cap'
-                // }).querySelector('input')
-                // strokeWidth.addEventListener('blur', (e) => {
-                //     const value = parseFloat(strokeWidth.value) || 0
-                //     if (value === styleParams.strokeWidth) return
-
-                //     styleParams.strokeWidth = value
-                //     updateGeoJSONData(layer)
-                // })
 
                 return parent
             }
