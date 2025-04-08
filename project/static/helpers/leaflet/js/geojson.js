@@ -117,8 +117,8 @@ const getLeafletGeoJSONLayer = async ({
         
         if (circlePolygon) {
             layerStyle.radius = styleParams.iconSize/2 
-            delete styleParams.dashArray
-            delete styleParams.dashOffset
+            delete layerStyle.dashArray
+            delete layerStyle.dashOffset
         }
         
         return layerStyle
