@@ -537,20 +537,20 @@ const handleLeafletStylePanel = (map, parent) => {
     selectContainer.className = 'd-flex p-3 flex-column'
     form.appendChild(selectContainer)
 
-    const select = createFormFloating({
+    const select = createInputGroup({
         parent: selectContainer,
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
         fieldAttrs: {
             name: 'layer',
+            placeholder: 'Layer'
         },
-        labelText: 'Layer'
     }).querySelector('select')
     select.disabled = true
 
     const body = document.createElement('div')
     body.id = `${map.getContainer().id}-panels-style-body`
-    body.className = 'd-flex flex-column flex-grow-1 overflow-auto p-3 d-none border-top'
+    body.className = 'd-flex flex-column flex-grow-1 overflow-auto p-3 d-none border-top gap-3'
     form.appendChild(body)
 
     const mapContainer = map.getContainer()
