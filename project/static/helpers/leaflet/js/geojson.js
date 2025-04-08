@@ -101,38 +101,38 @@ const getLeafletGeoJSONLayer = async ({
         }
     }
 
-    // geojsonLayer.options.filter = (feature) => {
-    //     const filters = Object.values(geojsonLayer._styles.filters)//.sort((a, b) => a.rank - b.rank)
-    //     for (const filter of filters) {
-    //         const property = filter.property
-    //         const inclusions = filter.inclusions
-    //         const exclusions = filter.exclusions
+    geojsonLayer.options.filter = (feature) => {
+        const filters = Object.values(geojsonLayer._styles.filters)//.sort((a, b) => a.rank - b.rank)
+        for (const filter of filters) {
+            const property = filter.property
+            const inclusions = filter.inclusions
+            const exclusions = filter.exclusions
             
-    //         const isGeom = property === '__geom__'
-    //         if (isGeom) {
-    //             if (inclusions.length && !inclusions.some(i => {
-    //                 const filterFeature = JSON.parse(i)
-    //                 if (!turf.booleanValid(filterFeature)) return true
-    //                 return turf.booleanIntersects(filterFeature, feature)
-    //             })) return false
+            const isGeom = property === '__geom__'
+            if (isGeom) {
+                if (inclusions.length && !inclusions.some(i => {
+                    const filterFeature = JSON.parse(i)
+                    if (!turf.booleanValid(filterFeature)) return true
+                    return turf.booleanIntersects(filterFeature, feature)
+                })) return false
                 
-    //             if (exclusions.length && exclusions.some(i => {
-    //                 const filterFeature = JSON.parse(i)
-    //                 if (!turf.booleanValid(filterFeature)) return false
-    //                 return turf.booleanIntersects(filterFeature, feature)
-    //             })) return false
-    //         } else {
-    //             const isType = property === '__type__'
-    //             const value = isType 
-    //             ? feature.geometry.type.toLowerCase().replace('multi', '') 
-    //             : feature.properties[property]
-    //             if (inclusions.length && !inclusions.includes(value)) return false
-    //             if (exclusions.length && exclusions.includes(value)) return false
-    //         }
-    //     }
+                if (exclusions.length && exclusions.some(i => {
+                    const filterFeature = JSON.parse(i)
+                    if (!turf.booleanValid(filterFeature)) return false
+                    return turf.booleanIntersects(filterFeature, feature)
+                })) return false
+            } else {
+                const isType = property === '__type__'
+                const value = isType 
+                ? feature.geometry.type.toLowerCase().replace('multi', '') 
+                : feature.properties[property]
+                if (inclusions.length && !inclusions.includes(value)) return false
+                if (exclusions.length && exclusions.includes(value)) return false
+            }
+        }
 
-    //     return true
-    // }
+        return true
+    }
 
     const getStyle = (feature, {circleMarker=false}={}) => {
         const styles = geojsonLayer._styles
