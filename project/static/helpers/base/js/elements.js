@@ -518,7 +518,7 @@ const createFormFloating = ({
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     Object.keys(fieldStyle).forEach(k => field.style[k] = fieldStyle[k])
     container.appendChild(field)
-    fieldDisabled.disabled = fieldDisabled
+    field.disabled = fieldDisabled
 
     if (fieldTag === 'select' && options) {
         for (const value in options) {
