@@ -1022,7 +1022,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const option = document.createElement('option')
                                 option.value = p
                                 option.text = properties[p]
-                                if (p === id) option.setAttribute('selected', true)
+                                if (p === id) option.selected = true
                                 e.target.appendChild(option)
                             }
                         },
@@ -1033,6 +1033,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             layerStyles.filters[value] = structuredClone(filter)
                             delete layerStyles.filters[id]
                             id = value
+                            console.log(value, layerStyles.filters, id)
                             updateGeoJSONData(layer)
                         }
                     }

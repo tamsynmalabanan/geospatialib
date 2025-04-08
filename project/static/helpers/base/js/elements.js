@@ -523,7 +523,7 @@ const createFormFloating = ({
             const option = document.createElement('option')
             option.value = value
             option.text = options[value]
-            if (value === currentValue) option.setAttribute('selected', true)
+            if (value === currentValue) option.selected = true
             field.appendChild(option)
         }
     } else {
