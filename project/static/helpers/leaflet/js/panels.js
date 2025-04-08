@@ -671,7 +671,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent,
                 })
 
-                // add contitiones if id !== '
+                // add contitiones if id !== ''
 
                 const iconFields = customCreateElement({
                     className:'d-flex gap-2',
@@ -965,9 +965,34 @@ const handleLeafletStylePanel = (map, parent) => {
                 return parent
             }
 
-            const getFilterForm = () => {
+            // const getFilterForm = () => {
+            //     const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
-            }
+            //     const groupFields = customCreateElement({
+            //         className:'d-flex gap-2',
+            //         parent,
+            //     })
+
+            //     const label = createFormFloating({
+            //         parent:groupFields,
+            //         fieldAttrs: {
+            //             name: `${id}-label`,
+            //             type: 'text',
+            //             value: style.label
+            //         },
+            //         labelText: 'Label',
+            //         fieldClass: 'form-control-sm',
+            //         events: {
+            //             blur: (e) => {
+            //                 const value = e.target.value.trim() 
+            //                 if (value === style.label) return
+        
+            //                 style.label = value
+            //                 updateGeoJSONData(layer)
+            //             }
+            //         }
+            //     })
+            // }
 
             const styleFields = {
                 'Legend': {

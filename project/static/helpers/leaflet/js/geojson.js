@@ -9,9 +9,6 @@ const getLeafletGeoJSONLayer = async ({
     styles,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        // filter: (feature) => {
-        //     return feature.geometry.type.endsWith('Polygon')
-        // },
         pane,
         renderer: new L.SVG({pane}),
         markersInheritOptions: true,
@@ -65,6 +62,7 @@ const getLeafletGeoJSONLayer = async ({
         // groups: {
         //     id: {
         //         label: 'Label',
+        //         rank: 1,
         //         validators: [
         //             (feature) => ['property', 'values'].contains(feature.properties['key'])
         //             // array of functions that return true or false - refine this, not functions, just
@@ -85,8 +83,40 @@ const getLeafletGeoJSONLayer = async ({
             max: 5000000,
         },
         filters: {
-            
+            id: {
+                property: '__type__', // propertyName // '__geom__'
+                inclusions: [],
+                exclusions: ['point'],
+            },
         }
+    }
+
+    geojsonLayer.filter = (feature) => {
+        const filters = Object.values(geojsonLayer._styles.filters)
+        for (const filter of filters) {
+            const property = filter.property
+            const isType = property === '__type__'
+            const isGeom = property === '__geom__'
+            
+            const properties = feature.properties
+            const geometry = feature.geometry
+            
+            const value = isGeom ? geometry 
+            : isType ? geometry.type.toLowerCase().replace('multi', '')
+            : properties[property]
+            
+            const inclusions = filter.inclusions
+            const exclusions = filter.exclusions
+
+            if (isGeom) {
+                
+            } else {
+                if (inclusions.length && !inclusions.includes(value)) return false
+                if (exclusions.length && exclusions.includes(value)) return false
+            }
+        }
+
+        return true
     }
 
     const getStyle = (feature, {circleMarker=false}={}) => {
