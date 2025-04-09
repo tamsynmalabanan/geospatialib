@@ -19,9 +19,9 @@ const createButton = ({
     iconClass,
     title,
     disabled,
-    clickHandler,
     parent,
     innerText,
+    events,
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
@@ -31,7 +31,7 @@ const createButton = ({
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
-    if (clickHandler) btn.addEventListener('click', clickHandler)
+    Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)
     return btn
 }

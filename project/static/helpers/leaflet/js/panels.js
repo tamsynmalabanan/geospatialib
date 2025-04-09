@@ -89,48 +89,50 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
                 className:`btn-sm btn-${getPreferredTheme()}`,
-                clickHandler: async (event) => {
-                    L.DomEvent.stopPropagation(event);
-                    L.DomEvent.preventDefault(event);        
-                    
-                    const btn = event.target
-                    const [panelName, currentMode] = map._panelMode || []
-                    const activate = currentMode !== toolId
-                    const mapClickHandler = activate ? data.mapClickHandler : null 
-                    const btnClickHandler = activate ? data.btnClickHandler : null     
-                    const skipToolHandler = !toolHandler || data.toolHandler === false
-
-                    if (activate && currentMode) {
-                        document.querySelector(`#${mapContainer.id}-panels-${panelName}-toolbar-${currentMode}`).click()
-                    }
-                    
-                    btn.classList.toggle('btn-primary', mapClickHandler)
-                    btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
-                    mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
-                    map._panelMode = [name, mapClickHandler ? toolId : undefined]
+                events: {
+                    click: async (event) => {
+                        L.DomEvent.stopPropagation(event);
+                        L.DomEvent.preventDefault(event);        
+                        
+                        const btn = event.target
+                        const [panelName, currentMode] = map._panelMode || []
+                        const activate = currentMode !== toolId
+                        const mapClickHandler = activate ? data.mapClickHandler : null 
+                        const btnClickHandler = activate ? data.btnClickHandler : null     
+                        const skipToolHandler = !toolHandler || data.toolHandler === false
     
-                    if (mapClickHandler) {
-                        const panelMapClickHandler = async (e) => {
-                            if (isLeafletControlElement(e.originalEvent.target) || map._panelMode[1] !== toolId) return
-    
-                            map.off('click', panelMapClickHandler)
-                            enableLeafletLayerClick(map)
-                            
-                            skipToolHandler ? await mapClickHandler() : await toolHandler(e, mapClickHandler)
-                            if (btn.classList.contains('btn-primary')) btn.click()
+                        if (activate && currentMode) {
+                            document.querySelector(`#${mapContainer.id}-panels-${panelName}-toolbar-${currentMode}`).click()
                         }
                         
-                        disableLeafletLayerClick(map)
-                        map.on('click', panelMapClickHandler)
-                    } else {
-                        enableLeafletLayerClick(map)
-                        map._events.click = map._events.click?.filter(handler => {
-                            return handler.fn.name !== 'panelMapClickHandler'
-                        })
-                    }
-                    
-                    if (btnClickHandler) {
-                        skipToolHandler ? await btnClickHandler(event) : await toolHandler(event, btnClickHandler)
+                        btn.classList.toggle('btn-primary', mapClickHandler)
+                        btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
+                        mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
+                        map._panelMode = [name, mapClickHandler ? toolId : undefined]
+        
+                        if (mapClickHandler) {
+                            const panelMapClickHandler = async (e) => {
+                                if (isLeafletControlElement(e.originalEvent.target) || map._panelMode[1] !== toolId) return
+        
+                                map.off('click', panelMapClickHandler)
+                                enableLeafletLayerClick(map)
+                                
+                                skipToolHandler ? await mapClickHandler() : await toolHandler(e, mapClickHandler)
+                                if (btn.classList.contains('btn-primary')) btn.click()
+                            }
+                            
+                            disableLeafletLayerClick(map)
+                            map.on('click', panelMapClickHandler)
+                        } else {
+                            enableLeafletLayerClick(map)
+                            map._events.click = map._events.click?.filter(handler => {
+                                return handler.fn.name !== 'panelMapClickHandler'
+                            })
+                        }
+                        
+                        if (btnClickHandler) {
+                            skipToolHandler ? await btnClickHandler(event) : await toolHandler(event, btnClickHandler)
+                        }
                     }
                 }
             })
@@ -1240,6 +1242,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                             form.elements[i].disabled = !value
                                         })
 
+                                        form.elements.toggleType.disabled = !value
+
                                         filters.type.active = value
                                         updateGeoJSONData(layer)
                                     }
@@ -1249,6 +1253,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createButton,
                                 className: 'btn-sm btn-primary fs-12',
                                 innerText: 'Toggle all',
+                                disabled: filters.type.active
                             },
                             geomType: {
                                 handler: createCheckboxOptions,
