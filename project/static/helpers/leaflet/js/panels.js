@@ -1252,14 +1252,14 @@ const handleLeafletStylePanel = (map, parent) => {
                             toggleType: {
                                 handler: createButton,
                                 name: 'toggleType',
-                                className: 'btn-sm btn-primary fs-12',
+                                className: 'btn-sm btn-primary fs-12 align-self-start',
                                 innerText: 'Toggle all',
                                 disabled: !filters.type.active,
                             },
                             geomType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
-                                containerClass: 'p-3 border rounded w-100 flex-wrap',
+                                containerClass: 'p-2 border rounded w-100 flex-wrap',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
