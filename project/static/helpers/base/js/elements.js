@@ -22,12 +22,14 @@ const createButton = ({
     parent,
     innerText,
     events = {},
+    name,
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
     btn.className = `btn ${className}`
     btn.setAttribute('type', 'button')
     if (innerText) btn.innerText = innerText
+    if (name) btn.setAttribute('name', name)
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
