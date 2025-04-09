@@ -29,7 +29,7 @@ const createButton = ({
     if (id) btn.id = id
     btn.className = `btn ${className}`
     btn.setAttribute('type', 'button')
-    if (innerText) btn.innerText = innerText
+    if (innerText) btn.appendChild(createSpan(innerText))
     
     Object.keys(btnAttrs).forEach(k => btn.setAttribute(k, btnAttrs[k]))
     if (name) btn.setAttribute('name', name)
