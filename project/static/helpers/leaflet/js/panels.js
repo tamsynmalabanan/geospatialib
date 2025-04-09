@@ -1256,6 +1256,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                         options[type] = {
                                             checked: filters.type.values[type],
                                             disabled: !filters.type.active,
+                                            events: {
+                                                click: (e) => {
+                                                    Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
+                                                        const field = form.elements[i]
+                                                        console.log(field)
+                                                    })
+            
+                                                }
+                                            }
                                         }
                                     }
                                     return options
