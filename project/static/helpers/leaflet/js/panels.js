@@ -1019,17 +1019,23 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent,
                     fieldAttrs: {name: `geomFilter-${id}-geom`},
                     fieldTag: 'textarea',
-                    currentValue: filter.geometry,
-                    labelText: 'Geometry geojson string',
+                    currentValue: JSON.stringify(filter.geometry),
+                    labelText: 'Geometry geojson',
                     disabled: !filters.geom.active,
                     // fieldStyle: {
                     //     minHeight: '100px', 
                     // },
                     events: {
                         blur: (e) => {
-                            const value = e.target.value
-                            if (value === filter.geometry) return
-        
+                            let value
+                            try {
+                                value = JSON.parse(e.target.value)
+                                if (turf.booleanEqual(value, filter.geometry)) return
+                            } catch {
+                                value = null
+                                e.target.value = ''
+                            }
+                            
                             filter.geometry = value
                             updateGeoJSONData(layer)
                         }
