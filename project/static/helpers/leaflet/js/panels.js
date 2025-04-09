@@ -1032,8 +1032,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             try {
                                 value = JSON.parse(e.target.value)
                                 if (turf.booleanEqual(value, filter.geometry)) return
-                            } catch {
-                                console.log('here')
+                            } catch (error) {
+                                console.log('here', error)
                                 value = null
                                 e.target.value = ''
                             }
