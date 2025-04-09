@@ -1316,10 +1316,12 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             geomInclusions: {
                                 handler: ({parent}={}) => {
-                                    const container = document.createElement('div')
+                                    const container = document.createElement('ul')
+                                    container.className = 'd-flex w-25 flex-grow-1 border rounded p-2'
+                                    container.style.height = '100px'
                                     parent.appendChild(container)
 
-                                    
+
                                 }
                             },
                         },
