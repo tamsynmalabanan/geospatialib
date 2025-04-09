@@ -998,7 +998,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fieldAttrs: {name: `${id}-intersect`},
                     fieldClass: 'form-select-sm',
                     labelText: 'Intersect',
-                    disabled: !filters.geom.active || !filter.active,
+                    disabled: !filters.geom.active,
                     options: {
                         'true': 'True',
                         'false': 'False',
