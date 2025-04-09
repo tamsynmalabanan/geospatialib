@@ -1220,7 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: 'row'
+                        className: ''
                     },
                     'Filter': {
                         fields: {
