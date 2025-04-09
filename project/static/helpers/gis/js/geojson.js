@@ -274,8 +274,8 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     container.appendChild(latSpan)
     container.appendChild(lngSpan)
 
-    const formatRadios = createRadios({
-        radios: {
+    const formatRadios = createCheckboxOptions({
+        options: {
             'DD': {
                 checked:coordsFormat === 'DD' ? true : false,
                 labelAttrs: {
@@ -289,6 +289,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
                 },
             },
         },
+        type: 'radio',
         containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
     })
     formatRadios.querySelectorAll('.form-check').forEach(formCheck => {

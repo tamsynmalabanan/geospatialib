@@ -341,18 +341,21 @@ const createDropdown = ({
     return [dropdown, toggle, menu]
 }
 
-const createRadios = ({
-    radios,
+const createCheckboxOptions = ({
+    options,
     name,
-    containerClassName = ''
+    containerClassName = '',
+    parent,
+    type = 'checkbox'
 } = {}) => {
     const container = document.createElement('div')
     container.className = `${containerClassName}`
+    parent?.appendChild(container)
 
     name = name || generateRandomString()
 
-    for (const option in radios) {
-        const data = radios[option]
+    for (const option in options) {
+        const data = options[option]
 
         const formCheck = document.createElement('div')
         formCheck.className = 'form-check'
@@ -363,8 +366,8 @@ const createRadios = ({
         const input = document.createElement('input')
         input.id = id
         input.className = 'form-check-input'
-        input.setAttribute('type', 'radio')
-        input.setAttribute('name', name)
+        input.setAttribute('type', type)
+        input.setAttribute('name', type === 'radio' ? name : `${name}-${generateRandomString()}`)
         input.checked = data.checked || false
         if (data.inputAttrs) Object.keys(data.inputAttrs).forEach(attr => input.setAttribute(attr, data.inputAttrs[attr]))
         formCheck.appendChild(input)
