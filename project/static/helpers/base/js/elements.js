@@ -21,7 +21,7 @@ const createButton = ({
     disabled,
     parent,
     innerText,
-    events,
+    events = {},
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
