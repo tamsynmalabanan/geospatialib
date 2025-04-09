@@ -1026,7 +1026,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     //     minHeight: '100px', 
                     // },
                     events: {
-                        input: (e) => {
+                        blur: (e) => {
                             const value = e.target.value
                             if (value === filter.geometry) return
         
