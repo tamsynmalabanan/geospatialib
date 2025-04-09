@@ -1230,7 +1230,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormCheck,
                                 checked: filters.type.active,
                                 formCheckClass: 'w-100',
-                                labelInnerText: 'Filter by geometry type',
+                                labelInnerText: 'Geometry type',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1260,7 +1260,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                                 click: (e) => {
                                                     Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
                                                         const field = form.elements[i]
-                                                        console.log(field)
+                                                        const label = form.querySelector(`label[form="${field.id}"]`)
                                                     })
             
                                                 }
