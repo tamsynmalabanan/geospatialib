@@ -1238,7 +1238,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const value = e.target.checked
                                         if (value === filters.type.active) return
                     
-                                        Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
+                                        Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
                                             form.elements[i].disabled = !value
                                         })
 
@@ -1254,12 +1254,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                 name: 'toggleType',
                                 className: 'fs-12 bg-transparent border-0 p-0',
                                 iconClass: 'bi bi-toggles',
-                                innerText: 'Toggle all',
-                                textClass: 'ms-1 d-none d-md-inline',
+                                // innerText: 'Toggle all',
+                                // textClass: 'ms-1 d-none d-md-inline',
                                 disabled: !filters.type.active,
                                 events: {
                                     click: () => {
-                                        const fields = Object.keys(form.elements).filter(i => i.startsWith('geomType-')).map(i => form.elements[i])
+                                        const fields = Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).map(i => form.elements[i])
                                         const check = fields.some(f => !f.checked)
 
                                         fields.forEach(field => {
@@ -1273,9 +1273,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
-                            geomType: {
+                            typeFilter: {
                                 handler: createCheckboxOptions,
-                                name: 'geomType',
+                                name: 'typeFilter',
                                 containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100',
                                 options: (() => {
                                     const options = {}
@@ -1285,7 +1285,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             disabled: !filters.type.active,
                                             events: {
                                                 click: () => {
-                                                    Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
+                                                    Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
                                                         const field = form.elements[i]
                                                         const option = form.querySelector(`label[for="${field.id}"]`).innerText
                                                         filters.type.values[option] = field.checked
@@ -1314,7 +1314,14 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
+                            geomInclusions: {
+                                handler: ({parent}={}) => {
+                                    const container = document.createElement('div')
+                                    parent.appendChild(container)
 
+                                    
+                                }
+                            },
                         },
                         className: 'flex-wrap'
                     }
