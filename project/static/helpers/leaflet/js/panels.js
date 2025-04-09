@@ -1261,7 +1261,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                                     Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
                                                         const field = form.elements[i]
                                                         const label = form.querySelector(`label[form="${field.id}"]`)
-                                                        filters.type.values[label.innerText] = field.checked
+                                                        console.log(form, field, label)
+                                                        // filters.type.values[label.innerText] = field.checked
                                                     })
                                                     updateGeoJSONData(layer)
                                                 }
