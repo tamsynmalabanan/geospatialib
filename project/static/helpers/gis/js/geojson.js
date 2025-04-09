@@ -290,7 +290,7 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
             },
         },
         type: 'radio',
-        containerClass: 'ms-auto flex-nowrap',
+        containerClass: 'ms-auto flex-nowrap gap-2',
     })
     formatRadios.querySelectorAll('.form-check').forEach(formCheck => {
         const label = formCheck.querySelector('label')

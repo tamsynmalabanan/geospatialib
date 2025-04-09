@@ -363,7 +363,7 @@ const createCheckboxOptions = ({
     type = 'checkbox',
 } = {}) => {
     const container = document.createElement('div')
-    container.className = `d-flex gap-2 ${containerClass}`
+    container.className = `d-flex ${containerClass}`
     parent?.appendChild(container)
 
     name = name || generateRandomString()
