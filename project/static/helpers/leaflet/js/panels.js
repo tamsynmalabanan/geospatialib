@@ -1236,7 +1236,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const value = e.target.checked
                                         if (value === filters.type.active) return
                     
-                                        console.log(form.elements)
+                                        console.log(Object.keys(form.elements))
                                         // form.elements.minScale.disabled = !value
                                         // form.elements.maxScale.disabled = !value
 
