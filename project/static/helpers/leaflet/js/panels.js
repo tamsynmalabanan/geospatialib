@@ -1237,7 +1237,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         if (value === filters.type.active) return
                     
                                         Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
-                                            form.elements[i].disabled = value
+                                            form.elements[i].disabled = !value
                                         })
 
                                         filters.type.active = value
