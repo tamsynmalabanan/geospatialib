@@ -1252,7 +1252,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             toggleType: {
                                 handler: createButton,
                                 name: 'toggleType',
-                                className: 'btn-sm btn-primary fs-12 align-self-start',
+                                className: 'btn-sm btn-primary fs-12 d-flex',
                                 innerText: 'Toggle all',
                                 disabled: !filters.type.active,
                             },
