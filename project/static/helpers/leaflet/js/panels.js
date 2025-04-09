@@ -957,7 +957,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     events: {
                         blur: (e) => {
                             const value = e.target.value
-                            console.log(value, e.target.value)
                             if (value === styleParams.lineBreak) return
         
                             styleParams.lineBreak = value
@@ -1229,6 +1228,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fieldAttrs: {name:'geomType'},
                                 fieldTag:'select',
                                 fieldMultiple: true,
+                                fieldDisabled: !filters.type.active,
                                 labelText: 'Geometry Type',
                                 options:(() => {
                                     const options = {}
@@ -1242,13 +1242,17 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }),
                                 fieldClass:'form-select-sm',
                                 events: {
-                                    change: (e) => {
-                                        const field = e.target
-                                        layerStyles.method = field.value
-                                        
-                                        const container = field.parentElement.nextSibling
-                                        container.innerHTML = ''
-                                    }
+                                    blur: (e) => {
+                                        const value = Array.from(e.target.selectedOptions).map(option => option.value)
+                                        console.log(value)
+                                        console.log(Object.keys(filters.type.values).filter(i => {
+                                            return filters.type.values[i]
+                                        }))
+                                        // if (value === styleParams.lineBreak) return
+                    
+                                        // styleParams.lineBreak = value
+                                        // updateGeoJSONData(layer)
+                                    }            
                                 }
                             }
                             // filterTools: {
