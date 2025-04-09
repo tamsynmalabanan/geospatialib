@@ -553,6 +553,7 @@ const createInputGroup = ({
     suffixHTML,
     events = {},
     fieldAttrs = {},
+    fieldDisabled = false,
 }={}) => {
     const inputGroup = document.createElement('div')
     inputGroup.className = `input-group`
@@ -573,6 +574,8 @@ const createInputGroup = ({
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     field.className = `${fieldTag === 'select' ? 'form-select' : 'form-control'} ${fieldClass}`
     inputGroup.appendChild(field)
+
+    field.disabled = fieldDisabled
 
     Object.keys(events).forEach(trigger => {
         field.addEventListener(trigger, events[trigger])

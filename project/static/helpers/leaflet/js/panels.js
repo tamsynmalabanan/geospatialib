@@ -598,6 +598,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
             const layerStyles = layer._styles
+
             const visibility = layerStyles.visibility
             const visibilityFieldsClick = (e) => {
                 const field = e.target
@@ -965,82 +966,82 @@ const handleLeafletStylePanel = (map, parent) => {
                 return parent
             }
 
-            const getFilterForm = (id) => {
-                const filter = layerStyles.filters[id]
+            // const getFilterForm = (id) => {
+            //     const filter = layerStyles.filters[id]
 
-                const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+            //     const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
-                const fields = customCreateElement({
-                    className:'d-flex gap-2 align-items-center',
-                    parent,
-                })
+            //     const fields = customCreateElement({
+            //         className:'d-flex gap-2 align-items-center',
+            //         parent,
+            //     })
 
-                const active = createFormCheck({
-                    parent:fields,
-                    checked: filter.active,
-                    events: {
-                        click: (e) => {
-                            const value = e.target.checked
-                            if (value === filter.active) return
+            //     const active = createFormCheck({
+            //         parent:fields,
+            //         checked: filter.active,
+            //         events: {
+            //             click: (e) => {
+            //                 const value = e.target.checked
+            //                 if (value === filter.active) return
         
-                            filter.active = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
+            //                 filter.active = value
+            //                 updateGeoJSONData(layer)
+            //             }
+            //         }
+            //     })
 
-                const property = createFormFloating({
-                    parent: fields,
-                    fieldTag: 'select',
-                    fieldAttrs: {name: generateRandomString()},
-                    fieldDisabled: Array('__type__', '__geom__').includes(filter.property),
-                    fieldClass: 'form-select-sm',
-                    labelText: 'Property',
-                    options: (() => {
-                        const options = {}
-                        const p = filter.property
-                        options[p] = p === '__type__' ? 'feature types' : p === '__geom__' ? 'geometries' : p
-                        return options
-                    })(),
-                    currentValue: filter.property,
-                    events: {
-                        click: (e) => {
-                            e.target.innerHTML = ''
+            //     const property = createFormFloating({
+            //         parent: fields,
+            //         fieldTag: 'select',
+            //         fieldAttrs: {name: generateRandomString()},
+            //         fieldDisabled: Array('__type__', '__geom__').includes(filter.property),
+            //         fieldClass: 'form-select-sm',
+            //         labelText: 'Property',
+            //         options: (() => {
+            //             const options = {}
+            //             const p = filter.property
+            //             options[p] = p === '__type__' ? 'feature types' : p === '__geom__' ? 'geometries' : p
+            //             return options
+            //         })(),
+            //         currentValue: filter.property,
+            //         events: {
+            //             click: (e) => {
+            //                 e.target.innerHTML = ''
 
-                            const properties = {}
+            //                 const properties = {}
 
-                            layer.eachLayer(l => {
-                                const p = l.feature?.properties
-                                if (!p) return
+            //                 layer.eachLayer(l => {
+            //                     const p = l.feature?.properties
+            //                     if (!p) return
 
-                                for (const k in p) {
-                                    properties[k] = k
-                                }
-                            })
+            //                     for (const k in p) {
+            //                         properties[k] = k
+            //                     }
+            //                 })
 
-                            const withFilters = Object.values(layerStyles.filters).map(i => i.property).filter(i => i !== filter.property)
-                            for (const p in properties) {
-                                if (withFilters.includes(p)) continue
+            //                 const withFilters = Object.values(layerStyles.filters).map(i => i.property).filter(i => i !== filter.property)
+            //                 for (const p in properties) {
+            //                     if (withFilters.includes(p)) continue
 
-                                const option = document.createElement('option')
-                                option.value = p
-                                option.text = properties[p]
-                                if (p === filter.property) option.selected = true
-                                e.target.appendChild(option)
-                            }
-                        },
-                        change: (e) => {
-                            const value = e.target.options[e.target.selectedIndex]?.value
-                            if (value === filter.property) return
+            //                     const option = document.createElement('option')
+            //                     option.value = p
+            //                     option.text = properties[p]
+            //                     if (p === filter.property) option.selected = true
+            //                     e.target.appendChild(option)
+            //                 }
+            //             },
+            //             change: (e) => {
+            //                 const value = e.target.options[e.target.selectedIndex]?.value
+            //                 if (value === filter.property) return
                             
-                            filter.property = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
+            //                 filter.property = value
+            //                 updateGeoJSONData(layer)
+            //             }
+            //         }
+            //     })
 
-                return parent
-            }
+            //     return parent
+            // }
 
             const styleFields = {
                 'Legend': {
@@ -1128,6 +1129,22 @@ const handleLeafletStylePanel = (map, parent) => {
                 'Rendering': {
                     'Visibility': {
                         fields: {
+                            activeScale: {
+                                handler: createFormCheck,
+                                checked: visibility.active,
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === visibility.active) return
+                    
+                                        form.elements.minScale.disabled = !value
+                                        form.elements.maxScale.disabled = !value
+
+                                        visibility.active = value
+                                        layerIsVisible(layer)
+                                    }
+                                }
+                            },
                             minScale: {
                                 handler: createInputGroup,
                                 fieldAttrs: {
@@ -1142,6 +1159,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 prefixHTML: '1:',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
+                                fieldDisabled: !visibility.active,
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
@@ -1176,6 +1194,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 prefixHTML: '1:',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
+                                fieldDisabled: !visibility.active,
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
@@ -1200,22 +1219,22 @@ const handleLeafletStylePanel = (map, parent) => {
                         className: 'flex-nowrap'
                     },
                     'Filter': {
-                        fields: {
-                            filterTools: {
+                        // fields: {
+                        //     filterTools: {
                             
-                            },
-                            filterDEtails: {
-                                handler: ({parent}={}) => {
-                                    const container = customCreateElement({className:'d-flex flex-column gap-2'})
+                        //     },
+                        //     filterDEtails: {
+                        //         handler: ({parent}={}) => {
+                        //             const container = customCreateElement({className:'d-flex flex-column gap-2'})
 
-                                    for (const id in layerStyles.filters) {
-                                        container.appendChild(getFilterForm(id))
-                                    }
+                        //             for (const id in layerStyles.filters) {
+                        //                 container.appendChild(getFilterForm(id))
+                        //             }
 
-                                    parent?.appendChild(container)
-                                }
-                            }
-                        }
+                        //             parent?.appendChild(container)
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             }        

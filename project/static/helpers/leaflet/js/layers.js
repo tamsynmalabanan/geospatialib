@@ -173,7 +173,7 @@ const leafletLayerStyleToHTML = (style, type) => {
         symbol.setAttribute('stroke-linejoin', style.lineJoin)
         symbol.setAttribute('stroke-dasharray', style.dashArray)
         symbol.setAttribute('stroke-dashoffset', style.dashOffset)
-        
+
         svg.appendChild(symbol)
 
         return svg.outerHTML
@@ -425,12 +425,13 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
     if (!map || !group) return
 
     const visibility = layer._styles.visibility
-    if (!visibility) return true
-
-    const mapScale = getLeafletMeterScale(map)
-    const layerMinScale = visibility.min || 0
-    const layerMaxScale = visibility.max || 5000000
-    const isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
+    let isVisible = true
+    if (visibility.active) {
+        const mapScale = getLeafletMeterScale(map)
+        const layerMinScale = visibility.min || 0
+        const layerMaxScale = visibility.max || 5000000
+        isVisible = mapScale <= layerMaxScale && mapScale >= layerMinScale
+    }
 
     if (addLayer) {
         isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
