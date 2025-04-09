@@ -1259,7 +1259,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             geomType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
-                                containerClass: 'p-2 border rounded w-100 flex-wrap',
+                                containerClass: 'p-2 border rounded w-75 flex-grow-1 flex-wrap',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
