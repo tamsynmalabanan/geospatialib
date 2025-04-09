@@ -275,19 +275,20 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
     container.appendChild(lngSpan)
 
     const formatRadios = createRadios({
-        'DD': {
-            checked:coordsFormat === 'DD' ? true : false,
-            labelAttrs: {
-                'data-bs-title':'Decimal Degrees',
+        radios: {
+            'DD': {
+                checked:coordsFormat === 'DD' ? true : false,
+                labelAttrs: {
+                    'data-bs-title':'Decimal Degrees',
+                },
+            },
+            'DMS': {
+                checked:coordsFormat === 'DMS' ? true : false,
+                labelAttrs: {
+                    'data-bs-title':'Degrees, minutes, seconds',
+                },
             },
         },
-        'DMS': {
-            checked:coordsFormat === 'DMS' ? true : false,
-            labelAttrs: {
-                'data-bs-title':'Degrees, minutes, seconds',
-            },
-        },
-    }, {
         containerClassName: 'd-flex flex-nowrap gap-2 ms-auto'
     })
     formatRadios.querySelectorAll('.form-check').forEach(formCheck => {

@@ -341,7 +341,8 @@ const createDropdown = ({
     return [dropdown, toggle, menu]
 }
 
-const createRadios = (radios, {
+const createRadios = ({
+    radios,
     name,
     containerClassName = ''
 } = {}) => {

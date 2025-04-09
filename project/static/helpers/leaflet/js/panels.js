@@ -1224,37 +1224,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     'Filter': {
                         fields: {
                             goemType: {
-                                handler: createFormFloating,
-                                containerClass: '',
-                                fieldAttrs: {name:'geomType'},
-                                fieldTag:'select',
-                                fieldMultiple: true,
-                                fieldDisabled: !filters.type.active,
-                                labelText: 'Geometry Type',
-                                options:(() => {
-                                    const options = {}
-                                    for (const type in filters.type.values) {
-                                        options[type] = type
-                                    }
-                                    return options
-                                })(),
-                                currentValue: Object.keys(filters.type.values).filter(i => {
-                                    return filters.type.values[i]
-                                }),
-                                fieldClass:'form-select-sm',
-                                events: {
-                                    change: (e) => {
-                                        const value = Array.from(e.target.selectedOptions).map(option => option.value)
-                                        console.log(value)
-                                        console.log(Object.keys(filters.type.values).filter(i => {
-                                            return filters.type.values[i]
-                                        }))
-                                        // if (value === styleParams.lineBreak) return
-                    
-                                        // styleParams.lineBreak = value
-                                        // updateGeoJSONData(layer)
-                                    }            
-                                }
+                                handler: createRadios,
+                                
                             }
                             // filterTools: {
                             
