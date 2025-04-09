@@ -999,7 +999,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     options: (() => {
                         const options = {}
                         const p = filter.property
-                        options[p] = p === '__type__' ? 'geometry type' : p === '__geom__' ? 'geometry filters' : p
+                        options[p] = p === '__type__' ? 'feature types' : p === '__geom__' ? 'geometries' : p
                         return options
                     })(),
                     currentValue: filter.property,
