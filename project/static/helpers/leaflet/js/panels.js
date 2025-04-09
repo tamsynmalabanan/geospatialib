@@ -1222,26 +1222,26 @@ const handleLeafletStylePanel = (map, parent) => {
                         className: 'flex-nowrap'
                     },
                     'Filter': {
-                        fields: {
-                            goemType: {
-                                handler: createRadios,
-                                
-                            }
-                            // filterTools: {
+                        // fields: {
+                        //     goemType: {
+                        //         handler: createRadios,
+
+                        //     }
+                        //     // filterTools: {
                             
-                            // },
-                            // filterDEtails: {
-                            //     handler: ({parent}={}) => {
-                            //         const container = customCreateElement({className:'d-flex flex-column gap-2'})
+                        //     // },
+                        //     // filterDEtails: {
+                        //     //     handler: ({parent}={}) => {
+                        //     //         const container = customCreateElement({className:'d-flex flex-column gap-2'})
 
-                            //         for (const id in layerStyles.filters) {
-                            //             container.appendChild(getFilterForm(id))
-                            //         }
+                        //     //         for (const id in layerStyles.filters) {
+                        //     //             container.appendChild(getFilterForm(id))
+                        //     //         }
 
-                            //         parent?.appendChild(container)
-                            //     }
-                            // }
-                        }
+                        //     //         parent?.appendChild(container)
+                        //     //     }
+                        //     // }
+                        // }
                     }
                 }
             }        
