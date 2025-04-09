@@ -600,6 +600,8 @@ const handleLeafletStylePanel = (map, parent) => {
             const layerStyles = layer._styles
 
             const visibility = layerStyles.visibility
+            const filters = layerStyles.filters
+
             const visibilityFieldsClick = (e) => {
                 const field = e.target
 
@@ -1220,24 +1222,51 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         className: 'flex-nowrap'
                     },
-                    // 'Filter': {
-                    //     fields: {
-                    //         filterTools: {
+                    'Filter': {
+                        fields: {
+                            goemType: {
+                                handler: createFormFloating,
+                                fieldAttrs: {name:'geomType'},
+                                fieldTag:'select',
+                                fieldMultiple: true,
+                                labelText: 'Geometry Type',
+                                options:(() => {
+                                    const options = {}
+                                    for (const type in filters.type.values) {
+                                        options[type] = type
+                                    }
+                                    return options
+                                })(),
+                                currentValue: Object.keys(filters.type.values).filter(i => {
+                                    return filters.type.values[i]
+                                }),
+                                fieldClass:'form-select-sm',
+                                events: {
+                                    change: (e) => {
+                                        const field = e.target
+                                        layerStyles.method = field.value
+                                        
+                                        const container = field.parentElement.nextSibling
+                                        container.innerHTML = ''
+                                    }
+                                }
+                            }
+                            // filterTools: {
                             
-                    //         },
-                    //         filterDEtails: {
-                    //             handler: ({parent}={}) => {
-                    //                 const container = customCreateElement({className:'d-flex flex-column gap-2'})
+                            // },
+                            // filterDEtails: {
+                            //     handler: ({parent}={}) => {
+                            //         const container = customCreateElement({className:'d-flex flex-column gap-2'})
 
-                    //                 for (const id in layerStyles.filters) {
-                    //                     container.appendChild(getFilterForm(id))
-                    //                 }
+                            //         for (const id in layerStyles.filters) {
+                            //             container.appendChild(getFilterForm(id))
+                            //         }
 
-                    //                 parent?.appendChild(container)
-                    //             }
-                    //         }
-                    //     }
-                    // }
+                            //         parent?.appendChild(container)
+                            //     }
+                            // }
+                        }
+                    }
                 }
             }        
             
