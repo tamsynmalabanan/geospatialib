@@ -1275,7 +1275,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             //         parent?.appendChild(container)
                             //     }
                             // }
-                        }
+                        },
+                        className: 'flex-wrap'
                     }
                 }
             }        
