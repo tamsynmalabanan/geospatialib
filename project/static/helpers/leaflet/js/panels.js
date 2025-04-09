@@ -1220,7 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: 'flex-column'
+                        className: 'row'
                     },
                     'Filter': {
                         fields: {
