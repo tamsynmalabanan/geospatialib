@@ -1028,10 +1028,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     events: {
                         blur: (e) => {
                             let value
+                            console.log(e.target.value)
                             try {
                                 value = JSON.parse(e.target.value)
                                 if (turf.booleanEqual(value, filter.geometry)) return
                             } catch {
+                                console.log('here')
                                 value = null
                                 e.target.value = ''
                             }
