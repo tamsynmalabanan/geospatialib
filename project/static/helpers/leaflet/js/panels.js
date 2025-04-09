@@ -1255,8 +1255,23 @@ const handleLeafletStylePanel = (map, parent) => {
                                 className: 'fs-12 bg-transparent border-0',
                                 iconClass: 'bi bi-toggles',
                                 innerText: 'Toggle all',
-                                textClass: 'd-none d-md-flex',
+                                textClass: 'ms-1 d-none d-md-inline',
                                 disabled: !filters.type.active,
+                                events: {
+                                    click: () => {
+                                        const fields = Object.keys(form.elements).filter(i => i.startsWith('geomType-')).map(i => form.elements[i])
+                                        const check = fields.some(f => !f.checked)
+
+                                        fields.forEach(field => {
+                                            field.checked = check
+                                            
+                                            const name = form.querySelector(`label[for="${field.id}"]`).innerText
+                                            filters.type.values[name] = check
+                                        })
+
+                                        updateGeoJSONData(layer)
+                                    }
+                                }
                             },
                             geomType: {
                                 handler: createCheckboxOptions,
