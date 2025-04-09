@@ -124,17 +124,6 @@ const getLeafletGeoJSONLayer = async ({
 
         if (filters.type.active && !filters.type.values[feature.geometry.type]) return false
 
-        if (filters.geom.active && !Object.values(filters.geom.values).map(i => {
-            if (!i.active) return
-            try {
-                const geom = JSON.parse(i.geometry)
-                if (!turf.booleanValid(geom)) return
-                return {geom, intersect: i.intersect}
-            } catch {return}
-        }).filter(i => i).some(i => {
-            return i.intersect === turf.booleanIntersects(i.geom, feature)
-        })) return false
-
         if (filters.geom.active) {
             const geomFilters = Object.values(filters.geom.values).map(i => {
                 if (!i.active) return
