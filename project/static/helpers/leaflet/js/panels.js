@@ -1241,7 +1241,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         })
 
                                         filters.type.active = value
-                                        layerIsVisible(layer)
+                                        updateGeoJSONData(layer)(layer)
                                     }
                                 }
                             },

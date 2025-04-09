@@ -87,7 +87,7 @@ const getLeafletGeoJSONLayer = async ({
             type: {
                 active: false,
                 values: {
-                    Point: true,
+                    Point: false,
                     MultiPoint: true,
                     LineString: true,
                     MultiLineString: true,
