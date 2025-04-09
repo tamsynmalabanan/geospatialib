@@ -1257,12 +1257,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                             checked: filters.type.values[type],
                                             disabled: !filters.type.active,
                                             events: {
-                                                click: (e) => {
+                                                click: () => {
                                                     Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
                                                         const field = form.elements[i]
                                                         const label = form.querySelector(`label[form="${field.id}"]`)
+                                                        filters.type.values[label.innerText] = field.checked
                                                     })
-            
+                                                    updateGeoJSONData(layer)
                                                 }
                                             }
                                         }
