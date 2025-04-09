@@ -344,12 +344,12 @@ const createDropdown = ({
 const createCheckboxOptions = ({
     options,
     name,
-    containerClassName = '',
+    containerClass = '',
     parent,
     type = 'checkbox'
 } = {}) => {
     const container = document.createElement('div')
-    container.className = `${containerClassName}`
+    container.className = `${containerClass}`
     parent?.appendChild(container)
 
     name = name || generateRandomString()
