@@ -130,6 +130,7 @@ const getLeafletGeoJSONLayer = async ({
                 try {
                     const geom = JSON.parse(i.geometry)
                     if (!turf.booleanValid(geom)) return
+                    console.log(geom)
                     return {geom, intersect: i.intersect}
                 } catch {return}
             }).filter(i => i)
