@@ -970,6 +970,27 @@ const handleLeafletStylePanel = (map, parent) => {
                 return parent
             }
 
+            const getGeomFilterForm = (id) => {
+                const filter = filters.geom.values[id]
+                const parent = customCreateElement({className:'d-flex gap-2'})
+
+                const enable = createFormCheck({
+                    parent,
+                    checked: filter.active,
+                    events: {
+                        click: (e) => {
+                            const value = e.target.checked
+                            if (value === filter.active) return
+        
+                            filter.active = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
+                return parent
+            }
+
             // const getFilterForm = (id) => {
             //     const filter = layerStyles.filters[id]
 
@@ -1323,7 +1344,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     container.style.height = '100px'
                                     parent.appendChild(container)
 
-
+                                    for (const id in filter.geom.values) {
+                                        container.appendChild(getGeomFilterForm(id))
+                                    }
 
 
                                 }
