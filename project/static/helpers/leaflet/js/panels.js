@@ -1236,9 +1236,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const value = e.target.checked
                                         if (value === filters.type.active) return
                     
-                                        console.log(Object.keys(form.elements))
-                                        // form.elements.minScale.disabled = !value
-                                        // form.elements.maxScale.disabled = !value
+                                        Object.keys(form.elements).filter(i => i.startsWith('geomType')).forEach(i => {
+                                            form.elements[i].disabled = value
+                                        })
 
                                         filters.type.active = value
                                         layerIsVisible(layer)
