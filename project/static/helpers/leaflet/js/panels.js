@@ -1015,6 +1015,25 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                const geom = createFormFloating({
+                    fieldTag: 'textarea',
+                    currentValue: filter.geometry,
+                    labelText: 'Geometry geojson string',
+                    disabled: !filters.geom.active,
+                    // fieldStyle: {
+                    //     minHeight: '100px', 
+                    // },
+                    events: {
+                        input: (e) => {
+                            const value = e.target.value
+                            if (value === filter.geometry) return
+        
+                            filter.geometry = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
 
                 return parent
             }
