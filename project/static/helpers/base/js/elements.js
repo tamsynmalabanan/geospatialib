@@ -347,15 +347,10 @@ const createCheckboxOptions = ({
     containerClass = '',
     parent,
     type = 'checkbox',
-    checkContainerClass = ''
 } = {}) => {
     const container = document.createElement('div')
-    container.className = `d-flex flex-column gap-2 ${containerClass}`
+    container.className = `d-flex flex-grow-1 gap-2 ${containerClass}`
     parent?.appendChild(container)
-
-    const checkContainer = document.createElement('div')
-    checkContainer.className = `${checkContainerClass} d-flex flex-grow-1 gap-2`
-    container.appendChild(checkContainer)
 
     name = name || generateRandomString()
 
@@ -364,7 +359,7 @@ const createCheckboxOptions = ({
 
         const formCheck = document.createElement('div')
         formCheck.className = 'form-check m-0'
-        checkContainer.appendChild(formCheck)
+        container.appendChild(formCheck)
 
         const id = data.id || generateRandomString()
 

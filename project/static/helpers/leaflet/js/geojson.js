@@ -119,6 +119,8 @@ const getLeafletGeoJSONLayer = async ({
 
         if (filters.type.active && !filters.type.values[feature.geometry.type]) return false
 
+
+
         // for (const id in filters) {
         //     const filter = filters[id]
         //     if (!filter.active) continue

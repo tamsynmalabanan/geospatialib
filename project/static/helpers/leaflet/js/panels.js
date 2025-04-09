@@ -1230,7 +1230,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormCheck,
                                 checked: filters.type.active,
                                 formCheckClass: 'w-100',
-                                labelInnerText: 'Geometry type',
+                                labelInnerText: 'Enable type filtering',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1245,11 +1245,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
-                            goemType: {
+                            geomType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
-                                containerClass: 'p-3 border rounded w-100',
-                                checkContainerClass: 'flex-wrap',
+                                containerClass: 'p-3 border rounded w-100 flex-wrap',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
@@ -1263,6 +1262,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                                         const label = form.querySelector(`label[for="${field.id}"]`)
                                                         filters.type.values[label.innerText] = field.checked
                                                     })
+
                                                     updateGeoJSONData(layer)
                                                 }
                                             }
@@ -1271,20 +1271,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     return options
                                 })()
                             },
-                            // filterTools: {
-                            
-                            // },
-                            // filterDEtails: {
-                            //     handler: ({parent}={}) => {
-                            //         const container = customCreateElement({className:'d-flex flex-column gap-2'})
-
-                            //         for (const id in layerStyles.filters) {
-                            //             container.appendChild(getFilterForm(id))
-                            //         }
-
-                            //         parent?.appendChild(container)
-                            //     }
-                            // }
                         },
                         className: 'flex-wrap'
                     }
