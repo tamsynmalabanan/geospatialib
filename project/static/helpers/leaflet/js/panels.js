@@ -731,7 +731,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const iconCheckboxes = customCreateElement({
-                    className:'d-flex flex-column justify-content-center border px-3 rounded', 
+                    className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
                     parent:iconFields
                 })
 
@@ -1129,9 +1129,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                 },
                 'Rendering': {
-                    'Scale-dependency': {
+                    'Visibility': {
                         fields: {
-                            activeScale: {
+                            enableScale: {
                                 handler: createFormCheck,
                                 checked: visibility.active,
                                 formCheckClass: 'w-100',
@@ -1226,15 +1226,37 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     'Filter': {
                         fields: {
+                            enableType: {
+                                handler: createFormCheck,
+                                checked: filters.type.active,
+                                formCheckClass: 'w-100',
+                                labelInnerText: 'Filter by geometry type',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === filters.type.active) return
+                    
+                                        console.log(form.elements)
+                                        // form.elements.minScale.disabled = !value
+                                        // form.elements.maxScale.disabled = !value
+
+                                        filters.type.active = value
+                                        layerIsVisible(layer)
+                                    }
+                                }
+                            },
                             goemType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
-                                containerClass: 'p-3 border rounded',
+                                containerClass: 'p-3 border rounded w-100',
                                 checkContainerClass: 'flex-wrap',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
-                                        options[type] = {checked: filters.type.values[type]}
+                                        options[type] = {
+                                            checked: filters.type.values[type],
+                                            disabled: !filters.type.active,
+                                        }
                                     }
                                     return options
                                 })()
@@ -1297,7 +1319,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const data = sections[sectionName]
         
                     const section = document.createElement('div')
-                    section.className = `d-flex flex-column gap-2`
+                    section.className = `d-flex flex-column gap-2 flex-grow-1`
                     categorySections.appendChild(section)
     
                     const sectionHeader = document.createElement('span')

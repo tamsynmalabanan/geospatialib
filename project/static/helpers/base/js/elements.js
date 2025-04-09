@@ -374,6 +374,7 @@ const createCheckboxOptions = ({
         input.setAttribute('type', type)
         input.setAttribute('name', type === 'radio' ? name : `${name}-${generateRandomString()}`)
         input.checked = data.checked || false
+        input.disabled = data.disabled || false
         if (data.inputAttrs) Object.keys(data.inputAttrs).forEach(attr => input.setAttribute(attr, data.inputAttrs[attr]))
         formCheck.appendChild(input)
         
