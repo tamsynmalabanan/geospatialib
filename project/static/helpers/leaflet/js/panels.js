@@ -1036,6 +1036,20 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                const btnsContainer = customCreateElement({
+                    className:'d-flex flex-column justify-content-center pt-1', 
+                    parent,
+                })
+
+                // remove, add to legend, zoom in
+                const removeBtn = createButton({
+                    parent: btnsContainer,
+                    className: 'btn-danger btn-sm fs-12',
+                    iconClass: 'bi bi-trash-fill',
+                    disabled: !filters.geom.active,
+                    name: `${id}-remove`,
+                    // events: 
+                })
 
                 return parent
             }
