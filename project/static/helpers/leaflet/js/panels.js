@@ -1032,7 +1032,7 @@ const handleLeafletStylePanel = (map, parent) => {
             //                 }
             //             },
             //             change: (e) => {
-            //                 const value = e.target.options[e.target.selectedIndex]?.value
+            //                 const value = e.target.value
             //                 if (value === filter.property) return
                             
             //                 filter.property = value
