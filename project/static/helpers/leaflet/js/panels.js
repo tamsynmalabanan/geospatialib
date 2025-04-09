@@ -906,7 +906,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     currentValue: styleParams.lineCap,
                     events: {
                         blur: (e) => {
-                            const value = e.target.options[e.target.selectedIndex]?.value
+                            // const value = e.target.options[e.target.selectedIndex]?.value
+                            const value = e.target.value
                             if (value === styleParams.lineCap) return
         
                             styleParams.lineCap = value
