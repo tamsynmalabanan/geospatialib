@@ -1234,6 +1234,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 checked: filters.type.active,
                                 formCheckClass: 'flex-grow-1',
                                 labelInnerText: 'Filter by geometry type',
+                                role: 'switch',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1304,6 +1305,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 checked: filters.geom.active,
                                 formCheckClass: 'flex-grow-1',
                                 labelInnerText: 'Enable spatial constraints',
+                                role: 'switch',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
