@@ -23,6 +23,7 @@ const createButton = ({
     innerText,
     events = {},
     btnAttrs = {},
+    name,
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
