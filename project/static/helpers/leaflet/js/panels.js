@@ -1119,7 +1119,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             methodDetails: {
                                 handler: ({parent}={}) => {
-                                    const container = customCreateElement()
+                                    const container = customCreateElement({className:'w-100'})
                                     container.appendChild(getSymbologyForm(''))
                                     parent?.appendChild(container)
                                 }
