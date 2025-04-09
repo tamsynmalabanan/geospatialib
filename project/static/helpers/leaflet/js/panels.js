@@ -1134,7 +1134,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             activeScale: {
                                 handler: createFormCheck,
                                 checked: visibility.active,
-                                formCheckClass: 'm-0',
+                                formCheckClass: '',
+                                labelInnerText: 'Enable scale-dependent rendering',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
