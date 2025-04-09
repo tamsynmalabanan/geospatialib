@@ -21,6 +21,7 @@ const createButton = ({
     disabled,
     parent,
     innerText,
+    textClass = '',
     events = {},
     btnAttrs = {},
     name,
@@ -37,7 +38,7 @@ const createButton = ({
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
     if (innerText) createSpan(innerText, {
         parent:btn, 
-        className:'ms-1 d-none d-md-flex'
+        className:`ms-1 ${textClass}`
     })
 
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))

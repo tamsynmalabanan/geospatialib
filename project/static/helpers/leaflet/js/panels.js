@@ -1255,6 +1255,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 className: 'fs-12 bg-transparent border-0',
                                 iconClass: 'bi bi-toggles',
                                 innerText: 'Toggle all',
+                                textClass: 'd-none d-md-flex',
                                 disabled: !filters.type.active,
                             },
                             geomType: {
