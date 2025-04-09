@@ -35,7 +35,10 @@ const createButton = ({
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
-    if (innerText) btn.appendChild(createSpan(innerText))
+    if (innerText) createSpan(innerText, {
+        parent:btn, 
+        className:'ms-1 d-none d-md-flex'
+    })
 
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)
