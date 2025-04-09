@@ -1027,6 +1027,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     // },
                     events: {
                         blur: (e) => {
+                            console.log(e)
                             const value = e.target.value
                             if (value === filter.geometry) return
         
