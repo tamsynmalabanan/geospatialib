@@ -1129,13 +1129,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                 },
                 'Rendering': {
-                    'Visibility': {
+                    'Scale-dependent rendering': {
                         fields: {
                             activeScale: {
                                 handler: createFormCheck,
                                 checked: visibility.active,
                                 formCheckClass: '',
-                                labelInnerText: 'Enable scale-dependent rendering',
+                                labelInnerText: 'Enable',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
