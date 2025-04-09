@@ -1249,17 +1249,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
-                            toggleType: {
-                                handler: createButton,
-                                name: 'toggleType',
-                                className: 'btn-sm btn-primary fs-12',
-                                innerText: 'Toggle all',
-                                disabled: !filters.type.active,
-                            },
                             geomType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
-                                containerClass: 'p-2 border rounded w-75 flex-grow-1 flex-wrap',
+                                containerClass: 'p-2 border rounded flex-grow-1 flex-wrap',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
@@ -1281,6 +1274,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                     return options
                                 })()
+                            },
+                            toggleType: {
+                                handler: createButton,
+                                name: 'toggleType',
+                                className: 'btn-sm btn-primary fs-12',
+                                innerText: 'Toggle all',
+                                disabled: !filters.type.active,
                             },
                         },
                         className: 'flex-wrap'
