@@ -29,13 +29,13 @@ const createButton = ({
     if (id) btn.id = id
     btn.className = `btn ${className}`
     btn.setAttribute('type', 'button')
-    if (innerText) btn.appendChild(createSpan(innerText))
     
     Object.keys(btnAttrs).forEach(k => btn.setAttribute(k, btnAttrs[k]))
     if (name) btn.setAttribute('name', name)
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
+    if (innerText) btn.appendChild(createSpan(innerText))
 
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)
