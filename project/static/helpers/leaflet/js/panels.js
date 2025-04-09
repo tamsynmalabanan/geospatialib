@@ -979,7 +979,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const enable = createFormCheck({
                     parent,
                     checked: filter.active,
-                    name: `${id}-enable`,
+                    name: `geomFilter-${id}-enable`,
                     disabled: !filters.geom.active,
                     events: {
                         click: (e) => {
@@ -995,7 +995,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const intersect = createFormFloating({
                     parent,
                     fieldTag: 'select',
-                    fieldAttrs: {name: `${id}-intersect`},
+                    fieldAttrs: {name: `geomFilter-${id}-intersect`},
                     fieldClass: 'form-select-sm',
                     labelText: 'Intersect',
                     disabled: !filters.geom.active,
@@ -1017,7 +1017,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const geom = createFormFloating({
                     parent,
-                    fieldAttrs: {name: `${id}-geom`},
+                    fieldAttrs: {name: `geomFilter-${id}-geom`},
                     fieldTag: 'textarea',
                     currentValue: filter.geometry,
                     labelText: 'Geometry geojson string',
@@ -1047,7 +1047,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     className: 'btn-danger btn-sm fs-12',
                     iconClass: 'bi bi-trash-fill',
                     disabled: !filters.geom.active,
-                    name: `${id}-remove`,
+                    name: `geomFilter-${id}-remove`,
                     // events: 
                 })
 
@@ -1395,12 +1395,16 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const value = e.target.checked
                                         if (value === filters.geom.active) return
                     
+                                        Object.keys(form.elements).filter(i => i.startsWith('geomFilter-')).forEach(i => {
+                                            form.elements[i].disabled = !value
+                                        })
+
                                         filters.geom.active = value
                                         updateGeoJSONData(layer)
                                     }
                                 }
                             },
-                            geomInclusions: {
+                            geomFilter: {
                                 handler: ({parent}={}) => {
                                     const container = document.createElement('div')
                                     container.className = 'd-flex w-100 gap-2'
