@@ -954,7 +954,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     currentValue: styleParams.lineBreak,
                     events: {
                         blur: (e) => {
-                            const value = e.target.options[e.target.selectedIndex]?.value
+                            const value = e.target.value
                             console.log(value, e.target.value)
                             if (value === styleParams.lineBreak) return
         
