@@ -979,6 +979,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 const enable = createFormCheck({
                     parent,
                     checked: filter.active,
+                    name: `${id}-enable`,
+                    disabled: !filters.geom.active,
                     events: {
                         click: (e) => {
                             const value = e.target.checked
@@ -996,6 +998,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fieldAttrs: {name: `${id}-intersect`},
                     fieldClass: 'form-select-sm',
                     labelText: 'Intersect',
+                    disabled: !filter.active,
                     options: {
                         'true': 'True',
                         'false': 'False',
@@ -1044,7 +1047,7 @@ const handleLeafletStylePanel = (map, parent) => {
             //         parent: fields,
             //         fieldTag: 'select',
             //         fieldAttrs: {name: generateRandomString()},
-            //         fieldDisabled: Array('__type__', '__geom__').includes(filter.property),
+            //         disabled: Array('__type__', '__geom__').includes(filter.property),
             //         fieldClass: 'form-select-sm',
             //         labelText: 'Property',
             //         options: (() => {
@@ -1212,7 +1215,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 prefixHTML: '1:',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
-                                fieldDisabled: !visibility.active,
+                                disabled: !visibility.active,
                                 inputGroupClass: 'w-25 flex-grow-1',
                                 events: {
                                     'change': (e) => {
@@ -1248,7 +1251,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 prefixHTML: '1:',
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
-                                fieldDisabled: !visibility.active,
+                                disabled: !visibility.active,
                                 inputGroupClass: 'w-25 flex-grow-1',
                                 events: {
                                     'change': (e) => {

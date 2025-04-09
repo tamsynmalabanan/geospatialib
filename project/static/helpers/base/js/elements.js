@@ -414,6 +414,7 @@ const createFormCheck = ({
     labelClass = '',
     events = {},
     role,
+    name,
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check m-0 ${formCheckClass} ${role == 'switch' ? 'form-switch' : ''}`
@@ -424,6 +425,7 @@ const createFormCheck = ({
     input.className = `form-check-input ${fieldClass}`
     input.setAttribute('type', 'checkbox')
     if (role) input.setAttribute('role', role)
+    if (name) input.setAttribute('name', name)
     input.value = inputValue
     input.disabled = disabled
     input.checked = checked
@@ -531,7 +533,7 @@ const createFormFloating = ({
     currentValue = '',
     fieldStyle = {},
     containerClass = '',
-    fieldDisabled = false,
+    disabled = false,
     fieldMultiple = false,
 } = {}) => {
     const container = document.createElement('div')
@@ -544,7 +546,7 @@ const createFormFloating = ({
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     Object.keys(fieldStyle).forEach(k => field.style[k] = fieldStyle[k])
     container.appendChild(field)
-    field.disabled = fieldDisabled
+    field.disabled = disabled
     if (fieldTag === 'select') field.multiple = fieldMultiple
 
     if (fieldTag === 'select' && options) {
@@ -585,7 +587,7 @@ const createInputGroup = ({
     suffixHTML,
     events = {},
     fieldAttrs = {},
-    fieldDisabled = false,
+    disabled = false,
     inputGroupClass = '',
 }={}) => {
     const inputGroup = document.createElement('div')
@@ -608,7 +610,7 @@ const createInputGroup = ({
     field.className = `${fieldTag === 'select' ? 'form-select' : 'form-control'} ${fieldClass}`
     inputGroup.appendChild(field)
 
-    field.disabled = fieldDisabled
+    field.disabled = disabled
 
     Object.keys(events).forEach(trigger => {
         field.addEventListener(trigger, events[trigger])
