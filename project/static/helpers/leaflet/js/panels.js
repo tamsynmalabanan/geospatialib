@@ -1028,15 +1028,17 @@ const handleLeafletStylePanel = (map, parent) => {
                     events: {
                         blur: (e) => {
                             let value
-                            console.log(e.target.value)
                             try {
                                 value = JSON.parse(e.target.value)
-                                if (turf.booleanEqual(value, filter.geometry)) return
+                                if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                             } catch (error) {
                                 console.log('here', error)
                                 value = null
                                 e.target.value = ''
                             }
+                            
+                            if (!value && !filter.geometry) return
+                            if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
                             
                             filter.geometry = value
                             updateGeoJSONData(layer)
