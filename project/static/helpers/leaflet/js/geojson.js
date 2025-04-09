@@ -86,15 +86,14 @@ const getLeafletGeoJSONLayer = async ({
         filters: {
             type: {
                 active: false,
-                inclusions: [
-                    'Point',
-                    'MultiPoint',
-                    'LineString',
-                    'MultiLineString',
-                    'Polygon',
-                    'MultiPolygon'
-                ],
-                exclusions: [],
+                values: {
+                    Point: true,
+                    MultiPoint: true,
+                    LineString: true,
+                    MultiLineString: true,
+                    Polygon: true,
+                    MultiPolygon: true,
+                }
             },
             // geom: {
             //     active: false,
@@ -118,13 +117,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.filter = (feature) => {
         const filters = geojsonLayer._styles.filters
 
-        if (filters.type.active) {
-            const featureType = feature.geometry.type
-            const inclusions = filters.type.inclusions
-            const exclusions = filters.type.exclusions
-            if (inclusions.length && !inclusions.includes(featureType)) return false
-            if (exclusions.length && exclusions.includes(featureType)) return false
-        }
+        if (filters.type.active && !filters.type.values[feature.geometry.type]) return false
 
         // for (const id in filters) {
         //     const filter = filters[id]
