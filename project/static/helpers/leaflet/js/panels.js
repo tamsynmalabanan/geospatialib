@@ -1134,7 +1134,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             activeScale: {
                                 handler: createFormCheck,
                                 checked: visibility.active,
-                                formCheckClass: '',
+                                formCheckClass: 'w-100',
                                 labelInnerText: 'Enable scale-dependent rendering',
                                 events: {
                                     click: (e) => {
@@ -1164,6 +1164,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 fieldDisabled: !visibility.active,
+                                inputGroupClass: 'w-25 flex-grow-1',
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
@@ -1199,6 +1200,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 suffixHTML: 'm',
                                 fieldClass: 'form-control-sm',
                                 fieldDisabled: !visibility.active,
+                                inputGroupClass: 'w-25 flex-grow-1',
                                 events: {
                                     'change': (e) => {
                                         const field = e.target
@@ -1258,7 +1260,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             Object.keys(styleFields).forEach(categoryName => {
                 const category = document.createElement('div')
-                category.className = `d-flex flex-column gap-2`
+                category.className = `d-flex flex-column gap-2 flex-grow-1`
                 body.appendChild(category)
 
                 const categoryCollase = document.createElement('div')
@@ -1303,7 +1305,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     section.appendChild(sectionHeader)
     
                     const sectionFields = document.createElement('div')
-                    sectionFields.className = `d-flex gap-2 ${data.className} align-items-center`
+                    sectionFields.className = `d-flex gap-2 align-items-center w-100 ${data.className}`
                     section.appendChild(sectionFields)
         
                     const fields = data.fields

@@ -570,9 +570,10 @@ const createInputGroup = ({
     events = {},
     fieldAttrs = {},
     fieldDisabled = false,
+    inputGroupClass = '',
 }={}) => {
     const inputGroup = document.createElement('div')
-    inputGroup.className = `input-group`
+    inputGroup.className = `input-group ${inputGroupClass}`
     parent?.appendChild(inputGroup)
 
     let prefix
