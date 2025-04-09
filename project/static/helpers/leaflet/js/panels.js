@@ -1231,7 +1231,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             enableType: {
                                 handler: createFormCheck,
                                 checked: filters.type.active,
-                                formCheckClass: 'w-25 flex-grow-1',
+                                formCheckClass: 'w-100',
                                 labelInnerText: 'Enable type filtering',
                                 events: {
                                     click: (e) => {
