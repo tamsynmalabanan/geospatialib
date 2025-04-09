@@ -97,10 +97,12 @@ const getLeafletGeoJSONLayer = async ({
             },
             geom: {
                 active: false,
-                inclusions: [],
-                exclusions: [
-                    '{"type":"Polygon","coordinates":[[[77.4240854,28.6192734],[77.4239929,28.6189705],[77.4237033,28.6185648],[77.4231857,28.6182511],[77.4240237,28.6169312],[77.4250405,28.6174181],[77.4256699,28.6164021],[77.4259618,28.6159057],[77.4259402,28.6158439],[77.4279983,28.6167744],[77.4265502,28.6191707],[77.4254349,28.6192194],[77.4241223,28.6193438],[77.4240854,28.6192734]]]}'
-                ],
+                values: {
+                    id: {
+                        intersect: true,
+                        geometry: '{"type":"Polygon","coordinates":[[[77.4240854,28.6192734],[77.4239929,28.6189705],[77.4237033,28.6185648],[77.4231857,28.6182511],[77.4240237,28.6169312],[77.4250405,28.6174181],[77.4256699,28.6164021],[77.4259618,28.6159057],[77.4259402,28.6158439],[77.4279983,28.6167744],[77.4265502,28.6191707],[77.4254349,28.6192194],[77.4241223,28.6193438],[77.4240854,28.6192734]]]}'
+                    }
+                }
             },
             // properties: {
             //     active: false,
@@ -122,24 +124,14 @@ const getLeafletGeoJSONLayer = async ({
         if (filters.type.active && !filters.type.values[feature.geometry.type]) return false
 
         if (filters.geom.active) {
-            const inclusions = filters.geom.inclusions
-            const exclusions = filters.geom.exclusions
-
-            if (inclusions.length && !inclusions.some(i => {
+            for (const id in filters.geom.values) {
+                const filter = filters.geom.values[id]
                 try {
-                    const filterFeature = JSON.parse(i)
-                    if (!turf.booleanValid(filterFeature)) return true
-                    return turf.booleanIntersects(filterFeature, feature)
-                } catch {return true}
-            })) return false
-            
-            if (exclusions.length && exclusions.some(i => {
-                try {
-                    const filterFeature = JSON.parse(i)
-                    if (!turf.booleanValid(filterFeature)) return false
-                    return turf.booleanIntersects(filterFeature, feature)
-                } catch {return false}
-            })) return false
+                    const geom = JSON.parse(filter.geometry)
+                    if (!turf.booleanValid(geom)) continue
+                    if (filter.intersect !== turf.booleanIntersects(geom, feature)) return false
+                } catch {continue}
+            }
         }
 
         // for (const id in filters) {

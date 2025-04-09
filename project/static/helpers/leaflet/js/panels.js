@@ -1232,7 +1232,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormCheck,
                                 checked: filters.type.active,
                                 formCheckClass: 'flex-grow-1',
-                                labelInnerText: 'Enable type filtering',
+                                labelInnerText: 'Filter by geometry type',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1254,7 +1254,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 name: 'toggleType',
                                 className: 'fs-12 bg-transparent border-0 p-0',
                                 iconClass: 'bi bi-toggles',
-                                title: 'Toggle all',
+                                title: 'Toggle all types',
                                 disabled: !filters.type.active,
                                 events: {
                                     click: () => {
@@ -1302,7 +1302,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormCheck,
                                 checked: filters.geom.active,
                                 formCheckClass: 'flex-grow-1',
-                                labelInnerText: 'Enable geometry filtering',
+                                labelInnerText: 'Enable spatial constraints',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1618,23 +1618,3 @@ const handleLeafletMapPanels = (map) => {
     
     control.addTo(map)
 }
-
-const bootstrapIConsDatalist = customCreateElement({tag:'datalist', parent:document.body})
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
-    .then(response => {
-        if (!response.ok) throw new Error('Response not ok.')
-        return response.text()
-    })
-    .then(text => {
-        const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
-        iconNames.forEach(i => {
-            const option = document.createElement('option')
-            option.value = i
-            bootstrapIConsDatalist.appendChild(option)
-        })
-    })
-    .catch(error => {
-        console.log(error)
-    })
-})
