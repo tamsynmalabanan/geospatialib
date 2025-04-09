@@ -1135,7 +1135,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createFormCheck,
                                 checked: visibility.active,
                                 formCheckClass: '',
-                                labelInnerText: 'Enable',
+                                labelInnerText: 'Enable scale-dependent rendering',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1220,7 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: ''
+                        className: 'flex-column'
                     },
                     'Filter': {
                         fields: {
