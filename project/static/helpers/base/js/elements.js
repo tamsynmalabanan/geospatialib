@@ -21,11 +21,13 @@ const createButton = ({
     disabled,
     clickHandler,
     parent,
+    innerText,
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
     btn.className = `btn ${className}`
     btn.setAttribute('type', 'button')
+    if (innerText) btn.innerText = innerText
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})

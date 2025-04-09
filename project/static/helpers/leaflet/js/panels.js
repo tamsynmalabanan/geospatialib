@@ -1229,7 +1229,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             enableType: {
                                 handler: createFormCheck,
                                 checked: filters.type.active,
-                                formCheckClass: 'w-100',
+                                formCheckClass: 'w-25 flex-grow-1',
                                 labelInnerText: 'Enable type filtering',
                                 events: {
                                     click: (e) => {
@@ -1245,6 +1245,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
+                            toggleType: {
+                                handler: createButton,
+                                className: 'btn-sm btn-primary',
+                                innerText: 'Toggle all',
+                            },
                             geomType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
@@ -1259,8 +1264,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                                 click: () => {
                                                     Object.keys(form.elements).filter(i => i.startsWith('geomType-')).forEach(i => {
                                                         const field = form.elements[i]
-                                                        const label = form.querySelector(`label[for="${field.id}"]`)
-                                                        filters.type.values[label.innerText] = field.checked
+                                                        const option = form.querySelector(`label[for="${field.id}"]`).innerText
+                                                        filters.type.values[option] = field.checked
                                                     })
 
                                                     updateGeoJSONData(layer)
