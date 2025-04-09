@@ -989,7 +989,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const intersect = createFormFloating({
-                    parent: lineFields,
+                    parent,
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-intersect`},
                     fieldClass: 'form-select-sm',
