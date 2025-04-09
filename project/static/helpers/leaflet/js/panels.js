@@ -1132,6 +1132,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             activeScale: {
                                 handler: createFormCheck,
                                 checked: visibility.active,
+                                formCheckClass: 'm-0',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
