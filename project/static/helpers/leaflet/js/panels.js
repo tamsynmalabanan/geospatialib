@@ -1226,6 +1226,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             goemType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
+                                containerClass: 'd-flex flex-wrap gap-2',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
