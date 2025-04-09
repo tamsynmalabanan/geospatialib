@@ -1247,7 +1247,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             toggleType: {
                                 handler: createButton,
-                                className: 'btn-sm btn-primary small',
+                                className: 'btn-sm btn-primary fs-12',
                                 innerText: 'Toggle all',
                             },
                             geomType: {
