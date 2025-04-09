@@ -1299,6 +1299,22 @@ const handleLeafletStylePanel = (map, parent) => {
                                     return options
                                 })()
                             },
+                            enableGeom: {
+                                handler: createFormCheck,
+                                checked: filters.geom.active,
+                                formCheckClass: 'flex-grow-1',
+                                labelInnerText: 'Enable geometry filtering',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === filters.geom.active) return
+                    
+                                        filters.geom.active = value
+                                        updateGeoJSONData(layer)
+                                    }
+                                }
+                            },
+
                         },
                         className: 'flex-wrap'
                     }
