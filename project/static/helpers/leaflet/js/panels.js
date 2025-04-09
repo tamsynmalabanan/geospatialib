@@ -1016,6 +1016,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const geom = createFormFloating({
+                    parent,
+                    fieldAttrs: {name: `${id}-geom`},
                     fieldTag: 'textarea',
                     currentValue: filter.geometry,
                     labelText: 'Geometry geojson string',
