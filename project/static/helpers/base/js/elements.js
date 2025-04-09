@@ -22,17 +22,21 @@ const createButton = ({
     parent,
     innerText,
     events = {},
-    name,
+    btnAttrs = {},
 } = {}) => {
     const btn = document.createElement('button')
     if (id) btn.id = id
     btn.className = `btn ${className}`
     btn.setAttribute('type', 'button')
     if (innerText) btn.innerText = innerText
+    
+    Object.keys(btnAttrs).forEach(k => btn.setAttribute(k, btnAttrs[k]))
     if (name) btn.setAttribute('name', name)
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
+    
+
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)
     return btn
@@ -332,7 +336,9 @@ const createDropdown = ({
     const toggle = createButton({
         className: `dropdown-toggle ${btnClassName}`,
         iconClass: btnIconClass,
-        title: btnTitle,
+        btnAttrs: {
+            title: btnTitle,
+        }
     })
     toggle.setAttribute('data-bs-toggle', 'dropdown')
     toggle.setAttribute('aria-expanded', 'false')
