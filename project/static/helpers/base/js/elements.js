@@ -358,7 +358,7 @@ const createCheckboxOptions = ({
         const data = options[option]
 
         const formCheck = document.createElement('div')
-        formCheck.className = 'form-check'
+        formCheck.className = 'form-check m-0'
         container.appendChild(formCheck)
 
         const id = data.id || generateRandomString()
@@ -396,7 +396,7 @@ const createFormCheck = ({
     events = {},
 } = {}) => {
     const formCheck = document.createElement('div')
-    formCheck.className = `form-check ${formCheckClass}`
+    formCheck.className = `form-check m-0 ${formCheckClass}`
     parent?.appendChild(formCheck)
     
     const input = document.createElement('input')

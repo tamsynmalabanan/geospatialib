@@ -731,7 +731,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const iconCheckboxes = customCreateElement({
-                    className:'d-flex flex-column justify-content-center', 
+                    className:'d-flex flex-column justify-content-center border px-3 rounded', 
                     parent:iconFields
                 })
 
