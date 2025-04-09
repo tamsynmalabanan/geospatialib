@@ -1129,7 +1129,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                 },
                 'Rendering': {
-                    'Scale-dependent rendering': {
+                    'Scale-dependency': {
                         fields: {
                             activeScale: {
                                 handler: createFormCheck,
@@ -1220,7 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: 'flex-nowrap'
+                        className: ''
                     },
                     'Filter': {
                         fields: {
