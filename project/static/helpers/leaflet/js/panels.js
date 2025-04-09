@@ -988,6 +988,29 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 })
 
+                const intersect = createFormFloating({
+                    parent: lineFields,
+                    fieldTag: 'select',
+                    fieldAttrs: {name: `${id}-intersect`},
+                    fieldClass: 'form-select-sm',
+                    labelText: 'Intersect',
+                    options: {
+                        'true': 'True',
+                        'false': 'False',
+                    },
+                    currentValue: filter.intersect ? 'true' : 'false',
+                    events: {
+                        blur: (e) => {
+                            const value = e.target.value === 'true'
+                            if (value === filter.intersect) return
+        
+                            filter.intersect = value
+                            updateGeoJSONData(layer)
+                        }
+                    }
+                })
+
+
                 return parent
             }
 
