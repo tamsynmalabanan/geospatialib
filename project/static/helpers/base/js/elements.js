@@ -36,7 +36,6 @@ const createButton = ({
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
     if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
-    
 
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)
