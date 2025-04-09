@@ -1344,7 +1344,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     container.style.height = '100px'
                                     parent.appendChild(container)
 
-                                    for (const id in filter.geom.values) {
+                                    for (const id in filters.geom.values) {
                                         container.appendChild(getGeomFilterForm(id))
                                     }
 
