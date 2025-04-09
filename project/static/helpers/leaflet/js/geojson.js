@@ -126,7 +126,7 @@ const getLeafletGeoJSONLayer = async ({
 
         if (filters.geom.active) {
             const geomFilters = Object.values(filters.geom.values)
-            .filter(i => i.active && turf.booleanValid(i.geometry))
+            .filter(i => i.active && i.geometry && turf.booleanValid(i.geometry))
             
             const intersect = geomFilters.filter(i => i.intersect)
             const avoid = geomFilters.filter(i => !i.intersect)
