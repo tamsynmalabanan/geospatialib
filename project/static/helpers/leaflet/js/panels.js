@@ -1225,6 +1225,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fields: {
                             goemType: {
                                 handler: createFormFloating,
+                                containerClass: '',
                                 fieldAttrs: {name:'geomType'},
                                 fieldTag:'select',
                                 fieldMultiple: true,
@@ -1242,7 +1243,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }),
                                 fieldClass:'form-select-sm',
                                 events: {
-                                    blur: (e) => {
+                                    change: (e) => {
                                         const value = Array.from(e.target.selectedOptions).map(option => option.value)
                                         console.log(value)
                                         console.log(Object.keys(filters.type.values).filter(i => {
