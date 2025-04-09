@@ -1231,7 +1231,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             enableType: {
                                 handler: createFormCheck,
                                 checked: filters.type.active,
-                                formCheckClass: 'w-100',
+                                formCheckClass: 'flex-grow-1',
                                 labelInnerText: 'Enable type filtering',
                                 events: {
                                     click: (e) => {
@@ -1249,10 +1249,17 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }
                             },
+                            toggleType: {
+                                handler: createButton,
+                                name: 'toggleType',
+                                className: 'fs-12 bg-transparent border-0',
+                                iconClass: 'bi bi-toggles',
+                                disabled: !filters.type.active,
+                            },
                             geomType: {
                                 handler: createCheckboxOptions,
                                 name: 'geomType',
-                                containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-75',
+                                containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
@@ -1274,13 +1281,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                     return options
                                 })()
-                            },
-                            toggleType: {
-                                handler: createButton,
-                                name: 'toggleType',
-                                className: 'btn-sm btn-primary fs-12',
-                                iconClass: 'bi bi-toggles',
-                                disabled: !filters.type.active,
                             },
                         },
                         className: 'flex-wrap'
