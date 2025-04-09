@@ -1253,7 +1253,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 handler: createButton,
                                 className: 'btn-sm btn-primary fs-12',
                                 innerText: 'Toggle all',
-                                disabled: filters.type.active
+                                disabled: !filters.type.active,
                             },
                             geomType: {
                                 handler: createCheckboxOptions,
