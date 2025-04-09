@@ -377,6 +377,10 @@ const createCheckboxOptions = ({
         input.disabled = data.disabled || false
         if (data.inputAttrs) Object.keys(data.inputAttrs).forEach(attr => input.setAttribute(attr, data.inputAttrs[attr]))
         formCheck.appendChild(input)
+
+        if (data.events) {
+            Object.keys(data.events).forEach(k => input.addEventListener(k, data.events[k]))
+        }
         
         const label = document.createElement('label')
         label.className = 'form-check-label'
