@@ -1220,7 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
                         },
-                        className: ''
+                        className: 'flex-wrap'
                     },
                     'Filter': {
                         fields: {
