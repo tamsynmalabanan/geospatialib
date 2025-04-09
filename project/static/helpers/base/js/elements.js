@@ -416,7 +416,7 @@ const createFormCheck = ({
     role,
 } = {}) => {
     const formCheck = document.createElement('div')
-    formCheck.className = `form-check m-0 ${formCheckClass}`
+    formCheck.className = `form-check m-0 ${formCheckClass} ${role == 'switch' ? 'form-switch' : ''}`
     parent?.appendChild(formCheck)
     
     const input = document.createElement('input')
