@@ -413,6 +413,7 @@ const createFormCheck = ({
     checked = false,
     labelClass = '',
     events = {},
+    role,
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check m-0 ${formCheckClass}`
@@ -422,6 +423,7 @@ const createFormCheck = ({
     input.id = inputId
     input.className = `form-check-input ${fieldClass}`
     input.setAttribute('type', 'checkbox')
+    if (role) input.setAttribute('role', role)
     input.value = inputValue
     input.disabled = disabled
     input.checked = checked

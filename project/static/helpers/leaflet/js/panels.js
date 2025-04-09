@@ -1138,6 +1138,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 checked: visibility.active,
                                 formCheckClass: 'w-100',
                                 labelInnerText: 'Enable scale-dependent rendering',
+                                role: 'switch',
                                 events: {
                                     click: (e) => {
                                         const value = e.target.checked
@@ -1320,7 +1321,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     container.style.height = '100px'
                                     parent.appendChild(container)
 
-                                    
+
 
 
                                 }
