@@ -975,7 +975,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    updateGeoJSONData(layer)
+                    if (filter.geometry) updateGeoJSONData(layer)
                 }
             }
         })
@@ -998,7 +998,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.intersect) return
 
                     filter.intersect = value
-                    updateGeoJSONData(layer)
+                    if (filter.active && filter.geometry) updateGeoJSONData(layer)
                 }
             }
         })
@@ -1030,7 +1030,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
                     
                     filter.geometry = value
-                    updateGeoJSONData(layer)
+                    if (filter.active) updateGeoJSONData(layer)
                 }
             }
         })
