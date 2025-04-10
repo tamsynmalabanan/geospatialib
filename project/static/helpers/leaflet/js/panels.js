@@ -1047,7 +1047,7 @@ const handleLeafletStylePanel = (map, parent) => {
         // remove, add to legend, zoom in
         const removeBtn = createButton({
             parent: btnsContainer,
-            className: 'btn-danger btn-sm fs-12',
+            className: 'fs-12 bg-transparent border-0 p-0 text-danger',
             iconClass: 'bi bi-trash-fill',
             disabled: !filters.geom.active,
             name: `geomFilter-${id}-remove`,
