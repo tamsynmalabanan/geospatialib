@@ -1458,13 +1458,14 @@ const handleLeafletStylePanel = (map, parent) => {
                             disabled: !filters.geom.active,
                             events: {
                                 click: () => {
-                                    const filter = filters.geom.values[generateRandomString()] = {
+                                    const id = generateRandomString()
+                                    const filter = filters.geom.values[id] = {
                                         active: true,
                                         intersect: true,
                                         geometry: L.rectangle(map.getBounds()).toGeoJSON().geometry
                                     }
-                                    console.log(filter)
-                                    // updateGeoJSONData(layer)                
+                                    body.querySelector(`#${geomFilterContainerId}`).appendChild(getGeomFilterForm(id))
+                                    updateGeoJSONData(layer)                
                                 }
                             }
                         },
@@ -1550,7 +1551,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const container = customCreateElement({
                                     id: geomFilterContainerId,
                                     className: 'd-flex flex-column w-100 gap-2 mb-3',
-                                    // style: {minHeight:'50px'},
                                     parent,
                                 })  
 
