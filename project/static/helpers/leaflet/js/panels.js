@@ -1054,7 +1054,7 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: (e) => {
                     parent.remove()
-                    
+
                     const update = filter.active && filter.geometry
                     delete filter
                     if (update) updateGeoJSONData(layer)
@@ -1400,7 +1400,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = document.createElement('div')
-                                container.className = 'd-flex w-100 gap-2'
+                                container.className = 'd-flex w-100 gap-2 border rounded p-3'
                                 parent.appendChild(container)
 
                                 for (const id in filters.geom.values) {
