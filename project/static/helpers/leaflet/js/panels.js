@@ -1001,7 +1001,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const intersect = createFormFloating({
                     parent,
-                    // containerClass: 'w-25',
                     fieldTag: 'select',
                     fieldAttrs: {name: `geomFilter-${id}-intersect`},
                     fieldClass: 'form-select-sm',
@@ -1025,6 +1024,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const geom = createFormFloating({
                     parent,
+                    containerClass: 'flex-grow-1',
                     fieldAttrs: {name: `geomFilter-${id}-geom`},
                     fieldTag: 'textarea',
                     fieldClass: 'mh-100',
