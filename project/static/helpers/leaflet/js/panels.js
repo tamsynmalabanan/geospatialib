@@ -1020,9 +1020,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                         if (turf.coordAll(value).length > 100) {
                             value = turf.simplify(value, {tolerance:0.01})
-                            console.log(value)
+                            e.target.value = JSON.stringify(value)
                         }
                     } catch (error) {
+                        console.log(error, error.message)
                         e.target.value = value = null
                     }
                     
