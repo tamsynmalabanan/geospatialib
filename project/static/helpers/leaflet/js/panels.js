@@ -1376,7 +1376,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             typeFilter: {
                                 handler: createCheckboxOptions,
                                 name: 'typeFilter',
-                                containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-3',
+                                containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2',
                                 options: (() => {
                                     const options = {}
                                     for (const type in filters.type.values) {
