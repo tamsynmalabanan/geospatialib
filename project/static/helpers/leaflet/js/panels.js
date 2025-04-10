@@ -902,7 +902,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const lineCap = createFormFloating({
                     parent: lineFields,
-                    containerClass: 'flex-grow-1',
+                    containerClass: 'w-100 flex-grow-1',
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineCap`},
                     fieldClass: 'form-select-sm',
@@ -926,7 +926,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const lineJoin = createFormFloating({
                     parent: lineFields,
-                    containerClass: 'flex-grow-1',
+                    containerClass: 'w-100 flex-grow-1',
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineJoin`},
                     fieldClass: 'form-select-sm',
@@ -952,7 +952,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const lineBreak = createFormFloating({
                     parent: lineFields,
-                    containerClass: 'flex-grow-1',
+                    containerClass: 'w-100 flex-grow-1',
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineBreak`},
                     fieldClass: 'form-select-sm',
