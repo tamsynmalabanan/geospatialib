@@ -1072,6 +1072,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         geojson: {
                             type: 'Feature',
                             geometry: filter.geometry,
+                            properties: {}
                         },
                         title: 'spatial constraint',
                         pane: createCustomPane(map),
