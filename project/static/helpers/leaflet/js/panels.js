@@ -1020,7 +1020,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                         if (turf.coordAll(value).length > 100) {
                             try {
-                                value = turf.simplify(value, {tolerance:0.01})
+                                value = turf.simplify(value, {tolerance:0.001})
                                 e.target.value = JSON.stringify(value)
                             } catch {
                                 throw new Error('Failed to simplify geometry')
