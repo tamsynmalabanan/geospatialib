@@ -611,12 +611,12 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Label',
             fieldClass: 'form-control-sm',
             events: {
-                blur: (e) => {
+                blur: async (e) => {
                     const value = e.target.value.trim() 
                     if (value === style.label) return
 
                     style.label = value
-                    updateGeoJSONData(layer)
+                    await updateGeoJSONData(layer)
                     console.log(layerLegend.querySelector(`${layerLegend.id}-details-table`))
                 }
             }
