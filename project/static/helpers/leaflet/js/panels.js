@@ -1051,7 +1051,14 @@ const handleLeafletStylePanel = (map, parent) => {
             iconClass: 'bi bi-trash-fill',
             disabled: !filters.geom.active,
             name: `geomFilter-${id}-remove`,
-            // events: 
+            events: {
+                click: (e) => {
+                    parent.remove()
+                    delete filter
+                    updateGeoJSONData(layer)
+
+                }
+            }
         })
 
         return parent
