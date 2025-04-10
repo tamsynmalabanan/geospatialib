@@ -961,7 +961,8 @@ const handleLeafletStylePanel = (map, parent) => {
         const filters = layerStyles.filters
         const filter = filters.geom.values[id]
         const parent = customCreateElement({
-            className:'d-flex gap-2 flex-grow-1 align-items-center'
+            className:'d-flex gap-2 flex-grow-1 align-items-center',
+            style: {minHeight:'50px'}
         })
 
         const enable = createFormCheck({
