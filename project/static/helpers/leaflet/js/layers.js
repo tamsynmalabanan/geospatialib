@@ -394,7 +394,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const geojsonLayer = findLeafletFeatureLayerParent(layer)
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const styles = feature ? geojsonLayer._styles : layer._styles
-                const title = layer._title
+                const title = layer._title || feature ? feature.geometry.type || 'feature' : 'layer'
                 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
