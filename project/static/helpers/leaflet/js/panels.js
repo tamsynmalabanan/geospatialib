@@ -647,7 +647,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         mapContainer.id
                     }-panels-legend-layers-${
                         layer._leaflet_id
-                    }-details-table-${id}-title`)
+                    }-details-table-${id}-count`)
                     .classList.toggle('d-none', !value)
                 }
             }
