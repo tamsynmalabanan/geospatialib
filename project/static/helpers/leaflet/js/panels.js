@@ -1374,6 +1374,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                         form.elements[i].disabled = !value
                                     })
 
+                                    form.elements.toggleType.disabled = !value
+
                                     filters.type.active = value
                                     updateGeoJSONData(layer)
                                 }
@@ -1381,7 +1383,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         toggleType: {
                             handler: createButton,
-                            name: 'typeFilter-toggle',
+                            name: 'toggleType',
                             className: 'fs-12 bg-transparent border-0 p-0',
                             iconClass: 'bi bi-toggles',
                             title: 'Toggle all types',
@@ -1449,24 +1451,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         // bbox, new, remove all, toggleall
-                        toggleGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0',
-                            iconClass: 'bi bi-toggles',
-                            title: 'Toggle all spatial constraints',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    const fields = Object.keys(form.elements).filter(i => i.startsWith('geomFilter-enable-')).map(i => form.elements[i])
-                                    const check = fields.some(f => !f.checked)
-                                    fields.forEach(field => field.checked = check)
-
-                                    Object.values(filters.geom.values).forEach(filter => filter.active = check)
-                                    updateGeoJSONData(layer)
-                                }
-                            }
-                        },
                         helperGeom: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
