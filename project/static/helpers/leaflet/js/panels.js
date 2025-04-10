@@ -1018,9 +1018,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     try {
                         value = JSON.parse(e.target.value)
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
-                        
-                        console.log(turf.coordAll(value).length)
-                        // simplify geoms with > 100 vertices
+                        if (turf.coordAll(value).length > 100) {
+                            console.log(value)
+                            console.log(turf.simplify(value))
+                        }
                     } catch (error) {
                         e.target.value = value = null
                     }
