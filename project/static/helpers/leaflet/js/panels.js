@@ -1226,6 +1226,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     form.elements.maxScale.disabled = !value
 
                                     visibility.active = value
+                                    
+                                    const scale = getLeafletMeterScale(map)
+                                    console.log(scale, visibility.min, visibility.max)
                                     layerIsVisible(layer)
                                 }
                             }
@@ -1394,7 +1397,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     })
 
                                     filters.geom.active = value
-                                    updateGeoJSONData(layer)
+                                    if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
                                 }
                             }
                         },
