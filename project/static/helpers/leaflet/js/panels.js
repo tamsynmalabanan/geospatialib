@@ -1131,7 +1131,13 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     const div = document.createElement('div')
                                     div.innerHTML = field.value
-                                    Array.from(div.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
+                                    Array.from(div.querySelectorAll('a')).forEach(a => {
+                                        a.setAttribute('target', '_blank')
+                                        
+                                        const href = a.getAttribute('href')
+                                        if (!href.startsWith('http')) a.setAttribute('href', `https://${href}`)
+                                        
+                                    })
                                     const value = div.innerHTML
 
                                     layer._attribution = value
