@@ -1449,6 +1449,21 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         // bbox, new
+                        bboxGeom: {
+                            handler: createButton,
+                            name: 'geomFilter-bbox',
+                            className: 'fs-12 bg-transparent border-0 p-0',
+                            iconClass: 'bi bi-bounding-box-circles',
+                            title: 'Add map extent as spatial constraint',
+                            disabled: !filters.geom.active,
+                            events: {
+                                click: () => {
+                                    const geom = L.rectangle(map.getBounds()).toGeoJSON()
+                                    console.log(geom)
+                                    // updateGeoJSONData(layer)                
+                                }
+                            }
+                        },
                         toggleGeom: {
                             handler: createButton,
                             name: 'geomFilter-toggle',
@@ -1471,21 +1486,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     Object.values(filters.geom.values).forEach(f => f.active = check)
 
                                     updateGeoJSONData(layer)
-                                }
-                            }
-                        },
-                        bboxGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-bbox',
-                            className: 'fs-12 bg-transparent border-0 p-0',
-                            iconClass: 'bi bi-bounding-box-circles',
-                            title: 'Add map extent as spatial constraint',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    const geom = L.rectangle(map.getBounds()).toGeoJSON().features[0].geometry
-                                    console.log(geom)
-                                    // updateGeoJSONData(layer)                
                                 }
                             }
                         },
