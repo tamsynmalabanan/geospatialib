@@ -656,7 +656,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
-        // add contitiones if id !== ''
+        // add conditions if id !== ''
 
         const iconFields = customCreateElement({
             className:'d-flex gap-2',
@@ -1060,7 +1060,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
         const option = document.createElement('option')
         option.value = '-1'
-        option.text = ''
+        option.text = 'Select a layer'
         select.appendChild(option)
         
         Array.from(legends).map(l => {
