@@ -993,7 +993,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             currentValue: filter.intersect ? 'true' : 'false',
             events: {
-                blur: (e) => {
+                change: (e) => {
                     const value = e.target.value === 'true'
                     if (value === filter.intersect) return
 
