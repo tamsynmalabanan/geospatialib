@@ -1057,7 +1057,6 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     select.addEventListener('focus', (e) => {
-        console.log(e)
         select.innerHTML = ''
 
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
@@ -1082,7 +1081,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
-    select.addEventListener('change', () => {
+    select.addEventListener('blur', () => {
         const newLayerId = parseInt(select.value)
         if (layer && newLayerId && newLayerId === layer._leaflet_id) return
 
