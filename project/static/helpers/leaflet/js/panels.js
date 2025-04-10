@@ -1460,7 +1460,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                 })
 
-                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified'
+                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 50 vertices will be simplified.'
                             }
                         },
                         geomFilter: {
