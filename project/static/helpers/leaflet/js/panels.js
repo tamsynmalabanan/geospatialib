@@ -1130,9 +1130,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const field = e.target
 
                                     const div = document.createElement('div')
-                                    div.outerHTML = field.value
+                                    div.innerHTML = field.value
                                     Array.from(div.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
-                                    const value = div.outerHTML
+                                    const value = div.innerHTML
 
                                     layer._attribution = value
                                     
