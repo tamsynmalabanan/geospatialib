@@ -651,6 +651,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const label = createFormFloating({
                     parent:groupFields,
+                    containerClass: 'w-100',
                     fieldAttrs: {
                         name: `${id}-label`,
                         type: 'text',
@@ -685,6 +686,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const iconClass = createFormFloating({
                     parent:iconFields,
+                    containerClass: 'flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-iconClass`,
                         type: 'text',
@@ -776,7 +778,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const fillColor = createFormFloating({
                     parent:fillFields,
-                    containerClass: 'w-25',
+                    containerClass: 'w-50 flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-fillColor`,
                         type: 'color',
@@ -826,7 +828,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const strokeColor = createFormFloating({
                     parent:strokeFields,
-                    containerClass: 'w-25',
+                    containerClass: 'w-50 flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-strokeColor`,
                         type: 'color',
@@ -900,6 +902,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const lineCap = createFormFloating({
                     parent: lineFields,
+                    containerClass: 'flex-grow-1',
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineCap`},
                     fieldClass: 'form-select-sm',
@@ -923,6 +926,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const lineJoin = createFormFloating({
                     parent: lineFields,
+                    containerClass: 'flex-grow-1',
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineJoin`},
                     fieldClass: 'form-select-sm',
@@ -948,6 +952,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const lineBreak = createFormFloating({
                     parent: lineFields,
+                    containerClass: 'flex-grow-1',
                     fieldTag: 'select',
                     fieldAttrs: {name: `${id}-lineBreak`},
                     fieldClass: 'form-select-sm',
