@@ -639,8 +639,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === style.showCount) return
 
                     style.showCount = value
-                    // updateGeoJSONData(layer)
-                    console.log(e)
+                    groupLegend.querySelector(`#${groupLegend.id}-count`).classList.toggle('d-none', !value)
                 }
             }
         })
