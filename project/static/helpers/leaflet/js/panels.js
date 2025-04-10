@@ -1458,8 +1458,12 @@ const handleLeafletStylePanel = (map, parent) => {
                             disabled: !filters.geom.active,
                             events: {
                                 click: () => {
-                                    const geom = L.rectangle(map.getBounds()).toGeoJSON()
-                                    console.log(geom)
+                                    const filter = filters.geom.values[generateRandomString()] = {
+                                        active: true,
+                                        intersect: true,
+                                        geometry: L.rectangle(map.getBounds()).toGeoJSON().geometry
+                                    }
+                                    console.log(filter)
                                     // updateGeoJSONData(layer)                
                                 }
                             }
