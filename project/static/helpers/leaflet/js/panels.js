@@ -1021,6 +1021,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (turf.coordAll(value).length > 100) {
                             try {
                                 value = turf.simplify(value, {tolerance:0.001})
+                                console.log(value)
                                 e.target.value = JSON.stringify(value)
                             } catch {
                                 throw new Error('Failed to simplify geometry')
