@@ -1456,7 +1456,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     tag: 'p',
-                                    className: 'd-flex w-100 user-select-none text-muted',
+                                    className: 'd-flex w-100 user-select-none text-muted p-0 m-0',
                                     parent,
                                 })
 
