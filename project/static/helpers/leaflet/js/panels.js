@@ -1006,7 +1006,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
-            currentValue: JSON.stringify(filter.geometry),
+            currentValue: filter.geometry ? JSON.stringify(filter.geometry) : '',
             labelText: 'Geometry geojson',
             disabled: !filters.geom.active,
             events: {
