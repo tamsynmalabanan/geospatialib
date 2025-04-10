@@ -582,6 +582,40 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
+    const visibilityFieldsClick = (e) => {
+        const field = e.target
+
+        const changeEvent = new Event('change', {
+            bubbles: true,
+            cancelable: true,
+        })
+
+        contextMenuHandler(e, {
+            useCurrent: {
+                innerText: `Use current map scale`,
+                btnCallback: async () => {
+                    const scale = getLeafletMeterScale(map)
+                    field.value = scale
+                    field.dispatchEvent(changeEvent)
+                }
+            },
+            zoomCurrent: {
+                innerText: `Zoom to nearest scale`,
+                btnCallback: async () => {
+                    const scale = field.value
+                    zoomLeafletMapToScale(map, scale)
+                }
+            },
+            useDefault: {
+                innerText: `Use default scale`,
+                btnCallback: async () => {
+                    field.value = field.name === 'minScale' ? 10 : 5000000
+                    field.dispatchEvent(changeEvent)
+                }
+            },
+        })
+    }
+
     Array('change', 'blur').forEach(trigger => {
         select.addEventListener(trigger, () => {
             const newLayerId = parseInt(select.options[select.selectedIndex]?.value || -1)
@@ -603,40 +637,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const visibility = layerStyles.visibility
             const filters = layerStyles.filters
-
-            const visibilityFieldsClick = (e) => {
-                const field = e.target
-
-                const changeEvent = new Event('change', {
-                    bubbles: true,
-                    cancelable: true,
-                })
-
-                contextMenuHandler(e, {
-                    useCurrent: {
-                        innerText: `Use current map scale`,
-                        btnCallback: async () => {
-                            const scale = getLeafletMeterScale(map)
-                            field.value = scale
-                            field.dispatchEvent(changeEvent)
-                        }
-                    },
-                    zoomCurrent: {
-                        innerText: `Zoom to nearest scale`,
-                        btnCallback: async () => {
-                            const scale = field.value
-                            zoomLeafletMapToScale(map, scale)
-                        }
-                    },
-                    useDefault: {
-                        innerText: `Use default scale`,
-                        btnCallback: async () => {
-                            field.value = field.name === 'minScale' ? 10 : 5000000
-                            field.dispatchEvent(changeEvent)
-                        }
-                    },
-                })
-            }
 
             const getSymbologyForm = (id) => {
                 const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
