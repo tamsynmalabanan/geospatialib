@@ -994,6 +994,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const intersect = createFormFloating({
                     parent,
+                    containerClass: 'w-25',
                     fieldTag: 'select',
                     fieldAttrs: {name: `geomFilter-${id}-intersect`},
                     fieldClass: 'form-select-sm',
@@ -1019,6 +1020,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent,
                     fieldAttrs: {name: `geomFilter-${id}-geom`},
                     fieldTag: 'textarea',
+                    fieldClass: 'mh-100',
                     currentValue: JSON.stringify(filter.geometry),
                     labelText: 'Geometry geojson',
                     disabled: !filters.geom.active,
@@ -1028,13 +1030,13 @@ const handleLeafletStylePanel = (map, parent) => {
                             try {
                                 value = JSON.parse(e.target.value)
                                 if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
+                                
                                 console.log(turf.coordAll(value).length)
                                 // simplify geoms with > 100 vertices
                             } catch (error) {
                                 e.target.value = value = null
                             }
                             
-                            console.log(value, filter.geometry)
                             if (!value && !filter.geometry) return
                             if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
                             
