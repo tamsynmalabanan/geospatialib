@@ -588,9 +588,6 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getSymbologyForm = (id) => {
-        const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
-        const groupLegend = layerLegend.querySelector(`#${layerLegend.id}-details-table-${id}`)
-
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
@@ -618,6 +615,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === style.label) return
 
                     style.label = value
+
                     document.querySelector(`#${
                         mapContainer.id
                     }-panels-legend-layers-${
@@ -644,7 +642,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === style.showCount) return
 
                     style.showCount = value
-                    groupLegend.querySelector(`#${groupLegend.id}-count`).classList.toggle('d-none', !value)
+                    
+                    document.querySelector(`#${
+                        mapContainer.id
+                    }-panels-legend-layers-${
+                        layer._leaflet_id
+                    }-details-table-${id}-title`)
+                    .classList.toggle('d-none', !value)
                 }
             }
         })
