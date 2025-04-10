@@ -1374,8 +1374,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         form.elements[i].disabled = !value
                                     })
 
-                                    form.elements.toggleType.disabled = !value
-
                                     filters.type.active = value
                                     updateGeoJSONData(layer)
                                 }
@@ -1383,7 +1381,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         toggleType: {
                             handler: createButton,
-                            name: 'toggleType',
+                            name: 'typeFilter-toggle',
                             className: 'fs-12 bg-transparent border-0 p-0',
                             iconClass: 'bi bi-toggles',
                             title: 'Toggle all types',
@@ -1453,7 +1451,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         // bbox, new, remove all, toggleall
                         toggleGeom: {
                             handler: createButton,
-                            name: 'toggleType',
+                            name: 'geomFilter-toggle',
                             className: 'fs-12 bg-transparent border-0 p-0',
                             iconClass: 'bi bi-toggles',
                             title: 'Toggle all spatial constraints',
