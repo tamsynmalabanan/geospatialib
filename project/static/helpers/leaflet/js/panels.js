@@ -588,6 +588,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getSymbologyForm = (id) => {
+        const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
@@ -1127,11 +1128,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 input: (e) => {
                                     const field = e.target
-                                    layer._attribution = field.value
+
+                                    const div = document.createElement('div')
+                                    div.outerHTML = field.value
+                                    Array.from(div.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
+                                    const value = div.outerHTML
+
+                                    layer._attribution = value
                                     
                                     const element = document.querySelector(`#${layerLegend.id}-attribution`)
-                                    element.innerHTML = field.value
-                                    Array.from(element.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
+                                    element.innerHTML = value
                                 }
                             }
                         },
