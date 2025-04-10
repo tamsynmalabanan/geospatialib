@@ -241,10 +241,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
-        // divider2: {
-        //     tag: 'div',
-        //     className: 'vr m-2',
-        // },
     })
 
     const clearLegend = (layerLegend, isHidden, isInvisible) => {
@@ -557,31 +553,6 @@ const handleLeafletStylePanel = (map, parent) => {
     const mapContainer = map.getContainer()
     let layer
 
-    select.addEventListener('focus', () => {
-        select.innerHTML = ''
-
-        const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-        const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
-        
-        const option = document.createElement('option')
-        option.value = ''
-        option.text = ''
-        select.appendChild(option)
-        
-        Array.from(legends).map(l => {
-            const leafletId = parseInt(l.dataset.layerId)
-            return map._ch.getLegendLayer(leafletId)
-        }).forEach(l => {
-            const option = document.createElement('option')
-            option.value = l._leaflet_id
-            option.text = l._title
-            if (layer && layer._leaflet_id === l._leaflet_id) {
-                option.setAttribute('selected', true)
-            }
-            select.appendChild(option)
-        })
-    })
-
     const visibilityFieldsClick = (e) => {
         const field = e.target
 
@@ -616,890 +587,838 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     }
 
-    Array('change', 'blur').forEach(trigger => {
-        select.addEventListener(trigger, () => {
-            const newLayerId = parseInt(select.options[select.selectedIndex]?.value || -1)
-            if (layer && newLayerId && newLayerId === layer._leaflet_id) return
-    
-            body.innerHTML = ''
-            layer = map._ch.getLegendLayer(newLayerId)
-            if (!layer) {
-                body.removeAttribute('data-layer-id')
-                body.classList.add('d-none')
-                return
+    const getSymbologyForm = (id) => {
+        const layerStyles = layer._styles
+        const style = layerStyles.groups[id]  || layerStyles.default
+        const styleParams = style.styleParams
+
+        const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+
+        const groupFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
+        const label = createFormFloating({
+            parent:groupFields,
+            containerClass: 'w-100',
+            fieldAttrs: {
+                name: `${id}-label`,
+                type: 'text',
+                value: style.label
+            },
+            labelText: 'Label',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = e.target.value.trim() 
+                    if (value === style.label) return
+
+                    style.label = value
+                    updateGeoJSONData(layer)
+                }
             }
+        })
 
-            body.setAttribute('data-layer-id', newLayerId)
-            body.classList.remove('d-none')
+        // add remove button if id !== ''
 
-            const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
-            const layerStyles = layer._styles
+        const conditionsFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
 
-            const visibility = layerStyles.visibility
-            const filters = layerStyles.filters
+        // add contitiones if id !== ''
 
-            const getSymbologyForm = (id) => {
-                const style = id !== '' ? layerStyles.groups[id] : layerStyles.default
-                const styleParams = style.styleParams
-
-                const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
-
-                const groupFields = customCreateElement({
-                    className:'d-flex gap-2',
-                    parent,
-                })
-
-                const label = createFormFloating({
-                    parent:groupFields,
-                    containerClass: 'w-100',
-                    fieldAttrs: {
-                        name: `${id}-label`,
-                        type: 'text',
-                        value: style.label
-                    },
-                    labelText: 'Label',
-                    fieldClass: 'form-control-sm',
-                    events: {
-                        blur: (e) => {
-                            const value = e.target.value.trim() 
-                            if (value === style.label) return
+        const iconFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
         
-                            style.label = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                // add remove button if id !== ''
-
-                const conditionsFields = customCreateElement({
-                    className:'d-flex gap-2',
-                    parent,
-                })
-
-                // add contitiones if id !== ''
-
-                const iconFields = customCreateElement({
-                    className:'d-flex gap-2',
-                    parent,
-                })
-                
-                const iconClass = createFormFloating({
-                    parent:iconFields,
-                    containerClass: 'w-100 flex-grow-1',
-                    fieldAttrs: {
-                        name:`${id}-iconClass`,
-                        type: 'search',
-                        value: styleParams.iconClass,
-                        list: bootstrapIConsDatalist.id
-                    },
-                    fieldClass: 'form-control-sm',
-                    labelText: 'Icon class',
-                    events: {
-                        blur: (e) => {
-                            let value = e.target.value.trim()
-                            if (!value) value = e.target.value = 'circle-fill'
-                            if (value === styleParams.iconClass) return
-                            
-                            styleParams.iconClass = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const iconSize = createInputGroup({
-                    parent:iconFields,
-                    fieldAttrs: {
-                        name: `${id}-iconSize`,
-                        type: 'number',
-                        min: '1',
-                        max: '100',
-                        step: '1',
-                        value: styleParams.iconSize,
-                        placeholder: 'Icon size',
-                    },
-                    suffixHTML: 'px',
-                    fieldClass: 'form-control-sm',
-                    events: {
-                        blur: (e) => {
-                            const value = parseFloat(e.target.value)
-                            if (!value || value === styleParams.iconSize) {
-                                e.target.value = styleParams.iconSize
-                                return
-                            }
-        
-                            styleParams.iconSize = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const iconCheckboxes = customCreateElement({
-                    className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-                    parent:iconFields
-                })
-
-                const iconShadow = createFormCheck({
-                    parent:iconCheckboxes,
-                    labelInnerText: 'Shadow effect',
-                    checked: styleParams.iconShadow,
-                    labelClass: 'text-nowrap',
-                    events: {
-                        click: (e) => {
-                            const value = e.target.checked
-                            if (value === styleParams.iconShadow) return
-        
-                            styleParams.iconShadow = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const iconGlow = createFormCheck({
-                    parent:iconCheckboxes,
-                    labelInnerText: 'Glow effect',
-                    checked: styleParams.iconGlow,
-                    labelClass: 'text-nowrap',
-                    events: {
-                        click: (e) => {
-                            const value = e.target.checked
-                            if (value === styleParams.iconGlow) return
-        
-                            styleParams.iconGlow = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const fillFields = customCreateElement({
-                    className:'d-flex gap-2',
-                    parent,
-                })
-
-                const fillColor = createFormFloating({
-                    parent:fillFields,
-                    containerClass: 'w-100 flex-grow-1',
-                    fieldAttrs: {
-                        name:`${id}-fillColor`,
-                        type: 'color',
-                        value: hslToHex(manageHSLAColor(styleParams.fillColor)),
-                    },
-                    fieldClass: 'form-control-sm',
-                    labelText: 'Fill color',
-                    events: {
-                        blur: (e) => {
-                            const value = hexToHSLA(e.target.value)
-                            if (value === styleParams.fillColor) return
-        
-                            styleParams.fillColor = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const fillOpacity = createInputGroup({
-                    parent:fillFields,
-                    fieldAttrs: {
-                        name: `${id}-fillOpacity`,
-                        type: 'number',
-                        min: '0',
-                        max: '100',
-                        step: '10',
-                        value: styleParams.fillOpacity * 100,
-                        placeholder: 'Fill opacity',
-                    },
-                    suffixHTML: '%',
-                    fieldClass: 'form-control-sm',
-                    events: {
-                        blur: (e) => {
-                            const value = (parseFloat(e.target.value) / 100) || 0
-                            if (value === styleParams.fillOpacity) return
-                            
-                            styleParams.fillOpacity = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-                
-                const strokeFields = customCreateElement({
-                    className:'d-flex gap-2',
-                    parent,
-                })
-                
-                const strokeColor = createFormFloating({
-                    parent:strokeFields,
-                    containerClass: 'w-100 flex-grow-1',
-                    fieldAttrs: {
-                        name:`${id}-strokeColor`,
-                        type: 'color',
-                        value: hslToHex(manageHSLAColor(styleParams.strokeColor)),
-                    },
-                    fieldClass: 'form-control-sm',
-                    labelText: 'Stroke color',
-                    events: {
-                        blur: (e) => {
-                            const value = hexToHSLA(e.target.value)
-                            if (value === styleParams.strokeColor) return
-        
-                            styleParams.strokeColor = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const strokeOpacity = createInputGroup({
-                    parent:strokeFields,
-                    fieldAttrs: {
-                        name: `${id}-strokeOpacity`,
-                        type: 'number',
-                        min: '0',
-                        max: '100',
-                        step: '10',
-                        value: styleParams.strokeOpacity * 100,
-                        placeholder: 'Stroke opacity',
-                    },
-                    suffixHTML: '%',
-                    fieldClass: 'form-control-sm',
-                    events: {
-                        blur: (e) => {
-                            const value = (parseFloat(e.target.value) / 100) || 0
-                            if (value === styleParams.strokeOpacity) return
-        
-                            styleParams.strokeOpacity = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const strokeWidth = createInputGroup({
-                    parent:strokeFields,
-                    fieldAttrs: {
-                        name: `${id}-strokeWidth`,
-                        type: 'number',
-                        min: '0',
-                        max: '10',
-                        step: '1',
-                        value: styleParams.strokeWidth,
-                        placeholder: 'Stroke width',
-                    },
-                    suffixHTML: 'px',
-                    fieldClass: 'form-control-sm',
-                    events: {
-                        blur: (e) => {
-                            const value = parseFloat(e.target.value) || 0
-                            if (value === styleParams.strokeWidth) return
-        
-                            styleParams.strokeWidth = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-                
-                const lineFields = customCreateElement({
-                    className:'d-flex gap-2',
-                    parent,
-                })
-
-                const lineCap = createFormFloating({
-                    parent: lineFields,
-                    containerClass: 'w-100 flex-grow-1',
-                    fieldTag: 'select',
-                    fieldAttrs: {name: `${id}-lineCap`},
-                    fieldClass: 'form-select-sm',
-                    labelText: 'Line cap',
-                    options: {
-                        'round': 'round',
-                        'butt': 'butt',
-                        'square': 'square',
-                    },
-                    currentValue: styleParams.lineCap,
-                    events: {
-                        blur: (e) => {
-                            const value = e.target.value
-                            if (value === styleParams.lineCap) return
-        
-                            styleParams.lineCap = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const lineJoin = createFormFloating({
-                    parent: lineFields,
-                    containerClass: 'w-100 flex-grow-1',
-                    fieldTag: 'select',
-                    fieldAttrs: {name: `${id}-lineJoin`},
-                    fieldClass: 'form-select-sm',
-                    labelText: 'Line join',
-                    options: {
-                        'round': 'round',
-                        'arcs': 'arcs',
-                        'bevel': 'bevel',
-                        'miter': 'miter',
-                        'miter-clip': 'miter-clip',
-                    },
-                    currentValue: styleParams.lineJoin,
-                    events: {
-                        blur: (e) => {
-                            const value = e.target.value
-                            if (value === styleParams.lineJoin) return
-        
-                            styleParams.lineJoin = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const lineBreak = createFormFloating({
-                    parent: lineFields,
-                    containerClass: 'w-100 flex-grow-1',
-                    fieldTag: 'select',
-                    fieldAttrs: {name: `${id}-lineBreak`},
-                    fieldClass: 'form-select-sm',
-                    labelText: 'Line break',
-                    options: {
-                        'solid': 'solid',
-                        'dashed': 'dashed',
-                        'dotted': 'dotted',
-                    },
-                    currentValue: styleParams.lineBreak,
-                    events: {
-                        blur: (e) => {
-                            const value = e.target.value
-                            if (value === styleParams.lineBreak) return
-        
-                            styleParams.lineBreak = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                return parent
+        const iconClass = createFormFloating({
+            parent:iconFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-iconClass`,
+                type: 'search',
+                value: styleParams.iconClass,
+                list: bootstrapIConsDatalist.id
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Icon class',
+            events: {
+                blur: (e) => {
+                    let value = e.target.value.trim()
+                    if (!value) value = e.target.value = 'circle-fill'
+                    if (value === styleParams.iconClass) return
+                    
+                    styleParams.iconClass = value
+                    updateGeoJSONData(layer)
+                }
             }
+        })
 
-            const getGeomFilterForm = (id) => {
-                const filter = filters.geom.values[id]
-                const parent = customCreateElement({
-                    className:'d-flex gap-2 flex-grow-1 align-items-center'
-                })
-
-                const enable = createFormCheck({
-                    parent,
-                    checked: filter.active,
-                    name: `geomFilter-${id}-enable`,
-                    disabled: !filters.geom.active,
-                    events: {
-                        click: (e) => {
-                            const value = e.target.checked
-                            if (value === filter.active) return
-        
-                            filter.active = value
-                            updateGeoJSONData(layer)
-                        }
+        const iconSize = createInputGroup({
+            parent:iconFields,
+            fieldAttrs: {
+                name: `${id}-iconSize`,
+                type: 'number',
+                min: '1',
+                max: '100',
+                step: '1',
+                value: styleParams.iconSize,
+                placeholder: 'Icon size',
+            },
+            suffixHTML: 'px',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value)
+                    if (!value || value === styleParams.iconSize) {
+                        e.target.value = styleParams.iconSize
+                        return
                     }
-                })
 
-                const intersect = createFormFloating({
-                    parent,
-                    fieldTag: 'select',
-                    fieldAttrs: {name: `geomFilter-${id}-intersect`},
-                    fieldClass: 'form-select-sm',
-                    labelText: 'Intersect',
-                    disabled: !filters.geom.active,
-                    options: {
-                        'true': 'True',
-                        'false': 'False',
-                    },
-                    currentValue: filter.intersect ? 'true' : 'false',
-                    events: {
-                        blur: (e) => {
-                            const value = e.target.value === 'true'
-                            if (value === filter.intersect) return
-        
-                            filter.intersect = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const geom = createFormFloating({
-                    parent,
-                    containerClass: 'flex-grow-1',
-                    fieldAttrs: {name: `geomFilter-${id}-geom`},
-                    fieldTag: 'textarea',
-                    fieldClass: 'mh-100',
-                    currentValue: JSON.stringify(filter.geometry),
-                    labelText: 'Geometry geojson',
-                    disabled: !filters.geom.active,
-                    events: {
-                        blur: (e) => {
-                            let value
-                            try {
-                                value = JSON.parse(e.target.value)
-                                if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
-                                
-                                console.log(turf.coordAll(value).length)
-                                // simplify geoms with > 100 vertices
-                            } catch (error) {
-                                e.target.value = value = null
-                            }
-                            
-                            if (!value && !filter.geometry) return
-                            if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
-                            
-                            filter.geometry = value
-                            updateGeoJSONData(layer)
-                        }
-                    }
-                })
-
-                const btnsContainer = customCreateElement({
-                    className:'d-flex flex-column justify-content-center pt-1', 
-                    parent,
-                })
-
-                // remove, add to legend, zoom in
-                const removeBtn = createButton({
-                    parent: btnsContainer,
-                    className: 'btn-danger btn-sm fs-12',
-                    iconClass: 'bi bi-trash-fill',
-                    disabled: !filters.geom.active,
-                    name: `geomFilter-${id}-remove`,
-                    // events: 
-                })
-
-                return parent
+                    styleParams.iconSize = value
+                    updateGeoJSONData(layer)
+                }
             }
+        })
 
-            // const getFilterForm = (id) => {
-            //     const filter = layerStyles.filters[id]
+        const iconCheckboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:iconFields
+        })
 
-            //     const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+        const iconShadow = createFormCheck({
+            parent:iconCheckboxes,
+            labelInnerText: 'Shadow effect',
+            checked: styleParams.iconShadow,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconShadow) return
 
-            //     const fields = customCreateElement({
-            //         className:'d-flex gap-2 align-items-center',
-            //         parent,
-            //     })
+                    styleParams.iconShadow = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
 
-            //     const active = createFormCheck({
-            //         parent:fields,
-            //         checked: filter.active,
-            //         events: {
-            //             click: (e) => {
-            //                 const value = e.target.checked
-            //                 if (value === filter.active) return
+        const iconGlow = createFormCheck({
+            parent:iconCheckboxes,
+            labelInnerText: 'Glow effect',
+            checked: styleParams.iconGlow,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconGlow) return
+
+                    styleParams.iconGlow = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const fillFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
+        const fillColor = createFormFloating({
+            parent:fillFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-fillColor`,
+                type: 'color',
+                value: hslToHex(manageHSLAColor(styleParams.fillColor)),
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Fill color',
+            events: {
+                blur: (e) => {
+                    const value = hexToHSLA(e.target.value)
+                    if (value === styleParams.fillColor) return
+
+                    styleParams.fillColor = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const fillOpacity = createInputGroup({
+            parent:fillFields,
+            fieldAttrs: {
+                name: `${id}-fillOpacity`,
+                type: 'number',
+                min: '0',
+                max: '100',
+                step: '10',
+                value: styleParams.fillOpacity * 100,
+                placeholder: 'Fill opacity',
+            },
+            suffixHTML: '%',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = (parseFloat(e.target.value) / 100) || 0
+                    if (value === styleParams.fillOpacity) return
+                    
+                    styleParams.fillOpacity = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
         
-            //                 filter.active = value
-            //                 updateGeoJSONData(layer)
-            //             }
-            //         }
-            //     })
+        const strokeFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+        
+        const strokeColor = createFormFloating({
+            parent:strokeFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-strokeColor`,
+                type: 'color',
+                value: hslToHex(manageHSLAColor(styleParams.strokeColor)),
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Stroke color',
+            events: {
+                blur: (e) => {
+                    const value = hexToHSLA(e.target.value)
+                    if (value === styleParams.strokeColor) return
 
-            //     const property = createFormFloating({
-            //         parent: fields,
-            //         fieldTag: 'select',
-            //         fieldAttrs: {name: generateRandomString()},
-            //         disabled: Array('__type__', '__geom__').includes(filter.property),
-            //         fieldClass: 'form-select-sm',
-            //         labelText: 'Property',
-            //         options: (() => {
-            //             const options = {}
-            //             const p = filter.property
-            //             options[p] = p === '__type__' ? 'feature types' : p === '__geom__' ? 'geometries' : p
-            //             return options
-            //         })(),
-            //         currentValue: filter.property,
-            //         events: {
-            //             click: (e) => {
-            //                 e.target.innerHTML = ''
+                    styleParams.strokeColor = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
 
-            //                 const properties = {}
+        const strokeOpacity = createInputGroup({
+            parent:strokeFields,
+            fieldAttrs: {
+                name: `${id}-strokeOpacity`,
+                type: 'number',
+                min: '0',
+                max: '100',
+                step: '10',
+                value: styleParams.strokeOpacity * 100,
+                placeholder: 'Stroke opacity',
+            },
+            suffixHTML: '%',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = (parseFloat(e.target.value) / 100) || 0
+                    if (value === styleParams.strokeOpacity) return
 
-            //                 layer.eachLayer(l => {
-            //                     const p = l.feature?.properties
-            //                     if (!p) return
+                    styleParams.strokeOpacity = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
 
-            //                     for (const k in p) {
-            //                         properties[k] = k
-            //                     }
-            //                 })
+        const strokeWidth = createInputGroup({
+            parent:strokeFields,
+            fieldAttrs: {
+                name: `${id}-strokeWidth`,
+                type: 'number',
+                min: '0',
+                max: '10',
+                step: '1',
+                value: styleParams.strokeWidth,
+                placeholder: 'Stroke width',
+            },
+            suffixHTML: 'px',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value) || 0
+                    if (value === styleParams.strokeWidth) return
 
-            //                 const withFilters = Object.values(layerStyles.filters).map(i => i.property).filter(i => i !== filter.property)
-            //                 for (const p in properties) {
-            //                     if (withFilters.includes(p)) continue
+                    styleParams.strokeWidth = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+        
+        const lineFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
 
-            //                     const option = document.createElement('option')
-            //                     option.value = p
-            //                     option.text = properties[p]
-            //                     if (p === filter.property) option.selected = true
-            //                     e.target.appendChild(option)
-            //                 }
-            //             },
-            //             change: (e) => {
-            //                 const value = e.target.value
-            //                 if (value === filter.property) return
-                            
-            //                 filter.property = value
-            //                 updateGeoJSONData(layer)
-            //             }
-            //         }
-            //     })
+        const lineCap = createFormFloating({
+            parent: lineFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldTag: 'select',
+            fieldAttrs: {name: `${id}-lineCap`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Line cap',
+            options: {
+                'round': 'round',
+                'butt': 'butt',
+                'square': 'square',
+            },
+            currentValue: styleParams.lineCap,
+            events: {
+                blur: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.lineCap) return
 
-            //     return parent
-            // }
+                    styleParams.lineCap = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
 
-            const styleFields = {
-                'Legend': {
-                    'Identification': {
-                        fields: {
-                            title: {
-                                handler: createFormFloating,
-                                containerClass: 'w-100',
-                                fieldAttrs: {
-                                    type: 'text',
-                                    value: layer._title,
-                                },
-                                fieldClass: 'form-control-sm',
-                                labelText: 'Title',
-                                events: {
-                                    input: (e) => {
-                                        const field = e.target
-                                        layer._title = field.value
-                                        
-                                        const element = document.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
-                                        if (element) element.innerText = field.value
+        const lineJoin = createFormFloating({
+            parent: lineFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldTag: 'select',
+            fieldAttrs: {name: `${id}-lineJoin`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Line join',
+            options: {
+                'round': 'round',
+                'arcs': 'arcs',
+                'bevel': 'bevel',
+                'miter': 'miter',
+                'miter-clip': 'miter-clip',
+            },
+            currentValue: styleParams.lineJoin,
+            events: {
+                blur: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.lineJoin) return
 
-                                        select.options[select.selectedIndex].text = field.value
-                                    }
-                                }
+                    styleParams.lineJoin = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const lineBreak = createFormFloating({
+            parent: lineFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldTag: 'select',
+            fieldAttrs: {name: `${id}-lineBreak`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Line break',
+            options: {
+                'solid': 'solid',
+                'dashed': 'dashed',
+                'dotted': 'dotted',
+            },
+            currentValue: styleParams.lineBreak,
+            events: {
+                blur: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.lineBreak) return
+
+                    styleParams.lineBreak = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        return parent
+    }
+
+    const getGeomFilterForm = (id) => {
+        const layerStyles = layer._styles
+        const filters = layerStyles.filters
+        const filter = filters.geom.values[id]
+        const parent = customCreateElement({
+            className:'d-flex gap-2 flex-grow-1 align-items-center'
+        })
+
+        const enable = createFormCheck({
+            parent,
+            checked: filter.active,
+            name: `geomFilter-${id}-enable`,
+            disabled: !filters.geom.active,
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === filter.active) return
+
+                    filter.active = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const intersect = createFormFloating({
+            parent,
+            fieldTag: 'select',
+            fieldAttrs: {name: `geomFilter-${id}-intersect`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Intersect',
+            disabled: !filters.geom.active,
+            options: {
+                'true': 'True',
+                'false': 'False',
+            },
+            currentValue: filter.intersect ? 'true' : 'false',
+            events: {
+                blur: (e) => {
+                    const value = e.target.value === 'true'
+                    if (value === filter.intersect) return
+
+                    filter.intersect = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const geom = createFormFloating({
+            parent,
+            containerClass: 'flex-grow-1',
+            fieldAttrs: {name: `geomFilter-${id}-geom`},
+            fieldTag: 'textarea',
+            fieldClass: 'mh-100',
+            currentValue: JSON.stringify(filter.geometry),
+            labelText: 'Geometry geojson',
+            disabled: !filters.geom.active,
+            events: {
+                blur: (e) => {
+                    let value
+                    try {
+                        value = JSON.parse(e.target.value)
+                        if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
+                        
+                        console.log(turf.coordAll(value).length)
+                        // simplify geoms with > 100 vertices
+                    } catch (error) {
+                        e.target.value = value = null
+                    }
+                    
+                    if (!value && !filter.geometry) return
+                    if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
+                    
+                    filter.geometry = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const btnsContainer = customCreateElement({
+            className:'d-flex flex-column justify-content-center pt-1', 
+            parent,
+        })
+
+        // remove, add to legend, zoom in
+        const removeBtn = createButton({
+            parent: btnsContainer,
+            className: 'btn-danger btn-sm fs-12',
+            iconClass: 'bi bi-trash-fill',
+            disabled: !filters.geom.active,
+            name: `geomFilter-${id}-remove`,
+            // events: 
+        })
+
+        return parent
+    }
+
+    select.addEventListener('click', () => {
+        select.innerHTML = ''
+
+        const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
+        const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
+        
+        const option = document.createElement('option')
+        option.value = '-1'
+        option.text = ''
+        select.appendChild(option)
+        
+        Array.from(legends).map(l => {
+            const leafletId = parseInt(l.dataset.layerId)
+            return map._ch.getLegendLayer(leafletId)
+        }).forEach(l => {
+            const option = document.createElement('option')
+            option.value = l._leaflet_id
+            option.text = l._title
+            if (layer && layer._leaflet_id === l._leaflet_id) {
+                option.setAttribute('selected', true)
+            }
+            select.appendChild(option)
+        })
+    })
+
+    select.addEventListener('change', () => {
+        const newLayerId = parseInt(select.value)
+        if (layer && newLayerId && newLayerId === layer._leaflet_id) return
+
+        body.innerHTML = ''
+        layer = map._ch.getLegendLayer(newLayerId)
+        if (!layer) {
+            body.removeAttribute('data-layer-id')
+            body.classList.add('d-none')
+            return
+        }
+
+        body.setAttribute('data-layer-id', newLayerId)
+        body.classList.remove('d-none')
+
+        const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
+        const layerStyles = layer._styles
+        const visibility = layerStyles.visibility
+        const filters = layerStyles.filters
+
+        const styleFields = {
+            'Legend': {
+                'Identification': {
+                    fields: {
+                        title: {
+                            handler: createFormFloating,
+                            containerClass: 'w-100',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: layer._title,
                             },
-                            attribution: {
-                                handler: createFormFloating,
-                                containerClass: 'w-100',
-                                fieldTag: 'textarea',
-                                currentValue: layer._attribution,
-                                labelText: 'Attribution (HTML-frieldly)',
-                                fieldStyle: {
-                                    minHeight: '100px', 
-                                },
-                                events: {
-                                    input: (e) => {
-                                        const field = e.target
-                                        layer._attribution = field.value
-                                        
-                                        const element = document.querySelector(`#${layerLegend.id}-attribution`)
-                                        element.innerHTML = field.value
-                                        Array.from(element.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
-                                    }
-                                }
-                            },
-                        },
-                        className: 'flex-column'
-                    },
-                    'Symbology': {
-                        fields: {   
-                            method: {
-                                handler: createFormFloating,
-                                containerClass: 'w-100',
-                                fieldAttrs: {
-                                    name:'method',
-                                },
-                                fieldTag:'select',
-                                labelText: 'Method',
-                                options:{
-                                    'uniform':'Uniform symbol',
-                                    // 'categorized':'Categorized symbols',
-                                    // 'ranged':'Ranged symbols',
-                                },
-                                currentValue: layerStyles.method,
-                                fieldClass:'form-select-sm',
-                                events: {
-                                    change: (e) => {
-                                        const field = e.target
-                                        layerStyles.method = field.value
-                                        
-                                        const container = field.parentElement.nextSibling
-                                        container.innerHTML = ''
-                                    }
-                                }
-                            },
-                            methodDetails: {
-                                handler: ({parent}={}) => {
-                                    const container = customCreateElement({className:'w-100'})
-                                    container.appendChild(getSymbologyForm(''))
-                                    parent?.appendChild(container)
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Title',
+                            events: {
+                                input: (e) => {
+                                    const field = e.target
+                                    layer._title = field.value
+                                    
+                                    const element = document.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
+                                    if (element) element.innerText = field.value
+
+                                    select.options[select.selectedIndex].text = field.value
                                 }
                             }
                         },
-                        className: 'flex-column'
+                        attribution: {
+                            handler: createFormFloating,
+                            containerClass: 'w-100',
+                            fieldTag: 'textarea',
+                            currentValue: layer._attribution,
+                            labelText: 'Attribution (HTML-frieldly)',
+                            fieldStyle: {
+                                minHeight: '100px', 
+                            },
+                            events: {
+                                input: (e) => {
+                                    const field = e.target
+                                    layer._attribution = field.value
+                                    
+                                    const element = document.querySelector(`#${layerLegend.id}-attribution`)
+                                    element.innerHTML = field.value
+                                    Array.from(element.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
+                                }
+                            }
+                        },
                     },
+                    className: 'flex-column'
                 },
-                'Rendering': {
-                    'Visibility': {
-                        fields: {
-                            enableScale: {
-                                handler: createFormCheck,
-                                checked: visibility.active,
-                                formCheckClass: 'w-100',
-                                labelInnerText: 'Enable scale-dependent rendering',
-                                role: 'switch',
-                                events: {
-                                    click: (e) => {
-                                        const value = e.target.checked
-                                        if (value === visibility.active) return
-                    
-                                        form.elements.minScale.disabled = !value
-                                        form.elements.maxScale.disabled = !value
-
-                                        visibility.active = value
-                                        layerIsVisible(layer)
-                                    }
-                                }
+                'Symbology': {
+                    fields: {   
+                        method: {
+                            handler: createFormFloating,
+                            containerClass: 'w-100',
+                            fieldAttrs: {
+                                name:'method',
                             },
-                            minScale: {
-                                handler: createInputGroup,
-                                fieldAttrs: {
-                                    name:'minScale',
-                                    type:'number',
-                                    min: '10',
-                                    max: visibility.max,
-                                    step: '10',
-                                    value: visibility.min,
-                                    placeholder: 'Maximum',
-                                },
-                                prefixHTML: '1:',
-                                suffixHTML: 'm',
-                                fieldClass: 'form-control-sm',
-                                disabled: !visibility.active,
-                                inputGroupClass: 'w-25 flex-grow-1',
-                                events: {
-                                    'change': (e) => {
-                                        const field = e.target
-                                        const maxScaleField = form.elements.maxScale
-                                        
-                                        if (!field.value) {
-                                            field.value = 10
-                                        } else {
-                                            const maxScaleValue = parseInt(maxScaleField.value)
-                                            if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
-                                        }
-        
-                                        visibility.min = parseInt(field.value)
-                                        maxScaleField.setAttribute('min', field.value)
-        
-                                        layerIsVisible(layer)
-                                    },
-                                    'click': visibilityFieldsClick,
-                                }
+                            fieldTag:'select',
+                            labelText: 'Method',
+                            options:{
+                                'uniform':'Uniform symbol',
+                                // 'categorized':'Categorized symbols',
+                                // 'ranged':'Ranged symbols',
                             },
-                            maxScale: {
-                                handler: createInputGroup,
-                                fieldAttrs: {
-                                    name:'maxScale',
-                                    type:'number',
-                                    min: visibility.min,
-                                    max: '5000000',
-                                    step: '10',
-                                    value: visibility.max,
-                                    placeholder: 'Minimum',
-                                },
-                                prefixHTML: '1:',
-                                suffixHTML: 'm',
-                                fieldClass: 'form-control-sm',
-                                disabled: !visibility.active,
-                                inputGroupClass: 'w-25 flex-grow-1',
-                                events: {
-                                    'change': (e) => {
-                                        const field = e.target
-                                        const minScaleField = form.elements.minScale
-                                        
-                                        if (!field.value) {
-                                            field.value = 5000000
-                                        } else {
-                                            const minScaleValue = parseInt(minScaleField.value)
-                                            if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
-                                        }
-                                        
-                                        visibility.max = parseInt(field.value)
-                                        minScaleField.setAttribute('max', field.value)
-                                        
-                                        layerIsVisible(layer)
-                                    },
-                                    'click': visibilityFieldsClick,
+                            currentValue: layerStyles.method,
+                            fieldClass:'form-select-sm',
+                            events: {
+                                change: (e) => {
+                                    const field = e.target
+                                    layerStyles.method = field.value
+                                    
+                                    const container = field.parentElement.nextSibling
+                                    container.innerHTML = ''
                                 }
-                            },
+                            }
                         },
-                        className: 'flex-wrap'
+                        methodDetails: {
+                            handler: ({parent}={}) => {
+                                const container = customCreateElement({className:'w-100'})
+                                container.appendChild(getSymbologyForm(''))
+                                parent?.appendChild(container)
+                            }
+                        }
                     },
-                    'Filter': {
-                        fields: {
-                            enableType: {
-                                handler: createFormCheck,
-                                checked: filters.type.active,
-                                formCheckClass: 'flex-grow-1',
-                                labelInnerText: 'Filter by geometry type',
-                                role: 'switch',
-                                events: {
-                                    click: (e) => {
-                                        const value = e.target.checked
-                                        if (value === filters.type.active) return
-                    
-                                        Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
-                                            form.elements[i].disabled = !value
-                                        })
+                    className: 'flex-column'
+                },
+            },
+            'Rendering': {
+                'Visibility': {
+                    fields: {
+                        enableScale: {
+                            handler: createFormCheck,
+                            checked: visibility.active,
+                            formCheckClass: 'w-100',
+                            labelInnerText: 'Enable scale-dependent rendering',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === visibility.active) return
+                
+                                    form.elements.minScale.disabled = !value
+                                    form.elements.maxScale.disabled = !value
 
-                                        form.elements.toggleType.disabled = !value
-
-                                        filters.type.active = value
-                                        updateGeoJSONData(layer)
-                                    }
+                                    visibility.active = value
+                                    layerIsVisible(layer)
                                 }
+                            }
+                        },
+                        minScale: {
+                            handler: createInputGroup,
+                            fieldAttrs: {
+                                name:'minScale',
+                                type:'number',
+                                min: '10',
+                                max: visibility.max,
+                                step: '10',
+                                value: visibility.min,
+                                placeholder: 'Maximum',
                             },
-                            toggleType: {
-                                handler: createButton,
-                                name: 'toggleType',
-                                className: 'fs-12 bg-transparent border-0 p-0',
-                                iconClass: 'bi bi-toggles',
-                                title: 'Toggle all types',
-                                disabled: !filters.type.active,
-                                events: {
-                                    click: () => {
-                                        const fields = Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).map(i => form.elements[i])
-                                        const check = fields.some(f => !f.checked)
-
-                                        fields.forEach(field => {
-                                            field.checked = check
-                                            
-                                            const name = form.querySelector(`label[for="${field.id}"]`).innerText
-                                            filters.type.values[name] = check
-                                        })
-
-                                        updateGeoJSONData(layer)
+                            prefixHTML: '1:',
+                            suffixHTML: 'm',
+                            fieldClass: 'form-control-sm',
+                            disabled: !visibility.active,
+                            inputGroupClass: 'w-25 flex-grow-1',
+                            events: {
+                                'change': (e) => {
+                                    const field = e.target
+                                    const maxScaleField = form.elements.maxScale
+                                    
+                                    if (!field.value) {
+                                        field.value = 10
+                                    } else {
+                                        const maxScaleValue = parseInt(maxScaleField.value)
+                                        if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
                                     }
-                                }
+    
+                                    visibility.min = parseInt(field.value)
+                                    maxScaleField.setAttribute('min', field.value)
+    
+                                    layerIsVisible(layer)
+                                },
+                                'click': visibilityFieldsClick,
+                            }
+                        },
+                        maxScale: {
+                            handler: createInputGroup,
+                            fieldAttrs: {
+                                name:'maxScale',
+                                type:'number',
+                                min: visibility.min,
+                                max: '5000000',
+                                step: '10',
+                                value: visibility.max,
+                                placeholder: 'Minimum',
                             },
-                            typeFilter: {
-                                handler: createCheckboxOptions,
-                                name: 'typeFilter',
-                                containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2',
-                                options: (() => {
-                                    const options = {}
-                                    for (const type in filters.type.values) {
-                                        options[type] = {
-                                            checked: filters.type.values[type],
-                                            disabled: !filters.type.active,
-                                            events: {
-                                                click: () => {
-                                                    Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
-                                                        const field = form.elements[i]
-                                                        const option = form.querySelector(`label[for="${field.id}"]`).innerText
-                                                        filters.type.values[option] = field.checked
-                                                    })
+                            prefixHTML: '1:',
+                            suffixHTML: 'm',
+                            fieldClass: 'form-control-sm',
+                            disabled: !visibility.active,
+                            inputGroupClass: 'w-25 flex-grow-1',
+                            events: {
+                                'change': (e) => {
+                                    const field = e.target
+                                    const minScaleField = form.elements.minScale
+                                    
+                                    if (!field.value) {
+                                        field.value = 5000000
+                                    } else {
+                                        const minScaleValue = parseInt(minScaleField.value)
+                                        if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
+                                    }
+                                    
+                                    visibility.max = parseInt(field.value)
+                                    minScaleField.setAttribute('max', field.value)
+                                    
+                                    layerIsVisible(layer)
+                                },
+                                'click': visibilityFieldsClick,
+                            }
+                        },
+                    },
+                    className: 'flex-wrap'
+                },
+                'Filter': {
+                    fields: {
+                        enableType: {
+                            handler: createFormCheck,
+                            checked: filters.type.active,
+                            formCheckClass: 'flex-grow-1',
+                            labelInnerText: 'Filter by geometry type',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === filters.type.active) return
+                
+                                    Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
+                                        form.elements[i].disabled = !value
+                                    })
 
-                                                    updateGeoJSONData(layer)
-                                                }
+                                    form.elements.toggleType.disabled = !value
+
+                                    filters.type.active = value
+                                    updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        toggleType: {
+                            handler: createButton,
+                            name: 'toggleType',
+                            className: 'fs-12 bg-transparent border-0 p-0',
+                            iconClass: 'bi bi-toggles',
+                            title: 'Toggle all types',
+                            disabled: !filters.type.active,
+                            events: {
+                                click: () => {
+                                    const fields = Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).map(i => form.elements[i])
+                                    const check = fields.some(f => !f.checked)
+
+                                    fields.forEach(field => {
+                                        field.checked = check
+                                        
+                                        const name = form.querySelector(`label[for="${field.id}"]`).innerText
+                                        filters.type.values[name] = check
+                                    })
+
+                                    updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        typeFilter: {
+                            handler: createCheckboxOptions,
+                            name: 'typeFilter',
+                            containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2',
+                            options: (() => {
+                                const options = {}
+                                for (const type in filters.type.values) {
+                                    options[type] = {
+                                        checked: filters.type.values[type],
+                                        disabled: !filters.type.active,
+                                        events: {
+                                            click: () => {
+                                                Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
+                                                    const field = form.elements[i]
+                                                    const option = form.querySelector(`label[for="${field.id}"]`).innerText
+                                                    filters.type.values[option] = field.checked
+                                                })
+
+                                                updateGeoJSONData(layer)
                                             }
                                         }
                                     }
-                                    return options
-                                })()
-                            },
-                            enableGeom: {
-                                handler: createFormCheck,
-                                checked: filters.geom.active,
-                                formCheckClass: 'flex-grow-1',
-                                labelInnerText: 'Enable spatial constraints',
-                                role: 'switch',
-                                events: {
-                                    click: (e) => {
-                                        const value = e.target.checked
-                                        if (value === filters.geom.active) return
-                    
-                                        Object.keys(form.elements).filter(i => i.startsWith('geomFilter-')).forEach(i => {
-                                            form.elements[i].disabled = !value
-                                        })
-
-                                        filters.geom.active = value
-                                        updateGeoJSONData(layer)
-                                    }
                                 }
-                            },
-                            geomFilter: {
-                                handler: ({parent}={}) => {
-                                    const container = document.createElement('div')
-                                    container.className = 'd-flex w-100 gap-2'
-                                    parent.appendChild(container)
-
-                                    for (const id in filters.geom.values) {
-                                        container.appendChild(getGeomFilterForm(id))
-                                    }
-
-
-                                }
-                            },
+                                return options
+                            })()
                         },
-                        className: 'flex-wrap'
-                    }
+                        enableGeom: {
+                            handler: createFormCheck,
+                            checked: filters.geom.active,
+                            formCheckClass: 'flex-grow-1',
+                            labelInnerText: 'Enable spatial constraints',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === filters.geom.active) return
+                
+                                    Object.keys(form.elements).filter(i => i.startsWith('geomFilter-')).forEach(i => {
+                                        form.elements[i].disabled = !value
+                                    })
+
+                                    filters.geom.active = value
+                                    updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        geomFilter: {
+                            handler: ({parent}={}) => {
+                                const container = document.createElement('div')
+                                container.className = 'd-flex w-100 gap-2'
+                                parent.appendChild(container)
+
+                                for (const id in filters.geom.values) {
+                                    container.appendChild(getGeomFilterForm(id))
+                                }
+
+
+                            }
+                        },
+                    },
+                    className: 'flex-wrap'
                 }
-            }        
+            }
+        }        
+        
+        Object.keys(styleFields).forEach(categoryName => {
+            const category = document.createElement('div')
+            category.className = `d-flex flex-column gap-2`
+            body.appendChild(category)
+
+            const categoryCollase = document.createElement('div')
+            categoryCollase.id =generateRandomString()
+            categoryCollase.className = 'collapse show'
+
+            const categoryHeader = document.createElement('div')
+            categoryHeader.className = `d-flex fw-medium`
+            categoryHeader.setAttribute('data-bs-toggle', 'collapse')
+            categoryHeader.setAttribute('aria-expanded', 'true')
+            categoryHeader.setAttribute('data-bs-target', `#${categoryCollase.id}`)
+            categoryHeader.setAttribute('aria-controls', categoryCollase.id)
+            categoryHeader.style.cursor = 'pointer'
             
-            Object.keys(styleFields).forEach(categoryName => {
-                const category = document.createElement('div')
-                category.className = `d-flex flex-column gap-2`
-                body.appendChild(category)
+            const categoryLabel = document.createElement('span')
+            categoryLabel.innerText = categoryName
+            categoryHeader.appendChild(categoryLabel)
+            
+            const categoryDropdown = createIcon({
+                className:'dropdown-toggle ms-auto', 
+                parent:categoryHeader, 
+                peNone:true
+            })
 
-                const categoryCollase = document.createElement('div')
-                categoryCollase.id =generateRandomString()
-                categoryCollase.className = 'collapse show'
+            category.appendChild(categoryHeader)
+            category.appendChild(categoryCollase)
 
-                const categoryHeader = document.createElement('div')
-                categoryHeader.className = `d-flex fw-medium`
-                categoryHeader.setAttribute('data-bs-toggle', 'collapse')
-                categoryHeader.setAttribute('aria-expanded', 'true')
-                categoryHeader.setAttribute('data-bs-target', `#${categoryCollase.id}`)
-                categoryHeader.setAttribute('aria-controls', categoryCollase.id)
-                categoryHeader.style.cursor = 'pointer'
-                
-                const categoryLabel = document.createElement('span')
-                categoryLabel.innerText = categoryName
-                categoryHeader.appendChild(categoryLabel)
-                
-                const categoryDropdown = createIcon({
-                    className:'dropdown-toggle ms-auto', 
-                    parent:categoryHeader, 
-                    peNone:true
-                })
+            const categorySections = document.createElement('div')
+            categorySections.className = 'd-flex flex-column gap-3'
+            categoryCollase.appendChild(categorySections)
 
-                category.appendChild(categoryHeader)
-                category.appendChild(categoryCollase)
-
-                const categorySections = document.createElement('div')
-                categorySections.className = 'd-flex flex-column gap-3'
-                categoryCollase.appendChild(categorySections)
+            const sections = styleFields[categoryName]
+            Object.keys(sections).forEach(sectionName => {
+                const data = sections[sectionName]
     
-                const sections = styleFields[categoryName]
-                Object.keys(sections).forEach(sectionName => {
-                    const data = sections[sectionName]
-        
-                    const section = document.createElement('div')
-                    section.className = `d-flex flex-column gap-2 flex-grow-1`
-                    categorySections.appendChild(section)
+                const section = document.createElement('div')
+                section.className = `d-flex flex-column gap-2 flex-grow-1`
+                categorySections.appendChild(section)
+
+                const sectionHeader = document.createElement('span')
+                sectionHeader.innerText = sectionName
+                section.appendChild(sectionHeader)
+
+                const sectionFields = document.createElement('div')
+                sectionFields.className = `d-flex gap-2 align-items-center w-100 ${data.className}`
+                section.appendChild(sectionFields)
     
-                    const sectionHeader = document.createElement('span')
-                    sectionHeader.innerText = sectionName
-                    section.appendChild(sectionHeader)
-    
-                    const sectionFields = document.createElement('div')
-                    sectionFields.className = `d-flex gap-2 align-items-center w-100 ${data.className}`
-                    section.appendChild(sectionFields)
-        
-                    const fields = data.fields
-                    Object.keys(fields).forEach(fieldName => {
-                        const params = fields[fieldName]
-                        if (params?.handler) params.handler({
-                            ...params, 
-                            parent: sectionFields,
-                        })
+                const fields = data.fields
+                Object.keys(fields).forEach(fieldName => {
+                    const params = fields[fieldName]
+                    if (params?.handler) params.handler({
+                        ...params, 
+                        parent: sectionFields,
                     })
                 })
             })
