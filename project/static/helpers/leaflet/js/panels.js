@@ -618,9 +618,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.label = value
 
-                    legendLayer
-                    .querySelector(`#${legendLayer.id}-details-table-${id}-title`)
-                    .innerText = value
+                    legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)?.innerText = value
                 }
             }
         })
@@ -642,9 +640,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.showCount = value
                     
-                    legendLayer
-                    .querySelector(`#${legendLayer.id}-details-table-${id}-count`)
-                    .classList.toggle('d-none', !value)
+                    legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-count`)?.classList.toggle('d-none', !value)
                 }
             }
         })
