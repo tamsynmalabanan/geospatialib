@@ -1036,6 +1036,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 e.target.value = ''
                             }
                             
+                            console.log(value, filter.value)
                             console.log(new Set(value, filter.value))
                             if (!value && !filter.geometry) return
                             if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
