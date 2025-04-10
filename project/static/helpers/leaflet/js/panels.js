@@ -686,7 +686,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const iconClass = createFormFloating({
                     parent:iconFields,
-                    containerClass: 'flex-grow-1',
+                    containerClass: 'w-100 flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-iconClass`,
                         type: 'text',
@@ -778,7 +778,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const fillColor = createFormFloating({
                     parent:fillFields,
-                    containerClass: 'w-50 flex-grow-1',
+                    containerClass: 'w-100 flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-fillColor`,
                         type: 'color',
@@ -828,7 +828,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const strokeColor = createFormFloating({
                     parent:strokeFields,
-                    containerClass: 'w-50 flex-grow-1',
+                    containerClass: 'w-100 flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-strokeColor`,
                         type: 'color',
