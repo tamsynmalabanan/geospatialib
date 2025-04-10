@@ -1069,11 +1069,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 click: async (e) => {
                     if (!filter.geometry) return 
                     const newLayer = await getLeafletGeoJSONLayer({
-                        geojson: filter.geometry,
+                        geojson: {
+                            type: 'Feature',
+                            geometry: filter.geometry,
+                        },
                         title: 'spatial constraint',
                         pane: createCustomPane(map),
                         group: map._ch.getLayerGroups().client,
                     })
+                    console.log(newLayer)
                     if (newLayer) newLayer._group.addLayer(newLayer)
                 }
             }
