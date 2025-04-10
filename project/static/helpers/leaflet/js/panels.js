@@ -1355,7 +1355,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         typeFilter: {
                             handler: createCheckboxOptions,
                             name: 'typeFilter',
-                            containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2',
+                            containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2',
                             options: (() => {
                                 const options = {}
                                 for (const type in filters.type.values) {
@@ -1401,7 +1401,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
-                                    className: 'd-flex w-100 gap-2 bg-adjusted rounded p-2',
+                                    className: 'd-flex w-100 gap-2 rounded',
                                     style: {minHeight:'50px'},
                                     parent,
                                 })  
