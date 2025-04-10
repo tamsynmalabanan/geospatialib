@@ -1019,16 +1019,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = JSON.parse(e.target.value)
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                         if (turf.coordAll(value).length > 100) {
-                            turf.simplify(value, {
-                                tolerance:0.01,
-                                mutate:true,
-                            })
+                            value = turf.simplify(value, {tolerance:0.01})
+                            console.log(value)
                         }
                     } catch (error) {
                         e.target.value = value = null
                     }
                     
-                    console.log(value)
                     if (!value && !filter.geometry) return
                     if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
                     
