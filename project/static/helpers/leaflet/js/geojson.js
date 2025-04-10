@@ -261,10 +261,11 @@ const getGeoJSONLayerStyles = (layer) => {
         if (group) {
             group.types[type].count +=1
         } else {
-            const featureLegend = layerStyles.groups && layerStyles.groups[groupId] ? layerStyles.groups[groupId] : layerStyles.default 
+            const featureLegend = (layerStyles.groups?.[groupId]) || layerStyles.default 
             const styleParams = featureLegend.styleParams
             styles[groupId] = {
-                label: featureLegend.label || '', 
+                label: featureLegend.label || '',
+                showCount: featureLegend.showCount,
                 types: {}
             }
             Array('point', 'linestring', 'polygon').forEach(typeName => {
@@ -331,14 +332,13 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
         tr.appendChild(icon)
 
-        console.log(styles)
         const totalCount = formatNumberWithCommas(
             Object.values(style.types)
             .map(type => type.count || 0)
             .reduce((a, b) => a + b, 0)
         )
         const label = document.createElement('td')
-        label.className = `d-flex gap-2`
+        label.className = `d-flex gap-2 ${!style.showCount ? 'd-none' : ''}`
         label.appendChild(createSpan(
             style.label ? `${style.label} ` : '', 
             {id:`${tr.id}-title`})
