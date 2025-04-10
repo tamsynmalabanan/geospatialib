@@ -1045,6 +1045,19 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         // remove, add to legend, zoom in
+        const zoominBtn = createButton({
+            parent: btnsContainer,
+            className: 'fs-12 bg-transparent border-0 p-0 text-danger',
+            iconClass: 'bi bi bi-zoom-in',
+            disabled: !filters.geom.active,
+            name: `geomFilter-${id}-zoomin`,
+            events: {
+                click: (e) => {
+                    zoomToLeafletLayer(L.geoJSON(filter.geometry), map)
+                }
+            }
+        })
+
         const removeBtn = createButton({
             parent: btnsContainer,
             className: 'fs-12 bg-transparent border-0 p-0 text-danger',
