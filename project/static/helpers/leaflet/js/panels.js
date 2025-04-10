@@ -1031,12 +1031,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                 console.log(turf.coordAll(value).length)
                                 // simplify geoms with > 100 vertices
                             } catch (error) {
-                                console.log('error', error)
-                                value = null
-                                e.target.value = ''
+                                e.target.value = value = null
                             }
                             
-                            console.log(value, filter.geometry)
                             if (!value && !filter.geometry) return
                             if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
                             
