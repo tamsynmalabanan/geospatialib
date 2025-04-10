@@ -591,7 +591,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
-        
+
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
         const groupFields = customCreateElement({
@@ -616,6 +616,28 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.label = value
                     updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const groupBtns = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:iconFields
+        })
+
+        const toggleCount = createFormCheck({
+            parent:groupBtns,
+            labelInnerText: 'Show count',
+            checked: style.showCount,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === style.showCount) return
+
+                    style.showCount = value
+                    // updateGeoJSONData(layer)
+                    console.log(e)
                 }
             }
         })
