@@ -1010,7 +1010,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
             currentValue: JSON.stringify(filter.geometry),
-            labelText: 'Geometry geojson',
+            labelText: 'Geometry geojson (input with more than 100 vertices will be simplified)',
             disabled: !filters.geom.active,
             events: {
                 blur: (e) => {
