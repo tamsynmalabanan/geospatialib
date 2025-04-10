@@ -1081,7 +1081,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     })
 
-    select.addEventListener('blur', () => {
+    select.addEventListener('change', () => {
         const newLayerId = parseInt(select.value)
         if (layer && newLayerId && newLayerId === layer._leaflet_id) return
 

@@ -332,7 +332,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
                 layerSelect.focus()
                 layerSelect.value = layer._leaflet_id
-                layerSelect.blur()
+                layerSelect.dispatchEvent(new Event('change', {
+                    bubbles: true,
+                    cancelable: true,
+                })) 
             }
         },
         toggleLegend: !isLegendGroup? null : {
