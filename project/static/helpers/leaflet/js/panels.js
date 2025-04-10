@@ -1567,8 +1567,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     id: geomFilterContainerId,
-                                    className: 'd-flex flex-column w-100 gap-2 mb-3 pe-3 overflow-y-auto',
-                                    style: {maxHeight:'200px'},
+                                    className: 'd-flex flex-column w-100 gap-2 mb-3',// pe-3 overflow-y-auto',
+                                    // style: {maxHeight:'200px'},
                                     parent,
                                 })  
 
