@@ -1056,8 +1056,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 click: (e) => {
                     parent.remove()
 
-                    const update = filter.active & filter.geometry
-                    delete filter
+                    const update = filter.active && filter.geometry
+                    delete filters.geom.values[id]
                     console.log(update, filters.geom.values)
                     if (update) updateGeoJSONData(layer)
                 }
