@@ -1542,14 +1542,14 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                 })
 
-                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 50 vertices will be simplified.'
+                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 50 vertices will be simplified to minimize lags.'
                             }
                         },
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     id: geomFilterContainerId,
-                                    className: 'd-flex w-100 gap-2 rounded mb-3',
+                                    className: 'd-flex flex-column w-100 gap-2 mb-3',
                                     // style: {minHeight:'50px'},
                                     parent,
                                 })  
