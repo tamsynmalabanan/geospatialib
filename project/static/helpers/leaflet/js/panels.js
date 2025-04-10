@@ -967,7 +967,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const enable = createFormCheck({
             parent,
             checked: filter.active,
-            name: `geomFilter-${id}-enable`,
+            name: `geomFilter-enable-${id}`,
             disabled: !filters.geom.active,
             events: {
                 click: (e) => {
@@ -983,7 +983,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const intersect = createFormFloating({
             parent,
             fieldTag: 'select',
-            fieldAttrs: {name: `geomFilter-${id}-intersect`},
+            fieldAttrs: {name: `geomFilter-intersect-${id}`},
             fieldClass: 'form-select-sm',
             labelText: 'Intersect',
             disabled: !filters.geom.active,
@@ -1006,7 +1006,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const geom = createFormFloating({
             parent,
             containerClass: 'flex-grow-1',
-            fieldAttrs: {name: `geomFilter-${id}-geom`},
+            fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
             currentValue: JSON.stringify(filter.geometry),
@@ -1055,13 +1055,12 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
-        // remove, add to legend, zoom in
         const zoominBtn = createButton({
             parent: btnsContainer,
             className: 'fs-12 bg-transparent border-0 p-0',
             iconClass: 'bi bi bi-zoom-in',
             disabled: !filters.geom.active,
-            name: `geomFilter-${id}-zoomin`,
+            name: `geomFilter-zoomin-${id}`,
             events: {
                 click: (e) => {
                     if (!filter.geometry) return
@@ -1075,7 +1074,7 @@ const handleLeafletStylePanel = (map, parent) => {
             className: 'fs-12 bg-transparent border-0 p-0',
             iconClass: 'bi bi-plus-lg',
             disabled: !filters.geom.active,
-            name: `geomFilter-${id}-legend`,
+            name: `geomFilter-legend-${id}`,
             events: {
                 click: async (e) => {
                     if (!filter.geometry) return
@@ -1103,7 +1102,7 @@ const handleLeafletStylePanel = (map, parent) => {
             className: 'fs-12 bg-transparent border-0 p-0',
             iconClass: 'bi bi-trash-fill',
             disabled: !filters.geom.active,
-            name: `geomFilter-${id}-remove`,
+            name: `geomFilter-remove-${id}`,
             events: {
                 click: (e) => {
                     parent.remove()
@@ -1448,6 +1447,25 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     filters.geom.active = value
                                     if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        // bbox, new, remove all, toggleall
+                        toggleGeom: {
+                            handler: createButton,
+                            name: 'toggleType',
+                            className: 'fs-12 bg-transparent border-0 p-0',
+                            iconClass: 'bi bi-toggles',
+                            title: 'Toggle all spatial constraints',
+                            disabled: !filters.geom.active,
+                            events: {
+                                click: () => {
+                                    const fields = Object.keys(form.elements).filter(i => i.startsWith('geomFilter-enable-')).map(i => form.elements[i])
+                                    const check = fields.some(f => !f.checked)
+                                    fields.forEach(field => field.checked = check)
+
+                                    Object.values(filters.geom.values).forEach(filter => filter.active = check)
+                                    updateGeoJSONData(layer)
                                 }
                             }
                         },
