@@ -550,8 +550,9 @@ const handleLeafletStylePanel = (map, parent) => {
     body.className = 'd-flex flex-column flex-grow-1 overflow-auto p-3 d-none border-top gap-3'
     form.appendChild(body)
 
-    const mapContainer = map.getContainer()
     let layer
+    const mapContainer = map.getContainer()
+    const getLayerLegend = () => mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
 
     const visibilityFieldsClick = (e) => {
         const field = e.target
@@ -588,6 +589,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getSymbologyForm = (id) => {
+        const legendLayer = getLegendLayer()
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
@@ -616,11 +618,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.label = value
 
-                    document.querySelector(`#${
-                        mapContainer.id
-                    }-panels-legend-layers-${
-                        layer._leaflet_id
-                    }-details-table-${id}-title`)
+                    legendLayer
+                    .querySelector(`#${legendLayer.id}-details-table-${id}-title`)
                     .innerText = value
                 }
             }
@@ -643,11 +642,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.showCount = value
                     
-                    document.querySelector(`#${
-                        mapContainer.id
-                    }-panels-legend-layers-${
-                        layer._leaflet_id
-                    }-details-table-${id}-count`)
+                    legendLayer
+                    .querySelector(`#${legendLayer.id}-details-table-${id}-count`)
                     .classList.toggle('d-none', !value)
                 }
             }
@@ -1096,7 +1092,7 @@ const handleLeafletStylePanel = (map, parent) => {
         body.setAttribute('data-layer-id', newLayerId)
         body.classList.remove('d-none')
 
-        const layerLegend = document.querySelector(`#${mapContainer.id}-panels-legend-layers-${layer._leaflet_id}`)
+        const layerLegend = getLayerLegend()
         const layerStyles = layer._styles
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
@@ -1119,7 +1115,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const field = e.target
                                     layer._title = field.value
                                     
-                                    const element = document.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
+                                    const element = layerLegend.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
                                     if (element) element.innerText = field.value
 
                                     select.options[select.selectedIndex].text = field.value
@@ -1152,7 +1148,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     layer._attribution = value
                                     
-                                    const element = document.querySelector(`#${layerLegend.id}-attribution`)
+                                    const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
                                 }
                             }
