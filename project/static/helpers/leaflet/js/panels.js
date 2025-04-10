@@ -1022,22 +1022,21 @@ const handleLeafletStylePanel = (map, parent) => {
                     currentValue: JSON.stringify(filter.geometry),
                     labelText: 'Geometry geojson',
                     disabled: !filters.geom.active,
-                    // fieldStyle: {
-                    //     minHeight: '100px', 
-                    // },
                     events: {
                         blur: (e) => {
                             let value
                             try {
                                 value = JSON.parse(e.target.value)
                                 if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
-                                console.log(turf.coordAll(value))
+                                console.log(turf.coordAll(value).length)
+                                // simplify geoms with > 100 vertices
                             } catch (error) {
                                 console.log('error', error)
                                 value = null
                                 e.target.value = ''
                             }
                             
+                            console.log(Set(value, filter.value))
                             if (!value && !filter.geometry) return
                             if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
                             
