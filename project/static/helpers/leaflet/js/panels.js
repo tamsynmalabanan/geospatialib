@@ -962,7 +962,6 @@ const handleLeafletStylePanel = (map, parent) => {
         const filter = filters.geom.values[id]
         const parent = customCreateElement({
             className:'d-flex gap-2 flex-grow-1 align-items-center',
-            style: {minHeight:'50px'}
         })
 
         const enable = createFormCheck({
@@ -1401,15 +1400,15 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         geomFilter: {
                             handler: ({parent}={}) => {
-                                const container = document.createElement('div')
-                                container.className = 'd-flex w-100 gap-2 border rounded p-2'
-                                parent.appendChild(container)
+                                const container = customCreateElement({
+                                    className: 'd-flex w-100 gap-2 border rounded p-2',
+                                    style: {minHeight:'50px'},
+                                    parent,
+                                })  
 
                                 for (const id in filters.geom.values) {
                                     container.appendChild(getGeomFilterForm(id))
                                 }
-
-
                             }
                         },
                     },
