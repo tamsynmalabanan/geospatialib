@@ -1010,7 +1010,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
             currentValue: JSON.stringify(filter.geometry),
-            labelText: 'Geometry geojson (input with more than 100 vertices will be simplified)',
+            labelText: 'Geometry geojson',
             disabled: !filters.geom.active,
             events: {
                 blur: (e) => {
@@ -1019,7 +1019,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = JSON.parse(e.target.value)
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                         
-                        let simplify = turf.coordAll(value).length > 100
+                        let simplify = turf.coordAll(value).length > 50
                         if (simplify) {
                             let simplifiedGeom
                             let tolerance = 0
@@ -1028,7 +1028,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 tolerance += 0.001
                                 try {
                                     simplifiedGeom = turf.simplify(value, {tolerance})
-                                    simplify = turf.coordAll(simplifiedGeom).length > 100
+                                    simplify = turf.coordAll(simplifiedGeom).length > 50
                                     console.log(simplifiedGeom)
                                 } catch {
                                     throw new Error('Failed to simplify geometry')
@@ -1450,6 +1450,18 @@ const handleLeafletStylePanel = (map, parent) => {
                                     filters.geom.active = value
                                     if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
                                 }
+                            }
+                        },
+                        helperGeom: {
+                            handler: ({parent}={}) => {
+                                const container = customCreateElement({
+                                    className: 'd-flex w-100',
+                                    parent,
+                                })
+
+                                container.appendChild(createSpan(
+                                    innerText='Filtering using complex geometries can input with more than 100 vertices will be simplified'
+                                ))
                             }
                         },
                         geomFilter: {
