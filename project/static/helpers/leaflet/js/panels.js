@@ -776,6 +776,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const fillColor = createFormFloating({
                     parent:fillFields,
+                    containerClass: 'w-25',
                     fieldAttrs: {
                         name:`${id}-fillColor`,
                         type: 'color',
@@ -825,6 +826,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const strokeColor = createFormFloating({
                     parent:strokeFields,
+                    containerClass: 'w-25',
                     fieldAttrs: {
                         name:`${id}-strokeColor`,
                         type: 'color',
@@ -994,7 +996,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const intersect = createFormFloating({
                     parent,
-                    containerClass: 'w-25',
+                    // containerClass: 'w-25',
                     fieldTag: 'select',
                     fieldAttrs: {name: `geomFilter-${id}-intersect`},
                     fieldClass: 'form-select-sm',
@@ -1147,6 +1149,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fields: {
                             title: {
                                 handler: createFormFloating,
+                                containerClass: 'w-100',
                                 fieldAttrs: {
                                     type: 'text',
                                     value: layer._title,
@@ -1167,6 +1170,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             attribution: {
                                 handler: createFormFloating,
+                                containerClass: 'w-100',
                                 fieldTag: 'textarea',
                                 currentValue: layer._attribution,
                                 labelText: 'Attribution (HTML-frieldly)',
@@ -1191,6 +1195,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         fields: {   
                             method: {
                                 handler: createFormFloating,
+                                containerClass: 'w-100',
                                 fieldAttrs: {
                                     name:'method',
                                 },
