@@ -1450,6 +1450,31 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         // bbox, new, remove all, toggleall
+                        toggleGeom: {
+                            handler: createButton,
+                            name: 'geomFilter-toggle',
+                            className: 'fs-12 bg-transparent border-0 p-0',
+                            iconClass: 'bi bi-toggles',
+                            title: 'Toggle all spatial constraints',
+                            disabled: !filters.geom.active,
+                            events: {
+                                click: () => {
+                                    const fields = Object.values(form.elements).filter(f => {
+                                        return (f.getAttribute('name') || '').startsWith('geomFilter-')
+                                        && f.getAttribute('type') === 'checkbox'
+                                    })
+                                    const check = fields.every(f => !f.checked)
+
+                                    fields.forEach(field => {
+                                        field.checked = check
+                                    })
+
+                                    Object.values(filters.geom.values).forEach(f => f.active = check)
+
+                                    updateGeoJSONData(layer)
+                                }
+                            }
+                        },
                         helperGeom: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
