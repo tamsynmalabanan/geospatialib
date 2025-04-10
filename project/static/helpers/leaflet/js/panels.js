@@ -1047,7 +1047,8 @@ const handleLeafletStylePanel = (map, parent) => {
         return parent
     }
 
-    select.addEventListener('focus', () => {
+    select.addEventListener('focus', (e) => {
+        console.log(e)
         select.innerHTML = ''
 
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
