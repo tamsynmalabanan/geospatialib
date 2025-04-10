@@ -1226,9 +1226,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     form.elements.maxScale.disabled = !value
 
                                     visibility.active = value
-                                    
-                                    const scale = getLeafletMeterScale(map)
-                                    console.log(scale, visibility.min, visibility.max)
                                     layerIsVisible(layer)
                                 }
                             }
@@ -1358,7 +1355,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         typeFilter: {
                             handler: createCheckboxOptions,
                             name: 'typeFilter',
-                            containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2',
+                            containerClass: 'p-2 bg-adjusted rounded flex-wrap flex-grow-1 w-100 gap-2',
                             options: (() => {
                                 const options = {}
                                 for (const type in filters.type.values) {

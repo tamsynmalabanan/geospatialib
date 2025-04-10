@@ -12,6 +12,9 @@
 }
 
 [data-bs-theme="light"] {
+    .bg-adjusted {
+        background-color: var(--adjusted-bg-light) !important;
+    }
     
     .offcanvas, .offcanvas-lg {
         background-color: var(--adjusted-bg-light) !important;
@@ -32,6 +35,9 @@
 }
 
 [data-bs-theme="dark"] {
+    .bg-adjusted {
+        background-color: var(--adjusted-bg-dark) !important;
+    }
     
     .highlight {
         border: 2px solid var(--adjusted-bg-dark);
