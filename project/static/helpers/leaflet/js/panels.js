@@ -617,7 +617,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.label = value
                     // updateGeoJSONData(layer)
-                    console.log(layerLegend.querySelector(`${layerLegend.id}-details-table`))
+                    console.log(layerLegend.querySelector(`#${layerLegend.id}-details-table`))
                 }
             }
         })
