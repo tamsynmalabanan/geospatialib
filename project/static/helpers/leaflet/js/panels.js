@@ -618,7 +618,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.label = value
 
-                    legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)?.innerText = value
+                    const legendLabel = legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)
+                    if (legendLabel) legendLabel.innerText = value
                 }
             }
         })
