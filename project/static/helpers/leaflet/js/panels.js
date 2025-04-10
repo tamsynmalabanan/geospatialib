@@ -1019,7 +1019,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = JSON.parse(e.target.value)
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                         
-                        let simplify = turf.coordAll(value).length > 30
+                        let simplify = turf.coordAll(value).length > 50
                         if (simplify) {
                             let simplifiedGeom
                             let tolerance = 0
@@ -1028,7 +1028,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 tolerance += 0.001
                                 try {
                                     simplifiedGeom = turf.simplify(value, {tolerance})
-                                    simplify = turf.coordAll(simplifiedGeom).length > 30
+                                    simplify = turf.coordAll(simplifiedGeom).length > 50
                                 } catch {
                                     throw new Error('Failed to simplify geometry')
                                 }
@@ -1459,7 +1459,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                 })
 
-                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 30 vertices will be simplified.'
+                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 50 vertices will be simplified.'
                             }
                         },
                         geomFilter: {
