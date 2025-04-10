@@ -1103,10 +1103,8 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: (e) => {
                     parent.remove()
-
                     const update = filter.active && filter.geometry
                     delete filters.geom.values[id]
-                    console.log(update, filters.geom.values)
                     if (update) updateGeoJSONData(layer)
                 }
             }
@@ -1159,6 +1157,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const layerStyles = layer._styles
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
+        const geomFilterContainerId = generateRandomString()
 
         const styleFields = {
             'Legend': {
@@ -1405,7 +1404,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         typeFilter: {
                             handler: createCheckboxOptions,
                             name: 'typeFilter',
-                            containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2',
+                            containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2 mb-3',
                             options: (() => {
                                 const options = {}
                                 for (const type in filters.type.values) {
@@ -1449,7 +1448,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        // bbox, new, remove all, toggleall
+                        // bbox, new, remove all
                         toggleGeom: {
                             handler: createButton,
                             name: 'geomFilter-toggle',
@@ -1475,6 +1474,22 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+                        removeGeom: {
+                            handler: createButton,
+                            name: 'geomFilter-remove',
+                            className: 'fs-12 bg-transparent border-0 p-0',
+                            iconClass: 'bi bi-trash-fill',
+                            title: 'Remove all spatial constraints',
+                            disabled: !filters.geom.active,
+                            events: {
+                                click: () => {
+                                    body.querySelector(`#${geomFilterContainerId}`).innerHTML = ''
+                                    const update = Object.values(filters.geom.values).some(f => f.active && f.geometry)
+                                    filters.geom.values = {}
+                                    if (update) updateGeoJSONData(layer)                
+                                }
+                            }
+                        },
                         helperGeom: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
@@ -1489,7 +1504,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
-                                    className: 'd-flex w-100 gap-2 rounded',
+                                    id: geomFilterContainerId,
+                                    className: 'd-flex w-100 gap-2 rounded mb-3',
                                     // style: {minHeight:'50px'},
                                     parent,
                                 })  
