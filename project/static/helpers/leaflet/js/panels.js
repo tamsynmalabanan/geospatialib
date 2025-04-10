@@ -622,7 +622,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const groupBtns = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:iconFields
+            parent:groupFields
         })
 
         const toggleCount = createFormCheck({
