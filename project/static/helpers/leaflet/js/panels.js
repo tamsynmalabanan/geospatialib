@@ -1204,7 +1204,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         }
                     },
-                    className: 'flex-column gap-2'
+                    className: 'flex-column gap-3'
                 },
             },
             'Rendering': {
