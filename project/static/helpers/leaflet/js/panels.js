@@ -1448,7 +1448,25 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        // bbox, new
+                        newGeom: {
+                            handler: createButton,
+                            name: 'geomFilter-new',
+                            className: 'fs-12 bg-transparent border-0 p-0',
+                            iconClass: 'bi bi-plus-lg',
+                            title: 'Add a new spatial constraint',
+                            disabled: !filters.geom.active,
+                            events: {
+                                click: () => {
+                                    const id = generateRandomString()
+                                    filters.geom.values[id] = {
+                                        active: true,
+                                        intersect: true,
+                                        geometry: null
+                                    }
+                                    body.querySelector(`#${geomFilterContainerId}`).appendChild(getGeomFilterForm(id))
+                                }
+                            }
+                        },
                         bboxGeom: {
                             handler: createButton,
                             name: 'geomFilter-bbox',
@@ -1459,7 +1477,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 click: () => {
                                     const id = generateRandomString()
-                                    const filter = filters.geom.values[id] = {
+                                    filters.geom.values[id] = {
                                         active: true,
                                         intersect: true,
                                         geometry: L.rectangle(map.getBounds()).toGeoJSON().geometry
