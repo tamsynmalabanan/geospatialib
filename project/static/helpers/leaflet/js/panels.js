@@ -1388,9 +1388,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             disabled: !filters.type.active,
                             events: {
                                 click: () => {
-                                    const fields = Object.keys(form.elements)
-                                    .filter(i => i.startsWith('typeFilter-') && i.getAttribute('type') === 'checkbox')
-                                    .map(i => form.elements[i])
+                                    const fields = Object.values(form.elements).filter(f => {
+                                        return (f.getAttribute('name') || '').startsWith('typeFilter-')
+                                        && f.getAttribute('type') === 'checkbox'
+                                    })
                                     const check = fields.some(f => !f.checked)
 
                                     fields.forEach(field => {
