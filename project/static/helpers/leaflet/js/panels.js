@@ -591,6 +591,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
+        
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
         const groupFields = customCreateElement({
