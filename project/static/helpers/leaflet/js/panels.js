@@ -616,8 +616,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === style.label) return
 
                     style.label = value
-                    // updateGeoJSONData(layer)
-                    console.log(layerLegend.querySelector(`#${layerLegend.id}-details-table`))
+                    layerLegend.querySelector(`#${layerLegend.id}-details-table-${id}-title`).innerText = value
                 }
             }
         })
@@ -1047,7 +1046,7 @@ const handleLeafletStylePanel = (map, parent) => {
         return parent
     }
 
-    select.addEventListener('click', () => {
+    select.addEventListener('focus', () => {
         select.innerHTML = ''
 
         const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
