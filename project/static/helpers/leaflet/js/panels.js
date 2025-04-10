@@ -618,7 +618,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === style.label) return
 
                     style.label = value
-                    groupLegend.querySelector(`#${groupLegend.id}-title`).innerText = value
+                    document.querySelector(`#${
+                        mapContainer.id
+                    }-panels-legend-layers-${
+                        layer._leaflet_id
+                    }-details-table-${id}-title`)
+                    .innerText = value
                 }
             }
         })
