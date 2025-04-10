@@ -893,7 +893,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             currentValue: styleParams.lineCap,
             events: {
-                blur: (e) => {
+                change: (e) => {
                     const value = e.target.value
                     if (value === styleParams.lineCap) return
 
@@ -919,7 +919,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             currentValue: styleParams.lineJoin,
             events: {
-                blur: (e) => {
+                change: (e) => {
                     const value = e.target.value
                     if (value === styleParams.lineJoin) return
 
@@ -943,7 +943,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             currentValue: styleParams.lineBreak,
             events: {
-                blur: (e) => {
+                change: (e) => {
                     const value = e.target.value
                     if (value === styleParams.lineBreak) return
 
