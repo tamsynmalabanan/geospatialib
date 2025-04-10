@@ -1167,7 +1167,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                     },
-                    className: 'flex-column'
+                    className: 'flex-column gap-3'
                 },
                 'Symbology': {
                     fields: {   
@@ -1204,7 +1204,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         }
                     },
-                    className: 'flex-column'
+                    className: 'flex-column gap-2'
                 },
             },
             'Rendering': {
@@ -1302,7 +1302,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                     },
-                    className: 'flex-wrap'
+                    className: 'flex-wrap gap-2'
                 },
                 'Filter': {
                     fields: {
@@ -1400,7 +1400,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = document.createElement('div')
-                                container.className = 'd-flex w-100 gap-2 border rounded p-3'
+                                container.className = 'd-flex w-100 gap-2 border rounded p-2'
                                 parent.appendChild(container)
 
                                 for (const id in filters.geom.values) {
@@ -1411,7 +1411,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                     },
-                    className: 'flex-wrap'
+                    className: 'flex-wrap gap-2'
                 }
             }
         }        
@@ -1463,7 +1463,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 section.appendChild(sectionHeader)
 
                 const sectionFields = document.createElement('div')
-                sectionFields.className = `d-flex gap-3 align-items-center w-100 ${data.className}`
+                sectionFields.className = `d-flex align-items-center w-100 ${data.className}`
                 section.appendChild(sectionFields)
     
                 const fields = data.fields
