@@ -1054,7 +1054,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const zoominBtn = createButton({
             parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0',
+            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
             iconClass: 'bi bi bi-zoom-in',
             disabled: !filters.geom.active,
             name: `geomFilter-zoomin-${id}`,
@@ -1068,7 +1068,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const legendBtn = createButton({
             parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0',
+            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
             iconClass: 'bi bi-plus-lg',
             disabled: !filters.geom.active,
             name: `geomFilter-legend-${id}`,
@@ -1096,7 +1096,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const removeBtn = createButton({
             parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0',
+            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
             iconClass: 'bi bi-trash-fill',
             disabled: !filters.geom.active,
             name: `geomFilter-remove-${id}`,
@@ -1378,7 +1378,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         toggleType: {
                             handler: createButton,
                             name: 'typeFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
                             iconClass: 'bi bi-toggles',
                             title: 'Toggle all types',
                             disabled: !filters.type.active,
@@ -1451,7 +1451,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         newGeom: {
                             handler: createButton,
                             name: 'geomFilter-new',
-                            className: 'fs-12 bg-transparent border-0 p-0',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
                             iconClass: 'bi bi-plus-lg',
                             title: 'Add a new spatial constraint',
                             disabled: !filters.geom.active,
@@ -1461,7 +1461,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     filters.geom.values[id] = {
                                         active: true,
                                         intersect: true,
-                                        geometry: null
                                     }
                                     body.querySelector(`#${geomFilterContainerId}`).appendChild(getGeomFilterForm(id))
                                 }
@@ -1470,7 +1469,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         bboxGeom: {
                             handler: createButton,
                             name: 'geomFilter-bbox',
-                            className: 'fs-12 bg-transparent border-0 p-0',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
                             iconClass: 'bi bi-bounding-box-circles',
                             title: 'Add map extent as spatial constraint',
                             disabled: !filters.geom.active,
@@ -1490,7 +1489,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         toggleGeom: {
                             handler: createButton,
                             name: 'geomFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
                             iconClass: 'bi bi-toggles',
                             title: 'Toggle all spatial constraints',
                             disabled: !filters.geom.active,
@@ -1515,7 +1514,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         toggleGeom: {
                             handler: createButton,
                             name: 'geomFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
                             iconClass: 'bi bi-toggles',
                             title: 'Toggle all spatial constraints',
                             disabled: !filters.geom.active,
@@ -1540,7 +1539,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         removeGeom: {
                             handler: createButton,
                             name: 'geomFilter-remove',
-                            className: 'fs-12 bg-transparent border-0 p-0',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
                             iconClass: 'bi bi-trash-fill',
                             title: 'Remove all spatial constraints',
                             disabled: !filters.geom.active,
