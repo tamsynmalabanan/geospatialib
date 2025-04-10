@@ -1067,18 +1067,22 @@ const handleLeafletStylePanel = (map, parent) => {
             name: `geomFilter-${id}-legend`,
             events: {
                 click: async (e) => {
-                    if (!filter.geometry) return 
+                    if (!filter.geometry) return
+                    
+                    const geojson = {
+                        type: 'Feature',
+                        geometry: filter.geometry,
+                        properties: {}
+                    }
+
                     const newLayer = await getLeafletGeoJSONLayer({
-                        geojson: {
-                            type: 'Feature',
-                            geometry: filter.geometry,
-                            properties: {}
-                        },
+                        geojson,
                         title: 'spatial constraint',
                         pane: createCustomPane(map),
                         group: map._ch.getLayerGroups().client,
                     })
-                    console.log(newLayer)
+
+                    console.log(geojson, newLayer)
                     if (newLayer) newLayer._group.addLayer(newLayer)
                 }
             }
