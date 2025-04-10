@@ -589,7 +589,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getSymbologyForm = (id) => {
-        const legendLayer = getLegendLayer()
+        const legendLayer = getLayerLegend()
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
