@@ -1047,20 +1047,41 @@ const handleLeafletStylePanel = (map, parent) => {
         // remove, add to legend, zoom in
         const zoominBtn = createButton({
             parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0 text-danger',
+            className: 'fs-12 bg-transparent border-0 p-0',
             iconClass: 'bi bi bi-zoom-in',
             disabled: !filters.geom.active,
             name: `geomFilter-${id}-zoomin`,
             events: {
                 click: (e) => {
+                    if (!filter.geometry) return
                     zoomToLeafletLayer(L.geoJSON(filter.geometry), map)
+                }
+            }
+        })
+
+        const legendBtn = createButton({
+            parent: btnsContainer,
+            className: 'fs-12 bg-transparent border-0 p-0',
+            iconClass: 'bi bi-plus-lg',
+            disabled: !filters.geom.active,
+            name: `geomFilter-${id}-legend`,
+            events: {
+                click: async (e) => {
+                    if (!filter.geometry) return 
+                    const newLayer = await getLeafletGeoJSONLayer({
+                        geojson: filter.geometry,
+                        title: 'spatial constraint',
+                        pane: createCustomPane(map),
+                        group: map._ch.getLayerGroups().client,
+                    })
+                    if (newLayer) newLayer._group.addLayer(newLayer)
                 }
             }
         })
 
         const removeBtn = createButton({
             parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0 text-danger',
+            className: 'fs-12 bg-transparent border-0 p-0',
             iconClass: 'bi bi-trash-fill',
             disabled: !filters.geom.active,
             name: `geomFilter-${id}-remove`,
@@ -1415,7 +1436,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     className: 'd-flex w-100 gap-2 rounded',
-                                    style: {minHeight:'50px'},
+                                    // style: {minHeight:'50px'},
                                     parent,
                                 })  
 
