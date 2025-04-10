@@ -1417,12 +1417,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                         disabled: !filters.type.active,
                                         events: {
                                             click: () => {
-                                                Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
-                                                    const field = form.elements[i]
+                                                Object.values(form.elements).filter(f => {
+                                                    return (f.getAttribute('name') || '').startsWith('typeFilter-')
+                                                    && f.getAttribute('type') === 'checkbox'
+                                                }).forEach(field => {
                                                     const option = form.querySelector(`label[for="${field.id}"]`).innerText
                                                     filters.type.values[option] = field.checked
                                                 })
-
                                                 updateGeoJSONData(layer)
                                             }
                                         }
