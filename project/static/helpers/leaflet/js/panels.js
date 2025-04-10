@@ -1068,12 +1068,12 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: async (e) => {
                     if (!filter.geometry) return
-                    
-                    const geojson = {
+
+                    const geojson = turf.featureCollection([{
                         type: 'Feature',
                         geometry: filter.geometry,
                         properties: {}
-                    }
+                    }])
 
                     const newLayer = await getLeafletGeoJSONLayer({
                         geojson,
@@ -1082,7 +1082,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         group: map._ch.getLayerGroups().client,
                     })
 
-                    console.log(geojson, newLayer)
                     if (newLayer) newLayer._group.addLayer(newLayer)
                 }
             }
