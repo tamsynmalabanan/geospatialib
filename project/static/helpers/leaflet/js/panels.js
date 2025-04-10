@@ -689,7 +689,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     containerClass: 'w-100 flex-grow-1',
                     fieldAttrs: {
                         name:`${id}-iconClass`,
-                        type: 'text',
+                        type: 'search',
                         value: styleParams.iconClass,
                         list: bootstrapIConsDatalist.id
                     },
