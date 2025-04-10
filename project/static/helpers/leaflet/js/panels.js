@@ -1455,12 +1455,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         helperGeom: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
+                                    tag: 'p',
                                     className: 'd-flex w-100',
                                     parent,
                                 })
 
                                 container.appendChild(createSpan(
-                                    innerText='Filtering using complex geometries can input with more than 100 vertices will be simplified'
+                                    innerText='Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified'
                                 ))
                             }
                         },
