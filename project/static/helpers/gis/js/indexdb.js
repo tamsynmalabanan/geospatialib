@@ -31,7 +31,10 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
         worker.terminate()
     }
 
-    worker.onmessage = (e) => save(e.data)
+    worker.onmessage = (e) => {
+        console.log(e.data)
+        save(e.data)
+    }
     
     worker.onerror = (error) => {
         worker.terminate()
