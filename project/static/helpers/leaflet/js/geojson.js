@@ -86,12 +86,12 @@ const getLeafletGeoJSONLayer = async ({
             }},
             geom: {active: false, values: {}},
             properties: {active: true, values: {
-                id: {
-                    active: true,
-                    include: true,
-                    property: 'access',
-                    values: ['private'],
-                },}
+                // id: {
+                //     active: true,
+                //     include: true,
+                //     property: 'access',
+                //     values: ['private'],
+                // },}
             },
         }
     }
