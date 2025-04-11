@@ -43,8 +43,8 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     
     const cachedData = await getFromGeoJSONDB(id)
     if (!cachedData) return save({
-        geojson:cachedData.geojson, 
-        queryExtent:cachedData.queryExtent
+        geojson:newGeoJSON, 
+        queryExtent:newQueryExtent
     })
     
     worker.postMessage({
