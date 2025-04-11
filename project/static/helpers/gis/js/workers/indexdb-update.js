@@ -26,6 +26,7 @@ self.onmessage = (e) => {
     
     if (currentGeoJSON) {
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
+            console.log(feature)
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
         
