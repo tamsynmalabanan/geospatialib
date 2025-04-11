@@ -32,7 +32,6 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     }
 
     worker.onmessage = (e) => {
-        console.log(e)
         save(e.data)
     }
     

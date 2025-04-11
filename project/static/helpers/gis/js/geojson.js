@@ -77,7 +77,7 @@ const createAttributionTable = (geojson) => {
 
     const info = {}
     Object.keys(geojson).forEach(key => {
-        if (!Array('features', 'type', '_queryExtent').includes(key)) {
+        if (!Array('features', 'type').includes(key)) {
             info[key] = geojson[key]
         }
     })
