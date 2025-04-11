@@ -405,7 +405,7 @@ const fetchGeoJSON = async ({
             const queryExtent = latlng ? turf.buffer(
                 queryGeom, 
                 getLeafletMeterScale(map)/2/1000
-            ) : queryGeom
+            ).geometry : queryGeom
 
             geojson = await (async () => {
                 if (controller?.signal.aborted) return
