@@ -657,4 +657,6 @@ const createTagifyField = ({
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         }
     })
+
+    Object.keys(events).forEach(i => tagifyObj.on(i, events[i]))
 } 
