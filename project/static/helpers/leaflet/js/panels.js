@@ -1180,8 +1180,16 @@ const handleLeafletStylePanel = (map, parent) => {
                     const options = {}
                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        console.log(currentProperties)
+                        Object.keys(currentProperties).forEach(i => options[i] = i)
                     })
+
+                    for (const i in options) {
+                        const option = document.createElement('option')
+                        option.value = i
+                        option.text = options[i]
+                        if (i === field.property) option.setAttribute('selected', true)
+                        field.appendChild(option)
+                    }
                 },
                 change: (e) => {
                     const value = e.target.value
