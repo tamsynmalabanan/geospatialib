@@ -1177,23 +1177,22 @@ const handleLeafletStylePanel = (map, parent) => {
                     field.innerHTML = ''
                     
                     // update to fetch properties from wfs (wms?)
-                    const options = {}
+                    const options = []
                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        Object.keys(currentProperties).forEach(i => options[i] = i)
+                        Object.keys(currentProperties).forEach(i => options.push(i))
                     })
 
-                    for (const i in options) {
+                    for (const i of options) {
                         const option = document.createElement('option')
                         option.value = i
-                        option.text = options[i]
+                        option.text = i
                         if (i === field.property) option.setAttribute('selected', true)
                         field.appendChild(option)
                     }
                 },
                 blur: (e) => {
                     const value = e.target.value
-                    console.log(value, filter)
                     if (value === filter.property) return
 
                     filter.property = value
