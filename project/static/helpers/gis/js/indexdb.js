@@ -70,7 +70,7 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
 
                 const {geojson, queryExtent} = result
                 if (save) saveToGeoJSONDB(id, geojson, queryExtent)
-                resolve({geojson, queryExtent})
+                resolve({geojson:turf.clone(geojson), queryExtent})
             }
     
             geojsonRequest.onerror = (e) => {
