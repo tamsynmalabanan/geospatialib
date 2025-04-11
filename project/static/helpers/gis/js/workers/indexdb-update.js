@@ -15,40 +15,26 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 }
 
 self.onmessage = (e) => {
-    const {
-        newGeoJSON, 
-        newQueryExtent,
-        currentGeoJSON,
-        currentQueryExtent,
-    } = e.data
-
-    console.log(currentGeoJSON, currentQueryExtent, newGeoJSON, newQueryExtent)
-
-    // console.log(newQueryExtent, turf.area(newQueryExtent))
+    const {newGeoJSON, currentGeoJSON} = e.data
     
-    console.lof('filtering...')
-
-    const filteredFeatures = currentGeoJSON.features.filter(feature => {
-        console.log(feature)
-        return !hasSimilarFeature(newGeoJSON.features, feature)
-    })
-    
-    console.lof('done filtering', filteredFeatures)
-    
-    if (filteredFeatures.length) {
-        newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
-        const unionQueryExtent = turf.union(turf.featureCollection([
-            newQueryExtent,
-            currentQueryExtent,
-        ]))
-        console.lof(unionQueryExtent)
-        newQueryExtent.type = unionQueryExtent.type
-        newQueryExtent.coordinates = unionQueryExtent.coordinates
-        console.log(newQueryExtent, turf.area(newQueryExtent))
+    if (currentGeoJSON) {
+        const filteredFeatures = currentGeoJSON.features.filter(feature => {
+            return !hasSimilarFeature(newGeoJSON.features, feature)
+        })
+        
+        const newQueryIsPoint = turf.getType(newGeoJSON._queryExtent) === 'Point'
+        const newQueryExtent = newQueryIsPoint ? turf.buffer(
+            newGeoJSON._queryExtent, 1/100000
+        ) : newGeoJSON._queryExtent
+        
+        if (filteredFeatures.length) {
+            newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
+            newGeoJSON._queryExtent = turf.union(turf.featureCollection([
+                newQueryExtent,
+                currentGeoJSON._queryExtent,
+            ]))
+        }
     }
 
-    self.postMessage({
-        geojson: newGeoJSON,
-        queryExtent: newQueryExtent,
-    })
+    self.postMessage({geojson:newGeoJSON})
 }
