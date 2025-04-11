@@ -171,14 +171,7 @@ const getLeafletGeoJSONLayer = async ({
         return layerStyle
     }
 
-    // Array('style', 'pointToLayer').forEach(i => {
-    //     geojsonLayer.options[i] = ()
-    // })
-
-    geojsonLayer.options.style = (feature, latlng) => {
-        console.log(latlng)
-        return getStyle(feature)
-    }
+    geojsonLayer.options.style = (feature) => getStyle(feature)
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
