@@ -23,20 +23,14 @@ const getLeafletGeoJSONLayer = async ({
 
     if (!fetcher && geojson) {
         const dbKey = generateRandomString()
-        const bbox = turf.bboxPolygon(turf.bbox(geojson))
-        console.log(turf.area(bbox))
-        // saveToGeoJSONDB(
-        //     dbKey, 
-        //     turf.clone(geojson), 
-        //     (turf.area(bbox) !== )
-        // )
-        // cache geojson in indexdb with queryExtent = geojson bbox -- 
-        // use turf.area to determinse if its needs buffer to be polygon, shorter expiration
-        // remove geojson from fetchGeoJSONInMap fn
+        const geom = turf.bboxPolygon(turf.bbox(geojson)).geometry
+        saveToGeoJSONDB(dbKey, turf.clone(geojson), (
+            turf.area(geom) ? geom : turf.buffer(geom, 1/100000).geometry
+        ))
 
         fetcher = fetchStaticGeoJSON = async ({map, controller}={}) => {
             if (!map) return geojson
-            return await fetchGeoJSONInMap(geojson, dbKey, map, {controller})
+            return await fetchGeoJSONInMap(geojson, dbKey, {map, controller})
         }
     }
     geojsonLayer._fetcher = fetcher
