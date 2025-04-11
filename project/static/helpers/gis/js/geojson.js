@@ -482,19 +482,21 @@ const fetchGeoJSONs = async (fetchers, {
     return geojsons
 }
 
-const mapForFetchGeoJSONInMap = new Map()
-const fetchGeoJSONInMap = async (dbKey, {
+const mapForFilterClientGeoJSON = new Map()
+const filterClientGeoJSON = async (dbKey, {
     map,
     controller,
 } = {}) => {
     const mapKey = `${dbKey};${map?.getContainer().id}`
-    if (mapForFetchGeoJSONInMap.has(mapKey)) {
-        return await mapForFetchGeoJSONInMap.get(mapKey)
+    if (mapForFilterClientGeoJSON.has(mapKey)) {
+        return await mapForFilterClientGeoJSON.get(mapKey)
     }
 
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
+            if (signal?.aborted) throw new Error()
+                
             const cachedData = await getFromGeoJSONDB(dbKey)
             if (!cachedData) return
 
@@ -517,11 +519,11 @@ const fetchGeoJSONInMap = async (dbKey, {
         } catch (error) {
             throw error
         } finally {
-            setTimeout(() => mapForFetchGeoJSONInMap.delete(mapKey), 1000)
+            setTimeout(() => mapForFilterClientGeoJSON.delete(mapKey), 1000)
         }
     })()
 
-    mapForFetchGeoJSONInMap.set(mapKey, geojsonClone)
+    mapForFilterClientGeoJSON.set(mapKey, geojsonClone)
     return geojsonClone
 }
 
