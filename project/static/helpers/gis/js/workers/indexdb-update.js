@@ -2,7 +2,6 @@ self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
 
 const featuresAreSimilar = (feature1, feature2) => {
     const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
-    console.log('booleanEqual', feature1.geometry, feature2.geometry)
     const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
     return propertiesEqual && geometriesEqual
 }
@@ -28,8 +27,8 @@ self.onmessage = (e) => {
             console.log('union', newGeoJSON._queryExtent,
                 currentGeoJSON._queryExtent)
             newGeoJSON._queryExtent = turf.union(turf.featureCollection([
-                newGeoJSON._queryExtent,
-                currentGeoJSON._queryExtent,
+                {type:'Feature',geometry:newGeoJSON._queryExtent},
+                {type:'Feature',geometry:currentGeoJSON._queryExtent},
             ]))
         }
     }
