@@ -26,12 +26,12 @@ self.onmessage = (e) => {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
             console.log(
                 'union', 
-                turf.feature(newGeoJSON._queryExtent),
-                turf.feature(currentGeoJSON._queryExtent),
+                turf.feature(turf.clone(newGeoJSON._queryExtent)),
+                turf.feature(turf.clone(currentGeoJSON._queryExtent)),
             )
             newGeoJSON._queryExtent = turf.union(turf.featureCollection([
-                turf.feature(newGeoJSON._queryExtent),
-                turf.feature(currentGeoJSON._queryExtent),
+                turf.feature(turf.clone(newGeoJSON._queryExtent)),
+                turf.feature(turf.clone(currentGeoJSON._queryExtent)),
             ]))
         }
     }
