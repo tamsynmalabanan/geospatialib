@@ -490,8 +490,8 @@ const fetchGeoJSONInMap = async (geojson, cacheId, {
     controller,
 } = {}) => {
     const mapKey = `${cacheId};${map?.getContainer().id}`
+    console.log(mapKey)
     if (mapForFetchGeoJSONInMap.has(mapKey)) {
-        console.log('here')
         return await mapForFetchGeoJSONInMap.get(mapKey)
     }
 
