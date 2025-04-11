@@ -22,7 +22,7 @@ self.onmessage = (e) => {
         currentQueryExtent,
     } = e.data
 
-    console.log(currentGeoJSON)
+    console.log(currentGeoJSON, currentQueryExtent, newGeoJSON, newQueryExtent)
 
     console.log(newQueryExtent, turf.area(newQueryExtent))
     
