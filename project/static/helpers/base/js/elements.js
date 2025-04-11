@@ -638,6 +638,7 @@ const createTagifyField = ({
     currentValue,
     fieldClass = '',
     whitelist = [],
+    events = {},
 } = {}) => {
 
     const input = document.createElement('input')
