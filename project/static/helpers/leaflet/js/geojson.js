@@ -29,7 +29,6 @@ const getLeafletGeoJSONLayer = async ({
         ))
 
         fetcher = fetchStaticGeoJSON = async ({map, controller}={}) => {
-            if (!map) return geojson
             return await fetchGeoJSONInMap(geojson, dbKey, {map, controller})
         }
     }
