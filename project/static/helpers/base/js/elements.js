@@ -630,3 +630,30 @@ const createInputGroup = ({
 
     return inputGroup
 }
+
+const createTagifyField = ({
+    parent,
+    name,
+    placeholder,
+    currentValue,
+    whitelist = [],
+} = {}) => {
+
+    const input = document.createElement('input')
+    input.className = `tagify--custom-dropdown ${fieldClass}`
+    if (name) input.setAttribute('name', name)
+    if (placeholder) input.setAttribute('placeholder', placeholder)
+    if (currentValue) input.value = currentValue
+    parent?.appendChild(input)
+
+    const tagifyObj = new Tagify(input, {
+        whitelist,
+        // maxTags: 10,
+        dropdown: {
+            // maxItems: 20,
+            // classname: 'tags-look', // <- custom classname for this dropdown, so it could be targeted
+            enabled: 1,             // <- show suggestions on focus
+            closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+        }
+    })
+} 
