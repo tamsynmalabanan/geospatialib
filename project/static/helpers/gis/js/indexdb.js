@@ -11,7 +11,7 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (id, geojson, queryExtent, expirationDays=1) => {
+const saveToGeoJSONDB = (id, geojson, queryExtent, expirationDays=7) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (e) => {
         const db = e.target.result
