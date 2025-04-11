@@ -26,7 +26,7 @@ const getLeafletGeoJSONLayer = async ({
         const geom = turf.bboxPolygon(turf.bbox(geojson)).geometry
         saveToGeoJSONDB(dbKey, turf.clone(geojson), (
             turf.area(geom) ? geom : turf.buffer(geom, 1/100000).geometry
-        ))
+        ), 1)
 
         fetcher = fetchStaticGeoJSON = async ({map, controller}={}) => {
             return await fetchGeoJSONInMap(geojson, dbKey, {map, controller})
