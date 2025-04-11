@@ -485,11 +485,11 @@ const fetchGeoJSONs = async (fetchers, {
 }
 
 const mapForFetchGeoJSONInMap = new Map()
-const fetchGeoJSONInMap = async (geojson, cacheId, {
+const fetchGeoJSONInMap = async (geojson, dbKey, {
     map,
     controller,
 } = {}) => {
-    const mapKey = `${cacheId};${map?.getContainer().id}`
+    const mapKey = `${dbKey};${map?.getContainer().id}`
     console.log(mapKey)
     if (mapForFetchGeoJSONInMap.has(mapKey)) {
         return await mapForFetchGeoJSONInMap.get(mapKey)
