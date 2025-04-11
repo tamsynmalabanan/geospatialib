@@ -15,26 +15,35 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 }
 
 self.onmessage = (e) => {
-    const {newGeoJSON, currentGeoJSON} = e.data
+    const {
+        newGeoJSON, 
+        newQueryExtent,
+        currentGeoJSON,
+        currentQueryExtent,
+    } = e.data
+
+    console.log(turf.area(newQueryExtent))
     
     if (currentGeoJSON) {
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
         
-        const newQueryIsPoint = turf.getType(newGeoJSON._queryExtent) === 'Point'
-        const newQueryExtent = newQueryIsPoint ? turf.buffer(
-            newGeoJSON._queryExtent, 1/100000
-        ) : newGeoJSON._queryExtent
-        
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
-            newGeoJSON._queryExtent = turf.union(turf.featureCollection([
+            const unionQueryExtent = turf.union(turf.featureCollection([
                 newQueryExtent,
-                currentGeoJSON._queryExtent,
+                currentQueryExtent,
             ]))
+            newQueryExtent.type = unionQueryExtent.type
+            newQueryExtent.coordinates = unionQueryExtent.coordinates
         }
     }
 
-    self.postMessage({geojson:newGeoJSON})
+    console.log(turf.area(newQueryExtent))
+
+    self.postMessage({
+        geojson: newGeoJSON,
+        queryExtent: newQueryExtent,
+    })
 }

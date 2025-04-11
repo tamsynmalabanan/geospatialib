@@ -11,7 +11,7 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (id, geojson, expirationDays=1) => {
+const saveToGeoJSONDB = (id, geojson, queryExtent, expirationDays=1) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (e) => {
         const db = e.target.result
@@ -19,25 +19,36 @@ const saveToGeoJSONDB = (id, geojson, expirationDays=1) => {
         const objectStore = transaction.objectStore('geojsons')
 
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
-        objectStore.put({id, geojson, expirationTime})
+        objectStore.put({id, geojson, queryExtent, expirationTime})
     }
 }
 
-const updateGeoJSONOnDB = async (id, newGeoJSON) => {
+const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
 
-    worker.onmessage = (e) => {
-        const geojson = e.data.geojson
-        if (geojson) saveToGeoJSONDB(id, geojson)
+    const save = (data) => {
+        if (data) saveToGeoJSONDB(id, data.geojson, data.queryExtent)
         worker.terminate()
     }
+
+    worker.onmessage = (e) => save(e.data)
     
     worker.onerror = (error) => {
         worker.terminate()
     }
     
-    const currentGeoJSON = await getFromGeoJSONDB(id)
-    worker.postMessage({newGeoJSON, currentGeoJSON})
+    const cached = await getFromGeoJSONDB(id)
+    if (!cached) return save({
+        geojson: newGeoJSON,
+        queryExtent: newQueryExtent
+    }) 
+    
+    worker.postMessage({
+        newGeoJSON, 
+        newQueryExtent,
+        currentGeoJSON: cached.geojson,
+        currentQueryExtent: cached.queryExtent,
+    })
 }
 
 const getFromGeoJSONDB = async (id) => {
@@ -52,7 +63,10 @@ const getFromGeoJSONDB = async (id) => {
     
             geojsonRequest.onsuccess = (e) => {
                 const result = e.target.result
-                result ? resolve(result.geojson) : resolve(null)
+                result ? resolve({
+                    geojson:result.geojson,
+                    queryExtent:result.queryExtent,
+                }) : resolve(null)
             }
     
             geojsonRequest.onerror = (e) => {
