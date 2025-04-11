@@ -957,6 +957,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const layerStyles = layer._styles
         const filters = layerStyles.filters
         const filter = filters.geom.values[id]
+
         const parent = customCreateElement({
             className:'d-flex gap-2 flex-grow-1 align-items-center',
         })
@@ -1113,6 +1114,57 @@ const handleLeafletStylePanel = (map, parent) => {
         return parent
     }
 
+    const getPropertyFilterForm = (id) => {
+        const layerStyles = layer._styles
+        const filters = layerStyles.filters
+        const filter = filters.properties.values[id]
+        
+        const parent = customCreateElement({
+            className:'d-flex gap-2 flex-grow-1 align-items-center',
+        })
+
+        const enable = createFormCheck({
+            parent,
+            checked: filter.active,
+            name: `propFilter-enable-${id}`,
+            disabled: !filters.properties.active,
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === filter.active) return
+
+                    filter.active = value
+                    if (filter.property && filter.values) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const include = createFormFloating({
+            parent,
+            fieldTag: 'select',
+            fieldAttrs: {name: `propFilter-include-${id}`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Include',
+            disabled: !filters.properties.active,
+            options: {
+                'true': 'True',
+                'false': 'False',
+            },
+            currentValue: filter.include ? 'true' : 'false',
+            events: {
+                change: (e) => {
+                    const value = e.target.value === 'true'
+                    if (value === filter.include) return
+
+                    filter.include = value
+                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        return parent
+    }
+
     select.addEventListener('focus', (e) => {
         select.innerHTML = ''
 
@@ -1157,7 +1209,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const layerStyles = layer._styles
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
-        const geomFilterContainerId = generateRandomString()
+        const filterContainerId = generateRandomString()
 
         const styleFields = {
             'Legend': {
@@ -1462,7 +1514,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         active: true,
                                         intersect: true,
                                     }
-                                    body.querySelector(`#${geomFilterContainerId}`).appendChild(getGeomFilterForm(id))
+                                    body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                 }
                             }
                         },
@@ -1481,7 +1533,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         intersect: true,
                                         geometry: L.rectangle(map.getBounds()).toGeoJSON().geometry
                                     }
-                                    body.querySelector(`#${geomFilterContainerId}`).appendChild(getGeomFilterForm(id))
+                                    body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                     updateGeoJSONData(layer)                
                                 }
                             }
@@ -1545,7 +1597,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             disabled: !filters.geom.active,
                             events: {
                                 click: () => {
-                                    body.querySelector(`#${geomFilterContainerId}`).innerHTML = ''
+                                    body.querySelector(`#${filterContainerId}-geom`).innerHTML = ''
                                     const update = Object.values(filters.geom.values).some(f => f.active && f.geometry)
                                     filters.geom.values = {}
                                     if (update) updateGeoJSONData(layer)                
@@ -1566,7 +1618,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
-                                    id: geomFilterContainerId,
+                                    id: `${filterContainerId}-geom`,
                                     className: 'd-flex flex-column w-100 gap-2 mb-3',// pe-3 overflow-y-auto',
                                     // style: {maxHeight:'200px'},
                                     parent,
@@ -1594,6 +1646,19 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     filters.properties.active = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        propFilter: {
+                            handler: ({parent}={}) => {
+                                const container = customCreateElement({
+                                    id: `${filterContainerId}-prop`,
+                                    className: 'd-flex flex-column w-100 gap-2 mb-3',
+                                    parent,
+                                })  
+
+                                for (const id in filters.properties.values) {
+                                    container.appendChild(getPropertyFilterForm(id))
                                 }
                             }
                         },
