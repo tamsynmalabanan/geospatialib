@@ -90,7 +90,7 @@ const getLeafletGeoJSONLayer = async ({
                     active: true,
                     include: true,
                     property: 'access',
-                    values: [null, 'private'],
+                    values: ['private'],
                 },}
             },
         }
@@ -120,12 +120,12 @@ const getLeafletGeoJSONLayer = async ({
             const exclude = propertyFilters.filter(i => !i.include)
 
             if (include.length && include.every(i => {
-                const value = feature.properties[i.property] || null
+                const value = feature.properties[i.property] ?? null
                 return !i.values.includes(value)
             })) return false
             
             if (exclude.length && exclude.some(i => {
-                const value = feature.properties[i.property] || null
+                const value = feature.properties[i.property] ?? null
                 return i.values.includes(value)
             })) return false
         }
