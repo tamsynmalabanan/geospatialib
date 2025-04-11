@@ -1172,6 +1172,17 @@ const handleLeafletStylePanel = (map, parent) => {
             options: {[filter.property]:filter.property},
             currentValue: filter.property,
             events: {
+                click: (e) => {
+                    const field = e.target
+                    field.innerHTML = ''
+                    
+                    // update to fetch properties from wfs (wms?)
+                    const options = {}
+                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                        console.log(currentProperties)
+                    })
+                },
                 change: (e) => {
                     const value = e.target.value
                     if (value === filter.property) return
