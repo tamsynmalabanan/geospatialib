@@ -27,11 +27,11 @@ self.onmessage = (e) => {
     console.log(newQueryExtent, turf.area(newQueryExtent))
     
     if (currentGeoJSON) {
+        console.lof('filtering...', filteredFeatures)
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
-
-        console.lof(filteredFeatures)
+        console.lof('done filtering', filteredFeatures)
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
