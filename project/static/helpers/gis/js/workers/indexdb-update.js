@@ -15,7 +15,7 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 }
 
 self.onmessage = (e) => {
-    const {newGeoJSON, currentGeoJSON, queryExtent} = e.data
+    const {newGeoJSON, currentGeoJSON} = e.data
     
     if (currentGeoJSON) {
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
