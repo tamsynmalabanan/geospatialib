@@ -30,6 +30,8 @@ self.onmessage = (e) => {
         const filteredFeatures = currentGeoJSON.features.filter(feature => {
             return !hasSimilarFeature(newGeoJSON.features, feature)
         })
+
+        console.lof(filteredFeatures)
         
         if (filteredFeatures.length) {
             newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
@@ -37,12 +39,12 @@ self.onmessage = (e) => {
                 newQueryExtent,
                 currentQueryExtent,
             ]))
+            console.lof(unionQueryExtent)
             newQueryExtent.type = unionQueryExtent.type
             newQueryExtent.coordinates = unionQueryExtent.coordinates
             console.log(newQueryExtent, turf.area(newQueryExtent))
         }
     }
-
 
     self.postMessage({
         geojson: newGeoJSON,
