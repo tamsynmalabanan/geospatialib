@@ -1167,7 +1167,7 @@ const handleLeafletStylePanel = (map, parent) => {
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: filter.values.join(', '),
-            whitelist: ['sdfs', 'dsgfsa', 'dsgfsgf']
+            whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf']
         })
 
         return parent
