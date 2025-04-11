@@ -24,7 +24,7 @@ self.onmessage = (e) => {
 
     console.log(currentGeoJSON, currentQueryExtent, newGeoJSON, newQueryExtent)
 
-    console.log(newQueryExtent, turf.area(newQueryExtent))
+    // console.log(newQueryExtent, turf.area(newQueryExtent))
     
     console.lof('filtering...')
 
