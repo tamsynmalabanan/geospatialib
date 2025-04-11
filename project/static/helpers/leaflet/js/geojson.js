@@ -85,7 +85,7 @@ const getLeafletGeoJSONLayer = async ({
                 MultiPolygon: true,
             }},
             geom: {active: false, values: {}},
-            properties: {active: false, values: {
+            properties: {active: true, values: {
                 id: {
                     active: true,
                     include: true,
@@ -112,21 +112,23 @@ const getLeafletGeoJSONLayer = async ({
             if (disjoint.length && disjoint.some(i => turf.booleanIntersects(i.geometry, feature))) return false 
         }
 
-        // for (const id in filters) {
-        //     const filter = filters[id]
-        //     if (!filter.active) continue
+        if (filters.properties.active) {
+            const propertyFilters = Object.values(filters.properties.values)
+            .filter(i => i.active && i.property && i.values.length)
+
+            const include = propertyFilters.filter(i => i.include)
+            const exclude = propertyFilters.filter(i => !i.include)
+
+            if (include.length && include.every(i => {
+                console.log(i.property, feature.properties[i.property])
+                return !i.values.includes(feature.properties[i.property])
+            })) return false
             
-        //     const property = filter.property
-        //     const inclusions = filter.inclusions
-        //     const exclusions = filter.exclusions
-            
-        //     if (property === '__geom__') {
-        //     } else {
-        //         const value = property === '__type__' ? feature.geometry.type : feature.properties[property] || 'null'
-        //         if (inclusions.length && !inclusions.includes(value)) return false
-        //         if (exclusions.length && exclusions.includes(value)) return false
-        //     }
-        // }
+            if (exclude.length && exclude.some(i => {
+                console.log(i.property, feature.properties[i.property])
+                return i.values.includes(feature.properties[i.property])
+            })) return false
+        }
 
         return true
     }
