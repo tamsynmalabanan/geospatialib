@@ -27,6 +27,7 @@ const updateGeoJSONOnDB = async (id, newGeoJSON) => {
     const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
 
     worker.onmessage = (e) => {
+        console.log(e)
         const geojson = e.data.geojson
         if (geojson) saveToGeoJSONDB(id, geojson)
         worker.terminate()
