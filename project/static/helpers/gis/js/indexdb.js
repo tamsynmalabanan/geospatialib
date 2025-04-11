@@ -34,6 +34,7 @@ const updateGeoJSONOnDB = async (id, newGeoJSON) => {
     }
     
     worker.onerror = (error) => {
+        console.log(error)
         worker.terminate()
     }
     
