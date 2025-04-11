@@ -1577,6 +1577,26 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+                        enableProps: {
+                            handler: createFormCheck,
+                            checked: filters.properties.active,
+                            formCheckClass: 'flex-grow-1',
+                            labelInnerText: 'Filter by properties',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === filters.properties.active) return
+                
+                                    Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
+                                        form.elements[i].disabled = !value
+                                    })
+
+                                    filters.properties.active = value
+                                    if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                }
+                            }
+                        },
                     },
                     className: 'flex-wrap gap-2'
                 }
