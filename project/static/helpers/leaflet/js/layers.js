@@ -107,9 +107,8 @@ const getLeafletLayerBounds = async (layer) => {
         return L.latLangBounds([s,w],[n,e])
     }
 
-    if (layer instanceof L.GeoJSON && layer._fetcher) {
-        const geojson = await layer._fetcher()
-        return L.geoJSON(geojson).getBounds()
+    if (layer instanceof L.GeoJSON && layer._fetchParams?.geojson) {
+        return L.geoJSON(layer._fetchParams?.geojson).getBounds()
     }
 
     if (layer.getBounds) {
@@ -237,7 +236,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
-                if (layer._fetcher?.name === 'fetchStaticGeoJSON') return await layer._fetcher()
+                return layer._fetchParams?.geojson
             }
         }
     })() : null
@@ -404,7 +403,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         attribution,
                         pane,
                         group: targetGroup,
-                        fetcher: layer._fetcher,
+                        fetchParams: layer._fetchParams,
                         styles: isLegendGroup ? structuredClone(styles) : null
                     })
                 }

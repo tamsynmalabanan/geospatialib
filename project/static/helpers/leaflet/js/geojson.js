@@ -5,7 +5,7 @@ const getLeafletGeoJSONLayer = async ({
     title = '',
     attribution = '',
     group,
-    fetcher,
+    fetchParams,
     styles,
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
@@ -21,18 +21,9 @@ const getLeafletGeoJSONLayer = async ({
     const map = group?._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
 
-    if (!fetcher && geojson) {
-        const dbKey = generateRandomString()
-        const geom = turf.bboxPolygon(turf.bbox(geojson)).geometry
-        saveToGeoJSONDB(dbKey, turf.clone(geojson), (
-            turf.area(geom) ? geom : turf.buffer(geom, 1/100000).geometry
-        ), 1)
-
-        fetcher = fetchStaticGeoJSON = async ({map, controller}={}) => {
-            return await filterClientGeoJSON(dbKey, {map, controller})
-        }
-    }
-    geojsonLayer._fetcher = fetcher
+    geojsonLayer._fetchParams = fetchParams || geojson ? {
+        id: generateRandomString(), geojson
+    } : null
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties
@@ -270,10 +261,16 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const updateGeoJSONData = async (layer, {controller} = {}) => {
-    const data = layer._fetcher ? await layer._fetcher({
+    const fetchParams = layer._fetchParams
+    if (!fetchParams) return
+
+    const fetcher = fetchParams.geojson ? filterGeoJSON : null
+    if (!fetcher) return
+
+    const data = await fetcher(...fetchParams, {
         map: layer._group?._map,
         controller,
-    }) : null
+    })
 
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {

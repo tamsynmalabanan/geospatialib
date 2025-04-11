@@ -482,48 +482,48 @@ const fetchGeoJSONs = async (fetchers, {
     return geojsons
 }
 
-const mapForFilterClientGeoJSON = new Map()
-const filterClientGeoJSON = async (dbKey, {
+const mapForFilterGeoJSON = new Map()
+const filterGeoJSON = async (id, geojson, {
     map,
     controller,
 } = {}) => {
-    const mapKey = `${dbKey};${map?.getContainer().id}`
-    if (mapForFilterClientGeoJSON.has(mapKey)) {
-        return await mapForFilterClientGeoJSON.get(mapKey)
+    const mapKey = `${id};${map?.getContainer().id}`
+    if (mapForFilterGeoJSON.has(mapKey)) {
+        return await mapForFilterGeoJSON.get(mapKey)
     }
 
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
             if (signal?.aborted) throw new Error()
-                
-            const cachedData = await getFromGeoJSONDB(dbKey)
-            if (!cachedData) return
 
-            const cachedGeoJSON = cachedData.geojson
-            const cachedQueryExtent = cachedData.queryExtent
+            const clonedGeoJSON = turf.clone(geojson)
+            const geojsonBbox = turf.bboxPolygon(turf.bbox(clonedGeoJSON)).geometry
+            const geojsonExtent = turf.area(geojsonBbox) ? geojsonBbox : turf.buffer(
+                geojsonBbox, 1/100000
+            ).geometry
         
-            if (!map) return cachedGeoJSON
+            if (!map) return clonedGeoJSON
             
             const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
-            if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
+            if (!turf.booleanIntersects(queryExtent, geojsonExtent)) return
 
-            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+            clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
                 if (signal?.aborted) throw new Error()
                 const featureBbox = turf.bboxPolygon(turf.bbox(feature))
                 return turf.booleanIntersects(queryExtent, featureBbox)
             })
             
-            if (cachedGeoJSON.features.length === 0) return
-            return cachedGeoJSON
+            if (clonedGeoJSON.features.length === 0) return
+            return clonedGeoJSON
         } catch (error) {
             throw error
         } finally {
-            setTimeout(() => mapForFilterClientGeoJSON.delete(mapKey), 1000)
+            setTimeout(() => mapForFilterGeoJSON.delete(mapKey), 1000)
         }
     })()
 
-    mapForFilterClientGeoJSON.set(mapKey, geojsonClone)
+    mapForFilterGeoJSON.set(mapKey, geojsonClone)
     return geojsonClone
 }
 
