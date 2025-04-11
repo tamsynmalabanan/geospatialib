@@ -40,7 +40,7 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
         worker.terminate()
     }
     
-    const cachedData = await getFromGeoJSONDB(id)
+    const cachedData = await getFromGeoJSONDB(id, {save:false})
     if (!cachedData) return save({
         geojson:newGeoJSON, 
         queryExtent:newQueryExtent
@@ -54,7 +54,7 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     })
 }
 
-const getFromGeoJSONDB = async (id) => {
+const getFromGeoJSONDB = async (id, {save=true}) => {
     return new Promise((resolve, reject) => {
         const request = requestGeoJSONDB()
   
@@ -66,10 +66,11 @@ const getFromGeoJSONDB = async (id) => {
     
             geojsonRequest.onsuccess = (e) => {
                 const result = e.target.result
-                result ? resolve({
-                    geojson: result.geojson,
-                    queryExtent: result.queryExtent,
-                }) : resolve(null)
+                if (!result) resolve(null)
+
+                const {geojson, queryExtent} = result
+                saveToGeoJSONDB(id, geojson, queryExtent)
+                resolve({geojson, queryExtent})
             }
     
             geojsonRequest.onerror = (e) => {

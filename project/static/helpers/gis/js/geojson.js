@@ -414,7 +414,6 @@ const fetchGeoJSON = async ({
 
                 const cachedGeoJSON = cachedData.geojson
                 const cachedQueryExtent = cachedData.queryExtent
-                const clone = turf.clone(cachedGeoJSON)
                 
                 try {
                     const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
@@ -431,7 +430,6 @@ const fetchGeoJSON = async ({
                 })
                 
                 if (cachedGeoJSON.features.length === 0) return
-                saveToGeoJSONDB(dbKey, clone, cachedQueryExtent)
                 return cachedGeoJSON
             })()
             
@@ -485,39 +483,37 @@ const fetchGeoJSONs = async (fetchers, {
 }
 
 const mapForFetchGeoJSONInMap = new Map()
-const fetchGeoJSONInMap = async (geojson, dbKey, {
+const fetchGeoJSONInMap = async (dbKey, {
     map,
     controller,
 } = {}) => {
     const mapKey = `${dbKey};${map?.getContainer().id}`
-    console.log(mapKey)
     if (mapForFetchGeoJSONInMap.has(mapKey)) {
         return await mapForFetchGeoJSONInMap.get(mapKey)
     }
 
-
-
     const signal = controller?.signal
     const geojsonClone = (async () => {
         try {
-            if (!map) return geojson
+            const cachedData = await getFromGeoJSONDB(dbKey)
+            if (!cachedData) return
 
-            const queryBbox = L.rectangle(map.getBounds()).toGeoJSON()
-            const dataExtent = turf.bboxPolygon(turf.bbox(geojson))
-            const dataBbox = turf.area(dataExtent) === 0 ? turf.buffer(dataExtent, 1/100000) : dataExtent
-            const filterBbox = turf.intersect(turf.featureCollection([queryBbox, dataBbox]))
-            if (!filterBbox) return
+            const cachedGeoJSON = cachedData.geojson
+            const cachedQueryExtent = cachedData.queryExtent
+        
+            if (!map) return cachedGeoJSON
             
-            const clone = turf.clone(geojson)
-            clone.features = clone.features.filter(feature => {
+            const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
+            if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
+
+            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                 if (signal?.aborted) throw new Error()
                 const featureBbox = turf.bboxPolygon(turf.bbox(feature))
-                return turf.booleanIntersects(filterBbox, featureBbox)
+                return turf.booleanIntersects(queryExtent, featureBbox)
             })
             
-            if (clone.features.length === 0) return
-    
-            return clone
+            if (cachedGeoJSON.features.length === 0) return
+            return cachedGeoJSON
         } catch (error) {
             throw error
         } finally {
