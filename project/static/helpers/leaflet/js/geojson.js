@@ -84,16 +84,14 @@ const getLeafletGeoJSONLayer = async ({
                 Polygon: true,
                 MultiPolygon: true,
             }},
-            geom: {active: true, values: {
-                sdfsdf: {"type":"Polygon","coordinates":[[[77.424085,28.619273],[77.423993,28.618971],[77.423703,28.618565],[77.423186,28.618251],[77.424024,28.616931],[77.425041,28.617418],[77.42567,28.616402],[77.425962,28.615906],[77.42594,28.615844],[77.427998,28.616774],[77.42655,28.619171],[77.425435,28.619219],[77.424122,28.619344],[77.424085,28.619273]]]}
-            }},
-            properties: {active: true, values: {
-                // id: {
-                //     active: true,
-                //     include: true,
-                //     property: 'access',
-                //     values: ['private'],
-                // },
+            geom: {active: true, values: {}},
+            properties: {active: false, values: {
+                id: {
+                    active: true,
+                    include: true,
+                    property: 'access',
+                    values: ['private'],
+                },
             }},
         }
     }
