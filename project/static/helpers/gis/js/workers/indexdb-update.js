@@ -32,6 +32,7 @@ self.onmessage = (e) => {
         console.log(feature)
         return !hasSimilarFeature(newGeoJSON.features, feature)
     })
+    
     console.lof('done filtering', filteredFeatures)
     
     if (filteredFeatures.length) {
