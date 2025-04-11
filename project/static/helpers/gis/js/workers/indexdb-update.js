@@ -29,8 +29,8 @@ self.onmessage = (e) => {
     if (filteredFeatures.length) {
         newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
         const unionQueryExtent = turf.union(turf.featureCollection([
-            turf.feature(newGeoJSON._queryExtent),
-            turf.feature(currentGeoJSON._queryExtent),
+            turf.feature(newQueryExtent),
+            turf.feature(currentQueryExtent),
         ])).geometry
         newQueryExtent.type = unionQueryExtent.type
         newQueryExtent.coordinates = unionQueryExtent.coordinates
