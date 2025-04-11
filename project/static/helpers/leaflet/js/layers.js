@@ -232,11 +232,13 @@ const getLeafletLayerContextMenu = async (e, layer, {
         try {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
+            console.log('here')
             try {
                 if (layer instanceof L.GeoJSON) {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
+                console.log('here again')
                 if (layer._fetcher?.name === 'fetchStaticGeoJSON') return await layer._fetcher()
             }
         }
