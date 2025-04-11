@@ -29,6 +29,7 @@ self.onmessage = (e) => {
     console.lof('filtering...')
 
     const filteredFeatures = currentGeoJSON.features.filter(feature => {
+        console.log(feature)
         return !hasSimilarFeature(newGeoJSON.features, feature)
     })
     console.lof('done filtering', filteredFeatures)
