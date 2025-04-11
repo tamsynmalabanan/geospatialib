@@ -433,7 +433,7 @@ const fetchGeoJSON = async ({
                 })
                 
                 if (currentGeoJSON.features.length === 0) return
-                saveToGeoJSONDB(dbKey, clone, currentQueryExtent)
+                saveToGeoJSONDB(dbKey, clone, turf.clone(currentQueryExtent))
                 return currentGeoJSON
             })()
             
@@ -446,7 +446,7 @@ const fetchGeoJSON = async ({
                     handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
                     
                     if (controller?.signal.aborted) return
-                    await updateGeoJSONOnDB(dbKey, turf.clone(geojson), queryExtent)
+                    await updateGeoJSONOnDB(dbKey, turf.clone(geojson), turf.clone(queryExtent))
 
                     return geojson
                 })()
