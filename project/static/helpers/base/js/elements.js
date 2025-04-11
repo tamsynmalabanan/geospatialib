@@ -641,7 +641,7 @@ const createTagifyField = ({
 } = {}) => {
 
     const input = document.createElement('input')
-    input.className = `tagify--custom-dropdown ${fieldClass}`
+    input.className = `${fieldClass}`
     if (name) input.setAttribute('name', name)
     if (placeholder) input.setAttribute('placeholder', placeholder)
     if (currentValue) input.value = currentValue

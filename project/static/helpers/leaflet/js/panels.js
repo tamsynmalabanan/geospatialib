@@ -1162,13 +1162,33 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const values = createTagifyField({
+        const property = createFormFloating({
             parent,
-            name:  `propFilter-values-${id}`,
-            placeholder: 'Select property value',
-            currentValue: filter.values.join(', '),
-            whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf']
+            fieldTag: 'select',
+            fieldAttrs: {name: `propFilter-property-${id}`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Property',
+            disabled: !filters.properties.active,
+            options: {[filter.property]:filter.property},
+            currentValue: filter.property,
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === filter.property) return
+
+                    filter.property = value
+                    if (filter.active && filter.values) updateGeoJSONData(layer)
+                }
+            }
         })
+
+        // const values = createTagifyField({
+        //     parent,
+        //     name:  `propFilter-values-${id}`,
+        //     placeholder: 'Select property value',
+        //     currentValue: filter.values.join(', '),
+        //     whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf']
+        // })
 
         return parent
     }
