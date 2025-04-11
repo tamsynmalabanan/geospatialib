@@ -66,7 +66,7 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
     
             geojsonRequest.onsuccess = (e) => {
                 const result = e.target.result
-                if (!result) resolve(null)
+                if (!result) return resolve(null)
 
                 const {geojson, queryExtent} = result
                 if (save) saveToGeoJSONDB(id, geojson, queryExtent)
