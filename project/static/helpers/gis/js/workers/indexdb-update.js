@@ -36,5 +36,7 @@ self.onmessage = (e) => {
         }
     }
 
+    console.log(newGeoJSON)
+
     self.postMessage({geojson:newGeoJSON})
 }
