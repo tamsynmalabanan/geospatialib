@@ -28,13 +28,11 @@ self.onmessage = (e) => {
                 'union', 
                 newGeoJSON._queryExtent,
                 currentGeoJSON._queryExtent,
-                // turf.feature(turf.clone(newGeoJSON._queryExtent)),
-                // turf.feature(turf.clone(currentGeoJSON._queryExtent)),
             )
-            // newGeoJSON._queryExtent = turf.union(turf.featureCollection([
-            //     turf.feature(turf.clone(newGeoJSON._queryExtent)),
-            //     turf.feature(turf.clone(currentGeoJSON._queryExtent)),
-            // ]))
+            newGeoJSON._queryExtent = turf.union(turf.featureCollection([
+                turf.feature(newGeoJSON._queryExtent),
+                turf.feature(currentGeoJSON._queryExtent),
+            ])).geometry
         }
     }
 
