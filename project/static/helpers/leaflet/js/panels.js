@@ -1183,7 +1183,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         Object.keys(currentProperties).forEach(i => options.push(i))
                     })
 
-                    for (const i of options) {
+                    const optionsSet = new Set(options)
+                    const sortedOptions = [...optionsSet].sort()
+
+                    for (const i of sortedOptions) {
                         const option = document.createElement('option')
                         option.value = i
                         option.text = i
