@@ -636,6 +636,7 @@ const createTagifyField = ({
     name,
     placeholder,
     currentValue,
+    fieldClass = '',
     whitelist = [],
 } = {}) => {
 
