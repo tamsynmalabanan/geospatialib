@@ -1192,8 +1192,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 },
                 change: (e) => {
-                    console.log(e)
                     const value = e.target.value
+                    console.log(value, filter)
                     if (value === filter.property) return
 
                     filter.property = value
