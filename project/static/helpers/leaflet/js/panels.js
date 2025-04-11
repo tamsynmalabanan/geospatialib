@@ -1172,7 +1172,7 @@ const handleLeafletStylePanel = (map, parent) => {
             options: {[filter.property]:filter.property},
             currentValue: filter.property,
             events: {
-                click: (e) => {
+                focus: (e) => {
                     const field = e.target
                     field.innerHTML = ''
                     
