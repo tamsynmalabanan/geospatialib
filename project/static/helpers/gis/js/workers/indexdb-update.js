@@ -15,21 +15,29 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 }
 
 self.onmessage = (e) => {
-    const {newGeoJSON, currentGeoJSON} = e.data
+    const {
+        newGeoJSON, 
+        newQueryExtent,
+        currentGeoJSON,
+        currentQueryExtent,
+    } = e.data
     
-    if (currentGeoJSON) {
-        const filteredFeatures = currentGeoJSON.features.filter(feature => {
-            return !hasSimilarFeature(newGeoJSON.features, feature)
-        })
-        
-        if (filteredFeatures.length) {
-            newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
-            newGeoJSON._queryExtent = turf.union(turf.featureCollection([
-                turf.feature(newGeoJSON._queryExtent),
-                turf.feature(currentGeoJSON._queryExtent),
-            ])).geometry
-        }
+    const filteredFeatures = currentGeoJSON.features.filter(feature => {
+        return !hasSimilarFeature(newGeoJSON.features, feature)
+    })
+    
+    if (filteredFeatures.length) {
+        newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
+        const unionQueryExtent = turf.union(turf.featureCollection([
+            turf.feature(newGeoJSON._queryExtent),
+            turf.feature(currentGeoJSON._queryExtent),
+        ])).geometry
+        newQueryExtent.type = unionQueryExtent.type
+        newQueryExtent.coordinates = unionQueryExtent.coordinates
     }
 
-    self.postMessage({geojson:newGeoJSON})
+    self.postMessage({
+        geojson:newGeoJSON,
+        queryExtent:newQueryExtent,
+    })
 }
