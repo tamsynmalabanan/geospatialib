@@ -54,7 +54,7 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     })
 }
 
-const getFromGeoJSONDB = async (id, {save=true}) => {
+const getFromGeoJSONDB = async (id, {save=true}={}) => {
     return new Promise((resolve, reject) => {
         const request = requestGeoJSONDB()
   
@@ -69,7 +69,7 @@ const getFromGeoJSONDB = async (id, {save=true}) => {
                 if (!result) resolve(null)
 
                 const {geojson, queryExtent} = result
-                saveToGeoJSONDB(id, geojson, queryExtent)
+                if (save) saveToGeoJSONDB(id, geojson, queryExtent)
                 resolve({geojson, queryExtent})
             }
     
