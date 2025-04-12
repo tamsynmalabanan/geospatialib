@@ -1216,7 +1216,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const removeBtn = createButton({
             parent: valueFields,
-            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+            className: 'fs-12 bg-transparent border-0 p-0 me-1',
             iconClass: 'bi bi-trash-fill',
             disabled: !filters.properties.active,
             name: `propFilter-remove-${id}`,
