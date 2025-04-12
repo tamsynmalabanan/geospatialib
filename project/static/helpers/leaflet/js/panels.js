@@ -1144,7 +1144,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const include = createFormFloating({
             parent: paramsFields,
-            containerClass: 'w-25',
+            containerClass: 'w-50',
             fieldTag: 'select',
             fieldAttrs: {name: `propFilter-include-${id}`},
             fieldClass: 'form-select-sm',
@@ -1218,9 +1218,11 @@ const handleLeafletStylePanel = (map, parent) => {
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
-            whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf'],
+            // whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf'],
             callbacks: {
-
+                'focus': (e) => {
+                    console.log(e)
+                }
             }
         })
 
