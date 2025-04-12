@@ -11,12 +11,6 @@ const getLeafletGeoJSONLayer = async ({
     console.log(
         'geojson', geojson,
     )
-    console.log(
-        'fetchParams', fetchParams,
-    )
-    console.log(
-        'styles', styles,
-    )
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
@@ -31,9 +25,15 @@ const getLeafletGeoJSONLayer = async ({
     const map = group?._map
     const isLegendGroup = map._legendLayerGroups.includes(group)
 
+    console.log(
+        'fetchParams', fetchParams,
+    )
+
     geojsonLayer._fetchParams = fetchParams || geojson ? {
         id: generateRandomString(), geojson
     } : null
+
+    console.log('geojsonLayer._fetchParams', geojsonLayer._fetchParams)
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const properties = feature.properties

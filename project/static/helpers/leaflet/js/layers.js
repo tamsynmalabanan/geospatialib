@@ -242,8 +242,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         }
     })()
-
-    console.log('layerGeoJSON', layerGeoJSON)
     
     const map = group._map
     const mapContainer = map.getContainer()
