@@ -668,4 +668,6 @@ const createTagifyField = ({
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         }
     })
+
+    console.log(tagifyObj)
 } 

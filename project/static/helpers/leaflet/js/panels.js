@@ -1220,7 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
-            disabled: true,
+            disabled: !filters.properties.active,
             dropdownClass:  `rounded mt-1 border`,
             userInput: false,
             name:  `propFilter-values-${id}`,
