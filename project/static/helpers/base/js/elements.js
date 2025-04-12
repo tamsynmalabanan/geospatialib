@@ -634,6 +634,7 @@ const createInputGroup = ({
 const createTagifyField = ({
     parent,
     name,
+    delimiters,
     inputTag = 'input',
     placeholder,
     currentValue,
@@ -651,6 +652,7 @@ const createTagifyField = ({
 
     const tagifyObj = new Tagify(input, {
         whitelist,
+        delimiters,
         callbacks,
         // maxTags: 10,
         dropdown: {

@@ -1207,6 +1207,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const values = createTagifyField({
             parent,
             inputTag: 'textarea',
+            delimiters: null,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
