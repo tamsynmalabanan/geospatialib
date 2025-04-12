@@ -40,10 +40,12 @@
         --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
     }
     
-    /* .text-bg-dark .tagify__dropdown__item{
+    .text-bg-dark .tagify__dropdown__item{
         background: var(--default-bg-dark);
         color: white;
-    } */
+        border-radius: var(--bs-border-radius);
+        border-color: var(--bs-border-color)
+    }
 
     .bg-adjusted {
         background-color: var(--adjusted-bg-dark) !important;
