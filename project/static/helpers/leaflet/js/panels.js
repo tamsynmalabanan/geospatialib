@@ -1221,7 +1221,7 @@ const handleLeafletStylePanel = (map, parent) => {
             delimiters: null,
             enabled: 0,
             disabled: !filters.properties.active,
-            dropdownClass:  `rounded mt-1 border`,
+            dropdownClass:  `rounded my-1 border`,
             userInput: false,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',

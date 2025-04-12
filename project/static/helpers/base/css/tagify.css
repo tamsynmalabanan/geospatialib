@@ -6,6 +6,7 @@
 
 .tagify[disabled] {
     background-color: var(--bs-body-bg);
+    --tags-focus-border-color: var(--bs-body-bg)
 }
 
 .tagify {
