@@ -1233,7 +1233,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
 
                     const optionsSet = new Set(options)
-                    const sortedOptions = [...optionsSet].sort()
+                    const sortedOptions = [...optionsSet].sort().map(i => i ?? 'null')
                     console.log(sortedOptions)
                     tagify.settings.whitelist = sortedOptions
                 }
