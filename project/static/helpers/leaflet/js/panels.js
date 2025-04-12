@@ -1216,6 +1216,7 @@ const handleLeafletStylePanel = (map, parent) => {
             delimiters: null,
             enabled: 0,
             dropdownClass:  `rounded mt-1 border`,
+            userInput: false,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),

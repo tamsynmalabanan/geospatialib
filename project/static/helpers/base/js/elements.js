@@ -643,6 +643,7 @@ const createTagifyField = ({
     whitelist = [],
     callbacks = {},
     dropdownClass = '', 
+    userInput = true,
 } = {}) => {
 
     const input = document.createElement(inputTag)
@@ -654,6 +655,7 @@ const createTagifyField = ({
 
     const tagifyObj = new Tagify(input, {
         whitelist,
+        userInput,
         delimiters,
         callbacks,
         // maxTags: 10,
