@@ -1211,7 +1211,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const values = createTagifyField({
             parent,
-            fieldClass: 'w-100 flex-grow-1',
+            fieldClass: 'w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-2',
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
