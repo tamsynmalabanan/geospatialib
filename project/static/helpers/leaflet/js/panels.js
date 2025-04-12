@@ -1215,7 +1215,7 @@ const handleLeafletStylePanel = (map, parent) => {
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
-            dropdownClass:  `bs-tagify-dropdown rounded `,
+            dropdownClass:  `bs-tagify-dropdown rounded mt-1`,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
