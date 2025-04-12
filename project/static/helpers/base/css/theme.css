@@ -41,16 +41,8 @@
     }
     
     .text-bg-dark .tagify__dropdown__item{
-        display: inline-block;
-        vertical-align: middle;
-        border-radius: 3px;
-        padding: .3em .5em;
-        border: 1px solid #CCC;
-        background: #F3F3F3;
-        margin: .2em;
-        font-size: .85em;
-        color: black;
-        transition: 0s;
+        background: var(--default-bg-dark);
+        color: white;
     }
 
     .bg-adjusted {
