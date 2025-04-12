@@ -1221,22 +1221,22 @@ const handleLeafletStylePanel = (map, parent) => {
             callbacks: {
                 'focus': (e) => {
                     const tagify = e.detail.tagify
-                    const property = filter.property
-                    const currentValues = filter.values
+                    // const property = filter.property
+                    // const currentValues = filter.values
                     
-                    const options = []
-                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        const value = currentProperties[property]
-                        console.log(currentProperties, value)
-                        if (currentValues.includes(value)) return
-                        options.push(value)
-                    })
+                    // const options = []
+                    // const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                    // turf.propEach(geojson, (currentProperties, featureIndex) => {
+                    //     const value = currentProperties[property]
+                    //     console.log(currentProperties, value)
+                    //     if (currentValues.includes(value)) return
+                    //     options.push(value)
+                    // })
 
-                    const optionsSet = new Set(options)
-                    const sortedOptions = [...optionsSet].sort()
-                    console.log(sortedOptions)
-                    tagify.settings.whitelist = sortedOptions
+                    // const optionsSet = new Set(options)
+                    // const sortedOptions = [...optionsSet].sort()
+                    // console.log(sortedOptions)
+                    tagify.settings.whitelist = ['sortedOptions', 'fgsdfg', 'dfasdf']
                 }
             }
         })
