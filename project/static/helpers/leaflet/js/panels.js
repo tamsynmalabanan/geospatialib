@@ -1230,7 +1230,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 focus: (e) => {
                     const tagify = e.detail.tagify
                     
-                    
                     const options = []
                     
                     if (filter.property) {
