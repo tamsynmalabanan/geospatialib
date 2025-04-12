@@ -119,16 +119,18 @@ const getLeafletGeoJSONLayer = async ({
             const include = propertyFilters.filter(i => i.include)
             const exclude = propertyFilters.filter(i => !i.include)
 
-            if (include.length && include.every(i => {
-                let value = feature.properties[i.property] ?? '[undefined]'
+            const getValue = (property) => {
+                let value = feature.properties[property] ?? '[undefined]'
                 if (value === '') value = '[blank]'
-                return !i.values.includes(value)
+                return value
+            }
+
+            if (include.length && include.every(i => {
+                return !i.values.includes(getValue(i.property))
             })) return false
             
             if (exclude.length && exclude.some(i => {
-                let value = feature.properties[i.property] ?? '[undefined]'
-                if (value === '') value = '[blank]'
-                return i.values.includes(value)
+                return i.values.includes(getValue(i.property))
             })) return false
         }
 
