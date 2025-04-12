@@ -1144,6 +1144,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const include = createFormFloating({
             parent: paramsFields,
+            containerClass: 'w-25',
             fieldTag: 'select',
             fieldAttrs: {name: `propFilter-include-${id}`},
             fieldClass: 'form-select-sm',
