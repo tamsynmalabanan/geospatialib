@@ -1227,10 +1227,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     const options = []
                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                    console.log(geojson)
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         const value = currentProperties[property]
-
+                        console.log(currentProperties, value)
                         if (currentValues.includes(value)) return
                         options.push(value)
                     })
