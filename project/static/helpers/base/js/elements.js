@@ -669,5 +669,5 @@ const createTagifyField = ({
         }
     })
 
-    console.log(tagifyObj)
+    console.log(tagifyObj, name)
 } 
