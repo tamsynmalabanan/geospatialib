@@ -38,6 +38,9 @@
     .tagify.text-bg-dark {
         --placeholder-color: hsla(0, 0%, 100%, 0.5);
         --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
+    }
+    
+    .tagify__dropdown__item.text-bg-dark {
         --tagify-dd-color-primary: var(--default-bg-dark);
         --tagify-dd-text-color: white;
     }
