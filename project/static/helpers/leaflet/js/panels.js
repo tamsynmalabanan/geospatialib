@@ -1238,7 +1238,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 blur: (e) => {
                     const tagify = e.detail.tagify
                     const value = tagify.value
-                    console.log(tagify.value)
+                    console.log(tagify, value)
 
                     // const value = e.target.value
                     // if (value === filter.property) return
