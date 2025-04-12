@@ -1221,6 +1221,7 @@ const handleLeafletStylePanel = (map, parent) => {
             delimiters: null,
             enabled: 0,
             disabled: !filters.properties.active,
+            dropdownClass:  `my-1`,
             userInput: false,
             scopeStyle: {
                 minHeight: '50px',
