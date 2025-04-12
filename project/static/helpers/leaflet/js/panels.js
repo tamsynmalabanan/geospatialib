@@ -1733,7 +1733,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
                                     })
 
-
                                     filters.properties.active = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
                                 }

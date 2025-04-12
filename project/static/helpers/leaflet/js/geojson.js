@@ -85,14 +85,7 @@ const getLeafletGeoJSONLayer = async ({
                 MultiPolygon: true,
             }},
             geom: {active: false, values: {}},
-            properties: {active: false, values: {
-                id: {
-                    active: true,
-                    include: true,
-                    property: 'access',
-                    values: ['private'],
-                },
-            }},
+            properties: {active: false, values: {}},
         }
     }
 
