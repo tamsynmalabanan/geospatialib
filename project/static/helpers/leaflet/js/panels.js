@@ -1230,17 +1230,22 @@ const handleLeafletStylePanel = (map, parent) => {
                 focus: (e) => {
                     const tagify = e.detail.tagify
                     
+                    
                     const options = []
-                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        let value = currentProperties[filter.property] ?? '[undefined]'
-                        if (value === '') value = '[blank]'
-                        if (filter.values.includes(value)) return
-                        options.push(value)
-                    })
+                    
+                    if (filter.property) {
+                        const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                        turf.propEach(geojson, (currentProperties, featureIndex) => {
+                            let value = currentProperties[filter.property] ?? '[undefined]'
+                            if (value === '') value = '[blank]'
+                            if (filter.values.includes(value)) return
+                            options.push(value)
+                        })
+                    }
 
-                    const optionsSet = new Set(options)
+                    const optionsSet = options.length ? new Set(options) : []
                     const sortedOptions = [...optionsSet].sort()
+
                     tagify.settings.whitelist = sortedOptions
                 },
                 blur: (e) => {
