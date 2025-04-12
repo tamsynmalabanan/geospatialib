@@ -1119,12 +1119,15 @@ const handleLeafletStylePanel = (map, parent) => {
         const filters = layerStyles.filters
         const filter = filters.properties.values[id]
         
-        const parent = customCreateElement({
+        const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+        
+        const paramsFields = customCreateElement({
             className:'d-flex gap-2 flex-grow-1 align-items-center',
+            parent,
         })
 
         const enable = createFormCheck({
-            parent,
+            parent: paramsFields,
             checked: filter.active,
             name: `propFilter-enable-${id}`,
             disabled: !filters.properties.active,
@@ -1140,7 +1143,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const include = createFormFloating({
-            parent,
+            parent: paramsFields,
             fieldTag: 'select',
             fieldAttrs: {name: `propFilter-include-${id}`},
             fieldClass: 'form-select-sm',
@@ -1163,7 +1166,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const property = createFormFloating({
-            parent,
+            parent: paramsFields,
             fieldTag: 'select',
             fieldAttrs: {name: `propFilter-property-${id}`},
             fieldClass: 'form-select-sm',
@@ -1206,6 +1209,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const values = createTagifyField({
             parent,
+            fieldClass: 'w-100 flex-grow-1',
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
