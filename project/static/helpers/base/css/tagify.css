@@ -9,8 +9,8 @@
     --placeholder-color-focus: var(--bs-secondary-color);
     --tag-bg: var(--bs-primary);
     --tag-hover: var(--bs-primary);
-    --tag-text-color: white;
-    --tag-text-color--edit: white;
-    --tag-remove-btn-color: white;
+    --tag-text-color: var(--bs-body-color);
+    --tag-text-color--edit: var(--bs-body-color);
+    --tag-remove-btn-color: var(--bs-body-color);
 }
 
