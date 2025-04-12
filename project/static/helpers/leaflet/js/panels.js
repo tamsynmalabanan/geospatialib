@@ -1211,11 +1211,11 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const values = createTagifyField({
             parent,
-            fieldClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 text-bg-${getPreferredTheme()}`,
+            fieldClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
-            dropdownClass:  `text-bg-${getPreferredTheme()}`,
+            dropdownClass:  `bs-tagify-dropdown`,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
