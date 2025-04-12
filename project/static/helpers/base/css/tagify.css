@@ -3,19 +3,17 @@
     --tagify-dd-text-color: var(--bs-body-color)
 }
 
-/* .bs-tagify-dropdown {
+.bs-tagify-dropdown {
     border-radius: var(--bs-border-radius);
     border-color: var(--bs-border-color);
     background: var(--bs-body-bg);
     
-    .tagify__dropdown__item{
+    /* .tagify__dropdown__item{
         color: var(--bs-body-color);
-    }
-} */
+    } */
+}
 
-[data-bs-theme="dark"] {
-    .tagify {
-        --placeholder-color: hsla(0, 0%, 100%, 0.5);
-        --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
-    }
+.tagify {
+    --placeholder-color: var(--bs-secondary-color);
+    --placeholder-color-focus: var(--bs-secondary-color);
 }
