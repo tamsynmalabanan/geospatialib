@@ -8,6 +8,10 @@
     background-color: var(--bs-body-bg);
 }
 
+.tagify__dropdown__wrapper {
+    background-color: var(--bs-body-bg) !important;
+}
+
 .tagify {
     --placeholder-color: var(--bs-secondary-color);
     --placeholder-color: var(--bs-secondary-color);
