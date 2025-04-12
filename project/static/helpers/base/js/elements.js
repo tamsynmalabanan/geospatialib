@@ -644,6 +644,7 @@ const createTagifyField = ({
     callbacks = {},
     dropdownClass = '', 
     userInput = true,
+    disabled = false,
 } = {}) => {
 
     const input = document.createElement(inputTag)
@@ -652,6 +653,7 @@ const createTagifyField = ({
     if (placeholder) input.setAttribute('placeholder', placeholder)
     if (currentValue) input.value = currentValue
     parent?.appendChild(input)
+    input.disabled = disabled
 
     const tagifyObj = new Tagify(input, {
         whitelist,

@@ -1175,7 +1175,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Property',
             disabled: !filters.properties.active,
             options: {[filter.property]:filter.property},
-            currentValue: filter.property,
+            currentValue: filter.property || '',
             events: {
                 focus: (e) => {
                     const field = e.target
@@ -1220,6 +1220,7 @@ const handleLeafletStylePanel = (map, parent) => {
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
+            disabled: true,
             dropdownClass:  `rounded mt-1 border`,
             userInput: false,
             name:  `propFilter-values-${id}`,
