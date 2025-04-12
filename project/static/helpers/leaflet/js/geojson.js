@@ -29,9 +29,9 @@ const getLeafletGeoJSONLayer = async ({
         'fetchParams', fetchParams,
     )
 
-    geojsonLayer._fetchParams = fetchParams || geojson ? {
+    geojsonLayer._fetchParams = fetchParams || (geojson ? {
         id: generateRandomString(), geojson
-    } : null
+    } : null)
 
     console.log('geojsonLayer._fetchParams', geojsonLayer._fetchParams)
 
@@ -196,7 +196,6 @@ const getLeafletGeoJSONLayer = async ({
     ]
 
     if (geojson && !isLegendGroup) {
-        console.log('geojsonLayer.addData(geojson)')
         geojsonLayer.addData(geojson)
     }
 
