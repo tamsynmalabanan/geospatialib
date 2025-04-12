@@ -671,7 +671,4 @@ const createTagifyField = ({
     })
 
     Object.keys(scopeStyle).forEach(i => tagifyObj.DOM.scope.style[i] = scopeStyle[i])
-
-    console.log(tagifyObj.DOM.scope)
-    console.log(tagifyObj.DOM.dropdown)
 }
