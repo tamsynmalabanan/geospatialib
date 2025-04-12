@@ -649,7 +649,6 @@ const createTagifyField = ({
 
     const input = document.createElement(inputTag)
     input.className = `${fieldClass}`
-    if (name) input.setAttribute('name', name)
     if (placeholder) input.setAttribute('placeholder', placeholder)
     if (currentValue) input.value = currentValue
     parent?.appendChild(input)
@@ -669,5 +668,8 @@ const createTagifyField = ({
         }
     })
 
-    console.log(tagifyObj, name)
+    if (name) {
+        input.setAttribute('name', name)
+        tagifyObj.DOM.scope.setAttribute('name', `${name}-tagify`)
+    } 
 } 
