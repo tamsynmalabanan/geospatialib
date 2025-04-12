@@ -118,7 +118,7 @@ const getLeafletGeoJSONLayer = async ({
                 return value
             }
 
-            if (include.length && include.every(i => {
+            if (include.length && include.some(i => {
                 return !i.values.includes(getValue(i.property))
             })) return false
             
