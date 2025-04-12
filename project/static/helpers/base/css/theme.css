@@ -40,7 +40,7 @@
         --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
     }
     
-    .text-bg-dark. .tagify__dropdown__item{
+    .text-bg-dark .tagify__dropdown__item{
         display: inline-block;
         vertical-align: middle;
         border-radius: 3px;
