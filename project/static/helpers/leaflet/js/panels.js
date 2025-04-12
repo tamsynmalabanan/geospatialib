@@ -1725,10 +1725,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const value = e.target.checked
                                     if (value === filters.properties.active) return
                 
-                                    console.log(Object.keys(form.elements))
                                     Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
                                         form.elements[i].disabled = !value
                                     })
+
+                                    body.querySelector(`#${filterContainerId}-prop`).querySelectorAll('.tagify').forEach(i => {
+                                        console.log(i)
+                                        i.disabled = !value
+                                    })
+
 
                                     filters.properties.active = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)

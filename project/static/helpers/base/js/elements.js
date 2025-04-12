@@ -649,6 +649,7 @@ const createTagifyField = ({
 
     const input = document.createElement(inputTag)
     input.className = `${fieldClass}`
+    if (name) input.setAttribute('name', name)
     if (placeholder) input.setAttribute('placeholder', placeholder)
     if (currentValue) input.value = currentValue
     parent?.appendChild(input)
@@ -667,9 +668,4 @@ const createTagifyField = ({
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         }
     })
-
-    if (name) {
-        input.setAttribute('name', name)
-        tagifyObj.DOM.scope.setAttribute('name', `${name}-tagify`)
-    } 
-} 
+}
