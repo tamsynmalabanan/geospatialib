@@ -1218,11 +1218,11 @@ const handleLeafletStylePanel = (map, parent) => {
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
-            // whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf'],
             callbacks: {
                 'focus': (e) => {
                     const tagify = e.detail.tagify
-                    tagify.settings.whitelist = ['sdvfdg', 'sdfsdfdfs', 'sdfsdf']
+                    console.log(tagify)
+                    // tagify.settings.whitelist = 
 
 
                 }
