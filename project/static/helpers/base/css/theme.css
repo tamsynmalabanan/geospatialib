@@ -38,6 +38,8 @@
     .tagify.text-bg-dark {
         --placeholder-color: hsla(0, 0%, 100%, 0.5);
         --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
+        --tagify-dd-color-primary: var(--default-bg-dark);
+        --tagify-dd-text-color: white;
     }
 
     .bg-adjusted {
