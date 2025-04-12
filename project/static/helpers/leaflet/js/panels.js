@@ -1239,6 +1239,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     const tagify = e.detail.tagify
                     const value = tagify.value
                     console.log(tagify.value)
+
+                    // const value = e.target.value
+                    // if (value === filter.property) return
+
+                    // filter.property = value
+                    // if (filter.active && filter.values) updateGeoJSONData(layer)
                 }
             }
         })
