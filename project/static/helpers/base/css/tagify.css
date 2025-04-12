@@ -13,6 +13,7 @@
     background-color: var(--bs-body-bg) !important;
     border-radius: var(--bs-border-radius) !important;
     margin-top: 3px;
+    margin-bottom: 3px;
 }
 
 .tagify {
