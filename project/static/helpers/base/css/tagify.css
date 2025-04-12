@@ -1,7 +1,7 @@
 .bs-tagify-dropdown .tagify__dropdown__item{
     border-radius: var(--bs-border-radius);
     border-color: var(--bs-border-color);
-    background: var(--default-bg-light);
+    background: var(--bs-body-bg);
     color: var(--bs-body-color);
 }
 
@@ -12,7 +12,7 @@
         --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
     }
     
-    .bs-tagify-dropdown .tagify__dropdown__item{
+    /* .bs-tagify-dropdown .tagify__dropdown__item{
         --tagify-dd-bg-color: var(--default-bg-dark);
-    }
+    } */
 }
