@@ -1167,6 +1167,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const property = createFormFloating({
             parent: paramsFields,
+            containerClass: 'w-100 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `propFilter-property-${id}`},
             fieldClass: 'form-select-sm',
