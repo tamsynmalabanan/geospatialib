@@ -1726,6 +1726,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     if (value === filters.properties.active) return
                 
                                     Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
+                                        console.log(i)
                                         form.elements[i].disabled = !value
                                     })
 
