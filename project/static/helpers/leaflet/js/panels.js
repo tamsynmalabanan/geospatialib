@@ -1733,19 +1733,21 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        removeProp: {
+                        newProp: {
                             handler: createButton,
-                            name: 'propFilter-remove',
+                            name: 'propFilter-new',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-trash-fill',
-                            title: 'Remove all property filters',
+                            iconClass: 'bi bi-plus-lg',
+                            title: 'Add a new property filter',
                             disabled: !filters.properties.active,
                             events: {
                                 click: () => {
-                                    body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
-                                    const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
-                                    filters.properties.values = {}
-                                    if (update) updateGeoJSONData(layer)                
+                                    const id = generateRandomString()
+                                    filters.properties.values[id] = {
+                                        active: true,
+                                        include: true,
+                                    }
+                                    body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
                                 }
                             }
                         },
@@ -1771,6 +1773,22 @@ const handleLeafletStylePanel = (map, parent) => {
                                     Object.values(filters.properties.values).forEach(f => f.active = check)
 
                                     updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        removeProp: {
+                            handler: createButton,
+                            name: 'propFilter-remove',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                            iconClass: 'bi bi-trash-fill',
+                            title: 'Remove all property filters',
+                            disabled: !filters.properties.active,
+                            events: {
+                                click: () => {
+                                    body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
+                                    const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
+                                    filters.properties.values = {}
+                                    if (update) updateGeoJSONData(layer)                
                                 }
                             }
                         },
