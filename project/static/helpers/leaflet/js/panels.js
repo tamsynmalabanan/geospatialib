@@ -1222,8 +1222,8 @@ const handleLeafletStylePanel = (map, parent) => {
             callbacks: {
                 'focus': (e) => {
                     const tagify = e.detail.tagify
-                    console.log(tagify)
-                    
+                    tagify.settings.whitelist = ['sdvfdg', 'sdfsdfdfs', 'sdfsdf']
+
 
                 }
             }
