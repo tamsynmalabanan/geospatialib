@@ -1174,7 +1174,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldClass: 'form-select-sm',
             labelText: 'Property',
             disabled: !filters.properties.active,
-            options: {[filter.property]:filter.property},
+            options: {[filter.property || '']:filter.property || ''},
             currentValue: filter.property || '',
             events: {
                 focus: (e) => {
