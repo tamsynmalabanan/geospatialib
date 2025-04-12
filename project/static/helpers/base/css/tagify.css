@@ -9,8 +9,8 @@
     --placeholder-color-focus: var(--bs-secondary-color);
 
     .tagify__tag {
-        background-color: var(--bs-bg-primary);
-        color: white;
+        background-color: var(--bs-primary-rgb) !important;
+        color: white !important;
     }
 }
 
