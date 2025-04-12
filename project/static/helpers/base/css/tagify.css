@@ -1,5 +1,6 @@
 :root {
-    --tagify-dd-bg-color: var(--bs-body-bg)
+    --tagify-dd-bg-color: var(--bs-body-bg);
+    --tagify-dd-text-color: var(--bs-body-color)
 }
 
 /* .bs-tagify-dropdown {
