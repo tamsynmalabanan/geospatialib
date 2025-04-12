@@ -1215,6 +1215,7 @@ const handleLeafletStylePanel = (map, parent) => {
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
+            dropdownClas:  `text-bg-${getPreferredTheme()}`,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
