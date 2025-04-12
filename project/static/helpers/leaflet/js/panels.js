@@ -1740,7 +1740,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     id: `${filterContainerId}-prop`,
-                                    className: 'd-flex flex-column w-100 gap-2 mb-3',
+                                    className: 'd-flex flex-column w-100 gap-2',
                                     parent,
                                 })  
 

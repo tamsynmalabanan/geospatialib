@@ -1,7 +1,7 @@
 :root {
     --tagify-dd-bg-color: var(--bs-body-bg);
     --tagify-dd-text-color: var(--bs-body-color);
-    --tags-focus-border-color: transparent;
+    --tagify-dd-color-primary: var(--bs-body-bg)
 }
 
 .bs-tagify-dropdown {
