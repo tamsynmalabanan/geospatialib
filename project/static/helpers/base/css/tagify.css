@@ -10,13 +10,13 @@
 
 .tagify__dropdown {
     border: none;
+    margin-top: 5px;
+    margin-bottom: 5px;
 
     .tagify__dropdown__wrapper {
         border-color: var(--bs-border-color) !important;
         background-color: var(--bs-body-bg) !important;
         border-radius: var(--bs-border-radius) !important;
-        margin-top: 5px;
-        margin-bottom: 5px;
     
         .tagify__dropdown__item {
             font-size: 12px !important;
