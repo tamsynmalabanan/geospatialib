@@ -638,17 +638,18 @@ const createTagifyField = ({
     placeholder,
     enabled,
     currentValue,
-    fieldClass = '',
+    inputClass = '',
     delimiters,
     whitelist = [],
     callbacks = {},
     dropdownClass = '', 
     userInput = true,
     disabled = false,
+    scopeStyle = {},
 } = {}) => {
 
     const input = document.createElement(inputTag)
-    input.className = `${fieldClass}`
+    input.className = `${inputClass}`
     if (name) input.setAttribute('name', name)
     if (placeholder) input.setAttribute('placeholder', placeholder)
     if (currentValue) input.value = currentValue
@@ -668,4 +669,8 @@ const createTagifyField = ({
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         }
     })
+
+    Object.keys(scopeStyle).forEach(i => tagifyObj.DOM.scope.style[i] = scopeStyle[i])
+
+    console.log(tagifyObj)
 }

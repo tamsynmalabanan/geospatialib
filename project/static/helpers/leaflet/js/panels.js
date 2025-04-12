@@ -1216,13 +1216,16 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const values = createTagifyField({
             parent: valueFields,
-            fieldClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+            inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
             inputTag: 'textarea',
             delimiters: null,
             enabled: 0,
             disabled: !filters.properties.active,
             dropdownClass:  `rounded my-1 border`,
             userInput: false,
+            scopeStyle: {
+                minHeight: '50px',
+            },
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
