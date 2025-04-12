@@ -1259,7 +1259,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent: valueFields,
             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
             iconClass: 'bi bi-trash-fill',
-            disabled: !filters.geom.active,
+            disabled: !filters.properties.active,
             name: `propFilter-remove-${id}`,
             events: {
                 click: (e) => {
