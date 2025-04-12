@@ -11,6 +11,8 @@
 .tagify__dropdown__wrapper {
     border-color: var(--bs-border-color) !important;
     background-color: var(--bs-body-bg) !important;
+    border-radius: var(--bs-border-radius) !important;
+    margin-top: 3px;
 }
 
 .tagify {
