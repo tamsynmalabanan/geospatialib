@@ -1730,8 +1730,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     })
 
                                     body.querySelector(`#${filterContainerId}-prop`).querySelectorAll('.tagify').forEach(i => {
-                                        console.log(i)
-                                        i.disabled = !value
+                                        value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
                                     })
 
 
