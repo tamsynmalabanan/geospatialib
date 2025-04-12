@@ -1209,7 +1209,7 @@ const handleLeafletStylePanel = (map, parent) => {
             inputTag: 'textarea',
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
-            currentValue: filter.values.split(','),
+            currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
             whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf'],
             callbacks: {
 
