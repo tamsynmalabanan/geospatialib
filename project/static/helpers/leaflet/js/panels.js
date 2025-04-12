@@ -1221,7 +1221,10 @@ const handleLeafletStylePanel = (map, parent) => {
             // whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf'],
             callbacks: {
                 'focus': (e) => {
-                    console.log(e)
+                    const tagify = e.detail.tagify
+                    console.log(tagify)
+                    
+
                 }
             }
         })
