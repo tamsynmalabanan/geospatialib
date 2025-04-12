@@ -634,14 +634,15 @@ const createInputGroup = ({
 const createTagifyField = ({
     parent,
     name,
+    inputTag = 'input',
     placeholder,
     currentValue,
     fieldClass = '',
     whitelist = [],
-    events = {},
+    callbacks = {},
 } = {}) => {
 
-    const input = document.createElement('input')
+    const input = document.createElement(inputTag)
     input.className = `${fieldClass}`
     if (name) input.setAttribute('name', name)
     if (placeholder) input.setAttribute('placeholder', placeholder)
@@ -650,6 +651,7 @@ const createTagifyField = ({
 
     const tagifyObj = new Tagify(input, {
         whitelist,
+        callbacks,
         // maxTags: 10,
         dropdown: {
             // maxItems: 20,
@@ -658,6 +660,4 @@ const createTagifyField = ({
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         }
     })
-
-    Object.keys(events).forEach(i => tagifyObj.on(i, events[i]))
 } 

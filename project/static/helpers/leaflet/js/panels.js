@@ -1206,12 +1206,13 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const values = createTagifyField({
             parent,
+            inputTag: 'textarea',
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: filter.values.join(', '),
             whitelist: ['private','sdfs', 'dsgfsa', 'dsgfsgf'],
-            events: {
-                
+            callbacks: {
+
             }
         })
 
