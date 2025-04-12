@@ -1223,7 +1223,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     const tagify = e.detail.tagify
                     const property = filter.property
                     const currentValues = filter.values
-                    console.log(tagify, property, currentValues)
                     
                     const options = []
                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
