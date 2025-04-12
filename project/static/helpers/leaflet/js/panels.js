@@ -1227,13 +1227,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     const options = []
                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        const value = currentProperties[property]
+                        const value = currentProperties[property] ?? 'null'
                         if (currentValues.includes(value)) return
                         options.push(value)
                     })
 
                     const optionsSet = new Set(options)
-                    const sortedOptions = [...optionsSet].sort().map(i => i ?? 'null')
+                    const sortedOptions = [...optionsSet].sort()
                     console.log(sortedOptions)
                     tagify.settings.whitelist = sortedOptions
                 }
