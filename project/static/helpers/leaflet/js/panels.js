@@ -1672,31 +1672,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        toggleGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-toggles',
-                            title: 'Toggle all spatial constraints',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    const fields = Object.values(form.elements).filter(f => {
-                                        return (f.getAttribute('name') || '').startsWith('geomFilter-')
-                                        && f.getAttribute('type') === 'checkbox'
-                                    })
-                                    const check = fields.every(f => !f.checked)
-
-                                    fields.forEach(field => {
-                                        field.checked = check
-                                    })
-
-                                    Object.values(filters.geom.values).forEach(f => f.active = check)
-
-                                    updateGeoJSONData(layer)
-                                }
-                            }
-                        },
                         removeGeom: {
                             handler: createButton,
                             name: 'geomFilter-remove',
@@ -1771,6 +1746,31 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
                                     filters.properties.values = {}
                                     if (update) updateGeoJSONData(layer)                
+                                }
+                            }
+                        },
+                        toggleProp: {
+                            handler: createButton,
+                            name: 'propFilter-toggle',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                            iconClass: 'bi bi-toggles',
+                            title: 'Toggle all property filters',
+                            disabled: !filters.properties.active,
+                            events: {
+                                click: () => {
+                                    const fields = Object.values(form.elements).filter(f => {
+                                        return (f.getAttribute('name') || '').startsWith('propFilter-')
+                                        && f.getAttribute('type') === 'checkbox'
+                                    })
+                                    const check = fields.every(f => !f.checked)
+
+                                    fields.forEach(field => {
+                                        field.checked = check
+                                    })
+
+                                    Object.values(filters.properties.values).forEach(f => f.active = check)
+
+                                    updateGeoJSONData(layer)
                                 }
                             }
                         },

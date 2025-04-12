@@ -1,7 +1,7 @@
 :root {
     --tagify-dd-bg-color: var(--bs-body-bg);
     --tagify-dd-text-color: var(--bs-body-color);
-    --tagify-dd-color-primary: var(--bs-body-color)
+    --tagify-dd-color-primary: var(--bs-body-bg)
 }
 
 .tagify {
@@ -13,4 +13,3 @@
     --tag-text-color--edit: white;
     --tag-remove-btn-color: white;
 }
-
