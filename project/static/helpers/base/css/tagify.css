@@ -1,3 +1,7 @@
+:root {
+    --tagify-dd-bg-color: var(--default-bg-light)
+}
+
 .bs-tagify-dropdown .tagify__dropdown__item{
     border-radius: var(--bs-border-radius);
     border-color: var(--bs-border-color);
@@ -6,6 +10,10 @@
 }
 
 [data-bs-theme="dark"] {
+    :root {
+        --tagify-dd-bg-color: var(--default-bg-dark)
+    }
+
     .tagify {
         --placeholder-color: hsla(0, 0%, 100%, 0.5);
         --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
