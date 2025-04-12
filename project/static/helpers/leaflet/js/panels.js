@@ -1208,6 +1208,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
             inputTag: 'textarea',
             delimiters: null,
+            enabled: 0,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),

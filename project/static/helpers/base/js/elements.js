@@ -634,11 +634,12 @@ const createInputGroup = ({
 const createTagifyField = ({
     parent,
     name,
-    delimiters,
     inputTag = 'input',
     placeholder,
+    enabled,
     currentValue,
     fieldClass = '',
+    delimiters,
     whitelist = [],
     callbacks = {},
 } = {}) => {
@@ -658,7 +659,7 @@ const createTagifyField = ({
         dropdown: {
             // maxItems: 20,
             // classname: 'tags-look', // <- custom classname for this dropdown, so it could be targeted
-            enabled: 0,             // <- show suggestions on focus
+            enabled,             // <- show suggestions on focus
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         }
     })
