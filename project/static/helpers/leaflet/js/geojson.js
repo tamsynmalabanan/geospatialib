@@ -12,25 +12,10 @@ const getLeafletGeoJSONLayer = async ({
         'geojson', geojson,
     )
     console.log(
-        'group', group,
-    )
-    console.log(
-        'pane', pane,
-    )
-    console.log(
-        'title', title,
-    )
-    console.log(
-        'attribution', attribution,
-    )
-    console.log(
         'fetchParams', fetchParams,
     )
     console.log(
         'styles', styles,
-    )
-    console.log(
-        'customStyleParams', customStyleParams,
     )
 
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
