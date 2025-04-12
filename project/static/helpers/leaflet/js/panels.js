@@ -1224,7 +1224,7 @@ const handleLeafletStylePanel = (map, parent) => {
             userInput: false,
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
-            currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
+            currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
                 focus: (e) => {
                     const tagify = e.detail.tagify
@@ -1746,6 +1746,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     filters.properties.values[id] = {
                                         active: true,
                                         include: true,
+                                        values: [],
                                     }
                                     body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
                                 }
