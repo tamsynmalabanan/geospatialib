@@ -1221,10 +1221,19 @@ const handleLeafletStylePanel = (map, parent) => {
             callbacks: {
                 'focus': (e) => {
                     const tagify = e.detail.tagify
-                    console.log(tagify)
-                    // tagify.settings.whitelist = 
+                    const property = filter.property
+                    const currentValues = filter.values
+                    console.log(tagify, property, currentValues)
 
+                    const options = []
+                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                        options.push(currentProperties[property])
+                    })
 
+                    const optionsSet = new Set(options)
+                    const sortedOptions = [...optionsSet].sort()
+                    tagify.settings.whitelist = sortedOptions
                 }
             }
         })
