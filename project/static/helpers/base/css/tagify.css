@@ -1,6 +1,6 @@
-:root {
+/* :root {
     --tagify-dd-bg-color: var(--default-bg-light)
-}
+} */
 
 .bs-tagify-dropdown .tagify__dropdown__item{
     border-radius: var(--bs-border-radius);
