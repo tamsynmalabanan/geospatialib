@@ -35,6 +35,10 @@
 }
 
 [data-bs-theme="dark"] {
+    .tagify {
+        
+    }
+
     .bg-adjusted {
         background-color: var(--adjusted-bg-dark) !important;
     }
