@@ -1271,7 +1271,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-
         return parent
     }
 
@@ -1756,6 +1755,22 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     filters.properties.active = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        removeProp: {
+                            handler: createButton,
+                            name: 'propFilter-remove',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                            iconClass: 'bi bi-trash-fill',
+                            title: 'Remove all property filters',
+                            disabled: !filters.properties.active,
+                            events: {
+                                click: () => {
+                                    body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
+                                    const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
+                                    filters.properties.values = {}
+                                    if (update) updateGeoJSONData(layer)                
                                 }
                             }
                         },
