@@ -90,7 +90,7 @@ const getLeafletGeoJSONLayer = async ({
                     active: true,
                     include: true,
                     property: 'access',
-                    values: ['private'],
+                    values: ['private', 'permissive'],
                 },
             }},
         }
