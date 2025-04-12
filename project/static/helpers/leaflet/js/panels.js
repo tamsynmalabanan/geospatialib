@@ -1219,7 +1219,7 @@ const handleLeafletStylePanel = (map, parent) => {
             placeholder: 'Select property value',
             currentValue: JSON.stringify(filter.values.map(i => {return {value:i}})),
             callbacks: {
-                'focus': (e) => {
+                focus: (e) => {
                     const tagify = e.detail.tagify
                     
                     const options = []
@@ -1234,6 +1234,11 @@ const handleLeafletStylePanel = (map, parent) => {
                     const optionsSet = new Set(options)
                     const sortedOptions = [...optionsSet].sort()
                     tagify.settings.whitelist = sortedOptions
+                },
+                blur: (e) => {
+                    const tagify = e.detail.tagify
+                    const value = tagify.value
+                    console.log(tagify.value)
                 }
             }
         })
