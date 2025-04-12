@@ -1214,6 +1214,22 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
+        const removeBtn = createButton({
+            parent: valueFields,
+            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+            iconClass: 'bi bi-trash-fill',
+            disabled: !filters.properties.active,
+            name: `propFilter-remove-${id}`,
+            events: {
+                click: (e) => {
+                    parent.remove()
+                    const update = filter.active && filter.property && filter.values.length
+                    delete filters.properties.values[id]
+                    if (update) updateGeoJSONData(layer)
+                }
+            }
+        })
+
         const values = createTagifyField({
             parent: valueFields,
             inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
@@ -1259,22 +1275,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     filter.values = values
                     if (filter.active && filter.property) updateGeoJSONData(layer)
-                }
-            }
-        })
-
-        const removeBtn = createButton({
-            parent: valueFields,
-            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-            iconClass: 'bi bi-trash-fill',
-            disabled: !filters.properties.active,
-            name: `propFilter-remove-${id}`,
-            events: {
-                click: (e) => {
-                    parent.remove()
-                    const update = filter.active && filter.property && filter.values.length
-                    delete filters.properties.values[id]
-                    if (update) updateGeoJSONData(layer)
                 }
             }
         })
