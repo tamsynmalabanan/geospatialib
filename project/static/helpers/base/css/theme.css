@@ -35,9 +35,10 @@
 }
 
 [data-bs-theme="dark"] {
-    /* .tagify {
-
-    } */
+    .tagify.text-bg-dark {
+        --placeholder-color: hsla(0, 0%, 100%, 0.5);
+        --placeholder-color-focus: hsla(0, 0%, 100%, 0.5);
+    }
 
     .bg-adjusted {
         background-color: var(--adjusted-bg-dark) !important;
