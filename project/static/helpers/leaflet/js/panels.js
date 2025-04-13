@@ -1265,7 +1265,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             options.push(value)
                         })
                     }
-
                     
                     const optionsSet = options.length ? new Set(options) : []
                     const sortedOptions = [...optionsSet].sort()
