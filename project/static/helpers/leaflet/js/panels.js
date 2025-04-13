@@ -1274,6 +1274,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 blur: (e) => {
                     const tagify = e.detail.tagify
                     const values = tagify.value.map(i => i.value)
+
+                    console.log(values)
+                    console.log(filter.values)
+
                     if (values.every(i => filter.values.includes(i))
                         && filter.values.every(i => values.includes(i))
                     ) return
