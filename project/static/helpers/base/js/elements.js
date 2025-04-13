@@ -646,6 +646,7 @@ const createTagifyField = ({
     userInput = true,
     disabled = false,
     scopeStyle = {},
+    maxItems = Infinity,
 } = {}) => {
 
     const input = document.createElement(inputTag)
@@ -663,7 +664,7 @@ const createTagifyField = ({
         callbacks,
         // maxTags: 10,
         dropdown: {
-            // maxItems: 20,
+            maxItems,
             classname: dropdownClass, // <- custom classname for this dropdown, so it could be targeted
             enabled,             // <- show suggestions on focus
             closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
