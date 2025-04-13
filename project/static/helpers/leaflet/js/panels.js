@@ -1262,7 +1262,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             let value = currentProperties[filter.property] ?? '[undefined]'
                             if (value === '') value = '[blank]'
                             if (filter.values.includes(value)) return
-                            options.push(value)
+                            options.push(String(value))
                         })
                     }
                     
