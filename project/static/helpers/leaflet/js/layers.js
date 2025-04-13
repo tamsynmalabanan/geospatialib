@@ -123,14 +123,8 @@ const zoomToLeafletLayer = async (layer, map, {
         return map.setView(layer.getLatLng(), zoom)
     }
     
-    const b = await getLeafletLayerBounds(layer)
-    if (!b) return
-    
-    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
-        return map.setView(b.getNorthEast(), zoom)
-    } else {
-        return map.fitBounds(b)
-    }
+    const bounds = await getLeafletLayerBounds(layer)
+    zoomLeafletMapToBounds(map, bounds)
 }
 
 const leafletLayerStyleToHTML = (style, type) => {
@@ -267,6 +261,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
+        },
+        zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer ? null : {
+            innerText: `Zoom to current features`,
+            btnCallback: async () => {
+                if (layer.getLayers().length) zoomLeafletMapToBounds(map, layer.getBounds())
+            }
         },
         isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
             innerText: `Isolate ${typeLabel}`,

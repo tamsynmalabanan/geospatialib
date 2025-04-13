@@ -86,3 +86,14 @@ const getLeafletMapBbox = (map) => {
         validateLeafletLayerCoords
     ).toBBoxString().split(',') // w,s,e,n
 }
+
+const zoomLeafletMapToBounds = (map, bounds, {zoom=18}={}) => {
+    const b = bounds
+    if (!b) return
+    
+    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+        return map.setView(b.getNorthEast(), zoom)
+    } else {
+        return map.fitBounds(b)
+    }
+}
