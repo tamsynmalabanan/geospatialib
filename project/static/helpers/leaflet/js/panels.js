@@ -1268,16 +1268,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     const optionsSet = options.length ? new Set(options) : []
                     const sortedOptions = [...optionsSet].sort()
-                    console.log(sortedOptions)
 
                     tagify.settings.whitelist = sortedOptions
                 },
                 blur: (e) => {
                     const tagify = e.detail.tagify
                     const values = tagify.value.map(i => i.value)
-
-                    console.log(values)
-                    console.log(filter.values)
 
                     if (values.every(i => filter.values.includes(i))
                         && filter.values.every(i => values.includes(i))
