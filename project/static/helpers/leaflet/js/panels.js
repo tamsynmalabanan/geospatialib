@@ -1181,7 +1181,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const field = e.target
                     field.innerHTML = ''
                     
-                    const usedProperties = filters.properties.values?.map(i => i.property) || []
+                    const usedProperties = Object.values((filters.properties.values || {})).map(i => i.property) || []
 
                     // update to fetch properties from wfs (wms?)
                     const options = []
