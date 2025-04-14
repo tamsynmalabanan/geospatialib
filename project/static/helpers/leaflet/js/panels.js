@@ -1073,7 +1073,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                     
                     if (!value && !filter.geoms?.length) return
-                    if (value && filter.geoms.length 
+                    if (value && filter.geoms && filter.geoms.length 
                         && value.every(i => filter.geoms.find(g => turf.booleanEqual(i, g)))
                         && filter.geoms.every(i => value.find(g => turf.booleanEqual(i, g)))
                     ) return
