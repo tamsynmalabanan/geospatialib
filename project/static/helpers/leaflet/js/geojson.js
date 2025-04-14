@@ -99,7 +99,7 @@ const getLeafletGeoJSONLayer = async ({
         if (filters.geom.active) {
             const geomFilters = Object.values(filters.geom.values)
             .filter(i => i.active 
-                && i.geoms.length 
+                && i.geoms?.length 
                 && i.geoms.every(g => turf.booleanValid(g))
             )
             

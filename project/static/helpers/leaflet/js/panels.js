@@ -1023,7 +1023,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
             currentValue: filter.geoms?.map(i => JSON.stringify(i)).join(',') ?? '',
-            labelText: 'Comma-delimited geometries)',
+            labelText: 'Comma-delimited geometries',
             disabled: !filters.geom.active,
             events: {
                 blur: (e) => {
