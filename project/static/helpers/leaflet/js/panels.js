@@ -1321,6 +1321,18 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const updateValues = (e) => {
+            const tagify = e.detail.tagify
+            const values = tagify.value.map(i => i.value)
+
+            if (values.every(i => filter.values.includes(i))
+                && filter.values.every(i => values.includes(i))
+            ) return
+
+            filter.values = values
+            if (filter.active && filter.property) updateGeoJSONData(layer)
+        }
+
         const values = createTagifyField({
             parent: valueFields,
             inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
@@ -1357,17 +1369,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     tagify.settings.whitelist = sortedOptions
                 },
-                blur: (e) => {
-                    const tagify = e.detail.tagify
-                    const values = tagify.value.map(i => i.value)
-
-                    if (values.every(i => filter.values.includes(i))
-                        && filter.values.every(i => values.includes(i))
-                    ) return
-
-                    filter.values = values
-                    if (filter.active && filter.property) updateGeoJSONData(layer)
-                }
+                blur: updateValues,
+                add: updateValues,
+                remove: updateValues,
+                edit: updateValues,
             }
         })
 
