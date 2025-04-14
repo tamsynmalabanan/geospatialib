@@ -1112,7 +1112,7 @@ const handleLeafletStylePanel = (map, parent) => {
             containerClass: 'flex-grow-1',
             fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
-            fieldClass: 'mh-100',
+            fieldClass: 'mh-100 fs-12',
             currentValue: (filter.geoms ?? []).map(i => JSON.stringify(i)).join(','),
             labelText: 'Comma-delimited geometries',
             disabled: !filters.geom.active,
