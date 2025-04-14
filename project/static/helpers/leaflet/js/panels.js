@@ -1255,6 +1255,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         // filters.properties.values[id] = {
         //     active: true,
+        //     property: 'access',
         //     handler: 'equals',
         //     case: true,
         //     value: true,
@@ -1272,6 +1273,7 @@ const handleLeafletStylePanel = (map, parent) => {
             options: {
                 'equals': '=',
                 'subset': '⊂',
+                header,
                 'greaterThan': '>',
                 'greaterThanEqualTo': '≥',
                 'lessThan': '<',
