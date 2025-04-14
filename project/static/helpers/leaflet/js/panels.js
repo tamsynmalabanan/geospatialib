@@ -1109,6 +1109,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         customStyleParams: {
                             fillOpacity: 0,
                             strokeWidth: 3,
+                            strokeColor: generateRandomColor()
                         },
                     })
 
