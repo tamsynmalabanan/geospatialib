@@ -1022,15 +1022,14 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
-            currentValue: filter.geoms?.map(i => JSON.stringify(i)).join(',') ?? '',
-            labelText: 'Comma-delimited geometries',
+            currentValue: JSON.stringify(filter.geoms ?? []),
+            labelText: 'Comma-delimited geometries array',
             disabled: !filters.geom.active,
             events: {
                 blur: (e) => {
                     let value
                     try {
-                        console.log(e.target.value.split(','))
-                        value = e.target.value.split(',').map(i => {
+                        value = e.target.value.split(';').map(i => {
                             try {
                                 return JSON.parse(i.trim())
                             } catch {
@@ -1067,7 +1066,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             value = simplifiedGeoms
                         }
 
-                        e.target.value = value.map(i => JSON.stringify(i)).join(',')
+                        e.target.value = value.map(i => JSON.stringify(i)).join(';')
                     } catch (error) {
                         console.log(error)
                         // e.target.value = 
@@ -1646,6 +1645,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                 return options
                             })()
                         },
+
+
                         enableGeom: {
                             handler: createFormCheck,
                             checked: filters.geom.active,
@@ -1761,8 +1762,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     id: `${filterContainerId}-geom`,
-                                    className: 'd-flex flex-column w-100 gap-2 mb-3',// pe-3 overflow-y-auto',
-                                    // style: {maxHeight:'200px'},
+                                    className: 'd-flex flex-column w-100 gap-2 mb-3',
                                     parent,
                                 })  
 
