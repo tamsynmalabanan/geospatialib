@@ -187,5 +187,8 @@ const relationHandlers = (name) => {
                 return String(v1).toLowerCase().includes(String(v2).toLowerCase())
             }
         },
+        greaterThan: (v1, v2) => {
+            return Number(v1) > Number(v2)
+        },
     }[name]
 }
