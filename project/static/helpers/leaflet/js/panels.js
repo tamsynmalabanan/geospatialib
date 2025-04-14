@@ -1029,6 +1029,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 blur: (e) => {
                     let value
                     try {
+                        console.log(e.target.value.split(','))
                         value = e.target.value.split(',').map(i => JSON.parse(i.trim())) 
                         if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
                             
