@@ -181,7 +181,6 @@ const relationHandlers = (name) => {
             }
         },
         contains: (v1, v2, {caseSensitive=true}={}) => {
-            console.log(String(v1), String(v2))
             if (caseSensitive) {
                 return String(v1).includes(String(v2))
             } else {
