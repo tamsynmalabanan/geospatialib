@@ -1060,6 +1060,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 i = simplifiedGeom
                             }
 
+                            console.log(i.coordinates)
                             return i
                         }).filter(i => i)
 
