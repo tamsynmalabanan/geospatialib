@@ -1039,9 +1039,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
                         
-                        value = value.map(i => i.type === 'Feature' ? i.geometry : i)
-                        
                         value = value.map(i => {
+                            i = i.type === 'Feature' ? i.geometry : i
+                            
                             let simplify = turf.coordAll(i).length > 100
                             if (simplify) {
                                 let simplifiedGeom
@@ -1061,7 +1061,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
 
                             return i
-                        })
+                        }).filter(i => i)
 
                         e.target.value = value.map(i => JSON.stringify(i)).join(',')
                     } catch (error) {
