@@ -182,9 +182,9 @@ const relationHandlers = (name) => {
         },
         contains: (v1, v2, {caseSensitive=true}={}) => {
             if (caseSensitive) {
-                return String(v1).contains(String(v2))
+                return String(v1).includes(String(v2))
             } else {
-                return String(v1).toLowerCase().contains(String(v2).toLowerCase())
+                return String(v1).toLowerCase().includes(String(v2).toLowerCase())
             }
         },
     }[name]
