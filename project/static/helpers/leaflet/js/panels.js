@@ -983,11 +983,12 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const handler = createFormFloating({
             parent: paramsFields,
+            containerClass:'w-100 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
             },
-            fieldClass: 'form-select-sm w-100 flex-grow-1',
+            fieldClass: 'form-select-sm',
             labelText: 'Feature relationship',
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
@@ -1012,6 +1013,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const value = createFormFloating({
             parent: paramsFields,
+            containerClass:'w-100 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
