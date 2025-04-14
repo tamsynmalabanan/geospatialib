@@ -978,16 +978,14 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const handler = createInputGroup({
+        const handler = createFormFloating({
             parent,
             fieldTag: 'select',
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
-                placeholder: 'Relationship',
             },
             fieldClass: 'form-select-sm',
-            // labelText: 'Feature',
-            prefixHTML: 'Feature',
+            labelText: 'Feature relationship',
             disabled: !filters.geom.active,
             options: {
                 'booleanIntersects': 'intersects',
