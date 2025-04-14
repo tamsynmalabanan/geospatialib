@@ -989,14 +989,22 @@ const handleLeafletStylePanel = (map, parent) => {
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
             options: {
-                'booleanIntersects': 'intersects',
-                'booleanDisjoint': 'disjoint from',
-                'booleanEqual': 'equals',
-                'booleanTouches': 'touches',
-                'booleanWithin': 'within',
-                'booleanContains': 'contains',
+                'booleanIntersects-true': 'intersects',
+                'booleanDisjoint-true': 'disjoint from',
+
+                'booleanEqual-true': 'equals',
+                'booleanEqual-false': 'not equal to',
+
+                'booleanTouches-true': 'touches',
+                'booleanTouches-false': 'not touching',
+
+                'booleanWithin-true': 'within',
+                'booleanWithin-false': 'not within',
+
+                'booleanContains-true': 'contains',
+                'booleanContains-false': 'not containing',
             },
-            currentValue: filter.handler ?? 'booleanIntersects',
+            currentValue: filter.handler ?? 'booleanIntersects-true',
             events: {
                 change: (e) => {
                     const value = e.target.value
@@ -1642,7 +1650,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.geom.values[id] = {
                                         active: true,
-                                        handler: 'booleanIntersects',
+                                        handler: 'booleanIntersects-true',
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                 }
@@ -1660,7 +1668,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.geom.values[id] = {
                                         active: true,
-                                        handler: 'booleanIntersects',
+                                        handler: 'booleanIntersects-true',
                                         geometry: L.rectangle(map.getBounds()).toGeoJSON().geometry
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
