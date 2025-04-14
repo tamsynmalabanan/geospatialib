@@ -973,7 +973,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.geometry) updateGeoJSONData(layer)
+                    if (filter.geoms?.length) updateGeoJSONData(layer)
                 }
             }
         })
@@ -1008,11 +1008,10 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 change: (e) => {
                     const value = e.target.value
-                    console.log(value, e.target.value)
                     if (value === filter.handler) return
 
                     filter.handler = value
-                    if (filter.active && filter.geometry) updateGeoJSONData(layer)
+                    if (filter.active && filter.geoms?.length) updateGeoJSONData(layer)
                 }
             }
         })
@@ -1092,8 +1091,8 @@ const handleLeafletStylePanel = (map, parent) => {
             name: `geomFilter-zoomin-${id}`,
             events: {
                 click: (e) => {
-                    if (!filter.geometry) return
-                    zoomToLeafletLayer(L.geoJSON(filter.geometry), map)
+                    if (!filter.geoms?.length) return
+                    // zoomToLeafletLayer(L.geoJSON(filter.geometry), map)
                 }
             }
         })
@@ -1106,7 +1105,7 @@ const handleLeafletStylePanel = (map, parent) => {
             name: `geomFilter-legend-${id}`,
             events: {
                 click: async (e) => {
-                    if (!filter.geometry) return
+                    if (!filter.geoms?.length) return
 
                     const geojson = turf.featureCollection([{
                         type: 'Feature',
@@ -1140,7 +1139,7 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: (e) => {
                     parent.remove()
-                    const update = filter.active && filter.geometry
+                    const update = filter.active && filter.geoms?.length
                     delete filters.geom.values[id]
                     if (update) updateGeoJSONData(layer)
                 }
