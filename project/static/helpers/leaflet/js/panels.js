@@ -1382,7 +1382,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const caseSensitive = createFormFloating({
             parent: valueFields,
-            containerClass: 'w-50',
+            containerClass: 'w-25 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `propFilter-case-${id}`},
             fieldClass: 'form-select-sm',
