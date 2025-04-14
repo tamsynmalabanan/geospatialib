@@ -1041,6 +1041,70 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
+        const btnsContainer = customCreateElement({
+            parent:geomsFields,
+            className:'d-flex flex-column justify-content-center pt-1 me-1', 
+        })
+
+        const zoominBtn = createButton({
+            parent: btnsContainer,
+            className: 'fs-12 bg-transparent border-0 p-0',
+            iconClass: 'bi bi bi-zoom-in',
+            disabled: !filters.geom.active,
+            name: `geomFilter-zoomin-${id}`,
+            events: {
+                click: (e) => {
+                    if (!filter.geoms?.length) return
+                    zoomToLeafletLayer(L.geoJSON(turf.featureCollection(filter.geoms.map(i => turf.feature(i)))), map)
+                }
+            }
+        })
+
+        const legendBtn = createButton({
+            parent: btnsContainer,
+            className: 'fs-12 bg-transparent border-0 p-0',
+            iconClass: 'bi bi-plus-lg',
+            disabled: !filters.geom.active,
+            name: `geomFilter-legend-${id}`,
+            events: {
+                click: async (e) => {
+                    if (!filter.geoms?.length) return
+
+                    const geojson = turf.featureCollection(filter.geoms.map(i => turf.feature(i)))
+
+                    const newLayer = await getLeafletGeoJSONLayer({
+                        geojson,
+                        title: 'spatial constraint',
+                        pane: createCustomPane(map),
+                        group: map._ch.getLayerGroups().client,
+                        customStyleParams: {
+                            fillOpacity: 0,
+                            strokeWidth: 3,
+                            strokeColor: generateRandomColor()
+                        },
+                    })
+
+                    if (newLayer) newLayer._group.addLayer(newLayer)
+                }
+            }
+        })
+
+        const removeBtn = createButton({
+            parent: btnsContainer,
+            className: 'fs-12 bg-transparent border-0 p-0',
+            iconClass: 'bi bi-trash-fill',
+            disabled: !filters.geom.active,
+            name: `geomFilter-remove-${id}`,
+            events: {
+                click: (e) => {
+                    parent.remove()
+                    const update = filter.active && filter.geoms?.length
+                    delete filters.geom.values[id]
+                    if (update) updateGeoJSONData(layer)
+                }
+            }
+        })
+
         const geom = createFormFloating({
             parent: geomsFields,
             containerClass: 'flex-grow-1',
@@ -1103,70 +1167,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     filter.geoms = value
                     if (filter.active) updateGeoJSONData(layer)
-                }
-            }
-        })
-
-        const btnsContainer = customCreateElement({
-            parent:geomsFields,
-            className:'d-flex flex-column justify-content-center pt-1', 
-        })
-
-        const zoominBtn = createButton({
-            parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-            iconClass: 'bi bi bi-zoom-in',
-            disabled: !filters.geom.active,
-            name: `geomFilter-zoomin-${id}`,
-            events: {
-                click: (e) => {
-                    if (!filter.geoms?.length) return
-                    zoomToLeafletLayer(L.geoJSON(turf.featureCollection(filter.geoms.map(i => turf.feature(i)))), map)
-                }
-            }
-        })
-
-        const legendBtn = createButton({
-            parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-            iconClass: 'bi bi-plus-lg',
-            disabled: !filters.geom.active,
-            name: `geomFilter-legend-${id}`,
-            events: {
-                click: async (e) => {
-                    if (!filter.geoms?.length) return
-
-                    const geojson = turf.featureCollection(filter.geoms.map(i => turf.feature(i)))
-
-                    const newLayer = await getLeafletGeoJSONLayer({
-                        geojson,
-                        title: 'spatial constraint',
-                        pane: createCustomPane(map),
-                        group: map._ch.getLayerGroups().client,
-                        customStyleParams: {
-                            fillOpacity: 0,
-                            strokeWidth: 3,
-                            strokeColor: generateRandomColor()
-                        },
-                    })
-
-                    if (newLayer) newLayer._group.addLayer(newLayer)
-                }
-            }
-        })
-
-        const removeBtn = createButton({
-            parent: btnsContainer,
-            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-            iconClass: 'bi bi-trash-fill',
-            disabled: !filters.geom.active,
-            name: `geomFilter-remove-${id}`,
-            events: {
-                click: (e) => {
-                    parent.remove()
-                    const update = filter.active && filter.geoms?.length
-                    delete filters.geom.values[id]
-                    if (update) updateGeoJSONData(layer)
                 }
             }
         })
