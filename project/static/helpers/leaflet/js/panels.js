@@ -1034,7 +1034,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                         if (value.type === 'Feature') value = value.geometry
                         
-                        let simplify = turf.coordAll(value).length > 50
+                        let simplify = turf.coordAll(value).length > 100
                         if (simplify) {
                             let simplifiedGeom
                             let tolerance = 0
@@ -1043,7 +1043,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 tolerance += 0.001
                                 try {
                                     simplifiedGeom = turf.simplify(value, {tolerance})
-                                    simplify = turf.coordAll(simplifiedGeom).length > 50
+                                    simplify = turf.coordAll(simplifiedGeom).length > 100
                                 } catch {
                                     throw new Error('Failed to simplify geometry')
                                 }
@@ -1728,7 +1728,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                 })
 
-                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 50 vertices will be simplified to minimize lags.'
+                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified to minimize lags.'
                             }
                         },
                         geomFilter: {
