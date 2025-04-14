@@ -1108,6 +1108,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         group: map._ch.getLayerGroups().client,
                         customStyleParams: {
                             fillOpacity: 0,
+                            strokeWidth: 3,
                         },
                     })
 
