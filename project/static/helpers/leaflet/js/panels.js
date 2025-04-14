@@ -1022,45 +1022,57 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
-            currentValue: filter.geometry ? JSON.stringify(filter.geometry) : '',
-            labelText: 'Geometry geojson',
+            currentValue: filter.geoms.map(i => JSON.stringify(i)).join(','),
+            labelText: 'Comma-delimited geometries)',
             disabled: !filters.geom.active,
             events: {
                 blur: (e) => {
                     let value
                     try {
-                        value = JSON.parse(e.target.value)
-                        if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
+                        value = e.target.value.split(',').map(i => JSON.parse(i.trim())) 
+                        if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
+                            
+                        value = value.map(i => value.type === 'Feature' ? value.geometry : value)
                         
-                        if (value.type === 'Feature') value = value.geometry
-                        
-                        let simplify = turf.coordAll(value).length > 100
+                        let simplify = value.every(i => turf.coordAll(i).length > 100)
                         if (simplify) {
-                            let simplifiedGeom
+                            let simplifiedGeoms
                             let tolerance = 0
                             
                             while (simplify) {
+                                simplifiedGeoms = []
                                 tolerance += 0.001
+
                                 try {
-                                    simplifiedGeom = turf.simplify(value, {tolerance})
-                                    simplify = turf.coordAll(simplifiedGeom).length > 100
+                                    value.forEach(i => {
+                                        simplifiedGeoms.push((
+                                            turf.coordAll(i).length > 100 
+                                            ? turf.simplify(i, {tolerance})
+                                            : i
+                                        ))
+                                    })
+                                    simplify = simplifiedGeoms.every(i => turf.coordAll(i).length > 100)
                                 } catch {
                                     throw new Error('Failed to simplify geometry')
                                 }
                             }
 
-                            value = simplifiedGeom
-                        
+                            value = simplifiedGeoms
                         }
-                        e.target.value = JSON.stringify(value)
+
+                        e.target.value = value.map(i => JSON.stringify(i)).join(',')
                     } catch (error) {
-                        e.target.value = value = null
+                        // e.target.value = 
+                        value = null
                     }
                     
-                    if (!value && !filter.geometry) return
-                    if (value && filter.geometry && turf.booleanEqual(value, filter.geometry)) return
+                    if (!value && !filter.geoms?.length) return
+                    if (value && filter.geoms.length 
+                        && value.every(i => filter.geoms.find(g => turf.booleanEqual(i, g)))
+                        && filter.geoms.every(i => value.find(g => turf.booleanEqual(i, g)))
+                    ) return
                     
-                    filter.geometry = value
+                    filter.geoms = value
                     if (filter.active) updateGeoJSONData(layer)
                 }
             }
