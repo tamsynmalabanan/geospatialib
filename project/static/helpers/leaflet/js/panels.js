@@ -1032,6 +1032,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = JSON.parse(e.target.value)
                         if (!turf.booleanValid(value)) throw new Error('Invalid goemetry')
                         
+                        if (value.type === 'feature') value = value.geometry
+                        
                         let simplify = turf.coordAll(value).length > 50
                         if (simplify) {
                             let simplifiedGeom
@@ -1048,8 +1050,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
 
                             value = simplifiedGeom
-                            e.target.value = JSON.stringify(value)
+                        
                         }
+                        e.target.value = JSON.stringify(value)
                     } catch (error) {
                         e.target.value = value = null
                     }
