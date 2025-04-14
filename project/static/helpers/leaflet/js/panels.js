@@ -989,15 +989,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 name: `geomFilter-handler-${id}`,
             },
             fieldClass: 'form-select-sm',
-            labelText: 'Feature relationship',
+            labelText: 'Relation',
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
             options: {
-                'booleanIntersects': 'intersects',
-                'booleanEqual': 'equals',
-                'booleanTouches': 'touches',
-                'booleanWithin': 'within',
-                'booleanContains': 'contains',
+                'booleanIntersects': 'Intersects',
+                'booleanEqual': 'Equals',
+                'booleanTouches': 'Touches',
+                'booleanWithin': 'Within',
+                'booleanContains': 'Contains',
             },
             currentValue: filter.handler,
             events: {
@@ -1019,7 +1019,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 name: `geomFilter-handler-${id}`,
             },
             fieldClass: 'form-select-sm w-100 flex-grow-1',
-            labelText: 'Feature relationship',
+            labelText: 'Value',
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
             options: {
@@ -1205,30 +1205,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const include = createFormFloating({
-            parent: paramsFields,
-            containerClass: 'w-50',
-            fieldTag: 'select',
-            fieldAttrs: {name: `propFilter-include-${id}`},
-            fieldClass: 'form-select-sm',
-            labelText: 'Include',
-            disabled: !filters.properties.active,
-            options: {
-                'true': 'True',
-                'false': 'False',
-            },
-            currentValue: filter.include ? 'true' : 'false',
-            events: {
-                change: (e) => {
-                    const value = e.target.value === 'true'
-                    if (value === filter.include) return
-
-                    filter.include = value
-                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
-                }
-            }
-        })
-
         const property = createFormFloating({
             parent: paramsFields,
             containerClass: 'w-100 flex-grow-1',
@@ -1273,6 +1249,90 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     filter.property = value
                     if (filter.active && filter.values) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        // filters.properties.values[id] = {
+        //     active: true,
+        //     handler: 'equals',
+        //     case: true,
+        //     value: true,
+        //     values: [],
+        // }
+
+        const handler = createFormFloating({
+            parent: paramsFields,
+            containerClass: 'w-50',
+            fieldTag: 'select',
+            fieldAttrs: {name: `propFilter-handler-${id}`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Operator',
+            disabled: !filters.properties.active,
+            options: {
+                'equals': '=',
+                'subset': '⊂',
+                'greaterThan': '>',
+                'greaterThanEqualTo': '≥',
+                'lessThan': '<',
+                'lessThanEqualTo': '≤',
+            },
+            currentValue: filter.handler,
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === filter.handler) return
+
+                    filter.handler = value
+                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const caseSensitive = createFormFloating({
+            parent: paramsFields,
+            containerClass: 'w-50',
+            fieldTag: 'select',
+            fieldAttrs: {name: `propFilter-case-${id}`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Case-sensitive',
+            disabled: !filters.properties.active,
+            options: {
+                'true': 'True',
+                'false': 'False',
+            },
+            currentValue: filter.case === 'true',
+            events: {
+                change: (e) => {
+                    const value = e.target.value === 'true'
+                    if (value === filter.case) return
+
+                    filter.case = value
+                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const value = createFormFloating({
+            parent: paramsFields,
+            containerClass: 'w-50',
+            fieldTag: 'select',
+            fieldAttrs: {name: `propFilter-value-${id}`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Value',
+            disabled: !filters.properties.active,
+            options: {
+                'true': 'True',
+                'false': 'False',
+            },
+            currentValue: filter.value === 'true',
+            events: {
+                change: (e) => {
+                    const value = e.target.value === 'true'
+                    if (value === filter.value) return
+
+                    filter.value = value
+                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
                 }
             }
         })
@@ -1832,7 +1892,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.properties.values[id] = {
                                         active: true,
-                                        include: true,
+                                        handler: 'equals',
+                                        case: true,
+                                        value: true,
                                         values: [],
                                     }
                                     body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
