@@ -1007,8 +1007,8 @@ const handleLeafletStylePanel = (map, parent) => {
             currentValue: filter.handler ?? 'booleanIntersects-true',
             events: {
                 change: (e) => {
-                    console.log('here')
                     const value = e.target.value
+                    console.log(value, e.target.value)
                     if (value === filter.handler) return
 
                     filter.handler = value
