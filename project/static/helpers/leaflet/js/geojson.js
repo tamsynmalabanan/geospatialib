@@ -116,28 +116,21 @@ const getLeafletGeoJSONLayer = async ({
             const propertyFilters = Object.values(filters.properties.values)
             .filter(i => i.active && i.property && i.values?.length)
 
-            if (propertyFilters.some(i => {
-                let value = feature.properties[i.property] ?? '[undefined]'
-                if (value === '') value = '[blank]'
-                return i.values.includes(String(value)) !== i.include
-            })) return false
+            if (!propertyFilters.every(i => {
+                const handler = (v1, v2, {caseSensitive=true}={}) => v1 === v2 //i.handler
+                if (!handler) return true
 
-            // const include = propertyFilters.filter(i => i.include)
-            // const exclude = propertyFilters.filter(i => !i.include)
+                const value = (() => {
+                    const value = feature.properties[i.property] ?? '[undefined]'
+                    return value === '' ? '[blank]' : String(value)
+                })()
 
-            // const getValue = (property) => {
-            //     let value = feature.properties[property] ?? '[undefined]'
-            //     if (value === '') value = '[blank]'
-            //     return value
-            // }
-
-            // if (include.length && include.some(i => {
-            //     return !i.values.includes(getValue(i.property))
-            // })) return false
-            
-            // if (exclude.length && exclude.some(i => {
-            //     return i.values.includes(getValue(i.property))
-            // })) return false
+                try {
+                    return i.values.some((v => handler(value, v, {caseSensitive:i.case})) === i.value)
+                } catch {
+                    return !i.value
+                }
+            }))
         }
 
         return true

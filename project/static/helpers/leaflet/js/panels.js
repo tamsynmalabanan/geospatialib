@@ -1249,12 +1249,13 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         // filters.properties.values[id] = {
-        //     active: true,
-        //     property: 'access',
-        //     handler: 'equals',
         //     case: true,
-        //     value: true,
         //     values: [],
+            
+        //     active: true,
+        //     handler: 'equals',
+        //     property: 'access',
+        //     value: true,
         // }
 
         const handler = createFormFloating({
@@ -1340,7 +1341,7 @@ const handleLeafletStylePanel = (map, parent) => {
             dropdownClass:  `my-1 border-0`,
             userInput: true,
             scopeStyle: {
-                minHeight: '50px',
+                minHeight: '58px',
             },
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property value',
