@@ -109,7 +109,7 @@ const getLeafletGeoJSONLayer = async ({
                 const value = boolStr === "true"
                 
                 try {
-                    return handler(feature, i.geometry)  === value
+                    return handler(feature.geometry, i.geometry)  === value
                 } catch {
                     return false
                 }
