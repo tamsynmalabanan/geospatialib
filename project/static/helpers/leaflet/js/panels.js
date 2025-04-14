@@ -1033,7 +1033,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (!value.startsWith('[')) value = `[${value}`
                         if (!value.endsWith(']')) value = `${value}]`
 
-                        value = JSON.stringify(value)
+                        value = JSON.parse(value)
 
                         if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
                             
