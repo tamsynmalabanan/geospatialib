@@ -1041,31 +1041,27 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                         value = value.map(i => i.type === 'Feature' ? i.geometry : i)
                         
-                        let simplify = value.some(i => turf.coordAll(i).length > 100)
-                        if (simplify) {
-                            let simplifiedGeoms
-                            let tolerance = 0
-                            
-                            while (simplify) {
-                                simplifiedGeoms = []
-                                tolerance += 0.001
+                        value = value.map(i => {
+                            let simplify = turf.coordAll(i).length > 100
+                            if (simplify) {
+                                let simplifiedGeom
+                                let tolerance = 0
 
-                                try {
-                                    value.forEach(i => {
-                                        simplifiedGeoms.push((
-                                            turf.coordAll(i).length > 100 
-                                            ? turf.simplify(i, {tolerance})
-                                            : i
-                                        ))
-                                    })
-                                    simplify = simplifiedGeoms.some(i => turf.coordAll(i).length > 100)
-                                } catch {
-                                    throw new Error('Failed to simplify geometry')
+                                while (simplify) {
+                                    tolerance += 0.001
+                                    try {
+                                        simplifiedGeom = turf.simplify(i, {tolerance})
+                                        simplify = turf.coordAll(simplifiedGeom).length > 100
+                                    } catch {
+                                        return
+                                    }
                                 }
+
+                                i = simplifiedGeom
                             }
 
-                            value = simplifiedGeoms
-                        }
+                            return i
+                        })
 
                         e.target.value = value.map(i => JSON.stringify(i)).join(',')
                     } catch (error) {
