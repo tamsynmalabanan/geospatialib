@@ -1106,6 +1106,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         title: 'spatial constraint',
                         pane: createCustomPane(map),
                         group: map._ch.getLayerGroups().client,
+                        customStyleParams: {
+                            fillOpacity: 0,
+                        },
                     })
 
                     if (newLayer) newLayer._group.addLayer(newLayer)
