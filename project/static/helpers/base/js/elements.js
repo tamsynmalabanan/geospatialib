@@ -554,9 +554,9 @@ const createFormFloating = ({
         for (const value in options) {
             if (value === '__divider__') {
                 field.appendChild(customCreateElement({tag:'hr', className:'dropdown-divider'}))
-                return
+                continue
             }
-            
+
             const option = document.createElement('option')
             option.value = value
             option.text = options[value]
