@@ -958,12 +958,15 @@ const handleLeafletStylePanel = (map, parent) => {
         const filters = layerStyles.filters
         const filter = filters.geom.values[id]
 
-        const parent = customCreateElement({
+        const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+
+        const paramsFields = customCreateElement({
             className:'d-flex gap-2 flex-grow-1 align-items-center',
+            parent,
         })
 
         const enable = createFormCheck({
-            parent,
+            parent: paramsFields,
             checked: filter.active,
             name: `geomFilter-enable-${id}`,
             disabled: !filters.geom.active,
@@ -979,7 +982,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const handler = createFormFloating({
-            parent,
+            parent: paramsFields,
             fieldTag: 'select',
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
@@ -1008,7 +1011,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const value = createFormFloating({
-            parent,
+            parent: paramsFields,
             fieldTag: 'select',
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
@@ -1033,8 +1036,13 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const geom = createFormFloating({
+        const geomsFields = customCreateElement({
+            className:'d-flex gap-2 flex-grow-1 align-items-center',
             parent,
+        })
+
+        const geom = createFormFloating({
+            parent: geomsFields,
             containerClass: 'flex-grow-1',
             fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
@@ -1100,8 +1108,8 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const btnsContainer = customCreateElement({
+            parent:geomsFields,
             className:'d-flex flex-column justify-content-center pt-1', 
-            parent,
         })
 
         const zoominBtn = createButton({
