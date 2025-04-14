@@ -1290,30 +1290,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const caseSensitive = createFormFloating({
-            parent: paramsFields,
-            containerClass: 'w-50',
-            fieldTag: 'select',
-            fieldAttrs: {name: `propFilter-case-${id}`},
-            fieldClass: 'form-select-sm',
-            labelText: 'Case-sensitive',
-            disabled: !filters.properties.active,
-            options: {
-                'true': 'True',
-                'false': 'False',
-            },
-            currentValue: filter.case === 'true',
-            events: {
-                change: (e) => {
-                    const value = e.target.value === 'true'
-                    if (value === filter.case) return
-
-                    filter.case = value
-                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
-                }
-            }
-        })
-
         const value = createFormFloating({
             parent: paramsFields,
             containerClass: 'w-50',
@@ -1405,6 +1381,30 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     filter.values = values
                     if (filter.active && filter.property) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const caseSensitive = createFormFloating({
+            parent: valueFields,
+            containerClass: 'w-50',
+            fieldTag: 'select',
+            fieldAttrs: {name: `propFilter-case-${id}`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Case-sensitive',
+            disabled: !filters.properties.active,
+            options: {
+                'true': 'True',
+                'false': 'False',
+            },
+            currentValue: filter.case === 'true',
+            events: {
+                change: (e) => {
+                    const value = e.target.value === 'true'
+                    if (value === filter.case) return
+
+                    filter.case = value
+                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
                 }
             }
         })
