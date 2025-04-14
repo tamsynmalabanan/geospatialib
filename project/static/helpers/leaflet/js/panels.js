@@ -1030,7 +1030,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     let value
                     try {
                         console.log(e.target.value.split(','))
-                        value = e.target.value.split(',').map(i => JSON.parse(i.trim())) 
+                        value = e.target.value.split(',').map(i => JSON.parse(i.trim() || {})) 
                         if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
                             
                         value = value.map(i => value.type === 'Feature' ? value.geometry : value)
