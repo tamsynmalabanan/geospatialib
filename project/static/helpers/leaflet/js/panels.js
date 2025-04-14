@@ -1027,6 +1027,8 @@ const handleLeafletStylePanel = (map, parent) => {
             disabled: !filters.geom.active,
             events: {
                 blur: (e) => {
+                    e.target.classList.remove('is-invalid')
+
                     let value
                     try {
                         value = e.target.value.trim()
@@ -1036,7 +1038,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = JSON.parse(value)
 
                         if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
-                            
+                        
                         value = value.map(i => i.type === 'Feature' ? i.geometry : i)
                         
                         let simplify = value.some(i => turf.coordAll(i).length > 100)
@@ -1068,6 +1070,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         e.target.value = value.map(i => JSON.stringify(i)).join(',')
                     } catch (error) {
                         console.log(error)
+                        e.target.classList.add('is-invalid')
                         value = null
                     }
                     
