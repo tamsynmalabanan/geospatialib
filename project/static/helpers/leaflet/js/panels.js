@@ -1041,6 +1041,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                         value = value.map(i => {
                             i = i.type === 'Feature' ? i.geometry : i
+                            console.log(i.coordinates)
                             
                             let simplify = turf.coordAll(i).length > 100
                             if (simplify) {
