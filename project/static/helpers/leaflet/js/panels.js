@@ -989,28 +989,45 @@ const handleLeafletStylePanel = (map, parent) => {
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
             options: {
-                'booleanIntersects-true': 'intersects',
-                'booleanDisjoint-true': 'disjoint from',
-
-                'booleanEqual-true': 'equals',
-                'booleanEqual-false': 'not equal to',
-
-                'booleanTouches-true': 'touches',
-                'booleanTouches-false': 'not touching',
-
-                'booleanWithin-true': 'within',
-                'booleanWithin-false': 'not within',
-
-                'booleanContains-true': 'contains',
-                'booleanContains-false': 'not containing',
+                'booleanIntersects': 'intersects',
+                'booleanEqual': 'equals',
+                'booleanTouches': 'touches',
+                'booleanWithin': 'within',
+                'booleanContains': 'contains',
             },
-            currentValue: filter.handler ?? 'booleanIntersects-true',
+            currentValue: filter.handler,
             events: {
                 change: (e) => {
                     const value = e.target.value
                     if (value === filter.handler) return
 
                     filter.handler = value
+                    if (filter.active && filter.geoms?.length) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const value = createFormFloating({
+            parent,
+            fieldTag: 'select',
+            fieldAttrs: {
+                name: `geomFilter-handler-${id}`,
+            },
+            fieldClass: 'form-select-sm',
+            labelText: 'Feature relationship',
+            labelClass: 'text-nowrap',
+            disabled: !filters.geom.active,
+            options: {
+                'true': 'True',
+                'false': 'False',
+            },
+            currentValue: filter.value ? 'true' : 'false',
+            events: {
+                change: (e) => {
+                    const value = e.target.value === 'true'
+                    if (value === filter.value) return
+
+                    filter.value = value
                     if (filter.active && filter.geoms?.length) updateGeoJSONData(layer)
                 }
             }
@@ -1672,7 +1689,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.geom.values[id] = {
                                         active: true,
-                                        handler: 'booleanIntersects-true',
+                                        handler: 'booleanIntersects',
+                                        value: true,
                                         geoms: [],
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
@@ -1691,7 +1709,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.geom.values[id] = {
                                         active: true,
-                                        handler: 'booleanIntersects-true',
+                                        handler: 'booleanIntersects',
+                                        value: true,
                                         geoms: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))

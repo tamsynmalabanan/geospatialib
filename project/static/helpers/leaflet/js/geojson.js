@@ -98,21 +98,16 @@ const getLeafletGeoJSONLayer = async ({
             
         if (filters.geom.active) {
             const geomFilters = Object.values(filters.geom.values)
-            .filter(i => i.active 
-                && i.geoms?.length 
-                && i.geoms.every(g => turf.booleanValid(g))
-            )
+            .filter(i => i.active && i.geoms?.length && i.geoms.every(g => turf.booleanValid(g)))
             
             if (!geomFilters.every(i => {
-                const [handlerName, value] = i.handler.split('-')
-                
-                const handler = turf[handlerName]
+                const handler = turf[i.handler]
                 if (!handler) return true
-                
+
                 try {
-                    return i.geoms.some(g => handler(feature.geometry, g) === (value === "true"))
+                    return i.geoms.some(g => handler(feature.geometry, g) === i.value)
                 } catch {
-                    return value !== "true"
+                    return !i.value
                 }
             })) return false
         }
