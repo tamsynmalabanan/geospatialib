@@ -1671,6 +1671,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     filters.geom.values[id] = {
                                         active: true,
                                         handler: 'booleanIntersects-true',
+                                        geoms: [],
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                 }
