@@ -1111,11 +1111,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 click: async (e) => {
                     if (!filter.geoms?.length) return
 
-                    const geojson = turf.featureCollection([{
-                        type: 'Feature',
-                        geometry: filter.geometry,
-                        properties: {}
-                    }])
+                    const geojson = turf.featureCollection(filter.geoms.map(i => turf.feature(i)))
 
                     const newLayer = await getLeafletGeoJSONLayer({
                         geojson,
