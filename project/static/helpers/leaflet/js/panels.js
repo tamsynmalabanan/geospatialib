@@ -1022,7 +1022,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {name: `geomFilter-geom-${id}`},
             fieldTag: 'textarea',
             fieldClass: 'mh-100',
-            currentValue: JSON.stringify(filter.geoms ?? []),
+            currentValue: (filter.geoms ?? []).map(i => JSON.stringify(i)).join(','),
             labelText: 'Comma-delimited geometries array',
             disabled: !filters.geom.active,
             events: {
@@ -1039,7 +1039,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             
                         value = value.map(i => i.type === 'Feature' ? i.geometry : i)
                         
-                        console
                         let simplify = value.some(i => turf.coordAll(i).length > 100)
                         if (simplify) {
                             let simplifiedGeoms
@@ -1066,7 +1065,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             value = simplifiedGeoms
                         }
 
-                        e.target.value = JSON.stringify(value ?? [])
+                        e.target.value = value.map(i => JSON.stringify(i)).join(',')
                     } catch (error) {
                         console.log(error)
                         value = null
