@@ -1733,7 +1733,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 click: () => {
                                     body.querySelector(`#${filterContainerId}-geom`).innerHTML = ''
-                                    const update = Object.values(filters.geom.values).some(f => f.active && f.geometry)
+                                    const update = Object.values(filters.geom.values).some(f => f.active && f.geoms?.length)
                                     filters.geom.values = {}
                                     if (update) updateGeoJSONData(layer)                
                                 }
@@ -1764,6 +1764,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+
+
                         enableProps: {
                             handler: createFormCheck,
                             checked: filters.properties.active,
