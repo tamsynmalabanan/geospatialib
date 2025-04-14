@@ -591,6 +591,8 @@ const createInputGroup = ({
     fieldAttrs = {},
     disabled = false,
     inputGroupClass = '',
+    currentValue,
+    options,
 }={}) => {
     const inputGroup = document.createElement('div')
     inputGroup.className = `input-group ${inputGroupClass}`
@@ -611,6 +613,23 @@ const createInputGroup = ({
     Object.keys(fieldAttrs).forEach(k => field.setAttribute(k, fieldAttrs[k]))
     field.className = `${fieldTag === 'select' ? 'form-select' : 'form-control'} ${fieldClass}`
     inputGroup.appendChild(field)
+
+    if (fieldTag === 'select' && options) {
+        for (const value in options) {
+            const option = document.createElement('option')
+            option.value = value
+            option.text = options[value]
+            field.appendChild(option)
+
+            if (fieldMultiple && currentValue.includes(value)) {
+                option.selected = true
+            } else if (value === currentValue) {
+                option.selected = true
+            }
+        }
+    } else {
+        if (currentValue) field.value = currentValue
+    }
 
     field.disabled = disabled
 
