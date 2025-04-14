@@ -117,14 +117,17 @@ const getLeafletGeoJSONLayer = async ({
             .filter(i => i.active && i.property && i.values?.length)
 
             if (!propertyFilters.every(i => {
-                const handler = (v1, v2, {caseSensitive=true}={}) => v1 === v2 //i.handler
+                const handler = (v1, v2, {caseSensitive=true}={}) => {
+                    console.log(v1, v2, v1 === v2)
+                    return v1 === v2
+                } //i.handler
                 if (!handler) return true
-
+                console.log(handler)
                 const value = (() => {
                     const value = feature.properties[i.property] ?? '[undefined]'
                     return value === '' ? '[blank]' : String(value)
                 })()
-
+                console.log(value)
                 try {
                     return i.values.some((v => handler(value, v, {caseSensitive:i.case})) === i.value)
                 } catch {
