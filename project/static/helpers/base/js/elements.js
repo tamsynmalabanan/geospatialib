@@ -593,6 +593,7 @@ const createInputGroup = ({
     inputGroupClass = '',
     currentValue,
     options,
+    fieldMultiple = false,
 }={}) => {
     const inputGroup = document.createElement('div')
     inputGroup.className = `input-group ${inputGroupClass}`
