@@ -197,5 +197,23 @@ const relationHandlers = (name) => {
             if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
             return v1Num > v2Num
         },
+        greaterThanEqualTo: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num >= v2Num
+        },
+        lessThan: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num < v2Num
+        },
+        lessThanEqualTo: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num <= v2Num
+        },
     }[name]
 }
