@@ -170,3 +170,22 @@ const hexToHSLA = (hex) => {
   
     return `hsla(${h}, ${s}%, ${l}%, 1)`;
 }
+
+const relationHandlers = (name) => {
+    return {
+        equals: (v1, v2, {caseSensitive=true}={}) => {
+            if (caseSensitive) {
+                return String(v1) === String(v2)
+            } else {
+                return String(v1).toLowerCase() === String(v2).toLowerCase()
+            }
+        },
+        contains: (v1, v2, {caseSensitive=true}={}) => {
+            if (caseSensitive) {
+                return String(v1).contains(String(v2))
+            } else {
+                return String(v1).toLowerCase().contains(String(v2).toLowerCase())
+            }
+        },
+    }[name]
+}

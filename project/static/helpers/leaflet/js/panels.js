@@ -1248,16 +1248,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        // filters.properties.values[id] = {
-        //     case: true,
-        //     values: [],
-            
-        //     active: true,
-        //     handler: 'equals',
-        //     property: 'access',
-        //     value: true,
-        // }
-
         const handler = createFormFloating({
             parent: paramsFields,
             containerClass: 'w-100 flex-grow-1',

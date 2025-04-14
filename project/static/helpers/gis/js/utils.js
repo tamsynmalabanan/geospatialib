@@ -24,3 +24,4 @@ const loopThroughCoordinates = (coordinates, handler) => {
     }
     return coordinates
 }
+
