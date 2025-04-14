@@ -1690,7 +1690,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     filters.geom.values[id] = {
                                         active: true,
                                         handler: 'booleanIntersects-true',
-                                        geometry: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
+                                        geoms: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                     updateGeoJSONData(layer)                
