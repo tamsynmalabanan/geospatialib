@@ -1041,7 +1041,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                         value = value.map(i => {
                             i = i.type === 'Feature' ? i.geometry : i
-                            console.log(i.coordinates)
                             
                             let simplify = turf.coordAll(i).length > 100
                             if (simplify) {
@@ -1061,7 +1060,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 i = simplifiedGeom
                             }
 
-                            console.log(i.coordinates)
                             return i
                         }).filter(i => i)
 
@@ -1098,7 +1096,7 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: (e) => {
                     if (!filter.geoms?.length) return
-                    // zoomToLeafletLayer(L.geoJSON(filter.geometry), map)
+                    zoomToLeafletLayer(L.geoJSON(turf.featureCollection(filter.geoms.map(i => turf.feature(i)))), map)
                 }
             }
         })
