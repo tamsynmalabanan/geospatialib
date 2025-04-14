@@ -92,17 +92,22 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.filter = (feature) => {
         const filters = geojsonLayer._styles.filters
 
-        if (filters.type.active && !filters.type.values[feature.geometry.type]) return false
-
+        if (filters.type.active) {
+            if (!filters.type.values[feature.geometry.type]) return false
+        }
+            
         if (filters.geom.active) {
             const geomFilters = Object.values(filters.geom.values)
-            .filter(i => i.active && i.geometry && turf.booleanValid(i.geometry))
-            
-            const intersect = geomFilters.filter(i => i.intersect)
-            const disjoint = geomFilters.filter(i => !i.intersect)
-            
-            if (intersect.length && intersect.every(i => turf.booleanDisjoint(i.geometry, feature))) return false 
-            if (disjoint.length && disjoint.some(i => turf.booleanIntersects(i.geometry, feature))) return false 
+            .filter(i => i.active && turf.booleanValid(i.geometry || {}))
+            if (!geomFilters.every(i => {
+                const handler = turf[i.handler]
+                if (!handler) return true
+                try {
+                    return handler(feature, i.geometry)
+                } catch {
+                    return false
+                }
+            })) return false
         }
 
         if (filters.properties.active) {

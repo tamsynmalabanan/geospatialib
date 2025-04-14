@@ -978,24 +978,32 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const intersect = createFormFloating({
+        const handler = createInputGroup({
             parent,
             fieldTag: 'select',
-            fieldAttrs: {name: `geomFilter-intersect-${id}`},
+            fieldAttrs: {
+                name: `geomFilter-handler-${id}`,
+                placeholder: 'Relationship',
+            },
             fieldClass: 'form-select-sm',
-            labelText: 'Intersect',
+            // labelText: 'Feature',
+            prefixHTML: 'Feature',
             disabled: !filters.geom.active,
             options: {
-                'true': 'True',
-                'false': 'False',
+                'booleanIntersects': 'intersects',
+                'booleanDisjoint': 'disjoint from',
+                'booleanEqual': 'equals',
+                'booleanTouches': 'touches',
+                'booleanWithin': 'within',
+                'booleanContains': 'contains',
             },
-            currentValue: filter.intersect ? 'true' : 'false',
+            currentValue: filter.handler ?? 'booleanIntersects',
             events: {
                 change: (e) => {
-                    const value = e.target.value === 'true'
-                    if (value === filter.intersect) return
+                    const value = e.target.value
+                    if (value === filter.handler) return
 
-                    filter.intersect = value
+                    filter.handler = value
                     if (filter.active && filter.geometry) updateGeoJSONData(layer)
                 }
             }
@@ -1635,7 +1643,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.geom.values[id] = {
                                         active: true,
-                                        intersect: true,
+                                        handler: 'booleanIntersects',
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                 }
@@ -1653,7 +1661,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const id = generateRandomString()
                                     filters.geom.values[id] = {
                                         active: true,
-                                        intersect: true,
+                                        handler: 'booleanIntersects',
                                         geometry: L.rectangle(map.getBounds()).toGeoJSON().geometry
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
