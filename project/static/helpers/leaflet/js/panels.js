@@ -1029,18 +1029,17 @@ const handleLeafletStylePanel = (map, parent) => {
                 blur: (e) => {
                     let value
                     try {
-                        value = e.target.value.split(';').map(i => {
-                            try {
-                                return JSON.parse(i.trim())
-                            } catch {
-                                return {}
-                            }
-                        }) 
+                        value = e.target.value.trim()
+                        if (!value.startsWith('[')) value = `[${value}`
+                        if (!value.endsWith(']')) value = `${value}]`
+
+                        value = JSON.stringify(value)
+
                         if (!value.every(i => turf.booleanValid(i))) throw new Error('Invalid goemetry')
                             
                         value = value.map(i => value.type === 'Feature' ? value.geometry : value)
                         
-                        let simplify = value.every(i => turf.coordAll(i).length > 100)
+                        let simplify = value.some(i => turf.coordAll(i).length > 100)
                         if (simplify) {
                             let simplifiedGeoms
                             let tolerance = 0
@@ -1057,7 +1056,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             : i
                                         ))
                                     })
-                                    simplify = simplifiedGeoms.every(i => turf.coordAll(i).length > 100)
+                                    simplify = simplifiedGeoms.some(i => turf.coordAll(i).length > 100)
                                 } catch {
                                     throw new Error('Failed to simplify geometry')
                                 }
@@ -1066,10 +1065,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             value = simplifiedGeoms
                         }
 
-                        e.target.value = value.map(i => JSON.stringify(i)).join(';')
+                        e.target.value = JSON.stringify(value ?? [])
                     } catch (error) {
                         console.log(error)
-                        // e.target.value = 
                         value = null
                     }
                     
