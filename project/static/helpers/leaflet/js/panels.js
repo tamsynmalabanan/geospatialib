@@ -987,7 +987,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
             },
-            fieldClass: 'form-select-sm',
+            fieldClass: 'form-select-sm w-100 flex-grow-1',
             labelText: 'Feature relationship',
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
@@ -1016,7 +1016,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {
                 name: `geomFilter-handler-${id}`,
             },
-            fieldClass: 'form-select-sm',
+            fieldClass: 'form-select-sm w-100 flex-grow-1',
             labelText: 'Feature relationship',
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
