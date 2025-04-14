@@ -1062,8 +1062,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         e.target.value = value.map(i => JSON.stringify(i)).join(',')
                     } catch (error) {
-                        // e.target.value = 
-                        value = null
+                        e.target.value = value = null
                     }
                     
                     if (!value && !filter.geoms?.length) return
