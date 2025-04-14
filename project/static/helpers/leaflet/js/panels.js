@@ -1216,14 +1216,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     const field = e.target
                     field.innerHTML = ''
                     
-                    const usedProperties = Object.values((filters.properties.values || {})).map(i => i.property) || []
+                    // const usedProperties = Object.values((filters.properties.values || {})).map(i => i.property) || []
 
                     // update to fetch properties from wfs (wms?)
                     const options = []
                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         Object.keys(currentProperties).forEach(i => {
-                            if (usedProperties.includes(i)) return
+                            // if (usedProperties.includes(i)) return
                             options.push(i)
                         })
                     })
