@@ -986,6 +986,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             fieldClass: 'form-select-sm',
             labelText: 'Feature relationship',
+            labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
             options: {
                 'booleanIntersects': 'intersects',

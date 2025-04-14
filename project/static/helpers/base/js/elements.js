@@ -573,7 +573,7 @@ const createFormFloating = ({
     })
 
     const label = document.createElement('label')
-    label.className = `text-wrap ${labelClass}`
+    label.className = `${labelClass}`
     label.setAttribute('for', field.id)
     label.innerText = labelText
     container.appendChild(label)
