@@ -129,8 +129,9 @@ const getLeafletGeoJSONLayer = async ({
                 })()
                 console.log(value)
                 try {
-                    return i.values.some((v => handler(value, v, {caseSensitive:i.case})) === i.value)
-                } catch {
+                    return i.values.some(v => handler(value, v, {caseSensitive:i.case}) === i.value)
+                } catch (error) {
+                    console.log(error)
                     return !i.value
                 }
             })) return false
