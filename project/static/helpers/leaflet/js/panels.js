@@ -269,6 +269,19 @@ const handleLeafletLegendPanel = (map, parent) => {
     const mapContainer = map.getContainer()
     const getStyleBody = () => mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`)
 
+    const fillPatternSVG = customCreateElement({
+        tag: 'svg',
+        style: {
+            position:'absolute',
+            top:'0',
+            left:'0',
+            width:'0',
+            height:'0',
+        },
+        innerHTML: '<defs><pattern id="mountainPattern" patternUnits="userSpaceOnUse" width="100" height="100"><polygon points="25,75 50,25 75,75" fill="#8B5A2B"/><circle cx="10" cy="75" r="10" fill="#228B22"/><rect x="8" y="75" width="4" height="10" fill="#8B4513"/></pattern></defs>'
+    })
+    mapContainer.parentElement.appendChild(fillPatternSVG)
+
     const clearStyleBody = () => {
         const styleBody = getStyleBody()
         styleBody.innerHTML = ''

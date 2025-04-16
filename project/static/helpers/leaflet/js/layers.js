@@ -35,10 +35,6 @@ const getLeafletStyleParams = ({
         } ${strokeWidth * 3}`
     }
 
-    if (fillPattern !== 'solid') {
-        console.log(fillPattern)
-    }
-
     return  {
         strokeWidth,
         strokeColor,
@@ -56,6 +52,8 @@ const getLeafletStyleParams = ({
         iconType,
         textWrap,
         boldText,
+        fillPattern,
+        fillAngle,
     }    
 }
 
@@ -80,6 +78,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         iconType,
         textWrap,
         boldText,
+        fillPattern,
+        fillAngle,
     } = getLeafletStyleParams(styleParams)
     
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
@@ -96,8 +96,9 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                 div.setAttribute('height', iconSize)
             }
         } else {
-            div = document.createElement('div')
-            div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
+            div = customCreateElement({
+                className:`h-100 w-100 d-flex justify-content-center align-items-center`
+            })
 
             if (iconType === 'bi') {
                 div.classList.add(`bi`, `bi-${iconClass}`)            
@@ -137,8 +138,10 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = "url(#mountainPattern)"
-            // params.fillColor = fillColor
+            params.fillColor = fillPattern === 'solid' ? fillColor : (() => {
+                
+                return "url(#mountainPattern)"
+            })()
         }
         
         return params
