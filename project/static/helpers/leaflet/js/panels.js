@@ -1775,6 +1775,105 @@ const handleLeafletStylePanel = (map, parent) => {
                             })()
                         },
 
+                        enableProps: {
+                            handler: createFormCheck,
+                            checked: filters.properties.active,
+                            formCheckClass: 'flex-grow-1',
+                            labelInnerText: 'Filter by properties',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === filters.properties.active) return
+                
+                                    Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
+                                        form.elements[i].disabled = !value
+                                    })
+
+                                    body.querySelector(`#${filterContainerId}-prop`).querySelectorAll('.tagify').forEach(i => {
+                                        value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
+                                    })
+
+                                    filters.properties.active = value
+                                    if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        newProp: {
+                            handler: createButton,
+                            name: 'propFilter-new',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                            iconClass: 'bi bi-plus-lg',
+                            title: 'Add a new property filter',
+                            disabled: !filters.properties.active,
+                            events: {
+                                click: () => {
+                                    const id = generateRandomString()
+                                    filters.properties.values[id] = {
+                                        active: true,
+                                        handler: 'equals',
+                                        case: true,
+                                        value: true,
+                                        values: [],
+                                    }
+                                    body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
+                                }
+                            }
+                        },
+                        toggleProp: {
+                            handler: createButton,
+                            name: 'propFilter-toggle',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                            iconClass: 'bi bi-toggles',
+                            title: 'Toggle all property filters',
+                            disabled: !filters.properties.active,
+                            events: {
+                                click: () => {
+                                    const fields = Object.values(form.elements).filter(f => {
+                                        return (f.getAttribute('name') || '').startsWith('propFilter-')
+                                        && f.getAttribute('type') === 'checkbox'
+                                    })
+                                    const check = fields.every(f => !f.checked)
+
+                                    fields.forEach(field => {
+                                        field.checked = check
+                                    })
+
+                                    Object.values(filters.properties.values).forEach(f => f.active = check)
+
+                                    updateGeoJSONData(layer)
+                                }
+                            }
+                        },
+                        removeProp: {
+                            handler: createButton,
+                            name: 'propFilter-remove',
+                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                            iconClass: 'bi bi-trash-fill',
+                            title: 'Remove all property filters',
+                            disabled: !filters.properties.active,
+                            events: {
+                                click: () => {
+                                    body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
+                                    const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
+                                    filters.properties.values = {}
+                                    if (update) updateGeoJSONData(layer)                
+                                }
+                            }
+                        },
+                        propFilter: {
+                            handler: ({parent}={}) => {
+                                const container = customCreateElement({
+                                    id: `${filterContainerId}-prop`,
+                                    className: 'd-flex flex-column w-100 gap-2',
+                                    parent,
+                                })  
+
+                                for (const id in filters.properties.values) {
+                                    container.appendChild(getPropertyFilterForm(id))
+                                }
+                            }
+                        },
 
                         enableGeom: {
                             handler: createFormCheck,
@@ -1900,107 +1999,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                 for (const id in filters.geom.values) {
                                     container.appendChild(getGeomFilterForm(id))
-                                }
-                            }
-                        },
-
-
-                        enableProps: {
-                            handler: createFormCheck,
-                            checked: filters.properties.active,
-                            formCheckClass: 'flex-grow-1',
-                            labelInnerText: 'Filter by properties',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === filters.properties.active) return
-                
-                                    Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
-                                        form.elements[i].disabled = !value
-                                    })
-
-                                    body.querySelector(`#${filterContainerId}-prop`).querySelectorAll('.tagify').forEach(i => {
-                                        value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
-                                    })
-
-                                    filters.properties.active = value
-                                    if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
-                                }
-                            }
-                        },
-                        newProp: {
-                            handler: createButton,
-                            name: 'propFilter-new',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-plus-lg',
-                            title: 'Add a new property filter',
-                            disabled: !filters.properties.active,
-                            events: {
-                                click: () => {
-                                    const id = generateRandomString()
-                                    filters.properties.values[id] = {
-                                        active: true,
-                                        handler: 'equals',
-                                        case: true,
-                                        value: true,
-                                        values: [],
-                                    }
-                                    body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
-                                }
-                            }
-                        },
-                        toggleProp: {
-                            handler: createButton,
-                            name: 'propFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-toggles',
-                            title: 'Toggle all property filters',
-                            disabled: !filters.properties.active,
-                            events: {
-                                click: () => {
-                                    const fields = Object.values(form.elements).filter(f => {
-                                        return (f.getAttribute('name') || '').startsWith('propFilter-')
-                                        && f.getAttribute('type') === 'checkbox'
-                                    })
-                                    const check = fields.every(f => !f.checked)
-
-                                    fields.forEach(field => {
-                                        field.checked = check
-                                    })
-
-                                    Object.values(filters.properties.values).forEach(f => f.active = check)
-
-                                    updateGeoJSONData(layer)
-                                }
-                            }
-                        },
-                        removeProp: {
-                            handler: createButton,
-                            name: 'propFilter-remove',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-trash-fill',
-                            title: 'Remove all property filters',
-                            disabled: !filters.properties.active,
-                            events: {
-                                click: () => {
-                                    body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
-                                    const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
-                                    filters.properties.values = {}
-                                    if (update) updateGeoJSONData(layer)                
-                                }
-                            }
-                        },
-                        propFilter: {
-                            handler: ({parent}={}) => {
-                                const container = customCreateElement({
-                                    id: `${filterContainerId}-prop`,
-                                    className: 'd-flex flex-column w-100 gap-2',
-                                    parent,
-                                })  
-
-                                for (const id in filters.properties.values) {
-                                    container.appendChild(getPropertyFilterForm(id))
                                 }
                             }
                         },
