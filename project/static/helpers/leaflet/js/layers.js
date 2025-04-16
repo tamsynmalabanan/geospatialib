@@ -82,7 +82,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         if (iconType === 'svg') {
         } else {
             div = document.createElement('div')
-            div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
+            div.className = `h-100 w-100 d-flex justify-content-center align-items-center text-nowrap`
 
             if (iconType === 'class') {
                 div.classList.add(`bi`, `bi-${iconClass}`)            
