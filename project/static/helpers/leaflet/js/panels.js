@@ -671,7 +671,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 'class': 'Bootstrap icon',
                 'text': 'Text',
                 'property': 'Property',
-                'svg': 'SVG string',
+                'svg': 'SVG',
             },
             currentValue: styleParams.iconType,
             events: {
@@ -692,11 +692,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 name:`${id}-iconClass`,
                 type: 'search',
                 value: styleParams.iconClass,
-                list: bootstrapIConsDatalist.id
+                // list: bootstrapIConsDatalist.id
             },
             fieldClass: 'form-control-sm',
             labelText: 'Icon description',
             events: {
+                focus: (e) => {
+                    e.target.setAttribute(bootstrapIConsDatalist.id)
+                },
                 blur: (e) => {
                     let value = e.target.value.trim()
                     if (!value) {
