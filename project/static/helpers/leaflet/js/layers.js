@@ -90,7 +90,11 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         
         if (iconType === 'html') {
             div = customCreateElement({innerHTML:iconClass}).firstChild
-            if (div instanceof Element) div.classList.add('position-absolute')
+            if (div instanceof Element) {
+                div.classList.add('position-absolute')
+                div.setAttribute('width', iconSize)
+                div.setAttribute('height', iconSize)
+            }
         } else {
             div = document.createElement('div')
             div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
