@@ -670,7 +670,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 list: bootstrapIConsDatalist.id
             },
             fieldClass: 'form-control-sm',
-            labelText: 'Icon class',
+            labelText: 'Icon (Bootstrap icon or SVG string)',
             events: {
                 blur: (e) => {
                     let value = e.target.value.trim()

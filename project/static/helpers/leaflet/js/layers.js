@@ -25,6 +25,10 @@ const getLeafletStyleParams = ({
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
     console.log(iconClass)
+    const bootstrapIcons = Array.from(bootstrapIConsDatalist.querySelectorAll('option')).map(i => i.value)
+    if (!bootstrapIcons.includes(iconClass)) {
+        console.log(iconClass)
+    }
 
     if (!dashArray && lineBreak !== 'solid') {
         dashArray = `${
