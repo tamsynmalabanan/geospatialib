@@ -668,10 +668,10 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldClass: 'form-select-sm',
             labelText: 'Icon type',
             options: {
-                'bi': 'Bootstrap icon',
-                'text': 'Text or emoji',
-                'property': 'Feature property',
-                'html': 'HTML string',
+                'bi': 'bootstrap icon',
+                'text': 'text or emoji',
+                'property': 'feature property',
+                'html': 'html string',
             },
             currentValue: styleParams.iconType,
             events: {
