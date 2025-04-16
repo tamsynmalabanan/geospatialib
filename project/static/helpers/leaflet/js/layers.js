@@ -74,10 +74,11 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
     const hslaColor = manageHSLAColor(fillColor)
 
     if (type === 'point') {
-        const div = document.createElement('div')
+        let div
         
         const bootstrapIcons = Array.from(bootstrapIConsDatalist.querySelectorAll('option')).map(i => i.value)
         if (bootstrapIcons.includes(iconClass)) {
+            div = document.createElement('div')
             div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
             div.classList.add(`bi`, `bi-${iconClass}`)            
             div.style.fontSize = `${iconSize}px`
@@ -88,14 +89,11 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
                 iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
                 iconGlow ? `0 0 ${iconSize/2*1}px ${glow}, 0 0 ${iconSize/2*2}px ${glow}, 0 0 ${iconSize/2*3}px ${glow}, 0 0 ${iconSize/2*4}px ${glow}` : ''
             ).filter(style => style !== '').join(',')
-        } else {
-            div.outerHTML = iconClass
         }
-
 
         return L.divIcon({
             className: 'bg-transparent',
-            html: div.outerHTML,
+            html: div?.outerHTML || iconClass,
         });
     } else {
         const params = {
