@@ -361,7 +361,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 try {
                     const styles = JSON.parse(text)
-                    console.log(styles)
+                    if (!Array('default', 'method', 'visibility', 'filters').every(i => {
+                        return Object.keys(styles).includes(i)
+                    })) return
+
+                    geojsonLayer._styles = styles
+                    updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
         },
