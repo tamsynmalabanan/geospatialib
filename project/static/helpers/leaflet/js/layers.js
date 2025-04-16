@@ -22,6 +22,7 @@ const getLeafletStyleParams = ({
     fillAngle=0,
     iconType='class',
     textWrap=false,
+    boldText=false,
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
@@ -54,6 +55,7 @@ const getLeafletStyleParams = ({
         lineJoin,
         iconType,
         textWrap,
+        boldText,
     }    
 }
 
@@ -77,6 +79,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         dashOffset,
         iconType,
         textWrap,
+        boldText,
     } = getLeafletStyleParams(styleParams)
     
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
@@ -93,14 +96,17 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             if (iconType === 'class') {
                 div.classList.add(`bi`, `bi-${iconClass}`)            
             } else {
-                div.classList.add(`text-center`, `${textWrap ? 'text-wrap' : 'text-nowrap'}`)            
+                div.classList.add(
+                    `text-center`, 
+                    `${textWrap ? 'text-wrap' : 'text-nowrap'}`
+                    `${boldText ? 'fw-bold' : 'fw-normal'}`
+                )            
                 if (iconType === 'text') {
                     div.innerText = iconClass         
                 } else {
                     div.innerText = feature.properties[iconClass]
                 }
             }
-            
         
             div.style.fontSize = `${iconSize}px`
             div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor

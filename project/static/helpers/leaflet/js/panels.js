@@ -793,7 +793,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconCheckboxes,
             labelInnerText: 'Shadow effect',
             checked: styleParams.iconShadow,
-            labelClass: 'text-nowrap',
+            labelClass: 'text-wrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -809,7 +809,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconCheckboxes,
             labelInnerText: 'Glow effect',
             checked: styleParams.iconGlow,
-            labelClass: 'text-nowrap',
+            labelClass: 'text-wrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -825,13 +825,29 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconCheckboxes,
             labelInnerText: 'Text wrap',
             checked: styleParams.textWrap,
-            labelClass: 'text-nowrap',
+            labelClass: 'text-wrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
                     if (value === styleParams.textWrap) return
 
                     styleParams.textWrap = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const boldText = createFormCheck({
+            parent:iconCheckboxes,
+            labelInnerText: 'Bold text',
+            checked: styleParams.boldText,
+            labelClass: 'text-wrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.boldText) return
+
+                    styleParams.boldText = value
                     updateGeoJSONData(layer)
                 }
             }
