@@ -785,7 +785,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const iconCheckboxes = customCreateElement({
-            className:'d-flex flex-wrap align-items-center border px-3 rounded pt-1 gap-2', 
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
             parent:iconFields2
         })
 
@@ -793,7 +793,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconCheckboxes,
             labelInnerText: 'Shadow effect',
             checked: styleParams.iconShadow,
-            labelClass: 'text-wrap',
+            labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -809,7 +809,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconCheckboxes,
             labelInnerText: 'Glow effect',
             checked: styleParams.iconGlow,
-            labelClass: 'text-wrap',
+            labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -821,11 +821,17 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        
+        const textCheckboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:iconFields2
+        })
+
         const textWrap = createFormCheck({
-            parent:iconCheckboxes,
+            parent:textCheckboxes,
             labelInnerText: 'Text wrap',
             checked: styleParams.textWrap,
-            labelClass: 'text-wrap',
+            labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -838,10 +844,10 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const boldText = createFormCheck({
-            parent:iconCheckboxes,
+            parent:textCheckboxes,
             labelInnerText: 'Bold text',
             checked: styleParams.boldText,
-            labelClass: 'text-wrap',
+            labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
