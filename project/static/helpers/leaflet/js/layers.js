@@ -137,7 +137,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = 'url(#mountainPattern)'
+            params.fillColor = "url(#mountainPattern)"
             // params.fillColor = fillColor
         }
         
