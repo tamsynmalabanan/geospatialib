@@ -698,7 +698,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Icon description',
             events: {
                 focus: (e) => {
-                    e.target.setAttribute(bootstrapIConsDatalist.id)
+                    e.target.setAttribute('list', bootstrapIConsDatalist.id)
                 },
                 blur: (e) => {
                     let value = e.target.value.trim()
