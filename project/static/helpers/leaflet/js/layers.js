@@ -23,9 +23,11 @@ const getLeafletStyleParams = ({
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
     if (!dashArray && lineBreak !== 'solid') {
-        dashArray = lineBreak === 'dashed' 
-        ? `${strokeWidth*5} ${strokeWidth*3}`
-        : `${((Math.ceil(strokeWidth))-1) || 1} ${strokeWidth*3}`
+        dashArray = `${
+            lineBreak === 'dashed' 
+            ? strokeWidth*5 
+            : (((Math.ceil(strokeWidth))-1) || 1)
+        } ${strokeWidth*3}`
     }
 
     return  {
