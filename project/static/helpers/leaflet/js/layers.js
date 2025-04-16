@@ -103,11 +103,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                     `${textWrap ? 'text-wrap' : 'text-nowrap'}`,
                     `${boldText ? 'fw-bold' : 'fw-normal'}`,
                 )            
-                if (iconType === 'text') {
-                    div.innerText = iconClass         
-                } else {
-                    div.innerText = feature.properties[iconClass] || ''
-                }
+                div.innerText = iconType === 'text' ? iconClass : feature.properties[iconClass] || ''   
             }
         
             div.style.fontSize = `${iconSize}px`
