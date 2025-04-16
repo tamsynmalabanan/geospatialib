@@ -348,10 +348,21 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
         copyStyle: !isLegendGroup || !geojsonLayer ? null : {
-            innerText: `Style layer style`,
+            innerText: `Copy layer style`,
             btnCallback: async () => {
                 navigator.clipboard.writeText(JSON.stringify(geojsonLayer._styles))
             }
+        },
+        pasteStyle: !isLegendGroup || !geojsonLayer ? null : {
+            innerText: `Paste layer style`,
+            btnCallback: async () => {
+                const text = await navigator.clipboard.readText()
+                console.log(text)
+            }
+        },
+
+        divider3: !isLegendGroup? null : {
+            divider: true,
         },
         toggleLegend: !isLegendGroup? null : {
             innerText: `Toggle legend`,
@@ -397,7 +408,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
 
-        divider3: {
+        divider4: {
             divider: true,
         },
         legend: {
