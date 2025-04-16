@@ -698,7 +698,10 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 blur: (e) => {
                     let value = e.target.value.trim()
-                    if (!value) value = e.target.value = 'circle-fill'
+                    if (!value) {
+                        parent.querySelector(`[name="${id}-iconType"]`).value = 'class'
+                        value = e.target.value = 'circle-fill'
+                    }
                     if (value === styleParams.iconClass) return
                     
                     styleParams.iconClass = value
