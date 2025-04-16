@@ -361,7 +361,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 try {
                     const styles = JSON.parse(text)
-                    if (!Array('default', 'method', 'visibility', 'filters').every(i => {
+                    if (!Object.keys(geojsonLayer._styles).every(i => {
                         return Object.keys(styles).includes(i)
                     })) return
 
