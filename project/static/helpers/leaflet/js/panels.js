@@ -682,6 +682,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === 'class') {
                         parent.querySelector(`[name="${id}-iconClass"]`).value = 'circle-fill'
                         styleParams.iconClass = 'circle-fill'
+                    } else {
+                        parent.querySelector(`[name="${id}-iconClass"]`).value = ''
+                        styleParams.iconClass = ''
                     }
 
                     styleParams.iconType = value
