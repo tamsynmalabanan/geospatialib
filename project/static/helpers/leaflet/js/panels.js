@@ -747,6 +747,7 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+
         const fillFields = customCreateElement({
             className:'d-flex gap-2',
             parent,
@@ -796,7 +797,58 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+
+        const fillPattern = createFormFloating({
+            parent: fillFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldTag: 'select',
+            fieldAttrs: {name: `${id}-fillPattern`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Fill pattern',
+            options: {
+                'solid': 'solid',
+                'dots': 'dots',
+                'squares': 'squares',
+                'stripes': 'stripes',
+            },
+            currentValue: styleParams.fillPattern,
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.fillPattern) return
+
+                    styleParams.fillPattern = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
         
+        const fillAngle = createInputGroup({
+            parent:fillFields,
+            fieldAttrs: {
+                name: `${id}-fillAngle`,
+                type: 'number',
+                min: '0',
+                max: '90',
+                step: '5',
+                value: styleParams.fillAngle,
+                placeholder: 'Fill opacity',
+            },
+            suffixHTML: '°',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value) || 0
+                    if (value === styleParams.fillAngle) return
+                    
+                    styleParams.fillAngle = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
             parent,
