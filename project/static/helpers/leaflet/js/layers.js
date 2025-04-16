@@ -347,6 +347,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 })) 
             }
         },
+        copyStyle: !isLegendGroup || !geojsonLayer ? null : {
+            innerText: `Style layer style`,
+            btnCallback: async () => {
+                navigator.clipboard.writeText(JSON.stringify(geojsonLayer._styles))
+            }
+        },
         toggleLegend: !isLegendGroup? null : {
             innerText: `Toggle legend`,
             btnCallback: () => {
