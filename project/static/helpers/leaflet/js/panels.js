@@ -692,13 +692,42 @@ const handleLeafletStylePanel = (map, parent) => {
                 name:`${id}-iconClass`,
                 type: 'search',
                 value: styleParams.iconClass,
-                // list: bootstrapIConsDatalist.id
             },
             fieldClass: 'form-control-sm',
             labelText: 'Icon description',
             events: {
                 focus: (e) => {
-                    e.target.setAttribute('list', bootstrapIConsDatalist.id)
+                    const iconType = parent.querySelector(`[name="${id}-iconType"]`).value
+                    
+                    if (iconType === 'class') {
+                        e.target.setAttribute('list', bootstrapIConsDatalist.id)
+                        return
+                    }
+                    
+                    if (iconType === 'property') {
+                        iconDatalist.innerHTML = ''
+    
+                        // update to fetch properties from wfs (wms?)
+                        const options = []
+                        const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                        turf.propEach(geojson, (currentProperties, featureIndex) => {
+                            Object.keys(currentProperties).forEach(i => options.push(i))
+                        })
+    
+                        const optionsSet = options.length ? new Set(options) : []
+                        const sortedOptions = [...optionsSet].sort()
+    
+                        for (const i of sortedOptions) {
+                            const option = document.createElement('option')
+                            option.value = i
+                            iconDatalist.appendChild(option)
+                        }
+
+                        e.target.setAttribute('list', iconDatalist.id)
+                        return
+                    }
+
+                    e.target.removeAttribute('list')
                 },
                 blur: (e) => {
                     let value = e.target.value.trim()
@@ -713,6 +742,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+
+        const iconDatalist = customCreateElement({tag:'datalist', parent:iconFields})
 
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',
