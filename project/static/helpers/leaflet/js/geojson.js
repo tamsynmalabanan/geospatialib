@@ -49,6 +49,8 @@ const getLeafletGeoJSONLayer = async ({
         ))
     }
  
+    console.log(geojsonLayer)
+
     geojsonLayer._styles = styles || {
         // groups: {
         //     id: {
