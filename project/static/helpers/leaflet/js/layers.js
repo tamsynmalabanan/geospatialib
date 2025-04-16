@@ -33,7 +33,7 @@ const getLeafletStyleParams = ({
     }
 
     if (fillPattern !== 'solid') {
-        
+        console.log(fillPattern)
     }
 
     return  {
