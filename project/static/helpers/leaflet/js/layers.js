@@ -89,6 +89,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         let div
         
         if (iconType === 'svg') {
+            div = customCreateElement({innerHTML:iconClass}).firstChild
+            console.log(div)
         } else {
             div = document.createElement('div')
             div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
