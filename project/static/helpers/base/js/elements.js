@@ -4,14 +4,14 @@ const customCreateElement = ({
     className = '',
     parent,
     style = {},
-    innerHTML,
+    innerHTML = '',
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
     element.className = className
     parent?.appendChild(element)
     Object.keys(style).forEach(k => element.style[k] = style[k])
-    if (innerHTML) element.appendChild(innerHTML)
+    element.innerHTML = innerHTML
     return element
 }
 
