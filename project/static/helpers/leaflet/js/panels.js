@@ -718,6 +718,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconSize = createInputGroup({
             parent:iconFields2,
+            inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconSize`,
                 type: 'number',
@@ -744,7 +745,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const iconCheckboxes = customCreateElement({
-            className:'d-flex flex-wrap align-items-center border px-3 rounded pt-1', 
+            className:'d-flex flex-wrap align-items-center border px-3 rounded pt-1 gap-2', 
             parent:iconFields2
         })
 
