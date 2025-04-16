@@ -20,7 +20,7 @@ const getLeafletStyleParams = ({
     dashOffset,
     fillPattern='solid',
     fillAngle=0,
-    iconType='class',
+    iconType='bi',
     textWrap=false,
     boldText=false,
 } = {}) => {
@@ -99,7 +99,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             div = document.createElement('div')
             div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
 
-            if (iconType === 'class') {
+            if (iconType === 'bi') {
                 div.classList.add(`bi`, `bi-${iconClass}`)            
             } else {
                 div.classList.add(

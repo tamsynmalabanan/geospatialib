@@ -163,7 +163,7 @@ const getLeafletGeoJSONLayer = async ({
 
         const circlePolygon = (
             circleMarker 
-            && styleParams.iconType === 'class' 
+            && styleParams.iconType === 'bi' 
             && styleParams.iconClass === 'circle-fill' 
             && !styleParams.iconShadow 
             && !styleParams.iconGlow

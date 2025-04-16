@@ -668,7 +668,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldClass: 'form-select-sm',
             labelText: 'Icon type',
             options: {
-                'class': 'Bootstrap icon',
+                'bi': 'Bootstrap icon',
                 'text': 'Text or emoji',
                 'property': 'Feature property',
                 'html': 'HTML string',
@@ -679,7 +679,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.iconType) return
 
-                    if (value === 'class') {
+                    if (value === 'bi') {
                         parent.querySelector(`[name="${id}-iconClass"]`).value = 'circle-fill'
                         styleParams.iconClass = 'circle-fill'
                     } else {
@@ -707,7 +707,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 focus: (e) => {
                     const iconType = parent.querySelector(`[name="${id}-iconType"]`).value
                     
-                    if (iconType === 'class') {
+                    if (iconType === 'bi') {
                         e.target.setAttribute('list', bootstrapIConsDatalist.id)
                         return
                     }
@@ -740,7 +740,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 blur: (e) => {
                     let value = e.target.value.trim()
                     
-                    if (!value && parent.querySelector(`[name="${id}-iconType"]`).value === 'class') {
+                    if (!value && parent.querySelector(`[name="${id}-iconType"]`).value === 'bi') {
                         value = e.target.value = 'circle-fill'
                     }
                     
