@@ -1016,7 +1016,7 @@ const handleLeafletStylePanel = (map, parent) => {
             containerClass:'w-100 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {
-                name: `geomFilter-handler-${id}`,
+                name: `geomFilter-value-${id}`,
             },
             fieldClass: 'form-select-sm w-100 flex-grow-1',
             labelText: 'Value',
@@ -1791,7 +1791,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 click: () => {
                                     const fields = Object.values(form.elements).filter(f => {
-                                        console.log(f)
+                                        console.log(f, f.hasOwnAttribute('getAttribute'))
                                         return (f.getAttribute('name') || '').startsWith('geomFilter-')
                                         && f.getAttribute('type') === 'checkbox'
                                     })
