@@ -90,7 +90,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
             ).filter(style => style !== '').join(',')
         } else {
             div.innerHTML = iconClass
-            div = div.firstChild
+            div = div.firstChild || div.innerText
         }
 
         return L.divIcon({
