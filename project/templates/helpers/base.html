@@ -24,8 +24,6 @@
         {% include "helpers/partials/resources/styles.html" %}
     </head>
     <body hx-headers="{'X-CSRFToken':'{{csrf_token}}'}" class="vh-100">
-        {% include "helpers/partials/maps/fill_patterns.html" %}
-        
         {% block body %}
             <div class="container-fluid vh-100">
                 <div class='row vh-100'>
@@ -49,6 +47,7 @@
             </div>
         {% endblock body %}
 
+        {% include "helpers/partials/maps/fill_patterns.html" %}
         {% include "helpers/partials/resources/scripts.html" %}
     </body>
 </html>
