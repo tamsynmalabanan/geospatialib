@@ -357,7 +357,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Paste layer style`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
-                console.log(text)
+                if (!text) return
+
+                try {
+                    const styles = JSON.parse(text)
+                    console.log(styles)
+                } catch { return }
             }
         },
 
