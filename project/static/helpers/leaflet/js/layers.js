@@ -24,6 +24,8 @@ const getLeafletStyleParams = ({
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
+    console.log(iconClass)
+
     if (!dashArray && lineBreak !== 'solid') {
         dashArray = `${
             lineBreak === 'dashed' 
