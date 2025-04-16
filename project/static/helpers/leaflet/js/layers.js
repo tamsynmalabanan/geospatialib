@@ -104,7 +104,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                 if (iconType === 'text') {
                     div.innerText = iconClass         
                 } else {
-                    div.innerText = feature.properties[iconClass]
+                    div.innerText = feature.properties[iconClass] || ''
                 }
             }
         

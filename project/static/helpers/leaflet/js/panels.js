@@ -669,9 +669,9 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Icon type',
             options: {
                 'class': 'Bootstrap icon',
-                'text': 'Text',
-                'property': 'Property',
-                'svg': 'SVG',
+                'text': 'Text or emoji',
+                'property': 'Feature property',
+                'svg': 'SVG string',
             },
             currentValue: styleParams.iconType,
             events: {
