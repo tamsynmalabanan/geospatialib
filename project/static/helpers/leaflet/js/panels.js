@@ -798,8 +798,14 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        
+        const patternFields = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
         const fillPattern = createFormFloating({
-            parent: fillFields,
+            parent: patternFields,
             containerClass: 'w-100 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `${id}-fillPattern`},
@@ -823,9 +829,8 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        
         const fillAngle = createInputGroup({
-            parent:fillFields,
+            parent:patternFields,
             fieldAttrs: {
                 name: `${id}-fillAngle`,
                 type: 'number',
@@ -833,7 +838,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 max: '90',
                 step: '5',
                 value: styleParams.fillAngle,
-                placeholder: 'Fill opacity',
+                placeholder: 'Fill angle',
             },
             suffixHTML: '°',
             fieldClass: 'form-control-sm',

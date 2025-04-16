@@ -18,6 +18,8 @@ const getLeafletStyleParams = ({
     lineBreak='solid',
     dashArray,
     dashOffset,
+    fillPattern='solid',
+    fillAngle=0,
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
@@ -28,6 +30,10 @@ const getLeafletStyleParams = ({
             ? (strokeWidth * 5) 
             : (((Math.ceil(strokeWidth)) - 1) || 1)
         } ${strokeWidth * 3}`
+    }
+
+    if (fillPattern !== 'solid') {
+        
     }
 
     return  {
