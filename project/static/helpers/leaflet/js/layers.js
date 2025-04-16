@@ -24,11 +24,6 @@ const getLeafletStyleParams = ({
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
-    const bootstrapIcons = Array.from(bootstrapIConsDatalist.querySelectorAll('option')).map(i => i.value)
-    if (!bootstrapIcons.includes(iconClass)) {
-        console.log(iconClass)
-    }
-
     if (!dashArray && lineBreak !== 'solid') {
         dashArray = `${
             lineBreak === 'dashed' 
@@ -80,7 +75,15 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
 
     if (type === 'point') {
         const div = document.createElement('div')
-        div.className = `h-100 w-100 d-flex justify-content-center align-items-center bi bi-${iconClass}`
+        div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
+
+        const bootstrapIcons = Array.from(bootstrapIConsDatalist.querySelectorAll('option')).map(i => i.value)
+        if (bootstrapIcons.includes(iconClass)) {
+            div.classList.add(`bi`, `bi-${iconClass}`)            
+        } else {
+            console.log(iconClass)
+        }
+
         div.style.fontSize = `${iconSize}px`
         div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
         div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
