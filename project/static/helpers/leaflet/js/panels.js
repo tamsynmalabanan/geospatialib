@@ -669,8 +669,9 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Icon type',
             options: {
                 'class': 'Bootstrap icon',
-                'svg': 'SVG string',
                 'text': 'Text',
+                'property': 'Property',
+                'svg': 'SVG string',
             },
             currentValue: styleParams.iconType,
             events: {
@@ -743,7 +744,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const iconCheckboxes = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            className:'d-flex align-items-center border px-3 rounded pt-1', 
             parent:iconFields2
         })
 
@@ -774,6 +775,22 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const textWrap = createFormCheck({
+            parent:iconCheckboxes,
+            labelInnerText: 'Text wrap',
+            checked: styleParams.textWrap,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.textWrap) return
+
+                    styleParams.textWrap = value
                     updateGeoJSONData(layer)
                 }
             }

@@ -21,6 +21,7 @@ const getLeafletStyleParams = ({
     fillPattern='solid',
     fillAngle=0,
     iconType='class',
+    textWrap=false,
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
@@ -52,6 +53,7 @@ const getLeafletStyleParams = ({
         lineCap,
         lineJoin,
         iconType,
+        textWrap,
     }    
 }
 
@@ -71,6 +73,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         dashArray,
         dashOffset,
         iconType,
+        textWrap,
     } = getLeafletStyleParams(styleParams)
     if (!featureType) return
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
@@ -82,13 +85,14 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         if (iconType === 'svg') {
         } else {
             div = document.createElement('div')
-            div.className = `h-100 w-100 d-flex justify-content-center align-items-center text-nowrap`
+            div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
 
             if (iconType === 'class') {
                 div.classList.add(`bi`, `bi-${iconClass}`)            
             }
-
+            
             if (iconType === 'text') {
+                div.classList.add(`${textWrap ? 'text-wrap' : 'text-nowrap'}`)            
                 div.innerText = iconClass         
             }
         
