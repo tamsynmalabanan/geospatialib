@@ -813,9 +813,8 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Fill pattern',
             options: {
                 'solid': 'solid',
-                'dots': 'dots',
-                'squares': 'squares',
-                'stripes': 'stripes',
+                'icon': 'icon',
+                // 'stripes': 'stripes',
             },
             currentValue: styleParams.fillPattern,
             events: {
