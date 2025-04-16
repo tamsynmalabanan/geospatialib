@@ -271,6 +271,11 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     const fillPatternSVG = customCreateElement({
         tag: 'svg',
+        attrs: {
+            xmlns:"http://www.w3.org/2000/svg", 
+            height:"0", 
+            width:"0", 
+        },
         style: {
             position:'absolute',
             top:'0',

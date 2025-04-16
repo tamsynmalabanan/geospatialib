@@ -5,12 +5,14 @@ const customCreateElement = ({
     parent,
     style = {},
     innerHTML = '',
+    attrs = {},
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
     element.className = className
     parent?.appendChild(element)
     Object.keys(style).forEach(k => element.style[k] = style[k])
+    Object.keys(attrs).forEach(k => element.setAttribute(k, style[k]))
     element.innerHTML = innerHTML
     return element
 }
