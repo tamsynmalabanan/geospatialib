@@ -659,6 +659,30 @@ const handleLeafletStylePanel = (map, parent) => {
             className:'d-flex gap-2',
             parent,
         })
+
+        const iconType = createFormFloating({
+            parent: iconFields,
+            containerClass: 'w-25 flex-grow-1',
+            fieldTag: 'select',
+            fieldAttrs: {name: `${id}-iconType`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Icon type',
+            options: {
+                'class': 'Bootstrap icon',
+                'svg': 'SVG string',
+                'text': 'Text',
+            },
+            currentValue: styleParams.iconType,
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.iconType) return
+
+                    styleParams.iconType = value
+                    updateGeoJSONData(layer)
+                }
+            }
+        })
         
         const iconClass = createFormFloating({
             parent:iconFields,
@@ -683,8 +707,13 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const iconFields2 = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
         const iconSize = createInputGroup({
-            parent:iconFields,
+            parent:iconFields2,
             fieldAttrs: {
                 name: `${id}-iconSize`,
                 type: 'number',
@@ -712,7 +741,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconCheckboxes = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:iconFields
+            parent:iconFields2
         })
 
         const iconShadow = createFormCheck({
