@@ -58,6 +58,8 @@ const getLeafletStyleParams = ({
 }
 
 const getLeafletLayerStyle = (featureType, styleParams={}) => {
+    if (!featureType) return
+
     const {
         fillColor,
         fillOpacity,
@@ -75,7 +77,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         iconType,
         textWrap,
     } = getLeafletStyleParams(styleParams)
-    if (!featureType) return
+    
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
     const hslaColor = manageHSLAColor(fillColor)
 
@@ -89,12 +91,13 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
 
             if (iconType === 'class') {
                 div.classList.add(`bi`, `bi-${iconClass}`)            
+            } else {
+                div.classList.add(`text-center ${textWrap ? 'text-wrap' : 'text-nowrap'}`)            
+                if (iconType === 'text') {
+                    div.innerText = iconClass         
+                }
             }
             
-            if (iconType === 'text') {
-                div.classList.add(`${textWrap ? 'text-wrap' : 'text-nowrap'}`)            
-                div.innerText = iconClass         
-            }
         
             div.style.fontSize = `${iconSize}px`
             div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
