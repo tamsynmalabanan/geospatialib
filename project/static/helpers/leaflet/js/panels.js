@@ -928,7 +928,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Fill pattern',
             options: {
                 'solid': 'solid',
-                'icon': 'icon',
+                'dots': 'dots',
                 // 'stripes': 'stripes',
             },
             currentValue: styleParams.fillPattern,
@@ -936,6 +936,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 change: (e) => {
                     const value = e.target.value
                     if (value === styleParams.fillPattern) return
+
+                    styleParams.fillPatternDef = value !== 'solid' ? "url(#mountainPattern)" : ''
 
                     styleParams.fillPattern = value
                     updateGeoJSONData(layer)

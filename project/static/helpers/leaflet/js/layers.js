@@ -23,6 +23,7 @@ const getLeafletStyleParams = ({
     iconType='bi',
     textWrap=false,
     boldText=false,
+    fillPatternDef='',
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
@@ -54,6 +55,7 @@ const getLeafletStyleParams = ({
         boldText,
         fillPattern,
         fillAngle,
+        fillPatternDef,
     }    
 }
 
@@ -80,6 +82,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         boldText,
         fillPattern,
         fillAngle,
+        fillPatternDef,
     } = getLeafletStyleParams(styleParams)
     
     const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
@@ -138,9 +141,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' ? fillColor : (() => {
-                return "url(#mountainPattern)"
-            })()
+            params.fillColor = fillPattern === 'solid' ? fillColor : fillPatternDef
         }
         
         return params
