@@ -88,7 +88,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
     if (type === 'point') {
         let div
         
-        if (iconType === 'svg') {
+        if (iconType === 'html') {
             div = customCreateElement({innerHTML:iconClass}).firstChild
             if (div instanceof Element) div.classList.add('position-absolute')
         } else {
