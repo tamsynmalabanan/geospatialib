@@ -662,7 +662,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconType = createFormFloating({
             parent: iconFields,
-            containerClass: 'w-25 flex-grow-1',
+            containerClass: 'w-50 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `${id}-iconType`},
             fieldClass: 'form-select-sm',
@@ -694,7 +694,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 list: bootstrapIConsDatalist.id
             },
             fieldClass: 'form-control-sm',
-            labelText: 'Icon (Bootstrap icon or SVG string)',
+            labelText: 'Icon description',
             events: {
                 blur: (e) => {
                     let value = e.target.value.trim()
