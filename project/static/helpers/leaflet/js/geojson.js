@@ -61,7 +61,7 @@ const getLeafletGeoJSONLayer = async ({
         //         ],
         //         styleParams: {
 
-        //         }, // getLeafletLayerStyle(feature.geometry.type, styleParams)
+        //         }, // getLeafletLayerStyle(feature, styleParams)
         //     },
         // },
         default: {
@@ -169,7 +169,10 @@ const getLeafletGeoJSONLayer = async ({
             && !styleParams.iconGlow
         )
         const type = circlePolygon ? 'Polygon' : feature.geometry.type
-        const layerStyle =  getLeafletLayerStyle(type, styleParams)
+        const layerStyle =  getLeafletLayerStyle({
+            properties:feature.properties,
+            geometry: {type}
+        }, styleParams)
         
         if (circlePolygon) {
             layerStyle.radius = styleParams.iconSize/2 
@@ -261,7 +264,10 @@ const getGeoJSONLayerStyles = (layer) => {
                 styles[groupId].types[typeName] = {
                     count: 0,
                     html: leafletLayerStyleToHTML(
-                        getLeafletLayerStyle(typeName, styleParams),
+                        getLeafletLayerStyle({
+                            properties: styleParams.iconType === 'property' ? {[styleParams.iconClass]:styleParams.iconClass} : {},
+                            geometry: {type:typeName}
+                        }, styleParams),
                         typeName
                     )
                 }

@@ -57,7 +57,8 @@ const getLeafletStyleParams = ({
     }    
 }
 
-const getLeafletLayerStyle = (featureType, styleParams={}) => {
+const getLeafletLayerStyle = (feature, styleParams={}) => {
+    const featureType = feature.geometry.type
     if (!featureType) return
 
     const {
@@ -95,6 +96,8 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
                 div.classList.add(`text-center`, `${textWrap ? 'text-wrap' : 'text-nowrap'}`)            
                 if (iconType === 'text') {
                     div.innerText = iconClass         
+                } else {
+                    div.innerText = feature.properties[iconClass]
                 }
             }
             
