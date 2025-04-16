@@ -106,14 +106,14 @@ LEAFLET_CONFIG = {
             ],
             'auto_include': True,
         },
-        'pattern': {
-            'css': [
-            ],
-            'js': [
-                'https://cdn.jsdelivr.net/npm/leaflet.pattern@0.1.0/dist/leaflet.pattern.min.js'
-            ],
-            'auto_include': True,
-        },
+        # 'pattern': {
+        #     'css': [
+        #     ],
+        #     'js': [
+        #         'https://cdn.jsdelivr.net/npm/leaflet.pattern@0.1.0/dist/leaflet.pattern.min.js'
+        #     ],
+        #     'auto_include': True,
+        # },
     },
 }
 
