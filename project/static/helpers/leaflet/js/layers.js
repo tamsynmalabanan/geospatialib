@@ -81,7 +81,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         if (bootstrapIcons.includes(iconClass)) {
             div.classList.add(`bi`, `bi-${iconClass}`)            
         } else {
-            console.log(iconClass)
+            div.innerHTML = iconClass
         }
 
         div.style.fontSize = `${iconSize}px`

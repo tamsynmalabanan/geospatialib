@@ -671,7 +671,6 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             fieldClass: 'form-control-sm',
             labelText: 'Icon (Bootstrap icon or SVG string)',
-            labelClass: 'text-wrap',
             events: {
                 blur: (e) => {
                     let value = e.target.value.trim()
