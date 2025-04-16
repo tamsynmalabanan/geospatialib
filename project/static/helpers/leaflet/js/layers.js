@@ -94,7 +94,7 @@ const getLeafletLayerStyle = (featureType, styleParams={}) => {
         }
 
         return L.divIcon({
-            className: 'bg-transparent',
+            className: 'bg-transparent d-flex justify-content-center align-items-center',
             html: div.outerHTML,
         });
     } else {
