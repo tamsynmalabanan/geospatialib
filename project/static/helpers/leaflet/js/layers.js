@@ -98,8 +98,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             } else {
                 div.classList.add(
                     `text-center`, 
-                    `${textWrap ? 'text-wrap' : 'text-nowrap'}`
-                    `${boldText ? 'fw-bold' : 'fw-normal'}`
+                    `${textWrap ? 'text-wrap' : 'text-nowrap'}`,
+                    `${boldText ? 'fw-bold' : 'fw-normal'}`,
                 )            
                 if (iconType === 'text') {
                     div.innerText = iconClass         
