@@ -683,7 +683,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         parent.querySelector(`[name="${id}-iconClass"]`).value = 'circle-fill'
                         styleParams.iconClass = 'circle-fill'
                     }
-                    
+
                     styleParams.iconType = value
                     updateGeoJSONData(layer)
                 }
@@ -736,6 +736,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 },
                 blur: (e) => {
                     let value = e.target.value.trim()
+                    
+                    if (!value && parent.querySelector(`[name="${id}-iconType"]`).value === 'class') {
+                        value = e.target.value = 'circle-fill'
+                    }
+                    
                     if (value === styleParams.iconClass) return
                     
                     styleParams.iconClass = value
