@@ -25,7 +25,7 @@ const getLeafletStyleParams = ({
     if (!dashArray && lineBreak !== 'solid') {
         dashArray = lineBreak === 'dashed' 
         ? `${strokeWidth*5} ${strokeWidth*3}`
-        : `${(strokeWidth-1) || 1} ${strokeWidth*3}`
+        : `${((Math.ceil(strokeWidth*10)/10)-1) || 1} ${strokeWidth*3}`
     }
 
     return  {
