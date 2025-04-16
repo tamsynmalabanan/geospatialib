@@ -1791,6 +1791,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 click: () => {
                                     const fields = Object.values(form.elements).filter(f => {
+                                        console.log(f)
                                         return (f.getAttribute('name') || '').startsWith('geomFilter-')
                                         && f.getAttribute('type') === 'checkbox'
                                     })
