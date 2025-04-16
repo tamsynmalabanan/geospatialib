@@ -89,8 +89,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         let div
         
         if (iconType === 'svg') {
-            div = customCreateElement({innerHTML:iconClass}).firstChild
-            console.log(div)
+            div = customCreateElement({innerHTML:iconClass}).querySelector('svg')
+            if (div) div.classList.add('position-absolute')
         } else {
             div = document.createElement('div')
             div.className = `h-100 w-100 d-flex justify-content-center align-items-center`
@@ -118,7 +118,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
 
         return L.divIcon({
             className: 'bg-transparent d-flex justify-content-center align-items-center',
-            html: div.outerHTML,
+            html: div.outerHTML || '',
         });
     } else {
         const params = {
