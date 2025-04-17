@@ -254,7 +254,7 @@ const findLeafletFeatureLayerParent = (layer) => {
     }
 }
 
-const cloneLayerStyle = (layer) => {
+const cloneLeafletLayerStyles = (layer) => {
     const styles = structuredClone(layer._styles)
     const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
     
@@ -276,6 +276,19 @@ const cloneLayerStyle = (layer) => {
     })
 
     return styles
+}
+
+const deleteLeafletLayerFillPatterns = (layer) => {
+    const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+                
+    Array(layer._styles.default, ...Object.values(layer._styles.groups ?? {})).forEach(i => {
+        const fillPatternId = i.styleParams.fillPatternId
+        if (!fillPatternId) return 
+        
+        const pattern = svgFillDefs.querySelector(`#${fillPatternId}`)
+        console.log(pattern)
+        pattern.remove()
+    })
 }
 
 const getLeafletLayerContextMenu = async (e, layer, {
@@ -426,7 +439,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         return Object.keys(styles).includes(i)
                     })) return
 
-                    geojsonLayer._styles = cloneLayerStyle({_styles:styles})
+                    geojsonLayer._styles = cloneLeafletLayerStyles({_styles:styles})
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
@@ -491,7 +504,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
                 const fetchParams = feature ? geojsonLayer._fetchParams : layer._fetchParams
-                const styles = isLegendGroup ? cloneLayerStyle((feature ? geojsonLayer : layer)) : null
+                const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let newLayer
                 if (['feature', 'geojson'].includes(type)) {
