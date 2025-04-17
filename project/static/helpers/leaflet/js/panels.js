@@ -599,7 +599,22 @@ const handleLeafletStylePanel = (map, parent) => {
         const update = () => {
             if (styleParams.fillPattern === 'icon') {
                 const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
-                console.log(svgFillDefs)
+
+                const patternId = `${styleParams.svgFillId}-pattern`
+                const currentPattern = svgFillDefs.querySelector(`#${patternId}`)
+                if (currentPattern) currentPattern.remove()
+
+                const newPattern = document.createElement('pattern')
+                newPattern.id = patternId
+                newPattern.patternUnits = 'userSpaceOnUse'
+                newPattern.width = '100'
+                newPattern.height = '100'
+                svgFillDefs.appendChild(newPattern)
+
+                if (styleParams.iconType === 'bi') {
+                    const unicode = bootstrapIcons[styleParams.iconClass]
+                    console.log(unicode)
+                }
             }
 
             updateGeoJSONData(layer)
