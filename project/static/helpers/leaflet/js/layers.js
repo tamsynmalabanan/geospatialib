@@ -286,8 +286,7 @@ const deleteLeafletLayerFillPatterns = (layer) => {
         if (!fillPatternId) return 
         
         const pattern = svgFillDefs.querySelector(`#${fillPatternId}`)
-        console.log(pattern)
-        pattern.parentNode.removeChild(pattern)
+        pattern.remove()
     })
 }
 
@@ -439,6 +438,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         return Object.keys(styles).includes(i)
                     })) return
 
+                    deleteLeafletLayerFillPatterns(geojsonLayer)
                     geojsonLayer._styles = cloneLeafletLayerStyles({_styles:styles})
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
