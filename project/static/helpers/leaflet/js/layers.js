@@ -107,8 +107,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         })
         
         if (element instanceof Element) {
-            console.log(element.tagName)
-            if (Array('IMG', 'SVG').includes(element.tagName)) {
+            if (Array('img', 'svg', 'path').includes(element.tagName)) {
+                console.log('here')
                 element.classList.add('position-absolute')
                 element.setAttribute('width', iconSize)
                 element.setAttribute('height', iconSize)
