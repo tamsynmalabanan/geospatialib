@@ -942,7 +942,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.fillPattern) return
 
-                    styleParams.fillPatternDef = value !== 'solid' ? (() => {
+                    //fillparentid is fixed per group
+                    styleParams.fillPatternId = value !== 'solid' ? (() => {
                         // layerid-groupid
                         // delete existing pattern def
                         // create pattern def in fill_patterns

@@ -135,21 +135,22 @@ const getLeafletGeoJSONLayer = async ({
         feature._groupId = ''
         
         if (styles?.groups) {
+            // make sure groups are sorted by rank
             for (const id in styles.groups) {
                 const group = styles.groups[id]
-                let valid = true
                 
+                let valid = true
                 for (const validator in group.validators) {
-                    if (!validator(feature)) {
-                        valid = false
-                        break
-                    }
+                    if (validator(feature)) continue
+                    valid = false
+                    break
                 }
 
-                if (valid) {
-                    feature._groupId = id
-                    styleParams = group.styleParams
-                }
+                if (!valid) continue
+                
+                feature._groupId = id
+                styleParams = group.styleParams
+                return
             }
         }
 
@@ -160,9 +161,10 @@ const getLeafletGeoJSONLayer = async ({
             && !styleParams.iconShadow 
             && !styleParams.iconGlow
         )
+
         const type = circlePolygon ? 'Polygon' : feature.geometry.type
         const layerStyle =  getLeafletLayerStyle({
-            properties:feature.properties,
+            properties: feature.properties,
             geometry: {type}
         }, styleParams)
         
