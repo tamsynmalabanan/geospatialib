@@ -942,13 +942,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.fillPattern) return
 
-                    styleParams.svgFillId = value !== 'solid' ? (() => {
-                        // layerid-groupid
-                        // delete existing pattern def
-                        // create pattern def in fill_patterns
-                        return "url(#mountainPattern)"
-                    })() : ''
-
                     styleParams.fillPattern = value
                     updateGeoJSONData(layer)
                 }
