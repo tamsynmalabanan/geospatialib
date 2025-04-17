@@ -489,6 +489,25 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
+                [layer._styles.default, ...Object.values(layer._styles.groups)].forEach(i => {
+                    const currentId = i.styleParams.fillPatternId
+                    if (!currentId) return 
+                    
+                    const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+                    const pattern = svgFillDefs.querySelector(`#${currentId}`)
+                    if (!pattern) return
+
+                    const newId = generateRandomString()
+                    i.styleParams.fillPatternId = newId
+
+                    const newPattern = document.createElementNS("http://www.w3.org/2000/svg", 'pattern')
+                    svgFillDefs.appendChild(newPattern)
+                    newPattern.outerHTML = pattern.outerHTML
+                    newPattern.id = newId
+
+                    console.log(newPattern)
+                })
+
                 layer.on('popupopen', (e) => {
                     layer._openpopup = e.popup
                 })
@@ -601,7 +620,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const currentId = styleParams.fillPatternId
             if (currentId) {
-                console.log(map._ch.getLegendLayers())
                 svgFillDefs.querySelector(`#${currentId}`)?.remove()
                 delete styleParams.fillPatternId
             }
