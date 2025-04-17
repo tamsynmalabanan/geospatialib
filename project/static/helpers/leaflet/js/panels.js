@@ -604,7 +604,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const currentPattern = svgFillDefs.querySelector(`#${patternId}`)
                 if (currentPattern) currentPattern.remove()
 
-                const newPattern = document.createElement('pattern')
+                const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = patternId
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', '100')
