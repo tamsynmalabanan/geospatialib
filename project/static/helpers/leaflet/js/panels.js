@@ -1218,24 +1218,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const simplify = createFormCheck({
-            parent:checkboxes,
-            labelInnerText: 'Simplify geometry',
-            checked: filter.simplify,
-            labelClass: 'text-nowrap',
-            disabled: !filters.geom.active,
-            name: `geomFilter-simplify-${id}`,
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === filter.simplify) return
-
-                    filter.simplify = value
-                    if (filter.active && filter.geoms?.length) updateGeoJSONData(layer)
-                }
-            }
-        })
-
         const geomsFields = customCreateElement({
             className:'d-flex gap-2 flex-grow-1 align-items-center',
             parent,
@@ -1332,8 +1314,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = value.map(i => {
                             i = i.type === 'Feature' ? i.geometry : i
                             
-                            if (filter.simplify && turf.coordAll(i).length > 100) {
-                                let simplify = true
+                            let simplify = turf.coordAll(i).length > 100
+                            if (simplify) {
                                 let simplifiedGeom
                                 let tolerance = 0
 
@@ -2041,7 +2023,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         active: true,
                                         handler: 'booleanIntersects',
                                         value: true,
-                                        simplify: true,
                                         geoms: [],
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
@@ -2062,7 +2043,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         active: true,
                                         handler: 'booleanIntersects',
                                         value: true,
-                                        simplify: false,
                                         geoms: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
@@ -2112,17 +2092,17 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        // helperGeom: {
-                        //     handler: ({parent}={}) => {
-                        //         const container = customCreateElement({
-                        //             tag: 'p',
-                        //             className: 'd-flex w-100 user-select-none text-muted p-0 m-0',
-                        //             parent,
-                        //         })
+                        helperGeom: {
+                            handler: ({parent}={}) => {
+                                const container = customCreateElement({
+                                    tag: 'p',
+                                    className: 'd-flex w-100 user-select-none text-muted p-0 m-0',
+                                    parent,
+                                })
 
-                        //         container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified to minimize lags.'
-                        //     }
-                        // },
+                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified to minimize lags.'
+                            }
+                        },
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
