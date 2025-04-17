@@ -612,13 +612,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 svgFillDefs.appendChild(newPattern)
 
                 if (styleParams.iconType === 'bi') {
-                    const text = document.createElement('text')
-                    text.setAttribute('x', '10')
-                    text.setAttribute('y', '10')
-                    text.setAttribute('font-family', 'bootstrap-icons')
-                    text.setAttribute('font-size', '24')
-                    text.innerText = `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};`
-                    newPattern.appendChild(text)
+                    newPattern.innerHTML = removeWhitespace(`
+                        <text x="10" y="30" font-family="bootstrap-icons" font-size="24">
+                            &#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};
+                        </text>
+                    `)
                 }
 
                 console.log(svgFillDefs)
