@@ -32,6 +32,7 @@ const getLeafletStyleParams = ({
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
+    iconGlow = iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : iconGlow || null
 
     if (!dashArray && lineBreak !== 'solid') {
         dashArray = `${
@@ -93,45 +94,37 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
     const hslaColor = manageHSLAColor(fillColor)
 
     if (type === 'point') {
-        let div
+        const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
+            innerHTML: iconType === 'text' ? iconClass : iconClass === 'property' ? feature.properties[iconClass] ?? '' : '',
+            className:removeWhitespace(`
+                h-100 w-100 d-flex justify-content-center align-items-center
+                ${iconType === 'bi' ? `bi bi-${iconClass}` : `
+                    text-center
+                    ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                    ${boldText ? 'fw-bold' : 'fw-normal'}
+                `}
+            `),
+        })
         
-        if (iconType === 'html') {
-            div = customCreateElement({innerHTML:iconClass}).firstChild
-            if (div instanceof Element) {
-                div.classList.add('position-absolute')
-                div.setAttribute('width', iconSize)
-                div.setAttribute('height', iconSize)
-            }
-        } else {
-            div = customCreateElement({
-                className:`h-100 w-100 d-flex justify-content-center align-items-center`
-            })
-
-            if (iconType === 'bi') {
-                div.classList.add(`bi`, `bi-${iconClass}`)            
+        if (element instanceof Element) {
+            if (Array('SVG', 'IMG').includes(element.tagName)) {
+                element.classList.add('position-absolute')
+                element.setAttribute('width', iconSize)
+                element.setAttribute('height', iconSize)
             } else {
-                div.classList.add(
-                    `text-center`, 
-                    `${textWrap ? 'text-wrap' : 'text-nowrap'}`,
-                    `${boldText ? 'fw-bold' : 'fw-normal'}`,
-                )
-
-                div.innerHTML = iconType === 'text' ? iconClass : feature.properties[iconClass] || ''
+                element.style.fontSize = `${iconSize}px`
+                element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
+                element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+                element.style.textShadow = Array(
+                    iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
+                    iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
+                ).filter(style => style !== '').join(',')
             }
-
-            div.style.fontSize = `${iconSize}px`
-            div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
-            div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
-            const glow = hslaColor?.toString({a:fillOpacity}) || `white`
-            div.style.textShadow = Array(
-                iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
-                iconGlow ? `0 0 ${iconSize/2*1}px ${glow}, 0 0 ${iconSize/2*2}px ${glow}, 0 0 ${iconSize/2*3}px ${glow}, 0 0 ${iconSize/2*4}px ${glow}` : ''
-            ).filter(style => style !== '').join(',')
         }
 
         return L.divIcon({
             className: 'bg-transparent d-flex justify-content-center align-items-center',
-            html: div?.outerHTML || '',
+            html: element?.outerHTML ?? '',
         });
     } else {
         const params = {
