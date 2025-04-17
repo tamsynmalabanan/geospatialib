@@ -489,7 +489,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                [layer._styles.default, ...Object.values(layer._styles.groups)].forEach(i => {
+                [layer._styles.default, ...Object.values(layer._styles.groups ?? {})].forEach(i => {
                     const currentId = i.styleParams.fillPatternId
                     if (!currentId) return 
                     
