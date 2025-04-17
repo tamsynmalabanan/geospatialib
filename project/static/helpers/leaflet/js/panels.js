@@ -594,11 +594,14 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
 
+        const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+        
         const update = () => {
+            console.log(fillPattern)
+
             updateGeoJSONData(layer)
         }
 
-        const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
         const groupFields = customCreateElement({
             className:'d-flex gap-2',
@@ -694,7 +697,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     styleParams.iconType = value
                     updateIconDatalistOptions()
-                    update(layer)
+                    update()
                     
                 }
             }
@@ -758,7 +761,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconClass) return
                     
                     styleParams.iconClass = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -791,7 +794,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
 
                     styleParams.iconSize = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -812,7 +815,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconShadow) return
 
                     styleParams.iconShadow = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -828,7 +831,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -850,7 +853,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.textWrap) return
 
                     styleParams.textWrap = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -866,7 +869,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.boldText) return
 
                     styleParams.boldText = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -893,7 +896,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -917,7 +920,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillOpacity) return
                     
                     styleParams.fillOpacity = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -937,8 +940,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Fill pattern',
             options: {
                 'solid': 'solid',
-                'dots': 'dots',
-                // 'stripes': 'stripes',
+                'icon': 'icon',
             },
             currentValue: styleParams.fillPattern,
             events: {
@@ -947,7 +949,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -971,7 +973,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillAngle) return
                     
                     styleParams.fillAngle = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -998,7 +1000,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeColor) return
 
                     styleParams.strokeColor = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -1022,7 +1024,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeOpacity) return
 
                     styleParams.strokeOpacity = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -1046,7 +1048,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeWidth) return
 
                     styleParams.strokeWidth = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -1075,7 +1077,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineCap) return
 
                     styleParams.lineCap = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -1101,7 +1103,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineJoin) return
 
                     styleParams.lineJoin = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -1125,7 +1127,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineBreak) return
 
                     styleParams.lineBreak = value
-                    update(layer)
+                    update()
                 }
             }
         })
@@ -1156,7 +1158,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.geoms?.length) update(layer)
+                    if (filter.geoms?.length) update()
                 }
             }
         })
