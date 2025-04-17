@@ -19,25 +19,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
     geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
-
-    if (styles) Array(styles.default, ...Object.values(styles.groups ?? {})).forEach(i => {
-        const currentId = i.styleParams.fillPatternId
-        if (!currentId) return 
-        
-        const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
-        const pattern = svgFillDefs.querySelector(`#${currentId}`)
-        if (!pattern) return
-
-        const newId = generateRandomString()
-        i.styleParams.fillPatternId = newId
-
-        const clonedPattern = pattern.cloneNode(true)
-        clonedPattern.id = newId
-        svgFillDefs.appendChild(clonedPattern)
-
-        console.log(clonedPattern)
-    })
-
     geojsonLayer._styles = styles || {
         // groups: {
         //     id: {
