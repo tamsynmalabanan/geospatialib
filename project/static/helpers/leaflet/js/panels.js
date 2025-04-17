@@ -599,8 +599,10 @@ const handleLeafletStylePanel = (map, parent) => {
         const update = () => {
             const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
 
-            if (styleParams.fillPatternId) {
-                svgFillDefs.querySelector(`#${styleParams.fillPatternId}`)?.remove()
+            const currentId = styleParams.fillPatternId
+            if (currentId) {
+                console.log(map._ch.getLegendLayers())
+                svgFillDefs.querySelector(`#${currentId}`)?.remove()
                 delete styleParams.fillPatternId
             }
 
