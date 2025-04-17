@@ -597,16 +597,20 @@ const handleLeafletStylePanel = (map, parent) => {
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
         
         const update = () => {
-            if (styleParams.fillPattern === 'icon') {
-                const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+            const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
 
-                const patternId = `${styleParams.svgFillId}Pattern`
-                const currentPattern = svgFillDefs.querySelector(`#${patternId}`)
-                if (currentPattern) currentPattern.remove()
+            if (styleParams.fillPatternId) {
+                svgFillDefs.querySelector(`#${styleParams.fillPatternId}`)?.remove()
+                delete styleParams.fillPatternId
+            }
+
+            if (styleParams.fillPattern === 'icon') {
+                const id = generateRandomString()
+                styleParams.fillPatternId = id
 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
-                newPattern.id = patternId
+                newPattern.id = id
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', '100')
                 newPattern.setAttribute('height', '100')

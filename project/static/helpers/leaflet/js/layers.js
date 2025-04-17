@@ -17,7 +17,7 @@ const getLeafletStyleParams = ({
     
     fillPattern='solid',
     fillAngle=0,
-    svgFillId='',
+    fillPatternId='',
 
     strokeColor=true,
     strokeOpacity=1,
@@ -61,7 +61,7 @@ const getLeafletStyleParams = ({
         boldText,
         fillPattern,
         fillAngle,
-        svgFillId,
+        fillPatternId,
     }    
 }
 
@@ -88,7 +88,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         boldText,
         fillPattern,
         fillAngle,
-        svgFillId,
+        fillPatternId,
     } = getLeafletStyleParams(styleParams)
     
     const hslaColor = manageHSLAColor(fillColor)
@@ -139,7 +139,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' ? fillColor : `url(#${svgFillId}Pattern)`
+            params.fillColor = fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})`
         }
         
         return params

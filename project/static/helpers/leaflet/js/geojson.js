@@ -37,10 +37,7 @@ const getLeafletGeoJSONLayer = async ({
         default: {
             label: '',
             showCount: true,
-            styleParams: getLeafletStyleParams({
-                ...customStyleParams, 
-                svgFillId:generateRandomString()
-            }),
+            styleParams: getLeafletStyleParams(customStyleParams),
         },
         method: 'uniform',
         visibility: {
