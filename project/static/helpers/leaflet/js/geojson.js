@@ -128,7 +128,7 @@ const getLeafletGeoJSONLayer = async ({
         return true
     }
 
-    const getStyle = (feature) => {
+    const getStyle = (feature, {circleMarker=false}={}) => {
         const styles = geojsonLayer._styles
         
         let styleParams = styles?.default?.styleParams || getLeafletStyleParams()
