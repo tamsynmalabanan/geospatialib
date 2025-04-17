@@ -618,7 +618,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('y', '30')
                     text.setAttribute('font-family', 'bootstrap-icons')
                     text.setAttribute('font-size', '24')
-                    text.innerText = `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};`
+                    text.innerHTML = `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};`
                     newPattern.appendChild(text)
                 }
 
