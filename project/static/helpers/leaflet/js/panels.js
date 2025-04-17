@@ -489,24 +489,6 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                [layer._styles.default, ...Object.values(layer._styles.groups ?? {})].forEach(i => {
-                    const currentId = i.styleParams.fillPatternId
-                    if (!currentId) return 
-                    
-                    const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
-                    const pattern = svgFillDefs.querySelector(`#${currentId}`)
-                    if (!pattern) return
-
-                    const newId = generateRandomString()
-                    i.styleParams.fillPatternId = newId
-
-                    const clonedPattern = pattern.cloneNode(true)
-                    clonedPattern.id = newId
-                    svgFillDefs.appendChild(clonedPattern)
-
-                    console.log(clonedPattern)
-                })
-
                 layer.on('popupopen', (e) => {
                     layer._openpopup = e.popup
                 })
@@ -646,8 +628,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     const icon = styleParams.iconClass
                     text.innerHTML = styleParams.iconType === 'bi' ? `&#x${bootstrapIcons[icon] ?? 'F287'};` : icon ?? ''
                 }
-
-                console.log(svgFillDefs)
             }
 
             updateGeoJSONData(layer)
