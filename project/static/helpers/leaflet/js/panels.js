@@ -1194,28 +1194,43 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const value = createFormFloating({
-            parent: paramsFields,
-            containerClass:'w-100 flex-grow-1',
-            fieldTag: 'select',
-            fieldAttrs: {
-                name: `geomFilter-value-${id}`,
-            },
-            fieldClass: 'form-select-sm w-100 flex-grow-1',
-            labelText: 'Value',
+        const checkboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1',
+            style: {height: '58px'},
+            parent:paramsFields
+        })
+
+        const value = createFormCheck({
+            parent:checkboxes,
+            labelInnerText: 'Relation is true',
+            checked: filter.value,
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
-            options: {
-                'true': 'True',
-                'false': 'False',
-            },
-            currentValue: filter.value ? 'true' : 'false',
+            name: `geomFilter-value-${id}`,
             events: {
-                change: (e) => {
-                    const value = e.target.value === 'true'
+                click: (e) => {
+                    const value = e.target.checked
                     if (value === filter.value) return
 
                     filter.value = value
+                    if (filter.active && filter.geoms?.length) updateGeoJSONData(layer)
+                }
+            }
+        })
+
+        const simplify = createFormCheck({
+            parent:checkboxes,
+            labelInnerText: 'Simplify geometry',
+            checked: filter.simplify,
+            labelClass: 'text-nowrap',
+            disabled: !filters.geom.active,
+            name: `geomFilter-simplify-${id}`,
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === filter.simplify) return
+
+                    filter.simplify = value
                     if (filter.active && filter.geoms?.length) updateGeoJSONData(layer)
                 }
             }
@@ -1317,8 +1332,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = value.map(i => {
                             i = i.type === 'Feature' ? i.geometry : i
                             
-                            let simplify = turf.coordAll(i).length > 100
-                            if (simplify) {
+                            if (filter.simplify && turf.coordAll(i).length > 100) {
+                                let simplify = true
                                 let simplifiedGeom
                                 let tolerance = 0
 
@@ -1460,7 +1475,8 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const checkboxes = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1',
+            style: {height: '58px'},
             parent:paramsFields
         })
 
@@ -2025,6 +2041,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         active: true,
                                         handler: 'booleanIntersects',
                                         value: true,
+                                        simplify: true,
                                         geoms: [],
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
@@ -2045,6 +2062,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         active: true,
                                         handler: 'booleanIntersects',
                                         value: true,
+                                        simplify: false,
                                         geoms: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
@@ -2094,17 +2112,17 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        helperGeom: {
-                            handler: ({parent}={}) => {
-                                const container = customCreateElement({
-                                    tag: 'p',
-                                    className: 'd-flex w-100 user-select-none text-muted p-0 m-0',
-                                    parent,
-                                })
+                        // helperGeom: {
+                        //     handler: ({parent}={}) => {
+                        //         const container = customCreateElement({
+                        //             tag: 'p',
+                        //             className: 'd-flex w-100 user-select-none text-muted p-0 m-0',
+                        //             parent,
+                        //         })
 
-                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified to minimize lags.'
-                            }
-                        },
+                        //         container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified to minimize lags.'
+                        //     }
+                        // },
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
