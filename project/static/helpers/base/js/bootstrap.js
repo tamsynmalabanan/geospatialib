@@ -40,7 +40,8 @@ const setBootstrapIconsAsOptions = (element) => {
         const option = document.createElement('option')
         option.style.fontFamily = 'bootstrap-icons'
         option.value = i
-        option.innerHTML = `&#x${bootstrapIcons[i]};`
+        option.innerHTML = `<i class="bi bi-${i}"></i>`
+        // option.innerHTML = `&#x${bootstrapIcons[i]};`
         element.appendChild(option)
     }
 }
