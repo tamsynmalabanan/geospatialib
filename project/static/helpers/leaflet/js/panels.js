@@ -692,6 +692,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+
+        const iconDatalist = customCreateElement({tag:'datalist', parent:iconFields})
         
         const iconClass = createFormFloating({
             parent:iconFields,
@@ -700,42 +702,32 @@ const handleLeafletStylePanel = (map, parent) => {
                 name:`${id}-iconClass`,
                 type: 'search',
                 value: styleParams.iconClass,
+                list: iconDatalist.id
             },
             fieldClass: 'form-control-sm',
             labelText: 'Icon description',
             events: {
                 focus: (e) => {
-                    const iconType = parent.querySelector(`[name="${id}-iconType"]`).value
+                    iconDatalist.innerHTML = ''
                     
-                    if (iconType === 'bi') {
-                        e.target.setAttribute('list', bootstrapIConsDatalist.id)
-                        return
-                    }
+                    const iconType = parent.querySelector(`[name="${id}-iconType"]`).value
+                    let options = iconType === 'bi' ? Object.keys(bootstrapIcons) : []
                     
                     if (iconType === 'property') {
-                        iconDatalist.innerHTML = ''
-    
                         // update to fetch properties from wfs (wms?)
-                        const options = []
                         const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             Object.keys(currentProperties).forEach(i => options.push(i))
                         })
     
-                        const optionsSet = options.length ? new Set(options) : []
-                        const sortedOptions = [...optionsSet].sort()
-    
-                        for (const i of sortedOptions) {
-                            const option = document.createElement('option')
-                            option.value = i
-                            iconDatalist.appendChild(option)
-                        }
-
-                        e.target.setAttribute('list', iconDatalist.id)
-                        return
+                        options = [...(options.length ? new Set(options) : [])].sort()
                     }
-
-                    e.target.removeAttribute('list')
+                    
+                    for (const i of options) {
+                        const option = document.createElement('option')
+                        option.value = i
+                        iconDatalist.appendChild(option)
+                    }
                 },
                 blur: (e) => {
                     let value = e.target.value.trim()
@@ -751,8 +743,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
-
-        const iconDatalist = customCreateElement({tag:'datalist', parent:iconFields})
 
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',

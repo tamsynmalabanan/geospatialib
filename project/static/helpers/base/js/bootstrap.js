@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 })
 
-const bootstrapIConsDatalist = customCreateElement({tag:'datalist', parent:document.body})
+const bootstrapIcons = {}
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
@@ -25,14 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.text()
     })
     .then(text => {
-        const iconNames = text.replace(' ', '').split('.bi-').slice(1).map(i => {
-            return i.replace('"}', '').split('::before{content:"\\')
-        })
-        iconNames.forEach(i => {
-            const option = document.createElement('option')
-            option.value = i[0]
-            option.setAttribute('data-bi-unicode', i[1])
-            bootstrapIConsDatalist.appendChild(option)
+        text.replace(' ', '').split('.bi-').slice(1).forEach(i => {
+            const [name, unicode] = i.replace('"}', '').split('::before{content:"\\')
+            bootstrapIcons[name] = unicode
         })
     })
     .catch(error => {
