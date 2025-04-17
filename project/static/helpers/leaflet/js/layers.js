@@ -439,7 +439,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     })) return
 
                     const clonedStyles = cloneLeafletLayerStyles({_styles:styles})
-                    deleteLeafletLayerFillPatterns(geojsonLayer)
+                    // deleteLeafletLayerFillPatterns(geojsonLayer)
                     geojsonLayer._styles = clonedStyles
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
