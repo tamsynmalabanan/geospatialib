@@ -1176,11 +1176,11 @@ const handleLeafletStylePanel = (map, parent) => {
             labelClass: 'text-nowrap',
             disabled: !filters.geom.active,
             options: {
-                'booleanIntersects': 'Intersects',
-                'booleanEqual': 'Equals',
-                'booleanTouches': 'Touches',
-                'booleanWithin': 'Within',
-                'booleanContains': 'Contains',
+                'booleanIntersects': 'intersects',
+                'booleanEqual': 'equals',
+                'booleanTouches': 'touches',
+                'booleanWithin': 'within',
+                'booleanContains': 'contains',
             },
             currentValue: filter.handler,
             events: {
