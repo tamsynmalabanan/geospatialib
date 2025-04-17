@@ -118,10 +118,6 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                 iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
                 iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
             ).filter(style => style !== '').join(',')
-            
-            // if (Array('SVG', 'IMG').includes(element.tagName)) {
-            // } else {
-            // }
         }
 
         return L.divIcon({
