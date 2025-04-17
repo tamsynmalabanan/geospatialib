@@ -1482,6 +1482,30 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+        
+        const checkboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:paramsFields
+        })
+
+        const caseSensitive = createFormCheck({
+            parent:checkboxes,
+            labelInnerText: 'Case-sensitive',
+            checked: filter.case,
+            labelClass: 'text-nowrap',
+            disabled: !filters.properties.active,
+            name: `propFilter-case-${id}`,
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === filter.case) return
+
+                    filter.case = value
+                    if (filter.active && filter.property && filter.values?.length) updateGeoJSONData(layer)
+                }
+            }
+        })
+
 
         const valueFields = customCreateElement({
             className:'d-flex gap-2 flex-grow-1 align-items-center',
@@ -1530,7 +1554,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                             value = value === '' ? '[blank]' : value
-                            
+
                             if (!filter.values.includes(value)) options.push(String(value))
                         })
                     }
@@ -1551,30 +1575,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     filter.values = values
                     if (filter.active && filter.property) updateGeoJSONData(layer)
                 }])))()
-            }
-        })
-
-        const caseSensitive = createFormFloating({
-            parent: valueFields,
-            containerClass: 'w-25 flex-grow-1',
-            fieldTag: 'select',
-            fieldAttrs: {name: `propFilter-case-${id}`},
-            fieldClass: 'form-select-sm',
-            labelText: 'Case-sensitive',
-            disabled: !filters.properties.active,
-            options: {
-                'true': 'True',
-                'false': 'False',
-            },
-            currentValue: filter.case === 'true',
-            events: {
-                change: (e) => {
-                    const value = e.target.value === 'true'
-                    if (value === filter.case) return
-
-                    filter.case = value
-                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
-                }
             }
         })
 
