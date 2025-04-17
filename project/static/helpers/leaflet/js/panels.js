@@ -500,12 +500,11 @@ const handleLeafletLegendPanel = (map, parent) => {
                     const newId = generateRandomString()
                     i.styleParams.fillPatternId = newId
 
-                    const newPattern = document.createElementNS("http://www.w3.org/2000/svg", 'pattern')
-                    svgFillDefs.appendChild(newPattern)
-                    newPattern.outerHTML = pattern.outerHTML
-                    newPattern.id = newId
+                    const clonedPattern = pattern.cloneNode(true)
+                    clonedPattern.id = newId
+                    svgFillDefs.appendChild(clonedPattern)
 
-                    console.log(newPattern)
+                    console.log(clonedPattern)
                 })
 
                 layer.on('popupopen', (e) => {
