@@ -693,8 +693,11 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const iconDatalist = customCreateElement({tag:'datalist', parent:iconFields})
-        
+        const iconDatalist = customCreateElement({
+            tag:'datalist', 
+            parent:iconFields,
+        })
+
         const iconClass = createFormFloating({
             parent:iconFields,
             containerClass: 'w-100 flex-grow-1',
