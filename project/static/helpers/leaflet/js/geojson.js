@@ -8,6 +8,9 @@ const getLeafletGeoJSONLayer = async ({
     styles,
     customStyleParams,
 } = {}) => {
+    const map = group?._map
+    const isLegendGroup = map._legendLayerGroups.includes(group)
+
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
         renderer: new L.SVG({pane}),
@@ -16,41 +19,8 @@ const getLeafletGeoJSONLayer = async ({
 
     geojsonLayer._title = title
     geojsonLayer._attribution = attribution
-    
     geojsonLayer._group = group
-    const map = group?._map
-    const isLegendGroup = map._legendLayerGroups.includes(group)
-
-    geojsonLayer._fetchParams = fetchParams || (geojson ? {
-        id: generateRandomString(), geojson
-    } : null)
-
-    geojsonLayer.options.onEachFeature = (feature, layer) => {
-        const properties = feature.properties
-        
-        layer.options.pane = geojsonLayer.options.pane
-        
-        if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
-
-        if (Object.keys(properties).length) {
-            layer.bindPopup(createFeaturePropertiesTable(properties, {
-                header: (() => {
-                    const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
-                    layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                    return popupHeader()
-                })()
-            }).outerHTML, {
-                autoPan: false,
-            })
-        }
-
-        layer.on('contextmenu', (e) => getLeafletLayerContextMenu(
-            e.originalEvent, layer
-        ))
-    }
- 
-    console.log(geojsonLayer)
-
+    geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
     geojsonLayer._styles = styles || {
         // groups: {
         //     id: {
@@ -90,6 +60,28 @@ const getLeafletGeoJSONLayer = async ({
             properties: {active: false, values: {}},
         }
     }
+    
+    geojsonLayer.options.onEachFeature = (feature, layer) => {
+        const properties = feature.properties
+        
+        layer.options.pane = geojsonLayer.options.pane
+        
+        if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
+
+        if (Object.keys(properties).length) {
+            layer.bindPopup(createFeaturePropertiesTable(properties, {
+                header: (() => {
+                    const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                    layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                    return popupHeader()
+                })()
+            }).outerHTML, {
+                autoPan: false,
+            })
+        }
+
+        layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
+    }
 
     geojsonLayer.options.filter = (feature) => {
         const filters = geojsonLayer._styles.filters
@@ -107,8 +99,8 @@ const getLeafletGeoJSONLayer = async ({
                 if (!handler) return true
 
                 const value = (() => {
-                    const value = feature.properties[i.property] ?? '[undefined]'
-                    return value === '' ? '[blank]' : String(value)
+                    const value = removeWhitespace(String(feature.properties[i.property] ?? '[undefined]'))
+                    return value === '' ? '[blank]' : value
                 })()
                 
                 try {
@@ -370,4 +362,4 @@ const createGeoJSONLayerLegend = (layer, parent) => {
             icon.appendChild(typeIcon) 
         }
     }
-}
+}  

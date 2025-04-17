@@ -1504,18 +1504,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const updateValues = (e) => {
-            const tagify = e.detail.tagify
-            const values = tagify.value.map(i => i.value)
-
-            if (values.every(i => filter.values.includes(i))
-                && filter.values.every(i => values.includes(i))
-            ) return
-
-            filter.values = values
-            if (filter.active && filter.property) updateGeoJSONData(layer)
-        }
-
         const values = createTagifyField({
             parent: valueFields,
             inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
@@ -1540,10 +1528,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (Array('equals').includes(filter.handler) && filter.property) {
                         const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
-                            let value = currentProperties[filter.property] ?? '[undefined]'
-                            if (value === '') value = '[blank]'
-                            if (filter.values.includes(value)) return
-                            options.push(String(value))
+                            let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
+                            value = value === '' ? '[blank]' : value
+                            
+                            if (!filter.values.includes(value)) options.push(String(value))
                         })
                     }
                     
@@ -1552,10 +1540,17 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     tagify.settings.whitelist = sortedOptions
                 },
-                blur: updateValues,
-                add: updateValues,
-                remove: updateValues,
-                edit: updateValues,
+                ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
+                    const tagify = e.detail.tagify
+                    const values = tagify.value.map(i => i.value)
+        
+                    if (values.every(i => filter.values.includes(i))
+                        && filter.values.every(i => values.includes(i))
+                    ) return
+        
+                    filter.values = values
+                    if (filter.active && filter.property) updateGeoJSONData(layer)
+                }])))()
             }
         })
 
@@ -2239,7 +2234,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const content = await createGeoJSONChecklist(geojsons, queryGroup, {
                     controller, 
                     pane: 'queryPane',
-                    customStyleParams: queryStyleParams, 
+                    customStyleParams, 
                 })
                 if (content) layers.appendChild(content)
             }
@@ -2268,7 +2263,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
     })
 
-    const queryStyleParams = {
+    const customStyleParams = {
         fillColor: 'hsla(111, 100%, 54%, 1)',
         strokeWidth: 1,
         // iconGlow: true,
@@ -2296,8 +2291,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const layer = await getLeafletGeoJSONLayer({
                     geojson: feature, 
                     pane: 'queryPane',
-                    customStyleParams: queryStyleParams,
                     group: queryGroup,
+                    customStyleParams,
                 })
                 queryGroup.addLayer(layer)
     
