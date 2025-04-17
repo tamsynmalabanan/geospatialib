@@ -1440,12 +1440,12 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Relation',
             disabled: !filters.properties.active,
             options: {
-                'equals': 'Equals',
-                'contains': 'Contains',
-                'greaterThan': 'Greater than',
-                'greaterThanEqualTo': 'Greater than or equal to',
-                'lessThan': 'Less than',
-                'lessThanEqualTo': 'Less than or equal to',
+                'equals': 'equals',
+                'contains': 'contains',
+                'greaterThan': 'greater than',
+                'greaterThanEqualTo': 'greater than or equal to',
+                'lessThan': 'less than',
+                'lessThanEqualTo': 'less than or equal to',
             },
             currentValue: filter.handler,
             events: {
