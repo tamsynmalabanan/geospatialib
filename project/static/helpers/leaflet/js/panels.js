@@ -620,6 +620,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.innerHTML = `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};`
                     newPattern.appendChild(text)
                 }
+
+                console.log(svgFillDefs)
             }
 
             updateGeoJSONData(layer)
