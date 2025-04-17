@@ -604,7 +604,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 const currentPattern = svgFillDefs.querySelector(`#${patternId}`)
                 if (currentPattern) currentPattern.remove()
 
-                const newPattern = document.createElementNS("http://www.w3.org/2000/svg", 'pattern')
+                const svgNS = "http://www.w3.org/2000/svg"
+                const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = patternId
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', '100')
@@ -612,11 +613,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 svgFillDefs.appendChild(newPattern)
 
                 if (styleParams.iconType === 'bi') {
-                    newPattern.innerHTML = removeWhitespace(`
-                        <text x="10" y="30" font-family="bootstrap-icons" font-size="24">
-                            &#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};
-                        </text>
-                    `)
+                    const text = document.createElementNS(svgNS, 'text')
+                    text.setAttribute('x', '10')
+                    text.setAttribute('y', '30')
+                    text.setAttribute('font-family', 'bootstrap-icons')
+                    text.setAttribute('font-size', '24')
+                    text.innerText = `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};`
+                    newPattern.appendChild(text)
                 }
 
                 console.log(svgFillDefs)
