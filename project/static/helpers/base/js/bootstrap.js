@@ -25,10 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.text()
     })
     .then(text => {
-        const iconNames = text.split('.bi-').map(i => i.split('::before')[0]).slice(1)
+        const iconNames = text.replace(' ', '').split('.bi-').slice(1).map(i => {
+            return i.replace('"}', '').split('::before{content:"\\')
+        })
         iconNames.forEach(i => {
             const option = document.createElement('option')
-            option.value = i
+            option.value = i[0]
+            option.setAttribute('data-bi-unicode', i[1])
             bootstrapIConsDatalist.appendChild(option)
         })
     })
