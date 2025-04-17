@@ -118,7 +118,9 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
 
                 div.innerHTML = iconType === 'text' ? iconClass : feature.properties[iconClass] || ''
             }
+        }
         
+        if (div instanceof Element) {
             div.style.fontSize = `${iconSize}px`
             div.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
             div.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
