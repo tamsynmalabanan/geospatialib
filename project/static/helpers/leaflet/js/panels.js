@@ -600,7 +600,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (styleParams.fillPattern === 'icon') {
                 const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
 
-                const patternId = `${styleParams.svgFillId}-pattern`
+                const patternId = `${styleParams.svgFillId}Pattern`
                 const currentPattern = svgFillDefs.querySelector(`#${patternId}`)
                 if (currentPattern) currentPattern.remove()
 
