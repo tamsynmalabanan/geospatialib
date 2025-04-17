@@ -38,8 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
 const setBootstrapIconsAsOptions = (element) => {
     for (const i in bootstrapIcons) {
         const option = document.createElement('option')
+        option.style.fontFamily = 'bootstrap-icons'
         option.value = i
-        option.text = bootstrapIcons[i]
+        option.innerHTML = `&#x${bootstrapIcons[i]};`
         element.appendChild(option)
     }
 }
