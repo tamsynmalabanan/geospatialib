@@ -620,7 +620,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('font-size', '24')
                     newPattern.appendChild(text)
                     
-                    text.innerHTML = styleParams.iconType === 'bi' ? `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};` : iconClass ?? ''
+                    const icon = styleParams.iconClass
+                    text.innerHTML = styleParams.iconType === 'bi' ? `&#x${bootstrapIcons[icon] ?? 'F287'};` : icon ?? ''
                 }
 
                 console.log(svgFillDefs)
