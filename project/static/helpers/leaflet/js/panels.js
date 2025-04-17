@@ -679,18 +679,19 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.iconType) return
 
+                    const iconClass = parent.querySelector(`[name="${id}-iconClass"]`)
                     if (value === 'bi') {
-                        parent.querySelector(`[name="${id}-iconClass"]`).value = 'circle-fill'
+                        iconClass.value = 'circle-fill'
                         styleParams.iconClass = 'circle-fill'
                     } else {
-                        parent.querySelector(`[name="${id}-iconClass"]`).value = ''
+                        iconClass.value = ''
                         styleParams.iconClass = ''
                     }
 
                     styleParams.iconType = value
+                    updateIconDatalistOptions()
                     updateGeoJSONData(layer)
                     
-                    updateIconDatalistOptions()
                 }
             }
         })
