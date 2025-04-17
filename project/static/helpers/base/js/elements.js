@@ -461,11 +461,13 @@ const createObjectTRs = (object, parent, {
             const label = innerText = [...new Set([...prefixes, key])].map(i => `${i[0].toUpperCase()}${i.slice(1)}`).join(' ')
             
             const th = document.createElement('th')
+            th.className = 'bg-transparent'
             th.setAttribute('scope', 'row')
             th.innerText = label
             tr.appendChild(th)
             
             const td = document.createElement('td')
+            td.className = 'bg-transparent'
             td.innerText = value.toString()
             tr.appendChild(td)
         }
