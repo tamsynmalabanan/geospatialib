@@ -293,7 +293,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         controller,
     })
 
-    const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
+    const renderer = (data?.features?.length || 0) > 100 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {
         layer.options.renderer._container?.classList.add('d-none')
         layer.options.renderer = layer._renderers.find(r => {
