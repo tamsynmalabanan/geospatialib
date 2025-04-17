@@ -287,7 +287,7 @@ const deleteLeafletLayerFillPatterns = (layer) => {
         
         const pattern = svgFillDefs.querySelector(`#${fillPatternId}`)
         console.log(pattern)
-        pattern.remove()
+        pattern.parentNode.removeChild(pattern)
     })
 }
 
