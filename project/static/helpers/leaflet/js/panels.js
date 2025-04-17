@@ -335,6 +335,17 @@ const handleLeafletLegendPanel = (map, parent) => {
 
             const styleLayerId = parseInt(getStyleBody().dataset.layerId || -1)
             if (styleLayerId === layer._leaflet_id) clearStyleBody()
+
+            if (layer instanceof L.GeoJSON) {
+                const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+                
+                Array(layer._styles.default, ...Object.values(layer._styles.groups ?? {})).forEach(i => {
+                    const fillPatternId = i.styleParams.fillPatternId
+                    if (!fillPatternId) return 
+                    
+                    svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
+                })
+            }
         }
 
         if (layer instanceof L.GeoJSON) layer.clearLayers()
