@@ -747,7 +747,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 blur: (e) => {
                     let value = e.target.value.trim()
                     
-                    if (!value && parent.querySelector(`[name="${id}-iconType"]`).value === 'bi') {
+                    if (!value && styleParams.iconType === 'bi') {
                         value = e.target.value = 'circle-fill'
                     }
                     
@@ -942,7 +942,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.fillPattern) return
 
-                    styleParams.fillPatternId = value !== 'solid' ? (() => {
+                    styleParams.svgFillId = value !== 'solid' ? (() => {
                         // layerid-groupid
                         // delete existing pattern def
                         // create pattern def in fill_patterns
