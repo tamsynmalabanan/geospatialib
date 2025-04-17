@@ -4,26 +4,31 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 }).addTo(map)
 
 const getLeafletStyleParams = ({
-    fillColor=generateRandomColor(),
-    fillOpacity=0.5,
-    strokeColor=true,
-    strokeOpacity=1,
-    strokeWidth=1,
+    iconType='bi',
     iconClass='circle-fill',
     iconSize=10,
     iconShadow=false,
     iconGlow=false,
+    textWrap=false,
+    boldText=false,
+    
+    fillColor=generateRandomColor(),
+    fillOpacity=0.5,
+    
+    fillPattern='solid',
+    fillAngle=0,
+    fillPatternDef='',
+
+    strokeColor=true,
+    strokeOpacity=1,
+    strokeWidth=1,
+    
     lineCap='round',
     lineJoin='round',
     lineBreak='solid',
+    
     dashArray,
     dashOffset,
-    fillPattern='solid',
-    fillAngle=0,
-    iconType='bi',
-    textWrap=false,
-    boldText=false,
-    fillPatternDef='',
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
@@ -60,8 +65,9 @@ const getLeafletStyleParams = ({
 }
 
 const getLeafletLayerStyle = (feature, styleParams={}) => {
-    const featureType = feature.geometry.type
-    if (!featureType) return
+    const type = feature?.geometry?.type?.toLowerCase().split('multi').filter(i => i !== '')[0]
+    console.log(type)
+    if (!type) return
 
     const {
         fillColor,
@@ -85,7 +91,6 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         fillPatternDef,
     } = getLeafletStyleParams(styleParams)
     
-    const type = featureType.toLowerCase().split('multi')[featureType.toLowerCase().split('multi').length-1]
     const hslaColor = manageHSLAColor(fillColor)
 
     if (type === 'point') {

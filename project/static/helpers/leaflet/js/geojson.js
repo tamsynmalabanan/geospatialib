@@ -8,9 +8,6 @@ const getLeafletGeoJSONLayer = async ({
     styles,
     customStyleParams,
 } = {}) => {
-    const map = group?._map
-    const isLegendGroup = map._legendLayerGroups.includes(group)
-
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
         renderer: new L.SVG({pane}),
@@ -20,6 +17,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._title = title
     geojsonLayer._attribution = attribution
     geojsonLayer._group = group
+    geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
     geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
     geojsonLayer._styles = styles || {
         // groups: {
@@ -130,7 +128,7 @@ const getLeafletGeoJSONLayer = async ({
         return true
     }
 
-    const getStyle = (feature, {circleMarker=false}={}) => {
+    const getStyle = (feature) => {
         const styles = geojsonLayer._styles
         
         let styleParams = styles?.default?.styleParams || getLeafletStyleParams()
@@ -188,15 +186,67 @@ const getLeafletGeoJSONLayer = async ({
             renderer,
         }) : L.marker(latlng, {icon: styleParams})
     }
-    
-    geojsonLayer._renderers = [
-        geojsonLayer.options.renderer,
-        new L.Canvas({pane})
-    ]
 
-    if (geojson && !isLegendGroup) {
-        geojsonLayer.addData(geojson)
-    }
+    // const getStyle = (feature, {circleMarker=false}={}) => {
+    //     const styles = geojsonLayer._styles
+        
+    //     let styleParams = styles?.default?.styleParams || getLeafletStyleParams()
+    //     feature._groupId = ''
+        
+    //     if (styles?.groups) {
+    //         for (const id in styles.groups) {
+    //             const group = styles.groups[id]
+    //             let valid = true
+                
+    //             for (const validator in group.validators) {
+    //                 if (!validator(feature)) {
+    //                     valid = false
+    //                     break
+    //                 }
+    //             }
+
+    //             if (valid) {
+    //                 feature._groupId = id
+    //                 styleParams = group.styleParams
+    //             }
+    //         }
+    //     }
+
+    //     const circlePolygon = (
+    //         circleMarker 
+    //         && styleParams.iconType === 'bi' 
+    //         && styleParams.iconClass === 'circle-fill' 
+    //         && !styleParams.iconShadow 
+    //         && !styleParams.iconGlow
+    //     )
+    //     const type = circlePolygon ? 'Polygon' : feature.geometry.type
+    //     const layerStyle =  getLeafletLayerStyle({
+    //         properties:feature.properties,
+    //         geometry: {type}
+    //     }, styleParams)
+        
+    //     if (circlePolygon) {
+    //         layerStyle.radius = styleParams.iconSize/2 
+    //         delete layerStyle.dashArray
+    //         delete layerStyle.dashOffset
+    //     }
+        
+    //     return layerStyle
+    // }
+
+    // geojsonLayer.options.style = (feature) => getStyle(feature)
+    // geojsonLayer.options.pointToLayer = (feature, latlng) => {
+    //     const renderer = geojsonLayer.options.renderer
+    //     const isCanvas = renderer instanceof L.Canvas
+    //     const styleParams = getStyle(feature, {circleMarker:isCanvas})
+
+    //     return isCanvas && styleParams.radius ? L.circleMarker(latlng, {
+    //         ...styleParams,
+    //         renderer,
+    //     }) : L.marker(latlng, {icon: styleParams})
+    // }
+    
+    if (geojson && !group?._map?._legendLayerGroups.includes(group)) geojsonLayer.addData(geojson)
 
     return geojsonLayer
 }
