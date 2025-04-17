@@ -597,9 +597,9 @@ const handleLeafletStylePanel = (map, parent) => {
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
         
         const update = () => {
-            console.log(styleParams)
-            if (styleParams.fillPattern === 'icons') {
+            if (styleParams.fillPattern === 'icon') {
                 const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+                console.log(svgFillDefs)
             }
 
             updateGeoJSONData(layer)
