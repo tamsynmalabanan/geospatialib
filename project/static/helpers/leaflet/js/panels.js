@@ -594,6 +594,10 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
 
+        const update = () => {
+            updateGeoJSONData(layer)
+        }
+
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
 
         const groupFields = customCreateElement({
@@ -690,7 +694,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     styleParams.iconType = value
                     updateIconDatalistOptions()
-                    updateGeoJSONData(layer)
+                    update(layer)
                     
                 }
             }
@@ -754,7 +758,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconClass) return
                     
                     styleParams.iconClass = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -787,7 +791,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
 
                     styleParams.iconSize = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -808,7 +812,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconShadow) return
 
                     styleParams.iconShadow = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -824,7 +828,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -846,7 +850,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.textWrap) return
 
                     styleParams.textWrap = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -862,7 +866,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.boldText) return
 
                     styleParams.boldText = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -889,7 +893,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -913,7 +917,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillOpacity) return
                     
                     styleParams.fillOpacity = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -943,7 +947,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -967,7 +971,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillAngle) return
                     
                     styleParams.fillAngle = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -994,7 +998,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeColor) return
 
                     styleParams.strokeColor = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -1018,7 +1022,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeOpacity) return
 
                     styleParams.strokeOpacity = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -1042,7 +1046,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeWidth) return
 
                     styleParams.strokeWidth = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -1071,7 +1075,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineCap) return
 
                     styleParams.lineCap = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -1097,7 +1101,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineJoin) return
 
                     styleParams.lineJoin = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -1121,7 +1125,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineBreak) return
 
                     styleParams.lineBreak = value
-                    updateGeoJSONData(layer)
+                    update(layer)
                 }
             }
         })
@@ -1152,7 +1156,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.geoms?.length) updateGeoJSONData(layer)
+                    if (filter.geoms?.length) update(layer)
                 }
             }
         })
