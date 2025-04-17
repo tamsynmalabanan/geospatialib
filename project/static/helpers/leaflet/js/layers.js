@@ -95,7 +95,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
 
     if (type === 'point') {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
-            innerHTML: iconType === 'text' ? iconClass : iconClass === 'property' ? feature.properties[iconClass] ?? '' : '',
+            innerHTML: iconType === 'text' ? iconClass : iconType === 'property' ? feature.properties[iconClass] ?? '' : '',
             className:removeWhitespace(`
                 h-100 w-100 d-flex justify-content-center align-items-center
                 ${iconType === 'bi' ? `bi bi-${iconClass}` : `
