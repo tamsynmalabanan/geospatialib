@@ -1459,33 +1459,27 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const value = createFormFloating({
-            parent: paramsFields,
-            containerClass: 'w-50',
-            fieldTag: 'select',
-            fieldAttrs: {name: `propFilter-value-${id}`},
-            fieldClass: 'form-select-sm',
-            labelText: 'Value',
-            disabled: !filters.properties.active,
-            options: {
-                'true': 'True',
-                'false': 'False',
-            },
-            currentValue: filter.value === 'true',
-            events: {
-                change: (e) => {
-                    const value = e.target.value === 'true'
-                    if (value === filter.value) return
-
-                    filter.value = value
-                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
-                }
-            }
-        })
-        
         const checkboxes = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
             parent:paramsFields
+        })
+
+        const value = createFormCheck({
+            parent:checkboxes,
+            labelInnerText: 'Relation is true',
+            checked: filter.value,
+            labelClass: 'text-nowrap',
+            disabled: !filters.properties.active,
+            name: `propFilter-value-${id}`,
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === filter.value) return
+
+                    filter.value = value
+                    if (filter.active && filter.property && filter.values?.length) updateGeoJSONData(layer)
+                }
+            }
         })
 
         const caseSensitive = createFormCheck({
