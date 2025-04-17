@@ -612,14 +612,17 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('height', '100')
                 svgFillDefs.appendChild(newPattern)
 
-                if (styleParams.iconType === 'bi') {
+                if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
                     text.setAttribute('x', '10')
                     text.setAttribute('y', '30')
                     text.setAttribute('font-family', 'bootstrap-icons')
                     text.setAttribute('font-size', '24')
-                    text.innerHTML = `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};`
                     newPattern.appendChild(text)
+                    
+                    if (styleParams.iconType === 'bi') {
+                        text.innerHTML = styleParams.iconType === 'bi' ? `&#x${bootstrapIcons[styleParams.iconClass] ?? 'F287'};` : iconClass
+                    }
                 }
 
                 console.log(svgFillDefs)
@@ -704,7 +707,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 'bi': 'bootstrap icon',
                 'text': 'text or emoji',
                 'property': 'feature property',
-                'html': 'html element',
+                'html': 'html/svg element',
             },
             currentValue: styleParams.iconType,
             events: {
