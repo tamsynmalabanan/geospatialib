@@ -34,3 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(error)
     })
 })
+
+const setBootstrapIconsAsOptions = (element) => {
+    for (const i in bootstrapIcons) {
+        const option = document.createElement('option')
+        option.value = i
+        option.text = `${i} (${bootstrapIcons[i]})`
+        element.appendChild(option)
+    }
+}

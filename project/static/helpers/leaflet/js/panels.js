@@ -689,6 +689,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     styleParams.iconType = value
                     updateGeoJSONData(layer)
+                    
+                    updateIconDatalistOptions()
                 }
             }
         })
@@ -698,6 +700,34 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconFields,
         })
 
+        const updateIconDatalistOptions = () => {
+            iconDatalist.innerHTML = ''
+
+            const iconType = styleParams.iconType
+
+            if (iconType === 'bi') {
+                setBootstrapIconsAsOptions(iconDatalist)
+            } 
+
+            if (iconType === 'property') {
+                const options = []
+                
+                // update to retrieve properties from wfs/wms
+                const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                turf.propEach(geojson, (currentProperties, featureIndex) => {
+                    Object.keys(currentProperties).forEach(i => options.push(i))
+                })
+
+                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
+                    
+                for (const i of sortedOptions) {
+                    const option = document.createElement('option')
+                    option.value = i
+                    iconDatalist.appendChild(option)
+                }
+            }
+        }
+
         const iconClass = createFormFloating({
             parent:iconFields,
             containerClass: 'w-100 flex-grow-1',
@@ -705,33 +735,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 name:`${id}-iconClass`,
                 type: 'search',
                 value: styleParams.iconClass,
-                list: iconDatalist.id
+                list: (() => {
+                    updateIconDatalistOptions()
+                    return iconDatalist.id
+                })()
             },
             fieldClass: 'form-control-sm',
             labelText: 'Icon description',
             events: {
-                focus: (e) => {
-                    iconDatalist.innerHTML = ''
-                    
-                    const iconType = parent.querySelector(`[name="${id}-iconType"]`).value
-                    let options = iconType === 'bi' ? Object.keys(bootstrapIcons) : []
-                    
-                    if (iconType === 'property') {
-                        // update to fetch properties from wfs (wms?)
-                        const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                        turf.propEach(geojson, (currentProperties, featureIndex) => {
-                            Object.keys(currentProperties).forEach(i => options.push(i))
-                        })
-    
-                        options = [...(options.length ? new Set(options) : [])].sort()
-                    }
-                    
-                    for (const i of options) {
-                        const option = document.createElement('option')
-                        option.value = i
-                        iconDatalist.appendChild(option)
-                    }
-                },
                 blur: (e) => {
                     let value = e.target.value.trim()
                     
