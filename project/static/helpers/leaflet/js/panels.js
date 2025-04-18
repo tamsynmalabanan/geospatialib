@@ -59,11 +59,11 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         error.appendChild(errorRemarkDiv)    
     }
 
-    template.clearLayers = (tools) => {
+    template.clearLayers = async (tools) => {
         layers.innerHTML = ''
         layers.classList.add('d-none')
 
-        clearLayersHandler?.()
+        await clearLayersHandler?.()
             
         for (const tool in tools) {
             const data = tools[tool]
@@ -2275,7 +2275,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         errorRemark: 'Query was interrupted.',
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
-            clearLayers(tools)
+            await clearLayers(tools)
             
             if (typeof handler !== 'function') return
     
