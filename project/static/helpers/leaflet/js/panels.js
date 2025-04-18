@@ -626,24 +626,24 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', iconSize*3)
                 newPattern.setAttribute('height', iconSize*3)
-
-                newPattern.setAttribute('stroke', styleParams.strokeColor)
-                newPattern.setAttribute('stroke-opacity', styleParams.strokeOpacity)
-                newPattern.setAttribute('stroke-width', styleParams.strokeWidth)
-                newPattern.setAttribute('stroke-linecap', styleParams.lineCap)
-                newPattern.setAttribute('stroke-linejoin', styleParams.lineJoin)
-                newPattern.setAttribute('fill', styleParams.fillColor)
-                newPattern.setAttribute('fill-opacity', styleParams.fillOpacity)
-                
                 svgFillDefs.appendChild(newPattern)
 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('rotate', fillAngle)
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
                     text.setAttribute('font-family', 'bootstrap-icons')
                     text.setAttribute('font-size', iconSize)
+                    
+                    text.setAttribute('stroke', styleParams.strokeColor)
+                    text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
+                    text.setAttribute('stroke-width', styleParams.strokeWidth)
+                    text.setAttribute('stroke-linecap', styleParams.lineCap)
+                    text.setAttribute('stroke-linejoin', styleParams.lineJoin)
+                    text.setAttribute('fill', styleParams.fillColor)
+                    text.setAttribute('fill-opacity', styleParams.fillOpacity)    
+                    text.setAttribute('rotate', fillAngle)
+
                     newPattern.appendChild(text)
                     
                     const icon = styleParams.iconClass
