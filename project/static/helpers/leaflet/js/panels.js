@@ -59,11 +59,11 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         error.appendChild(errorRemarkDiv)    
     }
 
-    template.clearLayers = async (tools) => {
+    template.clearLayers = (tools) => {
         layers.innerHTML = ''
         layers.classList.add('d-none')
 
-        await clearLayersHandler?.()
+        clearLayersHandler?.()
             
         for (const tool in tools) {
             const data = tools[tool]
