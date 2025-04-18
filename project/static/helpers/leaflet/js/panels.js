@@ -635,14 +635,22 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('font-family', 'bootstrap-icons')
                     text.setAttribute('font-size', iconSize)
                     
+                    // patternFill checkbox fill="none"
+                    text.setAttribute('fill', styleParams.fillColor)
+                    text.setAttribute('fill-opacity', styleParams.fillOpacity)    
+                    text.setAttribute('rotate', fillAngle)
+
+                    // patternStroke checkbox stroke="none"
                     text.setAttribute('stroke', styleParams.strokeColor)
                     text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
                     text.setAttribute('stroke-width', styleParams.strokeWidth)
                     text.setAttribute('stroke-linecap', styleParams.lineCap)
                     text.setAttribute('stroke-linejoin', styleParams.lineJoin)
-                    text.setAttribute('fill', styleParams.fillColor)
-                    text.setAttribute('fill-opacity', styleParams.fillOpacity)    
-                    text.setAttribute('rotate', fillAngle)
+                    
+                    text.setAttribute('class', removeWhitespace(`
+                        ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
+                        ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
+                    `))
 
                     newPattern.appendChild(text)
                     
