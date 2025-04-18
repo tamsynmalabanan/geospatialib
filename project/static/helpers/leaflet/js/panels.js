@@ -617,9 +617,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 const id = generateRandomString()
                 styleParams.fillPatternId = id
 
-                const iconSize = styleParams.iconSize
-                const fillRotation = styleParams.fillRotation
                 const strokeWidth = styleParams.strokeWidth
+                const iconSize = styleParams.iconSize + (strokeWidth*2)
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
@@ -631,10 +630,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('x', iconSize + (strokeWidth*2))
-                    text.setAttribute('y', iconSize + (strokeWidth*2))
+                    text.setAttribute('x', iconSize)
+                    text.setAttribute('y', iconSize)
                     text.setAttribute('font-size', iconSize)
-                    text.setAttribute('rotate', fillRotation)
+                    text.setAttribute('rotate', styleParams.fillRotation)
                     
                     // patternFill checkbox fill="none"
                     text.setAttribute('fill', styleParams.fillColor)
