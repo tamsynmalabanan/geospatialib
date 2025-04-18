@@ -625,8 +625,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = id
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', iconSize*3)
-                newPattern.setAttribute('height', iconSize*3)
+                newPattern.setAttribute('width', iconSize*2)
+                newPattern.setAttribute('height', iconSize*2)
                 svgFillDefs.appendChild(newPattern)
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
