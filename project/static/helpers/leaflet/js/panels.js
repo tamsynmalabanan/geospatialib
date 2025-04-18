@@ -59,11 +59,11 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         error.appendChild(errorRemarkDiv)    
     }
 
-    template.clearLayers = (tools) => {
+    template.clearLayers = async (tools) => {
         layers.innerHTML = ''
         layers.classList.add('d-none')
 
-        if (clearLayersHandler) clearLayersHandler()
+        await clearLayersHandler?.()
             
         for (const tool in tools) {
             const data = tools[tool]
@@ -160,7 +160,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearLayers,
         toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
-        clearLayersHandler: () => {
+        clearLayersHandler: async () => {
             map._ch.clearLegendLayers()
             disableStyleLayerSelect()
         }
@@ -320,8 +320,6 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 
     map.on('layerremove', (event) => {
-        console.log(event)
-
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         if (!layerLegend) return
