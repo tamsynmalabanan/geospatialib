@@ -244,6 +244,8 @@ const handleLeafletLegendPanel = (map, parent) => {
     })
 
     const clearLegend = (layerLegend, isHidden, isInvisible) => {
+        if (!layerLegend) return
+
         const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
         legendDetails.innerHTML = ''
 
@@ -322,15 +324,15 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('layerremove', (event) => {
         const layer = event.layer
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
-        if (!layerLegend) return
         
         const isHidden = map._ch.hasHiddenLegendLayer(layer)
         const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
-        if (isHidden || isInvisible) {
+        
+        if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, isHidden, isInvisible)
             layer.options.renderer?._container?.classList.add('d-none')
         } else {
-            layerLegend.remove()
+            layerLegend?.remove()
             if (layers.innerHTML === '') clearLayers(tools)
 
             const styleLayerId = parseInt(getStyleBody().dataset.layerId || -1)
