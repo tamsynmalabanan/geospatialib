@@ -16,7 +16,7 @@ const getLeafletStyleParams = ({
     fillOpacity=0.5,
     
     fillPattern='solid',
-    fillAngle=0,
+    fillRotation=0,
     fillPatternId='',
 
     strokeColor=true,
@@ -60,7 +60,7 @@ const getLeafletStyleParams = ({
         textWrap,
         boldText,
         fillPattern,
-        fillAngle,
+        fillRotation,
         fillPatternId,
     }    
 }
@@ -87,7 +87,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         textWrap,
         boldText,
         fillPattern,
-        fillAngle,
+        fillRotation,
         fillPatternId,
     } = getLeafletStyleParams(styleParams)
     

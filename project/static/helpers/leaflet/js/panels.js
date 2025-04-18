@@ -618,7 +618,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 styleParams.fillPatternId = id
 
                 const iconSize = styleParams.iconSize
-                const fillAngle = styleParams.fillAngle
+                const fillRotation = styleParams.fillRotation
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
@@ -627,32 +627,34 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('width', iconSize*3)
                 newPattern.setAttribute('height', iconSize*3)
                 svgFillDefs.appendChild(newPattern)
-
+                
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
                     text.setAttribute('font-size', iconSize)
+                    text.setAttribute('rotate', fillRotation)
                     
                     // patternFill checkbox fill="none"
                     text.setAttribute('fill', styleParams.fillColor)
                     text.setAttribute('fill-opacity', styleParams.fillOpacity)    
-                    text.setAttribute('rotate', fillAngle)
-
+                    
                     // patternStroke checkbox stroke="none"
                     text.setAttribute('stroke', styleParams.strokeColor)
                     text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
                     text.setAttribute('stroke-width', styleParams.strokeWidth)
                     text.setAttribute('stroke-linecap', styleParams.lineCap)
                     text.setAttribute('stroke-linejoin', styleParams.lineJoin)
+                    text.setAttribute('stroke-dasharray', styleParams.dashArray)
                     
                     // text italic checkbox
                     text.setAttribute('class', removeWhitespace(`
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
                     `))
-
+                    
                     newPattern.appendChild(text)
+                    newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
                     
                     const icon = styleParams.iconClass
                     if (styleParams.iconType === 'bi') {
@@ -1019,25 +1021,25 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const fillAngle = createInputGroup({
+        const fillRotation = createInputGroup({
             parent:patternFields,
             fieldAttrs: {
-                name: `${id}-fillAngle`,
+                name: `${id}-fillRotation`,
                 type: 'number',
                 min: '0',
                 max: '90',
                 step: '5',
-                value: styleParams.fillAngle,
-                placeholder: 'Fill angle',
+                value: styleParams.fillRotation,
+                placeholder: 'Fill rotation',
             },
             suffixHTML: '°',
             fieldClass: 'form-control-sm',
             events: {
                 blur: (e) => {
                     const value = parseFloat(e.target.value) || 0
-                    if (value === styleParams.fillAngle) return
+                    if (value === styleParams.fillRotation) return
                     
-                    styleParams.fillAngle = value
+                    styleParams.fillRotation = value
                     update()
                 }
             }
