@@ -618,7 +618,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 styleParams.fillPatternId = id
 
                 const iconSize = styleParams.iconSize
-                console.log(iconSize)
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
