@@ -619,8 +619,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const iconSize = styleParams.iconSize
                 const fillAngle = styleParams.fillAngle
-                const fillColor = styleParams.fillColor
-                const strokeColor = styleParams.strokeColor
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
@@ -628,8 +626,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', iconSize*3)
                 newPattern.setAttribute('height', iconSize*3)
-                newPattern.setAttribute('fill', fillColor)
-                newPattern.setAttribute('stroke', strokeColor)
+
+                newPattern.setAttribute('stroke', styleParams.strokeColor)
+                newPattern.setAttribute('stroke-opacity', styleParams.strokeOpacity)
+                newPattern.setAttribute('stroke-width', styleParams.strokeWidth)
+                newPattern.setAttribute('stroke-linecap', styleParams.lineCap)
+                newPattern.setAttribute('stroke-linejoin', styleParams.lineJoin)
+                newPattern.setAttribute('fill', styleParams.fillColor)
+                newPattern.setAttribute('fill-opacity', styleParams.fillOpacity)
+                
                 svgFillDefs.appendChild(newPattern)
 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
