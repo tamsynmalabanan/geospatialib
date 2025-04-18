@@ -618,6 +618,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 styleParams.fillPatternId = id
 
                 const iconSize = styleParams.iconSize
+                const fillAngle = styleParams.fillAngle
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
@@ -629,6 +630,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
+                    text.setAttribute('rotate', fillAngle)
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
                     text.setAttribute('font-family', 'bootstrap-icons')
