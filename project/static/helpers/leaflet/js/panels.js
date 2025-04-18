@@ -635,17 +635,23 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('font-size', iconSize)
                     text.setAttribute('rotate', styleParams.fillRotation)
                     
-                    // patternFill checkbox fill="none"
-                    text.setAttribute('fill', styleParams.fillColor)
-                    text.setAttribute('fill-opacity', styleParams.fillOpacity)    
+                    if (styleParams.patternFill) {
+                        text.setAttribute('fill', styleParams.fillColor)
+                        text.setAttribute('fill-opacity', styleParams.fillOpacity)    
+                    } else {
+                        text.setAttribute('fill', 'none')
+                    }
                     
-                    // patternStroke checkbox stroke="none"
-                    text.setAttribute('stroke', styleParams.strokeColor)
-                    text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
-                    text.setAttribute('stroke-width', strokeWidth)
-                    text.setAttribute('stroke-linecap', styleParams.lineCap)
-                    text.setAttribute('stroke-linejoin', styleParams.lineJoin)
-                    text.setAttribute('stroke-dasharray', styleParams.dashArray)
+                    if (styleParams.patternStroke) {
+                        text.setAttribute('stroke', styleParams.strokeColor)
+                        text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
+                        text.setAttribute('stroke-width', strokeWidth)
+                        text.setAttribute('stroke-linecap', styleParams.lineCap)
+                        text.setAttribute('stroke-linejoin', styleParams.lineJoin)
+                        text.setAttribute('stroke-dasharray', styleParams.dashArray)
+                    } else {
+                        text.setAttribute('stroke', 'none')
+                    }
                     
                     // text italic checkbox
                     text.setAttribute('class', removeWhitespace(`
@@ -669,7 +675,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
             updateGeoJSONData(layer)
         }
-
 
         const groupFields = customCreateElement({
             className:'d-flex gap-2',
@@ -1046,6 +1051,42 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const patternCheckboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:patternFields
+        })
+
+        const patternFill = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Pattern fill',
+            checked: styleParams.patternFill,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.patternFill) return
+
+                    styleParams.patternFill = value
+                    update()
+                }
+            }
+        })
+
+        const patternStroke = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Pattern stroke',
+            checked: styleParams.patternStroke,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.patternStroke) return
+
+                    styleParams.patternStroke = value
+                    update()
+                }
+            }
+        })
 
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
