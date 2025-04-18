@@ -333,7 +333,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             layer.options.renderer?._container?.classList.add('d-none')
         } else {
             if (layerLegend) {
-                layerLegend?.remove()
+                layerLegend.remove()
                 if (layers.innerHTML === '') clearLayers(tools)
             }
 
