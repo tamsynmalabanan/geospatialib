@@ -332,8 +332,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             clearLegend(layerLegend, isHidden, isInvisible)
             layer.options.renderer?._container?.classList.add('d-none')
         } else {
-            layerLegend?.remove()
-            if (layers.innerHTML === '') clearLayers(tools)
+            if (layerLegend) {
+                layerLegend?.remove()
+                if (layers.innerHTML === '') clearLayers(tools)
+            }
 
             const styleLayerId = parseInt(getStyleBody().dataset.layerId || -1)
             if (styleLayerId === layer._leaflet_id) clearStyleBody()
