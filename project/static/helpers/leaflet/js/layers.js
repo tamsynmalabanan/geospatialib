@@ -18,6 +18,8 @@ const getLeafletStyleParams = ({
     fillPattern='solid',
     fillRotation=0,
     fillPatternId='',
+    patternFill=true,
+    patternStroke=true,
 
     strokeColor=true,
     strokeOpacity=1,
@@ -62,6 +64,8 @@ const getLeafletStyleParams = ({
         fillPattern,
         fillRotation,
         fillPatternId,
+        patternFill,
+        patternStroke,
     }    
 }
 
