@@ -1193,6 +1193,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.lineBreak) return
 
+                    const strokeWidth = styleParams.strokeWidth
+                    dashArray = value === 'solid' ? null : `${
+                        lineBreak === 'dashed' 
+                        ? (strokeWidth * 5) 
+                        : (((Math.ceil(strokeWidth)) - 1) || 1)
+                    } ${strokeWidth * 3}`
+
                     styleParams.lineBreak = value
                     update()
                 }
