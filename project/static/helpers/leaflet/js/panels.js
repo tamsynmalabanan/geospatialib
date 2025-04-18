@@ -631,8 +631,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('x', iconSize + strokeWidth)
-                    text.setAttribute('y', iconSize + strokeWidth)
+                    text.setAttribute('x', iconSize + (strokeWidth*2))
+                    text.setAttribute('y', iconSize + (strokeWidth*2))
                     text.setAttribute('font-size', iconSize)
                     text.setAttribute('rotate', fillRotation)
                     
