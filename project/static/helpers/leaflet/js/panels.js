@@ -632,7 +632,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     const text = document.createElementNS(svgNS, 'text')
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
-                    text.setAttribute('font-family', 'bootstrap-icons')
                     text.setAttribute('font-size', iconSize)
                     
                     // patternFill checkbox fill="none"
@@ -647,6 +646,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('stroke-linecap', styleParams.lineCap)
                     text.setAttribute('stroke-linejoin', styleParams.lineJoin)
                     
+                    // text italic checkbox
                     text.setAttribute('class', removeWhitespace(`
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
@@ -655,7 +655,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     newPattern.appendChild(text)
                     
                     const icon = styleParams.iconClass
-                    text.innerHTML = styleParams.iconType === 'bi' ? `&#x${bootstrapIcons[icon] ?? 'F287'};` : icon ?? ''
+                    if (styleParams.iconType === 'bi') {
+                        text.setAttribute('font-family', 'bootstrap-icons')
+                        text.innerHTML = `&#x${bootstrapIcons[icon] ?? 'F287'};`
+                    } else {
+                        text.innerHTML = icon ?? ''
+                    }
                 }
             }
 
