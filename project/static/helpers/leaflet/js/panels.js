@@ -653,10 +653,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         text.setAttribute('stroke', 'none')
                     }
                     
-                    // text italic checkbox
                     text.setAttribute('class', removeWhitespace(`
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
+                        ${styleParams.italicText ? 'fst-italic' : 'fst-normal'}
                     `))
                     
                     newPattern.appendChild(text)
@@ -942,6 +942,22 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.boldText) return
 
                     styleParams.boldText = value
+                    update()
+                }
+            }
+        })
+
+        const italicText = createFormCheck({
+            parent:textCheckboxes,
+            labelInnerText: 'Italic text',
+            checked: styleParams.italicText,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.italicText) return
+
+                    styleParams.italicText = value
                     update()
                 }
             }
