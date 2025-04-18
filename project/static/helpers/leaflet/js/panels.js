@@ -619,6 +619,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const iconSize = styleParams.iconSize
                 const fillRotation = styleParams.fillRotation
+                const strokeWidth = styleParams.strokeWidth
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
@@ -630,8 +631,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('x', iconSize)
-                    text.setAttribute('y', iconSize)
+                    text.setAttribute('x', iconSize + strokeWidth)
+                    text.setAttribute('y', iconSize + strokeWidth)
                     text.setAttribute('font-size', iconSize)
                     text.setAttribute('rotate', fillRotation)
                     
@@ -642,7 +643,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     // patternStroke checkbox stroke="none"
                     text.setAttribute('stroke', styleParams.strokeColor)
                     text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
-                    text.setAttribute('stroke-width', styleParams.strokeWidth)
+                    text.setAttribute('stroke-width', strokeWidth)
                     text.setAttribute('stroke-linecap', styleParams.lineCap)
                     text.setAttribute('stroke-linejoin', styleParams.lineJoin)
                     text.setAttribute('stroke-dasharray', styleParams.dashArray)
@@ -654,7 +655,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     `))
                     
                     newPattern.appendChild(text)
-                    newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
+                    // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
+                    // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth
                     
                     const icon = styleParams.iconClass
                     if (styleParams.iconType === 'bi') {
@@ -1194,7 +1196,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineBreak) return
 
                     const strokeWidth = styleParams.strokeWidth
-                    dashArray = value === 'solid' ? null : `${
+                    styleParams.dashArray = value === 'solid' ? null : `${
                         lineBreak === 'dashed' 
                         ? (strokeWidth * 5) 
                         : (((Math.ceil(strokeWidth)) - 1) || 1)
