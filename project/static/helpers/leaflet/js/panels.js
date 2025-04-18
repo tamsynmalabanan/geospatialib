@@ -161,7 +161,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         toolsHandler,
     } = createLeafletMapPanelTemplate(map, parent, 'legend', {
         clearLayersHandler: async () => {
-            map._ch.clearLegendLayers()
+            await map._ch.clearLegendLayers()
             disableStyleLayerSelect()
         }
     })

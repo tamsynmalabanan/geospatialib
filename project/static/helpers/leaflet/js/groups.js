@@ -28,7 +28,7 @@ const handleLeafletLayerGroups = (map) => {
             hasHiddenLayer: (layer) => {
                 return group._ch.getHiddenLayers().includes(layer)
             },
-            removeHiddenLayer: (layer, {addLayer=true}={}) => {
+            removeHiddenLayer: async (layer, {addLayer=true}={}) => {
                 let match
                 
                 const hiddenLayers = group._ch.getHiddenLayers().filter(l => {
@@ -65,7 +65,7 @@ const handleLeafletLayerGroups = (map) => {
                     map.fire('layerremove', {layer})
                 }
             },
-            removeInvisibleLayer: (layer, {addLayer=true}={}) => {
+            removeInvisibleLayer: async (layer, {addLayer=true}={}) => {
                 let match
                 
                 const invisibleLayers = group._ch.getInvisibleLayers().filter(l => {
@@ -95,18 +95,20 @@ const handleLeafletLayerGroups = (map) => {
                 || group._ch.getInvisibleLayer(id) 
             },
                     
-            clearLayer: (layer) => {
+            clearLayer: async (layer) => {
                 group.removeLayer(layer)
-                group._ch.removeHiddenLayer(layer, {addLayer:false})
-                group._ch.removeInvisibleLayer(layer, {addLayer:false})
+                await group._ch.removeHiddenLayer(layer, {addLayer:false})
+                await group._ch.removeInvisibleLayer(layer, {addLayer:false})
                 
                 const paneName = layer.options.pane
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
                 }
             },
-            clearAllLayers: () => {
-                group._ch.getAllLayers().forEach(l => group._ch.clearLayer(l))
+            clearAllLayers: async () => {
+                group._ch.getAllLayers().forEach(async l => {
+                    await group._ch.clearLayer(l)
+                })
             },
             hideAllLayers: () => {
                 Array(
@@ -173,8 +175,10 @@ const handleLeafletLayerGroups = (map) => {
             }
             return layers
         },
-        clearLegendLayers: () => {
-            map._legendLayerGroups.forEach(group => group._ch.clearAllLayers())
+        clearLegendLayers: async () => {
+            map._legendLayerGroups.forEach(async group => {
+                await group._ch.clearAllLayers()
+            })
         },
         hideLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
