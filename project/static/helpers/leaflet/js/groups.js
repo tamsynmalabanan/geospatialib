@@ -96,6 +96,7 @@ const handleLeafletLayerGroups = (map) => {
             },
                     
             clearLayer: async (layer) => {
+                console.log(layer, group.hasLayer(layer))
                 if (group.hasLayer(layer)) group.removeLayer(layer)
                 await group._ch.removeHiddenLayer(layer, {addLayer:false})
                 await group._ch.removeInvisibleLayer(layer, {addLayer:false})
