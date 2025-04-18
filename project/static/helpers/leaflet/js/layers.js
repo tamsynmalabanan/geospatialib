@@ -271,8 +271,6 @@ const cloneLeafletLayerStyles = (layer) => {
         const clonedPattern = pattern.cloneNode(true)
         clonedPattern.id = newId
         svgFillDefs.appendChild(clonedPattern)
-
-        console.log(clonedPattern)
     })
 
     return styles
