@@ -68,7 +68,9 @@ const getLeafletStyleParams = ({
     }    
 }
 
-const getLeafletLayerStyle = (feature, styleParams={}) => {
+const getLeafletLayerStyle = (feature, styleParams={}, {
+    isCanvas=false
+} = {}) => {
     const type = feature?.geometry?.type?.toLowerCase().split('multi').filter(i => i !== '')[0]
     if (!type) return
 
@@ -93,7 +95,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         iconRotation,
         fillPatternId,
         patternFill,
-        patternStroke,
+        patternStr oke,
         italicFont,
         fontSerif,
         lineBreak,
@@ -101,6 +103,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
     } = getLeafletStyleParams(styleParams)
     
     const hslaColor = manageHSLAColor(fillColor)
+
+
 
     if (type === 'point') {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
@@ -171,7 +175,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})`
+            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? 'none' : `url(#${fillPatternId})`
         }
         
         return params

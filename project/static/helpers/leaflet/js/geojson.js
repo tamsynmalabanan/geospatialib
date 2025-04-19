@@ -31,7 +31,7 @@ const getLeafletGeoJSONLayer = async ({
         //         ],
         //         styleParams: {
 
-        //         }, // getLeafletLayerStyle(feature, styleParams)
+        //         },
         //     },
         // },
         default: {
@@ -154,15 +154,15 @@ const getLeafletGeoJSONLayer = async ({
             }
         }
 
-        return getLeafletLayerStyle(feature, styleParams)
+        return getLeafletLayerStyle(feature, styleParams, {
+            isCanvas:geojsonLayer.options.renderer instanceof L.Canvas
+        })
     }
-
 
     geojsonLayer.options.style = (feature) => getStyle(feature)
     
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const styleParams = getStyle(feature)
-        console.log(styleParams, styleParams instanceof L.DivIcon)
         return styleParams instanceof L.DivIcon ? L.marker(latlng, {icon: styleParams}) : L.circleMarker(latlng, {
             ...styleParams,
             radius: styleParams.iconSize/2,
