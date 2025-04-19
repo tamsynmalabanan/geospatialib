@@ -620,7 +620,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 const fillOpacity = styleParams.fillOpacity
                 const strokeWidth = styleParams.strokeWidth
                 const iconSize = styleParams.iconSize
-                const contaienrSize = iconSize + (strokeWidth*2)
+
+                const iconShadow = styleParams.iconShadow
+                const iconGlow = styleParams.iconGlow
+                const contaienrSize = iconSize + (strokeWidth*2) + (iconShadow ? iconSize*0.5*2 : 0) +(iconGlow ? iconSize*2*2 : 0)
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
@@ -675,13 +678,13 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const hslaColor = manageHSLAColor(styleParams.fillColor)
                     text.style.textShadow = Array(
-                        styleParams.iconShadow ? removeWhitespace(`
+                        iconShadow ? removeWhitespace(`
                             ${iconSize*0.1}px 
                             ${iconSize*0.1}px 
                             ${iconSize*0.5}px 
                             ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
                         `) : '',
-                        styleParams.iconGlow ? removeWhitespace(`
+                        iconGlow ? removeWhitespace(`
                             0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
                             0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
                             0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
