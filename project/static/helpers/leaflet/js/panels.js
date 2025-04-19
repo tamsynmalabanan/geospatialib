@@ -695,8 +695,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         `) : ''
                     ).filter(style => style !== '').join(',')
 
-                    text.style.transform = `rotate(${styleParams.iconRotation}deg)`
-                    text.style.transformOrigin = `50% 50%`
+                    newPattern.style.transform = `rotate(${styleParams.iconRotation}deg)`
+                    newPattern.style.transformOrigin = `50% 50%`
                 }
             }
 
