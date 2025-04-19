@@ -632,7 +632,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 lineBreak,
                 textShadow,
             } = styleParams
-            const contaienrSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
+            const containerSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
             
             const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
             if (fillPatternId) {
@@ -648,15 +648,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = id
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', contaienrSize*2)
-                newPattern.setAttribute('height', contaienrSize*2)                
+                newPattern.setAttribute('width', containerSize*2)
+                newPattern.setAttribute('height', containerSize*2)                
                 newPattern.style.transform = `rotate(${iconRotation}deg)`
                 newPattern.style.transformOrigin = `50% 50%`
                 svgFillDefs.appendChild(newPattern)
                 
                 const text = document.createElementNS(svgNS, 'text')
-                text.setAttribute('x', contaienrSize)
-                text.setAttribute('y', contaienrSize)
+                text.setAttribute('x', containerSize)
+                text.setAttribute('y', containerSize)
                 text.setAttribute('text-anchor', 'middle')
                 text.setAttribute('dominant-baseline', 'middle')
                 text.setAttribute('font-size', iconSize)
@@ -699,9 +699,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 temp.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
                 temp.classList.add('position-absolute')
                 document.body.appendChild(temp)
-                console.log(temp.getBoundingClientRect())
+                const bounds = temp.getBoundingClientRect()
                 document.body.removeChild(temp)
-                // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
+
+                newPattern.setAttribute('width', containerSize+bounds.width)
+                newPattern.setAttribute('height', containerSize+bounds.height)
 
                 const hslaColor = manageHSLAColor(fillColor)
                 text.style.textShadow = styleParams.textShadow = Array(
