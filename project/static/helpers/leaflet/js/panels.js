@@ -697,7 +697,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag:'span',
                     innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html,
                     // style:{height:'12px', width:'12px'},
-                    className: 'bg-transparent d-flex justify-content-center align-items-center',
+                    // className: 'bg-transparent d-flex justify-content-center align-items-center',
                 })
                 document.body.appendChild(temp)
                 console.log(temp.firstChild.getBoundingClientRect())
