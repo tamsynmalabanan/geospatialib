@@ -675,7 +675,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const hslaColor = manageHSLAColor(styleParams.fillColor)
                     const iconShadowColor = hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'
-                    const iconGlow = iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : iconGlow || null
+                    const iconGlow = styleParams.iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : null
                     text.style.textShadow = Array(
                         styleParams.iconShadow ? `2px 2px 4px ${iconShadowColor}` : '',
                         iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''

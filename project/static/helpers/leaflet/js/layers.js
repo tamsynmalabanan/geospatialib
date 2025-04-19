@@ -36,7 +36,7 @@ const getLeafletStyleParams = ({
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
-    iconGlow = iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : iconGlow || null
+    iconGlow = iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : null
 
     return  {
         strokeWidth,
