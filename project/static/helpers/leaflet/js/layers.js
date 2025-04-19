@@ -12,6 +12,7 @@ const getLeafletStyleParams = ({
     textWrap=false,
     boldText=false,
     italicText=false,
+    fontMonospace=false,
     
     fillColor=generateRandomColor(),
     fillOpacity=0.5,
@@ -68,6 +69,7 @@ const getLeafletStyleParams = ({
         patternFill,
         patternStroke,
         italicText,
+        fontMonospace,
     }    
 }
 
@@ -98,6 +100,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         patternFill,
         patternStroke,
         italicText,
+        fontMonospace,
     } = getLeafletStyleParams(styleParams)
     
     const hslaColor = manageHSLAColor(fillColor)
@@ -112,6 +115,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                     ${textWrap ? 'text-wrap' : 'text-nowrap'}
                     ${boldText ? 'fw-bold' : 'fw-normal'}
                     ${italicText ? 'fst-italic' : 'fst-normal'}
+                    ${fontMonospace ? 'font-monospace' : ''}
                 `}
             `),
         })

@@ -657,6 +657,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
                         ${styleParams.italicText ? 'fst-italic' : 'fst-normal'}
+                        ${styleParams.fontMonospace ? 'font-monospace' : ''}
                     `))
                     
                     newPattern.appendChild(text)
@@ -918,7 +919,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const textWrap = createFormCheck({
             parent:textCheckboxes,
-            formCheckClass:'me-2',
+            formCheckClass:'me-3',
             labelInnerText: 'Text wrap',
             checked: styleParams.textWrap,
             labelClass: 'text-nowrap',
@@ -960,6 +961,22 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.italicText) return
 
                     styleParams.italicText = value
+                    update()
+                }
+            }
+        })
+
+        const fontMonospace = createFormCheck({
+            parent:textCheckboxes,
+            labelInnerText: 'Text serif',
+            checked: styleParams.fontMonospace,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.fontMonospace) return
+
+                    styleParams.fontMonospace = value
                     update()
                 }
             }
