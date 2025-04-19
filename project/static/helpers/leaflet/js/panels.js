@@ -695,7 +695,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const temp = customCreateElement({
                     innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html,
-                    style:{height:'12px', width:'12px'},
+                    // style:{height:'12px', width:'12px'},
                     className: 'bg-transparent d-flex justify-content-center align-items-center',
                 })
                 document.body.appendChild(temp)
