@@ -611,7 +611,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (currentId) {
                 svgFillDefs.querySelector(`#${currentId}`)?.remove()
                 delete styleParams.fillPatternId
-            }
+            }   
 
             if (styleParams.fillPattern === 'icon') {
                 const id = generateRandomString()
@@ -620,11 +620,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 const fillOpacity = styleParams.fillOpacity
                 const strokeWidth = styleParams.strokeWidth
                 const iconSize = styleParams.iconSize
-
                 const iconShadow = styleParams.iconShadow
                 const iconGlow = styleParams.iconGlow
-                const contaienrSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*2 : 0), (iconShadow ? iconSize*0.5 : 0))*2)
-                console.log(iconSize, (strokeWidth*2), (iconShadow ? iconSize*0.5*2 : 0), (iconGlow ? iconSize*2*2 : 0), contaienrSize)
+                const contaienrSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*2 : 0), (iconShadow ? iconSize*0.5 : 0)))
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
