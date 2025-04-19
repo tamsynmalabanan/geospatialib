@@ -702,8 +702,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const bounds = temp.getBoundingClientRect()
                 document.body.removeChild(temp)
 
-                const width = containerSize+bounds.width
-                const height = containerSize+bounds.height
+                const width = (containerSize*2)+bounds.width
                 newPattern.setAttribute('width', width)
                 text.setAttribute('x', width/2)
 
