@@ -692,6 +692,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
                                     
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : iconClass ?? ''
+                
+                console.log(getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams))
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
 
