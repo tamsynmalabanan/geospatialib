@@ -702,8 +702,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 const bounds = temp.getBoundingClientRect()
                 document.body.removeChild(temp)
 
-                newPattern.setAttribute('width', containerSize+bounds.width)
-                newPattern.setAttribute('height', containerSize+bounds.height)
+                newPattern.setAttribute('width', (containerSize*2)+bounds.width)
+                newPattern.setAttribute('height', (containerSize*2)+bounds.height)
 
                 const hslaColor = manageHSLAColor(fillColor)
                 text.style.textShadow = styleParams.textShadow = Array(
