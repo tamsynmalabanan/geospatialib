@@ -693,12 +693,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : iconClass ?? ''
                 
-                const temp = customCreateElement({
-                    // tag:'span',
-                    innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html,
-                    // style:{height:'12px', width:'12px'},
-                    // className: 'bg-transparent d-flex justify-content-center align-items-center',
-                })
+                const temp = customCreateElement({innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html}).firstChild
+                temp.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
+                temp.classList.add('position-absolute')
                 document.body.appendChild(temp)
                 console.log(temp.firstChild.getBoundingClientRect())
                 // document.body.removeChild(temp)
