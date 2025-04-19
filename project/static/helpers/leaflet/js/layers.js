@@ -95,7 +95,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         iconRotation,
         fillPatternId,
         patternFill,
-        patternStr oke,
+        patternStroke,
         italicFont,
         fontSerif,
         lineBreak,
