@@ -681,10 +681,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             ${iconSize/10*1}px ${iconSize/10*1}px ${iconSize/10*2}px ${iconShadowColor}
                         `) : '',
                         iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize/2*1}px ${iconGlow}, 
-                            0 0 ${iconSize/2*2}px ${iconGlow}, 
-                            0 0 ${iconSize/2*3}px ${iconGlow}, 
-                            0 0 ${iconSize/2*4}px ${iconGlow}
+                            0 0 ${iconSize/5*1}px ${iconGlow}, 
+                            0 0 ${iconSize/5*2}px ${iconGlow}, 
+                            0 0 ${iconSize/5*3}px ${iconGlow}, 
+                            0 0 ${iconSize/5*4}px ${iconGlow}
                         `) : ''
                     ).filter(style => style !== '').join(',')
 
