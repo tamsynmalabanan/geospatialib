@@ -911,7 +911,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         
         const textCheckboxes = customCreateElement({
-            className:'d-flex flex-column flex-wrap justify-content-center border px-3 rounded pt-1', 
+            className:'d-flex flex-column flex-wrap justify-content-center border px-3 rounded pt-1 gap-2', 
             style: {height:'58px'},
             parent:iconFields2
         })
