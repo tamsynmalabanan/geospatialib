@@ -109,13 +109,11 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
             innerHTML: iconType === 'text' ? iconClass : iconType === 'property' ? feature.properties[iconClass] ?? '' : '',
             className:removeWhitespace(`
-                h-100 w-100 d-flex justify-content-center align-items-center
-                ${iconType === 'bi' ? `bi bi-${iconClass}` : `
-                    text-center lh-1
-                    ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                    ${boldFont ? 'fw-bold' : 'fw-normal'}
-                    ${italicFont ? 'fst-italic' : 'fst-normal'}
-                `}
+                h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
+                ${iconType === 'bi' ? `bi bi-${iconClass}` : ``}
+                ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                ${boldFont ? 'fw-bold' : 'fw-normal'}
+                ${italicFont ? 'fst-italic' : 'fst-normal'}
             `),
         })
 
