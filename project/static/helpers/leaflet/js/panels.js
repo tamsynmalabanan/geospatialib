@@ -889,6 +889,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconRotation = createInputGroup({
             parent:iconFields2,
+            inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconRotation`,
                 type: 'number',
@@ -910,7 +911,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
-
 
         const iconCheckboxes = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
