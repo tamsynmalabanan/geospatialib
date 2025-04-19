@@ -601,27 +601,47 @@ const handleLeafletStylePanel = (map, parent) => {
         const layerStyles = layer._styles
         const style = (layerStyles.groups?.[id]) || layerStyles.default
         const styleParams = style.styleParams
-
+        
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
         
         const update = () => {
+            const {
+                fillColor,
+                fillOpacity,
+                strokeColor,
+                strokeOpacity,
+                strokeWidth,
+                iconClass,
+                iconSize,
+                iconShadow,
+                iconGlow,
+                lineCap,
+                lineJoin,
+                dashArray,
+                dashOffset,
+                iconType,
+                textWrap,
+                boldFont,
+                fillPattern,
+                iconRotation,
+                fillPatternId,
+                patternFill,
+                patternStroke,
+                italicFont,
+                fontSerif,
+            } = styleParams
+            
             const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
 
-            const currentId = styleParams.fillPatternId
-            if (currentId) {
-                svgFillDefs.querySelector(`#${currentId}`)?.remove()
+            if (fillPatternId) {
+                svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
                 delete styleParams.fillPatternId
             }   
 
-            if (styleParams.fillPattern === 'icon') {
+            if (fillPattern === 'icon') {
                 const id = generateRandomString()
                 styleParams.fillPatternId = id
 
-                const fillOpacity = styleParams.fillOpacity
-                const strokeWidth = styleParams.strokeWidth
-                const iconSize = styleParams.iconSize
-                const iconShadow = styleParams.iconShadow
-                const iconGlow = styleParams.iconGlow
                 const contaienrSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*0.5 : 0), (iconShadow ? iconSize*0.1 : 0)))
                 
                 const svgNS = "http://www.w3.org/2000/svg"
@@ -630,28 +650,26 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', contaienrSize*2)
                 newPattern.setAttribute('height', contaienrSize*2)                
-                newPattern.style.transform = `rotate(${styleParams.iconRotation}deg)`
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
                 newPattern.style.transformOrigin = `50% 50%`
                 svgFillDefs.appendChild(newPattern)
                 
-                if (Array('bi', 'text').includes(styleParams.iconType)) {
+                if (Array('bi', 'text').includes(iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
                     text.setAttribute('x', contaienrSize)
                     text.setAttribute('y', contaienrSize)
                     text.setAttribute('text-anchor', 'middle')
                     text.setAttribute('dominant-baseline', 'middle')
                     text.setAttribute('font-size', iconSize)
-                    // text.setAttribute('lengthAdjust', 'spacingAndGlyphs')
-                    // text.setAttribute('textlength', iconSize)
                     
-                    if (styleParams.patternFill) {
+                    if (patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
                         text.setAttribute('fill-opacity', fillOpacity)    
                     } else {
                         text.setAttribute('fill', 'none')
                     }
                     
-                    if (styleParams.patternStroke) {
+                    if (patternStroke) {
                         text.setAttribute('stroke', styleParams.strokeColor)
                         text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
                         text.setAttribute('stroke-width', strokeWidth)
@@ -663,25 +681,26 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                                         
                     newPattern.appendChild(text)
-                    // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
-                    // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth
                     
-                    const icon = styleParams.iconClass
-                    if (styleParams.iconType === 'bi') {
-                        text.innerHTML = `&#x${bootstrapIcons[icon] ?? 'F287'};`
+                    const className = removeWhitespace(`
+                        text-center lh-1
+                        ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                        ${boldFont ? 'fw-bold' : 'fw-normal'}
+                        ${italicFont ? 'fst-italic' : 'fst-normal'}
+                    `)
+
+                    text.setAttribute('class', className)
+                    if (iconType === 'bi') {
+                        text.innerHTML = `&#x${bootstrapIcons[iconClass] ?? 'F287'};`
                         text.setAttribute('font-family', 'bootstrap-icons')
                     } else {
-                        text.innerHTML = icon ?? ''
-                        if (styleParams.fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
+                        text.innerHTML = iconClass ?? ''
+                        if (fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
+                        // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
+                        // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
                     }
-                    text.setAttribute('class', removeWhitespace(`
-                        text-center lh-1
-                        ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
-                        ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
-                        ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
-                    `))
 
-                    const hslaColor = manageHSLAColor(styleParams.fillColor)
+                    const hslaColor = manageHSLAColor(fillColor)
                     text.style.textShadow = Array(
                         iconShadow ? removeWhitespace(`
                             ${iconSize*0.1}px 
