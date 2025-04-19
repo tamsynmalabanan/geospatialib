@@ -695,7 +695,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 console.log(customCreateElement({
                     innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html,
-                    style:{height:'12px', width:'12px'}
+                    style:{height:'12px', width:'12px'},
+                    className: 'bg-transparent d-flex justify-content-center align-items-center',
                 }))
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
