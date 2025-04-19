@@ -617,6 +617,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const id = generateRandomString()
                 styleParams.fillPatternId = id
 
+                const fillOpacity = styleParams.fillOpacity
                 const strokeWidth = styleParams.strokeWidth
                 const iconSize = styleParams.iconSize + (strokeWidth*2)
                 
@@ -637,7 +638,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
-                        text.setAttribute('fill-opacity', styleParams.fillOpacity)    
+                        text.setAttribute('fill-opacity', fillOpacity)    
                     } else {
                         text.setAttribute('fill', 'none')
                     }
@@ -659,18 +660,26 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     const icon = styleParams.iconClass
                     if (styleParams.iconType === 'bi') {
-                        text.setAttribute('font-family', 'bootstrap-icons')
                         text.innerHTML = `&#x${bootstrapIcons[icon] ?? 'F287'};`
+                        text.setAttribute('font-family', 'bootstrap-icons')
                     } else {
-                        text.setAttribute('class', removeWhitespace(`
-                            text-center lh-1
-                            ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
-                            ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
-                            ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
-                        `))    
-                        if (styleParams.fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
                         text.innerHTML = icon ?? ''
+                        if (styleParams.fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
                     }
+                    text.setAttribute('class', removeWhitespace(`
+                        text-center lh-1
+                        ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
+                        ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
+                        ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
+                    `))
+
+                    const hslaColor = manageHSLAColor(styleParams.fillColor)
+                    const iconShadowColor = hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'
+                    const iconGlow = iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : iconGlow || null
+                    text.style.textShadow = Array(
+                        styleParams.iconShadow ? `2px 2px 4px ${iconShadowColor}` : '',
+                        iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
+                    ).filter(style => style !== '').join(',')
                 }
             }
 
