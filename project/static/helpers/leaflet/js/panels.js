@@ -636,7 +636,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     const text = document.createElementNS(svgNS, 'text')
                     text.setAttribute('x', contaienrSize)
                     text.setAttribute('y', contaienrSize)
-                    text.setAttribute('font-size', iconSize)
+                    // text.setAttribute('font-size', iconSize)
+                    text.setAttribute('lengthAdjust', 'spacingAndGlyphs')
+                    text.setAttribute('textlength', iconSize)
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
