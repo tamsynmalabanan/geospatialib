@@ -619,22 +619,22 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 const fillOpacity = styleParams.fillOpacity
                 const strokeWidth = styleParams.strokeWidth
-                const iconSize = styleParams.iconSize + (strokeWidth*2)
+                const iconSize = styleParams.iconSize
+                const contaienrSize = iconSize + (strokeWidth*2)
                 
                 const svgNS = "http://www.w3.org/2000/svg"
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = id
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', iconSize*2)
-                newPattern.setAttribute('height', iconSize*2)
+                newPattern.setAttribute('width', contaienrSize*2)
+                newPattern.setAttribute('height', contaienrSize*2)
                 svgFillDefs.appendChild(newPattern)
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('x', iconSize)
-                    text.setAttribute('y', iconSize)
-                    text.setAttribute('font-size', styleParams.iconSize)
-                    // text.setAttribute('rotate', styleParams.iconRotation)
+                    text.setAttribute('x', contaienrSize)
+                    text.setAttribute('y', contaienrSize)
+                    text.setAttribute('font-size', iconSize)
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
@@ -677,12 +677,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     const iconShadowColor = hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'
                     const iconGlow = styleParams.iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : null
                     text.style.textShadow = Array(
-                        styleParams.iconShadow ? `2px 2px 4px ${iconShadowColor}` : '',
+                        styleParams.iconShadow ? removeWhitespace(`
+                            ${iconSize/5*1}px ${iconSize/5*1}px ${iconSize/5*2}px ${iconShadowColor}
+                        `) : '',
                         iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize/2*1}px ${iconGlow}, 
-                            0 0 ${iconSize/2*2}px ${iconGlow}, 
-                            0 0 ${iconSize/2*3}px ${iconGlow}, 
-                            0 0 ${iconSize/2*4}px ${iconGlow}
+                            0 0 ${iconSize/5*1}px ${iconGlow}, 
+                            0 0 ${iconSize/5*2}px ${iconGlow}, 
+                            0 0 ${iconSize/5*3}px ${iconGlow}, 
+                            0 0 ${iconSize/5*4}px ${iconGlow}
                         `) : ''
                     ).filter(style => style !== '').join(',')
 
