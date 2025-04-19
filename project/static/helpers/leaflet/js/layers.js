@@ -108,7 +108,6 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
     if (type === 'point') {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
             innerHTML: iconType === 'text' ? iconClass : iconType === 'property' ? feature.properties[iconClass] ?? '' : '',
-            style: {fontFamily: 'Georgia, "Times New Roman", Times, serif'},
             className:removeWhitespace(`
                 h-100 w-100 d-flex justify-content-center align-items-center
                 ${iconType === 'bi' ? `bi bi-${iconClass}` : `
@@ -119,6 +118,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                 `}
             `),
         })
+
+        if (fontSerif) element.style.fontFamily = 'Georgia, "Times New Roman", Times, serif'
         
         if (element instanceof Element) {
             if (Array('img', 'svg', 'path').includes(element.tagName)) {
