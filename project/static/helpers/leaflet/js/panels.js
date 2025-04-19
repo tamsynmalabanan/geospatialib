@@ -681,7 +681,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             ${iconSize/10*2}px 
                             ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
                         `) : '',
-                        iconGlow ? removeWhitespace(`
+                        styleParams.iconGlow ? removeWhitespace(`
                             0 0 ${iconSize/5*1}px ${hslaColor.toString({a:fillOpacity/5*4})}, 
                             0 0 ${iconSize/5*2}px ${hslaColor.toString({a:fillOpacity/5*3})}, 
                             0 0 ${iconSize/5*3}px ${hslaColor.toString({a:fillOpacity/5*2})}, 
