@@ -629,7 +629,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.id = id
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', contaienrSize*2)
-                newPattern.setAttribute('height', contaienrSize*2)
+                newPattern.setAttribute('height', contaienrSize*2)                
+                newPattern.style.transform = `rotate(${styleParams.iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
                 svgFillDefs.appendChild(newPattern)
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
@@ -639,8 +641,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('text-anchor', 'middle')
                     text.setAttribute('dominant-baseline', 'middle')
                     text.setAttribute('font-size', iconSize)
-                    text.setAttribute('lengthAdjust', 'spacingAndGlyphs')
-                    text.setAttribute('textlength', iconSize)
+                    // text.setAttribute('lengthAdjust', 'spacingAndGlyphs')
+                    // text.setAttribute('textlength', iconSize)
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
@@ -694,9 +696,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
                         `) : ''
                     ).filter(style => style !== '').join(',')
-
-                    newPattern.style.transform = `rotate(${styleParams.iconRotation}deg)`
-                    newPattern.style.transformOrigin = `50% 50%`
                 }
             }
 
