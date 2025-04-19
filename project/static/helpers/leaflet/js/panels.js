@@ -865,7 +865,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 name: `${id}-iconRotation`,
                 type: 'number',
                 min: '0',
-                max: '180',
+                max: '360',
                 step: '5',
                 value: styleParams.iconRotation,
                 placeholder: 'Icon rotation',
