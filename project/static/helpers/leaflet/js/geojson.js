@@ -154,9 +154,7 @@ const getLeafletGeoJSONLayer = async ({
             }
         }
 
-        return getLeafletLayerStyle(feature, styleParams, {
-            isCanvas:geojsonLayer.options.renderer instanceof L.Canvas
-        })
+        return getLeafletLayerStyle(feature, styleParams, {renderer: geojsonLayer.options.renderer})
     }
 
     geojsonLayer.options.style = (feature) => getStyle(feature)
@@ -165,8 +163,8 @@ const getLeafletGeoJSONLayer = async ({
         const styleParams = getStyle(feature)
         return styleParams instanceof L.DivIcon ? L.marker(latlng, {icon: styleParams}) : L.circleMarker(latlng, {
             ...styleParams,
-            radius: styleParams.iconSize/2,
-            renderer: geojsonLayer.options.renderer,
+            // radius: styleParams.iconSize/2,
+            // renderer: geojsonLayer.options.renderer,
         })
     }
     

@@ -69,7 +69,7 @@ const getLeafletStyleParams = ({
 }
 
 const getLeafletLayerStyle = (feature, styleParams={}, {
-    isCanvas=false
+    renderer
 } = {}) => {
     const type = feature?.geometry?.type?.toLowerCase().split('multi').filter(i => i !== '')[0]
     if (!type) return
@@ -175,7 +175,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? 'white' : `url(#${fillPatternId})`
+            params.fillColor = fillPattern === 'solid' ? fillColor : renderer instanceof L.Canvas ? 'white' : `url(#${fillPatternId})`
         }
         
         return params
