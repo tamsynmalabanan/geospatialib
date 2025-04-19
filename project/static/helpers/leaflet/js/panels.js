@@ -757,7 +757,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconType = createFormFloating({
             parent: iconFields,
-            containerClass: 'w-50 flex-grow-1',
+            containerClass: 'w-25 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `${id}-iconType`},
             fieldClass: 'form-select-sm',
@@ -787,6 +787,59 @@ const handleLeafletStylePanel = (map, parent) => {
                     updateIconDatalistOptions()
                     update()
                     
+                }
+            }
+        })
+
+        const iconSize = createInputGroup({
+            parent:iconFields,
+            inputGroupClass: 'w-25 flex-grow-1',
+            fieldAttrs: {
+                name: `${id}-iconSize`,
+                type: 'number',
+                min: '1',
+                max: '100',
+                step: '1',
+                value: styleParams.iconSize,
+                placeholder: 'Icon size',
+            },
+            suffixHTML: 'px',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value)
+                    if (!value || value === styleParams.iconSize) {
+                        e.target.value = styleParams.iconSize
+                        return
+                    }
+
+                    styleParams.iconSize = value
+                    update()
+                }
+            }
+        })
+
+        const iconRotation = createInputGroup({
+            parent:iconFields,
+            inputGroupClass: 'w-25 flex-grow-1',
+            fieldAttrs: {
+                name: `${id}-iconRotation`,
+                type: 'number',
+                min: '0',
+                max: '90',
+                step: '5',
+                value: styleParams.iconRotation,
+                placeholder: 'Icon rotation',
+            },
+            suffixHTML: '°',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value) || 0
+                    if (value === styleParams.iconRotation) return
+                    
+                    styleParams.iconRotation = value
+                    update()
                 }
             }
         })
@@ -825,8 +878,8 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         const iconClass = createFormFloating({
-            parent:iconFields,
-            containerClass: 'w-100 flex-grow-1',
+            parent,
+            containerClass: 'd-flex w-100 flex-grow-1',
             fieldAttrs: {
                 name:`${id}-iconClass`,
                 type: 'search',
@@ -857,59 +910,6 @@ const handleLeafletStylePanel = (map, parent) => {
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',
             parent,
-        })
-
-        const iconSize = createInputGroup({
-            parent:iconFields2,
-            inputGroupClass: 'w-25 flex-grow-1',
-            fieldAttrs: {
-                name: `${id}-iconSize`,
-                type: 'number',
-                min: '1',
-                max: '100',
-                step: '1',
-                value: styleParams.iconSize,
-                placeholder: 'Icon size',
-            },
-            suffixHTML: 'px',
-            fieldClass: 'form-control-sm',
-            events: {
-                blur: (e) => {
-                    const value = parseFloat(e.target.value)
-                    if (!value || value === styleParams.iconSize) {
-                        e.target.value = styleParams.iconSize
-                        return
-                    }
-
-                    styleParams.iconSize = value
-                    update()
-                }
-            }
-        })
-
-        const iconRotation = createInputGroup({
-            parent:iconFields2,
-            inputGroupClass: 'w-25 flex-grow-1',
-            fieldAttrs: {
-                name: `${id}-iconRotation`,
-                type: 'number',
-                min: '0',
-                max: '90',
-                step: '5',
-                value: styleParams.iconRotation,
-                placeholder: 'Icon rotation',
-            },
-            suffixHTML: '°',
-            fieldClass: 'form-control-sm',
-            events: {
-                blur: (e) => {
-                    const value = parseFloat(e.target.value) || 0
-                    if (value === styleParams.iconRotation) return
-                    
-                    styleParams.iconRotation = value
-                    update()
-                }
-            }
         })
 
         const iconCheckboxes = customCreateElement({
