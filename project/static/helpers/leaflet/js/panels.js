@@ -694,7 +694,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : iconClass ?? ''
                 
                 const temp = customCreateElement({
-                    tag:'span',
+                    // tag:'span',
                     innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html,
                     // style:{height:'12px', width:'12px'},
                     // className: 'bg-transparent d-flex justify-content-center align-items-center',
