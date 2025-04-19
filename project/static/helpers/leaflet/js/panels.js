@@ -652,14 +652,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     } else {
                         text.setAttribute('stroke', 'none')
                     }
-                    
-                    text.setAttribute('class', removeWhitespace(`
-                        lh-1 text-center
-                        ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
-                        ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
-                        ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
-                    `))
-                    
+                                        
                     newPattern.appendChild(text)
                     // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
                     // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth
@@ -669,6 +662,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         text.setAttribute('font-family', 'bootstrap-icons')
                         text.innerHTML = `&#x${bootstrapIcons[icon] ?? 'F287'};`
                     } else {
+                        text.setAttribute('class', removeWhitespace(`
+                            lh-1 text-center
+                            ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
+                            ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
+                            ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
+                        `))    
                         if (styleParams.fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
                         text.innerHTML = icon ?? ''
                     }
