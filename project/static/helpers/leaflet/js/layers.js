@@ -137,8 +137,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             }
             
             element.style.fontSize = `${iconSize}px`
-            element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
-            element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+            element.style.color = patternFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
+            if (patternStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
             element.style.textShadow = textShadow
         }
 
