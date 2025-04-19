@@ -139,10 +139,10 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                     ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity})}
                 `) : '',
                 iconGlow ? removeWhitespace(`
-                    0 0 ${iconSize/2*1}px ${hslaColor.toString({a:fillOpacity/5*4})}, 
-                    0 0 ${iconSize/2*2}px ${hslaColor.toString({a:fillOpacity/5*3})}, 
-                    0 0 ${iconSize/2*3}px ${hslaColor.toString({a:fillOpacity/5*2})}, 
-                    0 0 ${iconSize/2*4}px ${hslaColor.toString({a:fillOpacity/5*1})}
+                    0 0 ${iconSize/2*1}px ${hslaColor.toString({a:fillOpacity/4*4})}, 
+                    0 0 ${iconSize/2*2}px ${hslaColor.toString({a:fillOpacity/4*3})}, 
+                    0 0 ${iconSize/2*3}px ${hslaColor.toString({a:fillOpacity/4*2})}, 
+                    0 0 ${iconSize/2*4}px ${hslaColor.toString({a:fillOpacity/4*1})}
                 `) : ''
             ).filter(style => style !== '').join(',')
         }
