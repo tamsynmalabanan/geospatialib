@@ -703,7 +703,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 console.log(temp.firstChild.getBoundingClientRect())
                 // document.body.removeChild(temp)
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
-                // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
 
                 const hslaColor = manageHSLAColor(fillColor)
                 text.style.textShadow = styleParams.textShadow = Array(
