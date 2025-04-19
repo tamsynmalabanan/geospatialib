@@ -1133,14 +1133,8 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        
-        const patternFields = customCreateElement({
-            className:'d-flex gap-2',
-            parent,
-        })
-
         const fillPattern = createFormFloating({
-            parent: patternFields,
+            parent: fillFields,
             containerClass: 'w-100 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `${id}-fillPattern`},
