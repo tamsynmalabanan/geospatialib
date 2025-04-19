@@ -654,6 +654,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                     
                     text.setAttribute('class', removeWhitespace(`
+                        lh-1 text-center
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
                         ${styleParams.italicText ? 'fst-italic' : 'fst-normal'}

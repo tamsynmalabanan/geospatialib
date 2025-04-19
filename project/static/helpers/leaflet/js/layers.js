@@ -111,7 +111,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             className:removeWhitespace(`
                 h-100 w-100 d-flex justify-content-center align-items-center
                 ${iconType === 'bi' ? `bi bi-${iconClass}` : `
-                    text-center
+                    text-center lh-1
                     ${textWrap ? 'text-wrap' : 'text-nowrap'}
                     ${boldText ? 'fw-bold' : 'fw-normal'}
                     ${italicText ? 'fst-italic' : 'fst-normal'}
