@@ -706,8 +706,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 const height = containerSize+bounds.height
                 newPattern.setAttribute('width', width)
                 text.setAttribute('x', width/2)
-                // newPattern.setAttribute('height', height)
-                // text.setAttribute('y', height/2)
 
                 const hslaColor = manageHSLAColor(fillColor)
                 text.style.textShadow = styleParams.textShadow = Array(
@@ -867,7 +865,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 name: `${id}-iconRotation`,
                 type: 'number',
                 min: '0',
-                max: '90',
+                max: '180',
                 step: '5',
                 value: styleParams.iconRotation,
                 placeholder: 'Icon rotation',
