@@ -634,7 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
                     text.setAttribute('font-size', styleParams.iconSize)
-                    text.setAttribute('rotate', styleParams.iconRotation)
+                    // text.setAttribute('rotate', styleParams.iconRotation)
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
