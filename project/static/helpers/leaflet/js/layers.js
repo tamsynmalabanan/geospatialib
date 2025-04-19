@@ -99,18 +99,25 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
 
     if (type === 'point') {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
-            innerHTML: iconType === 'text' ? iconClass : iconType === 'property' ? feature.properties[iconClass] ?? '' : '',
+            innerHTML: (
+                iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : 
+                iconType === 'text' ? iconClass : 
+                iconType === 'property' ? feature.properties[iconClass] ?? '' : 
+                ''
+            ),
+            style: {fontFamily: (
+                iconType === 'bi' ? 'bootstrap-icons' : 
+                fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
+                'default'
+            )},
             className:removeWhitespace(`
                 h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
-                ${iconType === 'bi' ? `bi bi-${iconClass}` : ``}
                 ${textWrap ? 'text-wrap' : 'text-nowrap'}
                 ${boldFont ? 'fw-bold' : 'fw-normal'}
                 ${italicFont ? 'fst-italic' : 'fst-normal'}
             `),
         })
 
-        if (fontSerif) element.style.fontFamily = 'Georgia, "Times New Roman", Times, serif'
-        
         if (element instanceof Element) {
             if (Array('img', 'svg', 'path').includes(element.tagName)) {
                 element.classList.add('position-absolute')
@@ -123,7 +130,12 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
             element.style.textShadow = Array(
                 iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
-                iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
+                iconGlow ? removeWhitespace(`
+                    0 0 ${iconSize/2*1}px ${iconGlow}, 
+                    0 0 ${iconSize/2*2}px ${iconGlow}, 
+                    0 0 ${iconSize/2*3}px ${iconGlow}, 
+                    0 0 ${iconSize/2*4}px ${iconGlow}
+                `) : ''
             ).filter(style => style !== '').join(',')
         }
 

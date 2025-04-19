@@ -678,7 +678,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     const iconGlow = styleParams.iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : null
                     text.style.textShadow = Array(
                         styleParams.iconShadow ? `2px 2px 4px ${iconShadowColor}` : '',
-                        iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
+                        iconGlow ? removeWhitespace(`
+                            0 0 ${iconSize/2*1}px ${iconGlow}, 
+                            0 0 ${iconSize/2*2}px ${iconGlow}, 
+                            0 0 ${iconSize/2*3}px ${iconGlow}, 
+                            0 0 ${iconSize/2*4}px ${iconGlow}
+                        `) : ''
                     ).filter(style => style !== '').join(',')
                 }
             }
