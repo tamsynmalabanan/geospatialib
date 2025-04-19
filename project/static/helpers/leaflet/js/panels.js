@@ -627,6 +627,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', iconSize*2)
                 newPattern.setAttribute('height', iconSize*2)
+                newPattern.setAttribute('rotate', styleParams.iconRotation)
                 svgFillDefs.appendChild(newPattern)
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
@@ -634,7 +635,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
                     text.setAttribute('font-size', styleParams.iconSize)
-                    text.setAttribute('rotate', styleParams.iconRotation)
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
@@ -972,7 +972,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
-        
+
         const fontSerif = createFormCheck({
             parent:textCheckboxes,
             labelInnerText: 'Font serif',
