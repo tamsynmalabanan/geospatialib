@@ -674,17 +674,18 @@ const handleLeafletStylePanel = (map, parent) => {
                     `))
 
                     const hslaColor = manageHSLAColor(styleParams.fillColor)
-                    const iconShadowColor = hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'
-                    const iconGlow = styleParams.iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : null
                     text.style.textShadow = Array(
                         styleParams.iconShadow ? removeWhitespace(`
-                            ${iconSize/10*1}px ${iconSize/10*1}px ${iconSize/10*2}px ${iconShadowColor}
+                            ${iconSize/10*1}px 
+                            ${iconSize/10*1}px 
+                            ${iconSize/10*2}px 
+                            ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
                         `) : '',
                         iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize/5*1}px ${iconGlow}, 
-                            0 0 ${iconSize/5*2}px ${iconGlow}, 
-                            0 0 ${iconSize/5*3}px ${iconGlow}, 
-                            0 0 ${iconSize/5*4}px ${iconGlow}
+                            0 0 ${iconSize/5*1}px ${hslaColor.toString({a:fillOpacity/5*4})}, 
+                            0 0 ${iconSize/5*2}px ${hslaColor.toString({a:fillOpacity/5*3})}, 
+                            0 0 ${iconSize/5*3}px ${hslaColor.toString({a:fillOpacity/5*2})}, 
+                            0 0 ${iconSize/5*4}px ${hslaColor.toString({a:fillOpacity/5*1})}
                         `) : ''
                     ).filter(style => style !== '').join(',')
 
