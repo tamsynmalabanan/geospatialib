@@ -629,93 +629,87 @@ const handleLeafletStylePanel = (map, parent) => {
                 patternStroke,
                 italicFont,
                 fontSerif,
+                lineBreak,
+                textShadow,
             } = styleParams
+            const contaienrSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*0.5 : 0), (iconShadow ? iconSize*0.1 : 0)))
             
             const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
-
             if (fillPatternId) {
                 svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
                 delete styleParams.fillPatternId
-            }   
+            }
+            const id = generateRandomString()
+            styleParams.fillPatternId = id
 
-            if (fillPattern === 'icon') {
-                const id = generateRandomString()
-                styleParams.fillPatternId = id
-
-                const contaienrSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*0.5 : 0), (iconShadow ? iconSize*0.1 : 0)))
+            const svgNS = "http://www.w3.org/2000/svg"
+            const newPattern = document.createElementNS(svgNS, 'pattern')
+            newPattern.id = id
+            newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+            newPattern.setAttribute('width', contaienrSize*2)
+            newPattern.setAttribute('height', contaienrSize*2)                
+            newPattern.style.transform = `rotate(${iconRotation}deg)`
+            newPattern.style.transformOrigin = `50% 50%`
+            svgFillDefs.appendChild(newPattern)
+            
+            if (Array('bi', 'text').includes(iconType)) {
+                const text = document.createElementNS(svgNS, 'text')
+                text.setAttribute('x', contaienrSize)
+                text.setAttribute('y', contaienrSize)
+                text.setAttribute('text-anchor', 'middle')
+                text.setAttribute('dominant-baseline', 'middle')
+                text.setAttribute('font-size', iconSize)
+                text.setAttribute('class', removeWhitespace(`
+                    text-center lh-1
+                    ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                    ${boldFont ? 'fw-bold' : 'fw-normal'}
+                    ${italicFont ? 'fst-italic' : 'fst-normal'}
+                `))
+                text.setAttribute('font-family', (
+                    iconType === 'bi' ? 'bootstrap-icons' :
+                    fontSerif ? 'Georgia, Times, serif' :
+                    'default'
+                ))
                 
-                const svgNS = "http://www.w3.org/2000/svg"
-                const newPattern = document.createElementNS(svgNS, 'pattern')
-                newPattern.id = id
-                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', contaienrSize*2)
-                newPattern.setAttribute('height', contaienrSize*2)                
-                newPattern.style.transform = `rotate(${iconRotation}deg)`
-                newPattern.style.transformOrigin = `50% 50%`
-                svgFillDefs.appendChild(newPattern)
-                
-                if (Array('bi', 'text').includes(iconType)) {
-                    const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('x', contaienrSize)
-                    text.setAttribute('y', contaienrSize)
-                    text.setAttribute('text-anchor', 'middle')
-                    text.setAttribute('dominant-baseline', 'middle')
-                    text.setAttribute('font-size', iconSize)
-                    
-                    if (patternFill) {
-                        text.setAttribute('fill', fillColor)
-                        text.setAttribute('fill-opacity', fillOpacity)    
-                    } else {
-                        text.setAttribute('fill', 'none')
-                    }
-                    
-                    if (patternStroke) {
-                        text.setAttribute('stroke', strokeColor)
-                        text.setAttribute('stroke-opacity', strokeOpacity)
-                        text.setAttribute('stroke-width', strokeWidth)
-                        text.setAttribute('stroke-linecap', lineCap)
-                        text.setAttribute('stroke-linejoin', lineJoin)
-                        text.setAttribute('stroke-dasharray', dashArray)
-                    } else {
-                        text.setAttribute('stroke', 'none')
-                    }
-                                        
-                    newPattern.appendChild(text)
-                    
-                    const className = removeWhitespace(`
-                        text-center lh-1
-                        ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                        ${boldFont ? 'fw-bold' : 'fw-normal'}
-                        ${italicFont ? 'fst-italic' : 'fst-normal'}
-                    `)
-
-                    text.setAttribute('class', className)
-                    if (iconType === 'bi') {
-                        text.innerHTML = `&#x${bootstrapIcons[iconClass] ?? 'F287'};`
-                        text.setAttribute('font-family', 'bootstrap-icons')
-                    } else {
-                        text.innerHTML = iconClass ?? ''
-                        if (fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
-                        // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
-                        // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
-                    }
-
-                    const hslaColor = manageHSLAColor(fillColor)
-                    text.style.textShadow = Array(
-                        iconShadow ? removeWhitespace(`
-                            ${iconSize*0.1}px 
-                            ${iconSize*0.1}px 
-                            ${iconSize*0.5}px 
-                            ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                        `) : '',
-                        iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                            0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                            0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                        `) : ''
-                    ).filter(style => style !== '').join(',')
+                if (patternFill) {
+                    text.setAttribute('fill', fillColor)
+                    text.setAttribute('fill-opacity', fillOpacity)    
+                } else {
+                    text.setAttribute('fill', 'none')
                 }
+                
+                if (patternStroke) {
+                    text.setAttribute('stroke', strokeColor)
+                    text.setAttribute('stroke-opacity', strokeOpacity)
+                    text.setAttribute('stroke-width', strokeWidth)
+                    text.setAttribute('stroke-linecap', lineCap)
+                    text.setAttribute('stroke-linejoin', lineJoin)
+                    text.setAttribute('stroke-dasharray', dashArray)
+                } else {
+                    text.setAttribute('stroke', 'none')
+                }
+                                    
+                text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : iconClass ?? ''
+                // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
+                // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
+
+                const hslaColor = manageHSLAColor(fillColor)
+                text.style.textShadow = styleParams.textShadow = Array(
+                    iconShadow ? removeWhitespace(`
+                        ${iconSize*0.1}px 
+                        ${iconSize*0.1}px 
+                        ${iconSize*0.2}px 
+                        ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                    `) : '',
+                    iconGlow ? removeWhitespace(`
+                        0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                        0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                        0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                        0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                    `) : ''
+                ).filter(i => i !== '').join(',')
+
+                newPattern.appendChild(text)
             }
 
             updateGeoJSONData(layer)

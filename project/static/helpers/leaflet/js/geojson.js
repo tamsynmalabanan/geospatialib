@@ -156,54 +156,7 @@ const getLeafletGeoJSONLayer = async ({
 
         return getLeafletLayerStyle(feature, styleParams)
     }
-    // const getStyle = (feature, {circleMarker=false}={}) => {
-    //     const styles = geojsonLayer._styles
-        
-    //     let styleParams = styles?.default?.styleParams || getLeafletStyleParams()
-    //     feature._groupId = ''
-        
-    //     if (styles?.groups) {
-    //         // make sure groups are sorted by rank
-    //         for (const id in styles.groups) {
-    //             const group = styles.groups[id]
-                
-    //             let valid = true
-    //             for (const validator in group.validators) {
-    //                 if (validator(feature)) continue
-    //                 valid = false
-    //                 break
-    //             }
 
-    //             if (!valid) continue
-                
-    //             feature._groupId = id
-    //             styleParams = group.styleParams
-    //             return
-    //         }
-    //     }
-
-    //     const circlePolygon = (
-    //         circleMarker 
-    //         && styleParams.iconType === 'bi' 
-    //         && styleParams.iconClass === 'circle-fill' 
-    //         && !styleParams.iconShadow 
-    //         && !styleParams.iconGlow
-    //     )
-
-    //     const type = circlePolygon ? 'Polygon' : feature.geometry.type
-    //     const layerStyle =  getLeafletLayerStyle({
-    //         properties: feature.properties,
-    //         geometry: {type}
-    //     }, styleParams)
-        
-    //     if (circlePolygon) {
-    //         layerStyle.radius = styleParams.iconSize/2 
-    //         delete layerStyle.dashArray
-    //         delete layerStyle.dashOffset
-    //     }
-        
-    //     return layerStyle
-    // }
 
     geojsonLayer.options.style = (feature) => getStyle(feature)
     
@@ -217,16 +170,6 @@ const getLeafletGeoJSONLayer = async ({
         })
     }
     
-    // geojsonLayer.options.pointToLayer = (feature, latlng) => {
-    //     const renderer = geojsonLayer.options.renderer
-    //     const isCanvas = renderer instanceof L.Canvas
-    //     const styleParams = getStyle(feature, {circleMarker:isCanvas})
-
-    //     return isCanvas && styleParams.radius ? L.circleMarker(latlng, {
-    //         ...styleParams,
-    //         renderer,
-    //     }) : L.marker(latlng, {icon: styleParams})
-    // }
     
     if (geojson && !group?._map?._legendLayerGroups.includes(group)) geojsonLayer.addData(geojson)
 

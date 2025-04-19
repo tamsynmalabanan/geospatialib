@@ -7,8 +7,11 @@ const getLeafletStyleParams = ({
     iconType='bi',
     iconClass='circle-fill',
     iconSize=10,
+    iconRotation=0,
+
     iconShadow=false,
     iconGlow=false,
+    textShadow=null,
     textWrap=false,
     boldFont=false,
     italicFont=false,
@@ -18,7 +21,6 @@ const getLeafletStyleParams = ({
     fillOpacity=0.5,
     
     fillPattern='solid',
-    iconRotation=0,
     fillPatternId='',
     patternFill=true,
     patternStroke=true,
@@ -61,6 +63,8 @@ const getLeafletStyleParams = ({
         patternStroke,
         italicFont,
         fontSerif,
+        lineBreak,
+        textShadow,
     }    
 }
 
@@ -69,19 +73,19 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
     if (!type) return
 
     const {
-        fillColor,
-        fillOpacity,
+        strokeWidth,
         strokeColor,
         strokeOpacity,
-        strokeWidth,
+        fillColor,
+        fillOpacity,
         iconClass,
         iconSize,
         iconShadow,
         iconGlow,
-        lineCap,
-        lineJoin,
         dashArray,
         dashOffset,
+        lineCap,
+        lineJoin,
         iconType,
         textWrap,
         boldFont,
@@ -92,6 +96,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         patternStroke,
         italicFont,
         fontSerif,
+        lineBreak,
+        textShadow,
     } = getLeafletStyleParams(styleParams)
     
     const hslaColor = manageHSLAColor(fillColor)
@@ -131,20 +137,21 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             element.style.fontSize = `${iconSize}px`
             element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
             element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
-            element.style.textShadow = Array(
-                iconShadow ? removeWhitespace(`
-                    ${iconSize*0.1}px 
-                    ${iconSize*0.1}px 
-                    ${iconSize*0.5}px
-                    ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity})}
-                `) : '',
-                iconGlow ? removeWhitespace(`
-                    0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                    0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                    0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                    0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                `) : ''
-            ).filter(style => style !== '').join(',')
+            element.style.textShadow = textShadow
+            // element.style.textShadow = Array(
+            //     iconShadow ? removeWhitespace(`
+            //         ${iconSize*0.1}px 
+            //         ${iconSize*0.1}px 
+            //         ${iconSize*0.5}px
+            //         ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity})}
+            //     `) : '',
+            //     iconGlow ? removeWhitespace(`
+            //         0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+            //         0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+            //         0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+            //         0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+            //     `) : ''
+            // ).filter(style => style !== '').join(',')
         }
 
         return L.divIcon({
