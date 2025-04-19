@@ -663,19 +663,19 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('font-size', iconSize)
                     
                     if (patternFill) {
-                        text.setAttribute('fill', styleParams.fillColor)
+                        text.setAttribute('fill', fillColor)
                         text.setAttribute('fill-opacity', fillOpacity)    
                     } else {
                         text.setAttribute('fill', 'none')
                     }
                     
                     if (patternStroke) {
-                        text.setAttribute('stroke', styleParams.strokeColor)
-                        text.setAttribute('stroke-opacity', styleParams.strokeOpacity)
+                        text.setAttribute('stroke', strokeColor)
+                        text.setAttribute('stroke-opacity', strokeOpacity)
                         text.setAttribute('stroke-width', strokeWidth)
-                        text.setAttribute('stroke-linecap', styleParams.lineCap)
-                        text.setAttribute('stroke-linejoin', styleParams.lineJoin)
-                        text.setAttribute('stroke-dasharray', styleParams.dashArray)
+                        text.setAttribute('stroke-linecap', lineCap)
+                        text.setAttribute('stroke-linejoin', lineJoin)
+                        text.setAttribute('stroke-dasharray', dashArray)
                     } else {
                         text.setAttribute('stroke', 'none')
                     }
