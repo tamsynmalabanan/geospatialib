@@ -171,9 +171,12 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             lineJoin,
             dashArray,
             dashOffset, 
-            renderer,   
-            radius: iconSize/2,
-        } 
+        }
+
+        if (type === 'point') {
+            params.renderer = renderer
+            params.radius = iconSize/2
+        }
         
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
