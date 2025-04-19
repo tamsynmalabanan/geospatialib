@@ -972,6 +972,22 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+        
+        const fontSerif = createFormCheck({
+            parent:textCheckboxes,
+            labelInnerText: 'Font serif',
+            checked: styleParams.fontSerif,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.fontSerif) return
+
+                    styleParams.fontSerif = value
+                    update()
+                }
+            }
+        })
 
         const boldFont = createFormCheck({
             parent:textCheckboxes,
@@ -1000,22 +1016,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.italicFont) return
 
                     styleParams.italicFont = value
-                    update()
-                }
-            }
-        })
-
-        const fontSerif = createFormCheck({
-            parent:textCheckboxes,
-            labelInnerText: 'Font serif',
-            checked: styleParams.fontSerif,
-            labelClass: 'text-nowrap',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.fontSerif) return
-
-                    styleParams.fontSerif = value
                     update()
                 }
             }
