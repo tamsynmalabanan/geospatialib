@@ -698,7 +698,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 temp.classList.add('position-absolute')
                 document.body.appendChild(temp)
                 console.log(temp.firstChild.getBoundingClientRect())
-                // document.body.removeChild(temp)
+                document.body.removeChild(temp)
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
 
                 const hslaColor = manageHSLAColor(fillColor)
