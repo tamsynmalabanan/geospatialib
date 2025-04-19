@@ -1272,7 +1272,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const strokeWidth = styleParams.strokeWidth
                     styleParams.dashArray = value === 'solid' ? null : `${
-                        lineBreak === 'dashed' 
+                        value === 'dashed' 
                         ? (strokeWidth * 5) 
                         : (((Math.ceil(strokeWidth)) - 1) || 1)
                     } ${strokeWidth * 3}`
