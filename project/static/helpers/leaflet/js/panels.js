@@ -663,7 +663,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         text.innerHTML = `&#x${bootstrapIcons[icon] ?? 'F287'};`
                     } else {
                         text.setAttribute('class', removeWhitespace(`
-                            lh-1 text-center
+                            text-center lh-1
                             ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                             ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
                             ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
