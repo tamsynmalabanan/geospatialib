@@ -697,7 +697,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 temp.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
                 temp.classList.add('position-absolute')
                 document.body.appendChild(temp)
-                console.log(temp.firstChild.getBoundingClientRect())
+                console.log(temp.getBoundingClientRect())
                 document.body.removeChild(temp)
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
 
