@@ -699,7 +699,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     className: 'bg-transparent d-flex justify-content-center align-items-center',
                 })
                 document.body.appendChild(temp)
-                console.log(element.getBoundingClientRect())
+                console.log(temp.firstChild.getBoundingClientRect())
                 document.body.removeChild(temp)
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
