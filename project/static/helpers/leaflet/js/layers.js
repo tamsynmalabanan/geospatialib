@@ -180,8 +180,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         
         const isCanvas = renderer instanceof L.Canvas
         if (type === 'polygon') {
-            params.fillOpacity = fillColor && (fillPattern === 'solid' || !isCanvas) ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? 'white' : `url(#${fillPatternId})`
+            params.fillOpacity = fillColor ? fillOpacity : 0
+            params.fillColor = fillPattern === 'solid' || isCanvas ? fillColor : `url(#${fillPatternId})`
         }
         
         return params
