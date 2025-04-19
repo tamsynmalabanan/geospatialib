@@ -10,8 +10,8 @@ const getLeafletStyleParams = ({
     iconShadow=false,
     iconGlow=false,
     textWrap=false,
-    boldText=false,
-    italicText=false,
+    boldFont=false,
+    italicFont=false,
     fontSerif=false,
     
     fillColor=generateRandomColor(),
@@ -62,13 +62,13 @@ const getLeafletStyleParams = ({
         lineJoin,
         iconType,
         textWrap,
-        boldText,
+        boldFont,
         fillPattern,
         fillRotation,
         fillPatternId,
         patternFill,
         patternStroke,
-        italicText,
+        italicFont,
         fontSerif,
     }    
 }
@@ -93,13 +93,13 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         dashOffset,
         iconType,
         textWrap,
-        boldText,
+        boldFont,
         fillPattern,
         fillRotation,
         fillPatternId,
         patternFill,
         patternStroke,
-        italicText,
+        italicFont,
         fontSerif,
     } = getLeafletStyleParams(styleParams)
     
@@ -113,8 +113,8 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                 ${iconType === 'bi' ? `bi bi-${iconClass}` : `
                     text-center lh-1
                     ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                    ${boldText ? 'fw-bold' : 'fw-normal'}
-                    ${italicText ? 'fst-italic' : 'fst-normal'}
+                    ${boldFont ? 'fw-bold' : 'fw-normal'}
+                    ${italicFont ? 'fst-italic' : 'fst-normal'}
                 `}
             `),
         })

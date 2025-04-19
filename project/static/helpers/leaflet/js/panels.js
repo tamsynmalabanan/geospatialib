@@ -656,8 +656,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('class', removeWhitespace(`
                         lh-1 text-center
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
-                        ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
-                        ${styleParams.italicText ? 'fst-italic' : 'fst-normal'}
+                        ${styleParams.boldFont ? 'fw-bold' : 'fw-normal'}
+                        ${styleParams.italicFont ? 'fst-italic' : 'fst-normal'}
                     `))
                     
                     newPattern.appendChild(text)
@@ -935,33 +935,33 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const boldText = createFormCheck({
+        const boldFont = createFormCheck({
             parent:textCheckboxes,
-            labelInnerText: 'Bold text',
-            checked: styleParams.boldText,
+            labelInnerText: 'Bold font',
+            checked: styleParams.boldFont,
             labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
-                    if (value === styleParams.boldText) return
+                    if (value === styleParams.boldFont) return
 
-                    styleParams.boldText = value
+                    styleParams.boldFont = value
                     update()
                 }
             }
         })
 
-        const italicText = createFormCheck({
+        const italicFont = createFormCheck({
             parent:textCheckboxes,
-            labelInnerText: 'Italic text',
-            checked: styleParams.italicText,
+            labelInnerText: 'Italic font',
+            checked: styleParams.italicFont,
             labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
-                    if (value === styleParams.italicText) return
+                    if (value === styleParams.italicFont) return
 
-                    styleParams.italicText = value
+                    styleParams.italicFont = value
                     update()
                 }
             }
