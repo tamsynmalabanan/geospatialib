@@ -628,7 +628,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = id
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', contaienrSize*5)
+                newPattern.setAttribute('width', contaienrSize*2)
                 newPattern.setAttribute('height', contaienrSize*2)                
                 newPattern.style.transform = `rotate(${styleParams.iconRotation}deg)`
                 newPattern.style.transformOrigin = `50% 50%`
