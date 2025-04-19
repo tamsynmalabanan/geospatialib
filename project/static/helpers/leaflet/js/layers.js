@@ -170,7 +170,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             lineCap,
             lineJoin,
             dashArray,
-            dashOffset,    
+            dashOffset, 
+            renderer,   
         } 
         
         if (type === 'polygon') {
