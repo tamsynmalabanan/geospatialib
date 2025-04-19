@@ -419,6 +419,7 @@ const createFormCheck = ({
     events = {},
     role,
     name,
+    style={},
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check m-0 ${formCheckClass} ${role == 'switch' ? 'form-switch' : ''}`
@@ -435,6 +436,7 @@ const createFormCheck = ({
     input.checked = checked
     formCheck.appendChild(input)
     Object.keys(events).forEach(k => input.addEventListener(k, events[k]))
+    Object.keys(style).forEach(k => input.style[k] = style[k])
 
     const label = document.createElement('label')
     label.className =  `form-check-label ${labelClass}`
