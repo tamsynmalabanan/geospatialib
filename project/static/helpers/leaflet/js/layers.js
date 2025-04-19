@@ -178,9 +178,10 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             params.radius = iconSize/2
         }
         
+        const isCanvas = renderer instanceof L.Canvas
         if (type === 'polygon') {
-            params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' ? fillColor : renderer instanceof L.Canvas ? 'white' : `url(#${fillPatternId})`
+            params.fillOpacity = fillColor && (fillPattern === 'solid' || !isCanvas) ? fillOpacity : 0
+            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? 'white' : `url(#${fillPatternId})`
         }
         
         return params
