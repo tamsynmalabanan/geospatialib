@@ -634,7 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('x', iconSize)
                     text.setAttribute('y', iconSize)
                     text.setAttribute('font-size', styleParams.iconSize)
-                    text.setAttribute('rotate', styleParams.fillRotation)
+                    text.setAttribute('rotate', styleParams.iconRotation)
                     
                     if (styleParams.patternFill) {
                         text.setAttribute('fill', styleParams.fillColor)
@@ -887,6 +887,31 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const iconRotation = createInputGroup({
+            parent:iconFields2,
+            fieldAttrs: {
+                name: `${id}-iconRotation`,
+                type: 'number',
+                min: '0',
+                max: '90',
+                step: '5',
+                value: styleParams.iconRotation,
+                placeholder: 'Icon rotation',
+            },
+            suffixHTML: '°',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value) || 0
+                    if (value === styleParams.iconRotation) return
+                    
+                    styleParams.iconRotation = value
+                    update()
+                }
+            }
+        })
+
+
         const iconCheckboxes = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
             parent:iconFields2
@@ -1071,30 +1096,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    update()
-                }
-            }
-        })
-
-        const fillRotation = createInputGroup({
-            parent:patternFields,
-            fieldAttrs: {
-                name: `${id}-fillRotation`,
-                type: 'number',
-                min: '0',
-                max: '90',
-                step: '5',
-                value: styleParams.fillRotation,
-                placeholder: 'Fill rotation',
-            },
-            suffixHTML: '°',
-            fieldClass: 'form-control-sm',
-            events: {
-                blur: (e) => {
-                    const value = parseFloat(e.target.value) || 0
-                    if (value === styleParams.fillRotation) return
-                    
-                    styleParams.fillRotation = value
                     update()
                 }
             }

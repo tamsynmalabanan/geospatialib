@@ -18,7 +18,7 @@ const getLeafletStyleParams = ({
     fillOpacity=0.5,
     
     fillPattern='solid',
-    fillRotation=0,
+    iconRotation=0,
     fillPatternId='',
     patternFill=true,
     patternStroke=true,
@@ -56,7 +56,7 @@ const getLeafletStyleParams = ({
         textWrap,
         boldFont,
         fillPattern,
-        fillRotation,
+        iconRotation,
         fillPatternId,
         patternFill,
         patternStroke,
@@ -87,7 +87,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         textWrap,
         boldFont,
         fillPattern,
-        fillRotation,
+        iconRotation,
         fillPatternId,
         patternFill,
         patternStroke,
@@ -105,11 +105,14 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                 iconType === 'property' ? feature.properties[iconClass] ?? '' : 
                 ''
             ),
-            style: {fontFamily: (
-                iconType === 'bi' ? 'bootstrap-icons' : 
-                fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
-                'default'
-            )},
+            style: {
+                fontFamily: (
+                    iconType === 'bi' ? 'bootstrap-icons' : 
+                    fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
+                    'default'
+                ),
+                transform: `rotate(${iconRotation}deg)`,
+            },
             className:removeWhitespace(`
                 h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
                 ${textWrap ? 'text-wrap' : 'text-nowrap'}
