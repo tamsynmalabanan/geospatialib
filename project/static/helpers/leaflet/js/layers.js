@@ -104,18 +104,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     
     const hslaColor = manageHSLAColor(fillColor)
 
-    // options: {
-    //     'bi': 'bootstrap icon',
-    //     'text': 'text or emoji',
-    //     'svg': 'svg element',
-    //     'html': 'html element',
-    //     'property': 'feature property',
-    // },
-
-    const isPoint = type === 'point'
-    const isCanvas = renderer instanceof L.Canvas
-
-    if (isPoint && !fillPatternId) {
+    if (type === 'point') {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
             innerHTML: (
                 iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : 
@@ -151,48 +140,36 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
             element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
             element.style.textShadow = textShadow
-            // element.style.textShadow = Array(
-            //     iconShadow ? removeWhitespace(`
-            //         ${iconSize*0.1}px 
-            //         ${iconSize*0.1}px 
-            //         ${iconSize*0.5}px
-            //         ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity})}
-            //     `) : '',
-            //     iconGlow ? removeWhitespace(`
-            //         0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-            //         0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-            //         0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-            //         0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-            //     `) : ''
-            // ).filter(style => style !== '').join(',')
         }
 
         return L.divIcon({
             className: 'bg-transparent d-flex justify-content-center align-items-center',
             html: element?.outerHTML ?? '',
         });
-    }
+    } else {
+        const params = {
+            color: strokeColor,
+            weight: strokeWidth,
+            opacity: strokeOpacity,
+            lineCap,
+            lineJoin,
+            dashArray,
+            dashOffset, 
+        }
 
-    const params = isPoint ? {
-        radius: iconSize/2,
-        renderer,
-    } : {
-        color: strokeColor,
-        weight: strokeWidth,
-        opacity: strokeOpacity,
-        lineCap,
-        lineJoin,
-        dashArray,
-        dashOffset,
+        if (type === 'point') {
+            params.renderer = renderer
+            params.radius = iconSize/2
+        }
+        
+        const isCanvas = renderer instanceof L.Canvas
+        if (type === 'polygon') {
+            params.fillOpacity = fillColor ? fillOpacity : 0
+            params.fillColor = fillPattern === 'solid' || isCanvas ? fillColor : `url(#${fillPatternId})`
+        }
+        
+        return params
     }
-
-    if (Array('point', 'polygon').includes(type)) {
-        params.fillOpacity = isPoint ? 1 : fillColor ? fillOpacity : 0
-        // update to convert fill to image if isCanvas
-        params.fillColor = isPoint || (fillPattern !== 'solid' && !isCanvas) ? `url(#${fillPatternId})` : fillColor
-    }
-    
-    return params
 }
 
 const getLeafletLayerBounds = async (layer) => {
