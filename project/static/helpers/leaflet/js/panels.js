@@ -701,7 +701,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
                 document.body.appendChild(temp)
                 console.log(temp.firstChild.getBoundingClientRect())
-                document.body.removeChild(temp)
+                // document.body.removeChild(temp)
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text width
                 // newPattern.setAttribute('width', iconSize*3) // update to adjust based on text lngth        
 
