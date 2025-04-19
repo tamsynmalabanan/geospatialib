@@ -658,7 +658,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         ${styleParams.textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${styleParams.boldText ? 'fw-bold' : 'fw-normal'}
                         ${styleParams.italicText ? 'fst-italic' : 'fst-normal'}
-                        ${styleParams.fontMonospace ? 'font-monospace' : ''}
                     `))
                     
                     newPattern.appendChild(text)
@@ -670,6 +669,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         text.setAttribute('font-family', 'bootstrap-icons')
                         text.innerHTML = `&#x${bootstrapIcons[icon] ?? 'F287'};`
                     } else {
+                        if (styleParams.fontSerif) text.setAttribute('font-family', 'Georgia, Times, serif')
                         text.innerHTML = icon ?? ''
                     }
                 }
@@ -967,17 +967,17 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const fontMonospace = createFormCheck({
+        const fontSerif = createFormCheck({
             parent:textCheckboxes,
-            labelInnerText: 'Text serif',
-            checked: styleParams.fontMonospace,
+            labelInnerText: 'Font serif',
+            checked: styleParams.fontSerif,
             labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
-                    if (value === styleParams.fontMonospace) return
+                    if (value === styleParams.fontSerif) return
 
-                    styleParams.fontMonospace = value
+                    styleParams.fontSerif = value
                     update()
                 }
             }
