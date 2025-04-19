@@ -172,6 +172,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             dashArray,
             dashOffset, 
             renderer,   
+            radius: iconSize/2,
         } 
         
         if (type === 'polygon') {
