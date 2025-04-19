@@ -104,9 +104,18 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     
     const hslaColor = manageHSLAColor(fillColor)
 
-    
+    // options: {
+    //     'bi': 'bootstrap icon',
+    //     'text': 'text or emoji',
+    //     'svg': 'svg element',
+    //     'html': 'html element',
+    //     'property': 'feature property',
+    // },
 
-    if (type === 'point') {
+    const isPoint = type === 'point'
+    const isCanvas = renderer instanceof L.Canvas
+
+    if (isPoint && !fillPatternId) {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
             innerHTML: (
                 iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : 
@@ -162,31 +171,28 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             className: 'bg-transparent d-flex justify-content-center align-items-center',
             html: element?.outerHTML ?? '',
         });
-    } else {
-        const params = {
-            color: strokeColor,
-            weight: strokeWidth,
-            opacity: strokeOpacity,
-            lineCap,
-            lineJoin,
-            dashArray,
-            dashOffset, 
-        }
-
-        if (type === 'point') {
-            params.renderer = renderer
-            params.radius = iconSize/2
-        }
-        
-        const isCanvas = renderer instanceof L.Canvas
-        if (type === 'polygon') {
-            params.fillOpacity = fillColor ? fillOpacity : 0
-            // update to convert fill to image if isCanvas
-            params.fillColor = fillPattern === 'solid' || isCanvas ? fillColor : `url(#${fillPatternId})`
-        }
-        
-        return params
     }
+
+    const params = isPoint ? {
+        radius: iconSize/2,
+        renderer,
+    } : {
+        color: strokeColor,
+        weight: strokeWidth,
+        opacity: strokeOpacity,
+        lineCap,
+        lineJoin,
+        dashArray,
+        dashOffset,
+    }
+
+    if (Array('point', 'polygon').includes(type)) {
+        params.fillOpacity = isPoint ? 1 : fillColor ? fillOpacity : 0
+        // update to convert fill to image if isCanvas
+        params.fillColor = isPoint || (fillPattern !== 'solid' && !isCanvas) ? `url(#${fillPatternId})` : fillColor
+    }
+    
+    return params
 }
 
 const getLeafletLayerBounds = async (layer) => {

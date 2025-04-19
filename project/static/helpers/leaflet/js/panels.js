@@ -639,20 +639,21 @@ const handleLeafletStylePanel = (map, parent) => {
                 svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
                 delete styleParams.fillPatternId
             }
-            const id = generateRandomString()
-            styleParams.fillPatternId = id
-
-            const svgNS = "http://www.w3.org/2000/svg"
-            const newPattern = document.createElementNS(svgNS, 'pattern')
-            newPattern.id = id
-            newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-            newPattern.setAttribute('width', contaienrSize*2)
-            newPattern.setAttribute('height', contaienrSize*2)                
-            newPattern.style.transform = `rotate(${iconRotation}deg)`
-            newPattern.style.transformOrigin = `50% 50%`
-            svgFillDefs.appendChild(newPattern)
             
             if (Array('bi', 'text').includes(iconType)) {
+                const id = generateRandomString()
+                styleParams.fillPatternId = id
+            
+                const svgNS = "http://www.w3.org/2000/svg"
+                const newPattern = document.createElementNS(svgNS, 'pattern')
+                newPattern.id = id
+                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                newPattern.setAttribute('width', contaienrSize*2)
+                newPattern.setAttribute('height', contaienrSize*2)                
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
+                svgFillDefs.appendChild(newPattern)
+                
                 const text = document.createElementNS(svgNS, 'text')
                 text.setAttribute('x', contaienrSize)
                 text.setAttribute('y', contaienrSize)
@@ -685,6 +686,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('stroke-linecap', lineCap)
                     text.setAttribute('stroke-linejoin', lineJoin)
                     text.setAttribute('stroke-dasharray', dashArray)
+                    text.setAttribute('stroke-dashoffset', dashOffset)
                 } else {
                     text.setAttribute('stroke', 'none')
                 }
