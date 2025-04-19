@@ -36,7 +36,6 @@ const getLeafletStyleParams = ({
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
-    iconGlow = iconGlow === true ? hslaColor?.toString({a:fillOpacity}) : null
 
     return  {
         strokeWidth,
@@ -133,12 +132,17 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
             element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
             element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
             element.style.textShadow = Array(
-                iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
+                iconShadow ? removeWhitespace(`
+                    ${iconSize/10*1}px 
+                    ${iconSize/10*1}px 
+                    ${iconSize/10*2}px
+                    ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity})}
+                `) : '',
                 iconGlow ? removeWhitespace(`
-                    0 0 ${iconSize/2*1}px ${iconGlow}, 
-                    0 0 ${iconSize/2*2}px ${iconGlow}, 
-                    0 0 ${iconSize/2*3}px ${iconGlow}, 
-                    0 0 ${iconSize/2*4}px ${iconGlow}
+                    0 0 ${iconSize/2*1}px ${hslaColor.toString({a:fillOpacity/5*4})}, 
+                    0 0 ${iconSize/2*2}px ${hslaColor.toString({a:fillOpacity/5*3})}, 
+                    0 0 ${iconSize/2*3}px ${hslaColor.toString({a:fillOpacity/5*2})}, 
+                    0 0 ${iconSize/2*4}px ${hslaColor.toString({a:fillOpacity/5*1})}
                 `) : ''
             ).filter(style => style !== '').join(',')
         }
