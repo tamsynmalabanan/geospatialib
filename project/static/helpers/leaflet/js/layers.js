@@ -122,19 +122,20 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
         if (fontSerif) element.style.fontFamily = 'Georgia, "Times New Roman", Times, serif'
         
         if (element instanceof Element) {
-            if (Array('img', 'svg', 'path').includes(element.tagName)) {
-                element.classList.add('position-absolute')
-                element.setAttribute('width', iconSize)
-                element.setAttribute('height', iconSize)
-            } else {
-                element.style.fontSize = `${iconSize}px`
-                element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
-                element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
-                element.style.textShadow = Array(
-                    iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
-                    iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
-                ).filter(style => style !== '').join(',')
-            }
+            element.classList.add('position-absolute')
+            element.setAttribute('width', iconSize)
+            element.setAttribute('height', iconSize)
+
+            element.style.fontSize = `${iconSize}px`
+            element.style.color = hslaColor?.toString({a:fillOpacity}) || fillColor
+            element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+            element.style.textShadow = Array(
+                iconShadow ? `2px 2px 4px ${hslaColor?.toString({l:hslaColor.l/10,a:fillOpacity}) || 'black'}` : '',
+                iconGlow ? `0 0 ${iconSize/2*1}px ${iconGlow}, 0 0 ${iconSize/2*2}px ${iconGlow}, 0 0 ${iconSize/2*3}px ${iconGlow}, 0 0 ${iconSize/2*4}px ${iconGlow}` : ''
+            ).filter(style => style !== '').join(',')
+            // if (Array('img', 'svg', 'path').includes(element.tagName)) {
+            // } else {
+            // }
         }
 
         return L.divIcon({
