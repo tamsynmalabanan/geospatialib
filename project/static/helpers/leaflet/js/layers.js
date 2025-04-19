@@ -112,6 +112,7 @@ const getLeafletLayerStyle = (feature, styleParams={}) => {
                     'default'
                 ),
                 transform: `rotate(${iconRotation}deg)`,
+                transformOrigin: `50% 50%`,
             },
             className:removeWhitespace(`
                 h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
