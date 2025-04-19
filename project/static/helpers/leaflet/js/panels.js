@@ -634,7 +634,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (Array('bi', 'text').includes(styleParams.iconType)) {
                     const text = document.createElementNS(svgNS, 'text')
-                    text.setAttribute('x', contaienrSize)
+                    text.setAttribute('x', contaienrSize/2)
                     text.setAttribute('y', contaienrSize)
                     text.setAttribute('font-size', iconSize)
                     
