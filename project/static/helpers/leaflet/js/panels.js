@@ -789,8 +789,9 @@ const handleLeafletStylePanel = (map, parent) => {
             options: {
                 'bi': 'bootstrap icon',
                 'text': 'text or emoji',
+                'svg': 'svg element',
+                'html': 'html element',
                 'property': 'feature property',
-                'html': 'html/svg element',
             },
             currentValue: styleParams.iconType,
             events: {
@@ -1045,6 +1046,42 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const patternCheckboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:iconFields2
+        })
+
+        const patternFill = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Pattern fill',
+            checked: styleParams.patternFill,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.patternFill) return
+
+                    styleParams.patternFill = value
+                    update()
+                }
+            }
+        })
+
+        const patternStroke = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Pattern stroke',
+            checked: styleParams.patternStroke,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.patternStroke) return
+
+                    styleParams.patternStroke = value
+                    update()
+                }
+            }
+        })
 
         const fillFields = customCreateElement({
             className:'d-flex gap-2',
@@ -1120,43 +1157,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    update()
-                }
-            }
-        })
-
-        const patternCheckboxes = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:patternFields
-        })
-
-        const patternFill = createFormCheck({
-            parent:patternCheckboxes,
-            labelInnerText: 'Pattern fill',
-            checked: styleParams.patternFill,
-            labelClass: 'text-nowrap',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.patternFill) return
-
-                    styleParams.patternFill = value
-                    update()
-                }
-            }
-        })
-
-        const patternStroke = createFormCheck({
-            parent:patternCheckboxes,
-            labelInnerText: 'Pattern stroke',
-            checked: styleParams.patternStroke,
-            labelClass: 'text-nowrap',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.patternStroke) return
-
-                    styleParams.patternStroke = value
                     update()
                 }
             }

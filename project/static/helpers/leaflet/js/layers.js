@@ -104,7 +104,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     
     const hslaColor = manageHSLAColor(fillColor)
 
-
+    
 
     if (type === 'point') {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
@@ -181,6 +181,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         const isCanvas = renderer instanceof L.Canvas
         if (type === 'polygon') {
             params.fillOpacity = fillColor ? fillOpacity : 0
+            // update to convert fill to image if isCanvas
             params.fillColor = fillPattern === 'solid' || isCanvas ? fillColor : `url(#${fillPatternId})`
         }
         
