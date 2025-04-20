@@ -924,7 +924,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconSpecs = createFormFloating({
             parent,
-            fieldTag: 'textarea',
             containerClass: 'd-flex w-100 flex-grow-1',
             fieldAttrs: {
                 name:`${id}-iconSpecs`,
