@@ -2,7 +2,7 @@ const createMapPanels = (container, {} = {}) => {
     const id = `${container.id}-panels`
     const [toggle, offcanvas] = createOffcanvas(id, {
         themed: true,
-        toggleIconClass: 'bi-info-circle',
+        toggleiconSpecs: 'bi-info-circle',
         toggleLabelText: 'Geopanel',
         toggleLabelClass: 'd-none d-md-block',
         show: getCookie(`show_#${id}`) === 'true',

@@ -20,7 +20,7 @@ const customCreateElement = ({
 const createButton = ({
     id,
     className = '',
-    iconClass,
+    iconSpecs,
     title,
     disabled,
     parent,
@@ -39,7 +39,7 @@ const createButton = ({
     if (name) btn.setAttribute('name', name)
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
-    if (iconClass) createIcon({className:`bi ${iconClass}`, parent:btn})
+    if (iconSpecs) createIcon({className:`bi ${iconSpecs}`, parent:btn})
     if (innerText) createSpan(innerText, {
         parent:btn, 
         className:`${textClass}`
@@ -169,7 +169,7 @@ const createOffcanvas = (id, {
     toggleLabelText,
     toggleTitle = `Toggle ${toggleLabelText ? toggleLabelText : 'sidebar'}`,
     toggleParent,
-    toggleIconClass,
+    toggleiconSpecs,
     toggleLabelClass = '',
     titleText = toggleLabelText,
     titleClass,
@@ -185,7 +185,7 @@ const createOffcanvas = (id, {
         label: toggleLabelText
     })
 
-    if (toggleIconClass) createIcon({className: `bi ${toggleIconClass}`, parent: toggle})
+    if (toggleiconSpecs) createIcon({className: `bi ${toggleiconSpecs}`, parent: toggle})
     if (toggleLabelText) createSpan(toggleLabelText, {className: `ms-2 text-nowrap ${toggleLabelClass}`, parent: toggle})
 
     const offcanvas = createOffcanvasElement(id, {
@@ -334,7 +334,7 @@ const createDropdownMenuLi = ({
 
 const createDropdown = ({
     btnClassName = '',
-    btnIconClass,
+    btniconSpecs,
     btnTitle, 
     menuClassName,
 } = {}) => {
@@ -343,7 +343,7 @@ const createDropdown = ({
 
     const toggle = createButton({
         className: `dropdown-toggle ${btnClassName}`,
-        iconClass: btnIconClass,
+        iconSpecs: btniconSpecs,
         btnAttrs: {
             title: btnTitle,
         }

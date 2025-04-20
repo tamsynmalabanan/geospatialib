@@ -5,25 +5,27 @@ const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z
 
 const getLeafletStyleParams = ({
     iconType='bi',
-    iconClass='circle-fill',
+    iconSpecs='circle-fill',
     iconSize=10,
     iconRotation=0,
 
     iconShadow=false,
     iconGlow=false,
     textShadow=null,
+
     textWrap=false,
     boldFont=false,
     italicFont=false,
     fontSerif=false,
+    
+    patternFill=true,
+    patternStroke=true,
     
     fillColor=generateRandomColor(),
     fillOpacity=0.5,
     
     fillPattern='solid',
     fillPatternId='',
-    patternFill=true,
-    patternStroke=true,
 
     strokeColor=true,
     strokeOpacity=1,
@@ -40,12 +42,13 @@ const getLeafletStyleParams = ({
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
     return  {
+        hslaColor,
         strokeWidth,
         strokeColor,
         strokeOpacity,
         fillColor,
         fillOpacity,
-        iconClass,
+        iconSpecs,
         iconSize,
         iconShadow,
         iconGlow,
@@ -75,12 +78,13 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     if (!type) return
 
     const {
+        hslaColor,
         strokeWidth,
         strokeColor,
         strokeOpacity,
         fillColor,
         fillOpacity,
-        iconClass,
+        iconSpecs,
         iconSize,
         iconShadow,
         iconGlow,
@@ -101,15 +105,17 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         lineBreak,
         textShadow,
     } = getLeafletStyleParams(styleParams)
-    
-    const hslaColor = manageHSLAColor(fillColor)
 
-    if (type === 'point') {
-        const element = iconType === 'html' ? customCreateElement({innerHTML:iconClass}).firstChild : customCreateElement({
+    const isPoint = type === 'point'
+    const isCircleMarker = isPoint && iconType === 'bi' && iconSpecs === 'circle-fill'
+    const isCanvas = renderer instanceof L.Canvas
+
+    if (isPoint && !isCircleMarker) {
+        const element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
             innerHTML: (
-                iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : 
-                iconType === 'text' ? iconClass : 
-                iconType === 'property' ? feature.properties[iconClass] ?? '' : 
+                iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
+                iconType === 'text' ? iconSpecs : 
+                iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
                 ''
             ),
             style: {
@@ -147,27 +153,30 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             html: element?.outerHTML ?? '',
         });
     } else {
+        const noPointStroke = isPoint && !patternStroke
+        const noPointFill = isPoint && !patternFill
+        
         const params = {
-            color: strokeColor,
-            weight: strokeWidth,
-            opacity: strokeOpacity,
+            color:  noPointStroke ? 'none' : strokeColor,
+            weight: noPointStroke ? 0 : strokeWidth,
+            opacity: noPointStroke ? 0 : strokeOpacity,
             lineCap,
             lineJoin,
             dashArray,
             dashOffset, 
         }
 
-        if (type === 'point') {
-            params.renderer = renderer
-            params.radius = iconSize/2
+        if (type !== 'linestring') {
+            params.fillOpacity = noPointFill ? 0 : fillOpacity
+            params.fillColor = noPointFill ? 'none' : isCanvas || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
+            
+            if (isPoint) {
+                params.renderer = renderer
+                params.radius = iconSize/2
+            }
         }
         
-        const isCanvas = renderer instanceof L.Canvas
-        if (type === 'polygon') {
-            params.fillOpacity = fillColor ? fillOpacity : 0
-            params.fillColor = fillPattern === 'solid' || isCanvas ? fillColor : `url(#${fillPatternId})`
-        }
-        
+
         return params
     }
 }

@@ -177,13 +177,13 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     const tools = toolsHandler({
         zoomin: {
-            iconClass: 'bi bi-zoom-in',
+            iconSpecs: 'bi bi-zoom-in',
             title: 'Zoom to layers',
             disabled: true,
             btnClickHandler: async () => await map._ch.zoomToLegendLayers(),
         },
         visibility: {
-            iconClass: 'bi bi-eye',
+            iconSpecs: 'bi bi-eye',
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
@@ -197,13 +197,13 @@ const handleLeafletLegendPanel = (map, parent) => {
             className: 'vr m-2',
         },
         collapse: {
-            iconClass: 'bi bi-chevron-up',
+            iconSpecs: 'bi bi-chevron-up',
             title: 'Collapse/expand',
             disabled: true,
             btnClickHandler: () => toggleCollapseElements(layers),
         },
         toggleLegends: {
-            iconClass: 'bi bi-list-task',
+            iconSpecs: 'bi bi-list-task',
             title: 'Toggle legends',
             disabled: true,
             btnClickHandler: () => {
@@ -214,7 +214,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             },
         },
         toggleAttribution: {
-            iconClass: 'bi bi-c-circle',
+            iconSpecs: 'bi bi-c-circle',
             title: 'Toggle attributions',
             disabled: true,
             btnClickHandler: () => {
@@ -226,7 +226,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             },
         },
         clear: {
-            iconClass: 'bi-trash-fill',
+            iconSpecs: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
             btnClickHandler: (e) => {
@@ -606,19 +606,20 @@ const handleLeafletStylePanel = (map, parent) => {
         
         const update = () => {
             const {
-                fillColor,
-                fillOpacity,
+                hslaColor,
+                strokeWidth,
                 strokeColor,
                 strokeOpacity,
-                strokeWidth,
-                iconClass,
+                fillColor,
+                fillOpacity,
+                iconSpecs,
                 iconSize,
                 iconShadow,
                 iconGlow,
-                lineCap,
-                lineJoin,
                 dashArray,
                 dashOffset,
+                lineCap,
+                lineJoin,
                 iconType,
                 textWrap,
                 boldFont,
@@ -691,7 +692,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('stroke', 'none')
                 }
                                     
-                text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconClass] ?? 'F287'};` : iconClass ?? ''
+                text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                 
                 const temp = customCreateElement({
                     innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html
@@ -712,7 +713,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('y', height/2)
                 }
 
-                const hslaColor = manageHSLAColor(fillColor)
                 text.style.textShadow = styleParams.textShadow = Array(
                     iconShadow ? removeWhitespace(`
                         ${iconSize*0.1}px 
@@ -818,13 +818,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.iconType) return
 
-                    const iconClass = parent.querySelector(`[name="${id}-iconClass"]`)
+                    const iconSpecs = parent.querySelector(`[name="${id}-iconSpecs"]`)
                     if (value === 'bi') {
-                        iconClass.value = 'circle-fill'
-                        styleParams.iconClass = 'circle-fill'
+                        iconSpecs.value = 'circle-fill'
+                        styleParams.iconSpecs = 'circle-fill'
                     } else {
-                        iconClass.value = ''
-                        styleParams.iconClass = ''
+                        iconSpecs.value = ''
+                        styleParams.iconSpecs = ''
                     }
 
                     styleParams.iconType = value
@@ -921,13 +921,13 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         }
 
-        const iconClass = createFormFloating({
+        const iconSpecs = createFormFloating({
             parent,
             containerClass: 'd-flex w-100 flex-grow-1',
             fieldAttrs: {
-                name:`${id}-iconClass`,
+                name:`${id}-iconSpecs`,
                 type: 'search',
-                value: styleParams.iconClass,
+                value: styleParams.iconSpecs,
                 list: (() => {
                     updateIconDatalistOptions()
                     return iconDatalist.id
@@ -943,9 +943,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = e.target.value = 'circle-fill'
                     }
                     
-                    if (value === styleParams.iconClass) return
+                    if (value === styleParams.iconSpecs) return
                     
-                    styleParams.iconClass = value
+                    styleParams.iconSpecs = value
                     update()
                 }
             }
@@ -1433,7 +1433,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const zoominBtn = createButton({
             parent: btnsContainer,
             className: 'fs-12 bg-transparent border-0 p-0',
-            iconClass: 'bi bi bi-zoom-in',
+            iconSpecs: 'bi bi bi-zoom-in',
             disabled: !filters.geom.active,
             name: `geomFilter-zoomin-${id}`,
             events: {
@@ -1447,7 +1447,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const legendBtn = createButton({
             parent: btnsContainer,
             className: 'fs-12 bg-transparent border-0 p-0',
-            iconClass: 'bi bi-plus-lg',
+            iconSpecs: 'bi bi-plus-lg',
             disabled: !filters.geom.active,
             name: `geomFilter-legend-${id}`,
             events: {
@@ -1476,7 +1476,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const removeBtn = createButton({
             parent: btnsContainer,
             className: 'fs-12 bg-transparent border-0 p-0',
-            iconClass: 'bi bi-trash-fill',
+            iconSpecs: 'bi bi-trash-fill',
             disabled: !filters.geom.active,
             name: `geomFilter-remove-${id}`,
             events: {
@@ -1709,7 +1709,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const removeBtn = createButton({
             parent: valueFields,
             className: 'fs-12 bg-transparent border-0 p-0 me-1',
-            iconClass: 'bi bi-trash-fill',
+            iconSpecs: 'bi bi-trash-fill',
             disabled: !filters.properties.active,
             name: `propFilter-remove-${id}`,
             events: {
@@ -2041,7 +2041,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'typeFilter-toggle',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-toggles',
+                            iconSpecs: 'bi bi-toggles',
                             title: 'Toggle all types',
                             disabled: !filters.type.active,
                             events: {
@@ -2119,7 +2119,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'propFilter-new',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-plus-lg',
+                            iconSpecs: 'bi bi-plus-lg',
                             title: 'Add a new property filter',
                             disabled: !filters.properties.active,
                             events: {
@@ -2140,7 +2140,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'propFilter-toggle',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-toggles',
+                            iconSpecs: 'bi bi-toggles',
                             title: 'Toggle all property filters',
                             disabled: !filters.properties.active,
                             events: {
@@ -2165,7 +2165,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'propFilter-remove',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-trash-fill',
+                            iconSpecs: 'bi bi-trash-fill',
                             title: 'Remove all property filters',
                             disabled: !filters.properties.active,
                             events: {
@@ -2215,7 +2215,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'geomFilter-new',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-plus-lg',
+                            iconSpecs: 'bi bi-plus-lg',
                             title: 'Add a new spatial constraint',
                             disabled: !filters.geom.active,
                             events: {
@@ -2235,7 +2235,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'geomFilter-bbox',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-bounding-box-circles',
+                            iconSpecs: 'bi bi-bounding-box-circles',
                             title: 'Add map extent as spatial constraint',
                             disabled: !filters.geom.active,
                             events: {
@@ -2256,7 +2256,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'geomFilter-toggle',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-toggles',
+                            iconSpecs: 'bi bi-toggles',
                             title: 'Toggle all spatial constraints',
                             disabled: !filters.geom.active,
                             events: {
@@ -2282,7 +2282,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createButton,
                             name: 'geomFilter-remove',
                             className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconClass: 'bi bi-trash-fill',
+                            iconSpecs: 'bi bi-trash-fill',
                             title: 'Remove all spatial constraints',
                             disabled: !filters.geom.active,
                             events: {
@@ -2476,7 +2476,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const tools = toolsHandler({
         locationCoords: {
-            iconClass: 'bi-geo-alt-fill',
+            iconSpecs: 'bi-geo-alt-fill',
             title: 'Query point coordinates',
             altShortcut: 'q',
             mapClickHandler: async (e) => {
@@ -2495,7 +2495,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             },
         },
         osmPoint: {
-            iconClass: 'bi-pin-map-fill',
+            iconSpecs: 'bi-pin-map-fill',
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, options={}) => {
@@ -2512,7 +2512,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }, options)}
         },
         osmView: {
-            iconClass: 'bi-bounding-box-circles',
+            iconSpecs: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, options={}) => {
@@ -2525,7 +2525,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             }
         },
         layerPoint: {
-            iconClass: 'bi-stack',
+            iconSpecs: 'bi-stack',
             title: 'Query layers at point',
         },
         divider1: {
@@ -2533,7 +2533,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             className: 'vr m-2',
         },
         cancel: {
-            iconClass: 'bi-arrow-counterclockwise',
+            iconSpecs: 'bi-arrow-counterclockwise',
             title: 'Cancel ongoing query',
             disabled: true,
         },
@@ -2542,7 +2542,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             className: 'vr m-2',
         },
         zoomin: {
-            iconClass: 'bi bi-zoom-in',
+            iconSpecs: 'bi bi-zoom-in',
             title: 'Zoom to layers',
             toolHandler: false,
             disabled: true,
@@ -2560,7 +2560,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             },
         },
         visibility: {
-            iconClass: 'bi bi-eye',
+            iconSpecs: 'bi bi-eye',
             title: 'Toggle visibility',
             toolHandler: false,
             disabled: true,
@@ -2577,14 +2577,14 @@ const handleLeafletQueryPanel = (map, parent) => {
             className: 'vr m-2',
         },
         collapse: {
-            iconClass: 'bi bi-chevron-up',
+            iconSpecs: 'bi bi-chevron-up',
             title: 'Collapse/expand',
             toolHandler: false,
             disabled: true,
             btnClickHandler: () => toggleCollapseElements(layers),
         },
         clear: {
-            iconClass: 'bi-trash-fill',
+            iconSpecs: 'bi-trash-fill',
             title: 'Clear query results',
             disabled: true,
             btnClickHandler: true
