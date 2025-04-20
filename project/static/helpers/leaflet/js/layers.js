@@ -107,8 +107,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     } = getLeafletStyleParams(styleParams)
 
     const isPoint = type === 'point'
-    const isCircleMarker = isPoint && iconType === 'bi' && iconSpecs === 'circle-fill'
     const isCanvas = renderer instanceof L.Canvas
+    const isCircleMarker = isCanvas && isPoint && iconType === 'bi' && iconSpecs === 'circle-fill'
 
     if (isPoint && !isCircleMarker) {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
