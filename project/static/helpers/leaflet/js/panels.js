@@ -1862,6 +1862,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             fieldTag: 'textarea',
                             currentValue: layer._attribution,
                             labelText: 'Attribution (HTML-frieldly)',
+                            fieldClass: 'fs-12',
                             fieldStyle: {
                                 minHeight: '100px', 
                             },
