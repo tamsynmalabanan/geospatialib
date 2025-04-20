@@ -671,8 +671,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     `) : ''
                 ).filter(i => i !== '').join(',')
 
-                text.setAttribute('x', containerSize)
-                text.setAttribute('y', containerSize)
+                text.setAttribute('x', '50%') //containerSize)
+                text.setAttribute('y', '50%') //containerSize)
                 text.setAttribute('text-anchor', 'middle')
                 text.setAttribute('dominant-baseline', 'middle')
                 text.setAttribute('font-size', iconSize)
@@ -737,11 +737,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (bounds.width > bounds.height) {
                     const width = containerSize+bounds.width
                     newPattern.setAttribute('width', width)
-                    text.setAttribute('x', width/2)
+                    // text.setAttribute('x', width/2)
                 } else {
                     const height = containerSize+bounds.height
                     newPattern.setAttribute('height', height)
-                    text.setAttribute('y', height/2)
+                    // text.setAttribute('y', height/2)
                 }
             }
 
