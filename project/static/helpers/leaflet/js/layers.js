@@ -160,7 +160,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         } else {
             const def = document.querySelector(`svg#svgFillDefs defs#${fillPatternId}`)
             const svgSelector = def.querySelector(`pattern#${fillPatternId}-pattern use`).getAttribute('href')
-            element = def.querySelector(svgSelector)
+            element = cloneNode(def.querySelector(svgSelector))
             console.log(element)
         }
 
