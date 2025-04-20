@@ -674,7 +674,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 text.setAttribute('x', containerSize)
                 text.setAttribute('y', containerSize)
                 text.setAttribute('text-anchor', 'middle')
-                text.setAttribute('dominant-baseline', 'middle')
+                text.setAttribute('dominant-baseline', 'central')
                 text.setAttribute('font-size', iconSize)
                 text.setAttribute('class', removeWhitespace(`
                     text-center lh-1
