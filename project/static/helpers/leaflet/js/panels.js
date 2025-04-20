@@ -924,6 +924,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconSpecs = createFormFloating({
             parent,
+            fieldTag: 'textarea',
             containerClass: 'd-flex w-100 flex-grow-1',
             fieldAttrs: {
                 name:`${id}-iconSpecs`,
@@ -935,7 +936,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
             },
             fieldClass: 'form-control-sm',
-            labelText: 'Icon description',
+            labelText: 'Icon',
             events: {
                 blur: (e) => {
                     let value = e.target.value.trim()
