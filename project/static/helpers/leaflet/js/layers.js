@@ -164,7 +164,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
             const svgNS = "http://www.w3.org/2000/svg"
             element = document.createElementNS(svgNS, 'use')
-            use.setAttribute('href', svgSelector)
+            element.setAttribute('href', svgSelector)
             console.log(element)
         }
 
