@@ -655,6 +655,22 @@ const handleLeafletStylePanel = (map, parent) => {
                 text.id = `${id}-text`
                 defs.appendChild(text)
 
+                text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+                text.style.textShadow = styleParams.textShadow = Array(
+                    iconShadow ? removeWhitespace(`
+                        ${iconSize*0.1}px 
+                        ${iconSize*0.1}px 
+                        ${iconSize*0.2}px 
+                        ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                    `) : '',
+                    iconGlow ? removeWhitespace(`
+                        0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                        0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                        0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                        0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                    `) : ''
+                ).filter(i => i !== '').join(',')
+
                 text.setAttribute('x', containerSize)
                 text.setAttribute('y', containerSize)
                 text.setAttribute('text-anchor', 'middle')
@@ -690,9 +706,20 @@ const handleLeafletStylePanel = (map, parent) => {
                 } else {
                     text.setAttribute('stroke', 'none')
                 }
-                                    
-                text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
-                
+
+                const newPattern = document.createElementNS(svgNS, 'pattern')
+                newPattern.id = `${id}-pattern`
+                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                newPattern.setAttribute('width', containerSize*2)
+                newPattern.setAttribute('height', containerSize*2)                
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
+                defs.appendChild(newPattern)
+
+                const use = document.createElementNS(svgNS, 'user')
+                use.setAttribute('href', `#${id}-text`)
+                newPattern.appendChild(use)
+
                 const tempStyle = getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams)
                 const tempElement = customCreateElement({
                     innerHTML: tempStyle.options?.html ?? leafletLayerStyleToHTML(tempStyle, 'point')
@@ -712,34 +739,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     newPattern.setAttribute('height', height)
                     text.setAttribute('y', height/2)
                 }
-
-                text.style.textShadow = styleParams.textShadow = Array(
-                    iconShadow ? removeWhitespace(`
-                        ${iconSize*0.1}px 
-                        ${iconSize*0.1}px 
-                        ${iconSize*0.2}px 
-                        ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                    `) : '',
-                    iconGlow ? removeWhitespace(`
-                        0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                        0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                        0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                        0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                    `) : ''
-                ).filter(i => i !== '').join(',')
-
-                const newPattern = document.createElementNS(svgNS, 'pattern')
-                newPattern.id = `${id}-pattern`
-                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', containerSize*2)
-                newPattern.setAttribute('height', containerSize*2)                
-                newPattern.style.transform = `rotate(${iconRotation}deg)`
-                newPattern.style.transformOrigin = `50% 50%`
-                defs.appendChild(newPattern)
-
-                const use = document.createElementNS(svgNS, 'user')
-                use.setAttribute('href', `#${id}-text`)
-                newPattern.appendChild(use)
             }
 
             updateGeoJSONData(layer)
