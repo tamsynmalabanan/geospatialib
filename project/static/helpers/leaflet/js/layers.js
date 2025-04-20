@@ -236,22 +236,13 @@ const leafletLayerStyleToHTML = (style, type) => {
             `${isPoint ? 'circle' : isLineString ? 'line' : 'rect'}`
         )
 
-        if (isPoint) {
-            console.log(!isPoint || style.patternStroke)
-            console.log(!isPoint || style.patternFill)
-        }
-        
-        if (!isPoint || style.patternStroke) {
-            symbol.setAttribute('stroke', style.color)
-            symbol.setAttribute('stroke-opacity', style.opacity)
-            symbol.setAttribute('stroke-width', style.weight)
-            symbol.setAttribute('stroke-linecap', style.lineCap)
-            symbol.setAttribute('stroke-linejoin', style.lineJoin)
-            symbol.setAttribute('stroke-dasharray', style.dashArray)
-            symbol.setAttribute('stroke-dashoffset', style.dashOffset)
-        } else {
-            symbol.setAttribute('stroke', 'none')
-        }
+        symbol.setAttribute('stroke', style.color)
+        symbol.setAttribute('stroke-opacity', style.opacity)
+        symbol.setAttribute('stroke-width', style.weight)
+        symbol.setAttribute('stroke-linecap', style.lineCap)
+        symbol.setAttribute('stroke-linejoin', style.lineJoin)
+        symbol.setAttribute('stroke-dasharray', style.dashArray)
+        symbol.setAttribute('stroke-dashoffset', style.dashOffset)
 
         if (isLineString) {
             symbol.setAttribute('x1', 0)
@@ -259,7 +250,6 @@ const leafletLayerStyleToHTML = (style, type) => {
             symbol.setAttribute('x2', width)
             symbol.setAttribute('y2', height/2)
         } else {
-            
             if (isPoint) {
                 symbol.setAttribute('r', style.radius ?? style.iconSize/2)
                 symbol.setAttribute('cx', width/2)
@@ -271,14 +261,9 @@ const leafletLayerStyleToHTML = (style, type) => {
                 symbol.setAttribute('height', height)
             }
 
-            if (!isPoint || style.patternFill) {
-                symbol.setAttribute('fill', style.fillColor)
-                symbol.setAttribute('fill-opacity', style.fillOpacity)
-                symbol.setAttribute('fill-rule', 'evenodd')
-            } else {
-                symbol.setAttribute('fill', 'none')
-            }
-
+            symbol.setAttribute('fill', style.fillColor)
+            symbol.setAttribute('fill-opacity', style.fillOpacity)
+            symbol.setAttribute('fill-rule', 'evenodd')
         }
 
         svg.appendChild(symbol)
