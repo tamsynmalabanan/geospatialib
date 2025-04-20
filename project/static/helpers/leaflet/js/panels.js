@@ -702,7 +702,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 temp.classList.add('position-absolute')
                 document.body.appendChild(temp)
                 const bounds = temp.getBoundingClientRect()
-                document.body.removeChild(temp)
+                // document.body.removeChild(temp)
 
                 if (bounds.width > bounds.height) {
                     const width = containerSize+bounds.width
