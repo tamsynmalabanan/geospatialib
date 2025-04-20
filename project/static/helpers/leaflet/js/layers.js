@@ -174,7 +174,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         if (type !== 'linestring') {
             if (!isPoint || patternFill) {
                 params.fillOpacity = !isPoint && isCanvas && fillPattern !== 'solid' ? 0 : fillOpacity
-                params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'transparent' : `url(#${fillPatternId})` 
+                params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'transparent' : `url(#${fillPatternId}-pattern)` 
             } else {
                 params.fillColor = 'transparent'
                 params.fillOpacity = 0
@@ -310,35 +310,39 @@ const findLeafletFeatureLayerParent = (layer) => {
 
 const cloneLeafletLayerStyles = (layer) => {
     const styles = structuredClone(layer._styles)
-    const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+    const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
     
     Array(styles.default, ...Object.values(styles.groups ?? {})).forEach(i => {
         const currentId = i.styleParams.fillPatternId
         if (!currentId) return 
         
-        const pattern = svgFillDefs.querySelector(`#${currentId}`)
-        if (!pattern) return
+        const defs = svgFillDefs.querySelector(`#${currentId}`)
+        if (!defs) return
 
         const newId = generateRandomString()
         i.styleParams.fillPatternId = newId
 
-        const clonedPattern = pattern.cloneNode(true)
-        clonedPattern.id = newId
-        svgFillDefs.appendChild(clonedPattern)
+        const clonedDefs = defs.cloneNode(true)
+        clonedDefs.id = newId
+        svgFillDefs.appendChild(clonedDefs)
+        
+        Array.from(clonedDefs.children).forEach(e => {
+            e.id = `${newId}-${e.id.replace(`${currentId}-`,'')}`
+        })
     })
 
     return styles
 }
 
 const deleteLeafletLayerFillPatterns = (layer) => {
-    const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+    const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
                 
     Array(layer._styles.default, ...Object.values(layer._styles.groups ?? {})).forEach(i => {
         const fillPatternId = i.styleParams.fillPatternId
         if (!fillPatternId) return 
         
-        const pattern = svgFillDefs.querySelector(`#${fillPatternId}`)
-        pattern?.remove()
+        const defs = svgFillDefs.querySelector(`#${fillPatternId}`)
+        defs?.remove()
     })
 }
 

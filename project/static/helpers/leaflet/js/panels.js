@@ -635,27 +635,26 @@ const handleLeafletStylePanel = (map, parent) => {
             } = styleParams
             const containerSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
             
-            const svgFillDefs = document.querySelector(`svg#svgFillDefs defs`)
+            const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
             if (fillPatternId) {
                 svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
                 delete styleParams.fillPatternId
             }
-            
+
             if (Array('bi', 'text').includes(iconType)) {
                 const id = generateRandomString()
                 styleParams.fillPatternId = id
-            
+        
                 const svgNS = "http://www.w3.org/2000/svg"
-                const newPattern = document.createElementNS(svgNS, 'pattern')
-                newPattern.id = id
-                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', containerSize*2)
-                newPattern.setAttribute('height', containerSize*2)                
-                newPattern.style.transform = `rotate(${iconRotation}deg)`
-                newPattern.style.transformOrigin = `50% 50%`
-                svgFillDefs.appendChild(newPattern)
                 
+                const defs = document.createElementNS(svgNS, 'defs')
+                defs.id = id
+                svgFillDefs.appendChild(defs)
+
                 const text = document.createElementNS(svgNS, 'text')
+                text.id = `${id}-text`
+                defs.appendChild(text)
+
                 text.setAttribute('x', containerSize)
                 text.setAttribute('y', containerSize)
                 text.setAttribute('text-anchor', 'middle')
@@ -695,14 +694,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                 
                 const tempStyle = getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams)
-                const temp = customCreateElement({
+                const tempElement = customCreateElement({
                     innerHTML: tempStyle.options?.html ?? leafletLayerStyleToHTML(tempStyle, 'point')
                 }).firstChild
-                temp.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
-                temp.classList.add('position-absolute')
-                document.body.appendChild(temp)
-                const bounds = temp.getBoundingClientRect()
-                document.body.removeChild(temp)
+                tempElement.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
+                tempElement.classList.add('position-absolute')
+                document.body.appendChild(tempElement)
+                const bounds = tempElement.getBoundingClientRect()
+                document.body.removeChild(tempElement)
 
                 if (bounds.width > bounds.height) {
                     const width = containerSize+bounds.width
@@ -729,7 +728,18 @@ const handleLeafletStylePanel = (map, parent) => {
                     `) : ''
                 ).filter(i => i !== '').join(',')
 
-                newPattern.appendChild(text)
+                const newPattern = document.createElementNS(svgNS, 'pattern')
+                newPattern.id = `${id}-pattern`
+                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                newPattern.setAttribute('width', containerSize*2)
+                newPattern.setAttribute('height', containerSize*2)                
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
+                defs.appendChild(newPattern)
+
+                const use = document.createElementNS(svgNS, 'user')
+                use.setAttribute('href', `#${id}-text`)
+                newPattern.appendChild(use)
             }
 
             updateGeoJSONData(layer)
