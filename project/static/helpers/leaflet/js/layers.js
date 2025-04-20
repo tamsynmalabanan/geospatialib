@@ -163,8 +163,17 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             const svgSelector = pattern.querySelector(`use`).getAttribute('href')
 
             const svgNS = "http://www.w3.org/2000/svg"
-            element = document.createElementNS(svgNS, 'use')
-            element.setAttribute('href', svgSelector)
+            element = document.createElementNS(svgNS, 'svg')
+            element.classList.add('position-absolute')
+            element.setAttribute('width', pattern.getAttribute('width'))
+            element.setAttribute('height', pattern.getAttribute('height'))
+            element.style.transform = `rotate(${iconRotation}deg)` 
+            element.style.transformOrigin = '50% 50%'
+            
+            const use = document.createElementNS(svgNS, 'use')
+            use.setAttribute('href', svgSelector)
+            element.appendChild(use)
+            
             console.log(element)
         }
 
