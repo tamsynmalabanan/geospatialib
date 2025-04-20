@@ -166,7 +166,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         if (type !== 'linestring') {
             if (!isPoint || patternFill) {
                 params.fillOpacity = fillOpacity
-                params.fillColor = isCanvas || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
+                params.fillColor = isPoint || isCanvas || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
             } else {
                 params.fillColor = 'none'
             }
