@@ -119,48 +119,48 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
     if (isPoint && !isCircleMarker) {
         let element
-        if (textWrap || !fillPatternId) {
-            element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
-                innerHTML: (
-                    iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
-                    iconType === 'text' ? iconSpecs : 
-                    iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
-                    ''
+        element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
+            innerHTML: (
+                iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
+                iconType === 'text' ? iconSpecs : 
+                iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
+                ''
+            ),
+            style: {
+                fontFamily: (
+                    iconType === 'bi' ? 'bootstrap-icons' : 
+                    fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
+                    'default'
                 ),
-                style: {
-                    fontFamily: (
-                        iconType === 'bi' ? 'bootstrap-icons' : 
-                        fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
-                        'default'
-                    ),
-                    transform: `rotate(${iconRotation}deg)`,
-                    transformOrigin: `50% 50%`,
-                },
-                className:removeWhitespace(`
-                    h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
-                    ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                    ${boldFont ? 'fw-bold' : 'fw-normal'}
-                    ${italicFont ? 'fst-italic' : 'fst-normal'}
-                `),
-            })
-    
-            if (element instanceof Element) {
-                if (Array('img', 'svg', 'path').includes(element.tagName)) {
-                    element.classList.add('position-absolute')
-                    element.setAttribute('width', iconSize)
-                    element.setAttribute('height', iconSize)
-                }
-                
-                element.style.fontSize = `${iconSize}px`
-                element.style.color = patternFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
-                if (patternStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
-                element.style.textShadow = textShadow
+                transform: `rotate(${iconRotation}deg)`,
+                transformOrigin: `50% 50%`,
+            },
+            className:removeWhitespace(`
+                h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
+                ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                ${boldFont ? 'fw-bold' : 'fw-normal'}
+                ${italicFont ? 'fst-italic' : 'fst-normal'}
+            `),
+        })
+
+        if (element instanceof Element) {
+            if (Array('img', 'svg', 'path').includes(element.tagName)) {
+                element.classList.add('position-absolute')
+                element.setAttribute('width', iconSize)
+                element.setAttribute('height', iconSize)
             }
-        } else {
-            const def = document.querySelector(`svg#svgFillDefs defs#${fillPatternId}`)
-            const svgSelector = def.querySelector(`pattern#${fillPatternId}-pattern use`).getAttribute('href')
-            element = def.querySelector(svgSelector)
+            
+            element.style.fontSize = `${iconSize}px`
+            element.style.color = patternFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
+            if (patternStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+            element.style.textShadow = textShadow
         }
+        // if (textWrap || !fillPatternId) {
+        // } else {
+        //     const def = document.querySelector(`svg#svgFillDefs defs#${fillPatternId}`)
+        //     const svgSelector = def.querySelector(`pattern#${fillPatternId}-pattern use`).getAttribute('href')
+        //     element = def.querySelector(svgSelector)
+        // }
 
         return L.divIcon({
             className: 'bg-transparent d-flex justify-content-center align-items-center',
