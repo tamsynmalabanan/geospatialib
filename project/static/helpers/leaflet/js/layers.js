@@ -149,12 +149,13 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             const svgSelector = def.querySelector(`pattern#${fillPatternId}-pattern use`).getAttribute('href')
 
             const svgNS = "http://www.w3.org/2000/svg"
-            element = document.createAttributeNS(svgNS, 'svg')
+            element = document.createElementNS(svgNS, 'svg')
+            
+            const use = document.createElementNS(svgNS, 'use')
+            use.setAttribute('href', svgSelector)
+            element.appendChild(use)
+            
             console.log(element)
-
-            // const use = document.createElementNS(svgNS, 'use')
-            // use.setAttribute('href', svgSelector)
-            // element.appendChild(use)
         }
 
         if (element instanceof Element) {
