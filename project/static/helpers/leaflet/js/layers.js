@@ -144,19 +144,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     ${italicFont ? 'fst-italic' : 'fst-normal'}
                 `),
             })
-    
-            if (element instanceof Element) {
-                if (Array('img', 'svg', 'path').includes(element.tagName)) {
-                    element.classList.add('position-absolute')
-                    element.setAttribute('width', iconSize)
-                    element.setAttribute('height', iconSize)
-                }
-                
-                element.style.fontSize = `${iconSize}px`
-                element.style.color = patternFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
-                if (patternStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
-                element.style.textShadow = textShadow
-            }
         } else {
             const def = document.querySelector(`svg#svgFillDefs defs#${fillPatternId}`)
             const svgSelector = def.querySelector(`pattern#${fillPatternId}-pattern use`).getAttribute('href')
@@ -168,6 +155,19 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             // const use = document.createElementNS(svgNS, 'use')
             // use.setAttribute('href', svgSelector)
             // element.appendChild(use)
+        }
+
+        if (element instanceof Element) {
+            if (Array('img', 'svg', 'path').includes(element.tagName)) {
+                element.classList.add('position-absolute')
+                element.setAttribute('width', iconSize)
+                element.setAttribute('height', iconSize)
+            }
+            
+            element.style.fontSize = `${iconSize}px`
+            element.style.color = patternFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
+            if (patternStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+            element.style.textShadow = textShadow
         }
 
         return L.divIcon({
