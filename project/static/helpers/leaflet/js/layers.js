@@ -112,6 +112,10 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         isPoint 
         && iconType === 'bi' 
         && iconSpecs === 'circle-fill'
+        && !iconShadow
+        && !iconGlow
+        && !boldFont
+        && !italicFont
     )
 
     if (isPoint && !isCircleMarker) {
