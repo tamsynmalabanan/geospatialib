@@ -606,7 +606,6 @@ const handleLeafletStylePanel = (map, parent) => {
         
         const update = () => {
             const {
-                hslaColor,
                 strokeWidth,
                 strokeColor,
                 strokeOpacity,
@@ -633,6 +632,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 lineBreak,
                 textShadow,
             } = styleParams
+            const hslaColor = manageHSLAColor(fillColor)
             const containerSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
             
             const svgFillDefs = document.querySelector(`svg#svgFillDefs`)

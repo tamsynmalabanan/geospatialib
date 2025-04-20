@@ -42,7 +42,6 @@ const getLeafletStyleParams = ({
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
 
     return  {
-        hslaColor,
         strokeWidth,
         strokeColor,
         strokeOpacity,
@@ -78,7 +77,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     if (!type) return
 
     const {
-        hslaColor,
         strokeWidth,
         strokeColor,
         strokeOpacity,
@@ -105,6 +103,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         lineBreak,
         textShadow,
     } = getLeafletStyleParams(styleParams)
+    const hslaColor = manageHSLAColor(fillColor)
 
     const isPoint = type === 'point'
     const isCanvas = renderer instanceof L.Canvas
