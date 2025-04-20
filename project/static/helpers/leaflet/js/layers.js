@@ -177,8 +177,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             const use = document.createElementNS(svgNS, 'use')
             use.setAttribute('href', svgSelector)
             element.appendChild(use)
-            
-            console.log(element)
         }
 
         return L.divIcon({
