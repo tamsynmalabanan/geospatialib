@@ -236,8 +236,10 @@ const leafletLayerStyleToHTML = (style, type) => {
             `${isPoint ? 'circle' : isLineString ? 'line' : 'rect'}`
         )
 
-        console.log(isPoint, !isPoint || style.patternStroke)
-        console.log(isPoint, !isPoint || style.patternFill)
+        if (isPoint) {
+            console.log(!isPoint || style.patternStroke)
+            console.log(!isPoint || style.patternFill)
+        }
         
         if (!isPoint || style.patternStroke) {
             symbol.setAttribute('stroke', style.color)
