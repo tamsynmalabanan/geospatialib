@@ -720,9 +720,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 use.setAttribute('href', `#${id}-text`)
                 newPattern.appendChild(use)
 
-                const tempStyle = getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams)
+                const tempStyle = getLeafletLayerStyle(
+                    {geometry:{type:'MultiPoint'}}, 
+                    {...styleParams, fillPatternId:null}
+                )
                 const tempElement = customCreateElement({
-                    innerHTML: tempStyle.options?.html ?? leafletLayerStyleToHTML(tempStyle, 'point')
+                    innerHTML: tempStyle.options?.html 
+                    ?? leafletLayerStyleToHTML(tempStyle, 'point')
                 }).firstChild
                 console.log(tempElement)
                 tempElement?.classList?.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
