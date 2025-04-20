@@ -235,6 +235,9 @@ const leafletLayerStyleToHTML = (style, type) => {
             'http://www.w3.org/2000/svg', 
             `${isPoint ? 'circle' : isLineString ? 'line' : 'rect'}`
         )
+
+        console.log(isPoint, !isPoint || style.patternStroke)
+        console.log(isPoint, !isPoint || style.patternFill)
         
         if (!isPoint || style.patternStroke) {
             symbol.setAttribute('stroke', style.color)
@@ -254,6 +257,7 @@ const leafletLayerStyleToHTML = (style, type) => {
             symbol.setAttribute('x2', width)
             symbol.setAttribute('y2', height/2)
         } else {
+            
             if (isPoint) {
                 symbol.setAttribute('r', style.radius ?? style.iconSize/2)
                 symbol.setAttribute('cx', width/2)
@@ -263,12 +267,12 @@ const leafletLayerStyleToHTML = (style, type) => {
                 symbol.setAttribute('y', 0)
                 symbol.setAttribute('width', width)
                 symbol.setAttribute('height', height)
-                symbol.setAttribute('fill-rule', 'evenodd')
             }
 
             if (!isPoint || style.patternFill) {
                 symbol.setAttribute('fill', style.fillColor)
                 symbol.setAttribute('fill-opacity', style.fillOpacity)
+                symbol.setAttribute('fill-rule', 'evenodd')
             } else {
                 symbol.setAttribute('fill', 'none')
             }
