@@ -728,7 +728,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     innerHTML: tempStyle.options?.html 
                     ?? leafletLayerStyleToHTML(tempStyle, 'point')
                 }).firstChild
-                console.log(tempElement)
                 tempElement?.classList?.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
                 tempElement?.classList?.add('position-absolute')
                 document.body.appendChild(tempElement)
