@@ -652,7 +652,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 svgFillDefs.appendChild(defs)
 
                 const text = document.createElementNS(svgNS, 'text')
-                text.id = `${id}-text`
+                text.id = `${id}Text`
                 defs.appendChild(text)
 
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
@@ -708,7 +708,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 const newPattern = document.createElementNS(svgNS, 'pattern')
-                newPattern.id = `${id}-pattern`
+                newPattern.id = `${id}Pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 newPattern.setAttribute('width', containerSize*2)
                 newPattern.setAttribute('height', containerSize*2)                
@@ -716,8 +716,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.style.transformOrigin = `50% 50%`
                 defs.appendChild(newPattern)
 
-                const use = document.createElementNS(svgNS, 'user')
-                use.setAttribute('href', `#${id}-text`)
+                const use = document.createElementNS(svgNS, 'use')
+                use.setAttribute('href', `#${id}Text`)
                 newPattern.appendChild(use)
 
                 const tempStyle = getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams)
