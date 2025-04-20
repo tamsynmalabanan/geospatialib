@@ -169,14 +169,15 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             lineJoin,
             dashArray,
             dashOffset, 
-        } : {color: 'none'}
+        } : {color: 'none', opacity: 0}
 
         if (type !== 'linestring') {
             if (!isPoint || patternFill) {
                 params.fillOpacity = !isPoint && isCanvas && fillPattern !== 'solid' ? 0 : fillOpacity
-                params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'none' :  `url(#${fillPatternId})` 
+                params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'transparent' : `url(#${fillPatternId})` 
             } else {
-                params.fillColor = 'none'
+                params.fillColor = 'transparent'
+                params.fillOpacity = 0
             }
             
             if (isPoint) {
