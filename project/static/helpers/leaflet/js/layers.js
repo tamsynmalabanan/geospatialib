@@ -108,10 +108,13 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
     const isPoint = type === 'point'
     const isCanvas = renderer instanceof L.Canvas
-    // const isCircleMarker = isCanvas && isPoint && iconType === 'bi' && iconSpecs === 'circle-fill'
+    const isCircleMarker = (
+        isPoint 
+        && iconType === 'bi' 
+        && iconSpecs === 'circle-fill'
+    )
 
-    // if (isPoint && !isCircleMarker) {
-    if (isPoint) {
+    if (isPoint && !isCircleMarker) {
         const element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
             innerHTML: (
                 iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
@@ -167,7 +170,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         if (type !== 'linestring') {
             if (!isPoint || patternFill) {
                 params.fillOpacity = fillOpacity
-                params.fillColor = isPoint || isCanvas || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
+                params.fillColor = isCanvas && fillPattern !== 'solid' ? 'none' : isPoint || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
             } else {
                 params.fillColor = 'none'
             }
