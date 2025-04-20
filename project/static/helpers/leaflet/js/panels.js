@@ -724,8 +724,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 const tempElement = customCreateElement({
                     innerHTML: tempStyle.options?.html ?? leafletLayerStyleToHTML(tempStyle, 'point')
                 }).firstChild
-                tempElement.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
-                tempElement.classList.add('position-absolute')
+                console.log(tempElement)
+                tempElement?.classList?.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
+                tempElement?.classList?.add('position-absolute')
                 document.body.appendChild(tempElement)
                 const bounds = tempElement.getBoundingClientRect()
                 document.body.removeChild(tempElement)
