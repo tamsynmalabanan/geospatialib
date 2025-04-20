@@ -694,8 +694,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                 
+                const tempStyle = getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams)
                 const temp = customCreateElement({
-                    innerHTML:getLeafletLayerStyle({geometry:{type:'MultiPoint'}}, styleParams).options.html
+                    innerHTML: tempStyle.options?.html ?? leafletLayerStyleToHTML(tempStyle, 'point')
                 }).firstChild
                 temp.classList.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
                 temp.classList.add('position-absolute')

@@ -225,7 +225,9 @@ const getGeoJSONLayerStyles = (layer) => {
                     count: 0,
                     html: leafletLayerStyleToHTML(
                         getLeafletLayerStyle({
-                            properties: styleParams.iconType === 'property' ? {[styleParams.iconSpecs]:styleParams.iconSpecs} : {},
+                            properties: styleParams.iconType === 'property' ? {
+                                [styleParams.iconSpecs]:styleParams.iconSpecs
+                            } : {},
                             geometry: {type:typeName}
                         }, styleParams),
                         typeName

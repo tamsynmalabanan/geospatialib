@@ -153,29 +153,29 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             html: element?.outerHTML ?? '',
         });
     } else {
-        const noPointStroke = isPoint && !patternStroke
-        const noPointFill = isPoint && !patternFill
-        
-        const params = {
-            color:  noPointStroke ? 'none' : strokeColor,
-            weight: noPointStroke ? 0 : strokeWidth,
-            opacity: noPointStroke ? 0 : strokeOpacity,
+        const params = !isPoint || patternStroke ? {
+            color:  strokeColor,
+            weight: strokeWidth,
+            opacity: strokeOpacity,
             lineCap,
             lineJoin,
             dashArray,
             dashOffset, 
-        }
+        } : {color: 'none'}
 
         if (type !== 'linestring') {
-            params.fillOpacity = noPointFill ? 0 : fillOpacity
-            params.fillColor = noPointFill ? 'none' : isCanvas || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
+            if (!isPoint || patternFill) {
+                params.fillOpacity = fillOpacity
+                params.fillColor = isCanvas || fillPattern === 'solid' ? fillColor : `url(#${fillPatternId})` 
+            } else {
+                params.fillColor = 'none'
+            }
             
             if (isPoint) {
                 params.renderer = renderer
                 params.radius = iconSize/2
             }
         }
-        
 
         return params
     }
@@ -208,8 +208,12 @@ const zoomToLeafletLayer = async (layer, map, {
 }
 
 const leafletLayerStyleToHTML = (style, type) => {
-    return type === 'point' ? style.options?.html : (() => {
-        const width = 20
+    return style.options?.html ?? (() => {
+        const isPoint = type === 'point'
+        const isLineString = type === 'linestring'
+        const isPolygon = type === 'polygon'
+        
+        const width = isPoint ? 14 : 20
         const height = 14
 
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
@@ -218,34 +222,49 @@ const leafletLayerStyleToHTML = (style, type) => {
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.style.display = 'block'
         
-        const isPolygon = type === 'polygon'
         const symbol = document.createElementNS(
             'http://www.w3.org/2000/svg', 
-            `${isPolygon ? 'rect' : 'line'}`
+            `${isPoint ? 'circle' : isLineString ? 'line' : 'rect'}`
         )
-
-        if (isPolygon) {
-            symbol.setAttribute('x', 0)
-            symbol.setAttribute('y', 0)
-            symbol.setAttribute('width', width)
-            symbol.setAttribute('height', height)
-            symbol.setAttribute('fill-rule', 'evenodd')
-            symbol.setAttribute('fill', style.fillColor)
-            symbol.setAttribute('fill-opacity', style.fillOpacity)
+        
+        if (!isPoint || style.patternStroke) {
+            symbol.setAttribute('stroke', style.color)
+            symbol.setAttribute('stroke-opacity', style.opacity)
+            symbol.setAttribute('stroke-width', style.weight)
+            symbol.setAttribute('stroke-linecap', style.lineCap)
+            symbol.setAttribute('stroke-linejoin', style.lineJoin)
+            symbol.setAttribute('stroke-dasharray', style.dashArray)
+            symbol.setAttribute('stroke-dashoffset', style.dashOffset)
         } else {
+            symbol.setAttribute('stroke', 'none')
+        }
+
+        if (isLineString) {
             symbol.setAttribute('x1', 0)
             symbol.setAttribute('y1', height/2)
             symbol.setAttribute('x2', width)
             symbol.setAttribute('y2', height/2)
-        }
+        } else {
+            if (isPoint) {
+                symbol.setAttribute('r', style.radius ?? style.iconSize/2)
+                symbol.setAttribute('cx', width/2)
+                symbol.setAttribute('cy', height/2)
+            } else {
+                symbol.setAttribute('x', 0)
+                symbol.setAttribute('y', 0)
+                symbol.setAttribute('width', width)
+                symbol.setAttribute('height', height)
+                symbol.setAttribute('fill-rule', 'evenodd')
+            }
 
-        symbol.setAttribute('stroke', style.color)
-        symbol.setAttribute('stroke-opacity', style.opacity)
-        symbol.setAttribute('stroke-width', style.weight)
-        symbol.setAttribute('stroke-linecap', style.lineCap)
-        symbol.setAttribute('stroke-linejoin', style.lineJoin)
-        symbol.setAttribute('stroke-dasharray', style.dashArray)
-        symbol.setAttribute('stroke-dashoffset', style.dashOffset)
+            if (!isPoint || style.patternFill) {
+                symbol.setAttribute('fill', style.fillColor)
+                symbol.setAttribute('fill-opacity', style.fillOpacity)
+            } else {
+                symbol.setAttribute('fill', 'none')
+            }
+
+        }
 
         svg.appendChild(symbol)
 
