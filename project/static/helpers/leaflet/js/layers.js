@@ -163,11 +163,12 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
             const svgNS = "http://www.w3.org/2000/svg"
             element = document.createAttributeNS(svgNS, 'svg')
-            const use = document.createElementNS(svgNS, 'use')
-            use.setAttribute('href', svgSelector)
-            element.appendChild(use)
+            console.log(element)
+
+            // const use = document.createElementNS(svgNS, 'use')
+            // use.setAttribute('href', svgSelector)
+            // element.appendChild(use)
         }
-        console.log(element)
 
         return L.divIcon({
             className: 'bg-transparent d-flex justify-content-center align-items-center',
