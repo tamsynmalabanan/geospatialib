@@ -328,6 +328,10 @@ const cloneLeafletLayerStyles = (layer) => {
         Array.from(clonedDefs.children).forEach(e => {
             e.id = `${newId}-${e.id.replace(`${currentId}-`,'')}`
         })
+
+        Array.from(clonedDefs.querySelectorAll('use')).forEach(e => {
+            e.setAttribute('href', `#${newId}-${e.getAttribute('href').replace(`#${currentId}-`,'')}`)
+        })
     })
 
     return styles
