@@ -752,14 +752,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
-                        src: `https://img.icons8.com/windows/32/hearts.png`,
-                        // src: `data:image/svg+xml,${encodeURIComponent((() => {
-                        //     const svgClone = svg.cloneNode(true)
-                        //     svgClone.id = ''
-                        //     svgClone.innerHTML = ''
-                        //     svgClone.innerHTML = text.outerHTML
-                        //     return svgClone.outerHTML
-                        // })())}`,
+                        src: `data:image/svg+xml,${((() => {
+                            const svgClone = svg.cloneNode(true)
+                            svgClone.id = ''
+                            svgClone.innerHTML = ''
+                            svgClone.innerHTML = text.outerHTML
+                            return svgClone.outerHTML
+                        })())}`,
                         alt: 'icon'
                     }
                 })
