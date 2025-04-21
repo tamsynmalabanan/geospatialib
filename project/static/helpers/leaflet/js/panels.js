@@ -773,34 +773,14 @@ const handleLeafletStylePanel = (map, parent) => {
                             const svgClone = svg.cloneNode(true)
                             svgClone.setAttribute('xmlns', svgNS)
                             svgClone.removeAttribute('id')
-                            // svgClone.removeAttribute('class')
-                            // svgClone.removeAttribute('style')
                             
                             const textClone = text.cloneNode(true)
                             textClone.removeAttribute('id')
-                            // textClone.removeAttribute('class')
                             
-                            const style = document.createElement('style')
-                            style.innerHTML = removeWhitespace(`
-                                <style>
-                                    @import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
-                                    @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
-                                </style>
-                            `)
-                            // text {
-                            //     font-family: 'bootstrap-icons';
-                            //     font-size: 20px;
-                            //     fill: black;
-                            // }
-
                             svgClone.innerHTML = ''
-                            svgClone.appendChild(style)
                             svgClone.appendChild(textClone)
                             
                             const src = `data:image/svg+xml,${encodeURIComponent(svgClone.outerHTML)}`
-                            console.log(svgClone)
-                            console.log(svgClone.outerHTML)
-                            console.log(src)
                             return src
                         })(),
                         alt: 'icon'
