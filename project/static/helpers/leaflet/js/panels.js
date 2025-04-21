@@ -763,6 +763,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             
                             svgClone.innerHTML = textClone.outerHTML
                             
+                            console.log(svgClone.outerHTML)
+
                             return svgClone.outerHTML.replace('<','%3C').replace('>','%3E')
                         })()}`,
                         alt: 'icon'
