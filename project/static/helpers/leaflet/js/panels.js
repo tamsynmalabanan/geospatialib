@@ -755,15 +755,16 @@ const handleLeafletStylePanel = (map, parent) => {
                         // src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='40' stroke='black' stroke-width='3' fill='red' /%3E%3C/svg%3E",
                         src: `data:image/svg+xml,${(() => {
                             const svgClone = svg.cloneNode(true)
-                            svgClone.id = ''
+                            svgClone.removeAttribute('id')
                             svgClone.innerHTML = ''
 
                             const textClone = text.cloneNode(true)
-                            textClone.id = ''
+                            textClone.removeAttribute('id')
                             
                             svgClone.innerHTML = textClone.outerHTML
                             
                             console.log(svgClone.outerHTML)
+                            console.log(svgClone.outerHTML.replace('<','%3C').replace('>','%3E'))
 
                             return svgClone.outerHTML.replace('<','%3C').replace('>','%3E')
                         })()}`,
