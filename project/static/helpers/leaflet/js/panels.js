@@ -651,6 +651,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.id = id
                 svgFillDefs.appendChild(defs)
 
+                const svg = document.createElementNS(svgNS, 'svg')
+                svg.id = `${id}-svg`
+                svg.classList.add('position-absolute')
+                defs.appendChild(svg)
                 const text = document.createElementNS(svgNS, 'text')
                 text.id = `${id}-text`
                 defs.appendChild(text)
@@ -707,10 +711,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('stroke', 'none')
                 }
 
-                const svg = document.createElementNS(svgNS, 'svg')
-                svg.id = `${id}-svg`
-                svg.classList.add('position-absolute')
-                defs.appendChild(svg)
                 const svgUse = document.createElementNS(svgNS, 'use')
                 svgUse.setAttribute('href', `#${id}-text`)
                 svg.appendChild(svgUse)
@@ -719,6 +719,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.id = `${id}-pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 defs.appendChild(newPattern)
+
                 const patternUse = document.createElementNS(svgNS, 'use')
                 patternUse.setAttribute('href', `#${id}-svg`)
                 newPattern.appendChild(patternUse)
@@ -745,46 +746,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     i.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     i.style.transform = `rotate(${iconRotation}deg)`
                     i.style.transformOrigin = `50% 50%`
-                })
-
-                const img = customCreateElement({
-                    parent: document.body,
-                    tag: 'img',
-                    id: `${id}-img`,
-                    attrs: {
-                        // src: removeWhitespace(`
-                        //     data:image/svg+xml,
-                        //     %3Csvg 
-                        //         xmlns='http://www.w3.org/2000/svg' 
-                        //         width='${svg.getAttribute('width')}'
-                        //         height='${svg.getAttribute('height')}'
-                        //     %3E
-                        //         %3Ctext 
-                        //             x='${text.getAttribute('x')}' 
-                        //             y='${text.getAttribute('y')}' 
-                        //             font-size='${text.getAttribute('font-size')}' 
-                        //             fill='${text.getAttribute('fill')}'
-                        //         %3E
-                        //             ${encodeURIComponent(text.innerHTML)}
-                        //         %3C/text%3E
-                        //     %3C/svg%3E    
-                        // `),
-                        src: (() => {
-                            const svgClone = svg.cloneNode(true)
-                            svgClone.setAttribute('xmlns', svgNS)
-                            svgClone.removeAttribute('id')
-                            
-                            const textClone = text.cloneNode(true)
-                            textClone.removeAttribute('id')
-                            
-                            svgClone.innerHTML = ''
-                            svgClone.appendChild(textClone)
-                            
-                            const src = `data:image/svg+xml,${encodeURIComponent(svgClone.outerHTML)}`
-                            return src
-                        })(),
-                        alt: 'icon'
-                    }
                 })
             }
 
