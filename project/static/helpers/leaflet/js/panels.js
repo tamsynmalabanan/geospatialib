@@ -780,6 +780,19 @@ const handleLeafletStylePanel = (map, parent) => {
                             textClone.removeAttribute('id')
                             // textClone.removeAttribute('class')
                             
+                            const style = document.createElement('style')
+                            style.innerHTML = removeWhitespace(`
+                                <style>
+                                    @import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+                                    @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+                                </style>
+                            `)
+                            // text {
+                            //     font-family: 'bootstrap-icons';
+                            //     font-size: 20px;
+                            //     fill: black;
+                            // }
+
                             svgClone.innerHTML = ''
                             svgClone.appendChild(textClone)
                             
