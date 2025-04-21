@@ -748,6 +748,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const img = customCreateElement({
+                    parent: defs,
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
