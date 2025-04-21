@@ -772,16 +772,16 @@ const handleLeafletStylePanel = (map, parent) => {
                         src: (() => {
                             const svgClone = svg.cloneNode(true)
                             svgClone.setAttribute('xmlns', svgNS)
-                            // svgClone.removeAttribute('id')
+                            svgClone.removeAttribute('id')
                             // svgClone.removeAttribute('class')
                             // svgClone.removeAttribute('style')
                             
                             const textClone = text.cloneNode(true)
-                            // textClone.removeAttribute('id')
+                            textClone.removeAttribute('id')
                             // textClone.removeAttribute('class')
                             
                             svgClone.innerHTML = ''
-                            svgClone.innerHTML = textClone.outerHTML
+                            svgClone.appendChild(textClone)
                             
                             const src = `data:image/svg+xml,${encodeURIComponent(svgClone.outerHTML)}`
                             console.log(svgClone.outerHTML)
