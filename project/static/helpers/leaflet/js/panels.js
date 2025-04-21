@@ -710,9 +710,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const svg = document.createElementNS(svgNS, 'svg')
                 svg.id = `${id}-svg`
                 svg.classList.add('position-absolute')
-                
                 defs.appendChild(svg)
-                
                 const svgUse = document.createElementNS(svgNS, 'use')
                 svgUse.setAttribute('href', `#${id}-text`)
                 svg.appendChild(svgUse)
@@ -720,9 +718,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = `${id}-pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                
                 defs.appendChild(newPattern)
-
                 const patternUse = document.createElementNS(svgNS, 'use')
                 patternUse.setAttribute('href', `#${id}-svg`)
                 newPattern.appendChild(patternUse)
@@ -747,10 +743,24 @@ const handleLeafletStylePanel = (map, parent) => {
                     i.setAttribute('width', width)
                     i.setAttribute('height', height)
                     i.setAttribute('viewbox', `0 0 ${width} ${height}`)
-
                     i.style.transform = `rotate(${iconRotation}deg)`
                     i.style.transformOrigin = `50% 50%`
                 })
+
+                const img = customCreateElement({
+                    tag: 'img',
+                    id: `${id}-img`,
+                    attrs: {
+                        src: `data:image/svg+xml,${encodeURIComponent((() => {
+                            const svg = svg.cloneNode(true)
+                            svg.innerHTML = ''
+                            svg.innerHTML = text.outerHTML
+                            return svg.outerHTML
+                        })())}`,
+                        alt: 'icon'
+                    }
+                })
+
             }
 
             updateGeoJSONData(layer)
