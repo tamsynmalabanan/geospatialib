@@ -752,41 +752,41 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
-                        src: removeWhitespace(`
-                            data:image/svg+xml,
-                            %3Csvg 
-                                xmlns='http://www.w3.org/2000/svg' 
-                                width=${svg.getAttribute('width')}
-                                height='100'
-                            %3E
-                                %3Ctext 
-                                    x='10' 
-                                    y='50' 
-                                    font-size='40' 
-                                    fill='blue'
-                                %3E
-                                    Hello%20SVG
-                                %3C/text%3E
-                            %3C/svg%3E    
-                        `),
-                        // src: `data:image/svg+xml,${(() => {
-                        //     const svgClone = svg.cloneNode(true)
-                        //     svgClone.removeAttribute('id')
-                        //     svgClone.removeAttribute('class')
-                        //     svgClone.removeAttribute('style')
-                        //     svgClone.innerHTML = ''
+                        // src: removeWhitespace(`
+                        //     data:image/svg+xml,
+                        //     %3Csvg 
+                        //         xmlns='http://www.w3.org/2000/svg' 
+                        //         width='${svg.getAttribute('width')}'
+                        //         height='100'
+                        //     %3E
+                        //         %3Ctext 
+                        //             x='10' 
+                        //             y='50' 
+                        //             font-size='40' 
+                        //             fill='blue'
+                        //         %3E
+                        //             Hello%20SVG
+                        //         %3C/text%3E
+                        //     %3C/svg%3E    
+                        // `),
+                        src: `data:image/svg+xml,${(() => {
+                            const svgClone = svg.cloneNode(true)
+                            svgClone.removeAttribute('id')
+                            svgClone.removeAttribute('class')
+                            svgClone.removeAttribute('style')
+                            svgClone.innerHTML = ''
 
-                        //     const textClone = text.cloneNode(true)
-                        //     textClone.removeAttribute('id')
-                        //     textClone.removeAttribute('class')
+                            const textClone = text.cloneNode(true)
+                            textClone.removeAttribute('id')
+                            textClone.removeAttribute('class')
                             
-                        //     svgClone.innerHTML = textClone.outerHTML
+                            svgClone.innerHTML = textClone.outerHTML
                             
-                        //     console.log(svgClone.outerHTML)
-                        //     console.log(svgClone.outerHTML.split('<').join('%3C').split('>').join('%3E'))
+                            console.log(svgClone.outerHTML)
+                            console.log(svgClone.outerHTML.split('<').join('%3C').split('>').join('%3E'))
 
-                        //     return svgClone.outerHTML.replace('<','%3C').replace('>','%3E')
-                        // })()}`,
+                            return svgClone.outerHTML.replace('<','%3C').replace('>','%3E')
+                        })()}`,
                         alt: 'icon'
                     }
                 })
