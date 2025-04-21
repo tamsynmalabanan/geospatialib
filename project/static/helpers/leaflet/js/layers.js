@@ -177,24 +177,19 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             lineJoin,
             dashArray,
             dashOffset, 
-        } : {color: 'none', opacity: 0}
+        } : {color: 'none'}
 
-        if (type !== 'linestring') {
-            if (!isPoint || iconFill) {
-                params.fillOpacity = fillOpacity // !isPoint && isCanvas && fillPattern !== 'solid' ? 0 : 
-                params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'transparent' : `url(#${fillPatternId}-pattern)` 
-                if (type === 'polygon' && isCanvas) {
-                    params.imgId = `${fillPatternId}-img`
-                }
-            } else {
-                params.fillColor = 'transparent'
-                params.fillOpacity = 0
-            }
-            
-            if (isPoint) {
-                params.renderer = renderer
-                params.radius = iconSize/2
-            }
+        if (isPoint) {
+            params.renderer = renderer
+            params.radius = iconSize/2
+            params.fillColor = iconFill ? fillColor : 'none'
+            params.fillOpacity = iconFill ? fillOpacity : 0
+        }
+
+        if (type === 'polygon') {
+            params.fillOpacity = fillOpacity 
+            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? fillColor : `url(#${fillPatternId}-pattern)` 
+            if (isCanvas) params.imgId = `${fillPatternId}-img`
         }
 
         return params
