@@ -765,7 +765,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     font-size='${text.getAttribute('font-size')}' 
                                     fill='${text.getAttribute('fill')}'
                                 %3E
-                                    ${encodeURIComponent(text.innerText)}
+                                    ${encodeURIComponent(text.innerHTML)}
                                 %3C/text%3E
                             %3C/svg%3E    
                         `),
