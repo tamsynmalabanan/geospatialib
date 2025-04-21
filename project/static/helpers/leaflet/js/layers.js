@@ -183,7 +183,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             if (!isPoint || iconFill) {
                 params.fillOpacity = fillOpacity // !isPoint && isCanvas && fillPattern !== 'solid' ? 0 : 
                 params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'transparent' : `url(#${fillPatternId}-pattern)` 
-                if (isPolygon && isCanvas) {
+                if (type === 'polygon' && isCanvas) {
                     params.imgId = `${fillPatternId}-img`
                 }
             } else {
