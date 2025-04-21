@@ -764,7 +764,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             svgClone.innerHTML = textClone.outerHTML
                             
                             console.log(svgClone.outerHTML)
-                            console.log(svgClone.outerHTML.replace('<','%3C').replace('>','%3E'))
+                            console.log(svgClone.outerHTML.split('<').join('%3C').split('>').join('%3E'))
 
                             return svgClone.outerHTML.replace('<','%3C').replace('>','%3E')
                         })()}`,
