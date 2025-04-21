@@ -18,8 +18,8 @@ const getLeafletStyleParams = ({
     italicFont=false,
     fontSerif=false,
     
-    patternFill=true,
-    patternStroke=true,
+    iconFill=true,
+    iconStroke=true,
     
     fillColor=generateRandomColor(),
     fillOpacity=0.5,
@@ -61,8 +61,8 @@ const getLeafletStyleParams = ({
         fillPattern,
         iconRotation,
         fillPatternId,
-        patternFill,
-        patternStroke,
+        iconFill,
+        iconStroke,
         italicFont,
         fontSerif,
         lineBreak,
@@ -96,8 +96,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         fillPattern,
         iconRotation,
         fillPatternId,
-        patternFill,
-        patternStroke,
+        iconFill,
+        iconStroke,
         italicFont,
         fontSerif,
         lineBreak,
@@ -153,8 +153,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 }
                 
                 element.style.fontSize = `${iconSize}px`
-                element.style.color = patternFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
-                if (patternStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
+                element.style.color = iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
+                if (iconStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
                 element.style.textShadow = textShadow
             }    
         } else {
@@ -184,7 +184,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             html: element?.outerHTML ?? '',
         })
     } else {
-        const params = !isPoint || patternStroke ? {
+        const params = !isPoint || iconStroke ? {
             color:  strokeColor,
             weight: strokeWidth,
             opacity: strokeOpacity,
@@ -195,7 +195,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         } : {color: 'none', opacity: 0}
 
         if (type !== 'linestring') {
-            if (!isPoint || patternFill) {
+            if (!isPoint || iconFill) {
                 params.fillOpacity = !isPoint && isCanvas && fillPattern !== 'solid' ? 0 : fillOpacity
                 params.fillColor = isPoint || fillPattern === 'solid' ? fillColor : isCanvas && fillPattern !== 'solid' ? 'transparent' : `url(#${fillPatternId}-pattern)` 
             } else {

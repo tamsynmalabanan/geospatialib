@@ -625,8 +625,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 fillPattern,
                 iconRotation,
                 fillPatternId,
-                patternFill,
-                patternStroke,
+                iconFill,
+                iconStroke,
                 italicFont,
                 fontSerif,
                 lineBreak,
@@ -688,14 +688,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     'default'
                 ))
                 
-                if (patternFill) {
+                if (iconFill) {
                     text.setAttribute('fill', fillColor)
                     text.setAttribute('fill-opacity', fillOpacity)    
                 } else {
                     text.setAttribute('fill', 'none')
                 }
                 
-                if (patternStroke) {
+                if (iconStroke) {
                     text.setAttribute('stroke', strokeColor)
                     text.setAttribute('stroke-opacity', strokeOpacity)
                     text.setAttribute('stroke-width', strokeWidth)
@@ -1084,33 +1084,33 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconFields2
         })
 
-        const patternFill = createFormCheck({
+        const iconFill = createFormCheck({
             parent:patternCheckboxes,
-            labelInnerText: 'Pattern fill',
-            checked: styleParams.patternFill,
+            labelInnerText: 'Icon fill',
+            checked: styleParams.iconFill,
             labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
-                    if (value === styleParams.patternFill) return
+                    if (value === styleParams.iconFill) return
 
-                    styleParams.patternFill = value
+                    styleParams.iconFill = value
                     update()
                 }
             }
         })
 
-        const patternStroke = createFormCheck({
+        const iconStroke = createFormCheck({
             parent:patternCheckboxes,
-            labelInnerText: 'Pattern stroke',
-            checked: styleParams.patternStroke,
+            labelInnerText: 'Icon stroke',
+            checked: styleParams.iconStroke,
             labelClass: 'text-nowrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
-                    if (value === styleParams.patternStroke) return
+                    if (value === styleParams.iconStroke) return
 
-                    styleParams.patternStroke = value
+                    styleParams.iconStroke = value
                     update()
                 }
             }
