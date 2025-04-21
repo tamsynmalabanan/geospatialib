@@ -786,6 +786,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             const src = `data:image/svg+xml,${encodeURIComponent(svgClone.outerHTML)}`
                             console.log(svgClone.outerHTML)
                             console.log(src)
+                            return src
                         })(),
                         alt: 'icon'
                     }
