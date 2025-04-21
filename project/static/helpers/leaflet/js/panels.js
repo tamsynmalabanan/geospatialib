@@ -671,8 +671,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     `) : ''
                 ).filter(i => i !== '').join(',')
 
-                text.setAttribute('x', containerSize)
-                text.setAttribute('y', containerSize)
+                text.setAttribute('x', '50%')
+                text.setAttribute('y', '50%')
                 text.setAttribute('text-anchor', 'middle')
                 text.setAttribute('dominant-baseline', 'central')
                 text.setAttribute('font-size', iconSize)
@@ -751,8 +751,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 newPattern.setAttribute('width', width)
                 newPattern.setAttribute('height', height)
                 newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                text.setAttribute('x', width/2)
-                text.setAttribute('y', height/2)
             }
 
             updateGeoJSONData(layer)
