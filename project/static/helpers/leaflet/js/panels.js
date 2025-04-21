@@ -651,9 +651,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.id = id
                 svgFillDefs.appendChild(defs)
 
+                const svg = document.createElementNS(svgNS, 'svg')
+                svg.id = `${id}-svg`
+                svg.classList.add('position-absolute')
+                svg.style.transform = `rotate(${iconRotation}deg)`
+                svg.style.transformOrigin = `50% 50%`
+                defs.appendChild(svg)
+                
                 const text = document.createElementNS(svgNS, 'text')
-                text.id = `${id}-text`
-                defs.appendChild(text)
+                svg.appendChild(text)
 
                 text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                 text.style.textShadow = styleParams.textShadow = Array(
@@ -706,23 +712,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 } else {
                     text.setAttribute('stroke', 'none')
                 }
-                
-                const svg = document.createElementNS(svgNS, 'svg')
-                svg.id = `${id}-svg`
-                svg.classList.add('position-absolute')
-                svg.style.transform = `rotate(${iconRotation}deg)`
-                svg.style.transformOrigin = `50% 50%`
-                defs.appendChild(svg)
-                
-                const svgUse = document.createElementNS(svgNS, 'use')
-                svgUse.setAttribute('href', `#${id}-text`)
-                svg.appendChild(svgUse)
 
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = `${id}-pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                // newPattern.style.transform = `rotate(${iconRotation}deg)`
-                // newPattern.style.transformOrigin = `50% 50%`
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
                 defs.appendChild(newPattern)
 
                 const patternUse = document.createElementNS(svgNS, 'use')
