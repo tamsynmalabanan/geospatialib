@@ -794,9 +794,11 @@ const handleLeafletStylePanel = (map, parent) => {
                             // }
 
                             svgClone.innerHTML = ''
+                            svgClone.appendChild(style)
                             svgClone.appendChild(textClone)
                             
                             const src = `data:image/svg+xml,${encodeURIComponent(svgClone.outerHTML)}`
+                            console.log(svgClone)
                             console.log(svgClone.outerHTML)
                             console.log(src)
                             return src
