@@ -120,7 +120,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     if (isPoint && !isCircleMarker) {
         let element
 
-        if (!fillPatternId || (textWrap && Array('text', 'property').includes(iconType))) {
+        const svgDefs = document.querySelector(`svg#svgFillDefs defs#${fillPatternId}`)
+        if (!svgDefs || (textWrap && Array('text', 'property').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType) 
             ? customCreateElement({innerHTML:iconSpecs}).firstChild 
             : customCreateElement({
@@ -160,9 +161,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 element.style.textShadow = textShadow
             }    
         } else {
-            const pattern = document.querySelector(
-                `svg#svgFillDefs defs#${fillPatternId} pattern#${fillPatternId}-pattern`
-            )
+            const pattern = svgDefs.querySelector(`pattern#${fillPatternId}-pattern`)
             const svgSelector = pattern.querySelector('use').getAttribute('href')
             const width = pattern.getAttribute('width')
             const height = pattern.getAttribute('height')

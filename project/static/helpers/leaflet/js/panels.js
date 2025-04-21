@@ -707,18 +707,23 @@ const handleLeafletStylePanel = (map, parent) => {
                     text.setAttribute('stroke', 'none')
                 }
 
+                const use = document.createElementNS(svgNS, 'use')
+                use.setAttribute('href', `#${id}-text`)
+
+                const svg = document.createElementNS(svgNS, 'svg')
+                svg.classList.add('position-absolute')
+                svg.style.transform = `rotate(${iconRotation}deg)`
+                svg.style.transformOrigin = `50% 50%`
+                svg.innerHTML = use.outerHTML
+                defs.appendChild(svg)
+
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = `${id}-pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                newPattern.setAttribute('width', containerSize*2)
-                newPattern.setAttribute('height', containerSize*2)                
                 newPattern.style.transform = `rotate(${iconRotation}deg)`
                 newPattern.style.transformOrigin = `50% 50%`
+                newPattern.innerHTML = use.outerHTML
                 defs.appendChild(newPattern)
-
-                const use = document.createElementNS(svgNS, 'use')
-                use.setAttribute('href', `#${id}-text`)
-                newPattern.appendChild(use)
 
                 const tempStyle = getLeafletLayerStyle(
                     {geometry:{type:'MultiPoint'}}, 
@@ -734,15 +739,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 const bounds = tempElement.getBoundingClientRect()
                 document.body.removeChild(tempElement)
 
-                if (bounds.width > bounds.height) {
-                    const width = containerSize+bounds.width
-                    newPattern.setAttribute('width', width)
-                    text.setAttribute('x', width/2)
-                } else {
-                    const height = containerSize+bounds.height
-                    newPattern.setAttribute('height', height)
-                    text.setAttribute('y', height/2)
-                }
+                const width = containerSize+bounds.width
+                const height = containerSize+bounds.height
+                svg.setAttribute('width', width)
+                svg.setAttribute('height', height)
+                svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
+                newPattern.setAttribute('width', width)
+                newPattern.setAttribute('height', height)
+                newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
+                text.setAttribute('x', width/2)
+                text.setAttribute('y', height/2)
             }
 
             updateGeoJSONData(layer)
