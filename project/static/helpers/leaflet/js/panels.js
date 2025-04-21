@@ -752,18 +752,19 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
-                        src: `data:image/svg+xml,${((() => {
-                            const svgClone = svg.cloneNode(true)
-                            svgClone.id = ''
-                            svgClone.innerHTML = ''
+                        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='40' stroke='black' stroke-width='3' fill='red' /%3E%3C/svg%3E"
+                        // src: `data:image/svg+xml,${(() => {
+                        //     const svgClone = svg.cloneNode(true)
+                        //     svgClone.id = ''
+                        //     svgClone.innerHTML = ''
 
-                            const textClone = text.cloneNode(true)
-                            textClone.id = ''
+                        //     const textClone = text.cloneNode(true)
+                        //     textClone.id = ''
                             
-                            svgClone.innerHTML = textClone.outerHTML
+                        //     svgClone.innerHTML = textClone.outerHTML
                             
-                            return svgClone.outerHTML
-                        })())}`,
+                        //     return svgClone.outerHTML
+                        // })()}`,
                         alt: 'icon'
                     }
                 })
