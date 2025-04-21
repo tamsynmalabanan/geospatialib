@@ -752,7 +752,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
-                        src: (() => {
+                        src: `data:image/svg+xml,${((() => {
                             const svgClone = svg.cloneNode(true)
                             svgClone.id = ''
                             svgClone.innerHTML = ''
@@ -761,11 +761,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             textClone.id = ''
                             
                             svgClone.innerHTML = textClone.outerHTML
-
-                            const svgString = new XMLSerializer().serializeToString(svgClone)
-                            const base64 = window.btoa(svgString)
-                            return `data:image/svg+xml;base64,${base64}`;
-                        })(),
+                            
+                            return svgClone.outerHTML
+                        })())}`,
                         alt: 'icon'
                     }
                 })
