@@ -161,23 +161,23 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 element.style.textShadow = textShadow
             }    
         } else {
-            const pattern = svgDefs.querySelector(`pattern#${fillPatternId}-pattern`)
-            const svgSelector = pattern.querySelector('use').getAttribute('href')
-            const width = pattern.getAttribute('width')
-            const height = pattern.getAttribute('height')
+            element = svgDefs.querySelector(`svg#${fillPatternId}-svg`)
+            // const svgSelector = pattern.querySelector('use').getAttribute('href')
+            // const width = pattern.getAttribute('width')
+            // const height = pattern.getAttribute('height')
 
-            const svgNS = "http://www.w3.org/2000/svg"
-            element = document.createElementNS(svgNS, 'svg')
-            element.classList.add('position-absolute')
-            element.setAttribute('width', width)
-            element.setAttribute('height', height)
-            element.setAttribute('viewbox', `0 0 ${width} ${height}`)
-            element.style.transform = `rotate(${iconRotation}deg)` 
-            element.style.transformOrigin = '50% 50%'
+            // const svgNS = "http://www.w3.org/2000/svg"
+            // element = document.createElementNS(svgNS, 'svg')
+            // element.classList.add('position-absolute')
+            // element.setAttribute('width', width)
+            // element.setAttribute('height', height)
+            // element.setAttribute('viewbox', `0 0 ${width} ${height}`)
+            // element.style.transform = `rotate(${iconRotation}deg)` 
+            // element.style.transformOrigin = '50% 50%'
             
-            const use = document.createElementNS(svgNS, 'use')
-            use.setAttribute('href', svgSelector)
-            element.appendChild(use)
+            // const use = document.createElementNS(svgNS, 'use')
+            // use.setAttribute('href', svgSelector)
+            // element.appendChild(use)
         }
 
         return L.divIcon({
