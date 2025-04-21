@@ -121,7 +121,9 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         let element
 
         if (!fillPatternId || (textWrap && Array('text', 'property').includes(iconType))) {
-            element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
+            element = Array('html', 'svg').includes(iconType) 
+            ? customCreateElement({innerHTML:iconSpecs}).firstChild 
+            : customCreateElement({
                 innerHTML: (
                     iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
                     iconType === 'text' ? iconSpecs : 
