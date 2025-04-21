@@ -709,7 +709,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 const svg = document.createElementNS(svgNS, 'svg')
                 svg.id = `${id}-svg`
                 svg.classList.add('position-absolute')
+                svg.style.transform = `rotate(${iconRotation}deg)`
+                svg.style.transformOrigin = `50% 50%`
                 defs.appendChild(svg)
+                
                 const svgUse = document.createElementNS(svgNS, 'use')
                 svgUse.setAttribute('href', `#${id}-text`)
                 svg.appendChild(svgUse)
@@ -717,11 +720,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = `${id}-pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
                 defs.appendChild(newPattern)
+
                 const patternUse = document.createElementNS(svgNS, 'use')
                 patternUse.setAttribute('href', `#${id}-svg`)
                 newPattern.appendChild(patternUse)
-
 
                 const tempStyle = getLeafletLayerStyle(
                     {geometry:{type:'MultiPoint'}}, 
@@ -739,13 +744,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 const width = containerSize+bounds.width
                 const height = containerSize+bounds.height
 
-                Array(svg, newPattern).forEach(i => {
-                    i.setAttribute('width', width)
-                    i.setAttribute('height', height)
-                    i.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                    i.style.transform = `rotate(${iconRotation}deg)`
-                    i.style.transformOrigin = `50% 50%`    
-                })
+                svg.setAttribute('width', width)
+                svg.setAttribute('height', height)
+                svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
+                newPattern.setAttribute('width', width)
+                newPattern.setAttribute('height', height)
+                newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
             }
 
             updateGeoJSONData(layer)
