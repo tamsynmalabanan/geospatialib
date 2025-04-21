@@ -748,7 +748,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const img = customCreateElement({
-                    parent: defs,
+                    parent: document.body,
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
@@ -762,6 +762,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         alt: 'icon'
                     }
                 })
+
+
 
             }
 
