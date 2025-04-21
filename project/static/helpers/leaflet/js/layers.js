@@ -9,6 +9,9 @@ const getLeafletStyleParams = ({
     iconSize=10,
     iconRotation=0,
 
+    iconFill=true,
+    iconStroke=true,
+
     iconShadow=false,
     iconGlow=false,
     textShadow=null,
@@ -17,9 +20,6 @@ const getLeafletStyleParams = ({
     boldFont=false,
     italicFont=false,
     fontSerif=false,
-    
-    iconFill=true,
-    iconStroke=true,
     
     fillColor=generateRandomColor(),
     fillOpacity=0.5,
@@ -120,7 +120,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     if (isPoint && !isCircleMarker) {
         let element
 
-        if (textWrap || !fillPatternId) {
+        if (!fillPatternId || (textWrap && Array('text', 'property').includes(iconType))) {
             element = iconType === 'html' ? customCreateElement({innerHTML:iconSpecs}).firstChild : customCreateElement({
                 innerHTML: (
                     iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
@@ -148,8 +148,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             if (element instanceof Element) {
                 if (Array('img', 'svg', 'path').includes(element.tagName)) {
                     element.classList.add('position-absolute')
-                    element.setAttribute('width', containerSize)
-                    element.setAttribute('height', containerSize)
+                    element.setAttribute('width', iconSize)
+                    element.setAttribute('height', iconSize)
                 }
                 
                 element.style.fontSize = `${iconSize}px`
@@ -158,10 +158,10 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 element.style.textShadow = textShadow
             }    
         } else {
-            const def = document.querySelector(`svg#svgFillDefs defs#${fillPatternId}`)
-            const pattern = def.querySelector(`pattern#${fillPatternId}-pattern`)
-            const svgSelector = pattern.querySelector(`use`).getAttribute('href')
-
+            const pattern = document.querySelector(
+                `svg#svgFillDefs defs#${fillPatternId} pattern#${fillPatternId}-pattern`
+            )
+            const svgSelector = pattern.querySelector('use').getAttribute('href')
             const width = pattern.getAttribute('width')
             const height = pattern.getAttribute('height')
 
