@@ -756,17 +756,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             data:image/svg+xml,
                             %3Csvg 
                                 xmlns='http://www.w3.org/2000/svg' 
-                                width=${svg.getAttribute('width')} 
-                                height=${svg.getAttribute('height')}
-                                viewbox=${svg.getAttribute('viewbox')}
+                                width='200' 
+                                height='100'
                             %3E
                                 %3Ctext 
-                                    x=${text.getAttribute('x')}
-                                    y=${text.getAttribute('y')}
-                                    font-size=${text.getAttribute('font-size')}
-                                    fill=${text.getAttribute('fill')}
+                                    x='10' 
+                                    y='50' 
+                                    font-size='40' 
+                                    fill='blue'
                                 %3E
-                                ${text.innerText}
+                                    Hello%20SVG
                                 %3C/text%3E
                             %3C/svg%3E    
                         `),
