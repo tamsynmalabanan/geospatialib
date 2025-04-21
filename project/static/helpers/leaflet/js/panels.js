@@ -752,7 +752,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
-                        src: `data:image/svg+xml,`,
+                        src: `data:image/svg+xml,${encodeURIComponent((() => {
+                            const svgClone = svg.cloneNode(true)
+                            svgClone.id = ''
+                            svgClone.innerHTML = ''
+                            svgClone.innerHTML = text.outerHTML
+                            console.log(svgClone)
+                            return svgClone.outerHTML
+                        })())}`,
                         alt: 'icon'
                     }
                 })
