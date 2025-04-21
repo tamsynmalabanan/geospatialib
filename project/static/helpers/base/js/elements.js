@@ -12,7 +12,7 @@ const customCreateElement = ({
     element.className = className
     parent?.appendChild(element)
     Object.keys(style).forEach(k => element.style[k] = style[k])
-    Object.keys(attrs).forEach(k => element.setAttribute(k, style[k]))
+    Object.keys(attrs).forEach(k => element.setAttribute(k, attrs[k]))
     element.innerHTML = innerHTML
     return element
 }
