@@ -725,7 +725,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 // newPattern.style.transformOrigin = `50% 50%`
                 defs.appendChild(newPattern)
 
-                const patternUse = document.createElement(svgNS, 'use')
+                const patternUse = document.createElementNS(svgNS, 'use')
                 patternUse.setAttribute('href', `#${id}-svg`)
                 newPattern.appendChild(patternUse)
 
