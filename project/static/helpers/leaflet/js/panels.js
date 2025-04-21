@@ -757,7 +757,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             svgClone.id = ''
                             svgClone.innerHTML = ''
                             svgClone.innerHTML = text.outerHTML
-                            console.log(svgClone)
                             return svgClone.outerHTML
                         })())}`,
                         alt: 'icon'
