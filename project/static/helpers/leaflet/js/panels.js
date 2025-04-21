@@ -752,19 +752,23 @@ const handleLeafletStylePanel = (map, parent) => {
                     tag: 'img',
                     id: `${id}-img`,
                     attrs: {
-                        src: `data:image/svg+xml,${((() => {
+                        src: (() => {
                             const svgClone = svg.cloneNode(true)
                             svgClone.id = ''
                             svgClone.innerHTML = ''
-                            svgClone.innerHTML = text.outerHTML
-                            return svgClone.outerHTML
-                        })())}`,
+
+                            const textClone = text.cloneNode(true)
+                            textClone.id = ''
+                            
+                            svgClone.innerHTML = textClone.outerHTML
+
+                            const svgString = new XMLSerializer().serializeToString(svgClone)
+                            const base64 = window.btoa(svgString)
+                            return `data:image/svg+xml;base64,${base64}`;
+                        })(),
                         alt: 'icon'
                     }
                 })
-
-
-
             }
 
             updateGeoJSONData(layer)
