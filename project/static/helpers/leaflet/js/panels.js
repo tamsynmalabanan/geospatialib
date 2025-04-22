@@ -1241,7 +1241,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const patternBgColor = (() => {
             const input = document.createElement('input')
-            input.className = 'p-0 border-0 rounded'
+            input.className = 'p-0'
             input.disabled = !styleParams.patternBg
             input.setAttribute('name',`${id}-patternBgColor`)
             input.setAttribute('type',`color`)
