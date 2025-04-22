@@ -169,6 +169,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             }    
         } else {
             element = svg
+            element.removeAttribute('id')
         }
 
         return L.divIcon({
