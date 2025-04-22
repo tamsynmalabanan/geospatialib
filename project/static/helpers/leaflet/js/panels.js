@@ -1001,7 +1001,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const updateTextShadow = () => {
-            const hslaColor = manageHSLAColor(fillColor)
+            const hslaColor = manageHSLAColor(styleParams.fillColor)
             const iconSize = styleParams.iconSize
             const fillOpacity = styleParams.fillOpacity
             styleParams.textShadow = Array(
