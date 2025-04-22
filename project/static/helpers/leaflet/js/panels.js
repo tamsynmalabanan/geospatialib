@@ -762,7 +762,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 Array('width', 'height').forEach(i => {
                     patternRect.setAttribute(i, svg.getAttribute(i))
                 })
-                patternRect.setAttribute('fill', patternBgColor)
+                patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                 newPattern.appendChild(patternRect)
 
                 const patternUse = document.createElementNS(svgNS, 'use')
@@ -1215,12 +1215,13 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         
-        const fillFields2 = customCreateElement({
-            className:'d-flex gap-2',
-            parent,
+        const patterhBgFields = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:fillFields
         })
 
         const patternBg = createFormCheck({
+            parent: patterhBgFields,
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
             labelClass: 'text-nowrap',
@@ -1238,9 +1239,8 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBgColor = createInputGroup({
-            parent:fillFields2,
+            parent:patterhBgFields,
             containerClass: 'w-100 flex-grow-1',
-            prefixHTML: patternBg,
             disabled: !styleParams.patternBg,
             fieldAttrs: {
                 name:`${id}-patternBgColor`,
