@@ -691,20 +691,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (Array('bi', 'text', 'property').includes(iconType)) {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
-                    icon.style.textShadow = styleParams.textShadow = Array(
-                        iconShadow ? removeWhitespace(`
-                            ${iconSize*0.1}px 
-                            ${iconSize*0.1}px 
-                            ${iconSize*0.2}px 
-                            ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                        `) : '',
-                        iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                            0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                            0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                        `) : ''
-                    ).filter(i => i !== '').join(',')
+                    icon.style.textShadow = textShadow
                     icon.setAttribute('class', removeWhitespace(`
                         text-center lh-1
                         ${textWrap ? 'text-wrap' : 'text-nowrap'}
@@ -1013,6 +1000,26 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconFields2
         })
 
+        const updateTextShadow = () => {
+            const hslaColor = manageHSLAColor(fillColor)
+            const iconSize = styleParams.iconSize
+            const fillOpacity = styleParams.fillOpacity
+            styleParams.textShadow = Array(
+                styleParams.iconShadow ? removeWhitespace(`
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.2}px 
+                    ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                `) : '',
+                iconGlow ? removeWhitespace(`
+                    0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                    0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                    0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                    0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                `) : ''
+            ).filter(i => i !== '').join(',')
+            
+        }
         const iconShadow = createFormCheck({
             parent:iconCheckboxes,
             labelInnerText: 'Shadow effect',
@@ -1024,6 +1031,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconShadow) return
 
                     styleParams.iconShadow = value
+                    updateTextShadow()
                     update()
                 }
             }
@@ -1040,6 +1048,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
+                    updateTextShadow()
                     update()
                 }
             }
