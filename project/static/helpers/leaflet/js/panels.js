@@ -686,7 +686,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('height', iconSize)
                     icon.setAttribute('x', buffer/2)
                     icon.setAttribute('y', buffer/2)
-                } else {
+                }
+                
+                if (Array('bi', 'text', 'property').includes(iconType)) {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                     icon.style.textShadow = styleParams.textShadow = Array(

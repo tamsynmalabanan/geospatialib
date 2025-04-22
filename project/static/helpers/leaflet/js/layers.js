@@ -160,11 +160,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     element.setAttribute('width', iconSize)
                     element.setAttribute('height', iconSize)
                 }
-                // if (Array('img', 'svg', 'path').includes(element.tagName)) {
-                //     element.classList.add('position-absolute')
-                //     element.setAttribute('width', iconSize)
-                //     element.setAttribute('height', iconSize)
-                // }
                 
                 element.style.fontSize = `${iconSize}px`
                 element.style.color = iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
