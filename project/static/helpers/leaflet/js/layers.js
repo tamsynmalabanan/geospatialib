@@ -135,6 +135,14 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 innerHTML: (
                     iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
                     iconType === 'text' ? iconSpecs : 
+                    iconType === 'img' ? removeWhitespace(`
+                        <img 
+                            src="${iconSpecs}"
+                            alt="icon"
+                            width="${iconSize}"
+                            height="${iconSize}"
+                        >
+                    `) : 
                     iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
                     ''
                 ),
