@@ -764,7 +764,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         const width = containerSize+bounds.width
                         const height = containerSize+bounds.height
                         
-                        Array(svg, pattern, patternRect).forEach(i => {
+                        Array(
+                            // svg, 
+                            pattern, 
+                            patternRect
+                        ).forEach(i => {
                             i.setAttribute('width', width)
                             i.setAttribute('height', height)
                             if (i !== patternRect) i.setAttribute('viewbox', `0 0 ${width} ${height}`)
