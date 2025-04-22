@@ -874,8 +874,43 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const iconSize = createInputGroup({
+        const iconSpecs = createFormFloating({
             parent:iconFields,
+            containerClass: 'd-flex w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-iconSpecs`,
+                type: 'search',
+                value: styleParams.iconSpecs,
+                list: (() => {
+                    updateIconDatalistOptions()
+                    return iconDatalist.id
+                })()
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Icon',
+            events: {
+                blur: (e) => {
+                    let value = e.target.value.trim()
+                    
+                    if (!value && styleParams.iconType === 'bi') {
+                        value = e.target.value = 'circle-fill'
+                    }
+                    
+                    if (value === styleParams.iconSpecs) return
+                    
+                    styleParams.iconSpecs = value
+                    update()
+                }
+            }
+        })
+
+        const iconFields3 = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
+        const iconSize = createInputGroup({
+            parent:iconFields3,
             inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconSize`,
@@ -903,7 +938,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const iconRotation = createInputGroup({
-            parent:iconFields,
+            parent:iconFields3,
             inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconRotation`,
@@ -959,36 +994,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         }
-
-        const iconSpecs = createFormFloating({
-            parent,
-            containerClass: 'd-flex w-100 flex-grow-1',
-            fieldAttrs: {
-                name:`${id}-iconSpecs`,
-                type: 'search',
-                value: styleParams.iconSpecs,
-                list: (() => {
-                    updateIconDatalistOptions()
-                    return iconDatalist.id
-                })()
-            },
-            fieldClass: 'form-control-sm',
-            labelText: 'Icon',
-            events: {
-                blur: (e) => {
-                    let value = e.target.value.trim()
-                    
-                    if (!value && styleParams.iconType === 'bi') {
-                        value = e.target.value = 'circle-fill'
-                    }
-                    
-                    if (value === styleParams.iconSpecs) return
-                    
-                    styleParams.iconSpecs = value
-                    update()
-                }
-            }
-        })
 
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',
@@ -1213,49 +1218,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
-
-        const patternBgFields = customCreateElement({
-            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-1', 
-            style: {maxHeight:'58px'},
-            parent:fillFields
-        })
-
-        const patternBg = createFormCheck({
-            parent: patternBgFields,
-            labelInnerText: 'Pattern background',
-            checked: styleParams.patternBg,
-            labelClass: 'text-wrap text-start',
-            formCheckClass: 'fs-10',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.patternBg) return
-
-                    patternBgColor.disabled = !value
-
-                    styleParams.patternBg = value
-                    update()
-                }
-            }
-        })
-
-        const patternBgColor = (() => {
-            const input = document.createElement('input')
-            input.className = 'p-0'
-            input.disabled = !styleParams.patternBg
-            input.setAttribute('name',`${id}-patternBgColor`)
-            input.setAttribute('type',`color`)
-            input.value = hslToHex(manageHSLAColor(styleParams.patternBgColor))
-            input.addEventListener('blur', (e) => {
-                const value = hexToHSLA(e.target.value)
-                if (value === styleParams.patternBgColor) return
-
-                styleParams.patternBgColor = value
-                update()
-            })
-            patternBgFields.appendChild(input)
-            return input
-        })()
 
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
