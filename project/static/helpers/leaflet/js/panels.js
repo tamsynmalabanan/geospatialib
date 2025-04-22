@@ -836,6 +836,39 @@ const handleLeafletStylePanel = (map, parent) => {
             className:'d-flex gap-2',
             parent,
         })
+        
+        const iconDatalist = customCreateElement({
+            tag:'datalist', 
+            parent:iconFields,
+        })
+
+        const updateIconDatalistOptions = () => {
+            iconDatalist.innerHTML = ''
+
+            const iconType = styleParams.iconType
+
+            if (iconType === 'bi') {
+                setBootstrapIconsAsOptions(iconDatalist)
+            } 
+
+            if (iconType === 'property') {
+                const options = []
+                
+                // update to retrieve properties from wfs/wms
+                const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                turf.propEach(geojson, (currentProperties, featureIndex) => {
+                    Object.keys(currentProperties).forEach(i => options.push(i))
+                })
+
+                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
+                    
+                for (const i of sortedOptions) {
+                    const option = document.createElement('option')
+                    option.value = i
+                    iconDatalist.appendChild(option)
+                }
+            }
+        }
 
         const iconType = createFormFloating({
             parent: iconFields,
@@ -961,39 +994,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
-
-        const iconDatalist = customCreateElement({
-            tag:'datalist', 
-            parent:iconFields,
-        })
-
-        const updateIconDatalistOptions = () => {
-            iconDatalist.innerHTML = ''
-
-            const iconType = styleParams.iconType
-
-            if (iconType === 'bi') {
-                setBootstrapIconsAsOptions(iconDatalist)
-            } 
-
-            if (iconType === 'property') {
-                const options = []
-                
-                // update to retrieve properties from wfs/wms
-                const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                turf.propEach(geojson, (currentProperties, featureIndex) => {
-                    Object.keys(currentProperties).forEach(i => options.push(i))
-                })
-
-                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
-                    
-                for (const i of sortedOptions) {
-                    const option = document.createElement('option')
-                    option.value = i
-                    iconDatalist.appendChild(option)
-                }
-            }
-        }
 
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',
