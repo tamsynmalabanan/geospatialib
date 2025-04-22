@@ -836,39 +836,6 @@ const handleLeafletStylePanel = (map, parent) => {
             className:'d-flex gap-2',
             parent,
         })
-        
-        const iconDatalist = customCreateElement({
-            tag:'datalist', 
-            parent:iconFields,
-        })
-
-        const updateIconDatalistOptions = () => {
-            iconDatalist.innerHTML = ''
-
-            const iconType = styleParams.iconType
-
-            if (iconType === 'bi') {
-                setBootstrapIconsAsOptions(iconDatalist)
-            } 
-
-            if (iconType === 'property') {
-                const options = []
-                
-                // update to retrieve properties from wfs/wms
-                const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                turf.propEach(geojson, (currentProperties, featureIndex) => {
-                    Object.keys(currentProperties).forEach(i => options.push(i))
-                })
-
-                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
-                    
-                for (const i of sortedOptions) {
-                    const option = document.createElement('option')
-                    option.value = i
-                    iconDatalist.appendChild(option)
-                }
-            }
-        }
 
         const iconType = createFormFloating({
             parent: iconFields,
@@ -907,89 +874,8 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const iconSpecs = createFormFloating({
-            parent:iconFields,
-            containerClass: 'd-flex w-100 flex-grow-1',
-            fieldAttrs: {
-                name:`${id}-iconSpecs`,
-                type: 'search',
-                value: styleParams.iconSpecs,
-                list: (() => {
-                    updateIconDatalistOptions()
-                    return iconDatalist.id
-                })()
-            },
-            fieldClass: 'form-control-sm',
-            labelText: 'Icon',
-            events: {
-                blur: (e) => {
-                    let value = e.target.value.trim()
-                    
-                    if (!value && styleParams.iconType === 'bi') {
-                        value = e.target.value = 'circle-fill'
-                    }
-                    
-                    if (value === styleParams.iconSpecs) return
-                    
-                    styleParams.iconSpecs = value
-                    update()
-                }
-            }
-        })
-
-        const iconFields3 = customCreateElement({
-            className:'d-flex gap-2',
-            parent,
-        })
-
-        const iconColor = createFormFloating({
-            parent:iconFields3,
-            containerClass: 'w-25 flex-grow-1',
-            fieldAttrs: {
-                name:`${id}-iconColor`,
-                type: 'color',
-                value: hslToHex(manageHSLAColor(styleParams.iconColor)),
-            },
-            fieldClass: 'form-control-sm',
-            labelText: 'Icon color',
-            events: {
-                blur: (e) => {
-                    const value = hexToHSLA(e.target.value)
-                    if (value === styleParams.iconColor) return
-
-                    styleParams.iconColor = value
-                    update()
-                }
-            }
-        })
-
-        const iconOpacity = createInputGroup({
-            parent:iconFields3,
-            inputGroupClass: 'w-25 flex-grow-1',
-            fieldAttrs: {
-                name: `${id}-iconOpacity`,
-                type: 'number',
-                min: '0',
-                max: '100',
-                step: '10',
-                value: styleParams.iconOpacity * 100,
-                placeholder: 'Icon opacity',
-            },
-            suffixHTML: '%',
-            fieldClass: 'form-control-sm',
-            events: {
-                blur: (e) => {
-                    const value = (parseFloat(e.target.value) / 100) || 0
-                    if (value === styleParams.iconOpacity) return
-                    
-                    styleParams.iconOpacity = value
-                    update()
-                }
-            }
-        })
-
         const iconSize = createInputGroup({
-            parent:iconFields3,
+            parent:iconFields,
             inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconSize`,
@@ -1017,7 +903,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const iconRotation = createInputGroup({
-            parent:iconFields3,
+            parent:iconFields,
             inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconRotation`,
@@ -1036,6 +922,69 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconRotation) return
                     
                     styleParams.iconRotation = value
+                    update()
+                }
+            }
+        })
+
+        const iconDatalist = customCreateElement({
+            tag:'datalist', 
+            parent:iconFields,
+        })
+
+        const updateIconDatalistOptions = () => {
+            iconDatalist.innerHTML = ''
+
+            const iconType = styleParams.iconType
+
+            if (iconType === 'bi') {
+                setBootstrapIconsAsOptions(iconDatalist)
+            } 
+
+            if (iconType === 'property') {
+                const options = []
+                
+                // update to retrieve properties from wfs/wms
+                const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                turf.propEach(geojson, (currentProperties, featureIndex) => {
+                    Object.keys(currentProperties).forEach(i => options.push(i))
+                })
+
+                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
+                    
+                for (const i of sortedOptions) {
+                    const option = document.createElement('option')
+                    option.value = i
+                    iconDatalist.appendChild(option)
+                }
+            }
+        }
+
+        const iconSpecs = createFormFloating({
+            parent,
+            containerClass: 'd-flex w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-iconSpecs`,
+                type: 'search',
+                value: styleParams.iconSpecs,
+                list: (() => {
+                    updateIconDatalistOptions()
+                    return iconDatalist.id
+                })()
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Icon',
+            events: {
+                blur: (e) => {
+                    let value = e.target.value.trim()
+                    
+                    if (!value && styleParams.iconType === 'bi') {
+                        value = e.target.value = 'circle-fill'
+                    }
+                    
+                    if (value === styleParams.iconSpecs) return
+                    
+                    styleParams.iconSpecs = value
                     update()
                 }
             }
@@ -1264,6 +1213,49 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+
+        const patternBgFields = customCreateElement({
+            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-1', 
+            style: {maxHeight:'58px'},
+            parent:fillFields
+        })
+
+        const patternBg = createFormCheck({
+            parent: patternBgFields,
+            labelInnerText: 'Pattern background',
+            checked: styleParams.patternBg,
+            labelClass: 'text-wrap text-start',
+            formCheckClass: 'fs-10',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.patternBg) return
+
+                    patternBgColor.disabled = !value
+
+                    styleParams.patternBg = value
+                    update()
+                }
+            }
+        })
+
+        const patternBgColor = (() => {
+            const input = document.createElement('input')
+            input.className = 'p-0'
+            input.disabled = !styleParams.patternBg
+            input.setAttribute('name',`${id}-patternBgColor`)
+            input.setAttribute('type',`color`)
+            input.value = hslToHex(manageHSLAColor(styleParams.patternBgColor))
+            input.addEventListener('blur', (e) => {
+                const value = hexToHSLA(e.target.value)
+                if (value === styleParams.patternBgColor) return
+
+                styleParams.patternBgColor = value
+                update()
+            })
+            patternBgFields.appendChild(input)
+            return input
+        })()
 
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
