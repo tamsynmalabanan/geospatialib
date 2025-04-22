@@ -765,7 +765,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         const height = containerSize+bounds.height
                         
                         Array(
-                            // svg, 
+                            svg, 
                             pattern, 
                             patternRect
                         ).forEach(i => {
