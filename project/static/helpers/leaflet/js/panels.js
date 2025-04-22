@@ -682,7 +682,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'svg') {
                     defs.innerHTML = iconSpecs
                     icon = defs.firstChild
-
+                    console.log(buffer)
+                    icon.setAttribute('x', buffer/2)
+                    icon.setAttribute('y', buffer/2)
                 } else {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
