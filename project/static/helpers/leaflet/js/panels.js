@@ -1214,15 +1214,8 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        
-        const patterhBgFields = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:fillFields
-        })
-
         const patternBg = createFormCheck({
-            parent: patterhBgFields,
-            labelInnerText: 'Pattern background',
+            // labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
             labelClass: 'text-nowrap',
             events: {
@@ -1238,8 +1231,9 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const patternBgColor = createFormFloating({
-            parent:patterhBgFields,
+        const patternBgColor = createInputGroup({
+            parent: fillFields,
+            prefixHTML: patternBg,
             containerClass: 'w-100 flex-grow-1',
             disabled: !styleParams.patternBg,
             fieldAttrs: {
