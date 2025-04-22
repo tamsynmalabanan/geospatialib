@@ -1215,9 +1215,9 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBg = createFormCheck({
-            // labelInnerText: 'Pattern background',
+            labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
-            labelClass: 'text-nowrap',
+            labelClass: 'text-wrap',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -1241,7 +1241,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 type: 'color',
                 value: hslToHex(manageHSLAColor(styleParams.patternBgColor)),
             },
-            fieldClass: 'form-control-sm',
+            fieldClass: 'form-control-sm h-100',
             events: {
                 blur: (e) => {
                     const value = hexToHSLA(e.target.value)
