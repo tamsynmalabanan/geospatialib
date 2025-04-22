@@ -682,11 +682,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'svg') {
                     defs.innerHTML = iconSpecs
                     icon = defs.firstChild
-                    console.log(buffer, width, height)
                     icon.setAttribute('width', iconSize)
                     icon.setAttribute('height', iconSize)
                     icon.setAttribute('x', buffer/2)
                     icon.setAttribute('y', buffer/2)
+                    console.log(buffer, width, height, iconSize)
                     console.log(icon)
                 } else {
                     icon = document.createElementNS(svgNS, 'text')
