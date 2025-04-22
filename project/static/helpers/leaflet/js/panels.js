@@ -1241,7 +1241,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 type: 'color',
                 value: hslToHex(manageHSLAColor(styleParams.patternBgColor)),
             },
-            labelText: 'test',
+            labelText: patternBg,
             fieldClass: 'form-control-sm h-100',
             events: {
                 blur: (e) => {

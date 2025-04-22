@@ -584,7 +584,11 @@ const createFormFloating = ({
     const label = document.createElement('label')
     label.className = `${labelClass}`
     label.setAttribute('for', field.id)
-    label.innerText = labelText
+    if (labelText instanceof Element) {
+        label.appendChild(labelText)
+    } else {
+        label.innerText = labelText
+    }
     container.appendChild(label)
     
     return container
