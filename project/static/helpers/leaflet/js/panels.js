@@ -689,10 +689,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 } else {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
-                    icon.setAttribute('x', '50%')
-                    icon.setAttribute('y', '50%')
-                    icon.setAttribute('text-anchor', 'middle')
-                    icon.setAttribute('dominant-baseline', 'central')
                     icon.setAttribute('font-size', iconSize)
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
@@ -739,7 +735,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (icon) {
                     icon.id = `${id}-icon`
-
+                    icon.setAttribute('x', '50%')
+                    icon.setAttribute('y', '50%')
+                    icon.setAttribute('text-anchor', 'middle')
+                    icon.setAttribute('dominant-baseline', 'central')
+                    
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
