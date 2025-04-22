@@ -944,7 +944,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconColor = createFormFloating({
             parent:iconFields3,
-            containerClass: 'w-100 flex-grow-1',
+            containerClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name:`${id}-iconColor`,
                 type: 'color',
@@ -965,6 +965,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconOpacity = createInputGroup({
             parent:iconFields3,
+            inputGroupClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name: `${id}-iconOpacity`,
                 type: 'number',
