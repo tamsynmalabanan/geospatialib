@@ -642,7 +642,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 delete styleParams.fillPatternId
             }
 
-            if (Array('bi', 'text', 'svg').includes(iconType)) {
+            if (iconSpecs !== '' && Array('bi', 'text', 'svg').includes(iconType)) {
                 const id = generateRandomString()
                 styleParams.fillPatternId = id
         
