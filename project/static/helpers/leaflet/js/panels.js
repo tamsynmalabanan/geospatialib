@@ -681,6 +681,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     return [width, height]
                 })()
+                console.log(width, height)
 
                 let svg
                 if (iconType === 'svg') {
