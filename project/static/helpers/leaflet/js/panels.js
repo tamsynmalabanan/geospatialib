@@ -1235,6 +1235,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:fillFields,
             containerClass: 'w-100 flex-grow-1',
             prefixHTML: patternBg,
+            disabled: !styleParams.patternBg,
             fieldAttrs: {
                 name:`${id}-patternBgColor`,
                 type: 'color',
