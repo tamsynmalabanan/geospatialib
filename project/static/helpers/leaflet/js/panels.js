@@ -1217,7 +1217,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const patternBg = createFormCheck({
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
-            labelClass: 'text-wrap',
+            labelClass: 'text-wrap text-start',
             formCheckClass: 'fs-12',
             events: {
                 click: (e) => {
@@ -1235,7 +1235,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const patternBgColor = createInputGroup({
             parent: fillFields,
             prefixHTML: patternBg,
-            containerClass: 'w-100 flex-grow-1 fs-12',
+            inputGroupClass: 'w-100 flex-grow-1 flex-nowrap',
             disabled: !styleParams.patternBg,
             fieldAttrs: {
                 name:`${id}-patternBgColor`,
