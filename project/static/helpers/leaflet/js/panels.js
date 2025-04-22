@@ -743,7 +743,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     defs.appendChild(text)
 
                     svg = document.createElementNS(svgNS, 'svg')
-                    svg.classList.add('position-absolute')
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     svg.setAttribute('width', width)
@@ -758,6 +757,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (svg) {
                     svg.id = `${id}-svg`
+                    svg.classList.add('position-absolute')
 
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
