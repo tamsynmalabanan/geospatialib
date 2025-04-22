@@ -168,7 +168,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 element.style.textShadow = textShadow
             }    
         } else {
-            element = svg
+            element = svg.cloneNode(true)
             element.removeAttribute('id')
         }
 
