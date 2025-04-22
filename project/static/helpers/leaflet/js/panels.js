@@ -1218,6 +1218,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
             labelClass: 'text-wrap',
+            formCheckClass: 'fs-12',
             events: {
                 click: (e) => {
                     const value = e.target.checked
