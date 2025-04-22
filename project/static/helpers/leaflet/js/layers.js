@@ -22,7 +22,7 @@ const getLeafletStyleParams = ({
     fontSerif=false,
     
     fillColor=generateRandomColor(),
-    patternBg='',
+    patternBg,
     fillOpacity=0.5,
     
     fillPattern='solid',
