@@ -758,7 +758,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 const patternRect = document.createElementNS(svgNS, 'rect')
                 Array('width', 'height').forEach(i => {
-                    patternRect.setAttribute(i ,svg.getAttribute(i))
+                    patternRect.setAttribute(i, svg.getAttribute(i))
                 })
                 patternRect.setAttribute('fill', 'white')
                 newPattern.appendChild(patternRect)
