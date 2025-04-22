@@ -680,23 +680,22 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 let icon
                 
-                if (iconType === 'svg') {
-                    defs.innerHTML = iconSpecs
-                    icon = defs.firstChild
+                if (Array('svg', 'img').includes(iconType)) {
+                    if (iconType === 'svg') {
+                        defs.innerHTML = iconSpecs
+                        icon = defs.firstChild
+                    }
+                    
+                    if (iconType === 'img') {
+                        icon = document.createElementNS(svgNS, 'image')
+                        icon.setAttribute('href', iconSpecs)
+                        defs.appendChild(icon)
+                    }
+
                     icon.setAttribute('width', iconSize)
                     icon.setAttribute('height', iconSize)
                     icon.setAttribute('x', buffer/2)
                     icon.setAttribute('y', buffer/2)
-                }
-                
-                if (iconType === 'img') {
-                    icon = document.createElementNS(svgNS, 'image')
-                    icon.setAttribute('href', iconSpecs)
-                    icon.setAttribute('width', iconSize)
-                    icon.setAttribute('height', iconSize)
-                    icon.setAttribute('x', buffer/2)
-                    icon.setAttribute('y', buffer/2)
-                    defs.appendChild(icon)
                 }
                 
                 if (Array('bi', 'text', 'property').includes(iconType)) {
