@@ -761,6 +761,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternRect.setAttribute(i ,svg.getAttribute(i))
                 })
                 patternRect.setAttribute('fill', 'white')
+                newPattern.appendChild(patternRect)
 
                 const patternUse = document.createElementNS(svgNS, 'use')
                 patternUse.setAttribute('href', `#${id}-svg`)
