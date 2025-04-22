@@ -1238,7 +1238,7 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const patternBgColor = createInputGroup({
+        const patternBgColor = createFormFloating({
             parent:patterhBgFields,
             containerClass: 'w-100 flex-grow-1',
             disabled: !styleParams.patternBg,
