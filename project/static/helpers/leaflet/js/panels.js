@@ -697,10 +697,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
                         `) : '',
                         iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize*0.25}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                            0 0 ${iconSize*0.75}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                            0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                            0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
                         `) : ''
                     ).filter(i => i !== '').join(',')
                     defs.appendChild(text)
@@ -731,7 +731,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         const bounds = tempElement.getBoundingClientRect()
                         document.body.removeChild(tempElement)
     
-                        const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize : 0) //(Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
+                        const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0) //(Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
                         const width = containerSize+bounds.width
                         const height = containerSize+bounds.height
                         
