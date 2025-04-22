@@ -654,9 +654,11 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 let svg
 
-                if (iconType === 'svg' && (iconSpecs.startsWith('<svg') && iconSpecs.endsWith('</svg>'))) {
-                    defs.innerHTML = iconSpecs
-                    svg = defs.firstChild
+                if (iconType === 'svg') {
+                    if (iconSpecs.startsWith('<svg') && iconSpecs.endsWith('</svg>')) {
+                        defs.innerHTML = iconSpecs
+                        svg = defs.firstChild
+                    }
                 } else {
                     const text = document.createElementNS(svgNS, 'text')
                     text.id = `${id}-text`
@@ -712,7 +714,32 @@ const handleLeafletStylePanel = (map, parent) => {
                     svg.classList.add('position-absolute')
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
-                    svg.setAttribute('viewbox', (() => {
+                    defs.appendChild(svg)
+                    
+                    const svgUse = document.createElementNS(svgNS, 'use')
+                    svgUse.setAttribute('href', `#${id}-text`)
+                    svg.appendChild(svgUse)
+                }
+                
+                if (svg) {
+                    svg.id = `${id}-svg`
+
+                    const pattern = document.createElementNS(svgNS, 'pattern')
+                    pattern.id = `${id}-pattern`
+                    pattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                    pattern.style.transform = `rotate(${iconRotation}deg)`
+                    pattern.style.transformOrigin = `50% 50%`
+                    defs.appendChild(pattern)
+                    
+                    const patternRect = document.createElementNS(svgNS, 'rect')
+                    patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
+                    pattern.appendChild(patternRect)
+    
+                    const patternUse = document.createElementNS(svgNS, 'use')
+                    patternUse.setAttribute('href', `#${id}-svg`)
+                    pattern.appendChild(patternUse)
+
+                    (() => {
                         const style = getLeafletLayerStyle(
                             {geometry:{type:'MultiPoint'}}, 
                             {...styleParams, fillPatternId:null}
@@ -733,44 +760,16 @@ const handleLeafletStylePanel = (map, parent) => {
                         const bounds = tempElement.getBoundingClientRect()
                         document.body.removeChild(tempElement)
     
-                        const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0) //(Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
+                        const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0)
                         const width = containerSize+bounds.width
                         const height = containerSize+bounds.height
                         
-                        svg.setAttribute('width', width)
-                        svg.setAttribute('height', height)
-                        return `0 0 ${width} ${height}`
-                    })())
-                    defs.appendChild(svg)
-                    
-                    const svgUse = document.createElementNS(svgNS, 'use')
-                    svgUse.setAttribute('href', `#${id}-text`)
-                    svg.appendChild(svgUse)
-                }
-                
-                if (svg) {
-                    svg.id = `${id}-svg`
-
-                    const newPattern = document.createElementNS(svgNS, 'pattern')
-                    newPattern.id = `${id}-pattern`
-                    newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    Array('width', 'height', 'viewbox').forEach(i => {
-                        newPattern.setAttribute(i ,svg.getAttribute(i))
-                    })
-                    newPattern.style.transform = `rotate(${iconRotation}deg)`
-                    newPattern.style.transformOrigin = `50% 50%`
-                    defs.appendChild(newPattern)
-                    
-                    const patternRect = document.createElementNS(svgNS, 'rect')
-                    Array('width', 'height').forEach(i => {
-                        patternRect.setAttribute(i, svg.getAttribute(i))
-                    })
-                    patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
-                    newPattern.appendChild(patternRect)
-    
-                    const patternUse = document.createElementNS(svgNS, 'use')
-                    patternUse.setAttribute('href', `#${id}-svg`)
-                    newPattern.appendChild(patternUse)
+                        Array(svg, pattern, patternRect).forEach(i => {
+                            i.setAttribute('width', width)
+                            i.setAttribute('height', height)
+                            if (i !== patternRect) i.setAttribute('viewbox', `0 0 ${width} ${height}`)
+                        })
+                    })()
                 }
             }
 
