@@ -22,7 +22,7 @@ const getLeafletStyleParams = ({
     fontSerif=false,
     
     fillColor=generateRandomColor(),
-    fillBg='transparent',
+    patternBg='',
     fillOpacity=0.5,
     
     fillPattern='solid',
@@ -47,7 +47,7 @@ const getLeafletStyleParams = ({
         strokeColor,
         strokeOpacity,
         fillColor,
-        fillBg,
+        patternBg,
         fillOpacity,
         iconSpecs,
         iconSize,
@@ -83,7 +83,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         strokeColor,
         strokeOpacity,
         fillColor,
-        fillBg,
+        patternBg,
         fillOpacity,
         iconSpecs,
         iconSize,

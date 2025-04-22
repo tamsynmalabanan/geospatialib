@@ -610,7 +610,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 strokeColor,
                 strokeOpacity,
                 fillColor,
-                fillBg,
+                patternBg,
                 fillOpacity,
                 iconSpecs,
                 iconSize,
@@ -761,7 +761,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 Array('width', 'height').forEach(i => {
                     patternRect.setAttribute(i, svg.getAttribute(i))
                 })
-                patternRect.setAttribute('fill', fillBg)
+                patternRect.setAttribute('fill', patternBg)
                 newPattern.appendChild(patternRect)
 
                 const patternUse = document.createElementNS(svgNS, 'use')
@@ -1166,27 +1166,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const fillBg = createFormFloating({
-            parent:fillFields,
-            containerClass: 'w-100 flex-grow-1',
-            fieldAttrs: {
-                name:`${id}-fillBg`,
-                type: 'color',
-                value: hslToHex(manageHSLAColor(styleParams.fillBg)),
-            },
-            fieldClass: 'form-control-sm',
-            labelText: 'Fill background',
-            events: {
-                blur: (e) => {
-                    const value = hexToHSLA(e.target.value)
-                    if (value === styleParams.fillBg) return
-
-                    styleParams.fillBg = value
-                    update()
-                }
-            }
-        })
-
         const fillOpacity = createInputGroup({
             parent:fillFields,
             fieldAttrs: {
@@ -1233,6 +1212,28 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+
+        const patternBg = createFormFloating({
+            parent:fillFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-patternBg`,
+                type: 'color',
+                value: hslToHex(manageHSLAColor(styleParams.patternBg)),
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Fill background',
+            events: {
+                blur: (e) => {
+                    const value = hexToHSLA(e.target.value)
+                    if (value === styleParams.patternBg) return
+
+                    styleParams.patternBg = value
+                    update()
+                }
+            }
+        })
+
 
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
