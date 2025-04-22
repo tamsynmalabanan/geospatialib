@@ -1232,9 +1232,8 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const patternBgColor = createInputGroup({
+        const patternBgColor = createFormFloating({
             parent: fillFields,
-            prefixHTML: patternBg,
             inputGroupClass: 'w-100 flex-grow-1 flex-nowrap',
             disabled: !styleParams.patternBg,
             fieldAttrs: {
@@ -1242,6 +1241,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 type: 'color',
                 value: hslToHex(manageHSLAColor(styleParams.patternBgColor)),
             },
+            labelText: 'test',
             fieldClass: 'form-control-sm h-100',
             events: {
                 blur: (e) => {
