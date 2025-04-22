@@ -686,8 +686,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'svg') {
                     defs.innerHTML = iconSpecs
                     icon = defs.firstChild
-                    icon.setAttribute('x', '50%')
-                    icon.setAttribute('y', '50%')
+                    icon.setAttribute('x', '25%')
+                    icon.setAttribute('y', '25%')
                     icon.setAttribute('transform', `translate(-8, -8)`)
                     } else {
                     icon = document.createElementNS(svgNS, 'text')
