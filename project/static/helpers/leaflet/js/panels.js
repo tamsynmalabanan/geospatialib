@@ -1234,7 +1234,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const patternBgColor = createInputGroup({
             parent: fillFields,
             prefixHTML: patternBg,
-            containerClass: 'w-100 flex-grow-1',
+            containerClass: 'w-100 flex-grow-1 fs-12',
             disabled: !styleParams.patternBg,
             fieldAttrs: {
                 name:`${id}-patternBgColor`,
