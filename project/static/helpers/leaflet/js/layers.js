@@ -127,7 +127,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     if (isPoint && !isCircleMarker) {
         let element
 
-        const svg = document.querySelector(`svg#svgFillDefs defs#${fillPatternId} svg#${fillPatternId}-svg`)
+        const svg = document.querySelector(`svg#${fillPatternId}-svg`)
         if (!svg || (textWrap && Array('text', 'property').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType) 
             ? customCreateElement({innerHTML:iconSpecs}).firstChild 
