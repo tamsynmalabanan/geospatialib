@@ -675,7 +675,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     document.body.appendChild(tempElement)
                     const bounds = tempElement.getBoundingClientRect()
                     document.body.removeChild(tempElement)
-                    return [bounds.width, bounds.height]
+                    return [buffer+bounds.width, buffer+bounds.height]
                 })()
 
                 let icon
@@ -743,9 +743,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
-                    svg.setAttribute('width', buffer+width)
-                    svg.setAttribute('height', buffer+height)
-                    svg.setAttribute('viewbox', `0 0 ${buffer+width} ${buffer+height}`)
+                    svg.setAttribute('width', width)
+                    svg.setAttribute('height', height)
+                    svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     defs.appendChild(svg)
@@ -757,16 +757,16 @@ const handleLeafletStylePanel = (map, parent) => {
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
                     newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    newPattern.setAttribute('width', buffer+width)
-                    newPattern.setAttribute('height', buffer+height)
-                    newPattern.setAttribute('viewbox', `0 0 ${buffer+width} ${buffer+height}`)
+                    newPattern.setAttribute('width', width)
+                    newPattern.setAttribute('height', height)
+                    newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     newPattern.style.transform = `rotate(${iconRotation}deg)`
                     newPattern.style.transformOrigin = `50% 50%`
                     defs.appendChild(newPattern)
                     
                     const patternRect = document.createElementNS(svgNS, 'rect')
-                    patternRect.setAttribute('width', buffer+width)
-                    patternRect.setAttribute('height', buffer+height)
+                    patternRect.setAttribute('width', width)
+                    patternRect.setAttribute('height', height)
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
