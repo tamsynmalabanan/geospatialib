@@ -146,15 +146,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
                     ''
                 ),
-                style: {
-                    fontFamily: (
-                        iconType === 'bi' ? 'bootstrap-icons' : 
-                        fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
-                        'default'
-                    ),
-                    transform: `rotate(${iconRotation}deg)`,
-                    transformOrigin: `50% 50%`,
-                },
                 className:removeWhitespace(`
                     h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
                     ${textWrap ? 'text-wrap' : 'text-nowrap'}
@@ -169,6 +160,13 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     element.setAttribute('height', iconSize)
                 }
                 
+                element.style.fontFamily = (
+                    iconType === 'bi' ? 'bootstrap-icons' : 
+                    fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
+                    'default'
+                )
+                element.style.transform = `rotate(${iconRotation}deg)`
+                element.style.transformOrigin = `50% 50%`
                 element.style.fontSize = `${iconSize}px`
                 element.style.color = iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent'
                 if (iconStroke) element.style.WebkitTextStroke = `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}`
