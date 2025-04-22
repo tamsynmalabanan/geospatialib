@@ -610,6 +610,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 strokeColor,
                 strokeOpacity,
                 fillColor,
+                fillBg,
                 fillOpacity,
                 iconSpecs,
                 iconSize,
@@ -760,7 +761,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 Array('width', 'height').forEach(i => {
                     patternRect.setAttribute(i, svg.getAttribute(i))
                 })
-                patternRect.setAttribute('fill', 'white')
+                patternRect.setAttribute('fill', fillBg)
                 newPattern.appendChild(patternRect)
 
                 const patternUse = document.createElementNS(svgNS, 'use')
@@ -1160,6 +1161,27 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
+                    update()
+                }
+            }
+        })
+
+        const fillBg = createFormFloating({
+            parent:fillFields,
+            containerClass: 'w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-fillBg`,
+                type: 'color',
+                value: hslToHex(manageHSLAColor(styleParams.fillBg)),
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Fill background',
+            events: {
+                blur: (e) => {
+                    const value = hexToHSLA(e.target.value)
+                    if (value === styleParams.fillBg) return
+
+                    styleParams.fillBg = value
                     update()
                 }
             }
