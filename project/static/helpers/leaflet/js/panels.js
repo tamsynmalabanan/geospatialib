@@ -689,17 +689,31 @@ const handleLeafletStylePanel = (map, parent) => {
                 } else {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
-                    icon.setAttribute('x', '50%')
-                    icon.setAttribute('y', '50%')
-                    icon.setAttribute('text-anchor', 'middle')
-                    icon.setAttribute('dominant-baseline', 'central')
-                    icon.setAttribute('font-size', iconSize)
+                    icon.style.textShadow = styleParams.textShadow = Array(
+                        iconShadow ? removeWhitespace(`
+                            ${iconSize*0.1}px 
+                            ${iconSize*0.1}px 
+                            ${iconSize*0.2}px 
+                            ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                        `) : '',
+                        iconGlow ? removeWhitespace(`
+                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                            0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                            0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                        `) : ''
+                    ).filter(i => i !== '').join(',')
                     icon.setAttribute('class', removeWhitespace(`
                         text-center lh-1
                         ${textWrap ? 'text-wrap' : 'text-nowrap'}
                         ${boldFont ? 'fw-bold' : 'fw-normal'}
                         ${italicFont ? 'fst-italic' : 'fst-normal'}
                     `))
+                    icon.setAttribute('x', '50%')
+                    icon.setAttribute('y', '50%')
+                    icon.setAttribute('text-anchor', 'middle')
+                    icon.setAttribute('dominant-baseline', 'central')
+                    icon.setAttribute('font-size', iconSize)
                     icon.setAttribute('font-family', (
                         iconType === 'bi' ? 'bootstrap-icons' :
                         fontSerif ? 'Georgia, Times, serif' :
@@ -725,20 +739,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                         return iconStroke ? strokeColor : 'none'
                     })())
-                    icon.style.textShadow = styleParams.textShadow = Array(
-                        iconShadow ? removeWhitespace(`
-                            ${iconSize*0.1}px 
-                            ${iconSize*0.1}px 
-                            ${iconSize*0.2}px 
-                            ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                        `) : '',
-                        iconGlow ? removeWhitespace(`
-                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                            0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                            0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                        `) : ''
-                    ).filter(i => i !== '').join(',')
 
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
