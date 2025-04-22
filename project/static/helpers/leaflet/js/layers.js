@@ -156,7 +156,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             })
 
             if (element instanceof Element) {
-                if (iconType === 'svg' || element.tagName.toLowerCase() === 'svg') {
+                if (Array('svg', 'img').includes(iconType) || Array('svg', 'img').includes(element.tagName.toLowerCase())) {
                     element.setAttribute('width', iconSize)
                     element.setAttribute('height', iconSize)
                 }

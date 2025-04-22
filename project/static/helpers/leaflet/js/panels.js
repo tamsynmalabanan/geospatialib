@@ -679,6 +679,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
 
                 let icon
+                
                 if (iconType === 'svg') {
                     defs.innerHTML = iconSpecs
                     icon = defs.firstChild
@@ -686,6 +687,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('height', iconSize)
                     icon.setAttribute('x', buffer/2)
                     icon.setAttribute('y', buffer/2)
+                }
+
+                if (iconType === 'img') {
+                    icon = document.createElementNS(svgNS, 'image')
+                    icon.setAttribute('xlink:href', iconSpecs)
+                    icon.setAttribute('width', iconSize)
+                    icon.setAttribute('height', iconSize)
+                    defs.appendChild(icon)
                 }
                 
                 if (Array('bi', 'text', 'property').includes(iconType)) {
@@ -846,6 +855,7 @@ const handleLeafletStylePanel = (map, parent) => {
             options: {
                 'bi': 'bootstrap icon',
                 'text': 'text or emoji',
+                'img': 'image url',
                 'svg': 'svg element',
                 'html': 'html element',
                 'property': 'feature property',
