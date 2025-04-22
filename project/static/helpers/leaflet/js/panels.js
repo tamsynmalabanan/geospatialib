@@ -1214,6 +1214,12 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        
+        const fillFields2 = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
         const patternBg = createFormCheck({
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
@@ -1232,7 +1238,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBgColor = createInputGroup({
-            parent:fillFields,
+            parent:fillFields2,
             containerClass: 'w-100 flex-grow-1',
             prefixHTML: patternBg,
             disabled: !styleParams.patternBg,
