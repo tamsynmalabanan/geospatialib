@@ -761,17 +761,16 @@ const handleLeafletStylePanel = (map, parent) => {
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
                     newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    Array('width', 'height', 'viewbox').forEach(i => {
-                        newPattern.setAttribute(i, svg.getAttribute(i))
-                    })
+                    newPattern.setAttribute('width', width)
+                    newPattern.setAttribute('height', height)
+                    newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     newPattern.style.transform = `rotate(${iconRotation}deg)`
                     newPattern.style.transformOrigin = `50% 50%`
                     defs.appendChild(newPattern)
                     
                     const patternRect = document.createElementNS(svgNS, 'rect')
-                    Array('width', 'height').forEach(i => {
-                        patternRect.setAttribute(i, svg.getAttribute(i))
-                    })
+                    patternRect.setAttribute('width', width)
+                    patternRect.setAttribute('height', height)
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
