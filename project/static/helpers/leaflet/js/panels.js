@@ -1215,7 +1215,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBgFields = customCreateElement({
-            className:'d-flex flex-column flex-wrap justify-content-center border px-3 rounded pt-1 flex-grow-1', 
+            className:'border rounded p-2 d-flex justify-content-center', 
             style: {maxHeight:'58px'},
             parent:fillFields
         })
@@ -1224,7 +1224,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent: patternBgFields,
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
-            labelClass: 'text-nowrap text-start',
+            labelClass: 'text-wrap text-start',
             formCheckClass: 'fs-12',
             events: {
                 click: (e) => {
