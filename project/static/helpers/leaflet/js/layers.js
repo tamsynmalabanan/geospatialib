@@ -330,9 +330,10 @@ const findLeafletFeatureLayerParent = (layer) => {
 
 const cloneLeafletLayerStyles = (layer) => {
     const styles = structuredClone(layer._styles)
+    const symbology = styles.symbology
     const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
     
-    Array(styles.default, ...Object.values(styles.groups ?? {})).forEach(i => {
+    Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
         const currentId = i.styleParams.fillPatternId
         if (!currentId) return 
         
@@ -360,8 +361,8 @@ const cloneLeafletLayerStyles = (layer) => {
 
 const deleteLeafletLayerFillPatterns = (layer) => {
     const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
-                
-    Array(layer._styles.default, ...Object.values(layer._styles.groups ?? {})).forEach(i => {
+    const symbology = layer._styles.symbology
+    Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
         const fillPatternId = i.styleParams.fillPatternId
         if (!fillPatternId) return 
         

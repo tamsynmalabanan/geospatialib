@@ -20,26 +20,28 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
     geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
     geojsonLayer._styles = styles || {
-        // groups: {
-        //     id: {
-        //         label: 'Label',
-        //         rank: 1,
-        //         validators: [
-        //             (feature) => ['property', 'values'].contains(feature.properties['key'])
-        //             // array of functions that return true or false - refine this, not functions, just
-        //             // field: type {range/category} values
-        //         ],
-        //         styleParams: {
-
-        //         }, // getLeafletLayerStyle(feature, styleParams)
-        //     },
-        // },
-        default: {
-            label: '',
-            showCount: true,
-            styleParams: getLeafletStyleParams(customStyleParams),
+        symbology: {
+            // groups: {
+            //     id: {
+            //         label: 'Label',
+            //         rank: 1,
+            //         validators: [
+            //             (feature) => ['property', 'values'].contains(feature.properties['key'])
+            //             // array of functions that return true or false - refine this, not functions, just
+            //             // field: type {range/category} values
+            //         ],
+            //         styleParams: {
+    
+            //         }, // getLeafletLayerStyle(feature, styleParams)
+            //     },
+            // },
+            default: {
+                label: '',
+                showCount: true,
+                styleParams: getLeafletStyleParams(customStyleParams),
+            },
+            method: 'uniform',
         },
-        method: 'uniform',
         visibility: {
             active: false,
             min: 10,
@@ -129,14 +131,14 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     const getStyle = (feature) => {
-        const styles = geojsonLayer._styles
-        let styleParams = styles?.default?.styleParams || getLeafletStyleParams()
+        const symbology = geojsonLayer._styles?.symbology
+        let styleParams = symbology?.default?.styleParams || getLeafletStyleParams()
         feature._groupId = ''
         
-        if (styles?.groups) {
+        if (symbology?.groups) {
             // make sure groups are sorted by rank
-            for (const id in styles.groups) {
-                const group = styles.groups[id]
+            for (const id in symbology.groups) {
+                const group = symbology.groups[id]
                 
                 let valid = true
                 for (const validator in group.validators) {
@@ -201,7 +203,7 @@ const assignFeatureLayerTitle = (layer) => {
 
 const getGeoJSONLayerStyles = (layer) => {
     const styles = {}
-    const layerStyles = layer._styles
+    const symbology = layer._styles.symbology
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
@@ -213,7 +215,7 @@ const getGeoJSONLayerStyles = (layer) => {
         if (group) {
             group.types[type].count +=1
         } else {
-            const featureLegend = (layerStyles.groups?.[groupId]) || layerStyles.default 
+            const featureLegend = (symbology.groups?.[groupId]) || symbology.default 
             const styleParams = featureLegend.styleParams
             styles[groupId] = {
                 label: featureLegend.label || '',

@@ -598,8 +598,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const getSymbologyForm = (id) => {
         const legendLayer = getLayerLegend()
-        const layerStyles = layer._styles
-        const style = (layerStyles.groups?.[id]) || layerStyles.default
+        const symbology = layer._styles.symbology
+        const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
         
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
@@ -1453,8 +1453,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getGeomFilterForm = (id) => {
-        const layerStyles = layer._styles
-        const filters = layerStyles.filters
+        const filters = layer._styles.filters
         const filter = filters.geom.values[id]
 
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
@@ -1674,8 +1673,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getPropertyFilterForm = (id) => {
-        const layerStyles = layer._styles
-        const filters = layerStyles.filters
+        const filters = layer._styles.filters
         const filter = filters.properties.values[id]
         
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
@@ -1931,6 +1929,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const layerLegend = getLayerLegend()
         const layerStyles = layer._styles
+        const symbology = layerStyles.symbology
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
         const filterContainerId = generateRandomString()
@@ -2010,12 +2009,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                 // 'categorized':'Categorized symbols',
                                 // 'ranged':'Ranged symbols',
                             },
-                            currentValue: layerStyles.method,
+                            currentValue: symbology.method,
                             fieldClass:'form-select-sm',
                             events: {
                                 change: (e) => {
                                     const field = e.target
-                                    layerStyles.method = field.value
+                                    symbology.method = field.value
                                     
                                     const container = field.parentElement.nextSibling
                                     container.innerHTML = ''
