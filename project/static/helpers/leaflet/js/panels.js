@@ -1254,6 +1254,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 update()
             })
             patternBgFields.appendChild(input)
+            return input
         })()
 
         const strokeFields = customCreateElement({
