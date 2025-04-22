@@ -642,23 +642,54 @@ const handleLeafletStylePanel = (map, parent) => {
                 delete styleParams.fillPatternId
             }
 
-            if (iconSpecs !== '' && Array('bi', 'text', 'svg').includes(iconType)) {
-                const id = generateRandomString()
-                styleParams.fillPatternId = id
-        
-                const svgNS = "http://www.w3.org/2000/svg"
-                
-                const defs = document.createElementNS(svgNS, 'defs')
-                defs.id = id
-                svgFillDefs.appendChild(defs)
+            const id = generateRandomString()
+            styleParams.fillPatternId = id
+    
+            const svgNS = "http://www.w3.org/2000/svg"
+            
+            const defs = document.createElementNS(svgNS, 'defs')
+            defs.id = id
+            svgFillDefs.appendChild(defs)
+            
+            try {
+                if (!iconSpecs) throw new Error('No icon specification.')
+
+                const [width, height] = (() => {
+                    const style = getLeafletLayerStyle(
+                        {geometry:{type:'MultiPoint'}}, 
+                        {...styleParams, fillPatternId:null}
+                    )
+
+                    const tempElement =  customCreateElement({
+                        innerHTML: leafletLayerStyleToHTML(style, 'point')
+                    }).firstChild
+                    tempElement?.classList?.add('position-absolute')
+                    tempElement?.classList?.remove(
+                        'h-100', 
+                        'w-100', 
+                        'd-flex', 
+                        'justify-content-center', 
+                        'align-items-center'
+                    )
+                    document.body.appendChild(tempElement)
+                    const bounds = tempElement.getBoundingClientRect()
+                    document.body.removeChild(tempElement)
+
+                    const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0) //(Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
+                    const width = containerSize+bounds.width
+                    const height = containerSize+bounds.height
+                    
+                    return [width, height]
+                })()
 
                 let svg
-
                 if (iconType === 'svg') {
-                    if (iconSpecs.startsWith('<svg') && iconSpecs.endsWith('</svg>')) {
-                        defs.innerHTML = iconSpecs
-                        svg = defs.firstChild
-                    }
+                    if (!iconSpecs.startsWith('<svg') || !iconSpecs.endsWith('</svg>')) throw new Error('Invalid SVG.')
+                    
+                    defs.innerHTML = iconSpecs
+                    svg = defs.firstChild
+                    
+                    if (!(svg instanceof Element) || svg.tagName.toLowerCase() !== 'svg') throw new Error('Invalid SVG.')
                 } else {
                     const text = document.createElementNS(svgNS, 'text')
                     text.id = `${id}-text`
@@ -714,6 +745,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     svg.classList.add('position-absolute')
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
+                    svg.setAttribute('width', width)
+                    svg.setAttribute('height', height)
+                    svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     defs.appendChild(svg)
                     
                     const svgUse = document.createElementNS(svgNS, 'use')
@@ -724,57 +758,31 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (svg) {
                     svg.id = `${id}-svg`
 
-                    const pattern = document.createElementNS(svgNS, 'pattern')
-                    pattern.id = `${id}-pattern`
-                    pattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    pattern.style.transform = `rotate(${iconRotation}deg)`
-                    pattern.style.transformOrigin = `50% 50%`
-                    defs.appendChild(pattern)
+                    const newPattern = document.createElementNS(svgNS, 'pattern')
+                    newPattern.id = `${id}-pattern`
+                    newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                    Array('width', 'height', 'viewbox').forEach(i => {
+                        newPattern.setAttribute(i, svg.getAttribute(i))
+                    })
+                    newPattern.style.transform = `rotate(${iconRotation}deg)`
+                    newPattern.style.transformOrigin = `50% 50%`
+                    defs.appendChild(newPattern)
                     
                     const patternRect = document.createElementNS(svgNS, 'rect')
+                    Array('width', 'height').forEach(i => {
+                        patternRect.setAttribute(i, svg.getAttribute(i))
+                    })
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
-                    pattern.appendChild(patternRect)
+                    newPattern.appendChild(patternRect)
     
                     const patternUse = document.createElementNS(svgNS, 'use')
                     patternUse.setAttribute('href', `#${id}-svg`)
-                    pattern.appendChild(patternUse)
-
-                    const updateDimensions = (() => {
-                        const style = getLeafletLayerStyle(
-                            {geometry:{type:'MultiPoint'}}, 
-                            {...styleParams, fillPatternId:null}
-                        )
-    
-                        const tempElement =  customCreateElement({
-                            innerHTML: leafletLayerStyleToHTML(style, 'point')
-                        }).firstChild
-                        tempElement?.classList?.add('position-absolute')
-                        tempElement?.classList?.remove(
-                            'h-100', 
-                            'w-100', 
-                            'd-flex', 
-                            'justify-content-center', 
-                            'align-items-center'
-                        )
-                        document.body.appendChild(tempElement)
-                        const bounds = tempElement.getBoundingClientRect()
-                        document.body.removeChild(tempElement)
-    
-                        const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0)
-                        const width = containerSize+bounds.width
-                        const height = containerSize+bounds.height
-                        
-                        Array(
-                            svg, 
-                            pattern, 
-                            patternRect
-                        ).forEach(i => {
-                            i.setAttribute('width', width)
-                            i.setAttribute('height', height)
-                            if (i !== patternRect) i.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                        })
-                    })()
+                    newPattern.appendChild(patternUse)
                 }
+            } catch (error) {
+                console.log(error)
+                delete styleParams.fillPatternId
+                defs.remove()
             }
 
             updateGeoJSONData(layer)
