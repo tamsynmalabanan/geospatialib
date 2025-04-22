@@ -633,7 +633,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 textShadow,
             } = styleParams
             const hslaColor = manageHSLAColor(fillColor)
-            const containerSize = iconSize + (strokeWidth*2) + (Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
             
             const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
             if (fillPatternId) {
@@ -651,102 +650,114 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.id = id
                 svgFillDefs.appendChild(defs)
 
-                const svg = document.createElementNS(svgNS, 'svg')
-                svg.id = `${id}-svg`
-                svg.classList.add('position-absolute')
-                defs.appendChild(svg)
-                const text = document.createElementNS(svgNS, 'text')
-                text.id = `${id}-text`
-                defs.appendChild(text)
+                let svg
 
-                text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
-                text.style.textShadow = styleParams.textShadow = Array(
-                    iconShadow ? removeWhitespace(`
-                        ${iconSize*0.1}px 
-                        ${iconSize*0.1}px 
-                        ${iconSize*0.2}px 
-                        ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                    `) : '',
-                    iconGlow ? removeWhitespace(`
-                        0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                        0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                        0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                        0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                    `) : ''
-                ).filter(i => i !== '').join(',')
+                if (iconType === 'svg') {
 
-                text.setAttribute('x', '50%')
-                text.setAttribute('y', '50%')
-                text.setAttribute('text-anchor', 'middle')
-                text.setAttribute('dominant-baseline', 'central')
-                text.setAttribute('font-size', iconSize)
-                text.setAttribute('class', removeWhitespace(`
-                    text-center lh-1
-                    ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                    ${boldFont ? 'fw-bold' : 'fw-normal'}
-                    ${italicFont ? 'fst-italic' : 'fst-normal'}
-                `))
-                text.setAttribute('font-family', (
-                    iconType === 'bi' ? 'bootstrap-icons' :
-                    fontSerif ? 'Georgia, Times, serif' :
-                    'default'
-                ))
-                
-                if (iconFill) {
-                    text.setAttribute('fill', fillColor)
-                    text.setAttribute('fill-opacity', fillOpacity)    
                 } else {
-                    text.setAttribute('fill', 'none')
+                    const text = document.createElementNS(svgNS, 'text')
+                    text.id = `${id}-text`
+                    text.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+                    text.setAttribute('x', '50%')
+                    text.setAttribute('y', '50%')
+                    text.setAttribute('text-anchor', 'middle')
+                    text.setAttribute('dominant-baseline', 'central')
+                    text.setAttribute('font-size', iconSize)
+                    text.setAttribute('fill', (() => {
+                        if (iconFill) text.setAttribute('fill-opacity', fillOpacity)
+                        return iconFill ? fillColor : 'none'
+                    })())
+                    text.setAttribute('stroke', (() => {
+                        if (iconStroke) {
+                            text.setAttribute('stroke-opacity', strokeOpacity)
+                            text.setAttribute('stroke-width', strokeWidth)
+                            text.setAttribute('stroke-linecap', lineCap)
+                            text.setAttribute('stroke-linejoin', lineJoin)
+                            text.setAttribute('stroke-dasharray', dashArray)
+                            text.setAttribute('stroke-dashoffset', dashOffset)
+                        }
+                        return iconStroke ? strokeColor : 'none'
+                    })())
+                    text.setAttribute('class', removeWhitespace(`
+                        text-center lh-1
+                        ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                        ${boldFont ? 'fw-bold' : 'fw-normal'}
+                        ${italicFont ? 'fst-italic' : 'fst-normal'}
+                    `))
+                    text.setAttribute('font-family', (
+                        iconType === 'bi' ? 'bootstrap-icons' :
+                        fontSerif ? 'Georgia, Times, serif' :
+                        'default'
+                    ))
+                    text.style.textShadow = styleParams.textShadow = Array(
+                        iconShadow ? removeWhitespace(`
+                            ${iconSize*0.1}px 
+                            ${iconSize*0.1}px 
+                            ${iconSize*0.2}px 
+                            ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                        `) : '',
+                        iconGlow ? removeWhitespace(`
+                            0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                            0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                            0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                            0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                        `) : ''
+                    ).filter(i => i !== '').join(',')
+                    defs.appendChild(text)
+
+                    svg = document.createElementNS(svgNS, 'svg')
+                    svg.id = `${id}-svg`
+                    svg.classList.add('position-absolute')
+                    svg.style.transform = `rotate(${iconRotation}deg)`
+                    svg.style.transformOrigin = `50% 50%`
+                    svg.setAttribute('viewbox', (() => {
+                        const style = getLeafletLayerStyle(
+                            {geometry:{type:'MultiPoint'}}, 
+                            {...styleParams, fillPatternId:null}
+                        )
+    
+                        const tempElement =  customCreateElement({
+                            innerHTML: leafletLayerStyleToHTML(style, 'point')
+                        }).firstChild
+                        tempElement?.classList?.add('position-absolute')
+                        tempElement?.classList?.remove(
+                            'h-100', 
+                            'w-100', 
+                            'd-flex', 
+                            'justify-content-center', 
+                            'align-items-center'
+                        )
+                        document.body.appendChild(tempElement)
+                        const bounds = tempElement.getBoundingClientRect()
+                        document.body.removeChild(tempElement)
+    
+                        const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize : 0) //(Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
+                        const width = containerSize+bounds.width
+                        const height = containerSize+bounds.height
+                        
+                        svg.setAttribute('width', width)
+                        svg.setAttribute('height', height)
+                        return `0 0 ${width} ${height}`
+                    })())
+                    defs.appendChild(svg)
+                    
+                    const svgUse = document.createElementNS(svgNS, 'use')
+                    svgUse.setAttribute('href', `#${id}-text`)
+                    svg.appendChild(svgUse)
                 }
                 
-                if (iconStroke) {
-                    text.setAttribute('stroke', strokeColor)
-                    text.setAttribute('stroke-opacity', strokeOpacity)
-                    text.setAttribute('stroke-width', strokeWidth)
-                    text.setAttribute('stroke-linecap', lineCap)
-                    text.setAttribute('stroke-linejoin', lineJoin)
-                    text.setAttribute('stroke-dasharray', dashArray)
-                    text.setAttribute('stroke-dashoffset', dashOffset)
-                } else {
-                    text.setAttribute('stroke', 'none')
-                }
-
-                const svgUse = document.createElementNS(svgNS, 'use')
-                svgUse.setAttribute('href', `#${id}-text`)
-                svg.appendChild(svgUse)
-
                 const newPattern = document.createElementNS(svgNS, 'pattern')
                 newPattern.id = `${id}-pattern`
                 newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
                 defs.appendChild(newPattern)
 
+                Array('width', 'height', 'viewbox').forEach(i => {
+                    newPattern.setAttribute(i ,svg.getAttribute(i))
+                })
+
                 const patternUse = document.createElementNS(svgNS, 'use')
                 patternUse.setAttribute('href', `#${id}-svg`)
                 newPattern.appendChild(patternUse)
-
-                const tempStyle = getLeafletLayerStyle(
-                    {geometry:{type:'MultiPoint'}}, 
-                    {...styleParams, fillPatternId:null}
-                )
-                const tempElement = customCreateElement({
-                    innerHTML: tempStyle.options?.html 
-                    ?? leafletLayerStyleToHTML(tempStyle, 'point')
-                }).firstChild
-                tempElement?.classList?.remove('h-100', 'w-100', 'd-flex', 'justify-content-center', 'align-items-center')
-                tempElement?.classList?.add('position-absolute')
-                document.body.appendChild(tempElement)
-                const bounds = tempElement.getBoundingClientRect()
-                document.body.removeChild(tempElement)
-                const width = containerSize+bounds.width
-                const height = containerSize+bounds.height
-
-                Array(svg, newPattern).forEach(i => {
-                    i.setAttribute('width', width)
-                    i.setAttribute('height', height)
-                    i.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                    i.style.transform = `rotate(${iconRotation}deg)`
-                    i.style.transformOrigin = `50% 50%`
-                })
             }
 
             updateGeoJSONData(layer)
