@@ -1215,7 +1215,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBgFields = customCreateElement({
-            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-2', 
+            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-1', 
             style: {maxHeight:'58px'},
             parent:fillFields
         })
