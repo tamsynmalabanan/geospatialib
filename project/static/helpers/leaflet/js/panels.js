@@ -737,10 +737,9 @@ const handleLeafletStylePanel = (map, parent) => {
     
                     const patternUse = document.createElementNS(svgNS, 'use')
                     patternUse.setAttribute('href', `#${id}-svg`)
-                    console.log(pattern)
                     pattern.appendChild(patternUse)
 
-                    (() => {
+                    const updateDimensions = (() => {
                         const style = getLeafletLayerStyle(
                             {geometry:{type:'MultiPoint'}}, 
                             {...styleParams, fillPatternId:null}
