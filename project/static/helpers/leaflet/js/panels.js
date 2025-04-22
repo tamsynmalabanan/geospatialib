@@ -740,9 +740,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
-                    svg.setAttribute('width', bounds+width)
-                    svg.setAttribute('height', bounds+height)
-                    svg.setAttribute('viewbox', `0 0 ${bounds+width} ${bounds+height}`)
+                    svg.setAttribute('width', buffer+width)
+                    svg.setAttribute('height', buffer+height)
+                    svg.setAttribute('viewbox', `0 0 ${buffer+width} ${buffer+height}`)
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     defs.appendChild(svg)
@@ -754,16 +754,16 @@ const handleLeafletStylePanel = (map, parent) => {
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
                     newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    newPattern.setAttribute('width', bounds+width)
-                    newPattern.setAttribute('height', bounds+height)
-                    newPattern.setAttribute('viewbox', `0 0 ${bounds+width} ${bounds+height}`)
+                    newPattern.setAttribute('width', buffer+width)
+                    newPattern.setAttribute('height', buffer+height)
+                    newPattern.setAttribute('viewbox', `0 0 ${buffer+width} ${buffer+height}`)
                     newPattern.style.transform = `rotate(${iconRotation}deg)`
                     newPattern.style.transformOrigin = `50% 50%`
                     defs.appendChild(newPattern)
                     
                     const patternRect = document.createElementNS(svgNS, 'rect')
-                    patternRect.setAttribute('width', bounds+width)
-                    patternRect.setAttribute('height', bounds+height)
+                    patternRect.setAttribute('width', buffer+width)
+                    patternRect.setAttribute('height', buffer+height)
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
