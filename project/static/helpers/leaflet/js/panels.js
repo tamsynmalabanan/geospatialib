@@ -1223,6 +1223,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.checked
                     if (value === styleParams.patternBg) return
 
+                    patternBgColor.querySelector('input[type="color"]').disabled = !value
+
                     styleParams.patternBg = value
                     update()
                 }
