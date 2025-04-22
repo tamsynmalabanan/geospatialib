@@ -686,8 +686,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('height', iconSize)
                     icon.setAttribute('x', buffer/2)
                     icon.setAttribute('y', buffer/2)
-                    console.log(buffer, width, height, iconSize)
-                    console.log(icon)
                 } else {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
@@ -696,6 +694,22 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('text-anchor', 'middle')
                     icon.setAttribute('dominant-baseline', 'central')
                     icon.setAttribute('font-size', iconSize)
+                    icon.setAttribute('class', removeWhitespace(`
+                        text-center lh-1
+                        ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                        ${boldFont ? 'fw-bold' : 'fw-normal'}
+                        ${italicFont ? 'fst-italic' : 'fst-normal'}
+                    `))
+                    icon.setAttribute('font-family', (
+                        iconType === 'bi' ? 'bootstrap-icons' :
+                        fontSerif ? 'Georgia, Times, serif' :
+                        'default'
+                    ))
+                    defs.appendChild(icon)
+                }
+                
+                if (icon) {
+                    icon.id = `${id}-icon`
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
                         return iconFill ? fillColor : 'none'
@@ -711,17 +725,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                         return iconStroke ? strokeColor : 'none'
                     })())
-                    icon.setAttribute('class', removeWhitespace(`
-                        text-center lh-1
-                        ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                        ${boldFont ? 'fw-bold' : 'fw-normal'}
-                        ${italicFont ? 'fst-italic' : 'fst-normal'}
-                    `))
-                    icon.setAttribute('font-family', (
-                        iconType === 'bi' ? 'bootstrap-icons' :
-                        fontSerif ? 'Georgia, Times, serif' :
-                        'default'
-                    ))
                     icon.style.textShadow = styleParams.textShadow = Array(
                         iconShadow ? removeWhitespace(`
                             ${iconSize*0.1}px 
@@ -736,11 +739,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
                         `) : ''
                     ).filter(i => i !== '').join(',')
-                    defs.appendChild(icon)
-                }
-                
-                if (icon) {
-                    icon.id = `${id}-icon`
 
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
