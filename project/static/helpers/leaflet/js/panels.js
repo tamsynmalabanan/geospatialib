@@ -707,6 +707,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
+                    svg.classList.add('position-absolute')
+                    svg.style.transform = `rotate(${iconRotation}deg)`
+                    svg.style.transformOrigin = `50% 50%`
                     svg.setAttribute('viewbox', (() => {
                         const style = getLeafletLayerStyle(
                             {geometry:{type:'MultiPoint'}}, 
