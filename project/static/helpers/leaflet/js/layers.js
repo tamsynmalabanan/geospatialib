@@ -23,7 +23,7 @@ const getLeafletStyleParams = ({
     
     fillColor=generateRandomColor(),
     patternBgColor,
-    patternBg=false,
+    patternBg=true,
     fillOpacity=0.5,
     
     fillPattern='solid',
@@ -42,6 +42,7 @@ const getLeafletStyleParams = ({
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
+    if (!patternBgColor) patternBgColor = hslaColor.toString({h:(hslaColor + 180) % 360})
 
     return  {
         strokeWidth,
