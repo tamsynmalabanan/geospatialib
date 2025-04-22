@@ -21,20 +21,18 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
     geojsonLayer._styles = styles || {
         symbology: {
-            // groups: {
-            //     id: {
-            //         label: 'Label',
-            //         rank: 1,
-            //         validators: [
-            //             (feature) => ['property', 'values'].contains(feature.properties['key'])
-            //             // array of functions that return true or false - refine this, not functions, just
-            //             // field: type {range/category} values
-            //         ],
-            //         styleParams: {
-    
-            //         }, // getLeafletLayerStyle(feature, styleParams)
-            //     },
-            // },
+            groups: {
+                vgdsfgdf: {
+                    rank: 1,
+                    label: 'Group 1',
+                    filters: [
+                        (feature) => ['property', 'values'].contains(feature.properties['key'])
+                        // array of functions that return true or false - refine this, not functions, just
+                        // field: type {range/category} values
+                    ],
+                    styleParams: getLeafletStyleParams()
+                },
+            },
             default: {
                 label: '',
                 showCount: true,
@@ -83,9 +81,7 @@ const getLeafletGeoJSONLayer = async ({
         layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
     }
 
-    geojsonLayer.options.filter = (feature) => {
-        const filters = geojsonLayer._styles.filters
-
+    const validateFeature = (feature, filters) => {
         if (filters.type.active) {
             if (!filters.type.values[feature.geometry.type]) return false
         }
@@ -93,11 +89,11 @@ const getLeafletGeoJSONLayer = async ({
         if (filters.properties.active) {
             const propertyFilters = Object.values(filters.properties.values)
             .filter(i => i.active && i.property && i.values?.length)
-
+    
             if (!propertyFilters.every(i => {
                 const handler = relationHandlers(i.handler)
                 if (!handler) return true
-
+    
                 const value = (() => {
                     const value = removeWhitespace(String(feature.properties[i.property] ?? '[undefined]'))
                     return value === '' ? '[blank]' : value
@@ -118,7 +114,7 @@ const getLeafletGeoJSONLayer = async ({
             if (!geomFilters.every(i => {
                 const handler = turf[i.handler]
                 if (!handler) return true
-
+    
                 try {
                     return i.geoms.some(g => handler(feature.geometry, g) === i.value)
                 } catch {
@@ -126,9 +122,12 @@ const getLeafletGeoJSONLayer = async ({
                 }
             })) return false
         }
-
+    
         return true
+
     }
+
+    geojsonLayer.options.filter = (feature) => validateFeature(feature, geojsonLayer._styles.filters)
 
     const getStyle = (feature) => {
         const symbology = geojsonLayer._styles?.symbology
