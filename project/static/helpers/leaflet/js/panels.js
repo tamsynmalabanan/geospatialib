@@ -1215,7 +1215,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBgFields = customCreateElement({
-            className:'border rounded p-2 d-flex justify-content-center', 
+            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-2', 
             style: {maxHeight:'58px'},
             parent:fillFields
         })
@@ -1225,7 +1225,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
             labelClass: 'text-wrap text-start',
-            formCheckClass: 'fs-12',
+            formCheckClass: 'fs-10',
             events: {
                 click: (e) => {
                     const value = e.target.checked
@@ -1241,7 +1241,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const patternBgColor = (() => {
             const input = document.createElement('input')
-            input.className = 'form-control-sm'
+            input.className = 'p-0 border-0 rounded'
             input.disabled = !styleParams.patternBg
             input.setAttribute('name',`${id}-patternBgColor`)
             input.setAttribute('type',`color`)
