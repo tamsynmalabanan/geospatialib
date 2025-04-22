@@ -942,6 +942,51 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
+        const iconColor = createFormFloating({
+            parent:iconFields3,
+            containerClass: 'w-100 flex-grow-1',
+            fieldAttrs: {
+                name:`${id}-iconColor`,
+                type: 'color',
+                value: hslToHex(manageHSLAColor(styleParams.iconColor)),
+            },
+            fieldClass: 'form-control-sm',
+            labelText: 'Icon color',
+            events: {
+                blur: (e) => {
+                    const value = hexToHSLA(e.target.value)
+                    if (value === styleParams.iconColor) return
+
+                    styleParams.iconColor = value
+                    update()
+                }
+            }
+        })
+
+        const iconOpacity = createInputGroup({
+            parent:iconFields3,
+            fieldAttrs: {
+                name: `${id}-iconOpacity`,
+                type: 'number',
+                min: '0',
+                max: '100',
+                step: '10',
+                value: styleParams.iconOpacity * 100,
+                placeholder: 'Icon opacity',
+            },
+            suffixHTML: '%',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = (parseFloat(e.target.value) / 100) || 0
+                    if (value === styleParams.iconOpacity) return
+                    
+                    styleParams.iconOpacity = value
+                    update()
+                }
+            }
+        })
+
         const iconSize = createInputGroup({
             parent:iconFields3,
             inputGroupClass: 'w-25 flex-grow-1',
