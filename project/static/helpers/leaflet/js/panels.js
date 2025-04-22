@@ -654,7 +654,6 @@ const handleLeafletStylePanel = (map, parent) => {
             try {
                 if (!iconSpecs) throw new Error('No icon specification.')
 
-                const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0)
                 const [width, height] = (() => {
                     const style = getLeafletLayerStyle(
                         {geometry:{type:'MultiPoint'}}, 
@@ -675,16 +674,18 @@ const handleLeafletStylePanel = (map, parent) => {
                     document.body.appendChild(tempElement)
                     const bounds = tempElement.getBoundingClientRect()
                     document.body.removeChild(tempElement)
-                    return [bounds.width, bounds.height]
+
+                    const containerSize = iconSize + (strokeWidth*2) + (iconGlow ? iconSize*2 : 0) //(Math.max((iconGlow ? iconSize*1 : 0), (iconShadow ? iconSize*0.1 : 0)))
+                    const width = containerSize+bounds.width
+                    const height = containerSize+bounds.height
+                    
+                    return [width, height]
                 })()
 
                 let icon
                 if (iconType === 'svg') {
-                    console.log(width, height)
                     defs.innerHTML = iconSpecs
                     icon = defs.firstChild
-                    icon.setAttribute('width', width)
-                    icon.setAttribute('height', height)
                 } else {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
@@ -742,9 +743,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
-                    svg.setAttribute('width', containerSize+width)
-                    svg.setAttribute('height', containerSize+height)
-                    svg.setAttribute('viewbox', `0 0 ${containerSize+width} ${containerSize+height}`)
+                    svg.setAttribute('width', width)
+                    svg.setAttribute('height', height)
+                    svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     defs.appendChild(svg)
@@ -756,16 +757,16 @@ const handleLeafletStylePanel = (map, parent) => {
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
                     newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    newPattern.setAttribute('width', containerSize+width)
-                    newPattern.setAttribute('height', containerSize+height)
-                    newPattern.setAttribute('viewbox', `0 0 ${containerSize+width} ${containerSize+height}`)
+                    newPattern.setAttribute('width', width)
+                    newPattern.setAttribute('height', height)
+                    newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     newPattern.style.transform = `rotate(${iconRotation}deg)`
                     newPattern.style.transformOrigin = `50% 50%`
                     defs.appendChild(newPattern)
                     
                     const patternRect = document.createElementNS(svgNS, 'rect')
-                    patternRect.setAttribute('width', containerSize+width)
-                    patternRect.setAttribute('height', containerSize+height)
+                    patternRect.setAttribute('width', width)
+                    patternRect.setAttribute('height', height)
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
