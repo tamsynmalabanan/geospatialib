@@ -131,18 +131,18 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         if (!svg || (textWrap && Array('text', 'property').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType) 
             ? customCreateElement({innerHTML:iconSpecs}).firstChild 
+            : iconType === 'img' ? customCreateElement({innerHTML:removeWhitespace(`
+                <img 
+                    src="${iconSpecs}"
+                    width="${iconSize}"
+                    height="${iconSize}"
+                    alt="icon"
+                >
+            `)}).firstChild
             : customCreateElement({
                 innerHTML: (
                     iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
                     iconType === 'text' ? iconSpecs : 
-                    iconType === 'img' ? removeWhitespace(`
-                        <img 
-                            src="${iconSpecs}"
-                            alt="icon"
-                            width="${iconSize}"
-                            height="${iconSize}"
-                        >
-                    `) : 
                     iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
                     ''
                 ),
