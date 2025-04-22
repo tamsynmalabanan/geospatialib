@@ -654,7 +654,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 let svg
 
-                if (iconType === 'svg' && (iconSpecs.startsWith('<svg>') && iconSpecs.endsWith('</svg>'))) {
+                if (iconType === 'svg' && (iconSpecs.startsWith('<svg') && iconSpecs.endsWith('</svg>'))) {
                     defs.innerHTML = iconSpecs
                     svg = defs.firstChild
                 } else {
