@@ -610,6 +610,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 strokeColor,
                 strokeOpacity,
                 fillColor,
+                patternBgColor,
                 patternBg,
                 fillOpacity,
                 iconSpecs,
@@ -761,7 +762,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 Array('width', 'height').forEach(i => {
                     patternRect.setAttribute(i, svg.getAttribute(i))
                 })
-                patternRect.setAttribute('fill', patternBg)
+                patternRect.setAttribute('fill', patternBgColor)
                 newPattern.appendChild(patternRect)
 
                 const patternUse = document.createElementNS(svgNS, 'use')
@@ -1213,22 +1214,37 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const patternBg = createInputGroup({
+        const patternBg = createFormCheck({
+            labelInnerText: 'Pattern background',
+            checked: styleParams.patternBg,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.patternBg) return
+
+                    styleParams.patternBg = value
+                    update()
+                }
+            }
+        })
+
+        const patternBgColor = createInputGroup({
             parent:fillFields,
             containerClass: 'w-100 flex-grow-1',
+            prefixHTML: patternBg,
             fieldAttrs: {
-                name:`${id}-patternBg`,
+                name:`${id}-patternBgColor`,
                 type: 'color',
-                value: hslToHex(manageHSLAColor(styleParams.patternBg)),
-                placeholder: 'Fill background',
+                value: hslToHex(manageHSLAColor(styleParams.patternBgColor)),
             },
             fieldClass: 'form-control-sm',
             events: {
                 blur: (e) => {
                     const value = hexToHSLA(e.target.value)
-                    if (value === styleParams.patternBg) return
+                    if (value === styleParams.patternBgColor) return
 
-                    styleParams.patternBg = value
+                    styleParams.patternBgColor = value
                     update()
                 }
             }

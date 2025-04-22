@@ -615,7 +615,11 @@ const createInputGroup = ({
         prefix = document.createElement('div')
         prefix.className = `input-group-text`
         prefix.id = generateRandomString()
-        prefix.innerHTML = prefixHTML
+        if (prefixHTML instanceof Element) {
+            prefix.appendChild(prefixHTML)
+        } else {
+            prefix.innerHTML = prefixHTML
+        }
         inputGroup.appendChild(prefix)
     }
 
@@ -651,7 +655,11 @@ const createInputGroup = ({
         suffix = document.createElement('div')
         suffix.className = `input-group-text`
         suffix.id = generateRandomString()
-        suffix.innerHTML = suffixHTML
+        if (suffixHTML instanceof Element) {
+            suffix.appendChild(suffixHTML)
+        } else {
+            suffix.innerHTML = suffixHTML
+        }
         inputGroup.appendChild(suffix)
     }
 
