@@ -1214,10 +1214,17 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const patternBgFields = customCreateElement({
+            className:'d-flex flex-column flex-wrap justify-content-center border px-3 rounded pt-1 flex-grow-1', 
+            style: {maxHeight:'58px'},
+            parent:fillFields
+        })
+
         const patternBg = createFormCheck({
+            parent: patternBgFields,
             labelInnerText: 'Pattern background',
             checked: styleParams.patternBg,
-            labelClass: 'text-wrap text-start',
+            labelClass: 'text-nowrap text-start',
             formCheckClass: 'fs-12',
             events: {
                 click: (e) => {
@@ -1232,28 +1239,22 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const patternBgColor = createFormFloating({
-            parent: fillFields,
-            containerClass: 'w-100 flex-grow-1 flex-nowrap',
-            disabled: !styleParams.patternBg,
-            fieldAttrs: {
-                name:`${id}-patternBgColor`,
-                type: 'color',
-                value: hslToHex(manageHSLAColor(styleParams.patternBgColor)),
-            },
-            labelText: patternBg,
-            fieldClass: 'form-control-sm h-100',
-            events: {
-                blur: (e) => {
-                    const value = hexToHSLA(e.target.value)
-                    if (value === styleParams.patternBgColor) return
+        const patternBgColor = (() => {
+            const input = document.createElement('input')
+            input.className = 'form-control-sm'
+            input.disabled = !styleParams.patternBg
+            input.setAttribute('name',`${id}-patternBgColor`)
+            input.setAttribute('type',`color`)
+            input.value = hslToHex(manageHSLAColor(styleParams.patternBgColor))
+            input.addEventListener('blur', (e) => {
+                const value = hexToHSLA(e.target.value)
+                if (value === styleParams.patternBgColor) return
 
-                    styleParams.patternBgColor = value
-                    update()
-                }
-            }
-        })
-
+                styleParams.patternBgColor = value
+                update()
+            })
+            patternBgFields.appendChild(input)
+        })()
 
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
