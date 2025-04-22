@@ -20,26 +20,26 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
     geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
     geojsonLayer._styles = styles || {
-        // symbology: {
-        //     groups: {
-        //         vgdsfgdf: {
-        //             rank: 1,
-        //             label: 'Group 1',
-        //             filters: [
-        //                 (feature) => ['property', 'values'].contains(feature.properties['key'])
-        //                 // array of functions that return true or false - refine this, not functions, just
-        //                 // field: type {range/category} values
-        //             ],
-        //             styleParams: getLeafletStyleParams()
-        //         },
-        //     },
-        //     default: {
-        //         label: '',
-        //         showCount: true,
-        //         styleParams: getLeafletStyleParams(customStyleParams),
-        //     },
-        //     method: 'uniform',
-        // },
+        symbology: {
+            // groups: {
+            //     vgdsfgdf: {
+            //         rank: 1,
+            //         label: 'Group 1',
+            //         filters: [
+            //             (feature) => ['property', 'values'].contains(feature.properties['key'])
+            //             // array of functions that return true or false - refine this, not functions, just
+            //             // field: type {range/category} values
+            //         ],
+            //         styleParams: getLeafletStyleParams()
+            //     },
+            // },
+            default: {
+                label: '',
+                showCount: true,
+                styleParams: getLeafletStyleParams(customStyleParams),
+            },
+            method: 'uniform',
+        },
         visibility: {
             active: false,
             min: 10,
