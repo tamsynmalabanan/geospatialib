@@ -154,8 +154,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         'default'
                     ),
                     color: iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
-                    WebkitTextStroke: iconStroke ? `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}` : '',
-                    textShadow,
                 },
                 className:removeWhitespace(`
                     h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
@@ -173,6 +171,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 
                 element.style.transform = `rotate(${iconRotation}deg)`
                 element.style.transformOrigin = `50% 50%`
+                element.style.WebkitTextStroke = iconStroke ? `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}` : ''
+                element.style.textShadow = text
             }    
         } else {
             element = svg.cloneNode(true)
