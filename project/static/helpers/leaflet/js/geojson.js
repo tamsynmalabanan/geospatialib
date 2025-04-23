@@ -72,7 +72,9 @@ const getLeafletGeoJSONLayer = async ({
         const styleParams = getStyle(feature)
         const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
         if (isCanvas && styleParams.fillPattern !== 'solid') {
+            console.log(layer)
             const coords = layer.getLatLngs()
+            console.log(coords)
             const poly = L.polygon(coords, {
                 // fill: 'url(img/tiny-hatch.svg)',
                 fillOpacity: 1,
