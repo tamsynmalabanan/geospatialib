@@ -905,7 +905,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     styleParams.iconType = value
                     updateIconDatalistOptions()
-                    await update()
+                    update()
                     
                 }
             }
@@ -969,7 +969,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconSpecs) return
                     
                     styleParams.iconSpecs = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1002,7 +1002,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
 
                     styleParams.iconSize = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1027,7 +1027,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconRotation) return
                     
                     styleParams.iconRotation = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1048,7 +1048,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconFill) return
 
                     styleParams.iconFill = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1064,7 +1064,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconStroke) return
 
                     styleParams.iconStroke = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1091,7 +1091,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconShadow) return
 
                     styleParams.iconShadow = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1107,7 +1107,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1130,7 +1130,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.textWrap) return
 
                     styleParams.textWrap = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1146,7 +1146,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fontSerif) return
 
                     styleParams.fontSerif = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1162,7 +1162,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.boldFont) return
 
                     styleParams.boldFont = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1178,7 +1178,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.italicFont) return
 
                     styleParams.italicFont = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1204,7 +1204,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1228,7 +1228,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillOpacity) return
                     
                     styleParams.fillOpacity = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1251,7 +1251,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1276,7 +1276,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternBgColor.disabled = !value
 
                     styleParams.patternBg = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1293,7 +1293,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (value === styleParams.patternBgColor) return
 
                 styleParams.patternBgColor = value
-                await update()
+                update()
             })
             patternBgFields.appendChild(input)
             return input
@@ -1320,7 +1320,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeColor) return
 
                     styleParams.strokeColor = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1344,7 +1344,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeOpacity) return
 
                     styleParams.strokeOpacity = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1368,7 +1368,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeWidth) return
 
                     styleParams.strokeWidth = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1397,7 +1397,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineCap) return
 
                     styleParams.lineCap = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1423,7 +1423,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineJoin) return
 
                     styleParams.lineJoin = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1454,7 +1454,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     } ${strokeWidth * 3}`
 
                     styleParams.lineBreak = value
-                    await update()
+                    update()
                 }
             }
         })
@@ -1484,7 +1484,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.geoms?.length) await update()
+                    if (filter.geoms?.length) update()
                 }
             }
         })
