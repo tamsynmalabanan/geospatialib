@@ -67,12 +67,25 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
-        const properties = feature.properties
-        
         layer.options.pane = geojsonLayer.options.pane
         
+        const styleParams = getStyle(feature)
+        const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
+        if (isCanvas && styleParams.fillPattern !== 'solid') {
+            const coords = layer.getLatLngs()
+            const poly = L.polygon(coords, {
+                fill: 'url(img/tiny-hatch.svg)',
+                fillOpacity: 1,
+                fillColor: 'white',
+                color: '#AAAAAA',
+                weight: 1,
+            }).addTo(geojsonLayer)
+            geojson.removeLayer(layer)
+        }
+        
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
-
+        
+        const properties = feature.properties
         if (Object.keys(properties).length) {
             layer.bindPopup(createFeaturePropertiesTable(properties, {
                 header: (() => {
