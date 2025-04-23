@@ -706,8 +706,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     id: `${id}-img`,
                     attrs: {
                         alt: 'icon',
-                        width, 
-                        height,
+                        width:iconSize, 
+                        height:iconSize,
                     }
                 })
                 
