@@ -800,7 +800,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         tag:'img',
                         id: `${id}-img`,
                         attrs: {
-                            src: await htmlToDataURL(svg),
+                            src: await htmlToDataURL(svg.outerHTML),
                             alt: 'icon',
                             width:iconSize, 
                             height:iconSize,

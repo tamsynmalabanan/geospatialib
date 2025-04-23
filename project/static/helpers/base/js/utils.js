@@ -226,6 +226,7 @@ const htmlToDataURL = async (element, {
     x,
     y,
 }={}) => {
+    console.log(element)
     if (!(element instanceof Element)) {
         element = customCreateElement({innerHTML: element}).firstChild
     }
