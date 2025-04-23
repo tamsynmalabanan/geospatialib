@@ -218,3 +218,14 @@ const relationHandlers = (name) => {
         },
     }[name]
 }
+
+const htmlToCanvas = (element) => {
+    if (element instanceof str) {
+        element = customCreateElement({innerHTML: element}).firstChild
+    }
+
+    return html2canvas(element).then(canvas => {
+        console.log(canvas)
+        document.body.appendChild(canvas)
+    })
+}

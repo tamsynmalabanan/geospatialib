@@ -719,7 +719,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('y', buffer/2)
                 }
                 
-                if (Array('bi', 'text', 'property').includes(iconType)) {
+                if (Array('bi', 'text').includes(iconType)) {
                     icon = document.createElementNS(svgNS, 'text')
                     icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                     icon.setAttribute('class', removeWhitespace(`
@@ -739,6 +739,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         'default'
                     ))
                     defs.appendChild(icon)
+                }
+
+                if (iconType === 'html') {
+                    htmlToCanvas(iconSpecs)
                 }
                 
                 if (icon) {
