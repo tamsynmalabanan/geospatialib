@@ -722,6 +722,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (icon) {
                     icon.id = `${id}-icon`
+                    console.log(textShadow)
                     icon.style.textShadow = textShadow
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
@@ -1071,7 +1072,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
                 `) : ''
             ).filter(i => i !== '').join(',')
-            
         }
 
         const iconShadow = createFormCheck({
