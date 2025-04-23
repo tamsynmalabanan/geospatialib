@@ -203,8 +203,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 const img = document.querySelector(`#${imgId}`)
                 if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
                     params.imgId = imgId
-                } else {
-                    console.log('no image', imgId, img)
                 }
             }
         }
