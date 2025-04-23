@@ -68,6 +68,8 @@ const getLeafletGeoJSONLayer = async ({
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const handler = (layer) => {
+            layer.options.pane = geojsonLayer.options.pane
+            
             if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
             
             const properties = feature.properties
@@ -94,10 +96,10 @@ const getLeafletGeoJSONLayer = async ({
                 group._map.removeLayer(layer)
 
                 const style = getLeafletLayerStyle(feature, styleParams, {renderer})
-                const poly = L.polygon(layer.getLatLngs(), {...style, pane:layer.options.pane})
+                const poly = L.polygon(layer.getLatLngs(), style)
                 poly.feature = feature
-                poly.addTo(geojsonLayer)
                 handler(poly)
+                poly.addTo(geojsonLayer)
             })
         } else {
             handler(layer)
@@ -191,7 +193,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const styleParams = getStyle(feature)
         const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
-        return icon instanceof L.DivIcon ? L.marker(latlng, {...icon, pane:layer.options.pane}) : L.circleMarker(latlng, icon)
+        return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
     if (geojson && !group?._map?._legendLayerGroups.includes(group)) geojsonLayer.addData(geojson)
