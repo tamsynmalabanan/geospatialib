@@ -68,14 +68,15 @@ const getLeafletGeoJSONLayer = async ({
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         console.log(layer.options)
-        // const renderer = geojsonLayer.options.renderer
-        // const styleParams = getStyle(feature)
-        // const isCanvas = renderer instanceof L.Canvas
-        // if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
-        //     const style = getLeafletLayerStyle(feature, styleParams, {renderer})
-        //     layer = L.polygon(layer.getLatLngs(), style)
-        //     layer.feature = feature
-        // }
+        const renderer = geojsonLayer.options.renderer
+        const styleParams = getStyle(feature)
+        const isCanvas = renderer instanceof L.Canvas
+        if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
+            const style = getLeafletLayerStyle(feature, styleParams, {renderer})
+            const newlayer = L.polygon(layer.getLatLngs(), style)
+            console.log(newlayer.options)
+            // layer.feature = feature
+        }
         
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
         
