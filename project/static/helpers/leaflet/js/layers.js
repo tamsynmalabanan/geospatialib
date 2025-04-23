@@ -179,7 +179,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             html: element?.outerHTML ?? '',
         })
     } else {
-        const params = !isPoint || iconStroke ? {
+        const params = {renderer, ...(!isPoint || iconStroke ? {
             color:  strokeColor,
             weight: strokeWidth,
             opacity: strokeOpacity,
@@ -187,10 +187,9 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             lineJoin,
             dashArray,
             dashOffset, 
-        } : {color: 'none'}
+        } : {color: 'none'})}
 
         if (isPoint) {
-            params.renderer = renderer
             params.radius = iconSize/2
             params.fillColor = iconFill ? fillColor : 'none'
             params.fillOpacity = iconFill ? fillOpacity : 0
@@ -198,7 +197,10 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
         if (type === 'polygon') {
             params.fillOpacity = fillOpacity
-            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? 'transparent' : `url(#${fillPatternId}-pattern)` 
+            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? 'white' : `url(#${fillPatternId}-pattern)`
+            if (isCanvas && fillPattern !== 'solid') {
+                params.fill = ''
+            }
         }
 
         return params

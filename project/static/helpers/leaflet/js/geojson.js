@@ -73,14 +73,9 @@ const getLeafletGeoJSONLayer = async ({
         if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
             geojsonLayer.removeLayer(layer)
             
-            layer = L.polygon(layer.getLatLngs(), {
-                // fill: 'url(img/tiny-hatch.svg)',
-                fillOpacity: 1,
-                fillColor: 'white',
-                color: '#AAAAAA',
-                weight: 1,
-                renderer
-            }).addTo(geojsonLayer)
+            const style = getLeafletLayerStyle(feature, styleParams, {renderer})
+            console.log(style)
+            layer = L.polygon(layer.getLatLngs(), style).addTo(geojsonLayer)
             layer.feature = feature
         }
         
