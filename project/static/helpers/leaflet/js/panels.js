@@ -799,6 +799,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                     })
 
+                    const canvas = document.createElement('canvas')
+                    canvg(canvas, new XMLSerializer().serializeToString(svg))
+                    html2canvas(canvas).then((canvas) => {
+                        img.setAttribute('src', canvas.toDataURL('image/png'))
+                    });
+
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
                     newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
