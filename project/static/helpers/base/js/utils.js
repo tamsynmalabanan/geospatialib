@@ -223,6 +223,8 @@ const htmlToDataURL = async (element, {
     backgroundColor=null,
     width,
     height,
+    x,
+    y,
 }={}) => {
     if (!(element instanceof Element)) {
         element = customCreateElement({innerHTML: element}).firstChild
