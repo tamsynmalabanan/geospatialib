@@ -742,6 +742,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
+                    tempElement.style.transform = ''
+                    tempElement.style.transformOrigin = ''
                     const dataUrl = await htmlToDataURL(tempElement)
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
@@ -773,7 +775,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     svg.setAttribute('width', width)
                     svg.setAttribute('height', height)
                     svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                    svg.style.transform = iconType === 'html' ? '' : `rotate(${iconRotation}deg)`
+                    svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     defs.appendChild(svg)
                     
