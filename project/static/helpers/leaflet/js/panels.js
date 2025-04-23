@@ -658,7 +658,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const [width, height] = (() => {
                     const style = getLeafletLayerStyle(
                         {geometry:{type:'MultiPoint'}}, 
-                        {...styleParams, fillPatternId:null}
+                        {...styleParams, fillPatternId:null, textWrap:false}
                     )
 
                     const tempElement =  customCreateElement({
