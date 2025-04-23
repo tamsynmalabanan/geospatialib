@@ -755,6 +755,18 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
                 
                 if (icon) {
+                    const img = customCreateElement({
+                        parent: defs,
+                        tag:'img',
+                        id: `${id}-img`,
+                        attrs: {
+                            src: 'https://img.icons8.com/keek/100/map.png',
+                            alt: 'icon',
+                            width, 
+                            height,
+                        }
+                    })
+
                     icon.id = `${id}-icon`
                     icon.style.textShadow = textShadow
                     icon.setAttribute('fill', (() => {
