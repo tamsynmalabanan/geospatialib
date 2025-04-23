@@ -167,11 +167,11 @@ const getLeafletGeoJSONLayer = async ({
 
     geojsonLayer.options.style = (feature) => {
         const styleParams = getStyle(feature)
-        // const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
-        // if (isCanvas && )
+        const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
+        if (isCanvas && styleParams.fillPattern !== 'solid') return
         return getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
     }
-    
+
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const styleParams = getStyle(feature)
         const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
