@@ -828,6 +828,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     newPattern.appendChild(patternUse)
                 }
             } catch (error) {
+                console.log(error)
                 delete styleParams.fillPatternId
                 defs.remove()
             }
