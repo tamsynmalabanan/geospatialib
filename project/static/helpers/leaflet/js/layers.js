@@ -167,6 +167,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 element.style.transform = `rotate(${iconRotation}deg)`
                 element.style.transformOrigin = `50% 50%`
                 element.style.WebkitTextStroke = iconStroke ? `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}` : ''
+                console.log(textShadow)
                 element.style.textShadow = textShadow
             }    
         } else {

@@ -743,6 +743,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (icon) {
                     icon.id = `${id}-icon`
+                    console.log(textShadow)
                     icon.style.textShadow = textShadow
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
