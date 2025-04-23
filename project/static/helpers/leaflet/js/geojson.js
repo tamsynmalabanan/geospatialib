@@ -77,8 +77,8 @@ const getLeafletGeoJSONLayer = async ({
                 const style = getLeafletLayerStyle(feature, styleParams, {renderer})
                 const poly = L.polygon(layer.getLatLngs(), {...style, pane:layer.options.pane})
                 poly.feature = feature
-                layer.addTo(geojsonLayer)
-                console.log(layer)
+                poly.addTo(geojsonLayer)
+                console.log(poly)
             })
         }
         
