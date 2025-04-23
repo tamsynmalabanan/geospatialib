@@ -128,7 +128,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         let element
 
         const svg = document.querySelector(`svg#${fillPatternId}-svg`)
-        if (!svg || iconType === 'html' || (textWrap && Array('text', 'property').includes(iconType))) {
+        if (!svg || iconType === 'htmls' || (textWrap && Array('text', 'property').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType) 
             ? customCreateElement({innerHTML:iconSpecs}).firstChild 
             : iconType === 'img' ? customCreateElement({
