@@ -226,15 +226,10 @@ const htmlToDataURL = async (element) => {
 
     if (element instanceof Element) {
         document.body.appendChild(element)
-        
         const canvas = await html2canvas(element, {
             backgroundColor:null,
         })
-        const dataUrl = canvas.toDataURL('image/png')
-
         element.remove()
-
-        return dataUrl
+        return canvas.toDataURL('image/png')
     }
-
 }

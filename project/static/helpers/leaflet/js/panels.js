@@ -676,7 +676,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (!iconSpecs) throw new Error('No icon specification.')
 
                 const buffer = iconSize + (strokeWidth*2) + (iconGlow && Array('bi', 'text').includes(iconType) ? iconSize*2 : 0)
-                const [width, height] = (() => {
+                const [width, height, tempElement] = (() => {
                     const style = getLeafletLayerStyle(
                         {geometry:{type:'MultiPoint'}}, 
                         {...styleParams, fillPatternId:null, textWrap:false}
@@ -696,7 +696,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     document.body.appendChild(tempElement)
                     const bounds = tempElement.getBoundingClientRect()
                     document.body.removeChild(tempElement)
-                    return [buffer+bounds.width, buffer+bounds.height]
+                    return [buffer+bounds.width, buffer+bounds.height, tempElement]
                 })()
 
                 let icon
@@ -742,8 +742,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    const dataUrl = await htmlToDataURL(iconSpecs)
-                    console.log(dataUrl)
+                    const dataUrl = await htmlToDataURL(tempElement)
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
                     defs.appendChild(icon)
