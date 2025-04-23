@@ -72,11 +72,13 @@ const getLeafletGeoJSONLayer = async ({
         const styleParams = getStyle(feature)
         if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
             layer.once('add', () => {
+                group._map.removeLayer(layer)
+
                 const style = getLeafletLayerStyle(feature, styleParams, {renderer})
-                const newlayer = L.polygon(layer.getLatLngs(), {...style, pane:layer.options.pane})
+                const poly = L.polygon(layer.getLatLngs(), {...style, pane:layer.options.pane})
+                poly.feature = feature
+                layer.addTo(geojsonLayer)
                 console.log(layer)
-                console.log(newlayer)
-                // layer.feature = feature
             })
         }
         
