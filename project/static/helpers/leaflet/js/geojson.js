@@ -81,6 +81,7 @@ const getLeafletGeoJSONLayer = async ({
                 weight: 1,
                 renderer
             }).addTo(geojsonLayer)
+            layer.feature = feature
         }
         
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
