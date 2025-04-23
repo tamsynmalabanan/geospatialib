@@ -67,6 +67,25 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
+        const handler = (layer) => {
+            if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
+            
+            const properties = feature.properties
+            if (Object.keys(properties).length) {
+                layer.bindPopup(createFeaturePropertiesTable(properties, {
+                    header: (() => {
+                        const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                        layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                        return popupHeader()
+                    })()
+                }).outerHTML, {
+                    autoPan: false,
+                })
+            }
+    
+            layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
+        }
+
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
@@ -78,26 +97,12 @@ const getLeafletGeoJSONLayer = async ({
                 const poly = L.polygon(layer.getLatLngs(), {...style, pane:layer.options.pane})
                 poly.feature = feature
                 poly.addTo(geojsonLayer)
+                handler(poly)
                 console.log(poly)
             })
+        } else {
+            handler(layer)
         }
-        
-        if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
-        
-        const properties = feature.properties
-        if (Object.keys(properties).length) {
-            layer.bindPopup(createFeaturePropertiesTable(properties, {
-                header: (() => {
-                    const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
-                    layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                    return popupHeader()
-                })()
-            }).outerHTML, {
-                autoPan: false,
-            })
-        }
-
-        layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
     }
 
     const validateFeature = (feature, filters) => {
