@@ -219,25 +219,23 @@ const relationHandlers = (name) => {
     }[name]
 }
 
-const htmlToCanvas = (element) => {
-    console.log(element)
-
+const htmlToDataURL = async (element) => {
     if (!(element instanceof Element)) {
         element = customCreateElement({innerHTML: element}).firstChild
     }
 
     if (element instanceof Element) {
         document.body.appendChild(element)
-        return html2canvas(element)
-        .then(canvas => {
-            console.log(canvas)
-            document.body.appendChild(canvas)
-            return
+        
+        const canvas = await html2canvas(element, {
+            backgroundColor:null,
         })
-        .catch(error => console.log(error))
-        .finally(() => {
-            // element.remove()
-        })
+        document.body.appendChild(canvas)
+        const dataUrl = canvas.toDataURL('image/png')
+
+        // element.remove()
+
+        return dataUrl
     }
 
 }
