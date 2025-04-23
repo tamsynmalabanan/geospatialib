@@ -797,7 +797,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     svg.setAttribute('width', width)
                     svg.setAttribute('height', height)
                     svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                    svg.style.transform = `rotate(${iconRotation}deg)`
+                    svg.style.transform = `rotate(${iconType === 'html' ? 0 : iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     defs.appendChild(svg)
                     
