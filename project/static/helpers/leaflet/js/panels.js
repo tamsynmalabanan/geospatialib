@@ -700,6 +700,20 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
 
                 let icon
+                const img = customCreateElement({
+                    parent: defs,
+                    tag:'img',
+                    id: `${id}-img`,
+                    attrs: {
+                        alt: 'icon',
+                        width:iconSize, 
+                        height:iconSize,
+                    },
+                    style: {
+                        transform: `rotate(${iconRotation}deg)`,
+                        transformOrigin: `50% 50%`,
+                    }
+                })
                 
                 if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
@@ -711,6 +725,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', iconSpecs)
                         defs.appendChild(icon)
+
+                        img.setAttribute('src', iconSpecs)
                     }
                     
                     icon.setAttribute('width', iconSize)
@@ -752,6 +768,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
                     defs.appendChild(icon)
+
+                    img.setAttribute('src', dataUrl)
+                }
+
+                if (Array('bi', 'text', 'svg').includes(iconType)) {
+                    const dataUrl = await htmlToDataURL
                 }
                 
                 if (icon) {
@@ -772,19 +794,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                         return iconStroke ? strokeColor : 'none'
                     })())
-
-                    const src = await htmlToDataURL(icon)
-                    const img = customCreateElement({
-                        parent: defs,
-                        tag:'img',
-                        id: `${id}-img`,
-                        attrs: {
-                            src,
-                            alt: 'icon',
-                            width:iconSize, 
-                            height:iconSize,
-                        }
-                    })    
 
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
@@ -821,7 +830,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     newPattern.appendChild(patternUse)
                 }
             } catch (error) {
-                console.log(error)
                 delete styleParams.fillPatternId
                 defs.remove()
             }
