@@ -722,7 +722,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (icon) {
                     icon.id = `${id}-icon`
-                    console.log(textShadow)
+                    if (!textShadow) updateTextShadow()
                     icon.style.textShadow = textShadow
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
@@ -775,7 +775,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     newPattern.appendChild(patternUse)
                 }
             } catch (error) {
-                console.log(error)
                 delete styleParams.fillPatternId
                 defs.remove()
             }
