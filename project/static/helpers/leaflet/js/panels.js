@@ -701,7 +701,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 let icon
                 
-                if (Array('svg', 'img').includes(iconType)) {
+                if (Array('svg', 'img', 'html').includes(iconType)) {
                     if (iconType === 'svg') {
                         defs.innerHTML = iconSpecs
                         icon = defs.firstChild
@@ -710,6 +710,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (iconType === 'img') {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', iconSpecs)
+                        defs.appendChild(icon)
+                    }
+                    
+                    if (iconType === 'html') {
+                        const dataUrl = await htmlToDataURL(iconSpecs)
+                        icon = document.createElementNS(svgNS, 'image')
+                        icon.setAttribute('href', dataUrl)
                         defs.appendChild(icon)
                     }
 
@@ -739,10 +746,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         'default'
                     ))
                     defs.appendChild(icon)
-                }
-
-                if (iconType === 'html') {
-                    icon = await htmlToDataURL(iconSpecs)
                 }
                 
                 if (icon) {
