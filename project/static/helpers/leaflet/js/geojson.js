@@ -71,6 +71,7 @@ const getLeafletGeoJSONLayer = async ({
         const styleParams = getStyle(feature)
         const isCanvas = renderer instanceof L.Canvas
         if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
+            console.log(layer.options)
             geojsonLayer.removeLayer(layer)
             
             // const style = getLeafletLayerStyle(feature, styleParams, {renderer})
