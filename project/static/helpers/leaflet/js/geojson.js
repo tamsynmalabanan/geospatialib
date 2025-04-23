@@ -68,22 +68,20 @@ const getLeafletGeoJSONLayer = async ({
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const renderer = geojsonLayer.options.renderer
-        // layer.options.pane = renderer
-        
-        // const styleParams = getStyle(feature)
-        // const isCanvas = renderer instanceof L.Canvas
-        // if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
-        //     const coords = layer.getLatLngs()
-        //     const poly = L.polygon(coords, {
-        //         // fill: 'url(img/tiny-hatch.svg)',
-        //         fillOpacity: 1,
-        //         fillColor: 'white',
-        //         color: '#AAAAAA',
-        //         weight: 1,
-        //         renderer
-        //     }).addTo(geojsonLayer)
-        //     geojsonLayer.removeLayer(layer)
-        // }
+        const styleParams = getStyle(feature)
+        const isCanvas = renderer instanceof L.Canvas
+        if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) {
+            geojsonLayer.removeLayer(layer)
+            
+            layer = L.polygon(layer.getLatLngs(), {
+                // fill: 'url(img/tiny-hatch.svg)',
+                fillOpacity: 1,
+                fillColor: 'white',
+                color: '#AAAAAA',
+                weight: 1,
+                renderer
+            }).addTo(geojsonLayer)
+        }
         
         if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
         
