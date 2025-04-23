@@ -742,7 +742,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    htmlToCanvas(iconSpecs)
+                    icon = htmlToCanvas(iconSpecs)
                 }
                 
                 if (icon) {

@@ -227,5 +227,6 @@ const htmlToCanvas = (element) => {
     return html2canvas(element).then(canvas => {
         console.log(canvas)
         document.body.appendChild(canvas)
+        return
     })
 }
