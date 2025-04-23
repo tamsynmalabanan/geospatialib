@@ -754,7 +754,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    tempElement.style.transform = 'rotate(0deg)'
+                    // tempElement.style.transform = 'rotate(0deg)'
                     const dataUrl = await htmlToDataURL(tempElement, {
                         width,
                         height,
@@ -767,6 +767,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     img.setAttribute('src', dataUrl)
                 }
+
+                // if (Array('bi', 'text', 'svg').includes(iconType)) {
+                //     const dataUrl = await htmlToDataURL(icon)
+                // }
                 
                 if (icon) {
                     icon.id = `${id}-icon`
