@@ -68,7 +68,7 @@ const getLeafletGeoJSONLayer = async ({
     
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const renderer = geojsonLayer.options.renderer
-        layer.options.pane = renderer
+        // layer.options.pane = renderer
         
         // const styleParams = getStyle(feature)
         // const isCanvas = renderer instanceof L.Canvas
