@@ -227,12 +227,17 @@ const htmlToDataURL = async (element, {
     y,
 }={}) => {
     console.log(element)
-    if (!(element instanceof Element)) {
+
+    const isElement = element instanceof Element
+    const inDOM = isElement && document.contains(element)
+
+    if (!isElement) {
         element = customCreateElement({innerHTML: element}).firstChild
     }
 
     if (element instanceof Element) {
-        document.body.appendChild(element)
+        if (!inDOM) document.body.appendChild(element)
+
         const canvas = await html2canvas(element, {
             backgroundColor,
             width,
@@ -240,7 +245,8 @@ const htmlToDataURL = async (element, {
             x,
             y,
         })
-        element.remove()
+        
+        if (!inDOM) element.remove()
         return canvas.toDataURL('image/png')
     }
 }
