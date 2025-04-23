@@ -191,7 +191,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const styleParams = getStyle(feature)
         const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
-        return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
+        return icon instanceof L.DivIcon ? L.marker(latlng, {...icon, pane:layer.options.pane}) : L.circleMarker(latlng, icon)
     }
     
     if (geojson && !group?._map?._legendLayerGroups.includes(group)) geojsonLayer.addData(geojson)
