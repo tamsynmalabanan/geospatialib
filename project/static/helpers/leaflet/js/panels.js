@@ -773,12 +773,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         return iconStroke ? strokeColor : 'none'
                     })())
 
+                    const src = await htmlToDataURL(icon)
                     const img = customCreateElement({
                         parent: defs,
                         tag:'img',
                         id: `${id}-img`,
                         attrs: {
-                            src: htmlToDataURL(icon),
+                            src,
                             alt: 'icon',
                             width:iconSize, 
                             height:iconSize,
