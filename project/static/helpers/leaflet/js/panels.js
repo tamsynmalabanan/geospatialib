@@ -787,17 +787,17 @@ const handleLeafletStylePanel = (map, parent) => {
                     svgUse.setAttribute('href', `#${id}-icon`)
                     svg.appendChild(svgUse)
 
-                    // const img = customCreateElement({
-                    //     parent: defs,
-                    //     tag:'img',
-                    //     id: `${id}-img`,
-                    //     attrs: {
-                    //         src: await htmlToDataURL(svg.outerHTML),
-                    //         alt: 'icon',
-                    //         width:iconSize, 
-                    //         height:iconSize,
-                    //     },
-                    // })
+                    const img = customCreateElement({
+                        parent: defs,
+                        tag:'img',
+                        id: `${id}-img`,
+                        attrs: {
+                            src: await htmlToDataURL(svg.outerHTML),
+                            alt: 'icon',
+                            width:iconSize, 
+                            height:iconSize,
+                        },
+                    })
 
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
