@@ -138,6 +138,7 @@ const getLeafletGeoJSONLayer = async ({
 
     const getStyle = (feature) => {
         const symbology = geojsonLayer._styles?.symbology
+        
         let styleParams = symbology?.default?.styleParams || getLeafletStyleParams()
         feature._groupId = ''
         
@@ -161,13 +162,20 @@ const getLeafletGeoJSONLayer = async ({
             }
         }
 
-        return getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
+        return styleParams
     }
 
-    geojsonLayer.options.style = (feature) => getStyle(feature)
+    geojsonLayer.options.style = (feature) => {
+        const styleParams = getStyle(feature)
+        // const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
+        // if (isCanvas && )
+        return getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
+    }
+    
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const styleParams = getStyle(feature)
-        return styleParams instanceof L.DivIcon ? L.marker(latlng, {icon: styleParams}) : L.circleMarker(latlng, styleParams)
+        const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
+        return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
     if (geojson && !group?._map?._legendLayerGroups.includes(group)) geojsonLayer.addData(geojson)
