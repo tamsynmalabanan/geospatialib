@@ -751,8 +751,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
-                    // icon.setAttribute('x', buffer/2)
-                    // icon.setAttribute('y', buffer/2)
                     defs.appendChild(icon)
                 }
                 
