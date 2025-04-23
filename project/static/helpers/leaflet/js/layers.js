@@ -199,7 +199,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             params.fillOpacity = fillOpacity
             params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? patternBg ? patternBgColor : 'none' : `url(#${fillPatternId}-pattern)`
             if (isCanvas && fillPattern !== 'solid') {
-                params.fill = true
+                params.imgId = `${fillPatternId}-img)`
             }
         }
 
