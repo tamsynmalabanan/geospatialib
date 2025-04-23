@@ -25,11 +25,18 @@ const getLeafletGeoJSONLayer = async ({
             //     vgdsfgdf: {
             //         rank: 1,
             //         label: 'Group 1',
-            //         filters: [
-            //             (feature) => ['property', 'values'].contains(feature.properties['key'])
-            //             // array of functions that return true or false - refine this, not functions, just
-            //             // field: type {range/category} values
-            //         ],
+                    // filters: {
+                    //     type: {active: false, values: {
+                    //         Point: true,
+                    //         MultiPoint: true,
+                    //         LineString: true,
+                    //         MultiLineString: true,
+                    //         Polygon: true,
+                    //         MultiPolygon: true,
+                    //     }},
+                    //     geom: {active: false, values: {}},
+                    //     properties: {active: false, values: {}},
+                    // },
             //         styleParams: getLeafletStyleParams()
             //     },
             // },

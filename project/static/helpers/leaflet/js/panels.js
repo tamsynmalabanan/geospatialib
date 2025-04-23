@@ -884,59 +884,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const iconSize = createInputGroup({
-            parent:iconFields,
-            inputGroupClass: 'w-25 flex-grow-1',
-            fieldAttrs: {
-                name: `${id}-iconSize`,
-                type: 'number',
-                min: '1',
-                max: '100',
-                step: '1',
-                value: styleParams.iconSize,
-                placeholder: 'Icon size',
-            },
-            suffixHTML: 'px',
-            fieldClass: 'form-control-sm',
-            events: {
-                blur: (e) => {
-                    const value = parseFloat(e.target.value)
-                    if (!value || value === styleParams.iconSize) {
-                        e.target.value = styleParams.iconSize
-                        return
-                    }
-
-                    styleParams.iconSize = value
-                    update()
-                }
-            }
-        })
-
-        const iconRotation = createInputGroup({
-            parent:iconFields,
-            inputGroupClass: 'w-25 flex-grow-1',
-            fieldAttrs: {
-                name: `${id}-iconRotation`,
-                type: 'number',
-                min: '0',
-                max: '359',
-                step: '15',
-                value: styleParams.iconRotation,
-                placeholder: 'Icon rotation',
-            },
-            suffixHTML: '°',
-            fieldClass: 'form-control-sm',
-            events: {
-                blur: (e) => {
-                    const value = parseFloat(e.target.value) || 0
-                    if (value === styleParams.iconRotation) return
-                    
-                    styleParams.iconRotation = value
-                    update()
-                }
-            }
-        })
-
         const iconDatalist = customCreateElement({
             tag:'datalist', 
             parent:iconFields,
@@ -971,7 +918,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         const iconSpecs = createFormFloating({
-            parent,
+            parent: iconFields,
             containerClass: 'd-flex w-100 flex-grow-1',
             fieldAttrs: {
                 name:`${id}-iconSpecs`,
@@ -1005,10 +952,105 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
+        const iconSize = createInputGroup({
+            parent:iconFields2,
+            inputGroupClass: 'w-25 flex-grow-1',
+            fieldAttrs: {
+                name: `${id}-iconSize`,
+                type: 'number',
+                min: '1',
+                max: '100',
+                step: '1',
+                value: styleParams.iconSize,
+                placeholder: 'Icon size',
+            },
+            suffixHTML: 'px',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value)
+                    if (!value || value === styleParams.iconSize) {
+                        e.target.value = styleParams.iconSize
+                        return
+                    }
+
+                    styleParams.iconSize = value
+                    update()
+                }
+            }
+        })
+
+        const iconRotation = createInputGroup({
+            parent:iconFields2,
+            inputGroupClass: 'w-25 flex-grow-1',
+            fieldAttrs: {
+                name: `${id}-iconRotation`,
+                type: 'number',
+                min: '0',
+                max: '359',
+                step: '15',
+                value: styleParams.iconRotation,
+                placeholder: 'Icon rotation',
+            },
+            suffixHTML: '°',
+            fieldClass: 'form-control-sm',
+            events: {
+                blur: (e) => {
+                    const value = parseFloat(e.target.value) || 0
+                    if (value === styleParams.iconRotation) return
+                    
+                    styleParams.iconRotation = value
+                    update()
+                }
+            }
+        })
+
+        const patternCheckboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:iconFields2
+        })
+
+        const iconFill = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Icon fill',
+            checked: styleParams.iconFill,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconFill) return
+
+                    styleParams.iconFill = value
+                    update()
+                }
+            }
+        })
+
+        const iconStroke = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Icon stroke',
+            checked: styleParams.iconStroke,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconStroke) return
+
+                    styleParams.iconStroke = value
+                    update()
+                }
+            }
+        })
+
+        const iconFields3 = customCreateElement({
+            className:'d-flex gap-2',
+            parent,
+        })
+
         const iconCheckboxes = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1 flex-grow-1', 
             style: {maxHeight:'58px'},
-            parent:iconFields2
+            parent:iconFields3
         })
 
         const updateTextShadow = () => {
@@ -1031,6 +1073,7 @@ const handleLeafletStylePanel = (map, parent) => {
             ).filter(i => i !== '').join(',')
             
         }
+
         const iconShadow = createFormCheck({
             parent:iconCheckboxes,
             labelInnerText: 'Shadow effect',
@@ -1068,7 +1111,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const textCheckboxes = customCreateElement({
             className:'d-flex flex-column flex-wrap justify-content-center border px-3 rounded pt-1 flex-grow-1', 
             style: {maxHeight:'58px'},
-            parent:iconFields2
+            parent:iconFields3
         })
 
         const textWrap = createFormCheck({
@@ -1131,43 +1174,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.italicFont) return
 
                     styleParams.italicFont = value
-                    update()
-                }
-            }
-        })
-
-        const patternCheckboxes = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:iconFields2
-        })
-
-        const iconFill = createFormCheck({
-            parent:patternCheckboxes,
-            labelInnerText: 'Icon fill',
-            checked: styleParams.iconFill,
-            labelClass: 'text-nowrap',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.iconFill) return
-
-                    styleParams.iconFill = value
-                    update()
-                }
-            }
-        })
-
-        const iconStroke = createFormCheck({
-            parent:patternCheckboxes,
-            labelInnerText: 'Icon stroke',
-            checked: styleParams.iconStroke,
-            labelClass: 'text-nowrap',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.iconStroke) return
-
-                    styleParams.iconStroke = value
                     update()
                 }
             }
@@ -2309,7 +2315,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createFormCheck,
                             checked: filters.geom.active,
                             formCheckClass: 'flex-grow-1',
-                            labelInnerText: 'Enable spatial constraints',
+                            labelInnerText: 'Filter by geometry',
                             role: 'switch',
                             events: {
                                 click: (e) => {
