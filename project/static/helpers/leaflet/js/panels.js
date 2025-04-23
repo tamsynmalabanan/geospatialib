@@ -743,7 +743,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 if (iconType === 'html') {
                     tempElement.style.transform = 'rotate(0deg)'
-                    const dataUrl = await htmlToDataURL(tempElement)
+                    const dataUrl = await htmlToDataURL(tempElement, {
+                        width,
+                        height,
+                    })
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
                     icon.setAttribute('x', buffer/2)

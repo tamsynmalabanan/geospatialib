@@ -219,7 +219,11 @@ const relationHandlers = (name) => {
     }[name]
 }
 
-const htmlToDataURL = async (element) => {
+const htmlToDataURL = async (element, (
+    backgroundColor=null,
+    width,
+    height,
+)={}) => {
     if (!(element instanceof Element)) {
         element = customCreateElement({innerHTML: element}).firstChild
     }
@@ -227,7 +231,9 @@ const htmlToDataURL = async (element) => {
     if (element instanceof Element) {
         document.body.appendChild(element)
         const canvas = await html2canvas(element, {
-            backgroundColor:null,
+            backgroundColor,
+            width,
+            height,
         })
         element.remove()
         return canvas.toDataURL('image/png')
