@@ -236,8 +236,8 @@ const htmlToDataURL = async (element, {
             backgroundColor,
             width,
             height,
-            x,
-            y,
+            x: (width-element.offsetWidth)/2,
+            y: (height-element.offsetHeight)/2
         })
         element.remove()
         return canvas.toDataURL('image/png')
