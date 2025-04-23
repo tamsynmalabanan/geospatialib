@@ -226,9 +226,11 @@ const htmlToCanvas = (element) => {
         element = customCreateElement({innerHTML: element}).firstChild
     }
 
-    return html2canvas(element).then(canvas => {
+    return html2canvas(element)
+    .then(canvas => {
         console.log(canvas)
         document.body.appendChild(canvas)
         return
     })
+    .catch(error => console.log(error))
 }
