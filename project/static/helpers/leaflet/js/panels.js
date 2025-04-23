@@ -700,6 +700,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
 
                 let icon
+                const img = customCreateElement({
+                    parent: defs,
+                    tag:'img',
+                    id: `${id}-img`,
+                    attrs: {
+                        alt: 'icon',
+                        width, 
+                        height,
+                    }
+                })
                 
                 if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
@@ -711,6 +721,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', iconSpecs)
                         defs.appendChild(icon)
+
+                        img.setAttribute('src', iconSpecs)
                     }
                     
                     icon.setAttribute('width', iconSize)
@@ -752,21 +764,11 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
                     defs.appendChild(icon)
+
+                    img.setAttribute('src', dataUrl)
                 }
                 
                 if (icon) {
-                    const img = customCreateElement({
-                        parent: defs,
-                        tag:'img',
-                        id: `${id}-img`,
-                        attrs: {
-                            src: 'https://img.icons8.com/keek/100/map.png',
-                            alt: 'icon',
-                            width, 
-                            height,
-                        }
-                    })
-
                     icon.id = `${id}-icon`
                     icon.style.textShadow = textShadow
                     icon.setAttribute('fill', (() => {
