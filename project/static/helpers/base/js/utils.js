@@ -230,10 +230,9 @@ const htmlToDataURL = async (element) => {
         const canvas = await html2canvas(element, {
             backgroundColor:null,
         })
-        document.body.appendChild(canvas)
         const dataUrl = canvas.toDataURL('image/png')
 
-        // element.remove()
+        element.remove()
 
         return dataUrl
     }

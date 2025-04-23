@@ -701,7 +701,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 let icon
                 
-                if (Array('svg', 'img', 'html').includes(iconType)) {
+                if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
                         defs.innerHTML = iconSpecs
                         icon = defs.firstChild
@@ -713,13 +713,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         defs.appendChild(icon)
                     }
                     
-                    if (iconType === 'html') {
-                        const dataUrl = await htmlToDataURL(iconSpecs)
-                        icon = document.createElementNS(svgNS, 'image')
-                        icon.setAttribute('href', dataUrl)
-                        defs.appendChild(icon)
-                    }
-
                     icon.setAttribute('width', iconSize)
                     icon.setAttribute('height', iconSize)
                     icon.setAttribute('x', buffer/2)
@@ -745,6 +738,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         fontSerif ? 'Georgia, Times, serif' :
                         'default'
                     ))
+                    defs.appendChild(icon)
+                }
+
+                if (iconType === 'html') {
+                    const dataUrl = await htmlToDataURL(iconSpecs)
+                    icon = document.createElementNS(svgNS, 'image')
+                    icon.setAttribute('href', dataUrl)
                     defs.appendChild(icon)
                 }
                 
