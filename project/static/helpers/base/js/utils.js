@@ -222,7 +222,7 @@ const relationHandlers = (name) => {
 const htmlToCanvas = (element) => {
     console.log(element)
 
-    if (element instanceof string) {
+    if (!(element instanceof Element)) {
         element = customCreateElement({innerHTML: element}).firstChild
     }
 
