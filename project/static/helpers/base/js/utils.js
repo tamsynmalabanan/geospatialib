@@ -227,17 +227,8 @@ const htmlToDataURL = async (element, {
     y,
 }={}) => {
     console.log(element)
-
-    const isElement = element instanceof Element
-    const inDOM = isElement && document.contains(element)
-
-    if (inDOM) {
-        element = element.outerHTML
-    }
-
-    if (!isElement || inDOM) {
+    if (!(element instanceof Element)) {
         element = customCreateElement({innerHTML: element}).firstChild
-        element.removeAttribute('id')
     }
 
     if (element instanceof Element) {
