@@ -700,16 +700,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
 
                 let icon
-                const img = customCreateElement({
-                    parent: defs,
-                    tag:'img',
-                    id: `${id}-img`,
-                    attrs: {
-                        alt: 'icon',
-                        width:iconSize, 
-                        height:iconSize,
-                    }
-                })
                 
                 if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
@@ -721,8 +711,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', iconSpecs)
                         defs.appendChild(icon)
-
-                        img.setAttribute('src', iconSpecs)
                     }
                     
                     icon.setAttribute('width', iconSize)
@@ -754,7 +742,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    // tempElement.style.transform = 'rotate(0deg)'
+                    tempElement.style.transform = 'rotate(0deg)'
                     const dataUrl = await htmlToDataURL(tempElement, {
                         width,
                         height,
@@ -764,13 +752,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
                     defs.appendChild(icon)
-
-                    img.setAttribute('src', dataUrl)
                 }
-
-                // if (Array('bi', 'text', 'svg').includes(iconType)) {
-                //     const dataUrl = await htmlToDataURL(icon)
-                // }
                 
                 if (icon) {
                     icon.id = `${id}-icon`
@@ -791,13 +773,25 @@ const handleLeafletStylePanel = (map, parent) => {
                         return iconStroke ? strokeColor : 'none'
                     })())
 
+                    const img = customCreateElement({
+                        parent: defs,
+                        tag:'img',
+                        id: `${id}-img`,
+                        attrs: {
+                            src: htmlToDataURL(icon),
+                            alt: 'icon',
+                            width:iconSize, 
+                            height:iconSize,
+                        }
+                    })    
+
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
                     svg.setAttribute('width', width)
                     svg.setAttribute('height', height)
                     svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
-                    svg.style.transform = `rotate(${iconType === 'html' ? 0 : iconRotation}deg)`
+                    svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
                     defs.appendChild(svg)
                     
