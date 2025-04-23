@@ -177,7 +177,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.style = (feature) => {
         const styleParams = getStyle(feature)
         const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
-        if (isCanvas && styleParams.fillPattern !== 'solid') return
+        if (isCanvas && styleParams.fillPattern !== 'solid' && turf.getType(feature).endsWith('Polygon')) return
         return getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
     }
 
