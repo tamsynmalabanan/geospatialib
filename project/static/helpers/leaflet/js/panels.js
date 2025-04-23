@@ -624,7 +624,7 @@ const handleLeafletStylePanel = (map, parent) => {
             ).filter(i => i !== '').join(',')
         }
 
-        const update = () => {
+        const update = async () => {
             updateTextShadow()
 
             const {
@@ -714,7 +714,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                     
                     if (iconType === 'html') {
-                        const dataUrl = htmlToDataURL(iconSpecs)
+                        const dataUrl = await htmlToDataURL(iconSpecs)
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', dataUrl)
                         defs.appendChild(icon)
