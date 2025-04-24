@@ -841,7 +841,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 delete styleParams.fillPatternId
                 defs.remove()
             } finally {
-                updateGeoJSONData(layer)
+                updateGeoJSONData(layer).then(() => {
+                    map.setZoom(map.getZoom())
+                })
             }
         }
 
