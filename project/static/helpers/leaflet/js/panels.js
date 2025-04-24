@@ -673,7 +673,13 @@ const handleLeafletStylePanel = (map, parent) => {
             try {
                 if (!iconSpecs) throw new Error('No icon specification.')
 
-                const buffer = (strokeWidth*2) + (iconGlow && Array('bi', 'text', 'html').includes(iconType) ? iconSize*2 : 0)
+                const buffer = (strokeWidth*2) + (Array('bi', 'text', 'html').includes(iconType) ? 
+                    Math.max(
+                        (iconGlow ? iconSize*2 : 0),
+                        (iconShadow ? iconSize*0.2 : 0),
+                        (italicFont ? iconSize*0.5 : 0),
+                    )                
+                : 0)
                 const [width, height, outerHTML] = (() => {
                     const style = getLeafletLayerStyle(
                         {geometry:{type:'MultiPoint'}}, 
