@@ -777,6 +777,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     iconType === 'img' ? iconSpecs : dataUrl, {
                         opacity:fillOpacity,
                         angle:iconRotation,
+                        width:patternWidth,
+                        height:patternHeight,
                     }, (newDataUrl) => {
                         img.setAttribute('src', newDataUrl)
                     }

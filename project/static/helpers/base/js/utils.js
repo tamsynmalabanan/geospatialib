@@ -250,7 +250,9 @@ const outerHTMLToDataURL = async (outerHTML, {
 
 const modifyImage = (src, {
     opacity = 1, 
-    angle = 0 
+    angle = 0,
+    width = null,
+    height = null,
 } = {}, callback) => {
     if (!src) return;
 
@@ -262,14 +264,15 @@ const modifyImage = (src, {
         const ctx = canvas.getContext("2d");
 
         // Set canvas dimensions to match the image
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = width || img.width;
+        canvas.height = height || img.height;
 
         // Translate to the center of the canvas for rotation
         ctx.translate(canvas.width / 2, canvas.height / 2);
 
         // Apply rotation
         ctx.rotate((angle * Math.PI) / 180);
+
 
         // Set transparency
         ctx.globalAlpha = opacity;
