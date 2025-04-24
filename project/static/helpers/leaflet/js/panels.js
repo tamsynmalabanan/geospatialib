@@ -756,6 +756,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'html') {
                     tempElement.style.transform = 'rotate(0deg)'
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
+                        backgroundColor: patternBg ? patternBgColor : null,
                         width,
                         height,
                         x:0-(buffer/2),
