@@ -102,9 +102,6 @@ const getLeafletGeoJSONLayer = async ({
                 geojsonLayer.removeLayer(layer)
                 const style = getLeafletLayerStyle(feature, styleParams, {renderer})
                 const poly = L.polygon(layer.getLatLngs(), style)
-                
-                console.log(styleParams, style, poly.options)       
-                
                 poly.feature = feature
                 handler(poly)
                 poly.addTo(geojsonLayer)

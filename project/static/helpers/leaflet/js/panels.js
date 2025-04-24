@@ -842,7 +842,8 @@ const handleLeafletStylePanel = (map, parent) => {
             } finally {
                 updateGeoJSONData(layer).then(() => {
                     const isCanvas = layer.options.renderer instanceof L.Canvas
-                    if (isCanvas && fillPattern !== 'solid') {
+                    if (isCanvas && fillPattern !== 'solid' && img.getAttribute('src')) {
+                        console.log('here')
                         map.invalidateSize()
                     }
                 })
