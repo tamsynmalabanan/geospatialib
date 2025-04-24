@@ -285,4 +285,8 @@ const modifyImage = (src, {
         // Pass the Data URL to the callback
         callback(canvas.toDataURL());
     };
+
+    img.onerror = (error) => {
+        console.log(error)
+    }
 }
