@@ -828,7 +828,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.remove()
             }
 
-            updateGeoJSONData(layer)
+            await updateGeoJSONData(layer)
+            map.invalidateSize()
         }
 
         const groupFields = customCreateElement({
