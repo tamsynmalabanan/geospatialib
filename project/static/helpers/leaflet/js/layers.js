@@ -248,8 +248,8 @@ const leafletLayerStyleToHTML = (style, type) => {
         const isLineString = type === 'linestring'
         const isPolygon = type === 'polygon'
         
-        const width = isPoint ? 14 : 20
-        const height = 14
+        const width = isPoint ? style.radius*2.5 : 20
+        const height = isPoint ? style.radius*2.5 : 14
 
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         svg.setAttribute('width', width)
