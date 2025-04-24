@@ -225,8 +225,8 @@ const outerHTMLToDataURL = async (outerHTML, {
     backgroundColor=null,
     width,
     height,
-    x,
-    y,
+    x=0,
+    y=0,
 }={}) => {
     const element = customCreateElement({innerHTML:outerHTML}).firstChild
     if (element instanceof Element) {
@@ -234,10 +234,10 @@ const outerHTMLToDataURL = async (outerHTML, {
         try {
             const canvas = await html2canvas(element, {
                 backgroundColor,
-                width,
-                height,
-                x,
-                y,
+                ...(width ? {width} : {}),
+                ...(height ? {height} : {}),
+                ...(x ? {x} : {}),
+                ...(y ? {y} : {}),
             })
             return canvas.toDataURL('image/png')
         } catch (error) {

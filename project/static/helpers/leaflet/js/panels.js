@@ -759,18 +759,20 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    // tempElement.style.transform = 'rotate(0deg)'
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
                         width,
                         height,
                         // x:0-(buffer/2),
                         // y:0-(buffer/2),
                     })
-                    icon = document.createElementNS(svgNS, 'image')
-                    icon.setAttribute('href', dataUrl)
-                    defs.appendChild(icon)
-
-                    img.setAttribute('src', dataUrl)
+                    console.log(dataUrl)
+                    if (dataUrl) {
+                        icon = document.createElementNS(svgNS, 'image')
+                        icon.setAttribute('href', dataUrl)
+                        defs.appendChild(icon)
+    
+                        img.setAttribute('src', dataUrl)
+                    }
                 }
 
                 if (icon) {
