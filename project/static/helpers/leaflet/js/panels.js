@@ -756,7 +756,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'html') {
                     tempElement.style.transform = 'rotate(0deg)'
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
-                        backgroundColor: patternBg ? patternBgColor : null,
                         width,
                         height,
                         x:0-(buffer/2),
@@ -815,6 +814,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const patternRect = document.createElementNS(svgNS, 'rect')
                     patternRect.setAttribute('width', width)
                     patternRect.setAttribute('height', height)
+                    patternRect.setAttribute('fillOpacity', fillOpacity)
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
