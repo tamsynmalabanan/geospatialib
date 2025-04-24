@@ -248,27 +248,23 @@ const outerHTMLToDataURL = async (outerHTML, {
     }
 }
 
-const modifyImage = (src, { opacity = 1 } = {}) => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous"; // Enable cross-origin access
-        img.src = src;
+const modifyImage = (src, { opacity = 1 } = {}, callback) => {
+    if (!src) return
+    
+    const img = new Image();
+    img.src = src;
 
-        img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
+    img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-            canvas.width = img.width;
-            canvas.height = img.height;
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-            ctx.globalAlpha = opacity;
-            ctx.drawImage(img, 0, 0);
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(img, 0, 0);
 
-            resolve(canvas.toDataURL());
-        };
-
-        img.onerror = (error) => {
-            reject(error);
-        };
-    });
+        // Pass the Data URL to the callback
+        callback(canvas.toDataURL());
+    };
 };
