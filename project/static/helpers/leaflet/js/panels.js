@@ -692,6 +692,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             fillPatternId:null, 
                             textWrap:false,
                             iconRotation: 0,
+                            fillOpacity: 1,
                         }
                     )
 
