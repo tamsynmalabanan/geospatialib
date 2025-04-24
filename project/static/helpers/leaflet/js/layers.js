@@ -200,8 +200,11 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             params.fillOpacity = fillOpacity
             params.fillColor = (
                 fillPattern === 'solid' ? fillColor : 
-                isCanvas ? patternBg ? patternBgColor : 'transparent' :
-                `url(#${fillPatternId}-pattern)`
+                (() => {
+                    const pattern = document.querySelector(`#${fillPatternId}-pattern`)
+                    if (!pattern || isCanvas) patternBg ? patternBgColor : 'transparent' 
+                    return `url(#${fillPatternId}-pattern)`
+                })()
             )
 
             if (isCanvas && fillPattern !== 'solid') {
