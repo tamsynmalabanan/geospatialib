@@ -745,7 +745,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (Array('bi', 'text').includes(iconType)) {
                     icon = document.createElementNS(svgNS, 'text')
-                    icon.innerText = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+                    icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                     icon.setAttribute('class', removeWhitespace(`
                         text-center lh-1
                         ${textWrap ? 'text-wrap' : 'text-nowrap'}
