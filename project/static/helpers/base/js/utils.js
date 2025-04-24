@@ -219,19 +219,14 @@ const relationHandlers = (name) => {
     }[name]
 }
 
-const htmlToDataURL = async (element, {
+const outerHTMLToDataURL = async (outerHTML, {
     backgroundColor=null,
     width,
     height,
     x,
     y,
 }={}) => {
-    console.log(element)
-    
-    if (!(element instanceof Element)) {
-        element = customCreateElement({innerHTML: element}).firstChild
-    }
-
+    const element = customCreateElement({innerHTML:outerHTML}).firstChild
     if (element instanceof Element) {
         document.body.appendChild(element)
         try {
