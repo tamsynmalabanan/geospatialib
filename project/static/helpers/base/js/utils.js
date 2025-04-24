@@ -1,3 +1,5 @@
+const svgNS = "http://www.w3.org/2000/svg"
+
 const elementResizeObserver = (element, callback) => {
     let resizeTimeout
     

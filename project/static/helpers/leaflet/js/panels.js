@@ -666,8 +666,6 @@ const handleLeafletStylePanel = (map, parent) => {
             const id = generateRandomString()
             styleParams.fillPatternId = id
     
-            const svgNS = "http://www.w3.org/2000/svg"
-            
             const defs = document.createElementNS(svgNS, 'defs')
             defs.id = id
             svgFillDefs.appendChild(defs)
@@ -790,8 +788,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
-                    svg.setAttribute('width', width)
-                    svg.setAttribute('height', height)
+                    svg.setAttribute('width', width-buffer)
+                    svg.setAttribute('height', height-buffer)
                     svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
@@ -829,7 +827,9 @@ const handleLeafletStylePanel = (map, parent) => {
             }
 
             await updateGeoJSONData(layer)
-            map.invalidateSize()
+            if (layer.options.renderer instanceof L.Canvas && fillPattern !== 'solid') {
+                map.invalidateSize()
+            }
         }
 
         const groupFields = customCreateElement({
