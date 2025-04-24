@@ -716,7 +716,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         width, 
                         height,
                     },
-                    style: {opacity:fillColor}
+                    style: {opacity:fillOpacity}
                 })
 
                 if (Array('svg', 'img').includes(iconType)) {
