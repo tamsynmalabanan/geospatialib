@@ -791,14 +791,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     // }
 
                     icon.setAttribute('fill', (() => {
-                        if (iconFill) icon.setAttribute('fill-opacity', 1)
-                        // if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
+                        if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
                         return iconFill ? fillColor : 'none'
                     })())
                     icon.setAttribute('stroke', (() => {
                         if (iconStroke) {
-                            const opacity = strokeOpacity === 0 ? 0 : strokeOpacity + fillOpacity
-                            icon.setAttribute('stroke-opacity', opacity > 100 ? 100 : opacity)
+                            icon.setAttribute('stroke-opacity', strokeOpacity)
                             icon.setAttribute('stroke-width', strokeWidth)
                             icon.setAttribute('stroke-linecap', lineCap)
                             icon.setAttribute('stroke-linejoin', lineJoin)
@@ -839,11 +837,21 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
-                    const patternUse = document.createElementNS(svgNS, 'use')
-                    patternUse.setAttribute('href', `#${id}-svg`)
+                    const patternUse = svg.cloneNode(true)
+                    patternUse.removeAttribute('id')
+                    patternUse.setAttribute('fill-opacity', 1)
+                    patternUse.setAttribute('stroke-opacity', (
+                        strokeOpacity > 0 ? strokeOpacity+fillOpacity : strokeOpacity
+                    ))
                     patternUse.setAttribute('x', buffer/2)
                     patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
+
+                    // const patternUse = document.createElementNS(svgNS, 'use')
+                    // patternUse.setAttribute('href', `#${id}-svg`)
+                    // patternUse.setAttribute('x', buffer/2)
+                    // patternUse.setAttribute('y', buffer/2)
+                    // newPattern.appendChild(patternUse)
                 }
             } catch (error) {
                 // console.log(error)
