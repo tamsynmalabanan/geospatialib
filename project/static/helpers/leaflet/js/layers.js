@@ -197,7 +197,12 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
         if (type === 'polygon') {
             params.fillOpacity = fillOpacity
-            params.fillColor = fillPattern === 'solid' ? fillColor : isCanvas ? patternBg ? patternBgColor : 'none' : `url(#${fillPatternId}-pattern)`
+            params.fillColor = (
+                fillPattern === 'solid' ? fillColor : 
+                isCanvas ? patternBg ? patternBgColor : 'transparent' : 
+                `url(#${fillPatternId}-pattern)`
+            )
+            
             if (isCanvas && fillPattern !== 'solid') {
                 const imgId = `${fillPatternId}-img`
                 const img = document.querySelector(`#${imgId}`)
