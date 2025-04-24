@@ -835,18 +835,17 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
                 }
-                
-                updateGeoJSONData(layer).then(() => {
-                    console.log('invalidateSize')
-                    map.invalidateSize()
-                    // const isCanvas = layer.options.renderer instanceof L.Canvas
-                    // if (isCanvas && fillPattern !== 'solid') {
-                    // }
-                })
             } catch (error) {
                 // console.log(error)
                 delete styleParams.fillPatternId
                 defs.remove()
+            } finally {
+                updateGeoJSONData(layer).then(() => {
+                    const isCanvas = layer.options.renderer instanceof L.Canvas
+                    if (isCanvas && fillPattern !== 'solid') {
+                        map.invalidateSize()
+                    }
+                })
             }
         }
 
