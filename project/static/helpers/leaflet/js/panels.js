@@ -785,10 +785,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.id = `${id}-icon`
                     icon.style.textShadow = textShadow
                     
-                    // if (Array('emoji', 'img', 'html').includes(iconType)) {
-                    //     // icon.style.opacity = fillOpacity
-                    // } else {
-                    // }
+                    if (Array('emoji', 'img', 'html').includes(iconType)) {
+                        icon.style.opacity = fillOpacity
+                    }
 
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
