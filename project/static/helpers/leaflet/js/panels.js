@@ -785,7 +785,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
-                    svg.classList.add('position-absolute')
+                    // svg.classList.add('position-absolute')
                     svg.setAttribute('width', width)
                     svg.setAttribute('height', height)
                     svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
