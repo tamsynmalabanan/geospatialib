@@ -700,7 +700,17 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
 
                 let icon
-                
+                const img = customCreateElement({
+                    parent: defs,
+                    tag:'img',
+                    id: `${id}-img`,
+                    attrs: {
+                        alt: 'icon',
+                        width:iconSize, 
+                        height:iconSize,
+                    },
+                })
+
                 if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
                         defs.innerHTML = iconSpecs
@@ -711,6 +721,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', iconSpecs)
                         defs.appendChild(icon)
+
+                        img.setAttribute('src', iconSpecs)
                     }
                     
                     icon.setAttribute('width', iconSize)
@@ -752,6 +764,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
                     defs.appendChild(icon)
+
+                    img.setAttribute('src', dataUrl)
                 }
 
                 if (icon) {
@@ -786,21 +800,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     const svgUse = document.createElementNS(svgNS, 'use')
                     svgUse.setAttribute('href', `#${id}-icon`)
                     svg.appendChild(svgUse)
-
-                    const img = customCreateElement({
-                        parent: defs,
-                        tag:'img',
-                        id: `${id}-img`,
-                        attrs: {
-                            // src: await outerHTMLToDataURL(svg.outerHTML),
-                            alt: 'icon',
-                            width:iconSize, 
-                            height:iconSize,
-                        },
-                    })
-
-                    const svgString = new XMLSerializer().serializeToString(svg);
-                    img.setAttribute('src', `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`)
                     
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
