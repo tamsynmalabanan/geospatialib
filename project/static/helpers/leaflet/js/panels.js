@@ -792,7 +792,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             return iconFill ? fillColor : 'none'
                         })())
                         icon.setAttribute('stroke', (() => {
-                            if   (iconStroke) {
+                            if (iconStroke) {
                                 icon.setAttribute('stroke-opacity', strokeOpacity)
                                 icon.setAttribute('stroke-width', strokeWidth)
                                 icon.setAttribute('stroke-linecap', lineCap)

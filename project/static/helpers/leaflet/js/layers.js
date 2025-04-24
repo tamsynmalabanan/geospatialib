@@ -202,22 +202,21 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
         if (type === 'polygon') {
             params.fillOpacity = fillOpacity
-            params.fillColor = (
-                fillPattern === 'solid' ? fillColor : 
-                (() => {
+            params.fillColor = fillPattern === 'solid' ? fillColor : (() => {
+                const bgColor = patternBg ? patternBgColor : 'transparent'
+                if (isCanvas) {
+                    const imgId = `${fillPatternId}-img`
+                    const img = document.querySelector(`#${imgId}`)
+                    if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
+                        params.imgId = imgId
+                    }
+                    return bgColor
+                } else {
                     const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    if (!pattern || isCanvas) return patternBg ? patternBgColor : 'transparent' 
+                    if (!pattern) return bgColor 
                     return `url(#${fillPatternId}-pattern)`
-                })()
-            )
-
-            if (isCanvas && fillPattern !== 'solid') {
-                const imgId = `${fillPatternId}-img`
-                const img = document.querySelector(`#${imgId}`)
-                if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
-                    params.imgId = imgId
                 }
-            }
+            })()
         }
 
         return params
