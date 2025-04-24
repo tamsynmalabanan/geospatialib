@@ -787,6 +787,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     if (Array('emoji', 'img', 'html').includes(iconType)) {
                         icon.style.opacity = fillOpacity
+                        icon.style.color = hslaColor.toString({a:fillOpacity})
                     }
 
                     icon.setAttribute('fill', (() => {
