@@ -204,17 +204,18 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             params.fillOpacity = fillOpacity
             params.fillColor = fillPattern === 'solid' ? fillColor : (() => {
                 const bgColor = patternBg ? patternBgColor : 'transparent'
+                console.log(bgColor)
                 if (isCanvas) {
                     const imgId = `${fillPatternId}-img`
                     const img = document.querySelector(`#${imgId}`)
                     if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
                         params.imgId = imgId
                     }
-                    console.log(img, bgColor)
+                    console.log(img)
                     return bgColor
                 } else {
                     const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    console.log(pattern, bgColor)
+                    console.log(pattern)
                     if (!pattern) return bgColor 
                     return `url(#${fillPatternId}-pattern)`
                 }
