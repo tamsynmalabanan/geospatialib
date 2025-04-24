@@ -167,10 +167,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     element.setAttribute('height', iconSize)
                 }
 
-                if (Array('emoji', 'img', 'html').includes(iconType)) {
-                    element.style.opacity = fillOpacity
-                }
-                
+                element.style.opacity = fillOpacity
                 element.style.transform = `rotate(${iconRotation}deg)`
                 element.style.transformOrigin = `50% 50%`
                 element.style.WebkitTextStroke = iconStroke ? `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}` : ''
