@@ -773,7 +773,9 @@ const handleLeafletStylePanel = (map, parent) => {
                         icon.setAttribute('href', dataUrl)
                         defs.appendChild(icon)
     
-                        img.setAttribute('src', modifyImage(dataUrl, {opacity:fillOpacity}))
+                        modifyImage(dataUrl, {opacity:fillOpacity}, (newDataUrl) => {
+                            img.setAttribute('src', newDataUrl)
+                        })
                     }
                 }
 
