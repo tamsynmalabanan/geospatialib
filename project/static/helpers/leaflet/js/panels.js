@@ -670,8 +670,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 id: `${id}-img`,
                 attrs: {
                     alt: 'icon',
-                    width, 
-                    height,
                 },
                 style: {opacity:fillOpacity}
             })
@@ -718,6 +716,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 const svgHeight = height + buffer
                 const patternWidth = width + iconSize + buffer
                 const patternHeight = height + iconSize + buffer
+                
+                img.setAttribute('width', width)
+                img.setAttribute('height', height)
 
                 if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
