@@ -247,3 +247,24 @@ const outerHTMLToDataURL = async (outerHTML, {
         }
     }
 }
+
+const modifyImage = (src, {
+    opacity = 1,
+}={}) => {
+    const img = new Image()
+    img.src = src
+
+    img.onload = () => {
+        const canvas = document.createElement("canvas")
+        const ctx = canvas.getContext("2d")
+
+        canvas.width = img.width
+        canvas.height = img.height
+
+        ctx.globalAlpha = opacity
+
+        ctx.drawImage(img, 0, 0)
+
+        return canvas.toDataURL()
+    }
+}
