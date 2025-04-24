@@ -202,7 +202,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 isCanvas ? patternBg ? patternBgColor : 'transparent' : 
                 `url(#${fillPatternId}-pattern)`
             )
-            
+            console.log(params.fillColor)
+
             if (isCanvas && fillPattern !== 'solid') {
                 const imgId = `${fillPatternId}-img`
                 const img = document.querySelector(`#${imgId}`)
