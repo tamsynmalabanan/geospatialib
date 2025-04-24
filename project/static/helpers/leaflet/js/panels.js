@@ -839,10 +839,13 @@ const handleLeafletStylePanel = (map, parent) => {
     
                     const patternUse = svg.cloneNode(true)
                     patternUse.removeAttribute('id')
-                    patternUse.setAttribute('fill-opacity', 1)
-                    patternUse.setAttribute('stroke-opacity', (
-                        strokeOpacity > 0 ? strokeOpacity+fillOpacity : strokeOpacity
-                    ))
+                    Array.from(patternUse.querySelectorAll('use')).forEach(i => {
+                        const opacity = strokeOpacity + (fillOpacity/2)
+                        i.setAttribute('fill-opacity', 1)
+                        i.setAttribute('stroke-opacity', (
+                            strokeOpacity > 0 ? opacity > 100 ? 100 : opacity : strokeOpacity
+                        ))
+                    })
                     patternUse.setAttribute('x', buffer/2)
                     patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
