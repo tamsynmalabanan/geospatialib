@@ -215,7 +215,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     return bgColor
                 } else {
                     const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    console.log(pattern)
                     if (!pattern) return bgColor 
                     return `url(#${fillPatternId}-pattern)`
                 }

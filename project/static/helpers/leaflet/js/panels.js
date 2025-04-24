@@ -781,7 +781,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (Array('emoji', 'img', 'html').includes(iconType)) {
                         icon.style.opacity = fillOpacity
                     }
-                    
+
                     icon.setAttribute('fill', (() => {
                         if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
                         return iconFill ? fillColor : 'none'
@@ -835,13 +835,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
                 }
-
                 
                 updateGeoJSONData(layer).then(() => {
-                    const isCanvas = layer.options.renderer instanceof L.Canvas
-                    if (isCanvas && fillPattern !== 'solid') {
-                        map.invalidateSize()
-                    }
+                    console.log('invalidateSize')
+                    map.invalidateSize()
+                    // const isCanvas = layer.options.renderer instanceof L.Canvas
+                    // if (isCanvas && fillPattern !== 'solid') {
+                    // }
                 })
             } catch (error) {
                 // console.log(error)
