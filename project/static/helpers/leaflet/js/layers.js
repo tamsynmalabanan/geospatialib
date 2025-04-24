@@ -142,6 +142,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     ''
                 ),
                 style: {
+                    opacity: fillOpacity,
                     fontSize: `${iconSize}px`,
                     fontFamily: (
                         iconType === 'bi' ? 'bootstrap-icons' : 
