@@ -662,7 +662,20 @@ const handleLeafletStylePanel = (map, parent) => {
             const defs = document.createElementNS(svgNS, 'defs')
             defs.id = id
             svgFillDefs.appendChild(defs)
-            
+
+            let icon
+            const img = customCreateElement({
+                parent: defs,
+                tag:'img',
+                id: `${id}-img`,
+                attrs: {
+                    alt: 'icon',
+                    width, 
+                    height,
+                },
+                style: {opacity:fillOpacity}
+            })
+
             try {
                 if (!iconSpecs) throw new Error('No icon specification.')
 
@@ -705,19 +718,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 const svgHeight = height + buffer
                 const patternWidth = width + iconSize + buffer
                 const patternHeight = height + iconSize + buffer
-
-                let icon
-                const img = customCreateElement({
-                    parent: defs,
-                    tag:'img',
-                    id: `${id}-img`,
-                    attrs: {
-                        alt: 'icon',
-                        width, 
-                        height,
-                    },
-                    style: {opacity:fillOpacity}
-                })
 
                 if (Array('svg', 'img').includes(iconType)) {
                     if (iconType === 'svg') {
