@@ -149,6 +149,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         'default'
                     ),
                     color: iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
+                    ...(textWrap ? {maxWidth:`${iconSize}px`} : {})
                 },
                 className:removeWhitespace(`
                     h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
