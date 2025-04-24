@@ -166,7 +166,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 }
 
                 if (Array('emoji', 'img', 'html').includes(iconType)) {
-                    icon.style.opacity = fillOpacity
+                    element.style.opacity = fillOpacity
                 }
                 
                 element.style.transform = `rotate(${iconRotation}deg)`
