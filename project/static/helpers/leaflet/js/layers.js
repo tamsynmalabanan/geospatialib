@@ -219,7 +219,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             })()
         }
 
-        console.log(params)
         return params
     }
 }
