@@ -207,6 +207,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 const imgId = `${fillPatternId}-img`
                 const img = document.querySelector(`#${imgId}`)
                 if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
+                    console.log(img)
                     params.imgId = imgId
                 }
             }
