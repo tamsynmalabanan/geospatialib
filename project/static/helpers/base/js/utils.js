@@ -232,7 +232,6 @@ const outerHTMLToDataURL = async (outerHTML, {
     if (element instanceof Element) {
         document.body.appendChild(element)
         try {
-            console.log(element)
             const canvas = await html2canvas(element, {
                 backgroundColor,
                 width,

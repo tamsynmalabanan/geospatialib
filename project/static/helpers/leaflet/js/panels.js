@@ -674,7 +674,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (!iconSpecs) throw new Error('No icon specification.')
 
                 const buffer = (strokeWidth*2) + (iconGlow && Array('bi', 'text', 'html').includes(iconType) ? iconSize*2 : 0)
-                const [width, height, tempElement] = (() => {
+                const [width, height, outerHTML] = (() => {
                     const style = getLeafletLayerStyle(
                         {geometry:{type:'MultiPoint'}}, 
                         {
@@ -696,10 +696,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         'justify-content-center', 
                         'align-items-center'
                     )
+                    const outerHTML = tempElement.outerHTML
                     document.body.appendChild(tempElement)
                     const bounds = tempElement.getBoundingClientRect()
                     document.body.removeChild(tempElement)
-                    return [bounds.width, bounds.height, tempElement]
+                    return [bounds.width, bounds.height, outerHTML]
                 })()
                 const svgWidth = width + buffer
                 const svgHeight = height + buffer
@@ -759,14 +760,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    console.log(tempElement)
-                    const dataUrl = await outerHTMLToDataURL(tempElement, {
+                    const dataUrl = await outerHTMLToDataURL(outerHTML, {
                         width:svgWidth,
                         height:svgHeight,
                         x:0-(buffer/2),
                         y:0-(buffer/2),
                     })
-                    console.log(dataUrl)
                     if (dataUrl) {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', dataUrl)
