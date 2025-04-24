@@ -686,13 +686,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 : 0)
                 const [width, height, outerHTML] = (() => {
                     const style = getLeafletLayerStyle(
-                        {geometry:{type:'MultiPoint'}}, 
-                        {
+                        {geometry:{type:'MultiPoint'}}, {
                             ...styleParams, 
                             fillPatternId:null, 
                             textWrap:false,
                             iconRotation: 0,
                             fillOpacity: 1,
+                        }, {
                             allowCircleMarker: false,
                         }
                     )
