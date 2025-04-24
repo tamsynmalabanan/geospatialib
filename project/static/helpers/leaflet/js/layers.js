@@ -178,6 +178,10 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             }    
         } else {
             element = svg.cloneNode(true)
+            Array.from(svg.querySelectorAll('use')).forEach(i => {
+                i.setAttribute('fill-opacity', fillOpacity)
+                i.setAttribute('stroke-opacity', strokeOpacity)
+            })
             element.removeAttribute('id')
         }
 

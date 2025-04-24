@@ -784,25 +784,29 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (icon) {
                     icon.id = `${id}-icon`
                     icon.style.textShadow = textShadow
-                    if (Array('emoji', 'img', 'html').includes(iconType)) {
-                        icon.style.opacity = fillOpacity
-                    } else {
-                        icon.setAttribute('fill', (() => {
-                            if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
-                            return iconFill ? fillColor : 'none'
-                        })())
-                        icon.setAttribute('stroke', (() => {
-                            if (iconStroke) {
-                                icon.setAttribute('stroke-opacity', strokeOpacity)
-                                icon.setAttribute('stroke-width', strokeWidth)
-                                icon.setAttribute('stroke-linecap', lineCap)
-                                icon.setAttribute('stroke-linejoin', lineJoin)
-                                icon.setAttribute('stroke-dasharray', dashArray)
-                                icon.setAttribute('stroke-dashoffset', dashOffset)
-                            }
-                            return iconStroke ? strokeColor : 'none'
-                        })())
-                    }
+                    
+                    // if (Array('emoji', 'img', 'html').includes(iconType)) {
+                    //     // icon.style.opacity = fillOpacity
+                    // } else {
+                    // }
+
+                    icon.setAttribute('fill', (() => {
+                        if (iconFill) icon.setAttribute('fill-opacity', 1)
+                        // if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
+                        return iconFill ? fillColor : 'none'
+                    })())
+                    icon.setAttribute('stroke', (() => {
+                        if (iconStroke) {
+                            const opacity = strokeOpacity === 0 ? 0 : strokeOpacity + fillOpacity
+                            icon.setAttribute('stroke-opacity', opacity > 100 ? 100 : opacity)
+                            icon.setAttribute('stroke-width', strokeWidth)
+                            icon.setAttribute('stroke-linecap', lineCap)
+                            icon.setAttribute('stroke-linejoin', lineJoin)
+                            icon.setAttribute('stroke-dasharray', dashArray)
+                            icon.setAttribute('stroke-dashoffset', dashOffset)
+                        }
+                        return iconStroke ? strokeColor : 'none'
+                    })())
 
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
