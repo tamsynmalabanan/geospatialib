@@ -248,23 +248,21 @@ const outerHTMLToDataURL = async (outerHTML, {
     }
 }
 
-const modifyImage = (src, {
-    opacity = 1,
-}={}) => {
-    const img = new Image()
-    img.src = src
+const modifyImage = (src, { opacity = 1 } = {}, callback) => {
+    const img = new Image();
+    img.src = src;
 
     img.onload = () => {
-        const canvas = document.createElement("canvas")
-        const ctx = canvas.getContext("2d")
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-        canvas.width = img.width
-        canvas.height = img.height
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-        ctx.globalAlpha = opacity
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(img, 0, 0);
 
-        ctx.drawImage(img, 0, 0)
-
-        return canvas.toDataURL()
-    }
-}
+        // Pass the Data URL to the callback
+        callback(canvas.toDataURL());
+    };
+};
