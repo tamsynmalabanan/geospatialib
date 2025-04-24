@@ -762,8 +762,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
                         width,
                         height,
-                        // x:0-(buffer/2),
-                        // y:0-(buffer/2),
+                        x:0-(buffer/2),
+                        y:0-(buffer/2),
                     })
                     console.log(dataUrl)
                     if (dataUrl) {
