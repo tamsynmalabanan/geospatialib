@@ -142,7 +142,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     ''
                 ),
                 style: {
-                    opacity: fillOpacity,
                     fontSize: `${iconSize}px`,
                     fontFamily: (
                         iconType === 'bi' ? 'bootstrap-icons' : 
@@ -164,6 +163,10 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 if (Array('svg', 'img').includes(iconType) || Array('svg', 'img').includes(element.tagName.toLowerCase())) {
                     element.setAttribute('width', iconSize)
                     element.setAttribute('height', iconSize)
+                }
+
+                if (Array('emoji', 'img', 'html').includes(iconType)) {
+                    icon.style.opacity = fillOpacity
                 }
                 
                 element.style.transform = `rotate(${iconRotation}deg)`
