@@ -757,6 +757,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('text-anchor', 'middle')
                     icon.setAttribute('dominant-baseline', 'central')
                     icon.setAttribute('font-size', iconSize)
+                    icon.setAttribute('opacity', fillOpacity)
                     icon.setAttribute('font-family', (
                         iconType === 'bi' ? 'bootstrap-icons' :
                         fontSerif ? 'Georgia, Times, serif' :
