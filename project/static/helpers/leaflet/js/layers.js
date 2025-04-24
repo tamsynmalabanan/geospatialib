@@ -116,8 +116,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     const isPoint = type === 'point'
     const isCanvas = renderer instanceof L.Canvas
     const isCircleMarker = (
-        allowCircleMarker,
-        isPoint 
+        allowCircleMarker
+        && isPoint 
         && iconType === 'bi' 
         && iconSpecs === 'circle-fill'
         && !iconShadow
