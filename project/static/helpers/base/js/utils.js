@@ -258,12 +258,6 @@ const modifyImage = (src, {
 
     console.log(src)
 
-    if(src.startsWith('http')) {
-        console.log(`/htmx/cors_proxy/?url=${encodeURIComponent(src)}`)
-        fetchCORSProxy(src)
-        .then(response => console.log(response))
-    }
-
     const img = new Image();
     img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
 
