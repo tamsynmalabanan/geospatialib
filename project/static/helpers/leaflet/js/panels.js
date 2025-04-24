@@ -745,7 +745,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (Array('bi', 'text').includes(iconType)) {
                     icon = document.createElementNS(svgNS, 'text')
-                    icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+                    icon.innerText = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
                     icon.setAttribute('class', removeWhitespace(`
                         text-center lh-1
                         ${textWrap ? 'text-wrap' : 'text-nowrap'}
@@ -757,7 +757,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     icon.setAttribute('text-anchor', 'middle')
                     icon.setAttribute('dominant-baseline', 'central')
                     icon.setAttribute('font-size', iconSize)
-                    icon.setAttribute('opacity', fillOpacity)
                     icon.setAttribute('font-family', (
                         iconType === 'bi' ? 'bootstrap-icons' :
                         fontSerif ? 'Georgia, Times, serif' :
