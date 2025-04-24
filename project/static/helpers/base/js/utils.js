@@ -233,16 +233,6 @@ const outerHTMLToDataURL = async (outerHTML, {
         document.body.appendChild(element)
         try {
             const canvas = await html2canvas(element, {
-                onclone: (clonedDocument) => {
-                    const originalGetContext = HTMLCanvasElement.prototype.getContext
-                    HTMLCanvasElement.prototype.getContext = (type, attributes) => {
-                        if (type === "2d") {
-                            attributes = attributes || {}
-                            attributes.willReadFrequently = true
-                        }
-                        return originalGetContext.call(this, type, attributes)
-                    }
-                },
                 backgroundColor,
                 width,
                 height,
