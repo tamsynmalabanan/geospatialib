@@ -223,8 +223,8 @@ const relationHandlers = (name) => {
 
 const outerHTMLToDataURL = async (outerHTML, {
     backgroundColor=null,
-    width,
-    height,
+    width=null,
+    height=null,
     x=0,
     y=0,
 }={}) => {
@@ -232,12 +232,13 @@ const outerHTMLToDataURL = async (outerHTML, {
     if (element instanceof Element) {
         document.body.appendChild(element)
         try {
+            console.log(element)
             const canvas = await html2canvas(element, {
                 backgroundColor,
-                ...(width ? {width} : {}),
-                ...(height ? {height} : {}),
-                ...(x ? {x} : {}),
-                ...(y ? {y} : {}),
+                width,
+                height,
+                x,
+                y,
             })
             return canvas.toDataURL('image/png')
         } catch (error) {
