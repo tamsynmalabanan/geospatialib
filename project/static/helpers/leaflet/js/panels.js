@@ -759,12 +759,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
+                    console.log(tempElement)
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
                         width:svgWidth,
                         height:svgHeight,
                         x:0-(buffer/2),
                         y:0-(buffer/2),
                     })
+                    console.log(dataUrl)
                     if (dataUrl) {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', dataUrl)
