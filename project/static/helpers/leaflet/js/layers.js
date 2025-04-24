@@ -197,7 +197,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         }
 
         if (type === 'polygon') {
-            params.fillOpacity = fillPattern === 'solid' ? fillOpacity : 1
+            params.fillOpacity = fillOpacity
             params.fillColor = (
                 fillPattern === 'solid' ? fillColor : 
                 (() => {
