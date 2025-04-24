@@ -604,30 +604,8 @@ const handleLeafletStylePanel = (map, parent) => {
         
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
         
-        const updateTextShadow = () => {
-            const hslaColor = manageHSLAColor(styleParams.fillColor)
-            const iconSize = styleParams.iconSize
-            const fillOpacity = styleParams.fillOpacity
-            styleParams.textShadow = Array(
-                styleParams.iconShadow ? removeWhitespace(`
-                    ${iconSize*0.1}px 
-                    ${iconSize*0.1}px 
-                    ${iconSize*0.2}px 
-                    ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                `) : '',
-                styleParams.iconGlow ? removeWhitespace(`
-                    0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                    0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                    0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                    0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                `) : ''
-            ).filter(i => i !== '').join(',')
-        }
-
         const update = async () => {
-            updateTextShadow()
-
-            const {
+            let {
                 strokeWidth,
                 strokeColor,
                 strokeOpacity,
@@ -656,15 +634,30 @@ const handleLeafletStylePanel = (map, parent) => {
                 lineBreak,
                 textShadow,
             } = styleParams
-            
+
+            const hslaColor = manageHSLAColor(fillColor)
+            textShadow = styleParams.textShadow = Array(
+                iconShadow ? removeWhitespace(`
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.2}px 
+                    ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                `) : '',
+                iconGlow ? removeWhitespace(`
+                    0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                    0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                    0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                    0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                `) : ''
+            ).filter(i => i !== '').join(',')
+
             const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
             if (fillPatternId) {
                 svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
                 delete styleParams.fillPatternId
             }
 
-            const id = generateRandomString()
-            styleParams.fillPatternId = id
+            const id = styleParams.fillPatternId = generateRandomString()
     
             const defs = document.createElementNS(svgNS, 'defs')
             defs.id = id
@@ -841,15 +834,18 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
                 }
+
+                
+                updateGeoJSONData(layer).then(() => {
+                    const isCanvas = layer.options.renderer instanceof L.Canvas
+                    if (isCanvas && fillPattern !== 'solid') {
+                        map.invalidateSize()
+                    }
+                })
             } catch (error) {
                 // console.log(error)
                 delete styleParams.fillPatternId
                 defs.remove()
-            }
-
-            await updateGeoJSONData(layer)
-            if (layer.options.renderer instanceof L.Canvas && fillPattern !== 'solid') {
-                map.invalidateSize()
             }
         }
 
