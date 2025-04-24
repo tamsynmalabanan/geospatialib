@@ -677,7 +677,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 const [width, height, tempElement] = (() => {
                     const style = getLeafletLayerStyle(
                         {geometry:{type:'MultiPoint'}}, 
-                        {...styleParams, fillPatternId:null, textWrap:false}
+                        {
+                            ...styleParams, 
+                            fillPatternId:null, 
+                            textWrap:false,
+                            iconRotation: 0,
+                        }
                     )
 
                     const tempElement =  customCreateElement({
@@ -754,7 +759,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'html') {
-                    tempElement.style.transform = 'rotate(0deg)'
+                    // tempElement.style.transform = 'rotate(0deg)'
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
                         width,
                         height,
