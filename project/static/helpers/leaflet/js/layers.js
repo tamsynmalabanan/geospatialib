@@ -210,7 +210,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
                         params.imgId = imgId
                     }
-                    console.log(img)
                     return bgColor
                 } else {
                     const pattern = document.querySelector(`#${fillPatternId}-pattern`)
@@ -220,6 +219,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             })()
         }
 
+        console.log(params)
         return params
     }
 }
