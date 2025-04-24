@@ -841,13 +841,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 delete styleParams.fillPatternId
                 defs.remove()
             } finally {
-                updateGeoJSONData(layer).then(() => {
-                    const isCanvas = layer.options.renderer instanceof L.Canvas
-                    if (isCanvas && fillPattern !== 'solid' && img.getAttribute('src')) {
-                        console.log('here')
-                        map.invalidateSize()
-                    }
-                })
+                updateGeoJSONData(layer)
             }
         }
 

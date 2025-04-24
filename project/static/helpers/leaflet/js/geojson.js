@@ -105,6 +105,7 @@ const getLeafletGeoJSONLayer = async ({
                 poly.feature = feature
                 handler(poly)
                 poly.addTo(geojsonLayer)
+                group._map.invalidateSize()
             })
         } else {
             handler(layer)
