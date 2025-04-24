@@ -249,6 +249,8 @@ const outerHTMLToDataURL = async (outerHTML, {
 }
 
 const modifyImage = (src, { opacity = 1 } = {}, callback) => {
+    if (!src) return
+    
     const img = new Image();
     img.src = src;
 

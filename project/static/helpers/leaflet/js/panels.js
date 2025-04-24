@@ -731,10 +731,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         icon = document.createElementNS(svgNS, 'image')
                         icon.setAttribute('href', iconSpecs)
                         defs.appendChild(icon)
-
-                        modifyImage(iconSpecs, {opacity:fillOpacity}, (newDataUrl) => {
-                            img.setAttribute('src', newDataUrl)
-                        })
                     }
                     
                     icon.setAttribute('width', width)
@@ -763,23 +759,26 @@ const handleLeafletStylePanel = (map, parent) => {
                     defs.appendChild(icon)
                 }
 
-                if (iconType === 'html') {
-                    const dataUrl = await outerHTMLToDataURL(outerHTML, {
-                        width:svgWidth,
-                        height:svgHeight,
-                        x:0-(buffer/2),
-                        y:0-(buffer/2),
-                    })
-                    if (dataUrl) {
-                        icon = document.createElementNS(svgNS, 'image')
-                        icon.setAttribute('href', dataUrl)
-                        defs.appendChild(icon)
-    
-                        modifyImage(dataUrl, {opacity:fillOpacity}, (newDataUrl) => {
-                            img.setAttribute('src', newDataUrl)
-                        })
-                    }
+                const dataUrl = await outerHTMLToDataURL(outerHTML, {
+                    width:svgWidth,
+                    height:svgHeight,
+                    x:0-(buffer/2),
+                    y:0-(buffer/2),
+                })
+
+                if (iconType === 'html' && dataUrl) {
+                    icon = document.createElementNS(svgNS, 'image')
+                    icon.setAttribute('href', dataUrl)
+                    defs.appendChild(icon)
                 }
+
+                modifyImage(
+                    iconType === 'img' ? iconSpecs : dataUrl, {
+                        opacity:fillOpacity
+                    }, (newDataUrl) => {
+                        img.setAttribute('src', newDataUrl)
+                    }
+                )
 
                 if (icon) {
                     icon.id = `${id}-icon`
