@@ -774,13 +774,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 modifyImage(
-                    iconType === 'img' ? iconSpecs : iconType === 'svg' ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}` : dataUrl, {
+                    iconType === 'img' ? iconSpecs : iconType === 'svg' ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconSpecs)}` : dataUrl, {
                         opacity:fillOpacity,
                         angle:iconRotation,
                         width:patternWidth,
                         height:patternHeight,
                     }, (newDataUrl) => {
-                        img.setAttribute('src', newDataUrl)
+                        img.setAttribute('src'  , newDataUrl)
                     }
                 )
 
