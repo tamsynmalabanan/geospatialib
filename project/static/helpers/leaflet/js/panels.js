@@ -693,6 +693,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             textWrap:false,
                             iconRotation: 0,
                             fillOpacity: 1,
+                            allowCircleMarker: false,
                         }
                     )
 
