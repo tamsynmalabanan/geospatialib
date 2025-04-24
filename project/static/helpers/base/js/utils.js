@@ -254,18 +254,18 @@ const modifyImage = (src, {
     width = null,
     height = null,
 } = {}, callback) => {
-    if (!src) return;
+    if (!src) return
 
     const img = new Image();
-    img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src;
+    img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
 
     img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        const canvas = document.createElement("canvas")
+        const ctx = canvas.getContext("2d")
 
-        // Set canvas dimensions to match the image
-        canvas.width = width || img.width;
-        canvas.height = height || img.height;
+        const radians = (angle * Math.PI) / 180; // Convert angle to radians
+        canvas.width = Math.max(Math.abs(img.width * Math.cos(radians)) + Math.abs(img.height * Math.sin(radians)), (width || 0))
+        canvas.height = Math.max(Math.abs(img.width * Math.sin(radians)) + Math.abs(img.height * Math.cos(radians)), (height || 0))
 
         // Translate to the center of the canvas for rotation
         ctx.translate(canvas.width / 2, canvas.height / 2);
