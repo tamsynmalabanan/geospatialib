@@ -694,7 +694,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     document.body.appendChild(tempElement)
                     const bounds = tempElement.getBoundingClientRect()
                     document.body.removeChild(tempElement)
-                    return [buffer+bounds.width, buffer+bounds.height, tempElement]
+                    return [bounds.width, bounds.height, tempElement]
                 })()
 
                 let icon
@@ -704,8 +704,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     id: `${id}-img`,
                     attrs: {
                         alt: 'icon',
-                        width:iconSize, 
-                        height:iconSize,
+                        width, 
+                        height,
                     },
                 })
 
@@ -723,10 +723,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         img.setAttribute('src', iconSpecs)
                     }
                     
-                    icon.setAttribute('width', iconSize)
-                    icon.setAttribute('height', iconSize)
-                    icon.setAttribute('x', buffer/2)
-                    icon.setAttribute('y', buffer/2)
+                    icon.setAttribute('width', width)
+                    icon.setAttribute('height', height)
                 }
                 
                 if (Array('bi', 'text').includes(iconType)) {
@@ -756,8 +754,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const dataUrl = await outerHTMLToDataURL(tempElement, {
                         width,
                         height,
-                        x:0-(buffer/2),
-                        y:0-(buffer/2),
+                        // x:0-(buffer/2),
+                        // y:0-(buffer/2),
                     })
                     icon = document.createElementNS(svgNS, 'image')
                     icon.setAttribute('href', dataUrl)
@@ -788,8 +786,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const svg = document.createElementNS(svgNS, 'svg')
                     svg.id = `${id}-svg`
                     svg.classList.add('position-absolute')
-                    svg.setAttribute('width', width-buffer)
-                    svg.setAttribute('height', height-buffer)
+                    svg.setAttribute('width', width)
+                    svg.setAttribute('height', height)
                     svg.setAttribute('viewbox', `0 0 ${width} ${height}`)
                     svg.style.transform = `rotate(${iconRotation}deg)`
                     svg.style.transformOrigin = `50% 50%`
@@ -802,22 +800,24 @@ const handleLeafletStylePanel = (map, parent) => {
                     const newPattern = document.createElementNS(svgNS, 'pattern')
                     newPattern.id = `${id}-pattern`
                     newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    newPattern.setAttribute('width', width)
-                    newPattern.setAttribute('height', height)
-                    newPattern.setAttribute('viewbox', `0 0 ${width} ${height}`)
+                    newPattern.setAttribute('width', width+buffer)
+                    newPattern.setAttribute('height', height+buffer)
+                    newPattern.setAttribute('viewbox', `0 0 ${width+buffer} ${height+buffer}`)
                     newPattern.style.transform = `rotate(${iconRotation}deg)`
                     newPattern.style.transformOrigin = `50% 50%`
                     defs.appendChild(newPattern)
                     
                     const patternRect = document.createElementNS(svgNS, 'rect')
-                    patternRect.setAttribute('width', width)
-                    patternRect.setAttribute('height', height)
+                    patternRect.setAttribute('width', width+buffer)
+                    patternRect.setAttribute('height', height+buffer)
                     patternRect.setAttribute('fillOpacity', fillOpacity)
                     patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
                     newPattern.appendChild(patternRect)
     
                     const patternUse = document.createElementNS(svgNS, 'use')
                     patternUse.setAttribute('href', `#${id}-svg`)
+                    patternUse.setAttribute('x', buffer/2)
+                    patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
                 }
             } catch (error) {
