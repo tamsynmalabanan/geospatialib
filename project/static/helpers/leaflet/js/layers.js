@@ -208,7 +208,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     const imgId = `${fillPatternId}-img`
                     const img = document.querySelector(`#${imgId}`)
                     const validImg = (
-                        img instanceof Element 
+                        img
+                        && img instanceof Element 
                         && img.tagName.toLowerCase() === 'img'
                         && img.getAttribute('src')
                     )
@@ -217,12 +218,11 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         params.stroke = strokeColor && strokeOpacity > 0 ? true : false
                         params.fill = fillColor && fillOpacity > 0 ? true : false
                     }
-                    return bgColor
                 } else {
                     const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    if (!pattern) return bgColor 
-                    return `url(#${fillPatternId}-pattern)`
+                    if (pattern) return `url(#${fillPatternId}-pattern)`
                 }
+                return bgColor 
             })()
         }
 
