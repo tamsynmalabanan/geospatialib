@@ -252,7 +252,7 @@ const modifyImage = (src, { opacity = 1 } = {}, callback) => {
     if (!src) return
     
     const img = new Image();
-    img.src = src;
+    img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
 
     img.onload = () => {
         const canvas = document.createElement("canvas");
