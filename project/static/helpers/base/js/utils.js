@@ -248,23 +248,36 @@ const outerHTMLToDataURL = async (outerHTML, {
     }
 }
 
-const modifyImage = (src, { opacity = 1 } = {}, callback) => {
-    if (!src) return
-    
+const modifyImage = (src, {
+    opacity = 1, 
+    angle = 0 
+} = {}, callback) => {
+    if (!src) return;
+
     const img = new Image();
-    img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
+    img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src;
 
     img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
+        // Set canvas dimensions to match the image
         canvas.width = img.width;
         canvas.height = img.height;
 
+        // Translate to the center of the canvas for rotation
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+
+        // Apply rotation
+        ctx.rotate((angle * Math.PI) / 180);
+
+        // Set transparency
         ctx.globalAlpha = opacity;
-        ctx.drawImage(img, 0, 0);
+
+        // Draw the image, adjusting for the center
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
 
         // Pass the Data URL to the callback
         callback(canvas.toDataURL());
     };
-};
+}
