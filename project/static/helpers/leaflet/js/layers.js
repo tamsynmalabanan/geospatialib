@@ -209,6 +209,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     const img = document.querySelector(`#${imgId}`)
                     if (img instanceof Element && img.tagName.toLowerCase() === 'img') {
                         params.imgId = imgId
+                        params.stroke = strokeColor && strokeOpacity > 0 ? true : false
+                        params.fill = fillColor && fillOpacity > 0 ? true : false
                     }
                     return bgColor
                 } else {
