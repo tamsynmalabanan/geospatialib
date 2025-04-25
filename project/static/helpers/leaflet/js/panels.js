@@ -2165,9 +2165,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                 })
                                 parent?.appendChild(container)
                                 
-                                Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
-                                    container.appendChild(getSymbologyForm(i))
-                                })
+                                if (symbology.method === 'uniform') {
+                                    container.appendChild(getSymbologyForm(''))
+                                } else {
+                                    Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+                                        container.appendChild(getSymbologyForm(i))
+                                    })
+                                }
                             }
                         }
                     },
