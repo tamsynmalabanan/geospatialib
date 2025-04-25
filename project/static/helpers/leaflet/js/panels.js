@@ -716,8 +716,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 })()
                 const svgWidth = width + buffer
                 const svgHeight = height + buffer
-                const patternWidth = svgWidth + (iconType === 'img' ? 0 : iconSize)
-                const patternHeight = svgHeight + (iconType === 'img' ? 0 : iconSize)
+                const patternGap = iconType === 'img' ? 0 : iconSize
+                const patternWidth = svgWidth + patternGap
+                const patternHeight = svgHeight + patternGap
                 
                 img.setAttribute('width', patternWidth)
                 img.setAttribute('height', patternHeight)
