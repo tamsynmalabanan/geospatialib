@@ -2077,10 +2077,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const value = field.value
                                     symbology.method = value
                                     
-                                    // const tagify = 
+                                    const tagify = field.parentElement.nextSibling
                                     if (value === 'uniform') {
+                                        tagify.setAttribute('disabled', true)
                                         if (symbology.groups) delete symbology.groups
                                     } else {
+                                        tagify.removeAttribute('disabled')
+                                        
                                         if (value === 'categories') {
                                             const groups = {}
 
