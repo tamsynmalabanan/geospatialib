@@ -2057,7 +2057,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fields: {   
                         method: {
                             handler: createFormFloating,
-                            containerClass: 'w-25 flex-grow-1',
+                            containerClass: 'w-25',
                             fieldAttrs: {
                                 name:'method',
                             },
@@ -2098,7 +2098,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         groupBy: {
                             handler: createTagifyField,
-                            inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
                             inputTag: 'textarea',
                             delimiters: null,
                             enabled: 0,
@@ -2156,7 +2156,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         }
                     },
-                    className: 'gap-3 flex-wrap'
+                    className: 'gap-2 flex-wrap'
                 },
             },
             'Rendering': {
