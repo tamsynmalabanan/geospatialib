@@ -2074,7 +2074,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             labelText: 'Method',
                             options:{
                                 'uniform':'Uniform symbol',
-                                // 'categorized':'Categorized symbols',
+                                'categorized':'Categorized symbols',
                                 // 'ranged':'Ranged symbols',
                             },
                             currentValue: symbology.method,
@@ -2092,8 +2092,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         methodDetails: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({className:'w-100'})
-                                container.appendChild(getSymbologyForm(''))
                                 parent?.appendChild(container)
+                                
+                                Array('', ...Object.keys(symbology.groups ?? {})).forEach(i => {
+                                    container.appendChild(getSymbologyForm(i))
+                                })
                             }
                         }
                     },

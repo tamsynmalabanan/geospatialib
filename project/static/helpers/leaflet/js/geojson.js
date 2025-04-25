@@ -23,21 +23,21 @@ const getLeafletGeoJSONLayer = async ({
         symbology: {
             // groups: {
             //     vgdsfgdf: {
-            //         rank: 1,
             //         label: 'Group 1',
-                    // filters: {
-                    //     type: {active: false, values: {
-                    //         Point: true,
-                    //         MultiPoint: true,
-                    //         LineString: true,
-                    //         MultiLineString: true,
-                    //         Polygon: true,
-                    //         MultiPolygon: true,
-                    //     }},
-                    //     geom: {active: false, values: {}},
-                    //     properties: {active: false, values: {}},
-                    // },
+            //         showCount: true,
             //         styleParams: getLeafletStyleParams()
+            //         filters: {
+            //             type: {active: false, values: {
+            //                 Point: true,
+            //                 MultiPoint: true,
+            //                 LineString: true,
+            //                 MultiLineString: true,
+            //                 Polygon: true,
+            //                 MultiPolygon: true,
+            //             }},
+            //             geom: {active: false, values: {}},
+            //             properties: {active: false, values: {}},
+            //         },
             //     },
             // },
             default: {
@@ -99,8 +99,10 @@ const getLeafletGeoJSONLayer = async ({
         ) {
             layer.once('add', () => {
                 geojsonLayer.removeLayer(layer)
-                const style = getLeafletLayerStyle(feature, styleParams, {renderer})
-                const poly = L.polygon(layer.getLatLngs(), style)
+                const poly = L.polygon(
+                    layer.getLatLngs(), 
+                    getLeafletLayerStyle(feature, styleParams, {renderer})
+                )
                 poly.feature = feature
                 handler(poly)
                 poly.addTo(geojsonLayer)
