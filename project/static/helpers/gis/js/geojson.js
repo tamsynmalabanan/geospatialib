@@ -492,10 +492,8 @@ const filterGeoJSON = async (id, geojson, {
 
     const mapKey = `${id};${map?.getContainer().id}`
     if (mapForFilterGeoJSON.has(mapKey)) {
-        console.log('waiting')
         geojsonClone = await mapForFilterGeoJSON.get(mapKey)
     } else {
-        console.log('filtering')
         const signal = controller?.signal
         geojsonClone = (async () => {
             try {
@@ -531,6 +529,10 @@ const filterGeoJSON = async (id, geojson, {
     }
 
     await geojsonClone
+    if (filters) geojsonClone.features = geojsonClone.features.filter(feature => {
+        return validateGeoJSONFeature(feature, filters)
+    })
+
     return geojsonClone
 }
 

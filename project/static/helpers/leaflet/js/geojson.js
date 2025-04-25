@@ -111,7 +111,7 @@ const getLeafletGeoJSONLayer = async ({
         }
     }
 
-    geojsonLayer.options.filter = (feature) => validateGeoJSONFeature(feature, geojsonLayer._styles.filters)
+    // geojsonLayer.options.filter = (feature) => validateGeoJSONFeature(feature, geojsonLayer._styles.filters)
 
     const getStyle = (feature) => {
         const symbology = geojsonLayer._styles?.symbology
@@ -210,7 +210,6 @@ const validateGeoJSONFeature = (feature, filters) => {
     return true
 }
 
-
 const assignFeatureLayerTitle = (layer) => {
     const properties = layer.feature.properties
 
@@ -295,9 +294,10 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     const data = await fetcher(fetchParams.id, fetchParams.geojson, {
         map: layer._group?._map,
         controller,
+        filters: layer._styles.filters
     })
 
-    
+
 
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {
