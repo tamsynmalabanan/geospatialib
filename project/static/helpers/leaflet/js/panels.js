@@ -2099,6 +2099,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                             container.appendChild(getSymbologyForm(i))
                                         })
                                     }
+
+                                    updateGeoJSONData(layer)
                                 }
                             }
                         },
@@ -2154,6 +2156,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
                                         container.appendChild(getSymbologyForm(i))
                                     })                                    
+
+                                    updateGeoJSONData(layer)
                                 }])))()
                             }
                         },
