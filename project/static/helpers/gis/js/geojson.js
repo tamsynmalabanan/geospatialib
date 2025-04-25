@@ -491,7 +491,6 @@ const filterGeoJSON = async (id, geojson, {
 
     const mapKey = `${id};${map?.getContainer().id}`
     if (mapForFilterGeoJSON.has(mapKey)) {
-        console.log('waiting')
         return mapForFilterGeoJSON.get(mapKey)
     }
 
