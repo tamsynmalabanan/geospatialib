@@ -776,17 +776,17 @@ const handleLeafletStylePanel = (map, parent) => {
                     defs.appendChild(icon)
                 }
 
-                createNewImage(
+                img.setAttribute('src', await createNewImage(
                     iconType === 'img' ? iconSpecs : 
                     dataUrl, {
                         opacity:fillOpacity,
                         angle:iconRotation,
                         width: patternWidth,
                         height: patternHeight,
-                    }, (newDataUrl) => {
-                        img.setAttribute('src', newDataUrl)
                     }
-                )
+                ))
+
+                console.log(img)
 
                 if (icon) {
                     icon.id = `${id}-icon`

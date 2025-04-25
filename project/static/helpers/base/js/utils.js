@@ -253,28 +253,29 @@ const createNewImage = (src, {
     angle = 0,
     width = null,
     height = null,
-} = {}, callback) => {
-    if (!src) return
+} = {}) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
 
-    const img = new Image();
-    img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
-
-    img.onload = () => {
-        const canvas = document.createElement("canvas")
-        const ctx = canvas.getContext("2d")
-
-        const radians = (angle * Math.PI) / 180
-        canvas.width = Math.max(Math.abs(img.width * Math.cos(radians)) + Math.abs(img.height * Math.sin(radians)), (width || 0))
-        canvas.height = Math.max(Math.abs(img.width * Math.sin(radians)) + Math.abs(img.height * Math.cos(radians)), (height || 0))
-
-        ctx.translate(canvas.width / 2, canvas.height / 2)
-        ctx.rotate(radians)
-        ctx.globalAlpha = opacity
-
-        ctx.drawImage(img, -img.width/2, -img.height/2);
-
-        callback(canvas.toDataURL());
-    };
+        img.onload = () => {
+            const canvas = document.createElement("canvas")
+            const ctx = canvas.getContext("2d")
+    
+            const radians = (angle * Math.PI) / 180
+            canvas.width = Math.max(Math.abs(img.width * Math.cos(radians)) + Math.abs(img.height * Math.sin(radians)), (width || 0))
+            canvas.height = Math.max(Math.abs(img.width * Math.sin(radians)) + Math.abs(img.height * Math.cos(radians)), (height || 0))
+    
+            ctx.translate(canvas.width / 2, canvas.height / 2)
+            ctx.rotate(radians)
+            ctx.globalAlpha = opacity
+    
+            ctx.drawImage(img, -img.width/2, -img.height/2);
+    
+            const dataUrl = canvas.toDataURL("image/png")
+            resolve(dataUrl)
+        }
+    })
 }
 
 const svgToDataURL = (svg) => {
