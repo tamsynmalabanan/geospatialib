@@ -855,12 +855,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternUse.setAttribute('x', buffer/2)
                     patternUse.setAttribute('y', buffer/2)
                     newPattern.appendChild(patternUse)
-
-                    // const patternUse = document.createElementNS(svgNS, 'use')
-                    // patternUse.setAttribute('href', `#${id}-svg`)
-                    // patternUse.setAttribute('x', buffer/2)
-                    // patternUse.setAttribute('y', buffer/2)
-                    // newPattern.appendChild(patternUse)
                 }
             } catch (error) {
                 // console.log(error)
