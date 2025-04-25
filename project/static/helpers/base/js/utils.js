@@ -259,7 +259,7 @@ const createNewImage = (src, {
     const img = new Image();
     img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
     console.log(img)
-    
+
     img.onload = () => {
         const canvas = document.createElement("canvas")
         const ctx = canvas.getContext("2d")
@@ -276,4 +276,23 @@ const createNewImage = (src, {
 
         callback(canvas.toDataURL());
     };
+}
+
+const svgToDataURL = (svg, callback) => {
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+
+    const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
+    const blobURL = URL.createObjectURL(svgBlob)
+
+    const img = new Image()
+    img.onload = () => {
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+        URL.revokeObjectURL(blobURL)
+        callback(canvas.toDataURL('image/png'))
+    }
+
+    img.src = blobURL
 }
