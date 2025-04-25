@@ -91,8 +91,7 @@ const getLeafletGeoJSONLayer = async ({
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
-        if (
-            isCanvas 
+        if ((isCanvas || styleParams.iconType === 'img')
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
             && document.querySelector(`#${styleParams.fillPatternId}-img`)
@@ -143,7 +142,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.style = (feature) => {
         const styleParams = getStyle(feature)
         const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
-        if (isCanvas 
+        if ((isCanvas || styleParams.iconType === 'img')
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
             && document.querySelector(`#${styleParams.fillPatternId}-img`)
