@@ -209,7 +209,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 if (isCanvas || iconType === 'img') {
                     const imgId = `${fillPatternId}-img`
                     const img = document.querySelector(`#${imgId}`)
-                    console.log(img)
                     const validImg = (
                         img
                         && img instanceof Element 
