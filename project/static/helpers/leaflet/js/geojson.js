@@ -46,7 +46,7 @@ const getLeafletGeoJSONLayer = async ({
                 styleParams: getLeafletStyleParams(customStyleParams),
             },
             method: 'uniform',
-        },
+        },                                  
         visibility: {
             active: false,
             min: 10,

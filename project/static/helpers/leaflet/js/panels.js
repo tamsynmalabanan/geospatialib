@@ -916,14 +916,16 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        // add remove button if id !== ''
-
-        const conditionsFields = customCreateElement({
-            className:'d-flex gap-2',
-            parent,
-        })
-
-        // add conditions if id !== ''
+        if (id !== '') {
+            // add remove button if id !== ''
+    
+            const filterFields = customCreateElement({
+                className:'d-flex gap-2',
+                parent,
+            })
+    
+            // add filters if id !== ''
+        }
 
         const iconFields = customCreateElement({
             className:'d-flex gap-2',
@@ -2076,6 +2078,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 'uniform':'Uniform symbol',
                                 'categorized':'Categorized symbols',
                                 // 'ranged':'Ranged symbols',
+                                // 'rule':'Rule-based symbols',
                             },
                             currentValue: symbology.method,
                             fieldClass:'form-select-sm',
@@ -2086,15 +2089,21 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                                     const container = field.parentElement.nextSibling
                                     container.innerHTML = ''
+
+                                    Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+                                        container.appendChild(getSymbologyForm(i))
+                                    })
                                 }
                             }
                         },
                         methodDetails: {
                             handler: ({parent}={}) => {
-                                const container = customCreateElement({className:'w-100'})
+                                const container = customCreateElement({
+                                    className:'w-100'
+                                })
                                 parent?.appendChild(container)
                                 
-                                Array('', ...Object.keys(symbology.groups ?? {})).forEach(i => {
+                                Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
                                     container.appendChild(getSymbologyForm(i))
                                 })
                             }
