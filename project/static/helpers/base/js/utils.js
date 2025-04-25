@@ -248,7 +248,7 @@ const outerHTMLToDataURL = async (outerHTML, {
     }
 }
 
-const modifyImage = (src, {
+const createNewImage = (src, {
     opacity = 1, 
     angle = 0,
     width = null,
@@ -265,28 +265,16 @@ const modifyImage = (src, {
         const canvas = document.createElement("canvas")
         const ctx = canvas.getContext("2d")
 
-        const radians = (angle * Math.PI) / 180; // Convert angle to radians
+        const radians = (angle * Math.PI) / 180
         canvas.width = Math.max(Math.abs(img.width * Math.cos(radians)) + Math.abs(img.height * Math.sin(radians)), (width || 0))
         canvas.height = Math.max(Math.abs(img.width * Math.sin(radians)) + Math.abs(img.height * Math.cos(radians)), (height || 0))
 
-        // Translate to the center of the canvas for rotation
-        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.translate(canvas.width / 2, canvas.height / 2)
+        ctx.rotate(radians)
+        ctx.globalAlpha = opacity
 
-        // Apply rotation
-        ctx.rotate((angle * Math.PI) / 180);
+        ctx.drawImage(img, -img.width/2, -img.height/2);
 
-
-        // Set transparency
-        ctx.globalAlpha = opacity;
-
-        // Draw the image, adjusting for the center
-        ctx.drawImage(img, -img.width / 2, -img.height / 2);
-
-        // Pass the Data URL to the callback
         callback(canvas.toDataURL());
     };
-
-    // img.onerror = (error) => {
-    //     console.log(error)
-    // }
 }

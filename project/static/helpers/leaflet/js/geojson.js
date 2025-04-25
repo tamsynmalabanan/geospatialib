@@ -158,7 +158,15 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (geojson && !group?._map?._legendLayerGroups.includes(group)) geojsonLayer.addData(geojson)
+    if (geojson && !group?._map?._legendLayerGroups.includes(group)) {
+        const filters = geojsonLayer._styles.filters
+        if (Object.values(filters).some(i => i.active)) {
+            geojson.features = geojson.features.filter(feature => {
+                return validateGeoJSONFeature(feature, filters)
+            })
+        }
+        geojsonLayer.addData(geojson)
+    }
 
     return geojsonLayer
 }

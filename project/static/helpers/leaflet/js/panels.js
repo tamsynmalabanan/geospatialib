@@ -773,7 +773,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     defs.appendChild(icon)
                 }
 
-                modifyImage(
+                createNewImage(
                     iconType === 'img' ? iconSpecs : dataUrl, {
                         opacity:fillOpacity,
                         angle:iconRotation,
