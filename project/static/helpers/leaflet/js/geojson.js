@@ -97,6 +97,7 @@ const getLeafletGeoJSONLayer = async ({
             && document.querySelector(`#${styleParams.fillPatternId}-img`)
             ?.getAttribute('src')
         ) {
+            console.log(document.querySelector(`#${styleParams.fillPatternId}-img`))
             layer.once('add', () => {
                 geojsonLayer.removeLayer(layer)
                 const style = getLeafletLayerStyle(feature, styleParams, {renderer})
