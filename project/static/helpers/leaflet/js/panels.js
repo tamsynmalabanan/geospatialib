@@ -2156,7 +2156,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         }
                     },
-                    className: 'gap-3'
+                    className: 'gap-3 flex-wrap'
                 },
             },
             'Rendering': {
