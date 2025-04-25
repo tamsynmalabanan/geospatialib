@@ -808,7 +808,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         document.body.appendChild(canvas); // Append canvas to the document to view it.
                     };
                     img.src = blobURL;
-                    console.log(img)
+                    console.log(img, canvas)
                 }
 
 
