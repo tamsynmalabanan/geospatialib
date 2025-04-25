@@ -414,6 +414,7 @@ const deleteLeafletLayerFillPatterns = (layer) => {
 const getLeafletLayerContextMenu = async (e, layer, {
 
 } = {}) => {
+    console.log(layer)
     if (!layer) return 
     const type = getLeafletLayerType(layer)
 
