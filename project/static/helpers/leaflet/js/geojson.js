@@ -91,6 +91,7 @@ const getLeafletGeoJSONLayer = async ({
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
+        console.log(styleParams)
         if ((isCanvas || styleParams.iconType === 'img')
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
@@ -104,7 +105,6 @@ const getLeafletGeoJSONLayer = async ({
                 poly.feature = feature
                 handler(poly)
                 poly.addTo(geojsonLayer)
-                console.log(poly)
             })
         } else {
             handler(layer)
