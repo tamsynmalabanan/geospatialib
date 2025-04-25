@@ -775,7 +775,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 createNewImage(
-                    iconType === 'img' ? iconSpecs : iconType === 'svg' ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}` : dataUrl, {
+                    iconType === 'img' ? iconSpecs : 
+                    iconType === 'svg' ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}` : 
+                    dataUrl, {
                         opacity:fillOpacity,
                         angle:iconRotation,
                         width: patternWidth,
