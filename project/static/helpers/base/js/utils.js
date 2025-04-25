@@ -256,8 +256,6 @@ const createNewImage = (src, {
 } = {}, callback) => {
     if (!src) return
 
-    console.log(src)
-
     const img = new Image();
     img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
 
