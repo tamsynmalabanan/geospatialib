@@ -681,7 +681,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     Math.max(
                         (iconGlow ? iconSize*2 : 0),
                         (iconShadow ? iconSize*0.2 : 0),
-                        (italicFont ? iconSize*0.5 : 0),
+                        (iconType === 'html' ? 0 : (italicFont ? iconSize*0.5 : 0)),
                     )                
                 : 0)
                 const [width, height, outerHTML] = (() => {
