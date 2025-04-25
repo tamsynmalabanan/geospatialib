@@ -111,53 +111,7 @@ const getLeafletGeoJSONLayer = async ({
         }
     }
 
-    const validateFeature = (feature, filters) => {
-        if (filters.type.active) {
-            if (!filters.type.values[feature.geometry.type]) return false
-        }
-        
-        if (filters.properties.active) {
-            const propertyFilters = Object.values(filters.properties.values)
-            .filter(i => i.active && i.property && i.values?.length)
-    
-            if (!propertyFilters.every(i => {
-                const handler = relationHandlers(i.handler)
-                if (!handler) return true
-    
-                const value = (() => {
-                    const value = removeWhitespace(String(feature.properties[i.property] ?? '[undefined]'))
-                    return value === '' ? '[blank]' : value
-                })()
-                
-                try {
-                    return i.values.some(v => handler(value, v, {caseSensitive:i.case}) === i.value)
-                } catch (error) {
-                    return !i.value
-                }
-            })) return false
-        }
-            
-        if (filters.geom.active) {
-            const geomFilters = Object.values(filters.geom.values)
-            .filter(i => i.active && i.geoms?.length && i.geoms.every(g => turf.booleanValid(g)))
-            
-            if (!geomFilters.every(i => {
-                const handler = turf[i.handler]
-                if (!handler) return true
-    
-                try {
-                    return i.geoms.some(g => handler(feature.geometry, g) === i.value)
-                } catch {
-                    return !i.value
-                }
-            })) return false
-        }
-    
-        return true
-
-    }
-
-    geojsonLayer.options.filter = (feature) => validateFeature(feature, geojsonLayer._styles.filters)
+    geojsonLayer.options.filter = (feature) => validateGeoJSONFeature(feature, geojsonLayer._styles.filters)
 
     const getStyle = (feature) => {
         const symbology = geojsonLayer._styles?.symbology
@@ -210,6 +164,52 @@ const getLeafletGeoJSONLayer = async ({
 
     return geojsonLayer
 }
+
+const validateGeoJSONFeature = (feature, filters) => {
+    if (filters.type.active) {
+        if (!filters.type.values[feature.geometry.type]) return false
+    }
+    
+    if (filters.properties.active) {
+        const propertyFilters = Object.values(filters.properties.values)
+        .filter(i => i.active && i.property && i.values?.length)
+
+        if (!propertyFilters.every(i => {
+            const handler = relationHandlers(i.handler)
+            if (!handler) return true
+
+            const value = (() => {
+                const value = removeWhitespace(String(feature.properties[i.property] ?? '[undefined]'))
+                return value === '' ? '[blank]' : value
+            })()
+            
+            try {
+                return i.values.some(v => handler(value, v, {caseSensitive:i.case}) === i.value)
+            } catch (error) {
+                return !i.value
+            }
+        })) return false
+    }
+        
+    if (filters.geom.active) {
+        const geomFilters = Object.values(filters.geom.values)
+        .filter(i => i.active && i.geoms?.length && i.geoms.every(g => turf.booleanValid(g)))
+        
+        if (!geomFilters.every(i => {
+            const handler = turf[i.handler]
+            if (!handler) return true
+
+            try {
+                return i.geoms.some(g => handler(feature.geometry, g) === i.value)
+            } catch {
+                return !i.value
+            }
+        })) return false
+    }
+
+    return true
+}
+
 
 const assignFeatureLayerTitle = (layer) => {
     const properties = layer.feature.properties
@@ -296,6 +296,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         map: layer._group?._map,
         controller,
     })
+
+    
 
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {

@@ -486,45 +486,49 @@ const mapForFilterGeoJSON = new Map()
 const filterGeoJSON = async (id, geojson, {
     map,
     controller,
+    filters,
 } = {}) => {
+    let geojsonClone
+
     const mapKey = `${id};${map?.getContainer().id}`
     if (mapForFilterGeoJSON.has(mapKey)) {
-        return await mapForFilterGeoJSON.get(mapKey)
+        geojsonClone = await mapForFilterGeoJSON.get(mapKey)
+    } else {
+        const signal = controller?.signal
+        geojsonClone = (async () => {
+            try {
+                if (signal?.aborted) throw new Error()
+    
+                const clonedGeoJSON = turf.clone(geojson)
+                const geojsonBbox = turf.bboxPolygon(turf.bbox(clonedGeoJSON)).geometry
+                const geojsonExtent = turf.area(geojsonBbox) ? geojsonBbox : turf.buffer(
+                    geojsonBbox, 1/100000
+                ).geometry
+            
+                if (map) {
+                    const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
+                    if (!turf.booleanIntersects(queryExtent, geojsonBbox)) return
+        
+                    clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
+                        if (signal?.aborted) throw new Error()
+                        const featureBbox = turf.bboxPolygon(turf.bbox(feature))
+                        return turf.booleanIntersects(queryExtent, featureBbox)
+                    })
+                }
+    
+                if (clonedGeoJSON.features.length === 0) return
+                return clonedGeoJSON
+            } catch (error) {
+                throw error
+            } finally {
+                setTimeout(() => mapForFilterGeoJSON.delete(mapKey), 1000)
+            }
+        })()
+    
+        mapForFilterGeoJSON.set(mapKey, geojsonClone)
     }
 
-    const signal = controller?.signal
-    const geojsonClone = (async () => {
-        try {
-            if (signal?.aborted) throw new Error()
-
-            const clonedGeoJSON = turf.clone(geojson)
-            const geojsonBbox = turf.bboxPolygon(turf.bbox(clonedGeoJSON)).geometry
-            const geojsonExtent = turf.area(geojsonBbox) ? geojsonBbox : turf.buffer(
-                geojsonBbox, 1/100000
-            ).geometry
-        
-            if (!map) return clonedGeoJSON
-            
-            const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
-            if (!turf.booleanIntersects(queryExtent, geojsonExtent)) return
-
-            clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
-                if (signal?.aborted) throw new Error()
-                const featureBbox = turf.bboxPolygon(turf.bbox(feature))
-                return turf.booleanIntersects(queryExtent, featureBbox)
-            })
-            
-            if (clonedGeoJSON.features.length === 0) return
-            return clonedGeoJSON
-        } catch (error) {
-            throw error
-        } finally {
-            setTimeout(() => mapForFilterGeoJSON.delete(mapKey), 1000)
-        }
-    })()
-
-    mapForFilterGeoJSON.set(mapKey, geojsonClone)
-    return geojsonClone
+    return await geojsonClone
 }
 
 const downloadGeoJSON = (geojson, fileName) => {
