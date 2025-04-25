@@ -665,7 +665,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
             let icon
             const img = customCreateElement({
-                parent: defs,
                 tag:'img',
                 id: `${id}-img`,
                 attrs: {
@@ -787,6 +786,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 ))
 
                 console.log(img)
+                defs.appendChild(img)
 
                 if (icon) {
                     icon.id = `${id}-icon`
