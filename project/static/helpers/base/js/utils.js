@@ -276,5 +276,7 @@ const createNewImage = (src, {
         ctx.drawImage(img, -img.width/2, -img.height/2);
 
         callback(canvas.toDataURL());
-    };
+    }
+
+    img.onerror(error => console.log(error))
 }
