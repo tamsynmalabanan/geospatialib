@@ -774,12 +774,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     defs.appendChild(icon)
                 }
 
-                if (iconType === 'svg') {
-                    const svgImage = new Image()
-                    svgImage.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
-                    console.log(svgImage)
-                }
-
                 createNewImage(
                     iconType === 'img' ? iconSpecs : iconType === 'svg' ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}` : dataUrl, {
                         opacity:fillOpacity,
