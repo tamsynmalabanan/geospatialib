@@ -762,7 +762,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 let dataUrl
-                iconType === 'svg' ? svgToDataURL(outerHTML, (v) => dataUrl = v)
+                iconType === 'svg' ? svgToDataURL(outerHTML, (v) => {
+                    console.log(v)
+                    dataUrl = v
+                })
                 : dataUrl = await outerHTMLToDataURL(outerHTML, {
                     width:svgWidth,
                     height:svgHeight,
