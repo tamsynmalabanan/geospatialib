@@ -778,14 +778,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'svg') {
                     const svgString = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
                     const blob = new Blob([svgString], { type: 'image/svg+xml' })
-                    console.log(blob)
-                    // const blobURL = URL.createObjectURL(blob)
-
-                    // const img = new Image();
-                    // img.src = blobURL;
-                    // img.onload = () => {
-                    //     URL.revokeObjectURL(blobURL);
-                    // };
+                    const blobURL = URL.createObjectURL(blob)
+                    
+                    const img = new Image();
+                    img.src = blobURL;
+                    img.onload = () => {
+                        URL.revokeObjectURL(blobURL);
+                    };
+                    console.log(img)
                 }
 
 
