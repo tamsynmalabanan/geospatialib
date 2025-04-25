@@ -277,21 +277,30 @@ const createNewImage = (src, {
     };
 }
 
-const svgToDataURL = (svg, callback) => {
-    const canvas = document.createElement("canvas")
-    const ctx = canvas.getContext("2d")
+const svgToDataURL = (svg) => {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement("canvas")
+        const ctx = canvas.getContext("2d")
 
-    const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
-    const blobURL = URL.createObjectURL(svgBlob)
+        const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
+        const blobURL = URL.createObjectURL(svgBlob)
 
-    const img = new Image()
-    img.onload = () => {
-        canvas.width = img.width
-        canvas.height = img.height
-        ctx.drawImage(img, 0, 0)
-        URL.revokeObjectURL(blobURL)
-        callback(canvas.toDataURL('image/png'))
-    }
+        const img = new Image()
+        img.onload = () => {
+            canvas.width = img.width
+            canvas.height = img.height
+            ctx.drawImage(img, 0, 0)
+            URL.revokeObjectURL(blobURL)
 
-    img.src = blobURL
+            const dataUrl = canvas.toDataURL("image/png")
+            resolve(dataUrl)
+        }
+
+        img.onerror = () => {
+            URL.revokeObjectURL(blobURL)
+            reject(new Error("Failed to load the SVG into the Image object"))
+        }
+
+        img.src = blobURL
+    })
 }
