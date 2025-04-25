@@ -414,7 +414,6 @@ const deleteLeafletLayerFillPatterns = (layer) => {
 const getLeafletLayerContextMenu = async (e, layer, {
 
 } = {}) => {
-    console.log(layer)
     if (!layer) return 
     const type = getLeafletLayerType(layer)
 
@@ -483,7 +482,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 addLayer(layer)
             }
         },
-        visibility: isLegendFeature || disabledCheckbox ? null : {
+        visibility: isLegendFeature || checkbox ? null : {
             innerText: `Toggle visibility`,
             btnCallback: () => {
                 group._ch.hasHiddenLayer(layer) 
