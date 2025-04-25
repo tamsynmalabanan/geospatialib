@@ -323,6 +323,8 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layerremove', (event) => {
         const layer = event.layer
+        if (!map._legendLayerGroups.includes(layer._group)) return
+
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         
         const isHidden = map._ch.hasHiddenLegendLayer(layer)
@@ -345,7 +347,6 @@ const handleLeafletLegendPanel = (map, parent) => {
             }
         }
 
-        console.log(layer, layerLegend, isHidden, isInvisible)
         if (layer instanceof L.GeoJSON) layer.clearLayers()
     })
 
