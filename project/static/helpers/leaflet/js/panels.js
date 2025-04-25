@@ -2078,24 +2078,27 @@ const handleLeafletStylePanel = (map, parent) => {
                                     symbology.method = value
                                     
                                     const tagify = field.parentElement.nextSibling
-                                    if (value === 'uniform') {
-                                        tagify.setAttribute('disabled', true)
-                                        if (symbology.groups) delete symbology.groups
-                                    } else {
-                                        tagify.removeAttribute('disabled')
-                                        
-                                        if (value === 'categories') {
-                                            const groups = {}
-
-                                        }
-                                    }
-
                                     const container = body.querySelector(`#${body.id}-methodDetails`)
                                     container.innerHTML = ''
+                                    
+                                    if (value === 'uniform') {
+                                        tagify.setAttribute('disabled', true)
+                                        container.appendChild(getSymbologyForm(''))
+                                    } else {
+                                        tagify.removeAttribute('disabled')
 
-                                    Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
-                                        container.appendChild(getSymbologyForm(i))
-                                    })
+                                        if (!Object.keys((symbology.groups || {})).length) {
+                                            if (symbology.groupBy?.length) {
+
+                                            } else {
+                                                // add default property to tagify
+                                            }
+                                        }
+
+                                        Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+                                            container.appendChild(getSymbologyForm(i))
+                                        })
+                                    }
                                 }
                             }
                         },
@@ -2136,12 +2139,21 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const tagify = e.detail.tagify
                                     const values = tagify.value.map(i => i.value)
                         
-                                    if (values.every(i => symbology.groupBy.includes(i))
+                                    if (
+                                        Object.keys((symbology.groups || {})).length 
+                                        && values.every(i => symbology.groupBy.includes(i))
                                         && symbology.groupBy.every(i => values.includes(i))
                                     ) return
                         
                                     symbology.groupBy = values
-                                    // if (filter.active && filter.property) updateGeoJSONData(layer)
+                                    
+                                    // update symbology.groups
+
+                                    const container = body.querySelector(`#${body.id}-methodDetails`)
+                                    container.innerHTML = ''
+                                    Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+                                        container.appendChild(getSymbologyForm(i))
+                                    })                                    
                                 }])))()
                             }
                         },
