@@ -91,13 +91,19 @@ const getLeafletGeoJSONLayer = async ({
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
-        console.log(styleParams)
+        console.log((isCanvas || styleParams.iconType === 'img')
+            && styleParams.fillPattern !== 'solid' 
+            && turf.getType(feature).endsWith('Polygon')
+            && document.querySelector(`#${styleParams.fillPatternId}-img`)
+            ?.getAttribute('src')
+        )
         if ((isCanvas || styleParams.iconType === 'img')
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
             && document.querySelector(`#${styleParams.fillPatternId}-img`)
             ?.getAttribute('src')
         ) {
+            console.log(styleParams)
             layer.once('add', () => {
                 geojsonLayer.removeLayer(layer)
                 const style = getLeafletLayerStyle(feature, styleParams, {renderer})
