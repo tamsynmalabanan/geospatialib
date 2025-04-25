@@ -775,9 +775,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
 
                 if (iconType === 'svg') {
+                    const svgImage = new Image()
+                    svgImage.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
                     console.log(outerHTML)
-                    // const svgImage = new Image()
-                    // svgImage.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
                 }
 
                 createNewImage(
@@ -797,7 +797,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     
                     if (Array('emoji', 'img', 'html').includes(iconType)) {
                         icon.style.opacity = fillOpacity
-                        icon.style.color = hslaColor.toString({a:fillOpacity})
                     }
 
                     icon.setAttribute('fill', (() => {

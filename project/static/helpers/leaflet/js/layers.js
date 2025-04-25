@@ -165,6 +165,24 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 if (Array('svg', 'img').includes(iconType) || Array('svg', 'img').includes(element.tagName.toLowerCase())) {
                     element.setAttribute('width', iconSize)
                     element.setAttribute('height', iconSize)
+
+                    if (iconType === 'svg') {
+                        element.setAttribute('fill', (() => {
+                            if (iconFill) element.setAttribute('fill-opacity', fillOpacity)
+                            return iconFill ? fillColor : 'none'
+                        })())
+                        element.setAttribute('stroke', (() => {
+                            if (iconStroke) {
+                                element.setAttribute('stroke-opacity', strokeOpacity)
+                                element.setAttribute('stroke-width', strokeWidth)
+                                element.setAttribute('stroke-linecap', lineCap)
+                                element.setAttribute('stroke-linejoin', lineJoin)
+                                element.setAttribute('stroke-dasharray', dashArray)
+                                element.setAttribute('stroke-dashoffset', dashOffset)
+                            }
+                            return iconStroke ? strokeColor : 'none'
+                        })())    
+                    }
                 }
 
                 if (Array('emoji', 'img', 'html').includes(iconType)) {
