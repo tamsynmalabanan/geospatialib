@@ -2085,13 +2085,15 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 change: (e) => {
                                     const field = e.target
-                                    symbology.method = field.value
+                                    const value = field.value
+                                    symbology.method = value
                                     
+                                    if (value === 'uniform' && symbology.groups) delete symbology.groups
+
                                     const container = field.parentElement.nextSibling
                                     container.innerHTML = ''
 
                                     Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
-                                        console.log(i)
                                         container.appendChild(getSymbologyForm(i))
                                     })
                                 }
