@@ -777,7 +777,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'svg') {
                     const svgImage = new Image()
                     svgImage.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
-                    console.log(outerHTML)
+                    console.log(svgImage)
                 }
 
                 createNewImage(
