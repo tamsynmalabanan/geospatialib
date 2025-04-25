@@ -488,14 +488,14 @@ const filterGeoJSON = async (id, geojson, {
     controller,
     filters,
 } = {}) => {
-    let geojsonClone
+    let geojsonPromise
 
     const mapKey = `${id};${map?.getContainer().id}`
     if (mapForFilterGeoJSON.has(mapKey)) {
-        geojsonClone = mapForFilterGeoJSON.get(mapKey)
+        geojsonPromise = mapForFilterGeoJSON.get(mapKey)
     } else {
         const signal = controller?.signal
-        geojsonClone = (async () => {
+        geojsonPromise = (async () => {
             try {
                 if (signal?.aborted) throw new Error()
     
@@ -525,17 +525,15 @@ const filterGeoJSON = async (id, geojson, {
             }
         })()
         
-        mapForFilterGeoJSON.set(mapKey, geojsonClone)
+        mapForFilterGeoJSON.set(mapKey, geojsonPromise)
     }
 
-    console.log(geojsonClone)
-    await geojsonClone
-    console.log(geojsonClone)
-    if (filters) geojsonClone.features = geojsonClone.features.filter(feature => {
+    const filteredGeoJSON = await geojsonPromise
+    if (filters) filteredGeoJSON.features = filteredGeoJSON.features.filter(feature => {
         return validateGeoJSONFeature(feature, filters)
     })
 
-    return geojsonClone
+    return filteredGeoJSON
 }
 
 const downloadGeoJSON = (geojson, fileName) => {
