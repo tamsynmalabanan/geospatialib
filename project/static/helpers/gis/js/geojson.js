@@ -114,12 +114,12 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         sortGeoJSONFeaturesByType(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
-            pane,
             geojson,
-            customStyleParams,
-            title,
             group,
+            pane,
+            title,
             attribution: createAttributionTable(geojson)?.outerHTML,
+            customStyleParams,
         })
 
         const featureLayers = geojsonLayer.getLayers()

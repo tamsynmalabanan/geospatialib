@@ -345,6 +345,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             }
         }
 
+        console.log(layer, layerLegend, isHidden, isInvisible)
         if (layer instanceof L.GeoJSON) layer.clearLayers()
     })
 
