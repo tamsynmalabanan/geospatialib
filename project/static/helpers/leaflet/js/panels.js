@@ -916,17 +916,6 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        if (id !== '') {
-            // add remove button if id !== ''
-    
-            const filterFields = customCreateElement({
-                className:'d-flex gap-2',
-                parent,
-            })
-    
-            // add filters if id !== ''
-        }
-
         const iconFields = customCreateElement({
             className:'d-flex gap-2',
             parent,
@@ -2076,8 +2065,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             labelText: 'Method',
                             options:{
                                 'uniform':'Uniform symbol',
-                                'categorized':'Categorized symbols',
-                                // 'ranged':'Ranged symbols',
+                                'categories':'Categorized symbols',
+                                // 'ranges':'Ranged symbols',
                                 // 'rule':'Rule-based symbols',
                             },
                             currentValue: symbology.method,
@@ -2088,9 +2077,17 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const value = field.value
                                     symbology.method = value
                                     
-                                    if (value === 'uniform' && symbology.groups) delete symbology.groups
+                                    // const tagify = 
+                                    if (value === 'uniform') {
+                                        if (symbology.groups) delete symbology.groups
+                                    } else {
+                                        if (value === 'categories') {
+                                            const groups = {}
 
-                                    const container = field.parentElement.nextSibling
+                                        }
+                                    }
+
+                                    const container = body.querySelector(`#${body.id}-methodDetails`)
                                     container.innerHTML = ''
 
                                     Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
@@ -2099,9 +2096,56 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+                        groupBy: {
+                            handler: createTagifyField,
+                            inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+                            inputTag: 'textarea',
+                            delimiters: null,
+                            enabled: 0,
+                            disabled: symbology.method === 'uniform',
+                            dropdownClass:  `my-1 border-0`,
+                            userInput: false,
+                            scopeStyle: {
+                                minHeight: '58px',
+                            },
+                            name:  `groupBy`,
+                            placeholder: 'Select properties',
+                            currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
+                            callbacks: {
+                                focus: (e) => {
+                                    const tagify = e.detail.tagify
+                                    
+                                    const options = ['geometry_type']
+                                    
+                                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                    })
+                                    
+                                    const optionsSet = options.length ? new Set(options) : []
+                                    const sortedOptions = [...optionsSet].filter(i => {
+                                        return !(symbology.groupBy || []).includes(i)
+                                    }).sort()
+                
+                                    tagify.settings.whitelist = sortedOptions
+                                },
+                                ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
+                                    const tagify = e.detail.tagify
+                                    const values = tagify.value.map(i => i.value)
+                        
+                                    if (values.every(i => symbology.groupBy.includes(i))
+                                        && symbology.groupBy.every(i => values.includes(i))
+                                    ) return
+                        
+                                    symbology.groupBy = values
+                                    // if (filter.active && filter.property) updateGeoJSONData(layer)
+                                }])))()
+                            }
+                        },
                         methodDetails: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
+                                    id:`${body.id}-methodDetails`,
                                     className:'w-100'
                                 })
                                 parent?.appendChild(container)
