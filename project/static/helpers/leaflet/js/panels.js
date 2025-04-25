@@ -778,8 +778,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (iconType === 'svg') {
                     const svgString = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
                     const blob = new Blob([svgString], { type: 'image/svg+xml' })
-                    const blobURL = URL.createObjectURL(blob)
-                    console.log(blobURL)
+                    console.log(blob)
+                    // const blobURL = URL.createObjectURL(blob)
 
                     // const img = new Image();
                     // img.src = blobURL;
