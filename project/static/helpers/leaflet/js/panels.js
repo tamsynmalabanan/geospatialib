@@ -2091,6 +2091,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     container.innerHTML = ''
 
                                     Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+                                        console.log(i)
                                         container.appendChild(getSymbologyForm(i))
                                     })
                                 }
