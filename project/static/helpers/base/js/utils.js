@@ -256,10 +256,8 @@ const createNewImage = (src, {
 } = {}, callback) => {
     if (!src) return
 
-    
     const img = new Image();
     img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
-    console.log(img)
 
     img.onload = () => {
         const canvas = document.createElement("canvas")
@@ -276,7 +274,5 @@ const createNewImage = (src, {
         ctx.drawImage(img, -img.width/2, -img.height/2);
 
         callback(canvas.toDataURL());
-    }
-
-    img.onerror(error => console.log(error))
+    };
 }
