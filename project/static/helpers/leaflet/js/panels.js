@@ -776,15 +776,38 @@ const handleLeafletStylePanel = (map, parent) => {
 
 
                 if (iconType === 'svg') {
-                    const svgString = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
-                    const blob = new Blob([svgString], { type: 'image/svg+xml' })
-                    const blobURL = URL.createObjectURL(blob)
+                    // const svgString = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(outerHTML)}`
+                    // const blob = new Blob([svgString], { type: 'image/svg+xml' })
+                    // const blobURL = URL.createObjectURL(blob)
                     
+                    // const img = new Image();
+                    // img.src = blobURL;
+                    // img.onload = () => {
+                    //     URL.revokeObjectURL(blobURL);
+                    // };
+                    // console.log(img)
+
+                    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200">
+                        <ellipse cx="150" cy="180" rx="100" ry="20" fill="#deb887"></ellipse>
+                        <rect x="140" y="100" width="20" height="80" fill="#8b4513"></rect>
+                        <path d="M150 100 C120 80, 120 50, 150 60 C180 50, 180 80, 150 100 Z" fill="#228b22"></path>
+                    </svg>`; // Replace this with your SVG string.
+
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+                    const blobURL = URL.createObjectURL(svgBlob);
+
                     const img = new Image();
-                    img.src = blobURL;
                     img.onload = () => {
-                        URL.revokeObjectURL(blobURL);
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        URL.revokeObjectURL(blobURL); // Clean up.
+                        document.body.appendChild(canvas); // Append canvas to the document to view it.
                     };
+                    img.src = blobURL;
                     console.log(img)
                 }
 
