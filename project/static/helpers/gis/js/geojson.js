@@ -21,6 +21,8 @@ const handleGeoJSON = async (geojson, {
 }
 
 const sortGeoJSONFeaturesByType = (geojson, { reverse = false }={}) => {
+    if (!geojson?.features?.length) return
+    
     geojson.features.sort((a, b) => {
         const featureTypeA = a.geometry.type;
         const featureTypeB = b.geometry.type;
