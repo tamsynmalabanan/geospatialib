@@ -1544,7 +1544,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     return value === '' ? '[blank]' : value
                 })()]))
 
-                console.log(values)
+                console.log(JSON.stringify(values))
             })
         }
 
