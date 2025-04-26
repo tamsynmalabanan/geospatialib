@@ -867,7 +867,10 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
         
-        const parent = customCreateElement({className:'d-flex gap-2 flex-column ps-3'})
+        const parent = customCreateElement({
+            className:'d-flex gap-2 flex-column ps-2 border-start border-3',
+            style: {borderColor: `${styleParams.fillColor} !important`}
+        })
 
         const collapseId = generateRandomString()
 
