@@ -144,7 +144,7 @@ const getLeafletGeoJSONLayer = async ({
                 return validateGeoJSONFeature(feature, filters)
             })
         }
-
+        sortGeoJSONFeaturesByType(geojson, {reverse:true})
         geojsonLayer.addData(geojson)
     }
 
