@@ -2256,7 +2256,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex gap-2'
+                                    className:'w-100 d-flex gap-2 flex-column'
                                 })
                                 parent?.appendChild(container)
                                 
