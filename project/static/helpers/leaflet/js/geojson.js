@@ -102,11 +102,16 @@ const getLeafletGeoJSONLayer = async ({
         let styleParams = symbology?.default?.styleParams || getLeafletStyleParams()
         feature._groupId = ''
         
-        console.log(symbology.groups)
         if (symbology?.groups) {
-            // make sure groups are sorted by rank
-            for (const id in symbology.groups) {
-                const group = symbology.groups[id]
+            const groups = Object.fromEntries(
+                Object.entries(symbology.groups).sort(([keyA, valueA], [keyB, valueB]) => {
+                    return valueA.rank - valueB.rank
+                })
+            )
+
+            console.log(groups)
+            for (const id in groups) {
+                const group = groups[id]
                 if (!validateGeoJSONFeature(feature, group.filters)) continue
                 
                 feature._groupId = id
