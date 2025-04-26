@@ -914,7 +914,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const toggleLabel = createFormCheck({
-            parent:groupBtns,
+            parent:groupChecks,
             labelInnerText: 'Show label',
             checked: style.showLabel,
             labelClass: 'text-nowrap',
@@ -930,7 +930,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const toggleCount = createFormCheck({
-            parent:groupBtns,
+            parent:groupChecks,
             labelInnerText: 'Show count',
             checked: style.showCount,
             labelClass: 'text-nowrap',
