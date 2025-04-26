@@ -952,27 +952,16 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:headerFields
         })
 
-        const copyBtn = createIcon({
-            className:'bi bi-trash-fill mx-1', 
-            parent:groupBtns, 
-            peNone:false,
-            events: {
-                click: (e) => {
-                    const menuContainer = contextMenuHandler(e, {
-                        confirm: {
-                            innerText: `Confirm to remove category`,
-                            btnCallback: async () => {
-                                parent.remove()
-                                document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
-                                delete symbology.groups[id]
-                                updateSymbology()
-                            }
-                        },            
-                    })
-                    menuContainer.classList.add('bg-danger')        
-                }
-            }
-        })
+        // const copyBtn = createIcon({
+        //     className:'bi bi-clipboard-fill mx-1', 
+        //     parent:groupBtns, 
+        //     peNone:false,
+        //     events: {
+        //         click: (e) => {
+                      
+        //         }
+        //     }
+        // })
         
         if (id !== '') {
             const deleteBtn = createIcon({
