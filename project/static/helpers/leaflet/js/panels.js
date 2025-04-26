@@ -963,6 +963,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             confirm: {
                                 innerText: `Confirm to remove category`,
                                 btnCallback: async () => {
+                                    parent.remove()
                                     document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
                                     delete symbology.groups[id]
                                     updateSymbology()
