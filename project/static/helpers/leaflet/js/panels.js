@@ -952,7 +952,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         if (id !== '') {
             const deleteBtn = createIcon({
-                className:'bi bi-trash-fill', 
+                className:'bi bi-trash-fill mx-1', 
                 parent:groupBtns, 
                 peNone:false
             })
@@ -1646,8 +1646,28 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 return value
                             })(),
+                            properties: (() => {
+                                const value = {active: false, values: {}}
+
+                                const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
+                                if (propertyFilters.length) {
+                                    value.active = true
+                                    propertyFilters.forEach(i => {
+                                        value.values[generateRandomString()] = {
+                                            active: true,
+                                            property: i,
+                                            handler: 'equals',
+                                            value: true,
+                                            case: true,
+                                            values: [filters[i]]
+                                        }
+                                    })
+                                }
+                                
+                                return value
+                            })(),
+                            // properties: {active: false, values: {}},
                             geom: {active: false, values: {}},
-                            properties: {active: false, values: {}},
                         },
                     }
                 }
@@ -2314,7 +2334,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const groupIds = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {
                                         return valueA.rank - valueB.rank
                                     }).map(i => i[0])
-                                    
+
                                     Array(...groupIds, '').forEach(i => {
                                         container.appendChild(getSymbologyForm(i))
                                     })
