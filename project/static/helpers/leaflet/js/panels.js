@@ -954,7 +954,12 @@ const handleLeafletStylePanel = (map, parent) => {
             const deleteBtn = createIcon({
                 className:'bi bi-trash-fill mx-1', 
                 parent:groupBtns, 
-                peNone:false
+                peNone:false,
+                events: {
+                    click: (e) => {
+                        e.target
+                    }
+                }
             })
         }
 
