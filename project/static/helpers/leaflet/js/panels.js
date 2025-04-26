@@ -1567,6 +1567,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const styleParams = getLeafletStyleParams({
                         ...symbology.default.styleParams,
                         fillColor: generateRandomColor(),
+                        strokeColor: null,
+                        patternBgColor: null,
                         fillPatternId: (() => cloneFillPatternDefs(
                             symbology.default.styleParams.fillPatternId
                         )?.id ?? null)()
