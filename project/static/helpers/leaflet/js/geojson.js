@@ -25,6 +25,7 @@ const getLeafletGeoJSONLayer = async ({
             //     vgdsfgdf: {
             //         label: 'Group 1',
             //         showCount: true,
+            //         showLabel: true,
             //         styleParams: getLeafletStyleParams()
             //         filters: {
             //             type: {active: false, values: {
@@ -43,6 +44,7 @@ const getLeafletGeoJSONLayer = async ({
             default: {
                 label: '',
                 showCount: true,
+                showLabel: true,
                 styleParams: getLeafletStyleParams(customStyleParams),
             },
             method: 'uniform',
@@ -269,6 +271,7 @@ const getGeoJSONLayerStyles = (layer) => {
             styles[groupId] = {
                 label: featureLegend.label || '',
                 showCount: featureLegend.showCount,
+                showLabel: featureLegend.showLabel,
                 types: {}
             }
             Array('point', 'linestring', 'polygon').forEach(typeName => {
@@ -361,8 +364,10 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         const label = document.createElement('td')
         label.className = `d-flex gap-2`
         label.appendChild(createSpan(
-            style.label ? `${style.label} ` : '', 
-            {id:`${tr.id}-title`})
+            style.label ? `${style.label} ` : '', {
+                id:`${tr.id}-title`,
+                className: `${!style.showLabel ? 'd-none' : ''}`
+            })
         )
         label.appendChild(createSpan(
             `(${totalCount})`, {

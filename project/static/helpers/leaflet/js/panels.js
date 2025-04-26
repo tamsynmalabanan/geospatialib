@@ -899,6 +899,22 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:groupFields
         })
 
+        const toggleLabel = createFormCheck({
+            parent:groupBtns,
+            labelInnerText: 'Show label',
+            checked: style.showLabel,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === style.showLabel) return
+
+                    style.showLabel = value
+                    legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)?.classList.toggle('d-none', !value)
+                }
+            }
+        })
+
         const toggleCount = createFormCheck({
             parent:groupBtns,
             labelInnerText: 'Show count',
@@ -910,7 +926,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === style.showCount) return
 
                     style.showCount = value
-                    
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-count`)?.classList.toggle('d-none', !value)
                 }
             }
