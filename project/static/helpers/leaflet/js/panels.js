@@ -1559,24 +1559,29 @@ const handleLeafletStylePanel = (map, parent) => {
                 for (const group of groupsSetSorted) {
                     const filters = JSON.parse(group)
                     console.log(filters)
-                    symbology.groups[generateRandomString()] = {
-                        label: group,
-                        showCount: true,
-                        showLabel: true,
-                        styleParams: getLeafletStyleParams(),
-                        filters: {
-                            type: {active: false, values: {
-                                Point: true,
-                                MultiPoint: true,
-                                LineString: true,
-                                MultiLineString: true,
-                                Polygon: true,
-                                MultiPolygon: true,
-                            }},
-                            geom: {active: false, values: {}},
-                            properties: {active: false, values: {}},
-                        },
-                    }
+                    const defaultStyleParams = symbology.default.styleParams
+                    console.log(defaultStyleParams)
+                    // symbology.groups[generateRandomString()] = {
+                    //     label: group,
+                    //     showCount: true,
+                    //     showLabel: true,
+                    //     styleParams: getLeafletStyleParams({
+                    //         ...defaultStyleParams, 
+                    //         fillColor:generateRandomColor()
+                    //     }),
+                    //     filters: {
+                    //         type: {active: false, values: {
+                    //             Point: true,
+                    //             MultiPoint: true,
+                    //             LineString: true,
+                    //             MultiLineString: true,
+                    //             Polygon: true,
+                    //             MultiPolygon: true,
+                    //         }},
+                    //         geom: {active: false, values: {}},
+                    //         properties: {active: false, values: {}},
+                    //     },
+                    // }
                 }
             }
         }
