@@ -1535,7 +1535,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
             const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-            // create groups
+            console.log(symbology.groupBy, geojson)
         }
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
@@ -2138,7 +2138,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             placeholder: 'Select properties',
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
-                                click: (e) => {
+                                focus: (e) => {
                                     const tagify = e.detail.tagify
                                     
                                     const options = ['geometry_type']
