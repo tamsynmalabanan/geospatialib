@@ -1590,9 +1590,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
             })
             
+            symbology.default.rank = groupsSetSorted.length + 1
             if (groupsSetSorted.length) {
                 symbology.groups = {}
+                
+                let rank = 0
                 for (const group of groupsSetSorted) {
+                    rank +=1
                     const filters = JSON.parse(group)
                     
                     const styleParams = await updateSymbology(getLeafletStyleParams({
@@ -1607,6 +1611,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         label: group,
                         showCount: true,
                         showLabel: true,
+                        rank,
                         styleParams,
                         filters: {
                             type: (() => {

@@ -23,6 +23,7 @@ const getLeafletGeoJSONLayer = async ({
         symbology: {
             default: {
                 label: '',
+                rank: 1,
                 showCount: true,
                 showLabel: true,
                 styleParams: getLeafletStyleParams(customStyleParams),
@@ -101,6 +102,7 @@ const getLeafletGeoJSONLayer = async ({
         let styleParams = symbology?.default?.styleParams || getLeafletStyleParams()
         feature._groupId = ''
         
+        console.log(symbology.groups)
         if (symbology?.groups) {
             // make sure groups are sorted by rank
             for (const id in symbology.groups) {
@@ -316,7 +318,6 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     table.appendChild(tbody)
 
     const styles = getGeoJSONLayerStyles(layer)
-    console.log(styles)
     for (const id in styles) {
         const style = styles[id]
         
