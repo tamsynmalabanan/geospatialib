@@ -1548,15 +1548,11 @@ const handleLeafletStylePanel = (map, parent) => {
             })
 
             const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
-                let lowerPriority = (item) => item.includes('[undefined]') || item.includes('[blank]')
-                if (lowerPriority(a) && !lowerPriority(b)) {
-                    return 1
-                } else if (!lowerPriority(a) && lowerPriority(b)) {
-                    return -1
-                } else {
-                    return a.localeCompare(b)
-                }
-            })
+                const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
+                const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
+                const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
+                return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
+            });
             console.log(groupsSetSorted)
         }
 
