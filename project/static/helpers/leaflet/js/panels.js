@@ -1594,6 +1594,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 symbology.groups = {}
                 for (const group of groupsSetSorted) {
                     const filters = JSON.parse(group)
+                    
                     const styleParams = await updateSymbology(getLeafletStyleParams({
                         ...symbology.default.styleParams,
                         fillColor: generateRandomColor(),
@@ -1601,12 +1602,32 @@ const handleLeafletStylePanel = (map, parent) => {
                         patternBgColor: null,
                         fillPatternId: null,
                     }), {refresh:false})
+
                     symbology.groups[generateRandomString()] = {
                         label: group,
                         showCount: true,
                         showLabel: true,
                         styleParams,
                         filters: {
+                            type: (() => {
+                                const value = {active: false, values: {
+                                    Point: true,
+                                    MultiPoint: true,
+                                    LineString: true,
+                                    MultiLineString: true,
+                                    Polygon: true,
+                                    MultiPolygon: true,
+                                }}
+
+                                if (Object.keys(filters).includes('[geometry_type')) {
+                                    value.active = true
+                                    Object.keys(value.values).forEach(i => {
+                                        value.values[i] = i === filters['[geometry_type']
+                                    })
+                                }
+                                
+                                return value
+                            })(),
                             type: {active: false, values: {
                                 Point: true,
                                 MultiPoint: true,
@@ -2183,10 +2204,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             fieldTag:'select',
                             labelText: 'Method',
                             options:{
-                                'uniform':'Uniform symbol',
-                                'categories':'Categorized symbols',
-                                // 'ranges':'Ranged symbols',
-                                // 'rule':'Rule-based symbols',
+                                'uniform':'Uniform',
+                                'categories':'Categorized',
+                                // 'ranges':'Ranged',
+                                // 'rule':'Rule-based',
                             },
                             currentValue: symbology.method,
                             fieldClass:'form-select-sm',
