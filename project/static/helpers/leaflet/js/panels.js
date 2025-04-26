@@ -1628,14 +1628,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 return value
                             })(),
-                            type: {active: false, values: {
-                                Point: true,
-                                MultiPoint: true,
-                                LineString: true,
-                                MultiLineString: true,
-                                Polygon: true,
-                                MultiPolygon: true,
-                            }},
                             geom: {active: false, values: {}},
                             properties: {active: false, values: {}},
                         },
