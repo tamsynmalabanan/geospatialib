@@ -2606,7 +2606,7 @@ const handleLeafletStylePanel = (map, parent) => {
             body.appendChild(category)
 
             const categoryCollase = document.createElement('div')
-            categoryCollase.id =generateRandomString()
+            categoryCollase.id = generateRandomString()
             categoryCollase.className = 'collapse show'
 
             const categoryHeader = document.createElement('div')
@@ -2639,17 +2639,38 @@ const handleLeafletStylePanel = (map, parent) => {
                 const data = sections[sectionName]
     
                 const section = document.createElement('div')
-                section.className = `d-flex flex-column gap-2 flex-grow-1`
+                section.className = `d-flex flex-column gap-2`
                 categorySections.appendChild(section)
 
-                const sectionHeader = document.createElement('span')
-                sectionHeader.innerText = sectionName
+                const sectionCollase = document.createElement('div')
+                sectionCollase.id = generateRandomString()
+                sectionCollase.className = 'collapse show'
+    
+                const sectionHeader = document.createElement('div')
+                sectionHeader.className = `d-flex fw-normal`
+                sectionHeader.setAttribute('data-bs-toggle', 'collapse')
+                sectionHeader.setAttribute('aria-expanded', 'true')
+                sectionHeader.setAttribute('data-bs-target', `#${categoryCollase.id}`)
+                sectionHeader.setAttribute('aria-controls', categoryCollase.id)
+                sectionHeader.style.cursor = 'pointer'
+                
+                const sectionLabel = document.createElement('span')
+                sectionLabel.innerText = sectionName
+                sectionHeader.appendChild(sectionLabel)
+                
+                const sectionDropdown = createIcon({
+                    className:'dropdown-toggle ms-auto', 
+                    parent:sectionHeader, 
+                    peNone:true
+                })
+    
                 section.appendChild(sectionHeader)
-
+                section.appendChild(sectionCollase)
+    
                 const sectionFields = document.createElement('div')
                 sectionFields.className = `d-flex align-items-center w-100 ${data.className}`
-                section.appendChild(sectionFields)
-    
+                sectionCollase.appendChild(sectionFields)
+
                 const fields = data.fields
                 Object.keys(fields).forEach(fieldName => {
                     const params = fields[fieldName]
