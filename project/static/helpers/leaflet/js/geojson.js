@@ -107,9 +107,7 @@ const getLeafletGeoJSONLayer = async ({
                 return valueA.rank - valueB.rank
             })
 
-            console.log(groups)
-            for (const id in groups) {
-                const group = groups[id]
+            for (const [id, group] of groups) {
                 if (!validateGeoJSONFeature(feature, group.filters)) continue
                 
                 feature._groupId = id
