@@ -319,15 +319,11 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
 
-    const styles = getGeoJSONLayerStyles(layer)
-    console.log(styles)
-    // const groups = Object.entries(getGeoJSONLayerStyles(layer)).sort(([keyA, valueA], [keyB, valueB]) => {
-    //     return valueA.rank - valueB.rank
-    // })
-
-    for (const id in styles) {
-        const style = styles[id]
-        
+    const styles = Object.entries(getGeoJSONLayerStyles(layer)).sort(([keyA, valueA], [keyB, valueB]) => {
+        return valueA.rank - valueB.rank
+    })
+  
+    for (const [id, style] of styles) {
         const tr = document.createElement('tr')
         tr.id = `${table.id}-${id}`
         tr.className = 'd-flex flex-nowrap align-items-center'
