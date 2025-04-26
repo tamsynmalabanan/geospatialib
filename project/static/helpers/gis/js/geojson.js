@@ -500,8 +500,8 @@ const filterGeoJSON = async (id, geojson, {
     
                 clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
                     if (signal?.aborted) throw new Error()
-                    const featureBbox = turf.bboxPolygon(turf.bbox(feature))
-                    return turf.booleanIntersects(queryExtent, featureBbox)
+                    // const featureBbox = turf.bboxPolygon(turf.bbox(feature))
+                    return turf.booleanIntersects(queryExtent, feature)
                 })
             }
 
