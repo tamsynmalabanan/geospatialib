@@ -867,7 +867,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
         
-        const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
+        const parent = customCreateElement({className:'d-flex gap-2 flex-column my-2'})
 
         const groupFields = customCreateElement({
             className:'d-flex gap-2',
