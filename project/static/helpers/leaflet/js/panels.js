@@ -856,6 +856,8 @@ const handleLeafletStylePanel = (map, parent) => {
             if (refresh) updateGeoJSONData(layer).then(() => {
                 map.setZoom(map.getZoom())
             })
+
+            return styleParams
         }
     }
 
@@ -1564,15 +1566,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 symbology.groups = {}
                 for (const group of groupsSetSorted) {
                     const filters = JSON.parse(group)
-                    const styleParams = getLeafletStyleParams({
+                    const styleParams = updateSymbology(getLeafletStyleParams({
                         ...symbology.default.styleParams,
                         fillColor: generateRandomColor(),
                         strokeColor: true,
                         patternBgColor: null,
-                        fillPatternId: (() => cloneFillPatternDefs(
-                            symbology.default.styleParams.fillPatternId
-                        )?.id ?? null)()
-                    })
+                        fillPatternId: null,
+                    }), {refresh:false})
                     console.log(filters,styleParams)
                     symbology.groups[generateRandomString()] = {
                         label: group,
