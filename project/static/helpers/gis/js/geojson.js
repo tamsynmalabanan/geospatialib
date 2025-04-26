@@ -372,7 +372,6 @@ const fetchGeoJSON = async ({
     abortBtns,
 } = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
-    console.log(map)
     const latlng = event.latlng
     const queryGeom = (latlng ? turf.point(
         Object.values(latlng).reverse()
@@ -403,9 +402,6 @@ const fetchGeoJSON = async ({
                 const cachedGeoJSON = cachedData.geojson
                 const cachedQueryExtent = cachedData.queryExtent
                 
-                console.log(L.geoJSON(queryExtent).addTo(map))
-                // L.geoJSON(cachedQueryExtent).addTo(map)
-
                 try {
                     const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
                     const withinBounds = turf.booleanWithin(queryExtent, cachedQueryExtent)
@@ -416,8 +412,8 @@ const fetchGeoJSON = async ({
                 
                 cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                     if (controller?.signal.aborted) return
-                    const featureBbox = turf.bboxPolygon(turf.bbox(feature))
-                    return turf.booleanIntersects(queryExtent, featureBbox)
+                    // const featureBbox = turf.bboxPolygon(turf.bbox(feature))
+                    return turf.booleanIntersects(queryExtent, feature)
                 })
                 
                 if (cachedGeoJSON.features.length === 0) return
