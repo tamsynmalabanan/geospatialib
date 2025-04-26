@@ -867,12 +867,12 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
         
-        const parent = customCreateElement({className:'d-flex gap-2 flex-column p-2'})
+        const parent = customCreateElement({className:'d-flex gap-2 flex-column ps-3'})
 
         const collapseId = generateRandomString()
 
         const headerFields = customCreateElement({
-            className:'d-flex gap-2',
+            className:'d-flex gap-2 align-items-center',
             attrs: {
                 'data-bs-toggle': 'collapse',
                 'aria-expanded': 'true',
