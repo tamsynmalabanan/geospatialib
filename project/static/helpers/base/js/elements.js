@@ -50,9 +50,18 @@ const createButton = ({
     return btn
 }
 
-const createIcon = ({className='', parent, peNone=true, title} = {}) => {
+const createIcon = ({
+    className='', 
+    parent, 
+    peNone=true, 
+    title,
+    style={},
+    attrs={},
+} = {}) => {
     const icon = document.createElement('i')
     icon.className = `${className} ${peNone ? 'pe-none' : ''}`
+    Object.keys(style).forEach(k => icon.style[k] = style[k])
+    Object.keys(attrs).forEach(k => icon.setAttribute(k, attrs[k]))
     if (!peNone) icon.style.cursor = 'pointer'
     if (title) icon.setAttribute('title', title)
     parent?.appendChild(icon)

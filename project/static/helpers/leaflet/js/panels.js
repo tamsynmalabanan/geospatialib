@@ -1601,7 +1601,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         patternBgColor: null,
                         fillPatternId: null,
                     }), {refresh:false})
-                    console.log(filters,styleParams)
                     symbology.groups[generateRandomString()] = {
                         label: group,
                         showCount: true,
@@ -2210,7 +2209,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         groupBy: {
                             handler: createTagifyField,
-                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+                            inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
                             inputTag: 'textarea',
                             delimiters: null,
                             enabled: 0,
@@ -2252,11 +2251,23 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }])))()
                             }
                         },
+                        collapse: {
+                            handler: createIcon,
+                            className:'dropdown-toggle w-25 flex-shrink-1', 
+                            peNone: false,
+                            attrs: {
+                                'data-bs-toggle': 'collapse',
+                                'aria-expanded': 'true',
+                                'data-bs-target': `#${`${body.id}-methodDetails`}`,
+                                'aria-controls': `${body.id}-methodDetails`,
+                            },
+                            style: {cursor:'pointer'},
+                        },
                         methodDetails: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex gap-2 flex-column'
+                                    className:'w-100 d-flex gap-2 flex-column collapse show'
                                 })
                                 parent?.appendChild(container)
                                 
