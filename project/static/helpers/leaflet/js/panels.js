@@ -1526,6 +1526,25 @@ const handleLeafletStylePanel = (map, parent) => {
         return parent
     }
 
+    const updateSymbologyGroups = () => {
+        const symbology = layer._styles.symbology
+        if (symbology.groups) delete symbology.groups
+
+        const container = body.querySelector(`#${body.id}-methodDetails`)
+        container.innerHTML = ''
+
+        if (value !== 'uniform' && symbology.groupBy?.length) {
+            const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+            // create groups
+        }
+
+        Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+            container.appendChild(getSymbologyForm(i))
+        })
+
+        updateGeoJSONData(layer)
+    }
+
     const getGeomFilterForm = (id) => {
         const filters = layer._styles.filters
         const filter = filters.geom.values[id]
@@ -2093,29 +2112,13 @@ const handleLeafletStylePanel = (map, parent) => {
                                     symbology.method = value
                                     
                                     const tagify = field.parentElement.nextSibling
-                                    const container = body.querySelector(`#${body.id}-methodDetails`)
-                                    container.innerHTML = ''
-                                    
                                     if (value === 'uniform') {
                                         tagify.setAttribute('disabled', true)
-                                        container.appendChild(getSymbologyForm(''))
                                     } else {
                                         tagify.removeAttribute('disabled')
-
-                                        if (!Object.keys((symbology.groups || {})).length) {
-                                            if (symbology.groupBy?.length) {
-
-                                            } else {
-                                                // add default property to tagify
-                                            }
-                                        }
-
-                                        Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
-                                            container.appendChild(getSymbologyForm(i))
-                                        })
                                     }
 
-                                    updateGeoJSONData(layer)
+                                    updateSymbologyGroups()
                                 }
                             }
                         },
@@ -2156,23 +2159,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const tagify = e.detail.tagify
                                     const values = tagify.value.map(i => i.value)
                         
-                                    if (
-                                        Object.keys((symbology.groups || {})).length 
-                                        && values.every(i => symbology.groupBy.includes(i))
-                                        && symbology.groupBy.every(i => values.includes(i))
-                                    ) return
+                                    if (values.every(i => symbology.groupBy.includes(i)) && symbology.groupBy.every(i => values.includes(i)) ) return
                         
                                     symbology.groupBy = values
-                                    
-                                    // update symbology.groups
-
-                                    const container = body.querySelector(`#${body.id}-methodDetails`)
-                                    container.innerHTML = ''
-                                    Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
-                                        container.appendChild(getSymbologyForm(i))
-                                    })                                    
-
-                                    updateGeoJSONData(layer)
+                                    updateSymbologyGroups()
                                 }])))()
                             }
                         },
