@@ -2258,18 +2258,24 @@ const handleLeafletStylePanel = (map, parent) => {
                             attrs: {
                                 'data-bs-toggle': 'collapse',
                                 'aria-expanded': 'true',
-                                'data-bs-target': `#${`${body.id}-methodDetails`}`,
-                                'aria-controls': `${body.id}-methodDetails`,
+                                'data-bs-target': `#${body.id}-methodDetails-collapse`,
+                                'aria-controls': `${body.id}-methodDetails-collapse`,
                             },
                             style: {cursor:'pointer'},
                         },
                         methodDetails: {
                             handler: ({parent}={}) => {
+                                const collapse = customCreateElement({
+                                    id:`${body.id}-methodDetails-collapse`,
+                                    className:'collapse show',
+                                    parent,
+                                })
+
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex gap-2 flex-column collapse show'
+                                    className:'w-100 d-flex gap-2 flex-column',
+                                    parent:collapse,
                                 })
-                                parent?.appendChild(container)
                                 
                                 if (symbology.method === 'uniform') {
                                     container.appendChild(getSymbologyForm(''))
