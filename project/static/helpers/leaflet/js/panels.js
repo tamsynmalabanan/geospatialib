@@ -1529,7 +1529,7 @@ const handleLeafletStylePanel = (map, parent) => {
         return parent
     }
 
-    const updateSymbologyGroups = () => {
+    const updateSymbologyGroups = async () => {
         const symbology = layer._styles.symbology
         if (symbology.groups) {
             Object.values(symbology.groups).forEach(i => {
@@ -1566,7 +1566,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 symbology.groups = {}
                 for (const group of groupsSetSorted) {
                     const filters = JSON.parse(group)
-                    const styleParams = updateSymbology(getLeafletStyleParams({
+                    const styleParams = await updateSymbology(getLeafletStyleParams({
                         ...symbology.default.styleParams,
                         fillColor: generateRandomColor(),
                         strokeColor: true,
