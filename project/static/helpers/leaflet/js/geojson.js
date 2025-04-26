@@ -330,7 +330,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         tbody.appendChild(tr)
 
         const icon = document.createElement('td')
-        icon.className = 'd-flex flex-no-wrap gap-2 align-items-center'
+        icon.className = 'd-flex flex-no-wrap gap-2 align-items-center justify-content-end'
         tr.appendChild(icon)
 
         const totalCount = formatNumberWithCommas(
