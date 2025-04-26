@@ -1536,6 +1536,13 @@ const handleLeafletStylePanel = (map, parent) => {
         if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
             const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
             console.log(symbology.groupBy, geojson)
+
+            // turf.propEach(geojson, (currentProperties, featureIndex) => {
+            //     let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
+            //     value = value === '' ? '[blank]' : value
+
+            //     if (!filter.values.includes(value)) options.push(String(value))
+            // })
         }
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
