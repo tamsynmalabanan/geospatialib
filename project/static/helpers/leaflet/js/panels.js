@@ -1552,8 +1552,32 @@ const handleLeafletStylePanel = (map, parent) => {
                 const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
                 const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
                 return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
-            });
-            console.log(groupsSetSorted)
+            })
+            
+            if (groupsSetSorted.length) {
+                symbology.groups = {}
+                for (const group of groupsSetSorted) {
+                    const filters = JSON.parse(group)
+                    symbology.groups[generateRandomString()] = {
+                        label: group,
+                        showCount: true,
+                        showLabel: true,
+                        styleParams: getLeafletStyleParams(),
+                        filters: {
+                            type: {active: false, values: {
+                                Point: true,
+                                MultiPoint: true,
+                                LineString: true,
+                                MultiLineString: true,
+                                Polygon: true,
+                                MultiPolygon: true,
+                            }},
+                            geom: {active: false, values: {}},
+                            properties: {active: false, values: {}},
+                        },
+                    }
+                }
+            }
         }
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {

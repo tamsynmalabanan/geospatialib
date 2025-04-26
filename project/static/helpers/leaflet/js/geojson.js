@@ -125,15 +125,7 @@ const getLeafletGeoJSONLayer = async ({
             // make sure groups are sorted by rank
             for (const id in symbology.groups) {
                 const group = symbology.groups[id]
-                
-                let valid = true
-                for (const validator in group.validators) {
-                    if (validator(feature)) continue
-                    valid = false
-                    break
-                }
-
-                if (!valid) continue
+                if (!validateGeoJSONFeature(feature, group.filters)) continue
                 
                 feature._groupId = id
                 styleParams = group.styleParams
