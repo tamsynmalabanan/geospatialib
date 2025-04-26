@@ -1619,10 +1619,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     MultiPolygon: true,
                                 }}
 
-                                if (Object.keys(filters).includes('[geometry_type')) {
+                                if (Object.keys(filters).includes('[geometry_type]')) {
                                     value.active = true
                                     Object.keys(value.values).forEach(i => {
-                                        value.values[i] = i === filters['[geometry_type']
+                                        value.values[i] = i === filters['[geometry_type]']
                                     })
                                 }
                                 
