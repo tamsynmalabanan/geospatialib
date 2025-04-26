@@ -1572,24 +1572,24 @@ const handleLeafletStylePanel = (map, parent) => {
                         )?.id ?? null)()
                     })
                     console.log(filters,styleParams)
-                    // symbology.groups[generateRandomString()] = {
-                    //     label: group,
-                    //     showCount: true,
-                    //     showLabel: true,
-                    //     styleParams,
-                    //     filters: {
-                    //         type: {active: false, values: {
-                    //             Point: true,
-                    //             MultiPoint: true,
-                    //             LineString: true,
-                    //             MultiLineString: true,
-                    //             Polygon: true,
-                    //             MultiPolygon: true,
-                    //         }},
-                    //         geom: {active: false, values: {}},
-                    //         properties: {active: false, values: {}},
-                    //     },
-                    // }
+                    symbology.groups[generateRandomString()] = {
+                        label: group,
+                        showCount: true,
+                        showLabel: true,
+                        styleParams,
+                        filters: {
+                            type: {active: false, values: {
+                                Point: true,
+                                MultiPoint: true,
+                                LineString: true,
+                                MultiLineString: true,
+                                Polygon: true,
+                                MultiPolygon: true,
+                            }},
+                            geom: {active: false, values: {}},
+                            properties: {active: false, values: {}},
+                        },
+                    }
                 }
             }
         }
