@@ -1530,7 +1530,8 @@ const handleLeafletStylePanel = (map, parent) => {
         const symbology = layer._styles.symbology
         if (symbology.groups) {
             Object.values(symbology.groups).forEach(i => {
-                document.querySelector(`defs#${i.styleParams.fillPatternId}`)?.remove()
+                console.log(document.querySelector(`svg#svgFillDefs defs#${i.styleParams.fillPatternId}`))
+                document.querySelector(`svg#svgFillDefs defs#${i.styleParams.fillPatternId}`)?.remove()
             })
             delete symbology.groups
         }
@@ -1566,9 +1567,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     const styleParams = getLeafletStyleParams({
                         ...symbology.default.styleParams,
                         fillColor: generateRandomColor(),
-                        fillPatternId: (() => {
-                            return cloneFillPatternDefs(symbology.default.styleParams.fillPatternId)?.id ?? null
-                        })()
+                        fillPatternId: (() => cloneFillPatternDefs(
+                            symbology.default.styleParams.fillPatternId
+                        )?.id ?? null)()
                     })
                     console.log(filters,styleParams)
                     // symbology.groups[generateRandomString()] = {
