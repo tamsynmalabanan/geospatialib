@@ -1547,8 +1547,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 groups.push(JSON.stringify(values))
             })
 
-            const groupsSet = groups.length ? [...new Set(groups)] : []
-            console.log(groupsSet)
+            const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort()
+            console.log(groupsSetSorted)
         }
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
