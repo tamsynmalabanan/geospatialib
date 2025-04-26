@@ -1533,7 +1533,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const container = body.querySelector(`#${body.id}-methodDetails`)
         container.innerHTML = ''
 
-        if (value !== 'uniform' && symbology.groupBy?.length) {
+        if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
             const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
             // create groups
         }
