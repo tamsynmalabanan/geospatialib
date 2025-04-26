@@ -601,75 +601,77 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {
         refresh=true,
     }={}) => {
-        let {
-            strokeWidth,
-            strokeColor,
-            strokeOpacity,
-            fillColor,
-            patternBgColor,
-            patternBg,
-            fillOpacity,
-            iconSpecs,
-            iconSize,
-            iconShadow,
-            iconGlow,
-            dashArray,
-            dashOffset,
-            lineCap,
-            lineJoin,
-            iconType,
-            textWrap,
-            boldFont,
-            fillPattern,
-            iconRotation,
-            fillPatternId,
-            iconFill,
-            iconStroke,
-            italicFont,
-            fontSerif,
-            lineBreak,
-            textShadow,
-        } = styleParams
-
-        const hslaColor = manageHSLAColor(fillColor)
-        textShadow = styleParams.textShadow = Array(
-            iconShadow ? removeWhitespace(`
-                ${iconSize*0.1}px 
-                ${iconSize*0.1}px 
-                ${iconSize*0.2}px 
-                ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-            `) : '',
-            iconGlow ? removeWhitespace(`
-                0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-            `) : ''
-        ).filter(i => i !== '').join(',')
-
-        const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
-        if (fillPatternId) {
-            svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
-            delete styleParams.fillPatternId
-        }
-
-        const id = styleParams.fillPatternId = generateRandomString()
-
-        const defs = document.createElementNS(svgNS, 'defs')
-        defs.id = id
-        svgFillDefs.appendChild(defs)
-
-        let icon
-        const img = customCreateElement({
-            tag:'img',
-            id: `${id}-img`,
-            attrs: {
-                alt: 'icon',
-            },
-            style: {opacity:fillOpacity}
-        })
-
         try {
+            if (!styleParams) throw new Error('No style params.')
+
+            let {
+                strokeWidth,
+                strokeColor,
+                strokeOpacity,
+                fillColor,
+                patternBgColor,
+                patternBg,
+                fillOpacity,
+                iconSpecs,
+                iconSize,
+                iconShadow,
+                iconGlow,
+                dashArray,
+                dashOffset,
+                lineCap,
+                lineJoin,
+                iconType,
+                textWrap,
+                boldFont,
+                fillPattern,
+                iconRotation,
+                fillPatternId,
+                iconFill,
+                iconStroke,
+                italicFont,
+                fontSerif,
+                lineBreak,
+                textShadow,
+            } = styleParams
+    
+            const hslaColor = manageHSLAColor(fillColor)
+            textShadow = styleParams.textShadow = Array(
+                iconShadow ? removeWhitespace(`
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.2}px 
+                    ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                `) : '',
+                iconGlow ? removeWhitespace(`
+                    0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                    0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                    0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                    0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                `) : ''
+            ).filter(i => i !== '').join(',')
+    
+            const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
+            if (fillPatternId) {
+                svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
+                delete styleParams.fillPatternId
+            }
+    
+            const id = styleParams.fillPatternId = generateRandomString()
+    
+            const defs = document.createElementNS(svgNS, 'defs')
+            defs.id = id
+            svgFillDefs.appendChild(defs)
+    
+            let icon
+            const img = customCreateElement({
+                tag:'img',
+                id: `${id}-img`,
+                attrs: {
+                    alt: 'icon',
+                },
+                style: {opacity:fillOpacity}
+            })
+            
             if (!iconSpecs) throw new Error('No icon specification.')
 
             const buffer = (iconType === 'img' ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
@@ -957,7 +959,17 @@ const handleLeafletStylePanel = (map, parent) => {
                 peNone:false,
                 events: {
                     click: (e) => {
-                        e.target
+                        const menuContainer = contextMenuHandler(e, {
+                            confirm: {
+                                innerText: `Confirm to remove category`,
+                                btnCallback: async () => {
+                                    document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
+                                    delete symbology.groups[id]
+                                    updateSymbology()
+                                }
+                            },            
+                        })
+                        menuContainer.classList.add('bg-danger')        
                     }
                 }
             })
