@@ -2314,7 +2314,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             style: {cursor:'pointer'},
                             events: {
                                 click: (e) => {
-                                    const collapse = document.querySelector(`#${e.target.getAttribute('data-bs-target')}`)
+                                    const collapse = document.querySelector(e.target.getAttribute('data-bs-target'))
                                     if (collapse.classList.includes('show')) return
                                     Array.from(collapse.querySelectorAll('.collapse')).forEach(i => {
                                         bootstrap.Collapse.getOrCreateInstance(i).hide()
