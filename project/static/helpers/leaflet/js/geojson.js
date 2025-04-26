@@ -373,5 +373,5 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
     const iconTds = Array.from(tbody.querySelectorAll('tr')).map(i => i.firstChild)
     const maxWidth = Math.max(...iconTds.map(i => i.offsetWidth))
-    iconTds.forEach(i => i.style.width = `${maxWidth}px`)
+    iconTds.forEach(i => i.style.minWidth = `${maxWidth}px`)
 }  
