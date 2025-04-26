@@ -20,7 +20,7 @@ const handleGeoJSON = async (geojson, {
     }
 }
 
-const sortGeoJSONFeaturesByType = (geojson, { reverse = false }) => {
+const sortGeoJSONFeaturesByType = (geojson, { reverse = false }={}) => {
     geojson.features.sort((a, b) => {
         const featureTypeA = a.geometry.type;
         const featureTypeB = b.geometry.type;
