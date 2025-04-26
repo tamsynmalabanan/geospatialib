@@ -1558,17 +1558,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 symbology.groups = {}
                 for (const group of groupsSetSorted) {
                     const filters = JSON.parse(group)
-                    console.log(filters)
-                    const defaultStyleParams = symbology.default.styleParams
-                    console.log(defaultStyleParams)
+                    const styleParams = getLeafletStyleParams({
+                        ...symbology.default.styleParams,
+                        fillColor: generateRandomColor()
+                    })
+                    console.log(filters,styleParams)
                     // symbology.groups[generateRandomString()] = {
                     //     label: group,
                     //     showCount: true,
                     //     showLabel: true,
-                    //     styleParams: getLeafletStyleParams({
-                    //         ...defaultStyleParams, 
-                    //         fillColor:generateRandomColor()
-                    //     }),
+                    //     styleParams,
                     //     filters: {
                     //         type: {active: false, values: {
                     //             Point: true,

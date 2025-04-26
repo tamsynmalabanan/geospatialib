@@ -21,26 +21,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
     geojsonLayer._styles = styles || {
         symbology: {
-            // groups: {
-            //     vgdsfgdf: {
-            //         label: 'Group 1',
-            //         showCount: true,
-            //         showLabel: true,
-            //         styleParams: getLeafletStyleParams()
-            //         filters: {
-            //             type: {active: false, values: {
-            //                 Point: true,
-            //                 MultiPoint: true,
-            //                 LineString: true,
-            //                 MultiLineString: true,
-            //                 Polygon: true,
-            //                 MultiPolygon: true,
-            //             }},
-            //             geom: {active: false, values: {}},
-            //             properties: {active: false, values: {}},
-            //         },
-            //     },
-            // },
             default: {
                 label: '',
                 showCount: true,

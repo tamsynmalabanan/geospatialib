@@ -368,32 +368,36 @@ const findLeafletFeatureLayerParent = (layer) => {
     }
 }
 
+const cloneFillPatternDefs = (currentId) => {
+    if (!currentId) return 
+        
+    const defs = document.querySelector(`svg#svgFillDefs defs#${currentId}`)
+    if (!defs) return
+
+    const newId = generateRandomString()
+
+    const clonedDefs = defs.cloneNode(true)
+    clonedDefs.id = newId
+    svgFillDefs.appendChild(clonedDefs)
+    
+    Array.from(clonedDefs.children).forEach(e => {
+        e.id = `${newId}-${e.id.replace(`${currentId}-`,'')}`
+    })
+
+    Array.from(clonedDefs.querySelectorAll('use')).forEach(e => {
+        e.setAttribute('href', `#${newId}-${e.getAttribute('href').replace(`#${currentId}-`,'')}`)
+    })
+
+    return clonedDefs
+}
+
 const cloneLeafletLayerStyles = (layer) => {
     const styles = structuredClone(layer._styles)
     const symbology = styles.symbology
-    const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
     
     Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
-        const currentId = i.styleParams.fillPatternId
-        if (!currentId) return 
-        
-        const defs = svgFillDefs.querySelector(`#${currentId}`)
-        if (!defs) return
-
-        const newId = generateRandomString()
-        i.styleParams.fillPatternId = newId
-
-        const clonedDefs = defs.cloneNode(true)
-        clonedDefs.id = newId
-        svgFillDefs.appendChild(clonedDefs)
-        
-        Array.from(clonedDefs.children).forEach(e => {
-            e.id = `${newId}-${e.id.replace(`${currentId}-`,'')}`
-        })
-
-        Array.from(clonedDefs.querySelectorAll('use')).forEach(e => {
-            e.setAttribute('href', `#${newId}-${e.getAttribute('href').replace(`#${currentId}-`,'')}`)
-        })
+        const newDefs = cloneFillPatternDefs(i.styleParams.fillPatternId)
+        i.styleParams.fillPatternId = newDefs.id
     })
 
     return styles
