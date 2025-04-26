@@ -2311,6 +2311,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                 if (symbology.method === 'uniform') {
                                     container.appendChild(getSymbologyForm(''))
                                 } else {
+                                    const groups = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {
+                                        return valueA.rank - valueB.rank
+                                    })
+                                    console.log(groups)
                                     Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
                                         container.appendChild(getSymbologyForm(i))
                                     })
