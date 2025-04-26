@@ -247,6 +247,7 @@ const getGeoJSONLayerStyles = (layer) => {
                 label: featureLegend.label || '',
                 showCount: featureLegend.showCount,
                 showLabel: featureLegend.showLabel,
+                rank: featureLegend.rank,
                 types: {}
             }
             Array('point', 'linestring', 'polygon').forEach(typeName => {
@@ -319,6 +320,11 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     table.appendChild(tbody)
 
     const styles = getGeoJSONLayerStyles(layer)
+    console.log(styles)
+    // const groups = Object.entries(getGeoJSONLayerStyles(layer)).sort(([keyA, valueA], [keyB, valueB]) => {
+    //     return valueA.rank - valueB.rank
+    // })
+
     for (const id in styles) {
         const style = styles[id]
         
