@@ -1534,15 +1534,18 @@ const handleLeafletStylePanel = (map, parent) => {
         container.innerHTML = ''
 
         if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
+            const groups = {}
             const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-            console.log(symbology.groupBy, geojson)
+            geojson.features.forEach(feature => {
+                const values = Object.fromEntries(symbology.groupBy.map(i => [i, (e) => {
+                    if (i === '[geometry_type]') return feature.geometry.type
+                    
+                    const value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
+                    return value === '' ? '[blank]' : value
+                }]))
 
-            // turf.propEach(geojson, (currentProperties, featureIndex) => {
-            //     let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
-            //     value = value === '' ? '[blank]' : value
-
-            //     if (!filter.values.includes(value)) options.push(String(value))
-            // })
+                console.log(values)
+            })
         }
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
@@ -2148,7 +2151,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 focus: (e) => {
                                     const tagify = e.detail.tagify
                                     
-                                    const options = ['geometry_type']
+                                    const options = ['[geometry_type]']
                                     
                                     const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                                     turf.propEach(geojson, (currentProperties, featureIndex) => {

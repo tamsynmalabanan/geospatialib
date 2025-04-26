@@ -487,6 +487,8 @@ const filterGeoJSON = async (id, geojson, {
     map,
     controller,
 } = {}) => {
+    if (!geojson) return
+
     let geojsonPromise
 
     const mapKey = `${id};${map?.getContainer().id}`
