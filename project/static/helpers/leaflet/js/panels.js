@@ -2253,7 +2253,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         collapse: {
                             handler: createIcon,
-                            className:'dropdown-toggle w-25 flex-shrink-1', 
+                            className:'dropdown-toggle', 
                             peNone: false,
                             attrs: {
                                 'data-bs-toggle': 'collapse',
@@ -2267,7 +2267,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const collapse = customCreateElement({
                                     id:`${body.id}-methodDetails-collapse`,
-                                    className:'collapse show',
+                                    className:'collapse show w-100',
                                     parent,
                                 })
 
