@@ -316,6 +316,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     table.appendChild(tbody)
 
     const styles = getGeoJSONLayerStyles(layer)
+    console.log(styles)
     for (const id in styles) {
         const style = styles[id]
         
