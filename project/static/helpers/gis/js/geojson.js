@@ -372,6 +372,7 @@ const fetchGeoJSON = async ({
     abortBtns,
 } = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
+    console.log(map)
     const latlng = event.latlng
     const queryGeom = (latlng ? turf.point(
         Object.values(latlng).reverse()
@@ -402,7 +403,7 @@ const fetchGeoJSON = async ({
                 const cachedGeoJSON = cachedData.geojson
                 const cachedQueryExtent = cachedData.queryExtent
                 
-                L.geoJSON(queryExtent).addTo(map)
+                console.log(L.geoJSON(queryExtent).addTo(map))
                 // L.geoJSON(cachedQueryExtent).addTo(map)
 
                 try {
