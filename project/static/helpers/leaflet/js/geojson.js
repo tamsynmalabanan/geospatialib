@@ -103,11 +103,9 @@ const getLeafletGeoJSONLayer = async ({
         feature._groupId = ''
         
         if (symbology?.groups) {
-            const groups = Object.fromEntries(
-                Object.entries(symbology.groups).sort(([keyA, valueA], [keyB, valueB]) => {
-                    return valueA.rank - valueB.rank
-                })
-            )
+            const groups = Object.entries(symbology.groups).sort(([keyA, valueA], [keyB, valueB]) => {
+                return valueA.rank - valueB.rank
+            })
 
             console.log(groups)
             for (const id in groups) {
