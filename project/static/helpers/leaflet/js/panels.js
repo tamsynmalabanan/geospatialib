@@ -1558,6 +1558,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 symbology.groups = {}
                 for (const group of groupsSetSorted) {
                     const filters = JSON.parse(group)
+                    console.log(filters)
                     symbology.groups[generateRandomString()] = {
                         label: group,
                         showCount: true,
