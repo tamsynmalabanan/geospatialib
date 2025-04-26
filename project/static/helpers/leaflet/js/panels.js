@@ -1528,7 +1528,12 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const updateSymbologyGroups = () => {
         const symbology = layer._styles.symbology
-        if (symbology.groups) delete symbology.groups
+        if (symbology.groups) {
+            Object.values(symbology.groups).forEach(i => {
+                document.querySelector(`defs#${i.styleParams.fillPatternId}`)?.remove()
+            })
+            delete symbology.groups
+        }
 
         const container = body.querySelector(`#${body.id}-methodDetails`)
         container.innerHTML = ''
