@@ -1534,7 +1534,7 @@ const handleLeafletStylePanel = (map, parent) => {
         container.innerHTML = ''
 
         if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
-            const groups = {}
+            const groups = []
             const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
             geojson.features.forEach(feature => {
                 const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
@@ -1544,8 +1544,11 @@ const handleLeafletStylePanel = (map, parent) => {
                     return value === '' ? '[blank]' : value
                 })()]))
 
-                console.log(JSON.stringify(values))
+                groups.push(JSON.stringify(values))
             })
+
+            const groupsSet = groups.length ? [...new Set(options)] : []
+            console.log(groupsSet)
         }
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
