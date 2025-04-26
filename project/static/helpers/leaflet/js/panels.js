@@ -1537,12 +1537,12 @@ const handleLeafletStylePanel = (map, parent) => {
             const groups = {}
             const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
             geojson.features.forEach(feature => {
-                const values = Object.fromEntries(symbology.groupBy.map(i => [i, (e) => {
+                const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
                     if (i === '[geometry_type]') return feature.geometry.type
                     
                     const value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
                     return value === '' ? '[blank]' : value
-                }]))
+                })()]))
 
                 console.log(values)
             })
