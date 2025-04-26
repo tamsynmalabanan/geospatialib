@@ -2138,7 +2138,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             placeholder: 'Select properties',
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
-                                focus: (e) => {
+                                ...(() => Object.fromEntries(['focus', 'click'].map(i => [i, (e) => {
                                     const tagify = e.detail.tagify
                                     
                                     const options = ['geometry_type']
@@ -2154,7 +2154,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }).sort()
                 
                                     tagify.settings.whitelist = sortedOptions
-                                },
+                                }])))(),
                                 ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
                                     const tagify = e.detail.tagify
                                     const values = tagify.value.map(i => i.value)
