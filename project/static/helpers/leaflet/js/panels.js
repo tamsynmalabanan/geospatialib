@@ -908,7 +908,7 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const groupBtns = customCreateElement({
+        const groupChecks = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
             parent:headerFields
         })
@@ -945,13 +945,17 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const groupBtns = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:headerFields
+        })
+
         if (id !== '') {
             const deleteBtn = createIcon({
                 className:'bi bi-trash-fill', 
-                parent:headerFields, 
+                parent:groupBtns, 
                 peNone:false
             })
-    
         }
 
         createIcon({
