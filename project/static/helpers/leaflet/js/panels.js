@@ -2621,7 +2621,7 @@ const handleLeafletStylePanel = (map, parent) => {
             categoryLabel.innerText = categoryName
             categoryHeader.appendChild(categoryLabel)
             
-            const categoryDropdown = createIcon({
+            createIcon({
                 className:'dropdown-toggle ms-auto', 
                 parent:categoryHeader, 
                 peNone:true
@@ -2650,15 +2650,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 sectionHeader.className = `d-flex fw-normal`
                 sectionHeader.setAttribute('data-bs-toggle', 'collapse')
                 sectionHeader.setAttribute('aria-expanded', 'true')
-                sectionHeader.setAttribute('data-bs-target', `#${categoryCollase.id}`)
-                sectionHeader.setAttribute('aria-controls', categoryCollase.id)
+                sectionHeader.setAttribute('data-bs-target', `#${sectionCollase.id}`)
+                sectionHeader.setAttribute('aria-controls', sectionCollase.id)
                 sectionHeader.style.cursor = 'pointer'
                 
                 const sectionLabel = document.createElement('span')
                 sectionLabel.innerText = sectionName
                 sectionHeader.appendChild(sectionLabel)
                 
-                const sectionDropdown = createIcon({
+                createIcon({
                     className:'dropdown-toggle ms-auto', 
                     parent:sectionHeader, 
                     peNone:true
