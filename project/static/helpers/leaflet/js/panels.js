@@ -1560,7 +1560,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     const filters = JSON.parse(group)
                     const styleParams = getLeafletStyleParams({
                         ...symbology.default.styleParams,
-                        fillColor: generateRandomColor()
+                        fillColor: generateRandomColor(),
+                        fillPatternId: (() => {
+                            return cloneFillPatternDefs(symbology.default.styleParams.fillPatternId)?.id ?? null
+                        })()
                     })
                     console.log(filters,styleParams)
                     // symbology.groups[generateRandomString()] = {

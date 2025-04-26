@@ -397,7 +397,7 @@ const cloneLeafletLayerStyles = (layer) => {
     
     Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
         const newDefs = cloneFillPatternDefs(i.styleParams.fillPatternId)
-        i.styleParams.fillPatternId = newDefs.id
+        i.styleParams.fillPatternId = newDefs?.id ?? null
     })
 
     return styles
