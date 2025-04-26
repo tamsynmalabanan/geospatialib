@@ -1547,7 +1547,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 groups.push(JSON.stringify(values))
             })
 
-            const groupsSet = groups.length ? [...new Set(options)] : []
+            const groupsSet = groups.length ? [...new Set(groups)] : []
             console.log(groupsSet)
         }
 
