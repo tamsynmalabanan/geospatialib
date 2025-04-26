@@ -945,6 +945,15 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        if (id !== '') {
+            const deleteBtn = createIcon({
+                className:'bi bi-trash-fill', 
+                parent:headerFields, 
+                peNone:false
+            })
+    
+        }
+
         createIcon({
             className:'dropdown-toggle ms-auto', 
             parent:headerFields, 
