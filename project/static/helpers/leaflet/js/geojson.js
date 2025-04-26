@@ -304,7 +304,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
 
     layer.clearLayers()
     if (data) {
-        sortGeoJSONFeaturesByType(data, {reverse:true})
+        // sortGeoJSONFeaturesByType(data, {reverse:true})
         layer.addData(data)
     }
     layer.fire('dataupdate')
