@@ -869,13 +869,15 @@ const handleLeafletStylePanel = (map, parent) => {
         
         const parent = customCreateElement({className:'d-flex gap-2 flex-column p-2'})
 
-        const groupFields = customCreateElement({
+        const collapseId = generateRandomString()
+
+        const headerFields = customCreateElement({
             className:'d-flex gap-2',
             parent,
         })
 
         const label = createFormFloating({
-            parent:groupFields,
+            parent:headerFields,
             containerClass: 'w-100',
             fieldAttrs: {
                 name: `${id}-label`,
@@ -899,7 +901,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const groupBtns = customCreateElement({
             className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:groupFields
+            parent:headerFields
         })
 
         const toggleLabel = createFormCheck({
@@ -934,9 +936,15 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const collapseFields = customCreateElement({
+            id: collapseId,
+            className:'d-flex flex-column gap-2',
+            parent,
+        })
+
         const iconFields = customCreateElement({
             className:'d-flex gap-2',
-            parent,
+            parent: collapseFields,
         })
 
         const iconType = createFormFloating({
@@ -1043,7 +1051,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',
-            parent,
+            parent: collapseFields,
         })
 
         const iconSize = createInputGroup({
@@ -1138,7 +1146,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconFields3 = customCreateElement({
             className:'d-flex gap-2',
-            parent,
+            parent: collapseFields,
         })
 
         const iconCheckboxes = customCreateElement({
@@ -1252,7 +1260,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const fillFields = customCreateElement({
             className:'d-flex gap-2',
-            parent,
+            parent: collapseFields,
         })
 
         const fillColor = createFormFloating({
@@ -1368,7 +1376,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const strokeFields = customCreateElement({
             className:'d-flex gap-2',
-            parent,
+            parent: collapseFields,
         })
         
         const strokeColor = createFormFloating({
@@ -1442,7 +1450,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
         const lineFields = customCreateElement({
             className:'d-flex gap-2',
-            parent,
+            parent: collapseFields,
         })
 
         const lineCap = createFormFloating({
