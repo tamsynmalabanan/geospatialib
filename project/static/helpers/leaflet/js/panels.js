@@ -868,7 +868,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const styleParams = style.styleParams
         
         const parent = customCreateElement({
-            className:'d-flex gap-2 flex-column flex-grow-1 mb-3',
+            className:'d-flex gap-2 flex-column flex-grow-1 mt-2',
         })
 
         const collapseId = generateRandomString()
@@ -2290,7 +2290,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                                     tagify.settings.whitelist = sortedOptions
                                 },
-                                ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
+                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
                                     const tagify = e.detail.tagify
                                     const values = tagify.value.map(i => i.value)
                         
@@ -2298,7 +2298,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                                     symbology.groupBy = values
                                     updateSymbologyGroups()
-                                }])))()
+                                }])))() // , 'add', 'remove', 'edit'
                             }
                         },
                         collapse: {
