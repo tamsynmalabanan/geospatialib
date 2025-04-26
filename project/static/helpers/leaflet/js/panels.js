@@ -946,7 +946,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const groupBtns = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            className:'d-flex flex-column justify-content-center', 
             parent:headerFields
         })
 
@@ -2311,11 +2311,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                 if (symbology.method === 'uniform') {
                                     container.appendChild(getSymbologyForm(''))
                                 } else {
-                                    const groups = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {
+                                    const groupIds = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {
                                         return valueA.rank - valueB.rank
-                                    })
-                                    console.log(groups)
-                                    Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+                                    }).map(i => i[0])
+                                    
+                                    Array(...groupIds, '').forEach(i => {
                                         container.appendChild(getSymbologyForm(i))
                                     })
                                 }
