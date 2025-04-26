@@ -868,7 +868,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const styleParams = style.styleParams
         
         const parent = customCreateElement({
-            className:'d-flex gap-2 flex-column flex-grow-1 mb-2',
+            className:'d-flex gap-2 flex-column flex-grow-1 mb-3',
         })
 
         const collapseId = generateRandomString()
