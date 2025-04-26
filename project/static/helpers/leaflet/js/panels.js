@@ -598,7 +598,9 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     }
 
-    const updateSymbology = async (styleParams) => {
+    const updateSymbology = async (styleParams, {
+        refresh=true,
+    }={}) => {
         let {
             strokeWidth,
             strokeColor,
@@ -701,11 +703,12 @@ const handleLeafletStylePanel = (map, parent) => {
                     'justify-content-center', 
                     'align-items-center'
                 )
-                const outerHTML = tempElement.outerHTML
+
                 document.body.appendChild(tempElement)
                 const bounds = tempElement.getBoundingClientRect()
                 document.body.removeChild(tempElement)
-                return [bounds.width, bounds.height, outerHTML]
+                
+                return [bounds.width, bounds.height, tempElement.outerHTML]
             })()
             const svgWidth = width + buffer
             const svgHeight = height + buffer
@@ -768,8 +771,7 @@ const handleLeafletStylePanel = (map, parent) => {
             }
 
             img.setAttribute('src', await createNewImage(
-                iconType === 'img' ? iconSpecs : 
-                dataUrl, {
+                iconType === 'img' ? iconSpecs :  dataUrl, {
                     opacity:fillOpacity,
                     angle:iconRotation,
                     width: patternWidth,
@@ -851,7 +853,7 @@ const handleLeafletStylePanel = (map, parent) => {
             delete styleParams.fillPatternId
             defs.remove()
         } finally {
-            updateGeoJSONData(layer).then(() => {
+            if (refresh) updateGeoJSONData(layer).then(() => {
                 map.setZoom(map.getZoom())
             })
         }
