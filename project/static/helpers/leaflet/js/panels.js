@@ -1666,7 +1666,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 return value
                             })(),
-                            // properties: {active: false, values: {}},
                             geom: {active: false, values: {}},
                         },
                     }
@@ -2313,6 +2312,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                 'aria-controls': `${body.id}-methodDetails-collapse`,
                             },
                             style: {cursor:'pointer'},
+                            events: {
+                                click: (e) => {
+                                    console.log(e)
+                                }
+                            }
                         },
                         methodDetails: {
                             handler: ({parent}={}) => {

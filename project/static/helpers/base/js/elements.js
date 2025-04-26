@@ -57,11 +57,13 @@ const createIcon = ({
     title,
     style={},
     attrs={},
+    events={},
 } = {}) => {
     const icon = document.createElement('i')
     icon.className = `${className} ${peNone ? 'pe-none' : ''}`
     Object.keys(style).forEach(k => icon.style[k] = style[k])
     Object.keys(attrs).forEach(k => icon.setAttribute(k, attrs[k]))
+    Object.keys(events).forEach(k => icon.addEventListener(k, events[k]))
     if (!peNone) icon.style.cursor = 'pointer'
     if (title) icon.setAttribute('title', title)
     parent?.appendChild(icon)
