@@ -1788,13 +1788,13 @@ const handleLeafletStylePanel = (map, parent) => {
                         const min = Math.min(...values)
                         const max = Math.max(...values)
                         const diff = max - min
-                        const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/4).length)-1))}`)
                         if (!symbology.interval) {
+                            const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/4).length)-1))}`)
                             symbology.interval = form.elements.interval.value = Math.round((diff/4)/roundBy) * roundBy
                         }
 
                         const groups = []
-                        let currentMin = 
+                        let currentMin = min
                         while (currentMin <= max) {
                             const currentMax = currentMin + symbology.interval
                             groups.push({
@@ -1816,7 +1816,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
                                     ...symbology.default.styleParams,
-                                    fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1))*(rank-1))}),
+                                    fillColor: hslaColor.toString({l:20+(((80-10)/(groups.length-1))*(rank-1))}),
                                     strokeColor: true,
                                     patternBgColor: null,
                                     fillPatternId: null,
