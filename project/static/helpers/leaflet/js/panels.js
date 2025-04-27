@@ -931,8 +931,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     try {
                         const newStyleParams = getLeafletStyleParams(JSON.parse(text))
 
-                        console.log(Object.keys(styleParams), Object.keys(newStyleParams))
-
                         if (!Object.keys(styleParams).every(i => {
                             return Object.keys(newStyleParams).includes(i)
                         })) throw new Error('Invalid style params')
