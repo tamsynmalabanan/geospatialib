@@ -946,16 +946,16 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:headerFields
         })
 
-        // const copyBtn = createIcon({
-        //     className:'bi bi-clipboard-fill mx-1', 
-        //     parent:groupBtns, 
-        //     peNone:false,
-        //     events: {
-        //         click: (e) => {
+        const copyBtn = createIcon({
+            className:'bi bi-clipboard-fill mx-1', 
+            parent:groupBtns, 
+            peNone:false,
+            events: {
+                click: (e) => {
                       
-        //         }
-        //     }
-        // })
+                }
+            }
+        })
         
         if (id !== '') {
             const deleteBtn = createIcon({
