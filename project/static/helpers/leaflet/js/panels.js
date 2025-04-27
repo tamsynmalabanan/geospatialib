@@ -1667,7 +1667,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const updateSymbologyGroups = async () => {
-        const spinner = body.querySelector(`${body.id}-symbologySpinner`)
+        const spinner = body.querySelector(`#${body.id}-symbologySpinner`)
         spinner.classList.remove('d-none')
 
         const symbology = layer._styles.symbology
