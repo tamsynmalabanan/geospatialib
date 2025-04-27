@@ -1825,7 +1825,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
                                 symbology.groups[generateRandomString()] = {
                                     active: true,
-                                    label: `${filters.min} - ${filters.max}`,
+                                    label: `${formatNumberWithCommas(filters.min)} - ${formatNumberWithCommas(filters.max)}`,
                                     showCount: true,
                                     showLabel: true,
                                     rank,
