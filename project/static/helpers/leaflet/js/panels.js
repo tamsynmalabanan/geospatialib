@@ -1689,93 +1689,191 @@ const handleLeafletStylePanel = (map, parent) => {
                     geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
                 }
                 
-                const groups = []
-                geojson.features.forEach(feature => {
-                    const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
-                        if (i === '[geometry_type]') return feature.geometry.type
-                        
-                        const value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
-                        return value === '' ? '[blank]' : value
-                    })()]))
-    
-                    groups.push(JSON.stringify(values))
-                })
-    
-                const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
-                    const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
-                    const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
-                    const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
-                    return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
-                })
-                
-                symbology.default.rank = groupsSetSorted.length + 1
-                if (groupsSetSorted.length) {
-                    symbology.groups = {}
+                if (symbology.method === 'categorized') {
+                    const groups = []
+                    geojson.features.forEach(feature => {
+                        const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
+                            if (i === '[geometry_type]') return feature.geometry.type
+                            
+                            const value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
+                            return value === '' ? '[blank]' : value
+                        })()]))
+        
+                        groups.push(JSON.stringify(values))
+                    })
+        
+                    const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
+                        const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
+                        const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
+                        const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
+                        return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
+                    })
                     
-                    let rank = 0
-                    for (const group of groupsSetSorted) {
-                        rank +=1
-                        const filters = JSON.parse(group)
+                    symbology.default.rank = groupsSetSorted.length + 1
+                    if (groupsSetSorted.length) {
+                        symbology.groups = {}
                         
-                        const styleParams = await updateSymbology(getLeafletStyleParams({
-                            ...symbology.default.styleParams,
-                            fillColor: generateRandomColor(),
-                            strokeColor: true,
-                            patternBgColor: null,
-                            fillPatternId: null,
-                        }), {refresh:false})
-    
-                        symbology.groups[generateRandomString()] = {
-                            active: true,
-                            label: Object.values(filters).join(', '),
-                            showCount: true,
-                            showLabel: true,
-                            rank,
-                            styleParams,
-                            filters: {
-                                type: (() => {
-                                    const value = {active: false, values: {
-                                        Point: true,
-                                        MultiPoint: true,
-                                        LineString: true,
-                                        MultiLineString: true,
-                                        Polygon: true,
-                                        MultiPolygon: true,
-                                    }}
-    
-                                    if (Object.keys(filters).includes('[geometry_type]')) {
-                                        value.active = true
-                                        Object.keys(value.values).forEach(i => {
-                                            value.values[i] = i === filters['[geometry_type]']
-                                        })
-                                    }
-                                    
-                                    return value
-                                })(),
-                                properties: (() => {
-                                    const value = {active: false, values: {}}
-    
-                                    const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
-                                    if (propertyFilters.length) {
-                                        value.active = true
-                                        propertyFilters.forEach(i => {
-                                            value.values[generateRandomString()] = {
-                                                active: true,
-                                                property: i,
-                                                handler: 'equals',
-                                                value: true,
-                                                case: true,
-                                                values: [filters[i]]
-                                            }
-                                        })
-                                    }
-                                    
-                                    return value
-                                })(),
-                                geom: {active: false, values: {}},
-                            },
+                        let rank = 0
+                        for (const group of groupsSetSorted) {
+                            rank +=1
+                            const filters = JSON.parse(group)
+                            
+                            const styleParams = await updateSymbology(getLeafletStyleParams({
+                                ...symbology.default.styleParams,
+                                fillColor: generateRandomColor(),
+                                strokeColor: true,
+                                patternBgColor: null,
+                                fillPatternId: null,
+                            }), {refresh:false})
+        
+                            symbology.groups[generateRandomString()] = {
+                                active: true,
+                                label: Object.values(filters).join(', '),
+                                showCount: true,
+                                showLabel: true,
+                                rank,
+                                styleParams,
+                                filters: {
+                                    type: (() => {
+                                        const value = {active: false, values: {
+                                            Point: true,
+                                            MultiPoint: true,
+                                            LineString: true,
+                                            MultiLineString: true,
+                                            Polygon: true,
+                                            MultiPolygon: true,
+                                        }}
+        
+                                        if (Object.keys(filters).includes('[geometry_type]')) {
+                                            value.active = true
+                                            Object.keys(value.values).forEach(i => {
+                                                value.values[i] = i === filters['[geometry_type]']
+                                            })
+                                        }
+                                        
+                                        return value
+                                    })(),
+                                    properties: (() => {
+                                        const value = {active: false, values: {}}
+        
+                                        const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
+                                        if (propertyFilters.length) {
+                                            value.active = true
+                                            propertyFilters.forEach(i => {
+                                                value.values[generateRandomString()] = {
+                                                    active: true,
+                                                    property: i,
+                                                    handler: 'equals',
+                                                    value: true,
+                                                    case: true,
+                                                    values: [filters[i]]
+                                                }
+                                            })
+                                        }
+                                        
+                                        return value
+                                    })(),
+                                    geom: {active: false, values: {}},
+                                },
+                            }
                         }
                     }
+                }
+                
+                if (symbology.method === 'ranged') {
+                    const property = symbology.groupBy[0]
+                    console.log(property)
+
+                    const interval = symbology.interval
+                    
+                    // const groups = []
+                    // geojson.features.forEach(feature => {
+                    //     const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
+                    //         if (i === '[geometry_type]') return feature.geometry.type
+                            
+                    //         const value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
+                    //         return value === '' ? '[blank]' : value
+                    //     })()]))
+        
+                    //     groups.push(JSON.stringify(values))
+                    // })
+        
+                    // const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
+                    //     const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
+                    //     const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
+                    //     const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
+                    //     return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
+                    // })
+                    
+                    // symbology.default.rank = groupsSetSorted.length + 1
+                    // if (groupsSetSorted.length) {
+                    //     symbology.groups = {}
+                        
+                    //     let rank = 0
+                    //     for (const group of groupsSetSorted) {
+                    //         rank +=1
+                    //         const filters = JSON.parse(group)
+                            
+                    //         const styleParams = await updateSymbology(getLeafletStyleParams({
+                    //             ...symbology.default.styleParams,
+                    //             fillColor: generateRandomColor(),
+                    //             strokeColor: true,
+                    //             patternBgColor: null,
+                    //             fillPatternId: null,
+                    //         }), {refresh:false})
+        
+                    //         symbology.groups[generateRandomString()] = {
+                    //             active: true,
+                    //             label: Object.values(filters).join(', '),
+                    //             showCount: true,
+                    //             showLabel: true,
+                    //             rank,
+                    //             styleParams,
+                    //             filters: {
+                    //                 type: (() => {
+                    //                     const value = {active: false, values: {
+                    //                         Point: true,
+                    //                         MultiPoint: true,
+                    //                         LineString: true,
+                    //                         MultiLineString: true,
+                    //                         Polygon: true,
+                    //                         MultiPolygon: true,
+                    //                     }}
+        
+                    //                     if (Object.keys(filters).includes('[geometry_type]')) {
+                    //                         value.active = true
+                    //                         Object.keys(value.values).forEach(i => {
+                    //                             value.values[i] = i === filters['[geometry_type]']
+                    //                         })
+                    //                     }
+                                        
+                    //                     return value
+                    //                 })(),
+                    //                 properties: (() => {
+                    //                     const value = {active: false, values: {}}
+        
+                    //                     const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
+                    //                     if (propertyFilters.length) {
+                    //                         value.active = true
+                    //                         propertyFilters.forEach(i => {
+                    //                             value.values[generateRandomString()] = {
+                    //                                 active: true,
+                    //                                 property: i,
+                    //                                 handler: 'equals',
+                    //                                 value: true,
+                    //                                 case: true,
+                    //                                 values: [filters[i]]
+                    //                             }
+                    //                         })
+                    //                     }
+                                        
+                    //                     return value
+                    //                 })(),
+                    //                 geom: {active: false, values: {}},
+                    //             },
+                    //         }
+                    //     }
+                    // }
                 }
             }
         }
