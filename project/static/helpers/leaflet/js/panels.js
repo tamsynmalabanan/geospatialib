@@ -871,7 +871,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const collapseId = generateRandomString()
         
         const parent = customCreateElement({
-            className:'d-flex gap-2 flex-column flex-grow-1 mt-3',
+            className:'d-flex gap-2 flex-column flex-grow-1 mt-2',
         })
         
         const toggleFields = customCreateElement({
@@ -895,6 +895,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         updateSymbology(styleParams)
                     }
                 }
+            })
+        } else {
+            const defaultLabel = createSpan('Default', {
+                parent: toggleFields,
+                className: 'fs-12',
             })
         }
 
