@@ -982,7 +982,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         createIcon({
-            className:'accordion-button ms-auto', 
+            className:'dropdown-toggle ms-auto', 
             parent:headerFields, 
             peNone:false,
             attrs: {
