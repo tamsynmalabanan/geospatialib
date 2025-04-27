@@ -929,9 +929,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (!text) return
     
                     try {
-                        const newStyleParams = JSON.parse(text)
+                        const newStyleParams = getLeafletStyleParams(JSON.parse(text))
 
-                        console.log(styleParams, newStyleParams)
+                        console.log(Object.keys(styleParams), Object.keys(newStyleParams))
 
                         if (!Object.keys(styleParams).every(i => {
                             return Object.keys(newStyleParams).includes(i)
