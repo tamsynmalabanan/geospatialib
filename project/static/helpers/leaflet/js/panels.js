@@ -2336,9 +2336,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const value = field.value
                                     symbology.method = value
                                     
-                                    console.log(Tagify(form.elements.groupBy))
-
-                                    const tagifyElement = field.parentElement.nextSibling
+                                    const tagifyObj = Tagify(form.elements.groupBy)
+                                    const tagifyElement = tagifyObj.DOM.scope
                                     if (value === 'uniform') {
                                         tagifyElement.setAttribute('disabled', true)
                                     } else {
