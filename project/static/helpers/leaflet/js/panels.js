@@ -1816,10 +1816,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
                                     ...symbology.default.styleParams,
-                                    fillColor: hslaColor.toString({l:25+(((75-25)/(groups.length-1))*(rank-1))}),
+                                    fillColor: hslaColor.toString({l:10+(((90-10)/(groups.length-1))*(rank-1))}),
                                     strokeColor: true,
                                     patternBgColor: null,
                                     fillPatternId: null,
+                                    iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
                                 }), {refresh:false})
