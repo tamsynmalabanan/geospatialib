@@ -971,7 +971,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const groupBtns2 = customCreateElement({
-            className:'d-flex flex-column gap-1 justify-content-center ms-auto', 
+            className:'d-flex flex-column gap-1 justify-content-center', 
             parent:headerFields
         })
         
