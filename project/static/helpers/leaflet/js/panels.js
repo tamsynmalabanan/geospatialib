@@ -969,11 +969,16 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
+
+        const groupBtns2 = customCreateElement({
+            className:'d-flex flex-column gap-1 justify-content-center', 
+            parent:headerFields
+        })
         
         if (id !== '') {
             const deleteBtn = createIcon({
                 className:'bi bi-trash-fill mx-1 text-danger', 
-                parent:groupBtns, 
+                parent:groupBtns2, 
                 peNone:false,
                 title: 'Remove group',
                 events: {
@@ -997,7 +1002,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         createIcon({
             className:'dropdown-toggle ms-auto', 
-            parent:headerFields, 
+            parent:groupBtns2, 
             peNone:false,
             attrs: {
                 'data-bs-toggle': 'collapse',
