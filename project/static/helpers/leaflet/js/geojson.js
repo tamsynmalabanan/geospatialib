@@ -348,6 +348,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         tr.appendChild(label)
         
         const labelContent = document.createElement('p')
+        labelContent.className = 'm-0 text-wrap'
         labelContent.appendChild(createSpan(
             style.label ? `${style.label} ` : '', {
                 id:`${tr.id}-title`,
