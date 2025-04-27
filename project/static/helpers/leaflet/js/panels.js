@@ -2414,6 +2414,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }])))() // , 'add', 'remove', 'edit'
                             }
                         },
+                        spinner: {
+                            handler: ({parent}={}) => {
+                                const div = customCreateElement({className:'spinner-border', attrs: {role:'status'}})
+                                parent.appendChild(div)
+                            },
+                        },
                         collapse: {
                             handler: createIcon,
                             className:'dropdown-toggle', 
