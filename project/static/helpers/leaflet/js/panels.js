@@ -984,7 +984,7 @@ const handleLeafletStylePanel = (map, parent) => {
         createIcon({
             className:'accordion-button ms-auto', 
             parent:headerFields, 
-            peNone:true,
+            peNone:false,
             attrs: {
                 'data-bs-toggle': 'collapse',
                 'aria-expanded': style.rank === 1 ? 'true' : 'false',
