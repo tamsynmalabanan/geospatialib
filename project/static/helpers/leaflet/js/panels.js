@@ -926,7 +926,6 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: async (e) => {
                     const text = await navigator.clipboard.readText()
-                    console.log(text)
                     if (!text) return
     
                     try {
@@ -934,7 +933,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         if (!Object.keys(styleParams).every(i => {
                             return Object.keys(newStyleParams).includes(i)
-                        })) return
+                        })) throw new Error('Invalid style params')
 
                         styleParams = style.styleParams = await updateSymbology(getLeafletStyleParams({
                             ...newStyleParams,
