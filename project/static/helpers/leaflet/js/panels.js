@@ -1785,11 +1785,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     const validFeatures = geojson.features.filter(i => !isNaN(Number(i.properties[property])))
                     if (validFeatures.length) {
                         const interval = symbology.interval
+                        const values = validFeatures.map(i => Number(i.properties[property]))
+                        const min = Math.min(...values)
+                        const max = Math.max(...values)
+                        const diff = max - min
+
+                        console.log(values, min, max, diff)
+
                         if (!interval) {
-                            const values = validFeatures.map(i => Number(i.properties[property]))
-                            const min = Math.min(...values)
-                            const max = Math.max(...values)
-                            const diff = max - min
                             symbology.interval = form.elements.interval.value = diff / 5
                         }
                         
