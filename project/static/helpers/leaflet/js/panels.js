@@ -2184,10 +2184,10 @@ const handleLeafletStylePanel = (map, parent) => {
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
                 focus: async (e) => {
+                    console.log(filter.handler, filter.property)
                     if (!Array('equals').includes(filter.handler) || !filter.property) return
                     
                     const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
-                    console.log(geojson)
                     if (!geojson) return
 
                     const tagify = e.detail.tagify
