@@ -902,7 +902,7 @@ const handleLeafletStylePanel = (map, parent) => {
         } else {
             const defaultLabel = createSpan('Default', {
                 parent: toggleFields,
-                className: 'fs-12 fw-medium text-muted user-select-none pb-2',
+                className: 'fs-12 fw-medium text-muted user-select-none mb-2',
             })
         }
 
