@@ -1123,16 +1123,15 @@ const handleLeafletStylePanel = (map, parent) => {
             } 
 
             if (iconType === 'property') {
-                const options = []
-                
                 // update to retrieve properties from wfs/wms
-                const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
+                const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
                 if (geojson) {
                     const filters = layer._styles.filters
                     if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
                         geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
                     }
                     
+                    const options = []
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         Object.keys(currentProperties).forEach(i => options.push(i))
                     })
