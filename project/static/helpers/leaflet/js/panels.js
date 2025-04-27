@@ -1804,6 +1804,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             currentMin = currentMax + 1
                         }
 
+                        console.log(groups)
+
                         // geojson.features.forEach(feature => {
                         //     const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
                         //         if (i === '[geometry_type]') return feature.geometry.type
