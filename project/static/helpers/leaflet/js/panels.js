@@ -874,7 +874,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
         
         const parent = customCreateElement({
-            className:'d-flex flex-column flex-grow-1 mb-3',
+            className:'d-flex flex-column flex-grow-1',
         })
         
         const toggleFields = customCreateElement({
@@ -987,7 +987,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const headerFields = customCreateElement({
-            className:'d-flex gap-2 align-items-center mb-2',
+            className:'d-flex gap-2 align-items-center',
             style: {cursor:'pointer'},
             parent,
         })
