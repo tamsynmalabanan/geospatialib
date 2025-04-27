@@ -868,10 +868,71 @@ const handleLeafletStylePanel = (map, parent) => {
         const symbology = layer._styles.symbology
         const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
+        const collapseId = generateRandomString()
         
         const parent = customCreateElement({
-            className:'d-flex gap-2 flex-column flex-grow-1',
+            className:'d-flex gap-2 flex-column flex-grow-1 mt-3',
         })
+
+        
+        // const groupBtns = customCreateElement({
+        //     className:'d-flex flex-column gap-1 justify-content-center align-items-center', 
+        //     parent:headerFields
+        // })
+
+        // const copyBtn = createIcon({
+        //     className:'bi bi-copy mx-1', 
+        //     parent:groupBtns, 
+        //     peNone:false,
+        //     title: 'Copy group symbology',
+        //     events: {
+        //         click: (e) => {
+                      
+        //         }
+        //     }
+        // })
+
+        // const pasteBtn = createIcon({
+        //     className:'bi bi-clipboard', 
+        //     parent:groupBtns, 
+        //     peNone:false,
+        //     title: 'Paste group symbology',
+        //     events: {
+        //         click: (e) => {
+                      
+        //         }
+        //     }
+        // })
+
+        // const groupBtns2 = customCreateElement({
+        //     className:'d-flex flex-column gap-1 justify-content-center align-items-center', 
+        //     parent:headerFields
+        // })
+        
+        // if (id !== '') {
+        //     const deleteBtn = createIcon({
+        //         className:'bi bi-trash-fill mx-1 text-danger', 
+        //         parent:groupBtns2, 
+        //         peNone:false,
+        //         title: 'Remove group',
+        //         events: {
+        //             click: (e) => {
+        //                 const menuContainer = contextMenuHandler(e, {
+        //                     confirm: {
+        //                         innerText: `Confirm to remove group`,
+        //                         btnCallback: async () => {
+        //                             parent.remove()
+        //                             document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
+        //                             delete symbology.groups[id]
+        //                             updateSymbology()
+        //                         }
+        //                     },            
+        //                 })
+        //                 menuContainer.classList.add('bg-danger')        
+        //             }
+        //         }
+        //     })
+        // }
 
         const toggleFields = customCreateElement({
             className:'d-flex gap-2 align-items-center',
@@ -897,7 +958,17 @@ const handleLeafletStylePanel = (map, parent) => {
             })
         }
 
-        const collapseId = generateRandomString()
+        createIcon({
+            className:'dropdown-toggle ms-start', 
+            parent:toggleFields, 
+            peNone:false,
+            attrs: {
+                'data-bs-toggle': 'collapse',
+                'aria-expanded': style.rank === 1 ? 'true' : 'false',
+                'data-bs-target': `#${collapseId}`,
+                'aria-controls': collapseId,
+            },
+        })
 
         const headerFields = customCreateElement({
             className:'d-flex gap-2 align-items-center',
@@ -963,77 +1034,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-count`)?.classList.toggle('d-none', !value)
                 }
             }
-        })
-
-        const groupBtns = customCreateElement({
-            className:'d-flex flex-column gap-1 justify-content-center align-items-center', 
-            parent:headerFields
-        })
-
-        const copyBtn = createIcon({
-            className:'bi bi-copy mx-1', 
-            parent:groupBtns, 
-            peNone:false,
-            title: 'Copy group symbology',
-            events: {
-                click: (e) => {
-                      
-                }
-            }
-        })
-
-        const pasteBtn = createIcon({
-            className:'bi bi-clipboard', 
-            parent:groupBtns, 
-            peNone:false,
-            title: 'Paste group symbology',
-            events: {
-                click: (e) => {
-                      
-                }
-            }
-        })
-
-        const groupBtns2 = customCreateElement({
-            className:'d-flex flex-column gap-1 justify-content-center align-items-center', 
-            parent:headerFields
-        })
-        
-        if (id !== '') {
-            const deleteBtn = createIcon({
-                className:'bi bi-trash-fill mx-1 text-danger', 
-                parent:groupBtns2, 
-                peNone:false,
-                title: 'Remove group',
-                events: {
-                    click: (e) => {
-                        const menuContainer = contextMenuHandler(e, {
-                            confirm: {
-                                innerText: `Confirm to remove group`,
-                                btnCallback: async () => {
-                                    parent.remove()
-                                    document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
-                                    delete symbology.groups[id]
-                                    updateSymbology()
-                                }
-                            },            
-                        })
-                        menuContainer.classList.add('bg-danger')        
-                    }
-                }
-            })
-        }
-
-        createIcon({
-            className:'dropdown-toggle', 
-            parent:groupBtns2, 
-            peNone:false,
-            attrs: {
-                'data-bs-toggle': 'collapse',
-                'aria-expanded': style.rank === 1 ? 'true' : 'false',
-                'data-bs-target': `#${collapseId}`,
-                'aria-controls': collapseId,
-            },
         })
 
         const collapseDiv = customCreateElement({
@@ -2406,7 +2406,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex flex-column accordion gap-2',
+                                    className:'w-100 d-flex flex-column accordion',
                                     parent:collapse,
                                 })
                                 
