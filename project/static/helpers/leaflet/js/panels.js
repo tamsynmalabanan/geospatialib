@@ -1667,6 +1667,9 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const updateSymbologyGroups = async () => {
+        const spinner = body.querySelector(`${body.id}-symbologySpinner`)
+        spinner.classList.remove('d-none')
+
         const symbology = layer._styles.symbology
         if (symbology.groups) {
             Object.values(symbology.groups).forEach(i => {
@@ -1780,6 +1783,8 @@ const handleLeafletStylePanel = (map, parent) => {
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
             container.appendChild(getSymbologyForm(i))
         })
+
+        spinner.classList.add('d-none')
 
         updateGeoJSONData(layer)
     }
@@ -2416,7 +2421,11 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         spinner: {
                             handler: ({parent}={}) => {
-                                const div = customCreateElement({id: 'symbologySpinner', className:'spinner-border', attrs: {role:'status'}})
+                                const div = customCreateElement({
+                                    id: `${body.id}-symbologySpinner`, 
+                                    className:'spinner-border spinner-border-sm d-none mx-2', 
+                                    attrs: {role:'status'}
+                                })
                                 parent.appendChild(div)
                             },
                         },
