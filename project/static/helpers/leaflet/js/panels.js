@@ -1825,7 +1825,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
                                 symbology.groups[generateRandomString()] = {
                                     active: true,
-                                    label: `≥ ${filters.min}, < ${filters.max}`,
+                                    label: `${filters.min} - ${filters.max}`,
                                     showCount: true,
                                     showLabel: true,
                                     rank,
@@ -1854,7 +1854,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             value.values[generateRandomString()] = {
                                                 active: true,
                                                 property,
-                                                handler: 'lessThan',
+                                                handler: 'lessThanEqualTo',
                                                 value: true,
                                                 case: true,
                                                 values: [filters.max]
