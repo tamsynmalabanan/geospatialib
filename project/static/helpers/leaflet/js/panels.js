@@ -1113,7 +1113,7 @@ const handleLeafletStylePanel = (map, parent) => {
             parent:iconFields,
         })
 
-        const updateIconDatalistOptions = () => {
+        const updateIconDatalistOptions = async () => {
             iconDatalist.innerHTML = ''
 
             const iconType = styleParams.iconType
@@ -1126,8 +1126,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const options = []
                 
                 // update to retrieve properties from wfs/wms
-                const geojson = layer._fetchParams?.geojson ? filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
-                console.log(geojson)
+                const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
                 if (geojson) {
                     const filters = layer._styles.filters
                     if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
