@@ -699,6 +699,7 @@ const createTagifyField = ({
     disabled = false,
     scopeStyle = {},
     maxItems = Infinity,
+    maxTags,
 } = {}) => {
 
     const input = document.createElement(inputTag)
@@ -714,7 +715,7 @@ const createTagifyField = ({
         userInput,
         delimiters,
         callbacks,
-        // maxTags: 10,
+        maxTags,
         dropdown: {
             maxItems,
             classname: dropdownClass, // <- custom classname for this dropdown, so it could be targeted
