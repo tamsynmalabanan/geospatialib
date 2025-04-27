@@ -2336,11 +2336,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const value = field.value
                                     symbology.method = value
                                     
-                                    const tagify = field.parentElement.nextSibling
+                                    const tagifyElement = field.parentElement.nextSibling
+                                    console.log(tagifyElement.tagify)
                                     if (value === 'uniform') {
-                                        tagify.setAttribute('disabled', true)
+                                        tagifyElement.setAttribute('disabled', true)
                                     } else {
-                                        tagify.removeAttribute('disabled')
+                                        tagifyElement.removeAttribute('disabled')
                                     }
 
                                     updateSymbologyGroups()
@@ -2351,7 +2352,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createTagifyField,
                             inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
                             inputTag: 'textarea',
-                            delimiters: null,
                             enabled: 0,
                             disabled: symbology.method === 'uniform',
                             dropdownClass:  `my-1 border-0`,

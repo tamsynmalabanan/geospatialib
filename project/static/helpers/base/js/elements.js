@@ -691,7 +691,7 @@ const createTagifyField = ({
     enabled,
     currentValue,
     inputClass = '',
-    delimiters,
+    delimiters = null,
     whitelist = [],
     callbacks = {},
     dropdownClass = '', 
