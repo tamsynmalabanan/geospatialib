@@ -1679,7 +1679,7 @@ const handleLeafletStylePanel = (map, parent) => {
         container.innerHTML = ''
 
         if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
-            const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
+            const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
             if (geojson) {
                 const filters = layer._styles.filters
                 if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
