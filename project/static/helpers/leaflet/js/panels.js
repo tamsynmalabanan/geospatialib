@@ -2430,8 +2430,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             labelText: 'Interval',
                             fieldClass: 'form-control-sm',
-                            disabled: !visibility.active,
-                            containerClass: 'w-25 flex-grow-1 d-none',
+                            containerClass: 'd-none',
                             events: {
                                 'change': (e) => {
                                     const value = e.target.value
