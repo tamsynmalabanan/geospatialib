@@ -1163,6 +1163,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldClass: 'form-control-sm',
             labelText: 'Icon',
             events: {
+                focus: (e) => updateIconDatalistOptions(),
                 blur: (e) => {
                     let value = e.target.value.trim()
                     
