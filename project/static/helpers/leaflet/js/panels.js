@@ -2343,6 +2343,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     } else {
                                         tagifyObj.settings.maxTags = value === 'categorized' ? 5 : 1
 
+                                        tagifyObj.value = []
                                         console.log(tagifyObj.value)
 
                                         tagifyElement.removeAttribute('disabled')
@@ -2362,7 +2363,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             userInput: false,
                             maxTags: symbology.method === 'categorized' ? 5 : 1,
                             scopeStyle: {
-                                minHeight: '58px',
+                                height: '58px',
                             },
                             name:  `groupBy`,
                             placeholder: 'Select properties',
