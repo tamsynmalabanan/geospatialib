@@ -699,7 +699,7 @@ const createTagifyField = ({
     disabled = false,
     scopeStyle = {},
     maxItems = Infinity,
-    maxTags,
+    maxTags = 100,
 } = {}) => {
 
     const input = document.createElement(inputTag)

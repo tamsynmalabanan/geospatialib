@@ -2362,7 +2362,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             name:  `groupBy`,
                             placeholder: 'Select properties',
-                            maxTags: null,
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
                                 focus: (e) => {
