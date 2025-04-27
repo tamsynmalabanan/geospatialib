@@ -878,22 +878,24 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
-        const enableGroup = createFormCheck({
-            parent: toggleFields,
-            checked: style.active,
-            formCheckClass: 'flex-grow-1',
-            labelInnerText: 'Enable group',
-            role: 'switch',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === style.active) return
-
-                    style.active = value
-                    updateSymbology(styleParams)
+        if (id !== '') {
+            const enableGroup = createFormCheck({
+                parent: toggleFields,
+                checked: style.active,
+                formCheckClass: 'flex-grow-1',
+                labelInnerText: 'Enable group',
+                role: 'switch',
+                events: {
+                    click: (e) => {
+                        const value = e.target.checked
+                        if (value === style.active) return
+    
+                        style.active = value
+                        updateSymbology(styleParams)
+                    }
                 }
-            }
-        })
+            })
+        }
 
         const collapseId = generateRandomString()
 
