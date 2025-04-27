@@ -1782,9 +1782,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (symbology.method === 'ranged') {
                     const property = symbology.groupBy[0]
-                    console.log(property)
-
+                    if (geojson.features.every(i => isNaN(Number(i.properties[property])))) return
                     const interval = symbology.interval
+                    console.log(interval)
                     
                     // const groups = []
                     // geojson.features.forEach(feature => {
