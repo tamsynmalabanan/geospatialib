@@ -345,20 +345,23 @@ const createGeoJSONLayerLegend = (layer, parent) => {
             .reduce((a, b) => a + b, 0)
         )
         const label = document.createElement('td')
-        label.className = `d-flex gap-2 ms-2`
-        label.appendChild(createSpan(
+        tr.appendChild(label)
+        
+        const labelContent = document.createElement('p')
+        labelContent.appendChild(createSpan(
             style.label ? `${style.label} ` : '', {
                 id:`${tr.id}-title`,
-                className: `text-truncate text-nowrap ${!style.showLabel ? 'd-none' : ''}`
+                className: `text-nowrap ${!style.showLabel ? 'd-none' : ''}`
             })
         )
-        label.appendChild(createSpan(
+        labelContent.appendChild(createSpan(
             `(${totalCount})`, {
                 id:`${tr.id}-count`,
                 className: `${!style.showCount ? 'd-none' : ''}`
             }
         ))
-        tr.appendChild(label)
+        label.appendChild(labelContent)
+
 
         for (const type in style.types) {
             const typeCount = style.types[type].count
