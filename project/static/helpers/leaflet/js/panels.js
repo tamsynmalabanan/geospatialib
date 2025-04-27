@@ -869,8 +869,9 @@ const handleLeafletStylePanel = (map, parent) => {
         const legendLayer = getLayerLegend()
         const symbology = layer._styles.symbology
         const style = (symbology.groups?.[id]) || symbology.default
-        const styleParams = style.styleParams
         const collapseId = generateRandomString()
+        
+        let styleParams = style.styleParams
         
         const parent = customCreateElement({
             className:'d-flex gap-2 flex-column flex-grow-1 mb-3',
@@ -912,7 +913,7 @@ const handleLeafletStylePanel = (map, parent) => {
             title: 'Copy group symbology',
             events: {
                 click: (e) => {
-                      
+                    navigator.clipboard.writeText(JSON.stringify(styleParams))
                 }
             }
         })
@@ -923,8 +924,25 @@ const handleLeafletStylePanel = (map, parent) => {
             peNone:false,
             title: 'Paste group symbology',
             events: {
-                click: (e) => {
-                      
+                click: async (e) => {
+                    const text = await navigator.clipboard.readText()
+                    if (!text) return
+    
+                    try {
+                        const newStyleParams = JSON.parse(text)
+
+                        if (!Object.keys(styleParams).every(i => {
+                            return Object.keys(newStyleParams).includes(i)
+                        })) return
+
+                        styleParams = style.styleParams = await updateSymbology(getLeafletStyleParams({
+                            ...newStyleParams,
+                            fillPatternId: styleParams.fillPatternId
+                        }), {refresh:style.active})
+
+                        parentElement.insertBefore(getSymbologyForm(id), parent)
+                        parent.remove()               
+                    } catch { return }  
                 }
             }
         })
