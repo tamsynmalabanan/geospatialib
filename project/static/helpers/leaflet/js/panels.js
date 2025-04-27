@@ -2336,7 +2336,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const value = field.value
                                     symbology.method = value
                                     
-                                    console.log(form.elements.groupBy)
+                                    console.log(form.elements.groupBy.tagify)
 
                                     const tagifyElement = field.parentElement.nextSibling
                                     if (value === 'uniform') {
