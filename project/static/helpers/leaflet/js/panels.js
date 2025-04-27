@@ -1126,7 +1126,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const options = []
                 
                 // update to retrieve properties from wfs/wms
-                const geojson = layer._fetchParams?.geojson ? filterGeoJSON(...layer._fetchParams) : layer.toGeoJSON()
+                const geojson = layer._fetchParams?.geojson ? filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
                 if (geojson) {
                     const filters = layer._styles.filters
                     if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
