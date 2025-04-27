@@ -996,7 +996,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const collapseDiv = customCreateElement({
             id: collapseId,
             className:`accordion-collapse collapse ${style.rank === 1 ? 'show' : ''} border-start border-3 ps-2`,
-            attrs: {'data-bs-parent':`${body.id}-methodDetails`},
+            attrs: {'data-bs-parent':`#${body.id}-methodDetails`},
             parent,
         })
 
