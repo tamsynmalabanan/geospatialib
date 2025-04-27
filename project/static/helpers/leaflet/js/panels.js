@@ -902,7 +902,7 @@ const handleLeafletStylePanel = (map, parent) => {
         } else {
             const defaultLabel = createSpan('Default', {
                 parent: toggleFields,
-                className: 'fs-12 fw-medium text-muted user-select-none',
+                className: 'fs-12 fw-medium text-muted user-select-none pb-2',
             })
         }
 
@@ -987,7 +987,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const headerFields = customCreateElement({
-            className:'d-flex gap-2 align-items-center',
+            className:'d-flex gap-2 align-items-center mb-2',
             style: {cursor:'pointer'},
             parent,
         })
@@ -2428,7 +2428,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex flex-column accordion',
+                                    className:'w-100 d-flex flex-column accordion gap-3',
                                     parent:collapse,
                                 })
                                 
