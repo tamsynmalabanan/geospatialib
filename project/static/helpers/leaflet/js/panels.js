@@ -869,9 +869,9 @@ const handleLeafletStylePanel = (map, parent) => {
         const legendLayer = getLayerLegend()
         const symbology = layer._styles.symbology
         const style = (symbology.groups?.[id]) || symbology.default
+        const styleParams = style.styleParams
         const collapseId = generateRandomString()
         
-        let styleParams = style.styleParams
         
         const parent = customCreateElement({
             className:'d-flex gap-2 flex-column flex-grow-1 mb-3',
@@ -935,10 +935,10 @@ const handleLeafletStylePanel = (map, parent) => {
                             return Object.keys(newStyleParams).includes(i)
                         })) throw new Error('Invalid style params')
 
-                        styleParams = style.styleParams = await updateSymbology(getLeafletStyleParams({
+                        style.styleParams = await updateSymbology({
                             ...newStyleParams,
                             fillPatternId: styleParams.fillPatternId
-                        }), {refresh:style.active})
+                        }, {refresh:style.active})
 
                         parent.parentElement.insertBefore(getSymbologyForm(id), parent)
                         parent.remove()               
