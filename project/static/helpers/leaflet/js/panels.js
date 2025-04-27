@@ -2342,6 +2342,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.setAttribute('disabled', true)
                                     } else {
                                         tagifyObj.settings.maxTags = value === 'categorized' ? 5 : 1
+
+                                        console.log(tagifyObj)
+
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
