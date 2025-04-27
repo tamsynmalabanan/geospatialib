@@ -929,7 +929,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (!text) return
     
                     try {
-                        const newStyleParams = getleafJSON.parse(text)
+                        const newStyleParams = JSON.parse(text)
 
                         console.log(styleParams, newStyleParams)
 
