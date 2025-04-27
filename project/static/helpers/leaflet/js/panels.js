@@ -2187,6 +2187,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (!Array('equals').includes(filter.handler) || !filter.property) return
                     
                     const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
+                    console.log(geojson)
                     if (!geojson) return
 
                     const tagify = e.detail.tagify
