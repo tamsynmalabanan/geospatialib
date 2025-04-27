@@ -2385,7 +2385,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
                                 focus: async (e) => {
-                                    const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
+                                    const geojson = await (layer._fetchParams?.geojson ? filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON())
                                     if (!geojson) return
                                     
                                     const filters = layer._styles.filters
