@@ -1126,17 +1126,24 @@ const handleLeafletStylePanel = (map, parent) => {
                 const options = []
                 
                 // update to retrieve properties from wfs/wms
-                const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
-                turf.propEach(geojson, (currentProperties, featureIndex) => {
-                    Object.keys(currentProperties).forEach(i => options.push(i))
-                })
-
-                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
+                const geojson = layer._fetchParams?.geojson ? filterGeoJSON(...layer._fetchParams) : layer.toGeoJSON()
+                if (geojson) {
+                    const filters = layer._styles.filters
+                    if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
+                        geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
+                    }
                     
-                for (const i of sortedOptions) {
-                    const option = document.createElement('option')
-                    option.value = i
-                    iconDatalist.appendChild(option)
+                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                        Object.keys(currentProperties).forEach(i => options.push(i))
+                    })
+
+                    const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
+                        
+                    for (const i of sortedOptions) {
+                        const option = document.createElement('option')
+                        option.value = i
+                        iconDatalist.appendChild(option)
+                    }
                 }
             }
         }

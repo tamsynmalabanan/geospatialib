@@ -281,16 +281,14 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     const fetcher = fetchParams.geojson ? filterGeoJSON : null
     if (!fetcher) return
 
-    const data = await fetcher(fetchParams.id, fetchParams.geojson, {
+    const data = await fetcher(...fetchParams, {
         map: layer._group?._map,
         controller,
     })
 
     const filters = layer._styles.filters
     if (data?.features?.length && Object.values(filters).some(i => i.active)) {
-        data.features = data.features.filter(feature => {
-            return validateGeoJSONFeature(feature, filters)
-        })
+        data.features = data.features.filter(feature => validateGeoJSONFeature(feature, filters))
     }
 
     const renderer = (data?.features?.length || 0) > 1000 ? L.Canvas : L.SVG
