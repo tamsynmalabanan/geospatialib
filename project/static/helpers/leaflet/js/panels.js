@@ -942,7 +942,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         parentElement.insertBefore(getSymbologyForm(id), parent)
                         parent.remove()               
-                    } catch { return }  
+                    } catch (error) {
+                        console.log(error)
+                    }  
                 }
             }
         })
