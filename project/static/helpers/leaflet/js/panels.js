@@ -959,7 +959,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const pasteBtn = createIcon({
-            className:'bi bi-clipboard mx-1', 
+            className:'bi bi-clipboard', 
             parent:groupBtns, 
             peNone:false,
             title: 'Paste group symbology',
@@ -1001,7 +1001,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         createIcon({
-            className:'dropdown-toggle ms-auto', 
+            className:'dropdown-toggle', 
             parent:groupBtns2, 
             peNone:false,
             attrs: {
