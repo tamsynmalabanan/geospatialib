@@ -947,9 +947,22 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const copyBtn = createIcon({
-            className:'bi bi-clipboard-fill mx-1', 
+            className:'bi bi-copy mx-1', 
             parent:groupBtns, 
             peNone:false,
+            title: 'Copy group symbology',
+            events: {
+                click: (e) => {
+                      
+                }
+            }
+        })
+
+        const pasteBtn = createIcon({
+            className:'bi bi-clipboard mx-1', 
+            parent:groupBtns, 
+            peNone:false,
+            title: 'Paste group symbology',
             events: {
                 click: (e) => {
                       
@@ -962,11 +975,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 className:'bi bi-trash-fill mx-1 text-danger', 
                 parent:groupBtns, 
                 peNone:false,
+                title: 'Remove group',
                 events: {
                     click: (e) => {
                         const menuContainer = contextMenuHandler(e, {
                             confirm: {
-                                innerText: `Confirm to remove category`,
+                                innerText: `Confirm to remove group`,
                                 btnCallback: async () => {
                                     parent.remove()
                                     document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
