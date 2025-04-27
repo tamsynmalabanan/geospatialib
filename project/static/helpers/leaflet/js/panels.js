@@ -2183,13 +2183,13 @@ const handleLeafletStylePanel = (map, parent) => {
             placeholder: 'Select property value',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
-                focus: async (e) => {
+                focus: (e) => {
                     const tagify = e.detail.tagify
                     
                     const options = []
                     
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
+                        const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                             value = value === '' ? '[blank]' : value
@@ -2384,16 +2384,21 @@ const handleLeafletStylePanel = (map, parent) => {
                             placeholder: 'Select properties',
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
-                                focus: (e) => {
+                                focus: async (e) => {
+                                    const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
+                                    if (!geojson) return
+                                    
+                                    const filters = layer._styles.filters
+                                    if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
+                                        geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
+                                    }
+
                                     const tagify = e.detail.tagify
-                                    
                                     const options = ['[geometry_type]']
-                                    
-                                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
                                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                                         Object.keys(currentProperties).forEach(i => options.push(String(i)))
                                     })
-                                    
+                           
                                     const optionsSet = options.length ? new Set(options) : []
                                     const sortedOptions = [...optionsSet].filter(i => {
                                         return !(symbology.groupBy || []).includes(i)
