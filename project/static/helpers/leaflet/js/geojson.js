@@ -22,6 +22,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
+                active: true,
                 label: '',
                 rank: 1,
                 showCount: true,
@@ -108,6 +109,7 @@ const getLeafletGeoJSONLayer = async ({
             })
 
             for (const [id, group] of groups) {
+                if (!group.active) continue
                 if (!validateGeoJSONFeature(feature, group.filters)) continue
                 
                 feature._groupId = id

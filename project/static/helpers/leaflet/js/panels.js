@@ -870,7 +870,29 @@ const handleLeafletStylePanel = (map, parent) => {
         const styleParams = style.styleParams
         
         const parent = customCreateElement({
-            className:'d-flex gap-2 flex-column flex-grow-1 mt-2',
+            className:'d-flex gap-2 flex-column flex-grow-1',
+        })
+
+        const toggleFields = customCreateElement({
+            className:'d-flex gap-2 align-items-center',
+            parent,
+        })
+
+        const enableGroup = createFormCheck({
+            parent: toggleFields,
+            checked: style.active,
+            formCheckClass: 'flex-grow-1',
+            labelInnerText: 'Enable group',
+            role: 'switch',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === style.active) return
+
+                    style.active = value
+                    updateSymbology(styleParams)
+                }
+            }
         })
 
         const collapseId = generateRandomString()
@@ -1670,6 +1692,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }), {refresh:false})
 
                     symbology.groups[generateRandomString()] = {
+                        active: true,
                         label: group,
                         showCount: true,
                         showLabel: true,
@@ -2381,7 +2404,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex flex-column accordion',
+                                    className:'w-100 d-flex flex-column accordion gap-2',
                                     parent:collapse,
                                 })
                                 
