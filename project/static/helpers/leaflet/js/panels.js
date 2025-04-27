@@ -894,7 +894,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (value === style.active) return
     
                         style.active = value
-                        updateSymbology(styleParams)
+                        updateSymbology()
                     }
                 }
             })
