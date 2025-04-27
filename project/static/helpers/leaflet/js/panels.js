@@ -1806,7 +1806,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         symbology.default.rank = groups.length + 1
                         if (groups.length) {
-                            const fillColor = generateRandomColor()
+                            const hslaColor = manageHSLAColor(generateRandomColor())
 
                             symbology.groups = {}
                             
@@ -1816,7 +1816,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
                                     ...symbology.default.styleParams,
-                                    fillColor,
+                                    fillColor: hslaColor.toString({l:25+(((75-25)/(groups.length-1))*(rank-1))}),
                                     strokeColor: true,
                                     patternBgColor: null,
                                     fillPatternId: null,
