@@ -2368,6 +2368,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
+                                    form.elements.interval.classList.toggle('d-none', value !== 'ranged')
+
                                     updateSymbologyGroups()
                                 }
                             }
@@ -2417,6 +2419,25 @@ const handleLeafletStylePanel = (map, parent) => {
                                     symbology.groupBy = values
                                     updateSymbologyGroups()
                                 }])))() // , 'add', 'remove', 'edit'
+                            }
+                        },
+                        interval: {
+                            handler: createFormFloating,
+                            fieldAttrs: {
+                                name:'interval',
+                                type:'number',
+                                value: symbology.interval ?? '',
+                            },
+                            labelText: 'Interval',
+                            fieldClass: 'form-control-sm',
+                            disabled: !visibility.active,
+                            containerClass: 'w-25 flex-grow-1 d-none',
+                            events: {
+                                'change': (e) => {
+                                    const value = e.target.value
+                                    symbology.interval = value
+                                    updateSymbologyGroups()
+                                },
                             }
                         },
                         spinner: {
