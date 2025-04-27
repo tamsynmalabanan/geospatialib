@@ -911,7 +911,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const pasteBtn = createIcon({
-            className:'bi bi-clipboard ms-auto', 
+            className:'bi bi-clipboard', 
             parent:toggleFields, 
             peNone:false,
             title: 'Paste group symbology',
@@ -924,7 +924,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         if (id !== '') {
             const deleteBtn = createIcon({
-                className:'bi bi-trash-fill ms-auto text-danger', 
+                className:'bi bi-trash-fill text-danger', 
                 parent:toggleFields, 
                 peNone:false,
                 title: 'Remove group',
@@ -948,7 +948,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         createIcon({
-            className:'dropdown-toggle ms-auto', 
+            className:'dropdown-toggle', 
             parent:toggleFields, 
             peNone:false,
             attrs: {
