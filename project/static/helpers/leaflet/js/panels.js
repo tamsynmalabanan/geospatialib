@@ -2416,7 +2416,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         spinner: {
                             handler: ({parent}={}) => {
-                                const div = customCreateElement({className:'spinner-border', attrs: {role:'status'}})
+                                const div = customCreateElement({id: 'symbologySpinner', className:'spinner-border', attrs: {role:'status'}})
                                 parent.appendChild(div)
                             },
                         },
