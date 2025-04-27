@@ -1820,7 +1820,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     strokeColor: true,
                                     patternBgColor: null,
                                     fillPatternId: null,
-                                    iconSize: 10 + (((40-10)/(groups.length-1))*(rank-1))
+                                    iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1))
                                 }), {refresh:false})
             
                                 symbology.groups[generateRandomString()] = {
