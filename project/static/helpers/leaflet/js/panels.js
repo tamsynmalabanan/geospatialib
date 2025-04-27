@@ -873,45 +873,34 @@ const handleLeafletStylePanel = (map, parent) => {
         const parent = customCreateElement({
             className:'d-flex gap-2 flex-column flex-grow-1 mt-3',
         })
-
-        
-        // const groupBtns = customCreateElement({
-        //     className:'d-flex flex-column gap-1 justify-content-center align-items-center', 
-        //     parent:headerFields
-        // })
-
-        // const copyBtn = createIcon({
-        //     className:'bi bi-copy mx-1', 
-        //     parent:groupBtns, 
-        //     peNone:false,
-        //     title: 'Copy group symbology',
-        //     events: {
-        //         click: (e) => {
-                      
-        //         }
-        //     }
-        // })
-
-        // const pasteBtn = createIcon({
-        //     className:'bi bi-clipboard', 
-        //     parent:groupBtns, 
-        //     peNone:false,
-        //     title: 'Paste group symbology',
-        //     events: {
-        //         click: (e) => {
-                      
-        //         }
-        //     }
-        // })
-
-        // const groupBtns2 = customCreateElement({
-        //     className:'d-flex flex-column gap-1 justify-content-center align-items-center', 
-        //     parent:headerFields
-        // })
         
         const toggleFields = customCreateElement({
-            className:'d-flex gap-2 align-items-center',
+            className:'d-flex gap-3 align-items-center',
             parent,
+        })
+
+        const copyBtn = createIcon({
+            className:'bi bi-copy ms-auto', 
+            parent:toggleFields, 
+            peNone:false,
+            title: 'Copy group symbology',
+            events: {
+                click: (e) => {
+                      
+                }
+            }
+        })
+
+        const pasteBtn = createIcon({
+            className:'bi bi-clipboard ms-auto', 
+            parent:toggleFields, 
+            peNone:false,
+            title: 'Paste group symbology',
+            events: {
+                click: (e) => {
+                      
+                }
+            }
         })
 
         if (id !== '') {
