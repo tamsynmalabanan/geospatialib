@@ -2345,7 +2345,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyObj.settings.maxTags = maxTags
 
                                         if (tagifyObj.value.length > maxTags) {
-                                            tagifyObj.removeAllTags.bind(tagifyObj)
+                                            tagify.removeAllTags.bind(tagifyObj)
                                         }
 
                                         tagifyElement.removeAttribute('disabled')
