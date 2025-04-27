@@ -909,31 +909,6 @@ const handleLeafletStylePanel = (map, parent) => {
         //     parent:headerFields
         // })
         
-        // if (id !== '') {
-        //     const deleteBtn = createIcon({
-        //         className:'bi bi-trash-fill mx-1 text-danger', 
-        //         parent:groupBtns2, 
-        //         peNone:false,
-        //         title: 'Remove group',
-        //         events: {
-        //             click: (e) => {
-        //                 const menuContainer = contextMenuHandler(e, {
-        //                     confirm: {
-        //                         innerText: `Confirm to remove group`,
-        //                         btnCallback: async () => {
-        //                             parent.remove()
-        //                             document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
-        //                             delete symbology.groups[id]
-        //                             updateSymbology()
-        //                         }
-        //                     },            
-        //                 })
-        //                 menuContainer.classList.add('bg-danger')        
-        //             }
-        //         }
-        //     })
-        // }
-
         const toggleFields = customCreateElement({
             className:'d-flex gap-2 align-items-center',
             parent,
@@ -956,10 +931,33 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 }
             })
+
+            const deleteBtn = createIcon({
+                className:'bi bi-trash-fill ms-auto text-danger', 
+                parent:toggleFields, 
+                peNone:false,
+                title: 'Remove group',
+                events: {
+                    click: (e) => {
+                        const menuContainer = contextMenuHandler(e, {
+                            confirm: {
+                                innerText: `Confirm to remove group`,
+                                btnCallback: async () => {
+                                    parent.remove()
+                                    document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
+                                    delete symbology.groups[id]
+                                    updateSymbology()
+                                }
+                            },            
+                        })
+                        menuContainer.classList.add('bg-danger')        
+                    }
+                }
+            })
         }
 
         createIcon({
-            className:'dropdown-toggle ms-start', 
+            className:'dropdown-toggle ms-auto', 
             parent:toggleFields, 
             peNone:false,
             attrs: {
