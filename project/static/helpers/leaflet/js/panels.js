@@ -2183,23 +2183,24 @@ const handleLeafletStylePanel = (map, parent) => {
             placeholder: 'Select property value',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
-                focus: async (e) => {
-                    console.log(filter.handler, filter.property)
-                    if (!Array('equals').includes(filter.handler) || !filter.property) return
-                    
-                    const geojson = layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
-                    if (!geojson) return
-
+                focus: (e) => {
                     const tagify = e.detail.tagify
+                    
                     const options = []
-                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
-                        value = value === '' ? '[blank]' : value
+                    
+                    if (Array('equals').includes(filter.handler) && filter.property) {
+                        const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                        turf.propEach(geojson, (currentProperties, featureIndex) => {
+                            let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
+                            value = value === '' ? '[blank]' : value
 
-                        if (!filter.values.includes(value)) options.push(String(value))
-                    })
+                            if (!filter.values.includes(value)) options.push(String(value))
+                        })
+                    }
+                    
                     const optionsSet = options.length ? new Set(options) : []
                     const sortedOptions = [...optionsSet].sort()
+
                     tagify.settings.whitelist = sortedOptions
                 },
                 ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
