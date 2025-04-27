@@ -1784,19 +1784,27 @@ const handleLeafletStylePanel = (map, parent) => {
                     const property = symbology.groupBy[0]
                     const validFeatures = geojson.features.filter(i => !isNaN(Number(i.properties[property])))
                     if (validFeatures.length) {
-                        const interval = symbology.interval
                         const values = validFeatures.map(i => Number(i.properties[property]))
                         const min = Math.min(...values)
                         const max = Math.max(...values)
                         const diff = max - min
-
-                        console.log(values, min, max, diff)
-
-                        if (!interval) {
-                            symbology.interval = form.elements.interval.value = diff / 5
+                        if (!symbology.interval) {
+                            const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/5).length)/2))}`)
+                            symbology.interval = form.elements.interval.value = Math.round((diff/5)/roundBy) * roundBy
                         }
                         
+
                         // const groups = []
+                        // let current = min
+                        // while (!current || current < max) {
+                        //     groups.push({
+                        //         min: current,
+                        //         max: 
+                        //     })
+
+                        //     current += min
+                        // }
+
                         // geojson.features.forEach(feature => {
                         //     const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
                         //         if (i === '[geometry_type]') return feature.geometry.type
