@@ -281,7 +281,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     const fetcher = fetchParams.geojson ? filterGeoJSON : null
     if (!fetcher) return
 
-    const data = await fetcher(...fetchParams, {
+    const data = await fetcher(...Object.values(fetchParams), {
         map: layer._group?._map,
         controller,
     })
