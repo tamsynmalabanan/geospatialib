@@ -942,7 +942,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             fillPatternId: styleParams.fillPatternId
                         }), {refresh:style.active})
 
-                        parentElement.insertBefore(getSymbologyForm(id), parent)
+                        parent.parentElement.insertBefore(getSymbologyForm(id), parent)
                         parent.remove()               
                     } catch (error) {
                         console.log(error)
