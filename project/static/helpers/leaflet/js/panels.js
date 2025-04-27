@@ -2337,12 +2337,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     symbology.method = value
                                     
                                     const tagifyObj = Tagify(form.elements.groupBy)
-                                    console.log(tagifyObj)
                                     const tagifyElement = tagifyObj.DOM.scope
                                     if (value === 'uniform') {
                                         tagifyElement.setAttribute('disabled', true)
                                     } else {
-                                        tagifyObj.settings.maxTags = value === 'categorized' ? 100 : 1
+                                        tagifyObj.settings.maxTags = value === 'categorized' ? 5 : 1
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
@@ -2358,6 +2357,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             disabled: symbology.method === 'uniform',
                             dropdownClass:  `my-1 border-0`,
                             userInput: false,
+                            maxTags: symbology.method === 'categorized' ? 5 : 1,
                             scopeStyle: {
                                 minHeight: '58px',
                             },
