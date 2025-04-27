@@ -877,12 +877,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const headerFields = customCreateElement({
             className:'d-flex gap-2 align-items-center',
-            attrs: {
-                'data-bs-toggle': 'collapse',
-                'aria-expanded': 'true',
-                'data-bs-target': `#${collapseId}`,
-                'aria-controls': collapseId,
-            },
             style: {cursor:'pointer'},
             parent,
         })
@@ -988,14 +982,21 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         createIcon({
-            className:'dropdown-toggle ms-auto', 
+            className:'accordion-button ms-auto', 
             parent:headerFields, 
-            peNone:true
+            peNone:true,
+            attrs: {
+                'data-bs-toggle': 'collapse',
+                'aria-expanded': style.rank === 1 ? 'true' : 'false',
+                'data-bs-target': `#${collapseId}`,
+                'aria-controls': collapseId,
+            },
         })
 
         const collapseDiv = customCreateElement({
             id: collapseId,
-            className:'collapse show border-start border-3 ps-2',
+            className:`accordion-collapse collapse ${style.rank === 1 ? 'show' : ''} border-start border-3 ps-2`,
+            attrs: {'data-bs-parent':`${body.id}-methodDetails`},
             parent,
         })
 
@@ -2263,8 +2264,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             labelText: 'Method',
                             options:{
                                 'uniform':'Uniform',
-                                'categories':'Categorized',
-                                // 'ranges':'Ranged',
+                                'categorized':'Categorized',
+                                'ranged':'Ranged',
                                 // 'rule':'Rule-based',
                             },
                             currentValue: symbology.method,
@@ -2361,7 +2362,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                 const container = customCreateElement({
                                     id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex flex-column',
+                                    className:'w-100 d-flex flex-column accordion',
                                     parent:collapse,
                                 })
                                 
