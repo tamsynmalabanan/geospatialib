@@ -1799,7 +1799,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             const currentMax = currentMin + symbology.interval
                             groups.push({
                                 min: currentMin,
-                                max: currentMax
+                                max: currentMax > max ? max : currentMax
                             })
                             currentMin = currentMax + 1
                         }
