@@ -926,6 +926,7 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: async (e) => {
                     const text = await navigator.clipboard.readText()
+                    console.log(text)
                     if (!text) return
     
                     try {
