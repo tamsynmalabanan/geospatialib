@@ -942,7 +942,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const groupBtns = customCreateElement({
-            className:'d-flex flex-column justify-content-center', 
+            className:'d-flex flex-column gap-1 justify-content-center', 
             parent:headerFields
         })
 
@@ -959,7 +959,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
         if (id !== '') {
             const deleteBtn = createIcon({
-                className:'bi bi-trash-fill mx-1', 
+                className:'bi bi-trash-fill mx-1 text-danger', 
                 parent:groupBtns, 
                 peNone:false,
                 events: {
