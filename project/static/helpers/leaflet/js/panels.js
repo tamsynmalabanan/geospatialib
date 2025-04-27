@@ -1792,18 +1792,17 @@ const handleLeafletStylePanel = (map, parent) => {
                             const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/5).length)/2))}`)
                             symbology.interval = form.elements.interval.value = Math.round((diff/5)/roundBy) * roundBy
                         }
-                        
 
-                        // const groups = []
-                        // let current = min
-                        // while (!current || current < max) {
-                        //     groups.push({
-                        //         min: current,
-                        //         max: 
-                        //     })
-
-                        //     current += min
-                        // }
+                        const groups = []
+                        let currentMin = min
+                        while (currentMin <= max) {
+                            const currentMax = currentMin + symbology.interval
+                            groups.push({
+                                min: currentMin,
+                                max: currentMax
+                            })
+                            currentMin = currentMax + 1
+                        }
 
                         // geojson.features.forEach(feature => {
                         //     const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
