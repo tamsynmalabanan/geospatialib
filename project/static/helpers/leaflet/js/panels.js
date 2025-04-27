@@ -879,6 +879,25 @@ const handleLeafletStylePanel = (map, parent) => {
             parent,
         })
 
+        if (id !== '') {
+            const enableGroup = createFormCheck({
+                parent: toggleFields,
+                checked: style.active,
+                formCheckClass: 'flex-grow-1',
+                labelInnerText: 'Enable group',
+                role: 'switch',
+                events: {
+                    click: (e) => {
+                        const value = e.target.checked
+                        if (value === style.active) return
+    
+                        style.active = value
+                        updateSymbology(styleParams)
+                    }
+                }
+            })
+        }
+
         const copyBtn = createIcon({
             className:'bi bi-copy ms-auto', 
             parent:toggleFields, 
@@ -904,23 +923,6 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         if (id !== '') {
-            const enableGroup = createFormCheck({
-                parent: toggleFields,
-                checked: style.active,
-                formCheckClass: 'flex-grow-1',
-                labelInnerText: 'Enable group',
-                role: 'switch',
-                events: {
-                    click: (e) => {
-                        const value = e.target.checked
-                        if (value === style.active) return
-    
-                        style.active = value
-                        updateSymbology(styleParams)
-                    }
-                }
-            })
-
             const deleteBtn = createIcon({
                 className:'bi bi-trash-fill ms-auto text-danger', 
                 parent:toggleFields, 
