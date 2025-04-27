@@ -2368,7 +2368,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    form.elements.interval.classList.toggle('d-none', value !== 'ranged')
+                                    form.elements.interval.parentElement.classList.toggle('d-none', value !== 'ranged')
 
                                     updateSymbologyGroups()
                                 }
