@@ -1789,8 +1789,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         const max = Math.max(...values)
                         const diff = max - min
                         if (!symbology.interval) {
-                            const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/5).length)/2))}`)
-                            symbology.interval = form.elements.interval.value = Math.round((diff/5)/roundBy) * roundBy
+                            const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/4).length)/2))}`)
+                            symbology.interval = form.elements.interval.value = Math.round((diff/4)/roundBy) * roundBy
                         }
 
                         const groups = []
