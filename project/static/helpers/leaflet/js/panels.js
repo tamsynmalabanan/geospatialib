@@ -2384,23 +2384,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             placeholder: 'Select properties',
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
-                                focus: async (e) => {
-                                    const geojson = await (async () => {
-                                        return layer._fetchParams?.geojson ? await filterGeoJSON(...Object.values(layer._fetchParams)) : layer.toGeoJSON()
-                                    })()
-                                    if (!geojson) return
-                                    
-                                    const filters = layer._styles.filters
-                                    if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
-                                        geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
-                                    }
-
+                                focus: (e) => {
                                     const tagify = e.detail.tagify
+                                    
                                     const options = ['[geometry_type]']
+                                    
+                                    const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
                                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                                         Object.keys(currentProperties).forEach(i => options.push(String(i)))
                                     })
-                           
+                                    
                                     const optionsSet = options.length ? new Set(options) : []
                                     const sortedOptions = [...optionsSet].filter(i => {
                                         return !(symbology.groupBy || []).includes(i)
