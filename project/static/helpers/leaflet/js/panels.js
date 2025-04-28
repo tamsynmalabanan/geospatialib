@@ -2466,9 +2466,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    Array.from('groupCount', 'groupPrecision').forEach(i => {
-                                        form.elements[i].parentElement.classList.toggle('d-none', value !== 'graduated')
-                                    })
+                                    form.elements.groupCount.parentElement.classList.toggle('d-none', value !== 'graduated')
+                                    form.elements.groupPrecision.parentElement.classList.toggle('d-none', value !== 'graduated')
 
                                     updateSymbologyGroups()
                                 }
