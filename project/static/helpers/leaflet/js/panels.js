@@ -1796,7 +1796,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         const groups = []
                         let currentMin = min
-                        while (currentMin <= max) {
+                        while (currentMin < max || !groups.length) {
                             const currentMax = currentMin + interval
                             groups.push({
                                 min: currentMin,
