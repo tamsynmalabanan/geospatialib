@@ -2820,7 +2820,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         operatorProps: {
                             handler: ({parent}={}) => {
                                 const select = document.createElement('select')
-                                select.className = `badge rounded-pill border-0 p-0 text-bg-${getPreferredTheme()}`
+                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`
                                 select.setAttribute('name', 'propFilter-operator')
                                 select.disabled = !filters.properties.active
                                 parent.appendChild(select)
