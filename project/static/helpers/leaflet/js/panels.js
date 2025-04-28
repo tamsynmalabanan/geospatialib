@@ -2823,6 +2823,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                 select.className = `badge rounded-pill text-bg-${getPreferredTheme()}`
                                 parent.appendChild(select)
 
+                                select.setAttribute('name', 'propFilter-operator')
+                                select.disabled = !filters.properties.active
+
                                 for (const operator of ['&&', '||']) {
                                     const option = document.createElement('option')
                                     option.value = operator
