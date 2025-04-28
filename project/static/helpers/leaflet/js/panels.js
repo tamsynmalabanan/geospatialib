@@ -915,16 +915,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 events: {
                     change: (e) => {
                         let value = parseInt(e.target.value)
-                        if (isNaN(value)) value = e.target.value = style.rank
+                        if (isNaN(value)) e.target.value = value = style.rank
                         if (value === style.rank) return
-    
-                        for (const i in symbology.groups) {
-                            const iGroup = symbology.groups[i]
-                            console.log(iGroup)
-                        }
-
-                        // update other styles rank
-                        // reload in styles to correct sequence
+                        
                         style.rank = value
                         updateSymbology((style.active ? styleParams : null))
                     }
