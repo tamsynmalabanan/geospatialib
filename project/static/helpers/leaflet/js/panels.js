@@ -1780,7 +1780,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                 }
                 
-                if (symbology.method === 'ranged') {
+                if (symbology.method === 'graduated') {
                     const property = symbology.groupBy[0]
                     const validFeatures = geojson.features.filter(i => !isNaN(Number(i.properties[property])))
                     if (validFeatures.length) {
@@ -2438,7 +2438,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             options:{
                                 'single':'Single',
                                 'categorized':'Categorized',
-                                'ranged':'Ranged',
+                                'graduated':'Graduated',
                                 // 'rule':'Rule-based',
                             },
                             currentValue: symbology.method,
@@ -2462,7 +2462,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    form.elements.interval.parentElement.classList.toggle('d-none', value !== 'ranged')
+                                    form.elements.interval.parentElement.classList.toggle('d-none', value !== 'graduated')
 
                                     updateSymbologyGroups()
                                 }
