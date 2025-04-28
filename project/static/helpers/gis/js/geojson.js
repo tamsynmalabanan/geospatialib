@@ -20,12 +20,15 @@ const handleGeoJSON = async (geojson, {
     }
 }
 
-const sortGeoJSONFeaturesByType = (geojson, { reverse = false }={}) => {
+const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
     if (!geojson?.features?.length) return
     
     geojson.features.sort((a, b) => {
-        const featureTypeA = a.geometry.type;
-        const featureTypeB = b.geometry.type;
+        const rankA = a._groupRank ?? Infinity
+        const rankB = b._groupRank ?? Infinity
+        
+        const featureTypeA = a.geometry.type
+        const featureTypeB = b.geometry.type
 
         const featureOrder = [
             "Point",
@@ -36,13 +39,16 @@ const sortGeoJSONFeaturesByType = (geojson, { reverse = false }={}) => {
             "MultiPolygon",
         ];
 
-        const orderA = featureOrder.indexOf(featureTypeA);
-        const orderB = featureOrder.indexOf(featureTypeB);
+        const orderA = featureOrder.indexOf(featureTypeA)
+        const orderB = featureOrder.indexOf(featureTypeB)
 
-        const comparison = orderA - orderB;
-        return reverse ? -comparison : comparison;
-    });
-};
+        const rankComparison = rankA - rankB
+        const typeComparison = orderA - orderB
+        const comparison = rankComparison !== 0 ? rankComparison : typeComparison
+
+        return reverse ? -comparison : comparison
+    })
+}
 
 const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const source_text = `EPSG:${source}`
@@ -100,7 +106,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const features = geojson.features
         if (!features?.length) continue
 
-        sortGeoJSONFeaturesByType(geojson)        
+        sortGeoJSONFeatures(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             geojson,

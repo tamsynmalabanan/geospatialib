@@ -127,7 +127,7 @@ const getLeafletGeoJSONLayer = async ({
                 return validateGeoJSONFeature(feature, filters)
             })
         }
-        sortGeoJSONFeaturesByType(geojson, {reverse:true})
+        sortGeoJSONFeatures(geojson, {reverse:true})
         geojsonLayer.addData(geojson)
     }
 
@@ -314,7 +314,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
 
     layer.clearLayers()
     if (featureCount) {
-        sortGeoJSONFeaturesByType(data, {reverse:true})
+        sortGeoJSONFeatures(data, {reverse:true})
         layer.addData(data)
     }
     layer.fire('dataupdate')
