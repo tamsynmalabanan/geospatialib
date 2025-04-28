@@ -24,8 +24,8 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
     if (!geojson?.features?.length) return
     
     geojson.features.sort((a, b) => {
-        const rankA = a._groupRank ?? Infinity
-        const rankB = b._groupRank ?? Infinity
+        const rankA = a._groupRank ?? 0
+        const rankB = b._groupRank ?? 0
         
         const featureTypeA = a.geometry.type
         const featureTypeB = b.geometry.type
