@@ -887,7 +887,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 parent: toggleFields,
                 checked: style.active,
                 formCheckClass: 'flex-grow-1',
-                labelInnerText: 'Enable group',
+                // labelInnerText: 'Enable group',
                 role: 'switch',
                 events: {
                     click: (e) => {
@@ -895,6 +895,33 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (value === style.active) return
     
                         style.active = value
+                        updateSymbology((style.active ? styleParams : null))
+                    }
+                }
+            })
+
+            const rank = createBadgeSelect({
+                parent: toggleFields,
+                selectClass: `ms-auto border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
+                attrs: {name: `${id}-rank`},
+                options: (() => {
+                    const options = {'':'Select group rank'}
+    
+                    for (let i = 0; i < (Object.keys((symbology.groups ?? {}))).length; i++) {
+                        options[i] = i
+                    }
+    
+                    return options
+                })(),
+                currentValue: style.rank,
+                events: {
+                    change: (e) => {
+                        let value = e.target.value
+                        if (value === '') value = e.target.value - style.rank
+                        if (value === style.rank) return
+    
+                        // update other styles rank
+                        style.rank = value
                         updateSymbology((style.active ? styleParams : null))
                     }
                 }
@@ -907,7 +934,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         const copyBtn = createIcon({
-            className:'bi bi-copy ms-auto', 
+            className:'bi bi-copy', 
             parent:toggleFields, 
             peNone:false,
             title: 'Copy group symbology',
@@ -2830,7 +2857,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 change:  (e) => {
                                     let value = e.target.value
-                                    if (value === 'Select an operator') value = e.target.value = filters.properties.operator
+                                    if (value === '') value = e.target.value = filters.properties.operator
                                     if (value === filters.properties.operator) return
 
                                     filters.properties.operator = value
@@ -2949,7 +2976,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             events: {
                                 change:  (e) => {
                                     let value = e.target.value
-                                    if (value === 'Select an operator') value = e.target.value = filters.geom.operator
+                                    if (value === '') value = e.target.value = filters.geom.operator
                                     if (value === filters.geom.operator) return
 
                                     filters.geom.operator = value
