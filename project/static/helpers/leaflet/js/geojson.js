@@ -229,6 +229,8 @@ const getGeoJSONLayerStyles = (layer) => {
             }).map(i => i.toLowerCase().replace('multi','')))
         }
 
+        console.log(typeNames)
+
         const styleParams = style.styleParams
         typeNames.forEach(typeName => {
             style.types[typeName] = {
