@@ -1791,13 +1791,17 @@ const handleLeafletStylePanel = (map, parent) => {
                         const groupCount = symbology.groupCount ?? (() => {
                             return symbology.groupCount = form.elements.groupCount.value = 5
                         })()
-                        // const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/(groupCount-1)).length)/2))}`)
                         const interval = diff/groupCount
+                        const precision = symbology.groupPrecision || (() => {
+                            return symbology.groupPrecision = form.elements.groupPrecision.value = Number(
+                                `1${'0'.repeat(Math.floor((String(interval).length)/2))}`
+                            )
+                        })()
 
                         const groups = []
                         let currentMin = min
                         while (currentMin < max || !groups.length) {
-                            const currentMax = currentMin + interval
+                            const currentMax = Math.round((currentMin + interval)/precision) * precision
                             groups.push({
                                 min: currentMin,
                                 max: currentMax > max ? max : currentMax
