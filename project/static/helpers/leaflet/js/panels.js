@@ -2520,6 +2520,37 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }])))() // , 'add', 'remove', 'edit'
                             }
                         },
+                        spinner: {
+                            handler: ({parent}={}) => {
+                                const div = customCreateElement({
+                                    id: `${body.id}-symbologySpinner`, 
+                                    className:'spinner-border spinner-border-sm d-none mx-2', 
+                                    attrs: {role:'status'}
+                                })
+                                parent.appendChild(div)
+                            },
+                        },
+                        collapse: {
+                            handler: createIcon,
+                            className:'dropdown-toggle ms-auto', 
+                            peNone: false,
+                            attrs: {
+                                'data-bs-toggle': 'collapse',
+                                'aria-expanded': 'true',
+                                'data-bs-target': `#${body.id}-methodDetails-collapse`,
+                                'aria-controls': `${body.id}-methodDetails-collapse`,
+                            },
+                            style: {cursor:'pointer'},
+                            events: {
+                                click: (e) => {
+                                    const collapse = document.querySelector(e.target.getAttribute('data-bs-target'))
+                                    if (collapse.classList.contains('show')) return
+                                    Array.from(collapse.querySelectorAll('.collapse')).forEach(i => {
+                                        bootstrap.Collapse.getOrCreateInstance(i).hide()
+                                    })
+                                }
+                            }
+                        },
                         groupCount: {
                             handler: createFormFloating,
                             fieldAttrs: {
@@ -2554,37 +2585,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     symbology.groupPrecision = value
                                     updateSymbologyGroups()
                                 },
-                            }
-                        },
-                        spinner: {
-                            handler: ({parent}={}) => {
-                                const div = customCreateElement({
-                                    id: `${body.id}-symbologySpinner`, 
-                                    className:'spinner-border spinner-border-sm d-none mx-2', 
-                                    attrs: {role:'status'}
-                                })
-                                parent.appendChild(div)
-                            },
-                        },
-                        collapse: {
-                            handler: createIcon,
-                            className:'dropdown-toggle', 
-                            peNone: false,
-                            attrs: {
-                                'data-bs-toggle': 'collapse',
-                                'aria-expanded': 'true',
-                                'data-bs-target': `#${body.id}-methodDetails-collapse`,
-                                'aria-controls': `${body.id}-methodDetails-collapse`,
-                            },
-                            style: {cursor:'pointer'},
-                            events: {
-                                click: (e) => {
-                                    const collapse = document.querySelector(e.target.getAttribute('data-bs-target'))
-                                    if (collapse.classList.contains('show')) return
-                                    Array.from(collapse.querySelectorAll('.collapse')).forEach(i => {
-                                        bootstrap.Collapse.getOrCreateInstance(i).hide()
-                                    })
-                                }
                             }
                         },
                         methodDetails: {
