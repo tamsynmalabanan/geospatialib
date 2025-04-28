@@ -24,12 +24,6 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
     if (!geojson?.features?.length) return
     
     geojson.features.sort((a, b) => {
-        const rankA = a._groupRank ?? 0
-        const rankB = b._groupRank ?? 0
-        
-        const featureTypeA = a.geometry.type
-        const featureTypeB = b.geometry.type
-
         const featureOrder = [
             "Point",
             "MultiPoint",
@@ -37,21 +31,16 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "MultiLineString",
             "Polygon",
             "MultiPolygon",
-        ];
+        ]
 
-        const orderA = featureOrder.indexOf(featureTypeA)
-        const orderB = featureOrder.indexOf(featureTypeB)
+        const rankComparison = (a._groupRank ?? 0) - (b._groupRank ?? 0)
+        const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
+        const comparison = (
+            typeComparison !== 0 ? typeComparison : 
+            rankComparison !== 0 ? rankComparison : 
+            (a.properties?.name ?? '').localeCompare(b.properties?.name ?? '')
+        )
 
-        const rankComparison = rankA - rankB
-        const typeComparison = orderA - orderB
-        const comparison = rankComparison !== 0 ? rankComparison : typeComparison
-
-        console.log('rank', rankA, rankB)
-        console.log('rank', rankComparison)
-        console.log('type', featureTypeA, featureTypeB)
-        console.log('type', orderA, orderB)
-        console.log('type', typeComparison)
-        console.log('comparison', comparison)
         console.log('return', reverse ? -comparison : comparison)
         return reverse ? -comparison : comparison
     })
