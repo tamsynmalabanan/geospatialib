@@ -1726,7 +1726,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fillPatternId: null,
                             }), {refresh:false})
         
-                            symbology.groups[generateRandomString()] = {
+                            symbology.groups?.[generateRandomString()] = {
                                 active: true,
                                 label: Object.values(filters).join(', '),
                                 showCount: true,

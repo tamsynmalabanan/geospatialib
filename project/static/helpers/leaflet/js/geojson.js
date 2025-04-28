@@ -238,8 +238,6 @@ const getGeoJSONLayerStyles = (layer) => {
         
         typeNames = typeNames?.map(i => i.toLowerCase().replace('multi', '')) || Array('point', 'linestring', 'polygon')
 
-        console.log(typeNames)
-
         const styleParams = style.styleParams
         typeNames.forEach(typeName => {
             style.types[typeName] = {
@@ -263,7 +261,9 @@ const getGeoJSONLayerStyles = (layer) => {
         styles[feature._groupId ?? ""].types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
     })
 
-    console.log(styles)
+    Object.values(styles).forEach(i => {
+        i.totalCount = Object.values(i.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)
+    })
 
     return styles
 }
@@ -360,11 +360,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         icon.className = 'd-flex flex-no-wrap gap-2 align-items-center justify-content-center'
         tr.appendChild(icon)
 
-        const totalCount = formatNumberWithCommas(
-            Object.values(style.types)
-            .map(type => type.count || 0)
-            .reduce((a, b) => a + b, 0)
-        )
+        const totalCount = formatNumberWithCommas(style.totalCount)
         const label = document.createElement('td')
         tr.appendChild(label)
         
