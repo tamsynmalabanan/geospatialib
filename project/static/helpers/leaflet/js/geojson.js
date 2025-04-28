@@ -221,6 +221,7 @@ const getGeoJSONLayerStyles = (layer) => {
             types: {}
         }
 
+        const styleParams = style.styleParams
         Array('point', 'linestring', 'polygon').forEach(typeName => {
             style.types[typeName] = {
                 count: 0,
@@ -230,7 +231,7 @@ const getGeoJSONLayerStyles = (layer) => {
                             [styleParams.iconSpecs]:styleParams.iconSpecs
                         } : {},
                         geometry: {type:typeName}
-                    }, style.styleParams),
+                    }, styleParams),
                     typeName
                 )
             }
