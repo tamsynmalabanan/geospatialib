@@ -907,8 +907,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 selectClass: `ms-auto border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`,
                 attrs: {name: `${id}-rank`},
                 options: (() => {
-                    const options = {'':'Select group rank'}
-                    for (i of Object.values((symbology.groups ?? {}))) {
+                    const options = {   }
+                    for (i of Object.values(symbology.groups)) {
                         options[i.rank] = i.rank
                     }
                     return options
@@ -920,7 +920,12 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (isNaN(value)) value = e.target.value = style.rank
                         if (value === style.rank) return
     
+                        for (const i in symbology.groups) {
+                            const iGroup = symbology.groups[i]
+                        }
+
                         // update other styles rank
+                        // reload in styles to correct sequence
                         style.rank = value
                         updateSymbology((style.active ? styleParams : null))
                     }

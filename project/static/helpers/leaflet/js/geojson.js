@@ -230,8 +230,11 @@ const getGeoJSONLayerStyles = (layer) => {
     
     const styles = {}
     Array(...Object.keys(symbology.groups ?? {}), '').forEach(id => {
+        const origStyle = symbology.groups?.[id] || symbology.default
+        if (!origStyle.active) return
+        
         const style = styles[id] = {
-            ...(symbology.groups?.[id] || symbology.default),
+            ...origStyle,
             types: {}
         }
 
