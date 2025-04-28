@@ -1791,88 +1791,85 @@ const handleLeafletStylePanel = (map, parent) => {
                         const groupCount = symbology.groupCount ?? (() => {
                             return symbology.groupCount = form.elements.groupCount.value = 5
                         })()
+                        // const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/(groupCount-1)).length)/2))}`)
+                        const interval = diff/(groupCount-1)
 
-                        console.log(groupCount)
+                        const groups = []
+                        let currentMin = min
+                        while (currentMin <= max) {
+                            const currentMax = currentMin + interval
+                            groups.push({
+                                min: currentMin,
+                                max: currentMax > max ? max : currentMax
+                            })
+                            currentMin = currentMax
+                        }
 
-                        // const roundBy = Number(`1${'0'.repeat(Math.floor((String(diff/4).length)/2))}`)
-                        // symbology.interval = form.elements.interval.value = Math.round((diff/4)/roundBy) * roundBy
+                        symbology.default.rank = groups.length + 1
+                        if (groups.length) {
+                            const hslaColor = manageHSLAColor(generateRandomColor())
 
-                        // const groups = []
-                        // let currentMin = min
-                        // while (currentMin <= max) {
-                        //     const currentMax = currentMin + symbology.interval
-                        //     groups.push({
-                        //         min: currentMin,
-                        //         max: currentMax > max ? max : currentMax
-                        //     })
-                        //     currentMin = currentMax
-                        // }
-
-                        // symbology.default.rank = groups.length + 1
-                        // if (groups.length) {
-                        //     const hslaColor = manageHSLAColor(generateRandomColor())
-
-                        //     symbology.groups = {}
+                            symbology.groups = {}
                             
-                        //     let rank = 0
-                        //     for (const filters of groups) {
-                        //         rank +=1
+                            let rank = 0
+                            for (const filters of groups) {
+                                rank +=1
                                 
-                        //         const styleParams = await updateSymbology(getLeafletStyleParams({
-                        //             ...symbology.default.styleParams,
-                        //             fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1))*(rank-1))}),
-                        //             strokeColor: true,
-                        //             patternBgColor: null,
-                        //             fillPatternId: null,
-                        //             iconStroke: false,
-                        //             iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
-                        //             strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
-                        //         }), {refresh:false})
+                                const styleParams = await updateSymbology(getLeafletStyleParams({
+                                    ...symbology.default.styleParams,
+                                    fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1))*(rank-1))}),
+                                    strokeColor: true,
+                                    patternBgColor: null,
+                                    fillPatternId: null,
+                                    iconStroke: false,
+                                    iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
+                                    strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
+                                }), {refresh:false})
             
-                        //         symbology.groups[generateRandomString()] = {
-                        //             active: true,
-                        //             label: `${formatNumberWithCommas(filters.min)} - ${formatNumberWithCommas(filters.max)}`,
-                        //             showCount: true,
-                        //             showLabel: true,
-                        //             rank,
-                        //             styleParams,
-                        //             filters: {
-                        //                 type: {active: false, values: {
-                        //                     Point: true,
-                        //                     MultiPoint: true,
-                        //                     LineString: true,
-                        //                     MultiLineString: true,
-                        //                     Polygon: true,
-                        //                     MultiPolygon: true,
-                        //                 }},
-                        //                 properties: (() => {
-                        //                     const value = {active: true, values: {}}
+                                symbology.groups[generateRandomString()] = {
+                                    active: true,
+                                    label: `${formatNumberWithCommas(filters.min)} - ${formatNumberWithCommas(filters.max)}`,
+                                    showCount: true,
+                                    showLabel: true,
+                                    rank,
+                                    styleParams,
+                                    filters: {
+                                        type: {active: false, values: {
+                                            Point: true,
+                                            MultiPoint: true,
+                                            LineString: true,
+                                            MultiLineString: true,
+                                            Polygon: true,
+                                            MultiPolygon: true,
+                                        }},
+                                        properties: (() => {
+                                            const value = {active: true, values: {}}
             
-                        //                     value.values[generateRandomString()] = {
-                        //                         active: true,
-                        //                         property,
-                        //                         handler: 'greaterThanEqualTo',
-                        //                         value: true,
-                        //                         case: true,
-                        //                         values: [filters.min]
-                        //                     }
+                                            value.values[generateRandomString()] = {
+                                                active: true,
+                                                property,
+                                                handler: 'greaterThanEqualTo',
+                                                value: true,
+                                                case: true,
+                                                values: [filters.min]
+                                            }
             
-                        //                     value.values[generateRandomString()] = {
-                        //                         active: true,
-                        //                         property,
-                        //                         handler: 'lessThanEqualTo',
-                        //                         value: true,
-                        //                         case: true,
-                        //                         values: [filters.max]
-                        //                     }
+                                            value.values[generateRandomString()] = {
+                                                active: true,
+                                                property,
+                                                handler: 'lessThanEqualTo',
+                                                value: true,
+                                                case: true,
+                                                values: [filters.max]
+                                            }
                                             
-                        //                     return value
-                        //                 })(),
-                        //                 geom: {active: false, values: {}},
-                        //             },
-                        //         }
-                        //     }
-                        // }
+                                            return value
+                                        })(),
+                                        geom: {active: false, values: {}},
+                                    },
+                                }
+                            }
+                        }
                     }
                 }
             }
