@@ -2818,30 +2818,18 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         operatorProps: {
-                            handler: createCheckboxOptions,
-                            name: 'propFilter-operator',
-                            containerClass: 'd-flex gap-2',
-                            type: 'radio',
-                            options: (() => {
-                                const options = {}
+                            handler: ({parent}={}) => {
+                                const select = document.createElement('select')
+                                select.className = `form-select form-select-sm`
+                                parent.appendChild(select)
 
                                 for (const operator of ['AND', 'OR']) {
-                                    options[operator] = {
-                                        checked: operator === filters.properties.operator,
-                                        disabled: !filters.properties.active,
-                                        events: {
-                                            click: (e) => {
-                                                const value = e.target.checked
-                                                console.log(e)
-                                                // filters.properties.operator = value
-                                                // if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
-                                            }
-                                        }
-                                    }
+                                    const option = document.createElement('option')
+                                    option.value = operator
+                                    option.text = operator
+                                    select.appendChild(option)
                                 }
-                                
-                                return options
-                            })()
+                            }
                         },
                         newProp: {
                             handler: createButton,
