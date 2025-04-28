@@ -222,8 +222,8 @@ const getGeoJSONLayerStyles = (layer) => {
         }
 
         let typeNames
-        const styleTypeFilter = style.filters.type
-        if (styleTypeFilter.active) {
+        const styleTypeFilter = style.filters?.type
+        if (styleTypeFilter?.active) {
             typeNames = [...new Set(Object.keys(styleTypeFilter.values).filter(i => {
                 return styleTypeFilter.values[i]
             }))]
