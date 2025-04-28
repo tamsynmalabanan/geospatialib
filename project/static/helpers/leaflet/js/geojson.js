@@ -221,6 +221,8 @@ const getGeoJSONLayerStyles = (layer) => {
             types: {}
         }
 
+        console.log(layer._styles.filters.type)
+
         const styleParams = style.styleParams
         Array('point', 'linestring', 'polygon').forEach(typeName => {
             style.types[typeName] = {
@@ -368,7 +370,6 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
         for (const type in style.types) {
             const typeCount = style.types[type].count
-            // if (!typeCount) continue
             
             const typeIcon = document.createElement('div')
             typeIcon.className = 'd-flex align-items-center justify-content-center'
