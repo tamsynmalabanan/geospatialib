@@ -368,7 +368,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
         for (const type in style.types) {
             const typeCount = style.types[type].count
-            if (!typeCount) continue
+            // if (!typeCount) continue
             
             const typeIcon = document.createElement('div')
             typeIcon.className = 'd-flex align-items-center justify-content-center'
