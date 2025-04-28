@@ -41,7 +41,6 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             (a.properties?.name ?? '').localeCompare(b.properties?.name ?? '')
         )
 
-        console.log('return', reverse ? -comparison : comparison)
         return reverse ? -comparison : comparison
     })
 }
