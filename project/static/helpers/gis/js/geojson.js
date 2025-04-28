@@ -46,6 +46,13 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
         const typeComparison = orderA - orderB
         const comparison = rankComparison !== 0 ? rankComparison : typeComparison
 
+        console.log('rank', rankA, rankB)
+        console.log('rank', rankComparison)
+        console.log('type', featureTypeA, featureTypeB)
+        console.log('type', orderA, orderB)
+        console.log('type', typeComparison)
+        console.log('comparison', comparison)
+        console.log('return', reverse ? -comparison : comparison)
         return reverse ? -comparison : comparison
     })
 }
