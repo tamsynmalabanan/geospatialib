@@ -913,11 +913,11 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
                     return options
                 })(),
-                currentValue: style.rank,
+                currentValue: String(style.rank),
                 events: {
                     change: (e) => {
-                        let value = e.target.value
-                        if (value === '') value = e.target.value - style.rank
+                        let value = parseInt(e.target.value)
+                        if (isNaN(value)) value = e.target.value = style.rank
                         if (value === style.rank) return
     
                         // update other styles rank
