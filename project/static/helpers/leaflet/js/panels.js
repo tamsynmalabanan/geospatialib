@@ -1681,7 +1681,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const container = body.querySelector(`#${body.id}-methodDetails`)
         container.innerHTML = ''
 
-        if (symbology.method !== 'uniform' && symbology.groupBy?.length) {
+        if (symbology.method !== 'single' && symbology.groupBy?.length) {
             const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
             if (geojson) {
                 const filters = layer._styles.filters
@@ -2436,7 +2436,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             fieldTag:'select',
                             labelText: 'Method',
                             options:{
-                                'uniform':'Uniform',
+                                'single':'Single',
                                 'categorized':'Categorized',
                                 'ranged':'Ranged',
                                 // 'rule':'Rule-based',
@@ -2451,7 +2451,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                                     const tagifyObj = Tagify(form.elements.groupBy)
                                     const tagifyElement = tagifyObj.DOM.scope
-                                    if (value === 'uniform') {
+                                    if (value === 'single') {
                                         tagifyElement.setAttribute('disabled', true)
                                     } else {
                                         const maxTags = value === 'categorized' ? 5 : 1
@@ -2473,7 +2473,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
                             inputTag: 'textarea',
                             enabled: 0,
-                            disabled: symbology.method === 'uniform',
+                            disabled: symbology.method === 'single',
                             dropdownClass:  `my-1 border-0`,
                             userInput: false,
                             maxTags: symbology.method === 'categorized' ? 5 : 1,
@@ -2578,7 +2578,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent:collapse,
                                 })
                                 
-                                if (symbology.method === 'uniform') {
+                                if (symbology.method === 'single') {
                                     container.appendChild(getSymbologyForm(''))
                                 } else {
                                     const groupIds = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {

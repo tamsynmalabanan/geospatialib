@@ -29,7 +29,7 @@ const getLeafletGeoJSONLayer = async ({
                 showLabel: true,
                 styleParams: getLeafletStyleParams(customStyleParams),
             },
-            method: 'uniform',
+            method: 'single',
             groupBy: [],
         },                                  
         visibility: {
