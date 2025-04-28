@@ -214,6 +214,9 @@ const assignFeatureLayerTitle = (layer) => {
 const getGeoJSONLayerStyles = (layer) => {
     const styles = {}
     const symbology = layer._styles.symbology
+
+    console.log(symbology)
+
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
@@ -252,7 +255,6 @@ const getGeoJSONLayerStyles = (layer) => {
         }
     })
 
-    console.log(styles)
     return styles
 }
 
