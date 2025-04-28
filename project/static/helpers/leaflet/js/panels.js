@@ -934,7 +934,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         const copyBtn = createIcon({
-            className:'bi bi-copy', 
+            className: `bi bi-copy ${id === '' ? 'ms-auto' : ''}`, 
             parent:toggleFields, 
             peNone:false,
             title: 'Copy group symbology',
