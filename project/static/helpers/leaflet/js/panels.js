@@ -904,13 +904,15 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const rank = createBadgeSelect({
                 parent: toggleFields,
-                selectClass: `ms-auto border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
+                selectClass: `ms-auto border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`,
                 attrs: {name: `${id}-rank`},
                 options: (() => {
                     const options = {'':'Select group rank'}
     
-                    for (let i = 0; i < (Object.keys((symbology.groups ?? {}))).length; i++) {
-                        options[i] = i
+                    let rank = 0
+                    for (i in (symbology.groups ?? {})) {
+                        rank +=1
+                        options[rank] = rank
                     }
     
                     return options
