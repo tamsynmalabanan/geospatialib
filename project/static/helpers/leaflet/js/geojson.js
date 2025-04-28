@@ -232,13 +232,16 @@ const getGeoJSONLayerStyles = (layer) => {
     Array(...Object.keys(symbology.groups ?? {}), '').forEach(id => {
         const origStyle = symbology.groups?.[id] || symbology.default
         if (!origStyle.active) return
-        
+
         const style = styles[id] = {
             ...origStyle,
             types: {}
         }
 
         let typeNames
+
+        console.log(turf.getType(turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()))
+
         const styleTypeFilter = style.filters?.type
         if (styleTypeFilter?.active) {
             typeNames = [...new Set(Object.keys(styleTypeFilter.values).filter(i => {
