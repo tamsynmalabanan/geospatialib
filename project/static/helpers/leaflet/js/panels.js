@@ -2475,7 +2475,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         groupBy: {
                             handler: createTagifyField,
-                            inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
                             inputTag: 'textarea',
                             enabled: 0,
                             disabled: symbology.method === 'single',
