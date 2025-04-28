@@ -296,7 +296,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
                 }
             }
 
-            return value
+            return valid
         })
     }
 
