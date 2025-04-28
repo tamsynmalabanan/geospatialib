@@ -900,6 +900,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             })
 
+            console.log(style)
+
             const rank = createBadgeSelect({
                 parent: toggleFields,
                 selectClass: `ms-auto border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
