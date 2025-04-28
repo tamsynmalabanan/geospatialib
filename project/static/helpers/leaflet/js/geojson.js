@@ -261,8 +261,10 @@ const getGeoJSONLayerStyles = (layer) => {
         styles[feature._groupId ?? ""].types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
     })
 
-    Object.values(styles).forEach(i => {
-        i.totalCount = Object.values(i.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)
+    Object.keys(styles).forEach(i => {
+        const style = styles[i]
+        const totalCount = Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)
+        i === '' && totalCount === 0 ? delete styles[i] : style.totalCount = totalCount
     })
 
     return styles
