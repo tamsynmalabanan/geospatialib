@@ -221,10 +221,16 @@ const getGeoJSONLayerStyles = (layer) => {
             types: {}
         }
 
-        console.log(layer._styles.filters.type)
+        let typeNames = Array('point', 'linestring', 'polygon')
+        const typeFilters = layer._styles.filters.type
+        if (typeFilters.active) {
+            typeNames = new Set(Object.keys(typeFilters.values).filter(i => {
+                return typeFilters.values[i]
+            }).map(i => i.toLowerCase().replace('multi','')))
+        }
 
         const styleParams = style.styleParams
-        Array('point', 'linestring', 'polygon').forEach(typeName => {
+        typeNames.forEach(typeName => {
             style.types[typeName] = {
                 count: 0,
                 html: leafletLayerStyleToHTML(
