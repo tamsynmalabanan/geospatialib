@@ -739,7 +739,7 @@ const createBadgeSelect = ({
     const select = document.createElement('select')
     select.className = `badge rounded-pill ${selectClass}`
     Object.keys(attrs).forEach(k => select.setAttribute(k, attrs[k]))
-    Object.keys(events).forEach(k => select.addEventListener(k, attrs[k]))
+    Object.keys(events).forEach(k => select.addEventListener(k, events[k]))
     select.disabled = disabled
     parent?.appendChild(select)
 
