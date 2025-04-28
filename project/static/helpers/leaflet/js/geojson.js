@@ -49,12 +49,12 @@ const getLeafletGeoJSONLayer = async ({
             geom: {
                 active: false, 
                 values: {},
-                operator: 'AND',
+                operator: '&&',
             },
             properties: {
                 active: false, 
                 values: {},
-                operator: 'AND',
+                operator: '&&',
             },
         }
     }

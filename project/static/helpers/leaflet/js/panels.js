@@ -2820,15 +2820,20 @@ const handleLeafletStylePanel = (map, parent) => {
                         operatorProps: {
                             handler: ({parent}={}) => {
                                 const select = document.createElement('select')
-                                select.className = `form-select form-select-sm`
+                                select.className = `badge rounded-pill text-bg-${getPreferredTheme()}`
                                 parent.appendChild(select)
 
-                                for (const operator of ['AND', 'OR']) {
+                                for (const operator of ['&&', '||']) {
                                     const option = document.createElement('option')
                                     option.value = operator
                                     option.text = operator
                                     select.appendChild(option)
                                 }
+
+                                select.addEventListener('change', () => {
+                                    filters.properties.operator = select.value
+                                    if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                })
                             }
                         },
                         newProp: {
