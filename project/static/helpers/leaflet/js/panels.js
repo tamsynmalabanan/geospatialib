@@ -2537,6 +2537,24 @@ const handleLeafletStylePanel = (map, parent) => {
                                 },
                             }
                         },
+                        groupPrecision: {
+                            handler: createFormFloating,
+                            fieldAttrs: {
+                                name:'groupPrecision',
+                                type:'number',
+                                value: symbology.groupPrecision ?? '',
+                            },
+                            labelText: 'Precision',
+                            fieldClass: 'form-control-sm',
+                            containerClass: 'w-25 d-none',
+                            events: {
+                                'change': (e) => {
+                                    const value = e.target.value
+                                    symbology.groupPrecision = value
+                                    updateSymbologyGroups()
+                                },
+                            }
+                        },
                         spinner: {
                             handler: ({parent}={}) => {
                                 const div = customCreateElement({
