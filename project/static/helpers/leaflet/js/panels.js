@@ -2560,7 +2560,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             labelText: 'Count',
                             fieldClass: 'form-control-sm',
-                            containerClass: 'w-25 d-none flex-grow-1',
+                            containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
                             events: {
                                 'change': (e) => {
                                     const value = e.target.value
@@ -2578,7 +2578,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             labelText: 'Precision',
                             fieldClass: 'form-control-sm',
-                            containerClass: 'w-25 d-none flex-grow-1',
+                            containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
                             events: {
                                 'change': (e) => {
                                     const value = e.target.value
