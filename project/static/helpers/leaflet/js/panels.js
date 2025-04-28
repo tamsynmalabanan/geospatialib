@@ -2826,7 +2826,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 select.setAttribute('name', 'propFilter-operator')
                                 select.disabled = !filters.properties.active
 
-                                for (const operator of ['&&', '||']) {
+                                for (const operator of ['Select an operator', '&&', '||']) {
                                     const option = document.createElement('option')
                                     option.value = operator
                                     option.text = operator
@@ -2834,7 +2834,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
 
                                 select.addEventListener('change', () => {
-                                    filters.properties.operator = select.value
+                                    const value = select.value
+                                    if (value === 'Select an operator') value = select.value = '&&'
+                                    
+                                    filters.properties.operator = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
                                 })
                             }
