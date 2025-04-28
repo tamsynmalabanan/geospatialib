@@ -728,28 +728,28 @@ const createTagifyField = ({
 }
 
 const createBadgeSelect = ({
-
+    selectClass = '',
+    attrs = {},
+    disabled = false,
+    parent,
+    options = {},
+    currentValue,
+    events = {},
 } = {}) => {
     const select = document.createElement('select')
-    select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`
-    select.setAttribute('name', 'geomFilter-operator')
-    select.disabled = !filters.geom.active
-    parent.appendChild(select)
+    select.className = `badge rounded-pill ${selectClass}`
+    Object.keys(attrs).forEach(k => select.setAttribute(k, attrs[k]))
+    Object.keys(events).forEach(k => select.addEventListener(k, attrs[k]))
+    select.disabled = disabled
+    parent?.appendChild(select)
 
-    for (const operator of ['Select an operator', '&&', '||']) {
+    for (const i in Object.keys(options)) {
         const option = document.createElement('option')
-        option.value = operator
-        option.text = operator
-        if (operator === filters.geom.operator) option.setAttribute('selected', true)
+        option.value = i
+        option.text = options[i]
+        if ( currentValue && i === currentValue) option.setAttribute('selected', true)
         select.appendChild(option)
     }
 
-    select.addEventListener('change', () => {
-        let value = select.value
-        if (value === 'Select an operator') value = select.value = '&&'
-        if (value === filters.geom.operator) return
-
-        filters.geom.operator = value
-        if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
-    })
+    return select
 }

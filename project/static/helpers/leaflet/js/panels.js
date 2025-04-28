@@ -2818,30 +2818,26 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         operatorProps: {
-                            handler: ({parent}={}) => {
-                                const select = document.createElement('select')
-                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`
-                                select.setAttribute('name', 'propFilter-operator')
-                                select.disabled = !filters.properties.active
-                                parent.appendChild(select)
-
-                                for (const operator of ['Select an operator', '&&', '||']) {
-                                    const option = document.createElement('option')
-                                    option.value = operator
-                                    option.text = operator
-                                    if (operator === filters.properties.operator) option.setAttribute('selected', true)
-                                    select.appendChild(option)
-                                }
-
-                                select.addEventListener('change', () => {
-                                    let value = select.value
-                                    if (value === 'Select an operator') value = select.value = '&&'
+                            handler: createBadgeSelect,
+                            selectClass: `border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
+                            attrs: {name: 'propFilter-operator'},
+                            disabled: !filters.properties.active,
+                            options: {
+                                '': 'Select an operator',
+                                '&&': '&&',
+                                '||': '||',
+                            },
+                            events: {
+                                change:  (e) => {
+                                    let value = e.target.value
+                                    if (value === 'Select an operator') value = e.target.value = filters.properties.operator
                                     if (value === filters.properties.operator) return
 
                                     filters.properties.operator = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
-                                })
-                            }
+                                }
+                            },
+                            currentValue: filters.properties.operator,
                         },
                         newProp: {
                             handler: createButton,
@@ -2940,30 +2936,26 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         operatorGeom: {
-                            handler: ({parent}={}) => {
-                                const select = document.createElement('select')
-                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`
-                                select.setAttribute('name', 'geomFilter-operator')
-                                select.disabled = !filters.geom.active
-                                parent.appendChild(select)
-
-                                for (const operator of ['Select an operator', '&&', '||']) {
-                                    const option = document.createElement('option')
-                                    option.value = operator
-                                    option.text = operator
-                                    if (operator === filters.geom.operator) option.setAttribute('selected', true)
-                                    select.appendChild(option)
-                                }
-
-                                select.addEventListener('change', () => {
-                                    let value = select.value
-                                    if (value === 'Select an operator') value = select.value = '&&'
+                            handler: createBadgeSelect,
+                            selectClass: `border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
+                            attrs: {name: 'geomFilter-operator'},
+                            disabled: !filters.geom.active,
+                            options: {
+                                '': 'Select an operator',
+                                '&&': '&&',
+                                '||': '||',
+                            },
+                            currentValue: filters.properties.operator,
+                            events: {
+                                change:  (e) => {
+                                    let value = e.target.value
+                                    if (value === 'Select an operator') value = e.target.value = filters.geom.operator
                                     if (value === filters.geom.operator) return
 
                                     filters.geom.operator = value
                                     if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
-                                })
-                            }
+                                }
+                            },
                         },
                         newGeom: {
                             handler: createButton,
