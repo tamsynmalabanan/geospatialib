@@ -908,13 +908,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 attrs: {name: `${id}-rank`},
                 options: (() => {
                     const options = {'':'Select group rank'}
-    
-                    let rank = 0
-                    for (i in (symbology.groups ?? {})) {
-                        rank +=1
-                        options[rank] = rank
+                    for (i of Object.values((symbology.groups ?? {}))) {
+                        options[i.rank] = i.rank
                     }
-    
                     return options
                 })(),
                 currentValue: style.rank,
