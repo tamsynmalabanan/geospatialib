@@ -238,6 +238,8 @@ const getGeoJSONLayerStyles = (layer) => {
         })
     })
 
+    console.log(styles)
+
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
