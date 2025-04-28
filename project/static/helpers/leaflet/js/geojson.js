@@ -221,13 +221,22 @@ const getGeoJSONLayerStyles = (layer) => {
             types: {}
         }
 
-        let typeNames = Array('point', 'linestring', 'polygon')
-        const typeFilters = layer._styles.filters.type
-        if (typeFilters.active) {
-            typeNames = new Set(Object.keys(typeFilters.values).filter(i => {
-                return typeFilters.values[i]
-            }).map(i => i.toLowerCase().replace('multi','')))
+        let typeNames
+        const styleTypeFilter = style.filters.type
+        if (styleTypeFilter.active) {
+            typeNames = [...new Set(Object.keys(styleTypeFilter.values).filter(i => {
+                return styleTypeFilter.values[i]
+            }))]
+        } else {
+            const layerTypeFilter = layer._styles.filters.type
+            if (layerTypeFilter.active) {
+                typeNames = [...new Set(Object.keys(layerTypeFilter.values).filter(i => {
+                    return layerTypeFilter.values[i]
+                }))]
+            }
         }
+        
+        typeNames = typeNames?.map(i => i.toLowerCase().replace('multi', '')) || Array('point', 'linestring', 'polygon')
 
         console.log(typeNames)
 
