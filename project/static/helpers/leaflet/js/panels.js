@@ -907,7 +907,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 options: (() => {
                     const options = {   }
                     
-                    for (let i = 0; i < array.length; i++) {
+                    for (let i = 0; i < Object.keys(symbology.groups).length; i++) {
                         options[i+1] = i+1
                     }
                     
