@@ -2836,7 +2836,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                 select.addEventListener('change', () => {
                                     const value = select.value
                                     if (value === 'Select an operator') value = select.value = '&&'
-                                    
+                                    if (value === filters.properties.operator) return
+
                                     filters.properties.operator = value
                                     if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
                                 })
