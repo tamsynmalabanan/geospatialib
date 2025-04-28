@@ -2939,6 +2939,32 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+                        operatorGeom: {
+                            handler: ({parent}={}) => {
+                                const select = document.createElement('select')
+                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`
+                                select.setAttribute('name', 'geomFilter-operator')
+                                select.disabled = !filters.geom.active
+                                parent.appendChild(select)
+
+                                for (const operator of ['Select an operator', '&&', '||']) {
+                                    const option = document.createElement('option')
+                                    option.value = operator
+                                    option.text = operator
+                                    if (operator === filters.geom.operator) option.setAttribute('selected', true)
+                                    select.appendChild(option)
+                                }
+
+                                select.addEventListener('change', () => {
+                                    const value = select.value
+                                    if (value === 'Select an operator') value = select.value = '&&'
+                                    if (value === filters.geom.operator) return
+
+                                    filters.geom.operator = value
+                                    if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
+                                })
+                            }
+                        },
                         newGeom: {
                             handler: createButton,
                             name: 'geomFilter-new',
