@@ -1755,7 +1755,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         return value
                                     })(),
                                     properties: (() => {
-                                        const value = {active: false, values: {}}
+                                        const value = {active: false, values: {}, operator: '&&'}
         
                                         const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
                                         if (propertyFilters.length) {
@@ -1774,7 +1774,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         
                                         return value
                                     })(),
-                                    geom: {active: false, values: {}},
+                                    geom: {active: false, values: {}, operator: '&&'},
                                 },
                             }
                         }
@@ -1848,7 +1848,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             MultiPolygon: true,
                                         }},
                                         properties: (() => {
-                                            const value = {active: true, values: {}}
+                                            const value = {active: true, values: {}, operator: '&&'}
             
                                             value.values[generateRandomString()] = {
                                                 active: true,
@@ -1870,7 +1870,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             
                                             return value
                                         })(),
-                                        geom: {active: false, values: {}},
+                                        geom: {active: false, values: {}, operator: '&&'},
                                     },
                                 }
                             }
@@ -2820,7 +2820,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         operatorProps: {
                             handler: ({parent}={}) => {
                                 const select = document.createElement('select')
-                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`
+                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`
                                 select.setAttribute('name', 'propFilter-operator')
                                 select.disabled = !filters.properties.active
                                 parent.appendChild(select)
@@ -2834,7 +2834,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
 
                                 select.addEventListener('change', () => {
-                                    const value = select.value
+                                    let value = select.value
                                     if (value === 'Select an operator') value = select.value = '&&'
                                     if (value === filters.properties.operator) return
 
@@ -2942,7 +2942,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         operatorGeom: {
                             handler: ({parent}={}) => {
                                 const select = document.createElement('select')
-                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`
+                                select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`
                                 select.setAttribute('name', 'geomFilter-operator')
                                 select.disabled = !filters.geom.active
                                 parent.appendChild(select)
@@ -2956,7 +2956,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
 
                                 select.addEventListener('change', () => {
-                                    const value = select.value
+                                    let value = select.value
                                     if (value === 'Select an operator') value = select.value = '&&'
                                     if (value === filters.geom.operator) return
 

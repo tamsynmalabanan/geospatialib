@@ -726,3 +726,30 @@ const createTagifyField = ({
 
     Object.keys(scopeStyle).forEach(i => tagifyObj.DOM.scope.style[i] = scopeStyle[i])
 }
+
+const createBadgeSelect = ({
+
+} = {}) => {
+    const select = document.createElement('select')
+    select.className = `badge rounded-pill border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`
+    select.setAttribute('name', 'geomFilter-operator')
+    select.disabled = !filters.geom.active
+    parent.appendChild(select)
+
+    for (const operator of ['Select an operator', '&&', '||']) {
+        const option = document.createElement('option')
+        option.value = operator
+        option.text = operator
+        if (operator === filters.geom.operator) option.setAttribute('selected', true)
+        select.appendChild(option)
+    }
+
+    select.addEventListener('change', () => {
+        let value = select.value
+        if (value === 'Select an operator') value = select.value = '&&'
+        if (value === filters.geom.operator) return
+
+        filters.geom.operator = value
+        if (Object.keys(filters.geom.values || {}).length) updateGeoJSONData(layer)
+    })
+}
