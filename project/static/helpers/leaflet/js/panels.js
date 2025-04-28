@@ -900,8 +900,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             })
 
-            console.log(style)
-
             const rank = createBadgeSelect({
                 parent: toggleFields,
                 selectClass: `ms-auto border-0 p-0 pe-1 text-end text-bg-${getPreferredTheme()}`,
@@ -922,6 +920,7 @@ const handleLeafletStylePanel = (map, parent) => {
     
                         for (const i in symbology.groups) {
                             const iGroup = symbology.groups[i]
+                            console.log(iGroup)
                         }
 
                         // update other styles rank
