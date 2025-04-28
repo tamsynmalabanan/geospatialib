@@ -743,7 +743,7 @@ const createBadgeSelect = ({
     select.disabled = disabled
     parent?.appendChild(select)
 
-    for (const i in Object.keys(options)) {
+    for (const i in options) {
         const option = document.createElement('option')
         option.value = i
         option.text = options[i]
