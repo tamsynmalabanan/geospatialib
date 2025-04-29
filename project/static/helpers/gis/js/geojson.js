@@ -381,9 +381,6 @@ const fetchClientGeoJSON = async (id, geojson, {map, controller} = {}) => {
 
             const clonedGeoJSON = turf.clone(geojson)
             const geojsonBbox = turf.bboxPolygon(turf.bbox(clonedGeoJSON)).geometry
-            const geojsonExtent = turf.area(geojsonBbox) ? geojsonBbox : turf.buffer(
-                geojsonBbox, 1/100000
-            ).geometry
         
             if (map) {
                 const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
@@ -391,7 +388,6 @@ const fetchClientGeoJSON = async (id, geojson, {map, controller} = {}) => {
     
                 clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
                     if (signal?.aborted) throw new Error()
-                    // const featureBbox = turf.bboxPolygon(turf.bbox(feature))
                     return turf.booleanIntersects(queryExtent, feature)
                 })
             }
@@ -492,10 +488,7 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
     return geojsonPromise
 }
 
-const fetchURLGeoJSONs = async (fetchers, {
-    controller,
-    abortBtns,
-} = {}) => {
+const fetchURLGeoJSONs = async (fetchers, { controller, abortBtns, } = {}) => {
     const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
         return fetchURLGeoJSON(fetcher, {abortBtns, controller})
     }))
