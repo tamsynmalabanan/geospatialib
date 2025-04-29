@@ -377,6 +377,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         tbody.appendChild(tr)
 
         const icon = document.createElement('td')
+        icon.id = `${tr.id}-icon`
         icon.className = 'd-flex flex-no-wrap gap-2 align-items-center justify-content-center'
         tr.appendChild(icon)
 
@@ -405,6 +406,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
             const typeCount = style.types[type].count
             
             const typeIcon = document.createElement('div')
+            typeIcon.id = `${icon.id}-${type}`
             typeIcon.className = 'd-flex align-items-center justify-content-center'
 
             const isPoint = type === 'point'
@@ -417,7 +419,14 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         }
     }
 
-    const iconTds = Array.from(tbody.querySelectorAll('tr')).map(i => i.firstChild)
-    const maxWidth = Math.max(...iconTds.map(i => i.offsetWidth))
-    iconTds.forEach(i => i.style.minWidth = `${maxWidth}px`)
+    const pointIcons = Array.from(tbody.querySelectorAll('tr')).map(i => {
+        return i.querySelector(`#${i.firstChild.id}-point`).cloneNode(true)
+    })
+    const maxWidth = Math.max(...pointIcons.map(i => {
+        document.body.appendChild(i)
+        const width = i.offsetWidth
+        i.remove()
+        return width
+    }))
+    pointIcons.forEach(i => i.style.minWidth = `${maxWidth}px`)
 }  
