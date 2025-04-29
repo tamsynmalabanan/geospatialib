@@ -2552,7 +2552,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const div = customCreateElement({
                                     parent,
                                     id: `${body.id}-graduatedParams`,
-                                    style: {width:'20%'},
+                                    style: {width:'20%', height:'58px'},
                                     className: `d-flex flex-column justify-content-center gap-1 w-25 ${symbology.method !== 'graduated' ? 'd-none' : ''}`
                                 })
 
@@ -2563,7 +2563,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupCount ?? '',
                                         placeholder: 'No. of groups',
                                     },
-                                    fieldClass: `py-1 px-2 form-control fs-12`,
+                                    fieldClass: `py-1 px-2 fs-10`,
                                     events: {
                                         'blur': (e) => {
                                             const value = parseInt(e.target.value)
@@ -2582,7 +2582,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupPrecision ?? '',
                                         placeholder: 'Precision',
                                     },
-                                    fieldClass: `py-1 px-2 form-control fs-12`,
+                                    fieldClass: `py-1 px-2 fs-10`,
                                     events: {
                                         'blur': (e) => {
                                             const value = parseInt(e.target.value)
