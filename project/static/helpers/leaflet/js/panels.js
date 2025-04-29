@@ -1737,7 +1737,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
                     })
                     
-                    symbology.default.rank = groupsSetSorted.length + 1
+                    const count = groupsSetSorted.length
+                    symbology.default.rank = count + 1
                     if (groupsSetSorted.length) {
                         symbology.groups = {}
                         
@@ -1745,10 +1746,14 @@ const handleLeafletStylePanel = (map, parent) => {
                         for (const group of groupsSetSorted) {
                             rank +=1
                             const filters = JSON.parse(group)
+
+                            
+                            const min = (359/count) * (rank-1)
+                            const max = (359/count) * rank
                             
                             const styleParams = await updateSymbology(getLeafletStyleParams({
                                 ...symbology.default.styleParams,
-                                fillColor: generateRandomColor(),
+                                fillColor: `hsla(${Math.floor(Math.random() * (max - min + 1)) + min}, 100%, 50%, 1)`,
                                 strokeColor: true,
                                 patternBgColor: null,
                                 fillPatternId: null,
