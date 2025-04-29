@@ -2552,7 +2552,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const div = customCreateElement({
                                     parent,
                                     id: `${body.id}-graduatedParams`,
-                                    className: `d-flex flex-column jsutify-content-center ${symbology.method !== 'graduated' ? 'd-none' : ''}`
+                                    style: {width:'20%'},
+                                    className: `d-flex flex-column justify-content-center gap-1 w-25 ${symbology.method !== 'graduated' ? 'd-none' : ''}`
                                 })
 
                                 div.appendChild(createFormFloating({
@@ -2562,7 +2563,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupCount ?? '',
                                         placeholder: 'No. of groups',
                                     },
-                                    fieldClass: `form-control-sm`,
+                                    fieldClass: `p-0`,
                                     events: {
                                         'blur': (e) => {
                                             const value = parseInt(e.target.value)
@@ -2581,7 +2582,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupPrecision ?? '',
                                         placeholder: 'Precision',
                                     },
-                                    fieldClass: `form-control-sm`,
+                                    fieldClass: `p-0`,
                                     events: {
                                         'blur': (e) => {
                                             const value = parseInt(e.target.value)
