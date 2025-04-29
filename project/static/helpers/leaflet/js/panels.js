@@ -604,6 +604,7 @@ const handleLeafletStylePanel = (map, parent) => {
         let defs
 
         try {
+            console.log('start', new Date())
             if (!styleParams) throw new Error('No style params.')
 
             let {
@@ -861,6 +862,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 map.setZoom(map.getZoom())
             })
 
+            console.log('end', new Date())
             return styleParams
         }
     }
