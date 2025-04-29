@@ -346,7 +346,9 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
             return match
         })
     }
+    
     layer.options.renderer._container?.classList.remove('d-none')
+    
     layer.clearLayers()
     if (featureCount) {
         sortGeoJSONFeatures(data, {reverse:true})
