@@ -420,15 +420,15 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     }
 
     const pointIcons = Array.from(tbody.querySelectorAll('tr')).map(i => {
-        return i.querySelector(`#${i.firstChild.id}-point`).cloneNode(true)
+        return i.querySelector(`#${i.firstChild.id}-point`)
     })
     const maxWidth = Math.max(...pointIcons.map(i => {
-        document.body.appendChild(i)
-        const width = i.offsetWidth
-        i.remove()
-        console.log(i, width)
+        const clone = i.cloneNode(true)
+        clone.className = 'position-absolute'
+        document.body.appendChild(clone)
+        const width = clone.offsetWidth
+        clone.remove()
         return width
     }), 20)
-    console.log('maxWidth', maxWidth)
     pointIcons.forEach(i => i.style.width = `${maxWidth}px`)
 }  
