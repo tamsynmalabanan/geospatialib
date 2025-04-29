@@ -1937,6 +1937,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         spinner.classList.add('d-none')
 
+        console.log(controllerId, controller.id)
         if (controllerId !== controller.id) return
         await updateGeoJSONData(layer)
     }
