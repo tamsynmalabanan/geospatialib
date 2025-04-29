@@ -2562,8 +2562,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupCount ?? '',
                                         placeholder: 'No. of groups',
                                     },
-                                    fieldClass: 'form-control-sm',
-                                    containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                                    fieldClass: `form-control-sm ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
                                     events: {
                                         'change': (e) => {
                                             const value = e.target.value
@@ -2580,8 +2579,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupPrecision ?? '',
                                         placeholder: 'Precision',
                                     },
-                                    fieldClass: 'form-control-sm',
-                                    containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                                    fieldClass: `form-control-sm ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
                                     events: {
                                         'change': (e) => {
                                             const value = e.target.value
