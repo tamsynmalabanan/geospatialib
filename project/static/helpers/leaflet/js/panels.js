@@ -1716,7 +1716,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
                 }
                 
-                if (controllerId !== controller.id) return
+                if (controllerId !== controller.id) return console.log(controllerId, controller.id)
 
                 if (symbology.method === 'categorized') {
                     const groups = []
@@ -1731,7 +1731,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         groups.push(JSON.stringify(values))
                     })
 
-                    if (controllerId !== controller.id) return
+                    if (controllerId !== controller.id) return console.log(controllerId, controller.id)
         
                     const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
                         const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
@@ -1747,7 +1747,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                         let rank = 0
                         for (const group of groupsSetSorted) {
-                            if (controllerId !== controller.id) return
+                            if (controllerId !== controller.id) return console.log(controllerId, controller.id)
 
                             rank +=1
                             const filters = JSON.parse(group)
@@ -1762,7 +1762,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fillPatternId: null,
                             }), {refresh:false})
         
-                            if (controllerId !== controller.id) return
+                            if (controllerId !== controller.id) return console.log(controllerId, controller.id)
                             if (!symbology.groups) return
                             
                             symbology.groups[generateRandomString()] = {
@@ -1823,7 +1823,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const property = symbology.groupBy[0]
                     const validFeatures = geojson.features.filter(i => !isNaN(Number(i.properties[property])))
                     if (validFeatures.length) {
-                        if (controllerId !== controller.id) return
+                        if (controllerId !== controller.id) return console.log(controllerId, controller.id)
                         
                         const values = validFeatures.map(i => Number(i.properties[property]))
                         const min = Math.min(...values)
@@ -1852,7 +1852,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             currentMin = currentMax
                         }
 
-                        if (controllerId !== controller.id) return
+                        if (controllerId !== controller.id) return console.log(controllerId, controller.id)
 
                         symbology.default.rank = groups.length + 1
                         if (groups.length) {
@@ -1862,7 +1862,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             
                             let rank = 0
                             for (const filters of groups) {
-                                if (controllerId !== controller.id) return
+                                if (controllerId !== controller.id) return console.log(controllerId, controller.id)
 
                                 rank +=1
                                 
@@ -1877,7 +1877,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
                                 }), {refresh:false})
 
-                                if (controllerId !== controller.id) return
+                                if (controllerId !== controller.id) return console.log(controllerId, controller.id)
                                 if (!symbology.groups) return
             
                                 symbology.groups[generateRandomString()] = {
@@ -1931,13 +1931,13 @@ const handleLeafletStylePanel = (map, parent) => {
 
 
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
-            if (controllerId !== controller.id) return
+            if (controllerId !== controller.id) return console.log(controllerId, controller.id)
             container.appendChild(getSymbologyForm(i))
         })
 
         spinner.classList.add('d-none')
 
-        if (controllerId !== controller.id) return
+        if (controllerId !== controller.id) return console.log(controllerId, controller.id)
         await updateGeoJSONData(layer)
     }
 
@@ -3255,7 +3255,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
             cancelBtn.disabled = true
             
-            if (controllerId !== controller.id) return
+            if (controllerId !== controller.id) return console.log(controllerId, controller.id)
             
             if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
                 const content = await createGeoJSONChecklist(geojsons, queryGroup, {
