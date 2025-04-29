@@ -2494,9 +2494,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    Array.from('groupCount', 'groupPrecision').forEach(i => {
-                                        form.elements[i].parentElement.classList.toggle('d-none', value !== 'graduated')
-                                    })
+                                    form.elements.groupCount.parentElement.classList.toggle('d-none', value !== 'graduated')
+                                    form.elements.groupPrecision.parentElement.classList.toggle('d-none', value !== 'graduated')
 
                                     updateSymbologyGroups()
                                 }
@@ -2549,6 +2548,50 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }])))() // , 'add', 'remove', 'edit'
                             }
                         },
+                        graduatedParams: {
+                            handler: ({parent}={}) => {
+                                const div = customCreateElement({
+                                    parent,
+                                    className: 'd-flex flex-column jsutify-content-center'
+                                })
+
+                                div.appendChild(createFormFloating({
+                                    fieldAttrs: {
+                                        name:'groupCount',
+                                        type:'number',
+                                        value: symbology.groupCount ?? '',
+                                        placeholder: 'No. of groups',
+                                    },
+                                    fieldClass: 'form-control-sm',
+                                    containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                                    events: {
+                                        'change': (e) => {
+                                            const value = e.target.value
+                                            symbology.groupCount = value
+                                            updateSymbologyGroups()
+                                        },
+                                    }
+                                }).firstChild)
+                                
+                                div.appendChild(createFormFloating({
+                                    fieldAttrs: {
+                                        name:'groupPrecision',
+                                        type:'number',
+                                        value: symbology.groupPrecision ?? '',
+                                        placeholder: 'Precision',
+                                    },
+                                    fieldClass: 'form-control-sm',
+                                    containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                                    events: {
+                                        'change': (e) => {
+                                            const value = e.target.value
+                                            symbology.groupPrecision = value
+                                            updateSymbologyGroups()
+                                        },
+                                    }
+                                }))
+                            }
+                        },
                         spinner: {
                             handler: ({parent}={}) => {
                                 const div = customCreateElement({
@@ -2580,42 +2623,42 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        groupCount: {
-                            handler: createFormFloating,
-                            fieldAttrs: {
-                                name:'groupCount',
-                                type:'number',
-                                value: symbology.groupCount ?? '',
-                            },
-                            labelText: 'No. of groups',
-                            fieldClass: 'form-control-sm',
-                            containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
-                            events: {
-                                'change': (e) => {
-                                    const value = e.target.value
-                                    symbology.groupCount = value
-                                    updateSymbologyGroups()
-                                },
-                            }
-                        },
-                        groupPrecision: {
-                            handler: createFormFloating,
-                            fieldAttrs: {
-                                name:'groupPrecision',
-                                type:'number',
-                                value: symbology.groupPrecision ?? '',
-                            },
-                            labelText: 'Precision',
-                            fieldClass: 'form-control-sm',
-                            containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
-                            events: {
-                                'change': (e) => {
-                                    const value = e.target.value
-                                    symbology.groupPrecision = value
-                                    updateSymbologyGroups()
-                                },
-                            }
-                        },
+                        // groupCount: {
+                        //     handler: createFormFloating,
+                        //     fieldAttrs: {
+                        //         name:'groupCount',
+                        //         type:'number',
+                        //         value: symbology.groupCount ?? '',
+                        //     },
+                        //     labelText: 'No. of groups',
+                        //     fieldClass: 'form-control-sm',
+                        //     containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                        //     events: {
+                        //         'change': (e) => {
+                        //             const value = e.target.value
+                        //             symbology.groupCount = value
+                        //             updateSymbologyGroups()
+                        //         },
+                        //     }
+                        // },
+                        // groupPrecision: {
+                        //     handler: createFormFloating,
+                        //     fieldAttrs: {
+                        //         name:'groupPrecision',
+                        //         type:'number',
+                        //         value: symbology.groupPrecision ?? '',
+                        //     },
+                        //     labelText: 'Precision',
+                        //     fieldClass: 'form-control-sm',
+                        //     containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                        //     events: {
+                        //         'change': (e) => {
+                        //             const value = e.target.value
+                        //             symbology.groupPrecision = value
+                        //             updateSymbologyGroups()
+                        //         },
+                        //     }
+                        // },
                         methodDetails: {
                             handler: ({parent}={}) => {
                                 const collapse = customCreateElement({
