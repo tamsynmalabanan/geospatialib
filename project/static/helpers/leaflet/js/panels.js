@@ -2553,7 +2553,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                     id: `${body.id}-graduatedParams`,
                                     style: {width:'20%', height:'58px'},
-                                    className: `d-flex flex-column justify-content-center gap-1 w-25 ${symbology.method !== 'graduated' ? 'd-none' : ''}`
+                                    className: `d-flex flex-column justify-content-between gap-1 w-25 ${symbology.method !== 'graduated' ? 'd-none' : ''}`
                                 })
 
                                 div.appendChild(createFormFloating({
