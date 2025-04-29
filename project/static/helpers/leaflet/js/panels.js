@@ -2564,8 +2564,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     },
                                     fieldClass: `form-control-sm`,
                                     events: {
-                                        'change': (e) => {
-                                            const value = e.target.value
+                                        'blur': (e) => {
+                                            const value = parseInt(e.target.value)
+                                            if (value === symbology.groupCount) return
+                                            
                                             symbology.groupCount = value
                                             updateSymbologyGroups()
                                         },
@@ -2581,8 +2583,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     },
                                     fieldClass: `form-control-sm`,
                                     events: {
-                                        'change': (e) => {
-                                            const value = e.target.value
+                                        'blur': (e) => {
+                                            const value = parseInt(e.target.value)
+                                            if (value === symbology.groupPrecision) return
+
                                             symbology.groupPrecision = value
                                             updateSymbologyGroups()
                                         },
