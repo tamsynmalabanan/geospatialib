@@ -1929,12 +1929,15 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         }
 
+
         Array(...Object.keys(symbology.groups ?? {}), '').forEach(i => {
+            if (controllerId !== controller.id) return
             container.appendChild(getSymbologyForm(i))
         })
 
         spinner.classList.add('d-none')
 
+        if (controllerId !== controller.id) return
         await updateGeoJSONData(layer)
     }
 
