@@ -2563,7 +2563,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupCount ?? '',
                                         placeholder: 'No. of groups',
                                     },
-                                    fieldClass: `p-0`,
+                                    fieldClass: `py-1 px-2 form-control fs-12`,
                                     events: {
                                         'blur': (e) => {
                                             const value = parseInt(e.target.value)
@@ -2582,7 +2582,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupPrecision ?? '',
                                         placeholder: 'Precision',
                                     },
-                                    fieldClass: `p-0`,
+                                    fieldClass: `py-1 px-2 form-control fs-12 flex-grow-1`,
                                     events: {
                                         'blur': (e) => {
                                             const value = parseInt(e.target.value)
