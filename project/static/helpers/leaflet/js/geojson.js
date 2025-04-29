@@ -411,7 +411,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
             const isPoint = type === 'point'
             typeIcon.style[isPoint ? 'minHeight' : 'height'] = '14px'
-            typeIcon.style[isPoint ? 'minWidth' : 'width'] = '20px'
+            if (!isPoint) typeIcon.style['width'] = '20px'
 
             typeIcon.innerHTML = style.types[type].html
             titleToTooltip(typeIcon, `${formatNumberWithCommas(typeCount)} ${type}${typeCount > 1 ? 's' : ''}`)
