@@ -426,7 +426,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         document.body.appendChild(i)
         const width = i.offsetWidth
         i.remove()
-        console.log(width)
+        console.log(i, width)
         return width
     }), 20)
     console.log('maxWidth', maxWidth)
