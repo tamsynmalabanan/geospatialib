@@ -420,7 +420,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
     const pointIcons = Array.from(tbody.querySelectorAll('tr')).map(i => {
         return i.querySelector(`#${i.firstChild.id}-point`)
-    })
+    }).filter(i => i)
     const maxWidth = Math.max(...pointIcons.map(i => {
         const clone = i.cloneNode(true)
         clone.className = 'position-absolute'
