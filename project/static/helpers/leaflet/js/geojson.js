@@ -240,8 +240,6 @@ const getGeoJSONLayerStyles = (layer) => {
 
         let typeNames
 
-        console.log(turf.getType(turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()))
-
         const styleTypeFilter = style.filters?.type
         if (styleTypeFilter?.active) {
             typeNames = [...new Set(Object.keys(styleTypeFilter.values).filter(i => {
