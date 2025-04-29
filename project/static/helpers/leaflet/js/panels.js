@@ -2494,8 +2494,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    form.elements.groupCount.parentElement.classList.toggle('d-none', value !== 'graduated')
-                                    form.elements.groupPrecision.parentElement.classList.toggle('d-none', value !== 'graduated')
+                                    Array.from('groupCount', 'groupPrecision').forEach(i => {\
+                                        form.elements[i].parentElement.classList.toggle('d-none', value !== 'graduated')
+                                    })
 
                                     updateSymbologyGroups()
                                 }
@@ -2586,7 +2587,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 type:'number',
                                 value: symbology.groupCount ?? '',
                             },
-                            labelText: 'Count',
+                            labelText: 'No. of groups',
                             fieldClass: 'form-control-sm',
                             containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
                             events: {
