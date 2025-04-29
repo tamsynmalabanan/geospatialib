@@ -2522,7 +2522,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     body.querySelector(`#${body.id}-graduatedParams`).classList.toggle('d-none', value !== 'graduated')
 
-                                    if (symbology.groupBy?.length) updateSymbologyGroups()
+                                    if (value === 'single' || symbology.groupBy?.length) updateSymbologyGroups()
                                 }
                             }
                         },
