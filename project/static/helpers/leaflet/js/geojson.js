@@ -282,7 +282,7 @@ const getGeoJSONLayerStyles = (layer) => {
     Object.keys(styles).forEach(i => {
         const style = styles[i]
         const totalCount = Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)
-        i === '' && totalCount === 0 ? delete styles[i] : style.totalCount = totalCount
+        i === '' && totalCount === 0 && Object.keys(styles).length > 1 ? delete styles[i] : style.totalCount = totalCount
     })
 
     return styles
