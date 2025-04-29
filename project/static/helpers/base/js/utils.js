@@ -305,3 +305,13 @@ const svgToDataURL = (svg) => {
         img.src = blobURL
     })
 }
+
+const resetController = ({
+    controller, 
+    message = 'Aborted.'
+} = {}) => {
+    if (controller) controller.abort(message)
+    controller = new AbortController()
+    controller.id = generateRandomString()
+    return controller
+}

@@ -166,14 +166,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         }
     })
 
-    let controller
-    const resetController = () => {
-        if (controller) controller.abort('Map moved or zoomed.')
-        controller = new AbortController()
-        controller.id = generateRandomString()
-        return controller
-    }
-    resetController()
+    let controller = resetController()
 
     const tools = toolsHandler({
         zoomin: {
@@ -537,6 +530,15 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletStylePanel = (map, parent) => {
+    let controller
+    const resetController = () => {
+        if (controller) controller.abort('Map moved or zoomed.')
+        controller = new AbortController()
+        controller.id = generateRandomString()
+        return controller
+    }
+    resetController()
+
     const form = document.createElement('form')
     form.className = `d-flex flex-grow-1 flex-column text-bg-${getPreferredTheme()} rounded h-100`
     parent.appendChild(form)
@@ -1745,10 +1747,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             rank +=1
                             const filters = JSON.parse(group)
 
-                            
                             const min = (359/count) * (rank-1)
                             const max = (359/count) * rank
-                            
                             const styleParams = await updateSymbology(getLeafletStyleParams({
                                 ...symbology.default.styleParams,
                                 fillColor: `hsla(${Math.floor(Math.random() * (max - min + 1)) + min}, 100%, 50%, 1)`,
@@ -2632,42 +2632,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        // groupCount: {
-                        //     handler: createFormFloating,
-                        //     fieldAttrs: {
-                        //         name:'groupCount',
-                        //         type:'number',
-                        //         value: symbology.groupCount ?? '',
-                        //     },
-                        //     labelText: 'No. of groups',
-                        //     fieldClass: 'form-control-sm',
-                        //     containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
-                        //     events: {
-                        //         'change': (e) => {
-                        //             const value = e.target.value
-                        //             symbology.groupCount = value
-                        //             updateSymbologyGroups()
-                        //         },
-                        //     }
-                        // },
-                        // groupPrecision: {
-                        //     handler: createFormFloating,
-                        //     fieldAttrs: {
-                        //         name:'groupPrecision',
-                        //         type:'number',
-                        //         value: symbology.groupPrecision ?? '',
-                        //     },
-                        //     labelText: 'Precision',
-                        //     fieldClass: 'form-control-sm',
-                        //     containerClass: `w-25 flex-grow-1 ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
-                        //     events: {
-                        //         'change': (e) => {
-                        //             const value = e.target.value
-                        //             symbology.groupPrecision = value
-                        //             updateSymbologyGroups()
-                        //         },
-                        //     }
-                        // },
                         methodDetails: {
                             handler: ({parent}={}) => {
                                 const collapse = customCreateElement({
