@@ -283,8 +283,11 @@ const handleLeafletLegendPanel = (map, parent) => {
         }
     }
 
-    map.on('movestart zoomstart', () => console.log(resetController({controller, message: 'Map moved.'})))
-    // map.on('movestart zoomstart', resetController)
+    map.on('movestart zoomstart', () => {
+        console.log(controller.id)
+        controller = resetController({controller, message: 'Map moved.'})
+        console.log(controller.id)
+    })
     
     let timeout
     map.on('moveend zoomend', (e) => {
