@@ -604,7 +604,6 @@ const handleLeafletStylePanel = (map, parent) => {
         let defs
 
         try {
-            console.log('start', new Date())
             if (!styleParams) throw new Error('No style params.')
 
             let {
@@ -861,8 +860,6 @@ const handleLeafletStylePanel = (map, parent) => {
             if (refresh) updateGeoJSONData(layer).then(() => {
                 map.setZoom(map.getZoom())
             })
-
-            console.log('end', new Date())
             return styleParams
         }
     }
@@ -1695,6 +1692,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const updateSymbologyGroups = async () => {
+        console.log('start', new Date())
         const spinner = body.querySelector(`#${body.id}-symbologySpinner`)
         spinner.classList.remove('d-none')
 
@@ -1919,7 +1917,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
         spinner.classList.add('d-none')
 
-        updateGeoJSONData(layer)
+        await updateGeoJSONData(layer)
+        console.log('end', new Date())
     }
 
     const getGeomFilterForm = (id) => {
