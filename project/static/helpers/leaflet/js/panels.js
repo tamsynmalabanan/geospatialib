@@ -284,9 +284,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     }
 
     map.on('movestart zoomstart', () => {
-        console.log(controller.id)
         controller = resetController({controller, message: 'Map moved.'})
-        console.log(controller.id)
     })
     
     let timeout
@@ -534,14 +532,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 }
 
 const handleLeafletStylePanel = (map, parent) => {
-    let controller
-    const resetController = () => {
-        if (controller) controller.abort('Map moved or zoomed.')
-        controller = new AbortController()
-        controller.id = generateRandomString()
-        return controller
-    }
-    resetController()
+    let controller = resetController()
 
     const form = document.createElement('form')
     form.className = `d-flex flex-grow-1 flex-column text-bg-${getPreferredTheme()} rounded h-100`
@@ -3202,6 +3193,8 @@ const handleLeafletStylePanel = (map, parent) => {
 }
 
 const handleLeafletQueryPanel = (map, parent) => {
+    let controller = resetController()
+
     const queryGroup = map._ch.getLayerGroups().query
     const {
         toolbar, 
@@ -3221,7 +3214,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             if (typeof handler !== 'function') return
     
-            const controllerId = resetController().id
+            controller = resetController({controller, message: 'New query started.'})
+            const controllerId = controller.id
     
             spinner.classList.remove('d-none')
             
@@ -3276,15 +3270,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         strokeWidth: 1,
         // iconGlow: true,
     }
-
-    let controller
-    const resetController = () => {
-        if (controller) controller.abort('New query started.')
-        controller = new AbortController()
-        controller.id = generateRandomString()
-        return controller
-    }
-    resetController()
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
