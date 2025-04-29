@@ -291,14 +291,15 @@ const getGeoJSONLayerStyles = (layer) => {
 const updateGeoJSONData = async (layer, {controller} = {}) => {
     const fetchParams = layer._fetchParams
     if (!fetchParams) return
-
+    
     const fetcher = fetchParams.geojson ? filterGeoJSON : null
     if (!fetcher) return
-
+    
     const data = await fetcher(...Object.values(fetchParams), {
         map: layer._group?._map,
         controller,
     })
+    console.log(data)
     if (!data) return
 
     const filters = layer._styles.filters
