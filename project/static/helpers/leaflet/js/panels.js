@@ -1689,7 +1689,9 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const updateSymbologyGroups = async () => {
-        console.log('start', new Date())
+        controller = resetController({controller, message: 'New symbology method update.'})
+        const controllerId = controller.id
+
         const spinner = body.querySelector(`#${body.id}-symbologySpinner`)
         spinner.classList.remove('d-none')
 
@@ -1707,11 +1709,15 @@ const handleLeafletStylePanel = (map, parent) => {
         if (symbology.method !== 'single' && symbology.groupBy?.length) {
             const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
             if (geojson) {
+                if (controllerId !== controller.id) return
+                
                 const filters = layer._styles.filters
                 if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
                     geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
                 }
                 
+                if (controllerId !== controller.id) return
+
                 if (symbology.method === 'categorized') {
                     const groups = []
                     geojson.features.forEach(feature => {
@@ -1724,6 +1730,8 @@ const handleLeafletStylePanel = (map, parent) => {
         
                         groups.push(JSON.stringify(values))
                     })
+
+                    if (controllerId !== controller.id) return
         
                     const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
                         const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
@@ -1739,6 +1747,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         
                         let rank = 0
                         for (const group of groupsSetSorted) {
+                            if (controllerId !== controller.id) return
+
                             rank +=1
                             const filters = JSON.parse(group)
 
@@ -1752,8 +1762,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fillPatternId: null,
                             }), {refresh:false})
         
-
-                            if (symbology.groups) symbology.groups[generateRandomString()] = {
+                            if (controllerId !== controller.id) return
+                            if (!symbology.groups) return
+                            
+                            symbology.groups[generateRandomString()] = {
                                 active: true,
                                 label: Object.values(filters).join(', '),
                                 showCount: true,
@@ -1811,6 +1823,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     const property = symbology.groupBy[0]
                     const validFeatures = geojson.features.filter(i => !isNaN(Number(i.properties[property])))
                     if (validFeatures.length) {
+                        if (controllerId !== controller.id) return
+                        
                         const values = validFeatures.map(i => Number(i.properties[property]))
                         const min = Math.min(...values)
                         const max = Math.max(...values)
@@ -1828,6 +1842,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         const groups = []
                         let currentMin = min
                         while (currentMin < max || !groups.length) {
+                            if (controllerId !== controller.id) break
+
                             const currentMax = Math.round((currentMin + interval)/precision) * precision
                             groups.push({
                                 min: currentMin,
@@ -1835,6 +1851,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             })
                             currentMin = currentMax
                         }
+
+                        if (controllerId !== controller.id) return
 
                         symbology.default.rank = groups.length + 1
                         if (groups.length) {
@@ -1844,6 +1862,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             
                             let rank = 0
                             for (const filters of groups) {
+                                if (controllerId !== controller.id) return
+
                                 rank +=1
                                 
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
@@ -1856,6 +1876,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
                                 }), {refresh:false})
+
+                                if (controllerId !== controller.id) return
+                                if (!symbology.groups) return
             
                                 symbology.groups[generateRandomString()] = {
                                     active: true,
@@ -1913,7 +1936,6 @@ const handleLeafletStylePanel = (map, parent) => {
         spinner.classList.add('d-none')
 
         await updateGeoJSONData(layer)
-        console.log('end', new Date())
     }
 
     const getGeomFilterForm = (id) => {
@@ -3230,7 +3252,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
             cancelBtn.disabled = true
             
-            if (controllerId !== controller.id) return console.log(controller)
+            if (controllerId !== controller.id) return
             
             if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
                 const content = await createGeoJSONChecklist(geojsons, queryGroup, {
