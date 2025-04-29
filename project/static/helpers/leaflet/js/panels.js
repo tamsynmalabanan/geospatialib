@@ -2591,7 +2591,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             updateSymbologyGroups()
                                         },
                                     }
-                                }))
+                                }).firstChild)
                             }
                         },
                         spinner: {
