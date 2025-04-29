@@ -278,7 +278,6 @@ const zoomToLeafletLayer = async (layer, map, {
 
 const leafletLayerStyleToHTML = (style, type) => {
     return style.options?.html.replace('position-absolute','') ?? (() => {
-        console.log(style)
         const isPoint = type === 'point'
         const isLineString = type === 'linestring'
         const isPolygon = type === 'polygon'
