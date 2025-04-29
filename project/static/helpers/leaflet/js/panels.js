@@ -2494,7 +2494,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    Array.from('groupCount', 'groupPrecision').forEach(i => {\
+                                    Array.from('groupCount', 'groupPrecision').forEach(i => {
                                         form.elements[i].parentElement.classList.toggle('d-none', value !== 'graduated')
                                     })
 
