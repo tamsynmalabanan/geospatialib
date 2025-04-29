@@ -314,24 +314,27 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
             return valueA.rank - valueB.rank
         })
+        const groupsLength = groups.length
         
-        if (data?.features?.length) {
-            data.features = data.features.filter(feature => {
-                const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
-    
-                if (groups.length) {
-                    for (const [id, group] of groups) {
-                        if (!group.active) continue
-                        if (!validateGeoJSONFeature(feature, group.filters)) continue
-                        feature._groupId = id
-                        feature._groupRank = group.rank
-                        break
-                    }
+        data.features = data.features.filter(feature => {
+            const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+
+            if (valid && groupsLength) {
+                for (const [id, group] of groups) {
+                    if (!group.active) continue
+                    if (!validateGeoJSONFeature(feature, group.filters)) continue
+                    
+                    feature._groupId = id
+                    feature._groupRank = group.rank
+                    break
                 }
-    
-                return valid
-            })
-        }
+
+                if (!feature._groupId) feature._groupId = ''
+                if (!feature._groupRank) feature._groupRank = groupsLength + 1
+            }
+
+            return valid
+        })
     }
 
     const featureCount = data?.features?.length ?? 0
