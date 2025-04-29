@@ -2533,7 +2533,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             enabled: 0,
                             disabled: symbology.method === 'single',
                             dropdownClass:  `my-1 border-0`,
-                            userInput: false,
+                            userInput: true,
                             maxTags: symbology.method === 'categorized' ? 5 : 1,
                             scopeStyle: {
                                 height: '58px',
