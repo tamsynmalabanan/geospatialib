@@ -3230,7 +3230,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
             cancelBtn.disabled = true
             
-            if (controllerId !== controller.id) return
+            if (controllerId !== controller.id) return console.log(controller)
             
             if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
                 const content = await createGeoJSONChecklist(geojsons, queryGroup, {
