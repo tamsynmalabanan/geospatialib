@@ -449,7 +449,6 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
                 
                 cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
                     if (controller?.signal.aborted) return
-                    // const featureBbox = turf.bboxPolygon(turf.bbox(feature))
                     return turf.booleanIntersects(queryExtent, feature)
                 })
                 
