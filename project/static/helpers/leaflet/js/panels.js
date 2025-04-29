@@ -676,7 +676,7 @@ const handleLeafletStylePanel = (map, parent) => {
             
             if (!iconSpecs) throw new Error('No icon specification.')
 
-            const buffer = (iconType === 'img' ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
+            const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
                 Math.max(
                     (iconGlow ? iconSize*3 : 0),
                     (iconShadow ? iconSize*0.2 : 0),
