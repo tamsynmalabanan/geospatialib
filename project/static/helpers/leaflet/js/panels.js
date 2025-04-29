@@ -1937,7 +1937,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
         spinner.classList.add('d-none')
 
-        console.log(controllerId, controller.id)
         if (controllerId !== controller.id) return
         await updateGeoJSONData(layer)
     }
@@ -3325,7 +3324,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, options={}) => {
                 const event = e
-                return await fetchGeoJSONs({
+                return await fetchURLGeoJSONs({
                     'OpenStreetMap via Nominatim': {
                         handler: fetchNominatim,
                         event,
@@ -3341,7 +3340,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, options={}) => {
-                return await fetchGeoJSONs({
+                return await fetchURLGeoJSONs({
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
                         event: e,

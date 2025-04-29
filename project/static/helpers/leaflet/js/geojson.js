@@ -292,7 +292,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     const fetchParams = layer._fetchParams
     if (!fetchParams) return
     
-    const fetcher = fetchParams.geojson ? filterGeoJSON : null
+    const fetcher = fetchParams.geojson ? fetchClientGeoJSON : null
     if (!fetcher) return
     
     const data = await fetcher(...Object.values(fetchParams), {
