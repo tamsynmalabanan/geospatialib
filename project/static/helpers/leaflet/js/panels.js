@@ -2494,8 +2494,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         tagifyElement.removeAttribute('disabled')
                                     }
 
-                                    form.elements.groupCount.parentElement.classList.toggle('d-none', value !== 'graduated')
-                                    form.elements.groupPrecision.parentElement.classList.toggle('d-none', value !== 'graduated')
+                                    body.querySelector(`#${body.id}-graduatedParams`).classList.toggle('d-none', value !== 'graduated')
 
                                     updateSymbologyGroups()
                                 }
@@ -2552,7 +2551,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const div = customCreateElement({
                                     parent,
-                                    className: 'd-flex flex-column jsutify-content-center'
+                                    id: `${body.id}-graduatedParams`,
+                                    className: `d-flex flex-column jsutify-content-center ${symbology.method !== 'graduated' ? 'd-none' : ''}`
                                 })
 
                                 div.appendChild(createFormFloating({
@@ -2562,7 +2562,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupCount ?? '',
                                         placeholder: 'No. of groups',
                                     },
-                                    fieldClass: `form-control-sm ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                                    fieldClass: `form-control-sm`,
                                     events: {
                                         'change': (e) => {
                                             const value = e.target.value
@@ -2579,7 +2579,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value: symbology.groupPrecision ?? '',
                                         placeholder: 'Precision',
                                     },
-                                    fieldClass: `form-control-sm ${symbology.method !== 'graduated' ? 'd-none' : ''}`,
+                                    fieldClass: `form-control-sm`,
                                     events: {
                                         'change': (e) => {
                                             const value = e.target.value
