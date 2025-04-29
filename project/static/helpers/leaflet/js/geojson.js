@@ -429,6 +429,6 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         const width = clone.offsetWidth
         clone.remove()
         return width
-    }), 20)
+    }))
     pointIcons.forEach(i => i.style.width = `${maxWidth}px`)
 }  
