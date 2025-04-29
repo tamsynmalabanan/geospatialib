@@ -204,15 +204,17 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             html: element?.outerHTML ?? '',
         })
     } else {
-        const params = {renderer, ...(!isPoint || iconStroke ? {
-            color:  strokeColor,
-            weight: strokeWidth,
-            opacity: strokeOpacity,
+        const hasStroke = !isPoint || iconStroke
+        const params = {
+            color: hasStroke ? strokeColor : 'transparent',
+            weight: hasStroke ? strokeWidth: 0,
+            opacity: hasStroke ? strokeOpacity : 0,
             lineCap,
             lineJoin,
             dashArray,
             dashOffset, 
-        } : {color: 'none'})}
+            renderer, 
+        }
 
         if (isPoint) {
             params.radius = iconSize/2
@@ -280,7 +282,7 @@ const leafletLayerStyleToHTML = (style, type) => {
     return style.options?.html.replace('position-absolute','') ?? (() => {
         const isPoint = type === 'point'
         const isLineString = type === 'linestring'
-        const isPolygon = type === 'polygon'
+        const isPolkygon = type === 'polygon'
         
         const iconSize = (style.radius*2) + (style.opacity ? style.weight*2 : 0)
         const width = isPoint ? iconSize : 20
