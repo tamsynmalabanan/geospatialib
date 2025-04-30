@@ -291,7 +291,6 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            console.log('start')
             mapContainer.style.cursor = 'wait !important'
             disableMapInteractivity(map)
 
@@ -324,7 +323,6 @@ const handleLeafletLegendPanel = (map, parent) => {
             Promise.all(promises).then(() => {
                 enableMapInteractivity(map)
                 mapContainer.style.cursor = ''
-                console.log('end')
             })
 
 
