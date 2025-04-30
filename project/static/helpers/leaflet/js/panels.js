@@ -1787,7 +1787,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     ${Math.round(Math.random()*(100-75))+75}%,
                                     ${Math.round(Math.random()*(55-45))+45}%,
                                 1)`),
+                                fillOpacity: 0.5,
                                 strokeColor: true,
+                                strokeOpacity: 1,
                                 patternBgColor: null,
                                 fillPatternId: null,
                             }), {refresh:false})
@@ -1899,7 +1901,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
                                     ...symbology.default.styleParams,
                                     fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1))*(rank-1))}),
+                                    fillOpacity: 0.5,
                                     strokeColor: true,
+                                    strokeOpacity: 1,
                                     patternBgColor: null,
                                     fillPatternId: null,
                                     iconStroke: false,
