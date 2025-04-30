@@ -29,8 +29,6 @@ const getLeafletGeoJSONLayer = async ({
         return {geojsonId}
     })()) : null)
 
-    console.log(geojsonLayer)
-
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
