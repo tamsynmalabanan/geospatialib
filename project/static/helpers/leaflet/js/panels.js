@@ -291,7 +291,11 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
+            const controllerId = controller.id
+
             Array.from(layers.children).reverse().forEach(async legend => {
+                if (controllerId !== controller.id) return
+ 
                 const leafletId = parseInt(legend.dataset.layerId)
                 const layer = map._ch.getLegendLayer(leafletId)
                 if (!layer) return
@@ -304,6 +308,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 }
                 
                 if (layer instanceof L.GeoJSON) {
+                    if (controllerId !== controller.id) return
+                    
                     await updateGeoJSONData(layer, {controller})
 
                     if (layer._openpopup) {
@@ -311,7 +317,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         delete layer._openpopup
                     }
                 }
-
             })
         }, 100)
     })
