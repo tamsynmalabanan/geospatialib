@@ -291,6 +291,8 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
+            document.body.style.cursor = 'wait'
+            
             const controllerId = controller.id
 
             Array.from(layers.children).reverse().forEach(async legend => {
@@ -318,6 +320,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 }
             })
+
+            document.body.style.cursor = ''
         }, 100)
     })
 
