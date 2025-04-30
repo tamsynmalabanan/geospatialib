@@ -2384,11 +2384,11 @@ const handleLeafletStylePanel = (map, parent) => {
     
                                 if (!filter.values.includes(value)) options.push(String(value))
                             })
-                            console.log(options)
                             return options
                         })
                     }
                     
+                    console.log(options)
                     const optionsSet = options.length ? new Set(options) : []
                     const sortedOptions = [...optionsSet].sort()
 
