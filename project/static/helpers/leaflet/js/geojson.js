@@ -372,6 +372,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         layer.addData(data)
     }
     layer.fire('dataupdate')
+    console.log('dataupdate')
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {
