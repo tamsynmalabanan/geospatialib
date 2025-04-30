@@ -1448,7 +1448,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             suffixHTML: '%',
             fieldClass: 'form-control-sm',
-            inputGroupClass: 'w-10 flex-grow-1',
+            inputGroupClass: 'w-25 flex-grow-1',
             events: {
                 blur: (e) => {
                     const value = (parseFloat(e.target.value) / 100) || 0
