@@ -293,37 +293,71 @@ const handleLeafletLegendPanel = (map, parent) => {
         timeout = setTimeout(async () => {
             mapContainer.style.cursor = 'wait !important'
             disableMapInteractivity(map)
-            
-            const controllerId = controller.id
 
-            Array.from(layers.children).reverse().forEach(async legend => {
+            const controllerId = controller.id
+            const promises = []
+
+            Array.from(layers.children).reverse().forEach(legend => {
                 if (controllerId !== controller.id) return
- 
+                
                 const leafletId = parseInt(legend.dataset.layerId)
                 const layer = map._ch.getLegendLayer(leafletId)
                 if (!layer) return
 
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !layerIsVisible(layer)
-                if (isHidden || isInvisible) {
-                    clearLegend(legend, isHidden, isInvisible)
-                    return
-                }
-                
+                if (isHidden || isInvisible) return clearLegend(legend, isHidden, isInvisible)
+
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
-                    await updateGeoJSONData(layer, {controller})
-
-                    if (layer._openpopup) {
-                        layer._openpopup.openOn(map)
-                        delete layer._openpopup
-                    }
+                    promises.push(updateGeoJSONData(layer, {controller}).then(() => {
+                        if (layer._openpopup) {
+                            layer._openpopup.openOn(map)
+                            delete layer._openpopup
+                        }
+                    }))
                 }
             })
 
-            enableMapInteractivity(map)
-            document.body.style.cursor = ''
+            Promise.all(promises).then(() => {
+                enableMapInteractivity(map)
+                mapContainer.style.cursor = ''
+            })
+
+
+            // mapContainer.style.cursor = 'wait !important'
+            // disableMapInteractivity(map)
+            
+            // const controllerId = controller.id
+            // Array.from(layers.children).reverse().forEach(async legend => {
+            //     if (controllerId !== controller.id) return
+ 
+            //     const leafletId = parseInt(legend.dataset.layerId)
+            //     const layer = map._ch.getLegendLayer(leafletId)
+            //     if (!layer) return
+
+            //     const isHidden = map._ch.hasHiddenLegendLayer(layer)
+            //     const isInvisible = !layerIsVisible(layer)
+            //     if (isHidden || isInvisible) {
+            //         clearLegend(legend, isHidden, isInvisible)
+            //         return
+            //     }
+                
+            //     if (layer instanceof L.GeoJSON) {
+            //         if (controllerId !== controller.id) return
+                    
+            //         await updateGeoJSONData(layer, {controller})
+
+            //         if (layer._openpopup) {
+            //             layer._openpopup.openOn(map)
+            //             delete layer._openpopup
+            //         }
+            //     }
+            // })
+
+            // enableMapInteractivity(map)
+            // document.body.style.cursor = ''
         }, 100)
     })
 
