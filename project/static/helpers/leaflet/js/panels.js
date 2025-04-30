@@ -2573,7 +2573,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             name:  `groupBy`,
                             placeholder: 'Select properties',
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
-                            callbacks: {
+                            events: {
                                 focus: async (e) => {
                                     const geojson = (await fetchClientGeoJSON(layer._fetchParams?.geojsonId)) || layer.toGeoJSON()
                                     if (!geojson) return
@@ -2582,8 +2582,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
                                         geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
                                     }
-
-                                    const tagify = e.detail.tagify
+    
+                                    const tagify = Tagify(form.elements['groupBy'])
                                     const options = symbology.method === 'categorized' ? ['[geometry_type]'] : []
                                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                                         Object.keys(currentProperties).forEach(i => options.push(String(i)))
@@ -2594,6 +2594,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }).sort()
                                     tagify.settings.whitelist = sortedOptions
                                 },
+                            },
+                            callbacks: {
                                 ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
                                     const tagify = e.detail.tagify
                                     const values = tagify.value.map(i => i.value)
