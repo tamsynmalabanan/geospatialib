@@ -2369,8 +2369,35 @@ const handleLeafletStylePanel = (map, parent) => {
             placeholder: 'Select property values',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             events: {
+                // focus: async (e) => {
+                //     const tagify = Tagify(form.elements[`propFilter-values-${id}`])
+                    
+                //     let options = []
+    
+                //     if (Array('equals').includes(filter.handler) && filter.property) {
+                //         options = await (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
+                //         .then(geojson => {
+                //             const options = []
+                //             turf.propEach(geojson, (currentProperties, featureIndex) => {
+                //                 let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
+                //                 value = value === '' ? '[blank]' : value
+    
+                //                 if (!filter.values.includes(value)) options.push(String(value))
+                //             })
+                //             return options
+                //         })
+                //     }
+                    
+                //     console.log(options)
+                //     const optionsSet = options.length ? new Set(options) : []
+                //     const sortedOptions = [...optionsSet].sort()
+    
+                //     tagify.settings.whitelist = sortedOptions
+                // },
+            },
+            callbacks: {
                 focus: async (e) => {
-                    const tagify = Tagify(form.elements[`propFilter-values-${id}`])
+                    const tagify = e.detail.tagify //Tagify(form.elements[`propFilter-values-${id}`])
                     
                     let options = []
     
@@ -2394,8 +2421,6 @@ const handleLeafletStylePanel = (map, parent) => {
     
                     tagify.settings.whitelist = sortedOptions
                 },
-            },
-            callbacks: {
                 ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
                     const tagify = e.detail.tagify
                     const values = tagify.value.map(i => i.value)
