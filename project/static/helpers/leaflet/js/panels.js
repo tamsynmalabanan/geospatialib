@@ -785,7 +785,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.appendChild(icon)
             }
 
-            if (controllerId !== controller.id) throw new Error()
+            if (refresh && controllerId !== controller.id) throw new Error()
             const dataUrl = iconType === 'svg' ? (await svgToDataURL(outerHTML)) : (await outerHTMLToDataURL(outerHTML, {
                 width:svgWidth,
                 height:svgHeight,
@@ -799,7 +799,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.appendChild(icon)
             }
 
-            if (controllerId !== controller.id) throw new Error()
+            if (refresh && controllerId !== controller.id) throw new Error()
             img.setAttribute('src', await createNewImage(
                 iconType === 'img' ? iconSpecs :  dataUrl, {
                     opacity:fillOpacity,
@@ -883,7 +883,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (styleParams.fillPatternId) delete styleParams.fillPatternId
             if (defs) defs.remove()
         } finally {
-            if (controllerId !== controller.id) return
+            if (refresh && controllerId !== controller.id) return
             if (refresh) updateGeoJSONData(layer).then(() => {
                 map.setZoom(map.getZoom())
             })
