@@ -1410,13 +1410,13 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const fillFields = customCreateElement({
-            className:'d-flex gap-2',
+            className:'d-flex gap-2 flex-wrap',
             parent: fieldsContainer,
         })
 
         const fillColor = createFormFloating({
             parent:fillFields,
-            containerClass: 'w-100 flex-grow-1',
+            containerClass: 'w-25 flex-grow-1',
             fieldAttrs: {
                 name:`${id}-fillColor`,
                 type: 'color',
@@ -1448,6 +1448,7 @@ const handleLeafletStylePanel = (map, parent) => {
             },
             suffixHTML: '%',
             fieldClass: 'form-control-sm',
+            inputGroupClass: 'w-25',
             events: {
                 blur: (e) => {
                     const value = (parseFloat(e.target.value) / 100) || 0
@@ -1461,7 +1462,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const fillPattern = createFormFloating({
             parent: fillFields,
-            containerClass: 'w-100 flex-grow-1',
+            containerClass: 'w-25 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `${id}-fillPattern`},
             fieldClass: 'form-select-sm',
@@ -1483,7 +1484,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const patternBgFields = customCreateElement({
-            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-1', 
+            className:'border rounded p-2 d-flex justify-content-center align-items-center gap-1 w-25', 
             style: {maxHeight:'58px'},
             parent:fillFields
         })
