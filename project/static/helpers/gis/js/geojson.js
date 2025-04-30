@@ -369,7 +369,7 @@ const createFeaturePropertiesTable = (properties, {
 
 const mapForFilterGeoJSON = new Map()
 const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
-    if (!geojson) return
+    if (!dbKey) return
 
     const mapKey = `${dbKey};${map?.getContainer().id}`
     if (mapForFilterGeoJSON.has(mapKey)) {
