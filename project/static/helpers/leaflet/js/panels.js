@@ -2370,12 +2370,12 @@ const handleLeafletStylePanel = (map, parent) => {
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
                 click: async (e) => {
+                    console.log('test')
                     const tagify = e.detail.tagify
                     
                     const options = []
                     
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        console.log('test')
                         let geojson = await fetchClientGeoJSON(layer._fetchParams?.geojsonId)
                         if (!geojson) geojson = layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
