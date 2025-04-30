@@ -10,9 +10,7 @@ const titleToTooltip = (element, altTitle) => {
     tooltip.setContent({'.tooltip-inner':title})
     
     element.addEventListener('show.bs.tooltip', (e) => {
-        const tooltip = bootstrap.Tooltip.getOrCreateInstance(e.target)
-        console.log(tooltip)
-        document.querySelectorAll('.tooltip.bs-tooltip-auto.fade.show').forEach(i => console.log(i))
+        document.querySelectorAll('.tooltip.bs-tooltip-auto.fade.show').forEach(i => i.remove())
     })
 
     return element
