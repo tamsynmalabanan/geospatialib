@@ -2366,18 +2366,17 @@ const handleLeafletStylePanel = (map, parent) => {
                 minHeight: '58px',
             },
             name:  `propFilter-values-${id}`,
-            placeholder: 'Select property value',
+            placeholder: 'Select property values',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
-                click: async (e) => {
-                    console.log('test')
+                focus: (e) => {
                     const tagify = e.detail.tagify
                     
                     const options = []
                     
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        let geojson = await fetchClientGeoJSON(layer._fetchParams?.geojsonId)
-                        if (!geojson) geojson = layer.toGeoJSON()
+                        const geojson = fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON()
+                        console.log(geojson)
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                             value = value === '' ? '[blank]' : value
