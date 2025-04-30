@@ -311,6 +311,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         controller,
     })
 
+    if (controller?.signal.aborted) return
+
     if (data?.features?.length) {
         const filters = layer._styles.filters
         const hasActiveFilters = Object.values(filters).some(i => {
@@ -328,6 +330,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         const groupsLength = groups.length
         
         data.features = data.features.filter(feature => {
+            if (controller?.signal.aborted) return
+
             const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
 
             if (valid && groupsLength) {
@@ -360,6 +364,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     
     layer.options.renderer._container?.classList.remove('d-none')
     
+    if (controller?.signal.aborted) return
+
     layer.clearLayers()
     if (featureCount) {
         sortGeoJSONFeatures(data, {reverse:true})
