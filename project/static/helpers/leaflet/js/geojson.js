@@ -21,11 +21,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._fetchParams = fetchParams || (geojson ? (await (async () => {
         const geojsonId = generateRandomString()
         await handleGeoJSON(geojson)
-        saveToGeoJSONDB(
-            geojsonId, 
-            geojson, 
-            turf.bboxPolygon(turf.bbox(geojson)).geometry
-        )
+        saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry)
         return {geojsonId}
     })()) : null)
 
@@ -463,4 +459,4 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         return width
     }))
     pointIcons.forEach(i => i.style.width = `${maxWidth}px`)
-}  
+}
