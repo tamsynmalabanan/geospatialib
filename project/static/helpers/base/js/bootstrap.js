@@ -9,6 +9,8 @@ const titleToTooltip = (element, altTitle) => {
     const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
     tooltip.setContent({'.tooltip-inner':title})
 
+    console.log(tooltip)
+
     return element
 }
 

@@ -234,6 +234,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
+        divider2: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        newFile: {
+            
+        },
+        // newURL: {
+
+        // },
     })
 
     const clearLegend = (layerLegend, isHidden, isInvisible) => {
