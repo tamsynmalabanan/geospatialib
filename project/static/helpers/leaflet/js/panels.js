@@ -2384,6 +2384,7 @@ const handleLeafletStylePanel = (map, parent) => {
     
                                 if (!filter.values.includes(value)) options.push(String(value))
                             })
+                            console.log(options)
                             return options
                         })
                     }
