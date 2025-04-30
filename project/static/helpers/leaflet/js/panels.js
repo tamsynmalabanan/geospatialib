@@ -2375,13 +2375,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     const options = []
                     
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        const geojson = fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON()
-                        console.log(geojson)
-                        turf.propEach(geojson, (currentProperties, featureIndex) => {
-                            let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
-                            value = value === '' ? '[blank]' : value
-
-                            if (!filter.values.includes(value)) options.push(String(value))
+                        (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
+                        .then(geojson => {
+                            turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
+                                value = value === '' ? '[blank]' : value
+    
+                                if (!filter.values.includes(value)) options.push(String(value))
+                            })
                         })
                     }
                     
