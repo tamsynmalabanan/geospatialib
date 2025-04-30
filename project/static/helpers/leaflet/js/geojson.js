@@ -287,7 +287,7 @@ const getGeoJSONLayerStyles = (layer) => {
 
     const typesString = [...new Set(Object.values(styles).map(i => Object.keys(i.types).filter(j => i.types[j].count > 0).join(',')))]
     if (typesString.length === 1) {
-        const types = typesString.split(',')
+        const types = typesString[0].split(',')
         Object.keys(styles).forEach(i => {
             const style = styles[i]
             Object.keys(style.types).forEach(j => {
