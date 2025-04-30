@@ -2377,6 +2377,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (Array('equals').includes(filter.handler) && filter.property) {
                         (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
                         .then(geojson => {
+                            console.log(geojson)
                             turf.propEach(geojson, (currentProperties, featureIndex) => {
                                 let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                                 value = value === '' ? '[blank]' : value
