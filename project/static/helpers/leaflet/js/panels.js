@@ -623,7 +623,7 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {
         refresh=true,
     }={}) => {
-        controller = resetController({controller, message: 'Updating symbology.'})
+        controller = resetController({controller, message: 'Updating symbology'})
         const controllerId = controller.id
         let defs
 
@@ -785,13 +785,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.appendChild(icon)
             }
 
-            if (refresh && controllerId !== controller.id) throw new Error()
-            const dataUrl = iconType === 'svg' ? (await svgToDataURL(outerHTML)) : (await outerHTMLToDataURL(outerHTML, {
+            const dataUrl = iconType === 'svg' ? await svgToDataURL(outerHTML) : await outerHTMLToDataURL(outerHTML, {
                 width:svgWidth,
                 height:svgHeight,
                 x:0-(buffer/2),
                 y:0-(buffer/2),
-            }))
+            })
 
             if (iconType === 'html' && dataUrl) {
                 icon = document.createElementNS(svgNS, 'image')
@@ -799,7 +798,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.appendChild(icon)
             }
 
-            if (refresh && controllerId !== controller.id) throw new Error()
             img.setAttribute('src', await createNewImage(
                 iconType === 'img' ? iconSpecs :  dataUrl, {
                     opacity:fillOpacity,
@@ -883,8 +881,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (styleParams.fillPatternId) delete styleParams.fillPatternId
             if (defs) defs.remove()
         } finally {
-            if (refresh && controllerId !== controller.id) return
-            if (refresh) updateGeoJSONData(layer).then(() => {
+            if (refresh && controllerId === controller.id) updateGeoJSONData(layer).then(() => {
                 map.setZoom(map.getZoom())
             })
             return styleParams
