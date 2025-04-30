@@ -2375,7 +2375,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     let options = []
 
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        options = (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
+                        options = await (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
                         .then(geojson => {
                             const options = []
                             turf.propEach(geojson, (currentProperties, featureIndex) => {
