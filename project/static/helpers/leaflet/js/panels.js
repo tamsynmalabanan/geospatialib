@@ -623,8 +623,6 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {
         refresh=true,
     }={}) => {
-        controller = resetController({controller, message: 'Updating symbology'})
-        const controllerId = controller.id
         let defs
 
         try {
@@ -881,7 +879,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (styleParams.fillPatternId) delete styleParams.fillPatternId
             if (defs) defs.remove()
         } finally {
-            if (refresh && controllerId === controller.id) updateGeoJSONData(layer).then(() => {
+            if (refresh) updateGeoJSONData(layer).then(() => {
                 map.setZoom(map.getZoom())
             })
             return styleParams
