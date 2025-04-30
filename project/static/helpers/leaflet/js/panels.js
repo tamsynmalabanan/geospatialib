@@ -2369,7 +2369,7 @@ const handleLeafletStylePanel = (map, parent) => {
             placeholder: 'Select property value',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
-                focus: async (e) => {
+                click: async (e) => {
                     const tagify = e.detail.tagify
                     
                     const options = []
