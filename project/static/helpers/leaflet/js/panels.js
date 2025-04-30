@@ -1755,6 +1755,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             const interval = 360/count
                             const min = interval * (rank-1)
                             const max = (interval * rank) - interval/2
+
+                            console.log(min, interval * rank, (interval * rank) - interval/2)
+
                             const styleParams = await updateSymbology(getLeafletStyleParams({
                                 ...symbology.default.styleParams,
                                 fillColor: `hsla(${Math.floor(Math.random() * (max - min + 1)) + min}, 100%, 50%, 1)`,
