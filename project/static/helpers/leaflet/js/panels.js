@@ -1758,8 +1758,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     ${Math.round(Math.random()*(
                                         ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
                                     ))+(360/count*(rank-1))},
-                                    ${Math.round(Math.random()*(100-50))+50}%,
-                                    ${Math.round(Math.random()*(60-40))+40}%,
+                                    ${Math.round(Math.random()*(100-75))+75}%,
+                                    ${Math.round(Math.random()*(55-45))+45}%,
                                 1)`),
                                 strokeColor: true,
                                 patternBgColor: null,
