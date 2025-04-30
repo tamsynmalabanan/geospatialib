@@ -1171,7 +1171,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
             if (iconType === 'property') {
                 // update to retrieve properties from wfs/wms
-                const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
+                const geojson = (await fetchClientGeoJSON(layer._fetchParams?.geojsonId)) || layer.toGeoJSON()
                 if (geojson) {
                     const filters = layer._styles.filters
                     if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
@@ -1733,7 +1733,7 @@ const handleLeafletStylePanel = (map, parent) => {
         container.innerHTML = ''
 
         if (symbology.method !== 'single' && symbology.groupBy?.length) {
-            const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
+            const geojson = (await fetchClientGeoJSON(layer._fetchParams?.geojsonId)) || layer.toGeoJSON()
             if (geojson) {
                 if (controllerId !== controller.id) return
                 
@@ -2229,13 +2229,13 @@ const handleLeafletStylePanel = (map, parent) => {
             options: {[filter.property || '']:filter.property || ''},
             currentValue: filter.property || '',
             events: {
-                focus: (e) => {
+                focus: async (e) => {
                     const field = e.target
                     field.innerHTML = ''
 
                     // update to fetch properties from wfs (wms?)
                     const options = []
-                    const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                    const geojson = (await fetchClientGeoJSON(layer._fetchParams?.geojsonId)) || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         Object.keys(currentProperties).forEach(i => options.push(i))
                     })
@@ -2369,13 +2369,13 @@ const handleLeafletStylePanel = (map, parent) => {
             placeholder: 'Select property value',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
             callbacks: {
-                focus: (e) => {
+                focus: async (e) => {
                     const tagify = e.detail.tagify
                     
                     const options = []
                     
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        const geojson = layer._fetchParams?.geojson || layer.toGeoJSON()
+                        const geojson = (await fetchClientGeoJSON(layer._fetchParams?.geojsonId)) || layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                             value = value === '' ? '[blank]' : value
@@ -2572,8 +2572,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             placeholder: 'Select properties',
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             callbacks: {
-                                focus: (e) => {
-                                    const geojson = turf.clone((layer._fetchParams?.geojson || {})) || layer.toGeoJSON()
+                                focus: async (e) => {
+                                    const geojson = (await fetchClientGeoJSON(layer._fetchParams?.geojsonId)) || layer.toGeoJSON()
                                     if (!geojson) return
                                     
                                     const filters = layer._styles.filters

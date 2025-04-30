@@ -258,8 +258,10 @@ const getLeafletLayerBounds = async (layer) => {
         return L.latLangBounds([s,w],[n,e])
     }
 
-    if (layer instanceof L.GeoJSON && layer._fetchParams?.geojson) {
-        return L.geoJSON(layer._fetchParams?.geojson).getBounds()
+    const geojsonId = layer._fetchParams?.geojsonId
+    if (layer instanceof L.GeoJSON && geojsonId) {
+        const geojson = await fetchClientGeoJSON(geojsonId)
+        return L.geoJSON(geojson ?? {}).getBounds()
     }
 
     if (layer.getBounds) {
@@ -441,7 +443,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
-                return layer._fetchParams?.geojson
+                return await fetchClientGeoJSON(layer._fetchParams?.geojsonId)
             }
         }
     })()
@@ -632,7 +634,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
-                const fetchParams = feature ? geojsonLayer._fetchParams : layer._fetchParams
+                const fetchParams = (feature ? geojsonLayer : layer)._fetchParams
                 const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let newLayer

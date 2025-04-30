@@ -18,7 +18,16 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._attribution = attribution
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-    geojsonLayer._fetchParams = fetchParams || (geojson ? {id: generateRandomString(), geojson} : null)
+    geojsonLayer._fetchParams = fetchParams || (geojson ? (async () => {
+        const geojsonId = generateRandomString()
+        await handleGeoJSON(geojson)
+        saveToGeoJSONDB(
+            geojsonId, 
+            geojson, 
+            turf.bboxPolygon(turf.bbox(geojson)).geometry
+        )
+        return {geojsonId}
+    })() : null)
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
@@ -303,7 +312,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     const fetchParams = layer._fetchParams
     if (!fetchParams) return
     
-    const fetcher = fetchParams.geojson ? fetchClientGeoJSON : null
+    const fetcher = fetchParams.geojsonId ? fetchClientGeoJSON : null
     if (!fetcher) return
     
     const data = await fetcher(...Object.values(fetchParams), {

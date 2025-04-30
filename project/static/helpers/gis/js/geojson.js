@@ -368,10 +368,10 @@ const createFeaturePropertiesTable = (properties, {
 }
 
 const mapForFilterGeoJSON = new Map()
-const fetchClientGeoJSON = async (id, geojson, {map, controller} = {}) => {
+const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
     if (!geojson) return
 
-    const mapKey = `${id};${map?.getContainer().id}`
+    const mapKey = `${dbKey};${map?.getContainer().id}`
     if (mapForFilterGeoJSON.has(mapKey)) {
         return mapForFilterGeoJSON.get(mapKey)
     }
@@ -380,10 +380,13 @@ const fetchClientGeoJSON = async (id, geojson, {map, controller} = {}) => {
     const geojsonPromise = (async () => {
         try {
             if (signal?.aborted) throw new Error()
+            
+            const cachedData = await getFromGeoJSONDB(dbKey)
+            if (!cachedData) throw new Error('Cached data not found.')
 
-            const clonedGeoJSON = turf.clone(geojson)
-            const geojsonBbox = turf.bboxPolygon(turf.bbox(clonedGeoJSON)).geometry
-        
+            const clonedGeoJSON = cachedData.geojson
+            const geojsonBbox = cachedData.queryExtent
+
             if (map) {
                 const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
                 if (!turf.booleanIntersects(queryExtent, geojsonBbox)) return
@@ -395,7 +398,7 @@ const fetchClientGeoJSON = async (id, geojson, {map, controller} = {}) => {
             }
 
             if (clonedGeoJSON.features.length === 0) return
-            return clonedGeoJSON
+            return clonedGeoJSON    
         } catch (error) {
             throw error
         } finally {
