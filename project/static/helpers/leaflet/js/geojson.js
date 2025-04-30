@@ -18,7 +18,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._attribution = attribution
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-    geojsonLayer._fetchParams = fetchParams || (geojson ? (async () => {
+    geojsonLayer._fetchParams = fetchParams || (geojson ? (await (async () => {
         const geojsonId = generateRandomString()
         await handleGeoJSON(geojson)
         saveToGeoJSONDB(
@@ -27,7 +27,7 @@ const getLeafletGeoJSONLayer = async ({
             turf.bboxPolygon(turf.bbox(geojson)).geometry
         )
         return {geojsonId}
-    })() : null)
+    })()) : null)
 
     console.log(geojsonLayer)
 
