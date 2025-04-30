@@ -291,7 +291,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            document.body.style.cursor = 'wait'
+            document.body.style.cursor = 'wait !important'
             
             const controllerId = controller.id
 
