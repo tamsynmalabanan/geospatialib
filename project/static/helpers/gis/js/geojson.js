@@ -337,6 +337,8 @@ const createFeaturePropertiesTable = (properties, {
     
     const handler = (properties) => {
         Object.keys(properties).forEach(property => {
+            if (property.startsWith('__') && property.endsWith('__')) return
+            
             let data = properties[property]
             
             if (data && typeof data === 'object') {
