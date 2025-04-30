@@ -2372,18 +2372,19 @@ const handleLeafletStylePanel = (map, parent) => {
                 focus: (e) => {
                     const tagify = e.detail.tagify
                     
-                    const options = []
-                    
+                    let options = []
+
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
+                        options = (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
                         .then(geojson => {
-                            console.log(geojson)
+                            const options = []
                             turf.propEach(geojson, (currentProperties, featureIndex) => {
                                 let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                                 value = value === '' ? '[blank]' : value
     
                                 if (!filter.values.includes(value)) options.push(String(value))
                             })
+                            return options
                         })
                     }
                     
