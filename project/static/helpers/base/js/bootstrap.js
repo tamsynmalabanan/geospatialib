@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
     document.addEventListener('show.bs.tooltip', (e) => {
-        console.log(e)
         document.querySelectorAll('.tooltip.bs-tooltip-auto.fade.show').forEach(i => i.remove())
     })
 
