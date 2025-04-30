@@ -8,10 +8,6 @@ const titleToTooltip = (element, altTitle) => {
     
     const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
     tooltip.setContent({'.tooltip-inner':title})
-    
-    element.addEventListener('show.bs.tooltip', (e) => {
-        document.querySelectorAll('.tooltip.bs-tooltip-auto.fade.show').forEach(i => i.remove())
-    })
 
     return element
 }
@@ -19,6 +15,12 @@ const titleToTooltip = (element, altTitle) => {
 document.addEventListener('DOMContentLoaded', () => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+    document.addEventListener('show.bs.tooltip', (e) => {
+        console.log(e)
+        document.querySelectorAll('.tooltip.bs-tooltip-auto.fade.show').forEach(i => i.remove())
+    })
+
 })
 
 const bootstrapIcons = {}
