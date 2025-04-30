@@ -1,6 +1,5 @@
 const disableMapInteractivity = (map) => {
     if (!map._enabledInteractivity || map._enabledInteractivity === true) {
-        console.log('disable')
         map.dragging.disable()
         map.touchZoom.disable()
         map.doubleClickZoom.disable()
@@ -11,7 +10,6 @@ const disableMapInteractivity = (map) => {
 
 const enableMapInteractivity = (map) => {
     if (map._enabledInteractivity === false) {
-        console.log('enable')
         map.dragging.enable()
         map.touchZoom.enable()
         map.doubleClickZoom.enable()

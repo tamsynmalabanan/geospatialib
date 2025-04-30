@@ -291,8 +291,11 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            mapContainer.style.cursor = 'wait !important'
+            const mapParent = mapContainer.parentElement
+            
             disableMapInteractivity(map)
+            mapParent.style.pointerEvents = 'none !important'
+            mapParent.style.cursor = 'wait !important'
 
             const controllerId = controller.id
             const promises = []
@@ -322,42 +325,9 @@ const handleLeafletLegendPanel = (map, parent) => {
 
             Promise.all(promises).then(() => {
                 enableMapInteractivity(map)
-                mapContainer.style.cursor = ''
+                mapParent.style.pointerEvents = ''
+                mapParent.style.cursor = ''
             })
-
-
-            // mapContainer.style.cursor = 'wait !important'
-            // disableMapInteractivity(map)
-            
-            // const controllerId = controller.id
-            // Array.from(layers.children).reverse().forEach(async legend => {
-            //     if (controllerId !== controller.id) return
- 
-            //     const leafletId = parseInt(legend.dataset.layerId)
-            //     const layer = map._ch.getLegendLayer(leafletId)
-            //     if (!layer) return
-
-            //     const isHidden = map._ch.hasHiddenLegendLayer(layer)
-            //     const isInvisible = !layerIsVisible(layer)
-            //     if (isHidden || isInvisible) {
-            //         clearLegend(legend, isHidden, isInvisible)
-            //         return
-            //     }
-                
-            //     if (layer instanceof L.GeoJSON) {
-            //         if (controllerId !== controller.id) return
-                    
-            //         await updateGeoJSONData(layer, {controller})
-
-            //         if (layer._openpopup) {
-            //             layer._openpopup.openOn(map)
-            //             delete layer._openpopup
-            //         }
-            //     }
-            // })
-
-            // enableMapInteractivity(map)
-            // document.body.style.cursor = ''
         }, 100)
     })
 
