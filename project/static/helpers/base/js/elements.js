@@ -700,6 +700,7 @@ const createTagifyField = ({
     scopeStyle = {},
     maxItems = Infinity,
     maxTags = 100,
+    events = {},
 } = {}) => {
 
     const input = document.createElement(inputTag)
@@ -724,6 +725,7 @@ const createTagifyField = ({
         }
     })
 
+    Object.keys(events).forEach(i => tagifyObj.DOM.scope.addEventListener(i, events[i]))
     Object.keys(scopeStyle).forEach(i => tagifyObj.DOM.scope.style[i] = scopeStyle[i])
 }
 

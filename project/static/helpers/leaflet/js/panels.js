@@ -2368,12 +2368,12 @@ const handleLeafletStylePanel = (map, parent) => {
             name:  `propFilter-values-${id}`,
             placeholder: 'Select property values',
             currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
-            callbacks: {
-                focus: (e) => {
-                    const tagify = e.detail.tagify
+            events: {
+                focus: async (e) => {
+                    const tagify = Tagify(form.elements[`propFilter-values-${id}`])
                     
                     let options = []
-
+    
                     if (Array('equals').includes(filter.handler) && filter.property) {
                         options = await (fetchClientGeoJSON(layer._fetchParams?.geojsonId) || layer.toGeoJSON())
                         .then(geojson => {
@@ -2391,9 +2391,11 @@ const handleLeafletStylePanel = (map, parent) => {
                     console.log(options)
                     const optionsSet = options.length ? new Set(options) : []
                     const sortedOptions = [...optionsSet].sort()
-
+    
                     tagify.settings.whitelist = sortedOptions
                 },
+            },
+            callbacks: {
                 ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
                     const tagify = e.detail.tagify
                     const values = tagify.value.map(i => i.value)
