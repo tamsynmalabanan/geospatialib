@@ -1752,12 +1752,15 @@ const handleLeafletStylePanel = (map, parent) => {
                             rank +=1
                             const filters = JSON.parse(group)
 
-                            const interval = 360/count
-                            const min = interval*(rank-1)
-                            const max = (interval*rank)-(interval*0.75)
                             const styleParams = await updateSymbology(getLeafletStyleParams({
                                 ...symbology.default.styleParams,
-                                fillColor: `hsla(${Math.round(Math.random()*(max-min))+min}, 50%, 50%, 1)`,
+                                fillColor: removeWhitespace(`hsla(
+                                    ${Math.round(Math.random()*(
+                                        ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
+                                    ))+(360/count*(rank-1))},
+                                    ${Math.round(Math.random()*(100-50))+50}%,
+                                    ${Math.round(Math.random()*(75-25))+25}%,
+                                1)`),
                                 strokeColor: true,
                                 patternBgColor: null,
                                 fillPatternId: null,
