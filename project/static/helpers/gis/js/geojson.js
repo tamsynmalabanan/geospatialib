@@ -33,7 +33,7 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "MultiPolygon",
         ]
 
-        const rankComparison = (a._groupRank ?? 0) - (b._groupRank ?? 0)
+        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
         const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
         const comparison = (
             typeComparison !== 0 ? typeComparison : 

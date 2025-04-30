@@ -107,7 +107,7 @@ const getLeafletGeoJSONLayer = async ({
 
     const getStyle = (feature) => {
         const symbology = geojsonLayer._styles?.symbology
-        return (symbology?.groups)?.[feature._groupId]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
+        return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
     }
 
     geojsonLayer.options.style = (feature) => {
@@ -276,7 +276,7 @@ const getGeoJSONLayerStyles = (layer) => {
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
-        styles[feature._groupId ?? ""].types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
+        styles[feature.properties.__groupId__ ?? ""].types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
     })
 
     Object.keys(styles).forEach(i => {
@@ -335,17 +335,18 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
             const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
 
             if (valid && groupsLength) {
+                const properties = feature.properties
                 for (const [id, group] of groups) {
                     if (!group.active) continue
                     if (!validateGeoJSONFeature(feature, group.filters)) continue
                     
-                    feature._groupId = id
-                    feature._groupRank = group.rank
+                    properties.__groupId__ = id
+                    properties.__groupRank__ = group.rank
                     break
                 }
 
-                if (!feature._groupId) feature._groupId = ''
-                if (!feature._groupRank) feature._groupRank = groupsLength + 1
+                if (!properties.__groupId__) properties.__groupId__ = ''
+                if (!properties.__groupRank__) properties.__groupRank__ = groupsLength + 1
             }
 
             return valid
