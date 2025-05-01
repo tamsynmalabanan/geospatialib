@@ -347,8 +347,6 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         if (hasActiveFilters || groupsLength) {
             console.log('filtering', new Date())
             data.features = data.features.filter(feature => {
-                console.log('filtering feature')
-                
                 if (controller?.signal.aborted) return
     
                 const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
