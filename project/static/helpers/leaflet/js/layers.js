@@ -586,7 +586,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 try {
                     const geojson = JSON.parse(text)
-                    if (!geojson) return
+                    if (!geojson || !turf.booleanValid(geojson)) return
 
                     const geojsonId = generateRandomString()
                     await handleGeoJSON(geojson)
