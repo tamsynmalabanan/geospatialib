@@ -3308,18 +3308,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
             })
         })
-
-        document.querySelector(`#${body.id}-symbology`).addEventListener('mousedown', (e) => {
-            if (!updateSymbologyTimeout) return
-            
-            const name = e.target.getAttribute('name')
-            if (!name) return
-            
-            console.log(name)
-            // const symbology = layer._styles.symbology
-            // const style = (symbology.groups?.[id]) || symbology.default
-            // updateSymbology((style.active ? style.styleParams : null))
-        })
     })
 }
 
