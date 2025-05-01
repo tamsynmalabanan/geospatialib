@@ -1852,7 +1852,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                                     property: i,
                                                     handler: 'equals',
                                                     value: true,
-                                                    case: true,
+                                                    case: symbology.case,
                                                     values: [filters[i]]
                                                 }
                                             })
