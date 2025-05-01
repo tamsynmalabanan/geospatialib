@@ -2570,7 +2570,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
 
                                     body.querySelector(`#${body.id}-graduatedParams`).classList.toggle('d-none', value !== 'graduated')
-                                    body.querySelector(`#${body.id}-categoryParams`).classList.toggle('d-none', value !== 'category')
+                                    body.querySelector(`#${body.id}-categoryParams`).classList.toggle('d-none', value !== 'categorized')
 
                                     if (value === 'single' || symbology.groupBy?.length) updateSymbologyGroups()
                                 }
@@ -2631,7 +2631,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                     id: `${body.id}-categoryParams`,
                                     style: {width:'20%', height:'58px'},
-                                    className: `d-flex flex-column justify-content-between gap-1 w-25 ${symbology.method !== 'category' ? 'd-none' : ''}`
+                                    className: `d-flex flex-column justify-content-center gap-1 w-25 ${symbology.method !== 'categorized' ? 'd-none' : ''}`
                                 })
 
                                 div.appendChild(createFormCheck({
