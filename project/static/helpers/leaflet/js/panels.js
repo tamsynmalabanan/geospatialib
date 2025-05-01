@@ -639,8 +639,7 @@ const handleLeafletStylePanel = (map, parent) => {
         refresh=true,
         timeout=2500,
     }={}) => {
-        clearTimeout(updateSymbologyTimeout)
-        updateSymbologyTimeout = setTimeout(async () => {
+        const handler = async () => {
             let defs
             try {
                 if (!styleParams) throw new Error('No style params.')
@@ -901,7 +900,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
                 return styleParams
             }
-        }, timeout)
+        }
+
+        clearTimeout(updateSymbologyTimeout)
+        if (timeout) {
+            updateSymbologyTimeout = setTimeout(handler, timeout)
+        } else {
+            return await handler()
+        }
     }
 
     const getSymbologyForm = (id) => {
@@ -1928,7 +1934,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
-                                }), {refresh:false, timeout:-1})
+                                }), {refresh:false, timeout:0})
 
                                 console.log(styleParams)
 
