@@ -900,8 +900,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
                 return styleParams
             }
-        }, 1000)
+        }, 250)
     }
+
+    document.addEventListener('mousedown', (e) => {
+        console.log(e.target)
+    })
 
     const getSymbologyForm = (id) => {
         const legendLayer = getLayerLegend()
