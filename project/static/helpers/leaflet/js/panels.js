@@ -3314,6 +3314,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (!name) return
 
             i.addEventListener('focus', (e) => {
+                if (!updateSymbologyTimeout) return
                 const symbology = layer._styles.symbology
                 const style = (symbology.groups?.[id]) || symbology.default
                 updateSymbology((style.active ? style.styleParams : null))
