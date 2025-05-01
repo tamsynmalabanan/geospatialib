@@ -640,7 +640,6 @@ const handleLeafletStylePanel = (map, parent) => {
         timeout=2500,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
-        console.log(timeout)
         updateSymbologyTimeout = setTimeout(async () => {
             let defs
             try {
@@ -900,7 +899,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (refresh) updateGeoJSONData(layer).then(() => {
                     map.setZoom(map.getZoom())
                 })
-                console.log(styleParams)
                 return styleParams
             }
         }, timeout)
@@ -1930,7 +1928,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
-                                }), {refresh:false, timeout:0})
+                                }), {refresh:false, timeout:-1})
 
                                 console.log(styleParams)
 
