@@ -1781,8 +1781,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
                         return aCount !== bCount ? aCount - bCount : (a.localeCompare(b))
                     })
-                    
-                    console.log(groupsSetSorted)
 
                     const count = groupsSetSorted.length
                     symbology.default.rank = count + 1
