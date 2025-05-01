@@ -2408,7 +2408,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 },
             },
             callbacks: {
-                ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
+                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
                     const tagify = e.detail.tagify
                     const values = tagify.value.map(i => i.value)
         
@@ -2418,7 +2418,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
                     filter.values = values
                     if (filter.active && filter.property) updateGeoJSONData(layer)
-                }])))()
+                }])))() //, 'add', 'remove', 'edit'
             }
         })
 
