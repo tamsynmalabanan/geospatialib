@@ -582,6 +582,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Update data`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
+                console.log(text)
                 if (!text) return
 
                 try {
