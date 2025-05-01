@@ -639,7 +639,7 @@ const handleLeafletStylePanel = (map, parent) => {
         refresh=true,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
-        updateSymbologyTimeout = setTimeout(() => {
+        updateSymbologyTimeout = setTimeout(async () => {
             let defs
             try {
                 if (!styleParams) throw new Error('No style params.')
