@@ -317,6 +317,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         controller,
     })
 
+    if (data instanceof Error) return data
+
     if (controller?.signal.aborted) return
 
     if (data?.features?.length) {
@@ -379,6 +381,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         layer.addData(data)
     }
     layer.fire('dataupdate')
+    return layer
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {

@@ -324,10 +324,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
-                    promises.push(updateGeoJSONData(layer, {controller}).then(() => {
-                        if (layer._openpopup) {
-                            layer._openpopup.openOn(map)
-                            delete layer._openpopup
+                    promises.push(updateGeoJSONData(layer, {controller}).then(layer => {
+                        if (layer instanceof Error) {
+                            console.log('fetch error', layer)
+                        } else {
+                            if (layer._openpopup) {
+                                layer._openpopup.openOn(map)
+                                delete layer._openpopup
+                            }
                         }
                     }))
                 }

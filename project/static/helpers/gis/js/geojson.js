@@ -403,7 +403,7 @@ const fetchClientGeoJSON = async (dbKey, {map, controller, filters, groups} = {}
             if (clonedGeoJSON.features.length === 0) return
             return clonedGeoJSON    
         } catch (error) {
-            throw error
+            return error
         } finally {
             setTimeout(() => mapForFilterGeoJSON.delete(mapKey), 1000)
         }
@@ -486,7 +486,7 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
             
             return geojson
         } catch (error) {
-            throw error
+            return error
         } finally {
             setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
         }
