@@ -582,12 +582,11 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Update data`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
-                console.log(text)
                 if (!text) return
 
                 try {
                     const geojson = JSON.parse(text)
-                    console.log(!geojson, !turf.booleanValid(geojson))
+                    console.log(geojson, turf.booleanValid(geojson))
                     if (!geojson || !turf.booleanValid(geojson)) return
 
                     const geojsonId = generateRandomString()
