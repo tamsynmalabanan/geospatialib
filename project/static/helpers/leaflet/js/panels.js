@@ -3315,9 +3315,10 @@ const handleLeafletStylePanel = (map, parent) => {
             const name = e.target.getAttribute('name')
             if (!name) return
             
-            const symbology = layer._styles.symbology
-            const style = (symbology.groups?.[id]) || symbology.default
-            updateSymbology((style.active ? style.styleParams : null))
+            console.log(name)
+            // const symbology = layer._styles.symbology
+            // const style = (symbology.groups?.[id]) || symbology.default
+            // updateSymbology((style.active ? style.styleParams : null))
         })
     })
 }
