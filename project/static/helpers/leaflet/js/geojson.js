@@ -136,12 +136,10 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     if (geojson && !group?._map?._legendLayerGroups.includes(group)) {
-        const filters = geojsonLayer._styles.filters
-        if (Object.values(filters).some(i => i.active)) {
-            geojson.features = geojson.features.filter(feature => {
-                return validateGeoJSONFeature(feature, filters)
-            })
-        }
+        filterGeoJSON(geojson, {
+            filters: geojsonLayer._styles.filters,
+            groups: geojsonLayer._styles.symbology.groups ?? {},
+        })
         sortGeoJSONFeatures(geojson, {reverse:true})
         geojsonLayer.addData(geojson)
     }
@@ -307,15 +305,12 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const updateGeoJSONData = async (layer, {controller} = {}) => {
-    console.log('start', new Date())
-
     const fetchParams = layer._fetchParams
     if (!fetchParams) return
     
     const fetcher = fetchParams.geojsonId ? fetchClientGeoJSON : null
     if (!fetcher) return
     
-    console.log('fetching data', new Date())
     const data = await fetcher(...Object.values(fetchParams), {
         map: layer._group?._map,
         controller,
@@ -329,46 +324,11 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     if (controller?.signal.aborted) return
 
     if (data?.features?.length) {
-        const filters = layer._styles.filters
-        const hasActiveFilters = Object.values(filters).some(i => {
-            if (!i.active) return false
-            if (!Object.values(i.values).some(j => {
-                if (!j.hasOwnProperty('active')) return true
-                return j.active
-            })) return false
-            return true
+        filterGeoJSON(data, {
+            filters: layer._styles.filters,
+            groups: layer._styles.symbology.groups ?? {},
+            controller
         })
-    
-        const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
-            return valueA.rank - valueB.rank
-        })
-        const groupsLength = groups.length
-        
-        if (hasActiveFilters || groupsLength) {
-            console.log('filtering', data?.features?.length, new Date())
-            data.features = data.features.filter(feature => {
-                if (controller?.signal.aborted) return
-    
-                const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
-    
-                if (valid && groupsLength) {
-                    const properties = feature.properties
-                    for (const [id, group] of groups) {
-                        if (!group.active) continue
-                        if (!validateGeoJSONFeature(feature, group.filters)) continue
-                        
-                        properties.__groupId__ = id
-                        properties.__groupRank__ = group.rank
-                        break
-                    }
-    
-                    if (!properties.__groupId__) properties.__groupId__ = ''
-                    if (!properties.__groupRank__) properties.__groupRank__ = groupsLength + 1
-                }
-    
-                return valid
-            })
-        }
     }
 
     const featureCount = data?.features?.length ?? 0
@@ -387,12 +347,10 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     layer.clearLayers()
     if (featureCount) {
         sortGeoJSONFeatures(data, {reverse:true})
-        console.log('adding data', featureCount, new Date())
         layer.addData(data)
     }
     layer.fire('dataupdate')
     
-    console.log('end', new Date())
     return layer
 }
 

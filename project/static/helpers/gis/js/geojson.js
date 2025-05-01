@@ -526,3 +526,45 @@ const downloadGeoJSON = (geojson, fileName) => {
     URL.revokeObjectURL(url)
 }
 
+const filterGeoJSON = (geojson, {filters={}, groups={}, controller,} = {}) => {
+    const hasActiveFilters = Object.values(filters).some(i => {
+        if (!i.active) return false
+        if (!Object.values(i.values).some(j => {
+            if (!j.hasOwnProperty('active')) return true
+            return j.active
+        })) return false
+        return true
+    })
+
+    groups = Object.entries((groups)).sort(([keyA, valueA], [keyB, valueB]) => {
+        return valueA.rank - valueB.rank
+    })
+    const groupsLength = groups.length
+    
+    if (hasActiveFilters || groupsLength) {
+        geojson.features = geojson.features.filter(feature => {
+            if (controller?.signal.aborted) return
+
+            const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+
+            if (valid && groupsLength) {
+                const properties = feature.properties
+                for (const [id, group] of groups) {
+                    if (!group.active) continue
+                    if (!validateGeoJSONFeature(feature, group.filters)) continue
+                    
+                    properties.__groupId__ = id
+                    properties.__groupRank__ = group.rank
+                    break
+                }
+
+                if (!properties.__groupId__) properties.__groupId__ = ''
+                if (!properties.__groupRank__) properties.__groupRank__ = groupsLength + 1
+            }
+
+            return valid
+        })
+    }
+
+    return geojson
+}
