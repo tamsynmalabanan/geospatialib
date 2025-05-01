@@ -1759,7 +1759,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (controllerId !== controller.id) return
 
                 if (symbology.method === 'categorized') {
-                    const groups = []
+                    let groups = []
                     geojson?.features?.forEach(feature => {
                         const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
                             if (i === '[geometry_type]') return feature.geometry.type
@@ -1773,6 +1773,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     if (controllerId !== controller.id) return
         
+                    if (symbology.case) groups = groups.map(i => i.toLowerCase())
+
                     const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
                         const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
                         const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
