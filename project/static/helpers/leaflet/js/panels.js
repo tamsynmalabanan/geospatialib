@@ -2916,8 +2916,9 @@ const handleLeafletStylePanel = (map, parent) => {
                             role: 'switch',
                             events: {
                                 click: (e) => {
+                                    const propertyFilters = filters.properties
                                     const value = e.target.checked
-                                    if (value === filters.properties.active) return
+                                    if (value === propertyFilters.active) return
                 
                                     Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
                                         form.elements[i].disabled = !value
@@ -2927,8 +2928,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                         value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
                                     })
 
-                                    filters.properties.active = value
-                                    if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                    propertyFilters.active = value
+                                    if (Object.values(propertyFilters.values ?? {}).some(i => {
+                                        return i.active && i.property && i.values.length
+                                    })) updateGeoJSONData(layer)
                                 }
                             }
                         },
