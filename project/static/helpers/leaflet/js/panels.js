@@ -3308,7 +3308,7 @@ const handleLeafletStylePanel = (map, parent) => {
             })
         })
 
-        document.querySelector(`#${body.id}-symbology`).addEventListener('mousedown', (e) => {
+        document.querySelector(`#${body.id}-symbology`).addEventListener('focus', (e) => {
             console.log(e.target, e.target.getAttribute('name'))
         })
     })
