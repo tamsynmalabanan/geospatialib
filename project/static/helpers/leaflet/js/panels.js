@@ -1780,7 +1780,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
                         const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
                         return aCount !== bCount ? aCount - bCount// : a.localeCompare(b)
-                        : a.toLowerCase().localeCompare(b.toLowerCase())
+                        // : a.toLowerCase().localeCompare(b.toLowerCase())
+                        : Object.values(JSON.parse(a))[0].localeCompare(Object.values(JSON.parse(b))[0])
                     })
                     
                     console.log(groupsSetSorted)
