@@ -637,6 +637,7 @@ const handleLeafletStylePanel = (map, parent) => {
     let updateSymbologyTimeout
     const updateSymbology = async (styleParams, {
         refresh=true,
+        timeout=250,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
         updateSymbologyTimeout = setTimeout(async () => {
@@ -900,7 +901,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
                 return styleParams
             }
-        }, 250)
+        }, timeout)
     }
 
     document.addEventListener('mousedown', (e) => {
@@ -1006,7 +1007,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         style.styleParams = await updateSymbology({
                             ...newStyleParams,
                             fillPatternId: styleParams.fillPatternId
-                        }, {refresh:style.active})
+                        }, {refresh:style.active, timeout:0})
 
                         parent.parentElement.insertBefore(getSymbologyForm(id), parent)
                         parent.remove()               
@@ -1814,7 +1815,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 strokeOpacity: 1,
                                 patternBgColor: null,
                                 fillPatternId: null,
-                            }), {refresh:false})
+                            }), {refresh:false, timeout:0})
         
                             if (controllerId !== controller.id) return
                             if (!symbology.groups) return
@@ -1931,7 +1932,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
-                                }), {refresh:false})
+                                }), {refresh:false, timeout:0})
 
                                 if (controllerId !== controller.id) return
                                 if (!symbology.groups) return
