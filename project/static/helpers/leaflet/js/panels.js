@@ -1134,6 +1134,8 @@ const handleLeafletStylePanel = (map, parent) => {
             parent: fieldsContainer,
         })
 
+        console.log(styleParams)
+
         const iconType = createFormFloating({
             parent: iconFields,
             containerClass: 'w-25 flex-grow-1',
