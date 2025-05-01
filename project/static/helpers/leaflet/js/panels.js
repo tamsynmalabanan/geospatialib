@@ -637,7 +637,7 @@ const handleLeafletStylePanel = (map, parent) => {
     let updateSymbologyTimeout
     const updateSymbology = async (styleParams, {
         refresh=true,
-        timeout=250,
+        timeout=1000,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
         updateSymbologyTimeout = setTimeout(async () => {
@@ -3309,7 +3309,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         document.querySelector(`#${body.id}-symbology`).addEventListener('mousedown', (e) => {
-            console.log(e.target)
+            console.log(e.target, e.target.hasOwnProperty('name'))
         })
     })
 }
