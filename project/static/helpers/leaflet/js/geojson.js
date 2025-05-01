@@ -306,6 +306,8 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const updateGeoJSONData = async (layer, {controller} = {}) => {
+    console.log('start', new Date())
+
     const fetchParams = layer._fetchParams
     if (!fetchParams) return
     
@@ -384,6 +386,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         layer.addData(data)
     }
     layer.fire('dataupdate')
+    
+    console.log('end', new Date())
     return layer
 }
 
