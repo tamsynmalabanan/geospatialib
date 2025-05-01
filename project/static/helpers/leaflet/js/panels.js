@@ -1783,6 +1783,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         : a.toLowerCase().localeCompare(b.toLowerCase())
                     })
                     
+                    console.log(groupsSetSorted)
+
                     const count = groupsSetSorted.length
                     symbology.default.rank = count + 1
                     if (groupsSetSorted.length) {
