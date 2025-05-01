@@ -3309,7 +3309,10 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         document.querySelector(`#${body.id}-symbology`).addEventListener('focus', (e) => {
-            console.log(e.target, e.target.getAttribute('name'))
+            const name = e.target.getAttribute('name')
+            if (!name) return
+
+            console.log(e.target)
         })
     })
 }
