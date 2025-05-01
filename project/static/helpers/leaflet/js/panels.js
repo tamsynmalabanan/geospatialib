@@ -2570,6 +2570,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
 
                                     body.querySelector(`#${body.id}-graduatedParams`).classList.toggle('d-none', value !== 'graduated')
+                                    body.querySelector(`#${body.id}-categoryParams`).classList.toggle('d-none', value !== 'category')
 
                                     if (value === 'single' || symbology.groupBy?.length) updateSymbologyGroups()
                                 }
@@ -2622,6 +2623,50 @@ const handleLeafletStylePanel = (map, parent) => {
                                     symbology.groupBy = values
                                     updateSymbologyGroups()
                                 }])))() // , 'add', 'remove', 'edit'
+                            }
+                        },
+                        categoryParams: {
+                            handler: ({parent}={}) => {
+                                const div = customCreateElement({
+                                    parent,
+                                    id: `${body.id}-categoryParams`,
+                                    style: {width:'20%', height:'58px'},
+                                    className: `d-flex flex-column justify-content-between gap-1 w-25 ${symbology.method !== 'category' ? 'd-none' : ''}`
+                                })
+
+                                div.appendChild(createFormCheck({
+                                    checked: symbology.case,
+                                    formCheckClass: 'w-100',
+                                    labelInnerText: 'Case-sensitive',
+                                    events: {
+                                        click: (e) => {
+                                            const value = e.target.checked
+                                            if (value === symbology.case) return
+                                            
+                                            symbology.case = value
+                                            updateSymbologyGroups()
+                                        }
+                                    }
+                                }))
+                                
+                                div.appendChild(createFormFloating({
+                                    fieldAttrs: {
+                                        name:'groupPrecision',
+                                        type:'number',
+                                        value: symbology.groupPrecision ?? '',
+                                        placeholder: 'Precision',
+                                    },
+                                    fieldClass: `py-1 px-2 fs-10`,
+                                    events: {
+                                        'blur': (e) => {
+                                            const value = parseInt(e.target.value)
+                                            if (value === symbology.groupPrecision) return
+
+                                            symbology.groupPrecision = value
+                                            updateSymbologyGroups()
+                                        },
+                                    }
+                                }).firstChild)
                             }
                         },
                         graduatedParams: {
