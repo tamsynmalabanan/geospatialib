@@ -345,7 +345,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         const groupsLength = groups.length
         
         if (hasActiveFilters || groupsLength) {
-            console.log('filtering', new Date())
+            console.log('filtering', data?.features?.length, new Date())
             data.features = data.features.filter(feature => {
                 if (controller?.signal.aborted) return
     
