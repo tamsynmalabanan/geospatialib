@@ -3309,16 +3309,15 @@ const handleLeafletStylePanel = (map, parent) => {
             })
         })
 
-        Array.from(form.elements).forEach(i => {
-            const name = i.getAttribute('name')
+        document.querySelector(`#${body.id}-symbology`).addEventListener('mousedown', (e) => {
+            if (!updateSymbologyTimeout) return
+            
+            const name = e.target.getAttribute('name')
             if (!name) return
-
-            i.addEventListener('focus', (e) => {
-                if (!updateSymbologyTimeout) return
-                const symbology = layer._styles.symbology
-                const style = (symbology.groups?.[id]) || symbology.default
-                updateSymbology((style.active ? style.styleParams : null))
-            })
+            
+            const symbology = layer._styles.symbology
+            const style = (symbology.groups?.[id]) || symbology.default
+            updateSymbology((style.active ? style.styleParams : null))
         })
     })
 }
