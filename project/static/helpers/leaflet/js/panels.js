@@ -333,10 +333,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
-                    promises.push(updateGeoJSONData(layer, {controller}).then(layer => {
-                        if (layer instanceof Error) return clearLegend(legend, {error: true})
-
-                        if (layer._openpopup) {
+                    promises.push(updateGeoJSONData(layer, {controller}).then((layer) => {
+                        if (layer && layer._openpopup) {
                             layer._openpopup.openOn(map)
                             delete layer._openpopup
                         }
@@ -547,6 +545,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
                 
                 layer.on('dataerror', () => {
+                    layer.clearLayers()
                     clearLegend(container, {error: true})
                 })
             }
@@ -554,9 +553,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (layerIsVisible(layer)) {
             if (layer instanceof L.GeoJSON) {
-                updateGeoJSONData(layer, {controller}).then(layer => {
-                    if (layer instanceof Error) return clearLegend(container, {error: true})
-                })
+                updateGeoJSONData(layer, {controller})
             }
         }
 
