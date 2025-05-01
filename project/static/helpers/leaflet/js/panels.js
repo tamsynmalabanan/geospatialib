@@ -1776,7 +1776,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (symbology.case) groups = groups.map(i => i.toLowerCase())
 
                     const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
-                        const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
+                        const countOccurrences = (item, search) => item.split(search).length-1
+                        // const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
                         const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
                         const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
                         console.log(a, aCount, b, bCount)
