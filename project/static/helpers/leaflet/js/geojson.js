@@ -320,7 +320,6 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         map: layer._group?._map,
         controller,
     })
-    console.log('data fetches', new Date())
 
     if (data instanceof Error) {
         layer.fire('dataerror')
@@ -330,7 +329,6 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     if (controller?.signal.aborted) return
 
     if (data?.features?.length) {
-        console.log('getting filters', new Date())
         const filters = layer._styles.filters
         const hasActiveFilters = Object.values(filters).some(i => {
             if (!i.active) return false
@@ -341,7 +339,6 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
             return true
         })
     
-        console.log('getting groups', new Date())
         const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
             return valueA.rank - valueB.rank
         })
@@ -350,6 +347,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         if (hasActiveFilters || groupsLength) {
             console.log('filtering', new Date())
             data.features = data.features.filter(feature => {
+                console.log('filtering feature')
+                
                 if (controller?.signal.aborted) return
     
                 const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
@@ -371,11 +370,9 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     
                 return valid
             })
-            console.log('done filtering', new Date())
         }
     }
 
-    console.log('updating renderer', new Date())
     const featureCount = data?.features?.length ?? 0
     const renderer = featureCount > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {
@@ -389,10 +386,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     
     if (controller?.signal.aborted) return
 
-    console.log('clearing data', new Date())
     layer.clearLayers()
     if (featureCount) {
-        console.log('sorting data', new Date())
         sortGeoJSONFeatures(data, {reverse:true})
         console.log('adding data', new Date())
         layer.addData(data)
