@@ -575,11 +575,34 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 } catch { return }
             }
         },
-
-        divider3: !isLegendGroup? null : {
+        divider3: !isLegendGroup || !geojsonLayer ? null : {
             divider: true,
         },
-        toggleLegend: !isLegendGroup? null : {
+        copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
+            innerText: `Copy data source`,
+            btnCallback: async () => {
+                navigator.clipboard.writeText(JSON.stringify({dataSource:geojsonLayer._fetchParams}))
+            }
+        },
+        pasteDataSource: !isLegendGroup || !geojsonLayer ? null : {
+            innerText: `Paste data source`,
+            btnCallback: async () => {
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+
+                try {
+                    const fetchParams = JSON.parse(text)?.dataSource
+                    if (!fetchParams) return
+
+                    geojsonLayer._fetchParams = fetchParams
+                    updateGeoJSONData(geojsonLayer)
+                } catch { return }
+            }
+        },
+        divider4: !isLegendGroup ? null : {
+            divider: true,
+        },
+        toggleLegend: !isLegendGroup ? null : {
             innerText: `Toggle legend`,
             btnCallback: () => {
                 const mapContainer = map.getContainer()
