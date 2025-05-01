@@ -246,7 +246,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
-    const clearLegend = (layerLegend, isHidden, isInvisible) => {
+    const clearLegend = (layerLegend, {isHidden, isInvisible, error} = {}) => {
         if (!layerLegend) return
 
         const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
@@ -267,6 +267,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                 parent: legendDetails,
                 peNone: false,
                 title: 'Beyond visible range',
+            })
+        }
+
+        if (error) {
+            createSpan(error.message, {
+                className: 'm-1',
+                parent: legendDetails,
             })
         }
     }
@@ -319,19 +326,17 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !layerIsVisible(layer)
-                if (isHidden || isInvisible) return clearLegend(legend, isHidden, isInvisible)
+                if (isHidden || isInvisible) return clearLegend(legend, {isHidden, isInvisible})
 
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
                     promises.push(updateGeoJSONData(layer, {controller}).then(layer => {
-                        if (layer instanceof Error) {
-                            console.log('fetch error', layer)
-                        } else {
-                            if (layer._openpopup) {
-                                layer._openpopup.openOn(map)
-                                delete layer._openpopup
-                            }
+                        if (layer instanceof Error) return clearLegend(legend, {error:layer})
+
+                        if (layer._openpopup) {
+                            layer._openpopup.openOn(map)
+                            delete layer._openpopup
                         }
                     }))
                 }
@@ -355,7 +360,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
         
         if ((isHidden || isInvisible)) {
-            clearLegend(layerLegend, isHidden, isInvisible)
+            clearLegend(layerLegend, {isHidden, isInvisible})
             layer.options.renderer?._container?.classList.add('d-none')
         } else {
             if (layerLegend) {
