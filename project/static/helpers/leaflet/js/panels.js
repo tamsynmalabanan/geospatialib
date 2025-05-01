@@ -1777,11 +1777,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
                         const countOccurrences = (item, search) => item.split(search).length-1
-                        // const countOccurrences = (item, search) => (item.match(new RegExp(search, 'g')) || []).length
                         const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
                         const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
-                        console.log(a, aCount, b, bCount)
-                        return aCount !== bCount ? aCount - bCount : b.localeCompare(a)
+                        console.log(a, b, aCount, bCount, a.localeCompare(b))
+                        return aCount !== bCount ? aCount - bCount : a.localeCompare(b)
                     })
                     
                     console.log(groupsSetSorted)
