@@ -3261,12 +3261,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 const data = sections[sectionName]
     
                 const section = document.createElement('div')
-                section.id = data.id ?? generateRandomString()
                 section.className = `d-flex flex-column gap-2`
                 categorySections.appendChild(section)
 
                 const sectionCollase = document.createElement('div')
-                sectionCollase.id = generateRandomString()
+                sectionCollase.id = data.id ?? generateRandomString()
                 sectionCollase.className = 'collapse show'
     
                 const sectionHeader = document.createElement('div')
