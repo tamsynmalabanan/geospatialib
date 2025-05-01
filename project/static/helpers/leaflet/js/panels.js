@@ -3312,7 +3312,9 @@ const handleLeafletStylePanel = (map, parent) => {
             const name = i.getAttribute('name')
             if (!name) return
 
-            console.log(name, i)
+            i.addEventListener('focus', (e) => {
+                console.log(name, i)
+            })
         })
     })
 }
