@@ -1773,7 +1773,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     if (controllerId !== controller.id) return
         
-                    if (symbology.case) groups = groups.map(i => i.toLowerCase())
+                    if (!symbology.case) groups = groups.map(i => i.toLowerCase())
 
                     const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
                         const countOccurrences = (item, search) => item.split(search).length-1
