@@ -640,6 +640,7 @@ const handleLeafletStylePanel = (map, parent) => {
         timeout=2500,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
+        console.log(timeout)
         updateSymbologyTimeout = setTimeout(async () => {
             let defs
             try {
@@ -899,6 +900,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (refresh) updateGeoJSONData(layer).then(() => {
                     map.setZoom(map.getZoom())
                 })
+                console.log(styleParams)
                 return styleParams
             }
         }, timeout)
@@ -1133,8 +1135,6 @@ const handleLeafletStylePanel = (map, parent) => {
             className:'d-flex gap-2',
             parent: fieldsContainer,
         })
-
-        console.log(styleParams)
 
         const iconType = createFormFloating({
             parent: iconFields,
