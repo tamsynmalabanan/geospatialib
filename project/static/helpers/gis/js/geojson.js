@@ -368,7 +368,7 @@ const createFeaturePropertiesTable = (properties, {
 }
 
 const mapForFilterGeoJSON = new Map()
-const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
+const fetchClientGeoJSON = async (dbKey, {map, controller, filters, groups} = {}) => {
     if (!dbKey) return
 
     const mapKey = `${dbKey};${map?.getContainer().id}`
@@ -381,7 +381,10 @@ const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
         try {
             if (signal?.aborted) throw new Error()
             
-            const cachedData = await getFromGeoJSONDB(dbKey)
+            // const mapBounds = map?.getBounds()
+            // const queryExtent = mapBounds ? L.rectangle(mapBounds)?.toGeoJSON()?.geometry
+            
+            const cachedData = await getFromGeoJSONDB(dbKey, {controller, filters, groups})
             if (!cachedData) throw new Error('Cached data not found.')
 
             const clonedGeoJSON = cachedData.geojson
@@ -474,6 +477,7 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
                         dbKey, 
                         turf.clone(geojson),
                         queryExtent,
+                        'url',
                     )
 
                     return geojson

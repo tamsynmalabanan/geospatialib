@@ -11,7 +11,7 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (id, geojson, queryExtent, expirationDays=7) => {
+const saveToGeoJSONDB = (id, geojson, queryExtent, source, expirationDays=7) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (e) => {
         const db = e.target.result
@@ -19,15 +19,15 @@ const saveToGeoJSONDB = (id, geojson, queryExtent, expirationDays=7) => {
         const objectStore = transaction.objectStore('geojsons')
 
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
-        objectStore.put({id, geojson, queryExtent, expirationTime})
+        objectStore.put({id, geojson, queryExtent, source, expirationTime})
     }
 }
 
-const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
+const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent, source) => {
     const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
 
     const save = (data) => {
-        if (data) saveToGeoJSONDB(id, data.geojson, data.queryExtent)
+        if (data) saveToGeoJSONDB(id, data.geojson, data.queryExtent, source)
         worker.terminate()
     }
 
@@ -43,7 +43,7 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     const cachedData = await getFromGeoJSONDB(id, {save:false})
     if (!cachedData) return save({
         geojson:newGeoJSON, 
-        queryExtent:newQueryExtent
+        queryExtent:newQueryExtent,
     })
     
     worker.postMessage({
@@ -68,8 +68,8 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
                 const result = e.target.result
                 if (!result) return resolve(null)
 
-                const {geojson, queryExtent} = result
-                if (save) saveToGeoJSONDB(id, geojson, queryExtent)
+                const {geojson, queryExtent, source} = result
+                if (save) saveToGeoJSONDB(id, geojson, queryExtent, source)
                 resolve({geojson:turf.clone(geojson), queryExtent})
             }
     
