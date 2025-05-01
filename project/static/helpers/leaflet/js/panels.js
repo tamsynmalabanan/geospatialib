@@ -2758,6 +2758,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         }
                     },
+                    id: `${body.id}-symbology`,
                     className: 'gap-2 flex-wrap'
                 },
             },
@@ -3260,6 +3261,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 const data = sections[sectionName]
     
                 const section = document.createElement('div')
+                section.id = data.id ?? generateRandomString()
                 section.className = `d-flex flex-column gap-2`
                 categorySections.appendChild(section)
 
