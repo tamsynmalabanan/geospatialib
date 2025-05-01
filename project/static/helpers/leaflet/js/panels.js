@@ -640,6 +640,7 @@ const handleLeafletStylePanel = (map, parent) => {
         timeout=1000,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
+        console.log('reset')
         updateSymbologyTimeout = setTimeout(async () => {
             let defs
             try {
@@ -3313,7 +3314,9 @@ const handleLeafletStylePanel = (map, parent) => {
             if (!name) return
 
             i.addEventListener('focus', (e) => {
-                console.log(name, i)
+                const symbology = layer._styles.symbology
+                const style = (symbology.groups?.[id]) || symbology.default
+                updateSymbology((style.active ? style.styleParams : null))
             })
         })
     })
