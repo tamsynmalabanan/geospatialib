@@ -904,10 +904,6 @@ const handleLeafletStylePanel = (map, parent) => {
         }, timeout)
     }
 
-    document.addEventListener('mousedown', (e) => {
-        console.log(e.target)
-    })
-
     const getSymbologyForm = (id) => {
         const legendLayer = getLayerLegend()
         const symbology = layer._styles.symbology
@@ -3310,6 +3306,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
                 })
             })
+        })
+
+        document.querySelector(`#${body.id}-symbology`).addEventListener('mousedown', (e) => {
+            console.log(e.target)
         })
     })
 }
