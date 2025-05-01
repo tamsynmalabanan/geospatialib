@@ -317,7 +317,11 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
         controller,
     })
 
-    if (data instanceof Error) return data
+    if (data instanceof Error) {
+        layer.clearLayers()
+        layer.fire('dataupdate')
+        return data
+    }
 
     if (controller?.signal.aborted) return
 

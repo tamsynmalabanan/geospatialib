@@ -1757,7 +1757,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                 if (symbology.method === 'categorized') {
                     const groups = []
-                    geojson.features.forEach(feature => {
+                    geojson?.features?.forEach(feature => {
                         const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
                             if (i === '[geometry_type]') return feature.geometry.type
                             
