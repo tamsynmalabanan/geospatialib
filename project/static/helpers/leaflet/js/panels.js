@@ -2231,7 +2231,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.property && filter.values) updateGeoJSONData(layer)
+                    if (filter.property && filter.values?.length) updateGeoJSONData(layer)
                 }
             }
         })
@@ -2274,7 +2274,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.property) return
 
                     filter.property = value
-                    if (filter.active && filter.values) updateGeoJSONData(layer)
+                    if (filter.active && filter.values?.length) updateGeoJSONData(layer)
                 }
             }
         })
@@ -2302,7 +2302,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.handler) return
 
                     filter.handler = value
-                    if (filter.active && filter.property && filter.values) updateGeoJSONData(layer)
+                    if (filter.active && filter.property && filter.values?.length) updateGeoJSONData(layer)
                 }
             }
         })
@@ -2364,9 +2364,8 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 click: (e) => {
                     parent.remove()
-                    const update = filter.active && filter.property && filter.values.length
                     delete filters.properties.values[id]
-                    if (update) updateGeoJSONData(layer)
+                    if (filter.active && filter.property && filter.values?.length) updateGeoJSONData(layer)
                 }
             }
         })
@@ -2947,12 +2946,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                             events: {
                                 change:  (e) => {
-                                    let value = e.target.value
-                                    if (value === '') value = e.target.value = filters.properties.operator
-                                    if (value === filters.properties.operator) return
+                                    const propertyFilters = filters.properties
 
-                                    filters.properties.operator = value
-                                    if (Object.keys(filters.properties.values || {}).length) updateGeoJSONData(layer)
+                                    let value = e.target.value
+                                    if (value === '') value = e.target.value = propertyFilters.operator
+                                    if (value === propertyFilters.operator) return
+
+                                    propertyFilters.operator = value
+                                    if (Object.values(propertyFilters.values ?? {}).some(i => {
+                                        return i.active && i.property && i.values.length
+                                    })) updateGeoJSONData(layer)
                                 }
                             },
                             currentValue: filters.properties.operator,
@@ -3012,10 +3015,13 @@ const handleLeafletStylePanel = (map, parent) => {
                             disabled: !filters.properties.active,
                             events: {
                                 click: () => {
+                                    const propertyFilters = filters.properties
+
                                     body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
-                                    const update = Object.values(filters.properties.values).some(f => f.active && f.property && f.values.length)
-                                    filters.properties.values = {}
-                                    if (update) updateGeoJSONData(layer)                
+                                    propertyFilters.values = {}
+                                    if (Object.values(propertyFilters.values ?? {}).some(i => {
+                                        return i.active && i.property && i.values.length
+                                    })) updateGeoJSONData(layer)                
                                 }
                             }
                         },
