@@ -548,7 +548,9 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (layerIsVisible(layer)) {
             if (layer instanceof L.GeoJSON) {
-                updateGeoJSONData(layer, {controller})
+                updateGeoJSONData(layer, {controller}).then(layer => {
+                    if (layer instanceof Error) return clearLegend(legend, {error:layer})
+                })
             }
         }
 
