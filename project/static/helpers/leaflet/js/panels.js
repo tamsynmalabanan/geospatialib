@@ -3308,11 +3308,11 @@ const handleLeafletStylePanel = (map, parent) => {
             })
         })
 
-        document.querySelector(`#${body.id}-symbology`).addEventListener('focus', (e) => {
-            const name = e.target.getAttribute('name')
+        Array.from(form.elements).forEach(i => {
+            const name = i.getAttribute('name')
             if (!name) return
 
-            console.log(e.target)
+            console.log(name, i)
         })
     })
 }
