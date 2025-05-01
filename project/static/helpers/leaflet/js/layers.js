@@ -578,24 +578,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
         divider3: !isLegendGroup || !geojsonLayer ? null : {
             divider: true,
         },
-        updateData: !isLegendGroup || !geojsonLayer ? null : {
-            innerText: `Update data`,
-            btnCallback: async () => {
-                const text = await navigator.clipboard.readText()
-                if (!text) return
-
-                try {
-                    const geojson = JSON.parse(text)
-                    if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
-
-                    const geojsonId = generateRandomString()
-                    await handleGeoJSON(geojson)
-                    saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry, 'client')
-                    geojsonLayer._fetchParams = {geojsonId}                    
-                    updateGeoJSONData(geojsonLayer)
-                } catch { return }
-            }
-        },
         copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
@@ -613,6 +595,24 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!fetchParams) return
 
                     geojsonLayer._fetchParams = fetchParams
+                    updateGeoJSONData(geojsonLayer)
+                } catch { return }
+            }
+        },
+        updateData: !isLegendGroup || !geojsonLayer ? null : {
+            innerText: `Paste clipboard data`,
+            btnCallback: async () => {
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+
+                try {
+                    const geojson = JSON.parse(text)
+                    if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
+
+                    const geojsonId = generateRandomString()
+                    await handleGeoJSON(geojson)
+                    saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry, 'client')
+                    geojsonLayer._fetchParams = {geojsonId}                    
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
