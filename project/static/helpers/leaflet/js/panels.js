@@ -637,10 +637,9 @@ const handleLeafletStylePanel = (map, parent) => {
     let updateSymbologyTimeout
     const updateSymbology = async (styleParams, {
         refresh=true,
-        timeout=1000,
+        timeout=2500,
     }={}) => {
         clearTimeout(updateSymbologyTimeout)
-        console.log('reset')
         updateSymbologyTimeout = setTimeout(async () => {
             let defs
             try {
