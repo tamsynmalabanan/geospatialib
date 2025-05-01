@@ -637,7 +637,7 @@ const handleLeafletStylePanel = (map, parent) => {
     let updateSymbologyTimeout
     const updateSymbology = async (styleParams, {
         refresh=true,
-        timeout=2500,
+        timeout=1000,
     }={}) => {
         const handler = async () => {
             let defs
