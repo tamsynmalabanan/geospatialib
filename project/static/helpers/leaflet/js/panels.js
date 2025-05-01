@@ -2648,25 +2648,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         }
                                     }
                                 }))
-                                
-                                div.appendChild(createFormFloating({
-                                    fieldAttrs: {
-                                        name:'groupPrecision',
-                                        type:'number',
-                                        value: symbology.groupPrecision ?? '',
-                                        placeholder: 'Precision',
-                                    },
-                                    fieldClass: `py-1 px-2 fs-10`,
-                                    events: {
-                                        'blur': (e) => {
-                                            const value = parseInt(e.target.value)
-                                            if (value === symbology.groupPrecision) return
-
-                                            symbology.groupPrecision = value
-                                            updateSymbologyGroups()
-                                        },
-                                    }
-                                }).firstChild)
                             }
                         },
                         graduatedParams: {
