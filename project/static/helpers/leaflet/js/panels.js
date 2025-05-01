@@ -246,7 +246,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         // },
     })
 
-    const clearLegend = (layerLegend, {isHidden, isInvisible, error} = {}) => {
+    const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
         if (!layerLegend) return
 
         const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
@@ -269,11 +269,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                 title: 'Beyond visible range',
             })
         }
-
+        
         if (error) {
-            createSpan(error.message, {
-                className: 'm-1',
+            createIcon({
+                className: 'bi-bug m-1',
                 parent: legendDetails,
+                peNone: false,
+                title: 'Data source error',
             })
         }
     }
@@ -332,7 +334,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     if (controllerId !== controller.id) return
                     
                     promises.push(updateGeoJSONData(layer, {controller}).then(layer => {
-                        if (layer instanceof Error) return clearLegend(legend, {error:layer})
+                        if (layer instanceof Error) return clearLegend(legend, {error: true})
 
                         if (layer._openpopup) {
                             layer._openpopup.openOn(map)
@@ -543,13 +545,17 @@ const handleLeafletLegendPanel = (map, parent) => {
                         legendDetails
                     )
                 })
+                
+                layer.on('dataerror', () => {
+                    clearLegend(container, {error: true})
+                })
             }
         }
 
         if (layerIsVisible(layer)) {
             if (layer instanceof L.GeoJSON) {
                 updateGeoJSONData(layer, {controller}).then(layer => {
-                    if (layer instanceof Error) return clearLegend(container, {error:layer})
+                    if (layer instanceof Error) return clearLegend(container, {error: true})
                 })
             }
         }
