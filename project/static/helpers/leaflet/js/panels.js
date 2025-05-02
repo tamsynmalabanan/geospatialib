@@ -3380,7 +3380,6 @@ const handleLeafletQueryPanel = (map, parent) => {
     const customStyleParams = {
         fillColor: 'hsla(111, 100%, 54%, 1)',
         strokeWidth: 1,
-        // iconGlow: true,
     }
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
@@ -3409,9 +3408,20 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconSpecs: 'bi-pin-map-fill',
             title: 'Query OSM at point',
             altShortcut: 'w',
-            mapClickHandler: async (e, options={}) => {
+            mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const event = e
-                return await fetchURLGeoJSONs({
+                // return await fetchURLGeoJSONs({
+                //     'OpenStreetMap via Nominatim': {
+                //         handler: fetchNominatim,
+                //         event,
+                //     },
+                //     'OpenStreetMap via Overpass': {
+                //         handler: fetchOverpass,
+                //         event,
+                //     },
+                // }, options)}
+
+                const fetchers = {
                     'OpenStreetMap via Nominatim': {
                         handler: fetchNominatim,
                         event,
@@ -3420,7 +3430,21 @@ const handleLeafletQueryPanel = (map, parent) => {
                         handler: fetchOverpass,
                         event,
                     },
-                }, options)}
+                }
+
+                const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
+                    return fetchURLGeoJSON(fetcher, {abortBtns, controller})
+                }))
+            
+                if (controller.signal.aborted) return
+            
+                const geojsons = {}
+                for (let i = 0; i < fetchedGeoJSONs.length; i++) {
+                    geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+                }
+            
+                return geojsons
+            }
         },
         osmView: {
             iconSpecs: 'bi-bounding-box-circles',
