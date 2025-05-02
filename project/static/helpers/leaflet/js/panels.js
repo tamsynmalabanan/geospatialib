@@ -375,8 +375,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 deleteLeafletLayerFillPatterns(layer)
             }
         }
-
-        if (layer instanceof L.GeoJSON) layer.clearLayers()
     })
 
     map.on('layeradd', (event) => {
@@ -528,14 +526,6 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
-                layer.on('popupopen', (e) => {
-                    layer._openpopup = e.popup
-                })
-                
-                layer.on('popupclose', (e) => {
-                    delete layer._openpopup 
-                })
-                
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
                     createGeoJSONLayerLegend(

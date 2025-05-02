@@ -139,10 +139,22 @@ const getLeafletGeoJSONLayer = async ({
     if (geojson && isQuery) {
         geojsonLayer.addData(geojson)
     } else if (geojsonLayer._fetchParams && !isQuery) {
+        geojsonLayer.on('popupopen', (e) => {
+            geojsonLayer._openpopup = e.popup
+        })
+        
+        geojsonLayer.on('popupclose', (e) => {
+            delete geojsonLayer._openpopup 
+        })
+
         geojsonLayer.on('add', () => {
             if (layerIsVisible(geojsonLayer)) {
                 updateGeoJSONData(geojsonLayer)
             }
+        })
+
+        geojsonLayer.on('remove', () => {
+            geojsonLayer.clearLayers()
         })
     }
 
