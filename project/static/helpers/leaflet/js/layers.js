@@ -258,7 +258,7 @@ const getLeafletLayerBounds = async (layer) => {
         return L.latLangBounds([s,w],[n,e])
     }
 
-    const geojsonId = layer._fetchParams?.geojsonId
+    const geojsonId = layer._geojsonId
     if (layer instanceof L.GeoJSON && geojsonId) {
         const geojson = await fetchClientGeoJSON(geojsonId)
         return L.geoJSON(geojson ?? {}).getBounds()
@@ -439,11 +439,11 @@ const getLeafletLayerContextMenu = async (e, layer, {
             return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
         } catch {
             try {
-                if (layer instanceof L.GeoJSON) {
+                if (type === 'geojson') {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
-                return await fetchClientGeoJSON(layer._fetchParams?.geojsonId)
+                return await fetchClientGeoJSON(layer._geojsonId)
             }
         }
     })()
@@ -581,7 +581,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
-                navigator.clipboard.writeText(JSON.stringify({dataSource:geojsonLayer._fetchParams}))
+                navigator.clipboard.writeText(JSON.stringify({geojsonId:geojsonLayer._geojsonId}))
             }
         },
         pasteDataSource: !isLegendGroup || !geojsonLayer ? null : {
@@ -591,10 +591,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 if (!text) return
 
                 try {
-                    const fetchParams = JSON.parse(text)?.dataSource
-                    if (!fetchParams) return
+                    const geojsonId = JSON.parse(text)?.geojsonId
+                    if (!geojsonId) return
 
-                    geojsonLayer._fetchParams = fetchParams
+                    geojsonLayer._geojsonId = geojsonId
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
@@ -612,7 +612,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     const geojsonId = generateRandomString()
                     await handleGeoJSON(geojson)
                     saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry, 'client')
-                    geojsonLayer._fetchParams = {geojsonId}                    
+                    geojsonLayer._geojsonId = geojsonId                
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
@@ -675,7 +675,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
-                const fetchParams = layer._fetchParams
+                const geojsonId = layer._geojsonId
                 const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let newLayer
@@ -686,7 +686,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         pane,
                         title,
                         attribution,
-                        fetchParams,
+                        geojsonId,
                         styles,
                     })
                 }

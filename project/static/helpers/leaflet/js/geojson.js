@@ -4,7 +4,7 @@ const getLeafletGeoJSONLayer = async ({
     pane = 'overlayPane',
     title = '',
     attribution = '',
-    fetchParams,
+    geojsonId,
     styles,
     customStyleParams,
 } = {}) => {
@@ -18,11 +18,13 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._attribution = attribution
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-    geojsonLayer._fetchParams = fetchParams || (geojson ? (await (async () => {
+
+    const isQuery = group?._name === 'query'
+    if (!isQuery) geojsonLayer._geojsonId = geojsonId || (geojson ? (await (async () => {
         const geojsonId = generateRandomString()
         await handleGeoJSON(geojson)
         saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry, 'client')
-        return {geojsonId}
+        return geojsonId
     })()) : null)
 
     geojsonLayer._styles = styles || {
@@ -135,10 +137,9 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    const isQuery = group?._name === 'query'
     if (geojson && isQuery) {
         geojsonLayer.addData(geojson)
-    } else if (geojsonLayer._fetchParams && !isQuery) {
+    } else if (geojsonLayer._geojsonId && !isQuery) {
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
         })
@@ -319,15 +320,12 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const updateGeoJSONData = async (layer, {controller} = {}) => {
-    const fetchParams = layer._fetchParams
-    if (!fetchParams) return
+    const geojsonId = layer._geojsonId
+    if (!geojsonId) return
     
-    const fetcher = fetchParams.geojsonId ? fetchClientGeoJSON : null
-    if (!fetcher) return
-    
-    const data = await fetcher(...Object.values(fetchParams), {
-        map: layer._group?._map,
+    const data = await fetchClientGeoJSON(geojsonId, {
         controller,
+        map: layer._group?._map,
         filters: layer._styles.filters,
         groups: layer._styles.symbology.groups ?? {},
     })
