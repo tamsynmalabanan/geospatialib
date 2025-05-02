@@ -922,9 +922,7 @@ const handleLeafletStylePanel = (map, parent) => {
         parent.addEventListener('focusin', (e) => {
             if (!updateTimeout) return
             if (!e.target.getAttribute('name')) return
-            
-            clearTimeout(updateTimeout)
-            parent.addEventListener('blurin', update, {once:true})
+            update()
         })
 
         const toggleFields = customCreateElement({
