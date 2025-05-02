@@ -3409,26 +3409,14 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
-                const event = e
-                // return await fetchURLGeoJSONs({
-                //     'OpenStreetMap via Nominatim': {
-                //         handler: fetchNominatim,
-                //         event,
-                //     },
-                //     'OpenStreetMap via Overpass': {
-                //         handler: fetchOverpass,
-                //         event,
-                //     },
-                // }, options)}
-
                 const fetchers = {
                     'OpenStreetMap via Nominatim': {
                         handler: fetchNominatim,
-                        event,
+                        event:e,
                     },
                     'OpenStreetMap via Overpass': {
                         handler: fetchOverpass,
-                        event,
+                        event:e,
                     },
                 }
 
@@ -3450,13 +3438,12 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconSpecs: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             altShortcut: 'e',
-            btnClickHandler: async (e, options={}) => {
-                return await fetchURLGeoJSONs({
-                    'OpenStreetMap via Overpass': {
-                        handler: fetchOverpass,
-                        event: e,
-                    },
-                }, options)
+            btnClickHandler: async (e, {abortBtns, controller} = {}) => {
+                const geojson = await fetchURLGeoJSON({
+                    handler: fetchOverpass,
+                    event: e,
+                }, {abortBtns, controller})
+                return {'OpenStreetMap via Overpass': geojson}
             }
         },
         layerPoint: {
