@@ -1,4 +1,4 @@
-const handleGeoJSON = async (geojson, {
+const normalizeGeoJSON = async (geojson, {
     controller,
     defaultGeom,
 } = {}) => {
@@ -469,7 +469,7 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
                     if (!geojson?.features?.length) return
                     
                     if (controller?.signal.aborted) return
-                    handleGeoJSON(geojson, {queryGeom, controller, abortBtns})
+                    normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
                     
                     if (controller?.signal.aborted) return
                     await updateGeoJSONOnDB(

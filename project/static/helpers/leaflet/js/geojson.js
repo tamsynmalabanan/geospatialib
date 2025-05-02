@@ -20,16 +20,9 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
     const isQuery = group?._name === 'query'
-    if (!isQuery) geojsonLayer._geojsonId = geojsonId || (geojson ? (await (async () => {
-        const geojsonId = generateRandomString()
-        await handleGeoJSON(geojson)
-        saveToGeoJSONDB(geojson, {
-            id: geojsonId, 
-            queryExtent: turf.bboxPolygon(turf.bbox(geojson)).geometry, 
-            source: 'client'
-        })
-        return geojsonId
-    })()) : null)
+    if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
+        geojson ? saveToGeoJSONDB(geojson) : null
+    )
 
     geojsonLayer._styles = styles || {
         symbology: {
