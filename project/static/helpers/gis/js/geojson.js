@@ -384,7 +384,7 @@ const fetchClientGeoJSON = async (dbKey, {map, controller, filters={}, groups={}
             const mapBounds = map?.getBounds()
             const queryExtent = mapBounds ? L.rectangle(mapBounds).toGeoJSON().geometry : null
             
-            const cachedData = await getFromGeoJSONDB(dbKey, {filters, groups, queryExtent})
+            const cachedData = await getFromGeoJSONDB(dbKey)
             if (!cachedData) throw new Error('Cached data not found.')
 
             const clonedGeoJSON = cachedData.geojson
@@ -440,7 +440,7 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
             geojson = await (async () => {
                 if (controller?.signal.aborted) return
                 
-                const cachedData = await getFromGeoJSONDB(dbKey, {filters, groups, queryExtent})
+                const cachedData = await getFromGeoJSONDB(dbKey)
                 if (!cachedData) return
 
                 const cachedGeoJSON = cachedData.geojson
