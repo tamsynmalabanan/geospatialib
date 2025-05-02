@@ -135,14 +135,17 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (geojson && group?._name === 'query') {
+    const isQuery = group?._name === 'query'
+    if (geojson && isQuery) {
         filterGeoJSONFeatures(geojson, {
             filters: geojsonLayer._styles.filters,
             groups: geojsonLayer._styles.symbology.groups ?? {},
         })
         sortGeoJSONFeatures(geojson, {reverse:true})
         geojsonLayer.addData(geojson)
-    } else {
+    }
+    
+    if (geojsonLayer._fetchParams && !isQuery) {
         // on layer add, update geojson layer
     }
 
