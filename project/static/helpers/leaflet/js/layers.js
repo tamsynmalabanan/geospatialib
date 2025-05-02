@@ -675,7 +675,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
-                const fetchParams = (feature ? geojsonLayer : layer)._fetchParams
+                const fetchParams = layer._fetchParams
                 const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let newLayer
