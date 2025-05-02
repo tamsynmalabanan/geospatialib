@@ -368,7 +368,7 @@ const createFeaturePropertiesTable = (properties, {
 }
 
 const mapForFilterGeoJSON = new Map()
-const fetchClientGeoJSON = async (dbKey, {map, controller, filters={}, groups={}} = {}) => {
+const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
     if (!dbKey) return
 
     const mapKey = `${dbKey};${map?.getContainer().id}`
@@ -414,7 +414,7 @@ const fetchClientGeoJSON = async (dbKey, {map, controller, filters={}, groups={}
 }
 
 const mapForFetchGeoJSON = new Map()
-const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abortBtns, filters={}, groups={}} = {}) => {
+const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abortBtns} = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
     const latlng = event.latlng
     const queryGeom = (latlng ? turf.point(

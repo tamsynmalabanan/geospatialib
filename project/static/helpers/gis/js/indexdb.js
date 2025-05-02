@@ -12,7 +12,7 @@ const requestGeoJSONDB = () => {
 }
 
 const saveToGeoJSONDB = (geojson, {
-    id = generateRandomString(), 
+    id = `client;${generateRandomString()}`, 
     queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry, 
     source='client', 
     expirationDays=7,
