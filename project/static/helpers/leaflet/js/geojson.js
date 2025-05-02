@@ -137,16 +137,13 @@ const getLeafletGeoJSONLayer = async ({
     
     const isQuery = group?._name === 'query'
     if (geojson && isQuery) {
-        filterGeoJSONFeatures(geojson, {
-            filters: geojsonLayer._styles.filters,
-            groups: geojsonLayer._styles.symbology.groups ?? {},
-        })
-        sortGeoJSONFeatures(geojson, {reverse:true})
         geojsonLayer.addData(geojson)
-    }
-    
-    if (geojsonLayer._fetchParams && !isQuery) {
-        // on layer add, update geojson layer
+    } else if (geojsonLayer._fetchParams && !isQuery) {
+        geojsonLayer.on('add', () => {
+            if (layerIsVisible(geojsonLayer)) {
+                updateGeoJSONData(geojsonLayer)
+            }
+        })
     }
 
     return geojsonLayer
