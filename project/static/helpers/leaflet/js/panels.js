@@ -634,283 +634,267 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     }
 
-    let updateSymbologyTimeout
-    const updateSymbology = async (styleParams, {
-        refresh=true,
-        timeout=1000,
-    }={}) => {
-        const handler = async () => {
-            let defs
-            try {
-                if (!styleParams) throw new Error('No style params.')
-    
-                let {
-                    strokeWidth,
-                    strokeColor,
-                    strokeOpacity,
-                    fillColor,
-                    patternBgColor,
-                    patternBg,
-                    fillOpacity,
-                    iconSpecs,
-                    iconSize,
-                    iconShadow,
-                    iconGlow,
-                    dashArray,
-                    dashOffset,
-                    lineCap,
-                    lineJoin,
-                    iconType,
-                    textWrap,
-                    boldFont,
-                    fillPattern,
-                    iconRotation,
-                    fillPatternId,
-                    iconFill,
-                    iconStroke,
-                    italicFont,
-                    fontSerif,
-                    lineBreak,
-                    textShadow,
-                } = styleParams
+    const updateSymbology = async (styleParams, {refresh=true}={}) => {
+        let defs
         
-                const hslaColor = manageHSLAColor(fillColor)
-                textShadow = styleParams.textShadow = Array(
-                    iconShadow ? removeWhitespace(`
-                        ${iconSize*0.1}px 
-                        ${iconSize*0.1}px 
-                        ${iconSize*0.2}px 
-                        ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
-                    `) : '',
-                    iconGlow ? removeWhitespace(`
-                        0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                        0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                        0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                        0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
-                    `) : ''
-                ).filter(i => i !== '').join(',')
-        
-                const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
-                if (fillPatternId) {
-                    svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
-                    delete styleParams.fillPatternId
-                }
-        
-                const id = styleParams.fillPatternId = generateRandomString()
-        
-                defs = document.createElementNS(svgNS, 'defs')
-                defs.id = id
-                svgFillDefs.appendChild(defs)
-        
-                let icon
-                const img = customCreateElement({
-                    tag:'img',
-                    id: `${id}-img`,
-                    attrs: {
-                        alt: 'icon',
-                    },
-                    style: {opacity:fillOpacity}
-                })
-                
-                if (!iconSpecs) throw new Error('No icon specification.')
-    
-                const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
-                    Math.max(
-                        (iconGlow ? iconSize*3 : 0),
-                        (iconShadow ? iconSize*0.2 : 0),
-                        (iconType !== 'html' && italicFont ? iconSize*0.5 : 0),
-                    )                
-                : 0)
-                const [width, height, outerHTML] = (() => {
-                    const style = getLeafletLayerStyle(
-                        {geometry:{type:'MultiPoint'}}, {
-                            ...styleParams, 
-                            fillPatternId:null, 
-                            textWrap:false,
-                            iconRotation: 0,
-                            fillOpacity: 1,
-                        }, {
-                            allowCircleMarker: false,
-                        }
-                    )
-    
-                    const tempElement =  customCreateElement({
-                        innerHTML: leafletLayerStyleToHTML(style, 'point')
-                    }).firstChild
-                    tempElement?.classList?.add('position-absolute')
-                    tempElement?.classList?.remove(
-                        'h-100', 
-                        'w-100', 
-                        'd-flex', 
-                        'justify-content-center', 
-                        'align-items-center'
-                    )
-    
-                    document.body.appendChild(tempElement)
-                    const bounds = tempElement.getBoundingClientRect()
-                    document.body.removeChild(tempElement)
-                    
-                    return [bounds.width, bounds.height, tempElement.outerHTML]
-                })()
-                const svgWidth = width + buffer
-                const svgHeight = height + buffer
-                const patternGap = iconType === 'img' ? 0 : iconSize
-                const patternWidth = svgWidth + patternGap
-                const patternHeight = svgHeight + patternGap
-                
-                img.setAttribute('width', patternWidth)
-                img.setAttribute('height', patternHeight)
-    
-                if (Array('svg', 'img').includes(iconType)) {
-                    if (iconType === 'svg') {
-                        defs.innerHTML = iconSpecs
-                        icon = defs.firstChild
-                    }
-                    
-                    if (iconType === 'img') {
-                        icon = document.createElementNS(svgNS, 'image')
-                        icon.setAttribute('href', iconSpecs)
-                        defs.appendChild(icon)
-                    }
-                    
-                    icon.setAttribute('width', width)
-                    icon.setAttribute('height', height)
-                }
-                
-                if (Array('bi', 'text', 'emoji').includes(iconType)) {
-                    icon = document.createElementNS(svgNS, 'text')
-                    icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
-                    icon.setAttribute('class', removeWhitespace(`
-                        text-center lh-1
-                        ${textWrap ? 'text-wrap' : 'text-nowrap'}
-                        ${boldFont ? 'fw-bold' : 'fw-normal'}
-                        ${italicFont ? 'fst-italic' : 'fst-normal'}
-                    `))
-                    icon.setAttribute('x', '50%')
-                    icon.setAttribute('y', '50%')
-                    icon.setAttribute('text-anchor', 'middle')
-                    icon.setAttribute('dominant-baseline', 'central')
-                    icon.setAttribute('font-size', iconSize)
-                    icon.setAttribute('font-family', (
-                        iconType === 'bi' ? 'bootstrap-icons' :
-                        fontSerif ? 'Georgia, Times, serif' :
-                        'default'
-                    ))
-                    defs.appendChild(icon)
-                }
-    
-                const dataUrl = iconType === 'svg' ? await svgToDataURL(outerHTML) : await outerHTMLToDataURL(outerHTML, {
-                    width:svgWidth,
-                    height:svgHeight,
-                    x:0-(buffer/2),
-                    y:0-(buffer/2),
-                })
-    
-                if (iconType === 'html' && dataUrl) {
-                    icon = document.createElementNS(svgNS, 'image')
-                    icon.setAttribute('href', dataUrl)
-                    defs.appendChild(icon)
-                }
-    
-                img.setAttribute('src', await createNewImage(
-                    iconType === 'img' ? iconSpecs :  dataUrl, {
-                        opacity:fillOpacity,
-                        angle:iconRotation,
-                        width: patternWidth,
-                        height: patternHeight,
-                    }
-                ))
-    
-                defs.appendChild(img)
-    
-                if (icon) {
-                    icon.id = `${id}-icon`
-                    icon.style.textShadow = textShadow
-                    
-                    if (Array('emoji', 'img', 'html').includes(iconType)) {
-                        icon.style.opacity = fillOpacity
-                    }
-    
-                    icon.setAttribute('fill', (() => {
-                        if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
-                        return iconFill ? fillColor : 'none'
-                    })())
-                    icon.setAttribute('stroke', (() => {
-                        if (iconStroke) {
-                            icon.setAttribute('stroke-opacity', strokeOpacity)
-                            icon.setAttribute('stroke-width', strokeWidth)
-                            icon.setAttribute('stroke-linecap', lineCap)
-                            icon.setAttribute('stroke-linejoin', lineJoin)
-                            icon.setAttribute('stroke-dasharray', dashArray)
-                            icon.setAttribute('stroke-dashoffset', dashOffset)
-                        }
-                        return iconStroke ? strokeColor : 'none'
-                    })())
-    
-                    const svg = document.createElementNS(svgNS, 'svg')
-                    svg.id = `${id}-svg`
-                    svg.classList.add('position-absolute')
-                    svg.setAttribute('width', svgWidth)
-                    svg.setAttribute('height', svgHeight)
-                    svg.setAttribute('viewbox', `0 0 ${svgWidth} ${svgHeight}`)
-                    svg.style.transform = `rotate(${iconRotation}deg)`
-                    svg.style.transformOrigin = `50% 50%`
-                    defs.appendChild(svg)
-                    
-                    const svgUse = document.createElementNS(svgNS, 'use')
-                    svgUse.setAttribute('href', `#${id}-icon`)
-                    svg.appendChild(svgUse)
-                    
-                    const newPattern = document.createElementNS(svgNS, 'pattern')
-                    newPattern.id = `${id}-pattern`
-                    newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
-                    newPattern.setAttribute('width', patternWidth)
-                    newPattern.setAttribute('height', patternHeight)
-                    newPattern.setAttribute('viewbox', `0 0 ${patternWidth} ${patternHeight}`)
-                    newPattern.style.transform = `rotate(${iconRotation}deg)`
-                    newPattern.style.transformOrigin = `50% 50%`
-                    defs.appendChild(newPattern)
-                    
-                    const patternRect = document.createElementNS(svgNS, 'rect')
-                    patternRect.setAttribute('width', patternWidth)
-                    patternRect.setAttribute('height', patternHeight)
-                    patternRect.setAttribute('fillOpacity', fillOpacity)
-                    patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
-                    newPattern.appendChild(patternRect)
-    
-                    const patternUse = svg.cloneNode(true)
-                    patternUse.removeAttribute('id')
-                    Array.from(patternUse.querySelectorAll('use')).forEach(i => {
-                        const opacity = strokeOpacity + (fillOpacity/2)
-                        i.setAttribute('fill-opacity', 1)
-                        i.setAttribute('stroke-opacity', (
-                            strokeOpacity > 0 ? opacity > 100 ? 100 : opacity : strokeOpacity
-                        ))
-                    })
-                    patternUse.setAttribute('x', buffer/2)
-                    patternUse.setAttribute('y', buffer/2)
-                    newPattern.appendChild(patternUse)
-                }
-            } catch (error) {
-                if (styleParams.fillPatternId) delete styleParams.fillPatternId
-                if (defs) defs.remove()
-            } finally {
-                if (refresh) updateGeoJSONData(layer).then(() => {
-                    map.setZoom(map.getZoom())
-                })
-                return styleParams
-            }
-        }
+        try {
+            if (!styleParams) throw new Error('No style params.')
 
-        clearTimeout(updateSymbologyTimeout)
-        console.log('reset')
-        if (timeout) {
-            updateSymbologyTimeout = setTimeout(() => {
-                handler()
-                updateSymbologyTimeout = null
-            }, timeout)
-        } else {
-            return await handler()
+            let {
+                strokeWidth,
+                strokeColor,
+                strokeOpacity,
+                fillColor,
+                patternBgColor,
+                patternBg,
+                fillOpacity,
+                iconSpecs,
+                iconSize,
+                iconShadow,
+                iconGlow,
+                dashArray,
+                dashOffset,
+                lineCap,
+                lineJoin,
+                iconType,
+                textWrap,
+                boldFont,
+                fillPattern,
+                iconRotation,
+                fillPatternId,
+                iconFill,
+                iconStroke,
+                italicFont,
+                fontSerif,
+                lineBreak,
+                textShadow,
+            } = styleParams
+    
+            const hslaColor = manageHSLAColor(fillColor)
+            textShadow = styleParams.textShadow = Array(
+                iconShadow ? removeWhitespace(`
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.1}px 
+                    ${iconSize*0.2}px 
+                    ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                `) : '',
+                iconGlow ? removeWhitespace(`
+                    0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
+                    0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
+                    0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
+                    0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                `) : ''
+            ).filter(i => i !== '').join(',')
+    
+            const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
+            if (fillPatternId) {
+                svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
+                delete styleParams.fillPatternId
+            }
+    
+            const id = styleParams.fillPatternId = generateRandomString()
+    
+            defs = document.createElementNS(svgNS, 'defs')
+            defs.id = id
+            svgFillDefs.appendChild(defs)
+    
+            let icon
+            const img = customCreateElement({
+                tag:'img',
+                id: `${id}-img`,
+                attrs: {
+                    alt: 'icon',
+                },
+                style: {opacity:fillOpacity}
+            })
+            
+            if (!iconSpecs) throw new Error('No icon specification.')
+
+            const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
+                Math.max(
+                    (iconGlow ? iconSize*3 : 0),
+                    (iconShadow ? iconSize*0.2 : 0),
+                    (iconType !== 'html' && italicFont ? iconSize*0.5 : 0),
+                )                
+            : 0)
+            const [width, height, outerHTML] = (() => {
+                const style = getLeafletLayerStyle(
+                    {geometry:{type:'MultiPoint'}}, {
+                        ...styleParams, 
+                        fillPatternId:null, 
+                        textWrap:false,
+                        iconRotation: 0,
+                        fillOpacity: 1,
+                    }, {
+                        allowCircleMarker: false,
+                    }
+                )
+
+                const tempElement =  customCreateElement({
+                    innerHTML: leafletLayerStyleToHTML(style, 'point')
+                }).firstChild
+                tempElement?.classList?.add('position-absolute')
+                tempElement?.classList?.remove(
+                    'h-100', 
+                    'w-100', 
+                    'd-flex', 
+                    'justify-content-center', 
+                    'align-items-center'
+                )
+
+                document.body.appendChild(tempElement)
+                const bounds = tempElement.getBoundingClientRect()
+                document.body.removeChild(tempElement)
+                
+                return [bounds.width, bounds.height, tempElement.outerHTML]
+            })()
+            const svgWidth = width + buffer
+            const svgHeight = height + buffer
+            const patternGap = iconType === 'img' ? 0 : iconSize
+            const patternWidth = svgWidth + patternGap
+            const patternHeight = svgHeight + patternGap
+            
+            img.setAttribute('width', patternWidth)
+            img.setAttribute('height', patternHeight)
+
+            if (Array('svg', 'img').includes(iconType)) {
+                if (iconType === 'svg') {
+                    defs.innerHTML = iconSpecs
+                    icon = defs.firstChild
+                }
+                
+                if (iconType === 'img') {
+                    icon = document.createElementNS(svgNS, 'image')
+                    icon.setAttribute('href', iconSpecs)
+                    defs.appendChild(icon)
+                }
+                
+                icon.setAttribute('width', width)
+                icon.setAttribute('height', height)
+            }
+            
+            if (Array('bi', 'text', 'emoji').includes(iconType)) {
+                icon = document.createElementNS(svgNS, 'text')
+                icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+                icon.setAttribute('class', removeWhitespace(`
+                    text-center lh-1
+                    ${textWrap ? 'text-wrap' : 'text-nowrap'}
+                    ${boldFont ? 'fw-bold' : 'fw-normal'}
+                    ${italicFont ? 'fst-italic' : 'fst-normal'}
+                `))
+                icon.setAttribute('x', '50%')
+                icon.setAttribute('y', '50%')
+                icon.setAttribute('text-anchor', 'middle')
+                icon.setAttribute('dominant-baseline', 'central')
+                icon.setAttribute('font-size', iconSize)
+                icon.setAttribute('font-family', (
+                    iconType === 'bi' ? 'bootstrap-icons' :
+                    fontSerif ? 'Georgia, Times, serif' :
+                    'default'
+                ))
+                defs.appendChild(icon)
+            }
+
+            const dataUrl = iconType === 'svg' ? await svgToDataURL(outerHTML) : await outerHTMLToDataURL(outerHTML, {
+                width:svgWidth,
+                height:svgHeight,
+                x:0-(buffer/2),
+                y:0-(buffer/2),
+            })
+
+            if (iconType === 'html' && dataUrl) {
+                icon = document.createElementNS(svgNS, 'image')
+                icon.setAttribute('href', dataUrl)
+                defs.appendChild(icon)
+            }
+
+            img.setAttribute('src', await createNewImage(
+                iconType === 'img' ? iconSpecs :  dataUrl, {
+                    opacity:fillOpacity,
+                    angle:iconRotation,
+                    width: patternWidth,
+                    height: patternHeight,
+                }
+            ))
+
+            defs.appendChild(img)
+
+            if (icon) {
+                icon.id = `${id}-icon`
+                icon.style.textShadow = textShadow
+                
+                if (Array('emoji', 'img', 'html').includes(iconType)) {
+                    icon.style.opacity = fillOpacity
+                }
+
+                icon.setAttribute('fill', (() => {
+                    if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
+                    return iconFill ? fillColor : 'none'
+                })())
+                icon.setAttribute('stroke', (() => {
+                    if (iconStroke) {
+                        icon.setAttribute('stroke-opacity', strokeOpacity)
+                        icon.setAttribute('stroke-width', strokeWidth)
+                        icon.setAttribute('stroke-linecap', lineCap)
+                        icon.setAttribute('stroke-linejoin', lineJoin)
+                        icon.setAttribute('stroke-dasharray', dashArray)
+                        icon.setAttribute('stroke-dashoffset', dashOffset)
+                    }
+                    return iconStroke ? strokeColor : 'none'
+                })())
+
+                const svg = document.createElementNS(svgNS, 'svg')
+                svg.id = `${id}-svg`
+                svg.classList.add('position-absolute')
+                svg.setAttribute('width', svgWidth)
+                svg.setAttribute('height', svgHeight)
+                svg.setAttribute('viewbox', `0 0 ${svgWidth} ${svgHeight}`)
+                svg.style.transform = `rotate(${iconRotation}deg)`
+                svg.style.transformOrigin = `50% 50%`
+                defs.appendChild(svg)
+                
+                const svgUse = document.createElementNS(svgNS, 'use')
+                svgUse.setAttribute('href', `#${id}-icon`)
+                svg.appendChild(svgUse)
+                
+                const newPattern = document.createElementNS(svgNS, 'pattern')
+                newPattern.id = `${id}-pattern`
+                newPattern.setAttribute('patternUnits', 'userSpaceOnUse')
+                newPattern.setAttribute('width', patternWidth)
+                newPattern.setAttribute('height', patternHeight)
+                newPattern.setAttribute('viewbox', `0 0 ${patternWidth} ${patternHeight}`)
+                newPattern.style.transform = `rotate(${iconRotation}deg)`
+                newPattern.style.transformOrigin = `50% 50%`
+                defs.appendChild(newPattern)
+                
+                const patternRect = document.createElementNS(svgNS, 'rect')
+                patternRect.setAttribute('width', patternWidth)
+                patternRect.setAttribute('height', patternHeight)
+                patternRect.setAttribute('fillOpacity', fillOpacity)
+                patternRect.setAttribute('fill', patternBg ? patternBgColor : 'none')
+                newPattern.appendChild(patternRect)
+
+                const patternUse = svg.cloneNode(true)
+                patternUse.removeAttribute('id')
+                Array.from(patternUse.querySelectorAll('use')).forEach(i => {
+                    const opacity = strokeOpacity + (fillOpacity/2)
+                    i.setAttribute('fill-opacity', 1)
+                    i.setAttribute('stroke-opacity', (
+                        strokeOpacity > 0 ? opacity > 100 ? 100 : opacity : strokeOpacity
+                    ))
+                })
+                patternUse.setAttribute('x', buffer/2)
+                patternUse.setAttribute('y', buffer/2)
+                newPattern.appendChild(patternUse)
+            }
+        } catch (error) {
+            if (styleParams.fillPatternId) delete styleParams.fillPatternId
+            if (defs) defs.remove()
+        } finally {
+            if (refresh) updateGeoJSONData(layer).then(() => {
+                map.setZoom(map.getZoom())
+            })
+            return styleParams
         }
     }
 
@@ -920,15 +904,27 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
         const collapseId = generateRandomString()
-        
+
+        let updateTimeout
+        const update = async ({refresh=true}={}) => {
+            clearTimeout(updateTimeout)
+            console.log('reset')
+            updateTimeout = setTimeout(() => {
+                updateSymbology(style.active ? styleParams : null, {refresh})
+                updateTimeout = null
+            }, 1000)
+        }
+
         const parent = customCreateElement({
             className:'d-flex flex-column flex-grow-1',
         })
 
         parent.addEventListener('focusin', (e) => {
-            if (!updateSymbologyTimeout) return
+            if (!updateTimeout) return
             if (!e.target.getAttribute('name')) return
-            updateSymbology((style.active ? styleParams : null))
+            
+            clearTimeout(updateTimeout)
+            parent.addEventListener('blurin', update, {once:true})
         })
 
         const toggleFields = customCreateElement({
@@ -949,7 +945,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (value === style.active) return
     
                         style.active = value
-                        updateSymbology((style.active ? styleParams : null))
+                        update()
                     }
                 }
             })
@@ -975,7 +971,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         if (value === style.rank) return
                         
                         style.rank = value
-                        updateSymbology((style.active ? styleParams : null))
+                        update()
                     }
                 }
             })
@@ -1018,7 +1014,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         style.styleParams = await updateSymbology({
                             ...newStyleParams,
                             fillPatternId: styleParams.fillPatternId
-                        }, {refresh:style.active, timeout:0})
+                        }, {refresh:style.active})
 
                         parent.parentElement.insertBefore(getSymbologyForm(id), parent)
                         parent.remove()               
@@ -1044,7 +1040,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent.remove()
                                     document.querySelector(`#${styleParams.fillPatternId}`)?.remove()
                                     delete symbology.groups[id]
-                                    if (style.active) updateSymbology()
+                                    style.active = false
+                                    update()
                                 }
                             },            
                         })
@@ -1182,7 +1179,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     styleParams.iconType = value
                     updateIconDatalistOptions()
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                     
                 }
             }
@@ -1253,7 +1250,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconSpecs) return
                     
                     styleParams.iconSpecs = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1286,7 +1283,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
 
                     styleParams.iconSize = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1311,7 +1308,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconRotation) return
                     
                     styleParams.iconRotation = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1332,7 +1329,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconFill) return
 
                     styleParams.iconFill = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1348,7 +1345,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconStroke) return
 
                     styleParams.iconStroke = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1375,7 +1372,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconShadow) return
 
                     styleParams.iconShadow = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1391,7 +1388,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1414,7 +1411,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.textWrap) return
 
                     styleParams.textWrap = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1430,7 +1427,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fontSerif) return
 
                     styleParams.fontSerif = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1446,7 +1443,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.boldFont) return
 
                     styleParams.boldFont = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1462,7 +1459,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.italicFont) return
 
                     styleParams.italicFont = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1488,7 +1485,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1513,7 +1510,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillOpacity) return
                     
                     styleParams.fillOpacity = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1536,7 +1533,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1561,7 +1558,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternBgColor.disabled = !value
 
                     styleParams.patternBg = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1578,7 +1575,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (value === styleParams.patternBgColor) return
 
                 styleParams.patternBgColor = value
-                updateSymbology((style.active ? styleParams : null))
+                update()
             })
             patternBgFields.appendChild(input)
             return input
@@ -1605,7 +1602,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeColor) return
 
                     styleParams.strokeColor = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1629,7 +1626,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeOpacity) return
 
                     styleParams.strokeOpacity = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1653,7 +1650,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeWidth) return
 
                     styleParams.strokeWidth = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1682,7 +1679,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineCap) return
 
                     styleParams.lineCap = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1708,7 +1705,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineJoin) return
 
                     styleParams.lineJoin = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1739,7 +1736,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     } ${strokeWidth * 3}`
 
                     styleParams.lineBreak = value
-                    updateSymbology((style.active ? styleParams : null))
+                    update()
                 }
             }
         })
@@ -1826,7 +1823,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 strokeOpacity: 1,
                                 patternBgColor: null,
                                 fillPatternId: null,
-                            }), {refresh:false, timeout:0})
+                            }), {refresh:false})
         
                             if (controllerId !== controller.id) return
                             if (!symbology.groups) return
@@ -1943,7 +1940,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
-                                }), {refresh:false, timeout:0})
+                                }), {refresh:false})
 
                                 console.log(styleParams)
 
