@@ -686,7 +686,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         geojsonId,
                         styles,
                     })
+
+                    if (type === 'geojson' && group._name === 'query') layer._geojsonId = newLayer._geojsonId
                 }
+
                 if (newLayer) targetGroup.addLayer(newLayer)
             }
         },
