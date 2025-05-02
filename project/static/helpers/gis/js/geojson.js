@@ -32,9 +32,9 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "Polygon",
             "MultiPolygon",
         ]
-
-        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
         const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
+        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
+
         const comparison = (
             typeComparison !== 0 ? typeComparison : 
             rankComparison !== 0 ? rankComparison : 
@@ -100,8 +100,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const features = geojson.features
         if (!features?.length) continue
-
-        sortGeoJSONFeatures(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             geojson,
