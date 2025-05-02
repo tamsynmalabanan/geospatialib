@@ -903,6 +903,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         clearTimeout(updateSymbologyTimeout)
+        console.log('reset')
         if (timeout) {
             updateSymbologyTimeout = setTimeout(() => {
                 handler()
@@ -919,7 +920,6 @@ const handleLeafletStylePanel = (map, parent) => {
         const style = (symbology.groups?.[id]) || symbology.default
         const styleParams = style.styleParams
         const collapseId = generateRandomString()
-        
         
         const parent = customCreateElement({
             className:'d-flex flex-column flex-grow-1',
