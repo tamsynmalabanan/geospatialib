@@ -551,12 +551,6 @@ const handleLeafletLegendPanel = (map, parent) => {
             }
         }
 
-        // if (layerIsVisible(layer)) {
-        //     if (layer instanceof L.GeoJSON) {
-        //         updateGeoJSONData(layer, {controller})
-        //     }
-        // }
-
         if (layers.innerHTML !== '') {
             layers.classList.remove('d-none')
             disableStyleLayerSelect(false)
