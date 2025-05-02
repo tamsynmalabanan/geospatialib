@@ -903,6 +903,7 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         clearTimeout(updateSymbologyTimeout)
+        console.log(updateSymbologyTimeout)
         if (timeout) {
             updateSymbologyTimeout = setTimeout(handler, timeout)
         } else {
