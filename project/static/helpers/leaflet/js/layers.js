@@ -491,7 +491,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 addLayer(layer)
             }
         },
-        visibility: isLegendFeature ? null : {
+        visibility: isLegendFeature || !feature ? null : {
             innerText: `Toggle visibility`,
             btnCallback: () => {
                 group._ch.hasHiddenLayer(layer) 
