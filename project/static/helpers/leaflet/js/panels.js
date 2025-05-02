@@ -903,7 +903,6 @@ const handleLeafletStylePanel = (map, parent) => {
         }
 
         clearTimeout(updateSymbologyTimeout)
-        console.log(updateSymbologyTimeout)
         if (timeout) {
             updateSymbologyTimeout = setTimeout(() => {
                 handler()
@@ -3318,6 +3317,13 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
                 })
             })
+        })
+
+        document.querySelector(`#${body.id}-symbology`).addEventListener('focusin', (e) => {
+            if (!e.target.getAttribute('name')) return
+
+            console.log(e.target)
+            console.log(updateSymbologyTimeout)
         })
     })
 }
