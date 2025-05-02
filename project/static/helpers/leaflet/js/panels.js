@@ -924,7 +924,13 @@ const handleLeafletStylePanel = (map, parent) => {
         const parent = customCreateElement({
             className:'d-flex flex-column flex-grow-1',
         })
-        
+
+        parent.addEventListener('focusin', (e) => {
+            if (!updateSymbologyTimeout) return
+            if (!e.target.getAttribute('name')) return
+            updateSymbology((style.active ? styleParams : null))
+        })
+
         const toggleFields = customCreateElement({
             className:'d-flex gap-3 align-items-center',
             parent,
@@ -1176,7 +1182,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     styleParams.iconType = value
                     updateIconDatalistOptions()
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                     
                 }
             }
@@ -1247,7 +1253,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconSpecs) return
                     
                     styleParams.iconSpecs = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1280,7 +1286,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     }
 
                     styleParams.iconSize = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1305,7 +1311,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconRotation) return
                     
                     styleParams.iconRotation = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1326,7 +1332,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconFill) return
 
                     styleParams.iconFill = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1342,7 +1348,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconStroke) return
 
                     styleParams.iconStroke = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1369,7 +1375,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconShadow) return
 
                     styleParams.iconShadow = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1385,7 +1391,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconGlow) return
 
                     styleParams.iconGlow = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1408,7 +1414,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.textWrap) return
 
                     styleParams.textWrap = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1424,7 +1430,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fontSerif) return
 
                     styleParams.fontSerif = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1440,7 +1446,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.boldFont) return
 
                     styleParams.boldFont = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1456,7 +1462,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.italicFont) return
 
                     styleParams.italicFont = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1482,7 +1488,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1507,7 +1513,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillOpacity) return
                     
                     styleParams.fillOpacity = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1530,7 +1536,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillPattern) return
 
                     styleParams.fillPattern = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1555,7 +1561,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     patternBgColor.disabled = !value
 
                     styleParams.patternBg = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1572,7 +1578,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (value === styleParams.patternBgColor) return
 
                 styleParams.patternBgColor = value
-                if (style.active) updateSymbology(styleParams)
+                updateSymbology((style.active ? styleParams : null))
             })
             patternBgFields.appendChild(input)
             return input
@@ -1599,7 +1605,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeColor) return
 
                     styleParams.strokeColor = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1623,7 +1629,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeOpacity) return
 
                     styleParams.strokeOpacity = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1647,7 +1653,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.strokeWidth) return
 
                     styleParams.strokeWidth = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1676,7 +1682,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineCap) return
 
                     styleParams.lineCap = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1702,7 +1708,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.lineJoin) return
 
                     styleParams.lineJoin = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -1733,7 +1739,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     } ${strokeWidth * 3}`
 
                     styleParams.lineBreak = value
-                    if (style.active) updateSymbology(styleParams)
+                    updateSymbology((style.active ? styleParams : null))
                 }
             }
         })
@@ -2773,7 +2779,6 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         }
                     },
-                    id: `${body.id}-symbology`,
                     className: 'gap-2 flex-wrap'
                 },
             },
@@ -3317,13 +3322,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     })
                 })
             })
-        })
-
-        document.querySelector(`#${body.id}-symbology`).addEventListener('focusin', (e) => {
-            if (!e.target.getAttribute('name')) return
-
-            console.log(e.target)
-            console.log(updateSymbologyTimeout)
         })
     })
 }
