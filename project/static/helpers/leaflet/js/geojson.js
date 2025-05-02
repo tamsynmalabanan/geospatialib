@@ -135,7 +135,7 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (geojson && group._name === 'client') {
+    if (geojson && !group?._map?._legendLayerGroups.includes(group)) {
         filterGeoJSONFeatures(geojson, {
             filters: geojsonLayer._styles.filters,
             groups: geojsonLayer._styles.symbology.groups ?? {},
