@@ -23,7 +23,11 @@ const getLeafletGeoJSONLayer = async ({
     if (!isQuery) geojsonLayer._geojsonId = geojsonId || (geojson ? (await (async () => {
         const geojsonId = generateRandomString()
         await handleGeoJSON(geojson)
-        saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry, 'client')
+        saveToGeoJSONDB(geojson, {
+            id: geojsonId, 
+            queryExtent: turf.bboxPolygon(turf.bbox(geojson)).geometry, 
+            source: 'client'
+        })
         return geojsonId
     })()) : null)
 

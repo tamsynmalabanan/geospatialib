@@ -11,7 +11,7 @@ const requestGeoJSONDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (id, geojson, queryExtent, source, expirationDays=7) => {
+const saveToGeoJSONDB = (geojson, {id, queryExtent, source, expirationDays=7}={}) => {
     const request = requestGeoJSONDB()
     request.onsuccess = (e) => {
         const db = e.target.result
@@ -25,7 +25,8 @@ const saveToGeoJSONDB = (id, geojson, queryExtent, source, expirationDays=7) => 
 
 const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent, source) => {
     const save = (data) => {
-        if (data) saveToGeoJSONDB(id, data.geojson, data.queryExtent, source)
+        const {geojson, queryExtent} = data
+        if (data) saveToGeoJSONDB(geojson, {id, queryExtent, source})
     }
     
     const cachedData = await getFromGeoJSONDB(id, {save:false})
@@ -71,7 +72,7 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
                 if (!result) return resolve(null)
 
                 const {geojson, queryExtent, source} = result
-                if (save) saveToGeoJSONDB(id, geojson, queryExtent, source)
+                if (save) saveToGeoJSONDB(geojson, {id, queryExtent, source})
                 resolve({geojson:turf.clone(geojson), queryExtent})
             }
     

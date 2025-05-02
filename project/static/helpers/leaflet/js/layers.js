@@ -611,7 +611,11 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                     const geojsonId = generateRandomString()
                     await handleGeoJSON(geojson)
-                    saveToGeoJSONDB(geojsonId, geojson, turf.bboxPolygon(turf.bbox(geojson)).geometry, 'client')
+                    saveToGeoJSONDB(geojson, {
+                        id: geojsonId, 
+                        queryExtent: turf.bboxPolygon(turf.bbox(geojson)).geometry, 
+                        source: 'client'
+                    })
                     geojsonLayer._geojsonId = geojsonId                
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
