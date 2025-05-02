@@ -135,7 +135,7 @@ const createGeoJSONChecklist = async (geojsonList, group, {
             const featuresContainer = document.createElement('div')
             contentCollapse.appendChild(featuresContainer)
 
-            for (const featureLayer of featureLayers) {
+            for (const featureLayer of featureLayers.reverse()) {
                 if (controller?.signal.aborted) return
                 
                 featureLayer._checkbox = createFormCheck({
