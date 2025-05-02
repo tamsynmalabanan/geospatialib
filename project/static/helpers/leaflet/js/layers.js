@@ -661,7 +661,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
 
-        divider4: {
+        divider5: {
             divider: true,
         },
         legend: {
