@@ -135,8 +135,8 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (geojson && !group?._map?._legendLayerGroups.includes(group)) {
-        filterGeoJSON(geojson, {
+    if (geojson && group._name === 'client') {
+        filterGeoJSONFeatures(geojson, {
             filters: geojsonLayer._styles.filters,
             groups: geojsonLayer._styles.symbology.groups ?? {},
         })
@@ -314,6 +314,8 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     const data = await fetcher(...Object.values(fetchParams), {
         map: layer._group?._map,
         controller,
+        filters: layer._styles.filters,
+        groups: layer._styles.symbology.groups ?? {},
     })
 
     if (data instanceof Error) {
@@ -324,7 +326,7 @@ const updateGeoJSONData = async (layer, {controller} = {}) => {
     if (controller?.signal.aborted) return
 
     if (data?.features?.length) {
-        filterGeoJSON(data, {
+        filterGeoJSONFeatures(data, {
             filters: layer._styles.filters,
             groups: layer._styles.symbology.groups ?? {},
             controller

@@ -32,9 +32,9 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "Polygon",
             "MultiPolygon",
         ]
-
-        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
         const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
+        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
+
         const comparison = (
             typeComparison !== 0 ? typeComparison : 
             rankComparison !== 0 ? rankComparison : 
@@ -100,8 +100,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
 
         const features = geojson.features
         if (!features?.length) continue
-
-        sortGeoJSONFeatures(geojson)        
 
         const geojsonLayer = await getLeafletGeoJSONLayer({
             geojson,
@@ -368,7 +366,7 @@ const createFeaturePropertiesTable = (properties, {
 }
 
 const mapForFilterGeoJSON = new Map()
-const fetchClientGeoJSON = async (dbKey, {map, controller, filters, groups} = {}) => {
+const fetchClientGeoJSON = async (dbKey, {map, controller, filters={}, groups={}} = {}) => {
     if (!dbKey) return
 
     const mapKey = `${dbKey};${map?.getContainer().id}`
@@ -381,17 +379,16 @@ const fetchClientGeoJSON = async (dbKey, {map, controller, filters, groups} = {}
         try {
             if (signal?.aborted) throw new Error()
             
-            // const mapBounds = map?.getBounds()
-            // const queryExtent = mapBounds ? L.rectangle(mapBounds)?.toGeoJSON()?.geometry
+            const mapBounds = map?.getBounds()
+            const queryExtent = mapBounds ? L.rectangle(mapBounds).toGeoJSON().geometry : null
             
-            const cachedData = await getFromGeoJSONDB(dbKey, {controller, filters, groups})
+            const cachedData = await getFromGeoJSONDB(dbKey, {filters, groups, queryExtent})
             if (!cachedData) throw new Error('Cached data not found.')
 
             const clonedGeoJSON = cachedData.geojson
             const geojsonBbox = cachedData.queryExtent
 
             if (map) {
-                const queryExtent = L.rectangle(map.getBounds()).toGeoJSON().geometry
                 if (!turf.booleanIntersects(queryExtent, geojsonBbox)) return
     
                 clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
@@ -415,7 +412,7 @@ const fetchClientGeoJSON = async (dbKey, {map, controller, filters, groups} = {}
 }
 
 const mapForFetchGeoJSON = new Map()
-const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abortBtns} = {}) => {
+const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abortBtns, filters={}, groups={}} = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
     const latlng = event.latlng
     const queryGeom = (latlng ? turf.point(
@@ -441,7 +438,7 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
             geojson = await (async () => {
                 if (controller?.signal.aborted) return
                 
-                const cachedData = await getFromGeoJSONDB(dbKey)
+                const cachedData = await getFromGeoJSONDB(dbKey, {filters, groups, queryExtent})
                 if (!cachedData) return
 
                 const cachedGeoJSON = cachedData.geojson
@@ -526,7 +523,7 @@ const downloadGeoJSON = (geojson, fileName) => {
     URL.revokeObjectURL(url)
 }
 
-const filterGeoJSON = (geojson, {filters={}, groups={}, controller,} = {}) => {
+const filterGeoJSONFeatures = (geojson, {filters={}, groups={}, controller,} = {}) => {
     const hasActiveFilters = Object.values(filters).some(i => {
         if (!i.active) return false
         if (!Object.values(i.values).some(j => {
