@@ -3334,7 +3334,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
             cancelBtn.disabled = false
 
-            if (e.target instanceof L.Map === false) e._leafletMap = map
+            if (!(e.target instanceof L.Map)) e._leafletMap = map
             const geojsons = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 

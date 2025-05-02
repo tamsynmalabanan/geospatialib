@@ -417,6 +417,7 @@ const mapForFetchGeoJSON = new Map()
 const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abortBtns, filters={}, groups={}} = {}) => {
     const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
     const latlng = event.latlng
+    console.log(latlng, L.rectangle(map.getBounds()).toGeoJSON()).geometry)
     const queryGeom = (latlng ? turf.point(
         Object.values(latlng).reverse()
     ) : L.rectangle(map.getBounds()).toGeoJSON()).geometry
