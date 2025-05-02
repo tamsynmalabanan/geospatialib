@@ -24,34 +24,37 @@ const saveToGeoJSONDB = (id, geojson, queryExtent, source, expirationDays=7) => 
 }
 
 const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent, source) => {
-    const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
-
     const save = (data) => {
         if (data) saveToGeoJSONDB(id, data.geojson, data.queryExtent, source)
         worker.terminate()
     }
-
-    worker.onmessage = (e) => {
-        save(e.data)
-    }
-    
-    worker.onerror = (error) => {
-        console.log(error)
-        worker.terminate()
-    }
     
     const cachedData = await getFromGeoJSONDB(id, {save:false})
-    if (!cachedData) return save({
-        geojson:newGeoJSON, 
-        queryExtent:newQueryExtent,
-    })
+    if (!cachedData) {
+        return save({
+            geojson:newGeoJSON, 
+            queryExtent:newQueryExtent,
+        })
+    } else {
+        const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
+
+        worker.postMessage({
+            newGeoJSON, 
+            newQueryExtent,
+            currentGeoJSON: cachedData.geojson,
+            currentQueryExtent: cachedData.queryExtent,
+        })
+
+        worker.onmessage = (e) => {
+            save(e.data)
+        }
+        
+        worker.onerror = (error) => {
+            console.log(error)
+            worker.terminate()
+        }
+    }
     
-    worker.postMessage({
-        newGeoJSON, 
-        newQueryExtent,
-        currentGeoJSON: cachedData.geojson,
-        currentQueryExtent: cachedData.queryExtent,
-    })
 }
 
 const getFromGeoJSONDB = async (id, {save=true}={}) => {
