@@ -26,7 +26,6 @@ const saveToGeoJSONDB = (id, geojson, queryExtent, source, expirationDays=7) => 
 const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent, source) => {
     const save = (data) => {
         if (data) saveToGeoJSONDB(id, data.geojson, data.queryExtent, source)
-        worker.terminate()
     }
     
     const cachedData = await getFromGeoJSONDB(id, {save:false})
@@ -47,10 +46,10 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent, source) => {
 
         worker.onmessage = (e) => {
             save(e.data)
+            worker.terminate()
         }
         
         worker.onerror = (error) => {
-            console.log(error)
             worker.terminate()
         }
     }
