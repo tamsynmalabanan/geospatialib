@@ -3447,15 +3447,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const start = turf.point([w, s+(n-s)])
                 const end = turf.point([e, s+(n-s)])
                 const distance = turf.distance(start, end)*1000
-                const zoom = parseInt(scaleToLeafletZoom(distance))
-                console.log(zoom)
 
-                // geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
-                //     queryGeom,
-                //     zoom: map.getZoom(),
-                //     abortBtns, 
-                //     controller
-                // })
+                geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
+                    queryGeom,
+                    zoom: parseInt(scaleToLeafletZoom(distance)),
+                    abortBtns, 
+                    controller
+                })
                 
                 geojsons['OpenStreetMap via Overpass'] = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom,
