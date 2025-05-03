@@ -375,16 +375,24 @@ const fetchGeoJSONHandlers = (name) => {
 }
 
 const mapForFetchGeoJSON = new Map()
-const fetchGeoJSON = async (dbKey, {queryGeom, zoom=20, controller, abortBtns} = {}) => {
+const fetchGeoJSON = async (dbKey, {
+    callback, 
+    queryGeom, 
+    zoom=20, 
+    filters={},
+    groups={},    
+    controller, 
+    abortBtns
+} = {}) => {
     if (!dbKey) return
-
-    const [handlerName, handlerParams] = dbKey.split(';', 2)
-    const isClient = handlerName === 'client'
 
     const geomBbox = queryGeom ? turf.bbox(queryGeom).join(',') : null
     const mapKey = [dbKey, geomBbox, controller?.id].join(';')
     if (mapForFetchGeoJSON.has(mapKey)) return mapForFetchGeoJSON.get(mapKey)
-
+        
+    const [handlerName, handlerParams] = dbKey.split(';', 2)
+    const isClient = handlerName === 'client'
+    
     const geojsonPromise = (async () => {
         try {
             let geojson

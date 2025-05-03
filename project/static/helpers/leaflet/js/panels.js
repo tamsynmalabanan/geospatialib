@@ -1923,8 +1923,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
                                 }), {refresh:false})
 
-                                console.log(styleParams)
-
                                 if (controllerId !== controller.id) return
                                 if (!symbology.groups) return
             
