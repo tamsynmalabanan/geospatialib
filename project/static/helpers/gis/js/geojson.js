@@ -395,7 +395,13 @@ const fetchGeoJSON = async (dbKey, {
         if (controller?.signal.aborted) return
         
         const cachedData = await getFromGeoJSONDB(dbKey)
-        if (!cachedData) return
+        if (!cachedData) {
+            if (isClient) {
+                return new Error('Cached data not found.')
+            } else {
+                return
+            }
+        }
 
         const cachedGeoJSON = cachedData.geojson
         const cachedQueryExtent = cachedData.queryExtent
@@ -447,7 +453,7 @@ const fetchGeoJSON = async (dbKey, {
         return geojson
     })()
     
-    return geojson ?? new Error('Cached data not found.')
+    return geojson
 }
 
 const downloadGeoJSON = (geojson, fileName) => {
