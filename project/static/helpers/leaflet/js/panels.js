@@ -3457,6 +3457,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     abortBtns, 
                     controller
                 })
+
+                console.log(geojsons)
                 return geojsons
             }
         },

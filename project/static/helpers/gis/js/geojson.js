@@ -471,7 +471,6 @@ const fetchGeoJSON = async (dbKey, {
 
     mapForFetchGeoJSON.set(mapKey, geojsonPromise)
     return geojsonPromise
-
 }
 
 const downloadGeoJSON = (geojson, fileName) => {
