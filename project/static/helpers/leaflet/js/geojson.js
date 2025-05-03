@@ -330,7 +330,7 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const handler = (data) => {
         if (data instanceof Error) return layer.fire('dataerror')
         
-        // web worker here
+        // web worker here - filter, group/rank, symplify/cluster, sort
         
         if (controller?.signal.aborted) return
         
