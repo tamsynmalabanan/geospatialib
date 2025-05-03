@@ -15,7 +15,6 @@ const saveToGeoJSONDB = (geojson, {
     id = `client;${generateRandomString()}`, 
     queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry, 
     expirationDays=7,
-    normalize=true,
 }={}) => {
     if (!geojson) return
 
@@ -24,8 +23,6 @@ const saveToGeoJSONDB = (geojson, {
         const db = e.target.result
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
-
-        if (normalize) await normalizeGeoJSON(geojson)
 
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
         objectStore.put({id, geojson, queryExtent, expirationTime})
@@ -37,7 +34,7 @@ const saveToGeoJSONDB = (geojson, {
 const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
     const save = (data) => {
         const {geojson, queryExtent} = data
-        if (data) saveToGeoJSONDB(geojson, {id, queryExtent, normalize:false})
+        if (data) saveToGeoJSONDB(geojson, {id, queryExtent})
     }
     
     const cachedData = await getFromGeoJSONDB(id, {save:false})
@@ -83,7 +80,7 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
                 if (!result) return resolve(null)
 
                 const {geojson, queryExtent} = result
-                if (save) saveToGeoJSONDB(geojson, {id, queryExtent, normalize:false})
+                if (save) saveToGeoJSONDB(geojson, {id, queryExtent})
                 resolve({geojson:turf.clone(geojson), queryExtent})
             }
     

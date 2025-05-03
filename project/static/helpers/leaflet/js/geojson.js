@@ -21,7 +21,10 @@ const getLeafletGeoJSONLayer = async ({
 
     const isQuery = group?._name === 'query'
     if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
-        geojson ? saveToGeoJSONDB(geojson) : null
+        geojson ? (async () => {
+            await normalizeGeoJSON(geojson)
+            return saveToGeoJSONDB(geojson)
+        })() : null
     )
 
     geojsonLayer._styles = styles || {
