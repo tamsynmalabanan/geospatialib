@@ -468,52 +468,6 @@ const fetchGeoJSON = async (dbKey, {queryGeom, zoom=20, controller, abortBtns} =
 
 }
 
-const mapForFilterGeoJSON = new Map()
-const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
-    if (!dbKey) return
-
-    const mapKey = `${dbKey};${map?.getContainer().id}`
-    if (mapForFilterGeoJSON.has(mapKey)) {
-        return mapForFilterGeoJSON.get(mapKey)
-    }
-
-    const signal = controller?.signal
-    const geojsonPromise = (async () => {
-        try {
-            if (signal?.aborted) throw new Error()
-            
-            const mapBounds = map?.getBounds()
-            const queryExtent = mapBounds ? L.rectangle(mapBounds).toGeoJSON().geometry : null
-            
-            const cachedData = await getFromGeoJSONDB(dbKey)
-            if (!cachedData) throw new Error('Cached data not found.')
-
-            const clonedGeoJSON = cachedData.geojson
-            const geojsonBbox = cachedData.queryExtent
-
-            if (map) {
-                if (!turf.booleanIntersects(queryExtent, geojsonBbox)) return
-    
-                clonedGeoJSON.features = clonedGeoJSON.features.filter(feature => {
-                    if (signal?.aborted) throw new Error()
-                    return turf.booleanIntersects(queryExtent, feature)
-                })
-            }
-
-            if (clonedGeoJSON.features.length === 0) return
-            return clonedGeoJSON    
-        } catch (error) {
-            return error
-        } finally {
-            setTimeout(() => mapForFilterGeoJSON.delete(mapKey), 1000)
-        }
-    })()
-    
-    mapForFilterGeoJSON.set(mapKey, geojsonPromise)
-
-    return geojsonPromise
-}
-
 const downloadGeoJSON = (geojson, fileName) => {
     if (!geojson) return 
     

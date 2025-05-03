@@ -1762,7 +1762,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             if (i === '[geometry_type]') return feature.geometry.type
                             
                             let value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
-                            if (!symbology.case) value = value.toLowerCase()
+                            if (symbology.case === false) value = value.toLowerCase()
                             return value === '' ? '[blank]' : value
                         })()]))
         
@@ -1777,6 +1777,8 @@ const handleLeafletStylePanel = (map, parent) => {
                         const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
                         return aCount !== bCount ? aCount - bCount : (a.localeCompare(b))
                     })
+
+                    console.log(groupsSetSorted)
 
                     const count = groupsSetSorted.length
                     symbology.default.rank = count + 1
