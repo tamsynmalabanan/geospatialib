@@ -38,6 +38,8 @@ const scaleToLeafletZoom = (scale) => {
         if (scale === value) return i
         diff[Math.abs(scale-value)] = i
     }
+
+    console.log(diff)
     return diff[Math.min(...Object.keys(diff))]
 }
 
