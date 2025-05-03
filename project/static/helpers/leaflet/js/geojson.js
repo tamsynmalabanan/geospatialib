@@ -323,7 +323,6 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const map = layer._group?._map
     const data = await fetchGeoJSON(geojsonId, {
         queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
-        queryZoom: map.getZoom(),
         controller,
         abortBtns,
     })
