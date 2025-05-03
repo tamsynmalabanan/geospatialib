@@ -378,6 +378,7 @@ const mapForFetchGeoJSON = new Map()
 const fetchGeoJSON = async (dbKey, {queryGeom, zoom=20, controller, abortBtns} = {}) => {
     if (!dbKey) return
 
+    console.log(dbKey)
     const [handlerName, handlerParams] = dbKey.split(';', 2)
     const isClient = handlerName === 'client'
 
