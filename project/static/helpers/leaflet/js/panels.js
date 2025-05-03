@@ -3444,7 +3444,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const geojsons = {}
 
                 const [w, s, e, n] = turf.bbox(queryGeom)
-                const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/2*1000
+                const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/4*1000
 
                 geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
                     queryGeom,
