@@ -31,6 +31,16 @@ const getLeafletMeterScale = (map) => {
     return leafletZoomToMeter(map.getZoom())
 }
 
+const scaleToLeafletZoom = (scale) => {
+    const diff = {}
+    for (i in leafletZoomToMeter()) {
+        const value = leafletZoomToMeter(i)
+        if (scale === value) return i
+        diff[Math.abs(scale-value)] = i
+    }
+    return diff[Math.min(...Object.keys(diff))]
+}
+
 const zoomLeafletMapToScale = (map, scale) => {
     const mapZoom = map.getZoom()
     const mapScale = leafletZoomToMeter(mapZoom)

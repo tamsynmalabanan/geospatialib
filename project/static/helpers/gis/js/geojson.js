@@ -495,21 +495,6 @@ const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abor
     return geojsonPromise
 }
 
-const fetchURLGeoJSONs = async (fetchers, { controller, abortBtns, } = {}) => {
-    const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
-        return fetchURLGeoJSON(fetcher, {abortBtns, controller})
-    }))
-
-    if (controller.signal.aborted) return
-
-    const geojsons = {}
-    for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-        geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
-    }
-
-    return geojsons
-}
-
 const downloadGeoJSON = (geojson, fileName) => {
     if (!geojson) return 
     

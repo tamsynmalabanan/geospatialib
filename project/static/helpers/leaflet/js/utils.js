@@ -1,5 +1,5 @@
 const leafletZoomToMeter = (zoom) => {
-    return {
+    const values = {
         20: 10,
         19: 20,
         18: 30,
@@ -23,7 +23,9 @@ const leafletZoomToMeter = (zoom) => {
         3: 1000000,
         2: 3000000,
         1: 5000000,
-    }[zoom]
+    }
+
+    return zoom ? values[zoom] : values
 }
 
 const isLeafletControlElement = (element) => {
