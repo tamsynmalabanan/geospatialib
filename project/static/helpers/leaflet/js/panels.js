@@ -3440,15 +3440,14 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'e',
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
-                console.log(queryGeom)
 
                 const geojsons = {}
 
                 const [w, s, e, n] = turf.bbox(queryGeom)
                 const start = turf.point([w, n-s])
                 const end = turf.point([e, n-s])
-                const distance = turf.distance(start, end)/1000
-                const zoom = scaleToLeafletZoom(distance)
+                const distance = turf.distance(start, end)
+                const zoom = parseInt(scaleToLeafletZoom(distance/2/1000))
                 console.log(start, end, distance, zoom)
 
                 // geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
