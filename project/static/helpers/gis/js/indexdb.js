@@ -24,6 +24,8 @@ const saveToGeoJSONDB = (geojson, {
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
 
+        if (id.startsWith('client')) await normalizeGeoJSON(geojson)
+
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
         objectStore.put({id, geojson, queryExtent, expirationTime})
     }
