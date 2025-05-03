@@ -3444,7 +3444,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const geojsons = {}
 
                 const lat = turf.centroid(queryGeom).geometry.coordinates[1]
-                const lons = turf.getCoords().map(i => i[0])
+                const lons = turf.getCoords(queryGeom).map(i => i[0])
                 const start = turf.point([Math.min(...lons), lat])
                 const end = turf.point([Math.max(...lons), lat])
                 const distance = turf.distance(start, end)/1000
