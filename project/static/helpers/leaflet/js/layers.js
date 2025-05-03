@@ -260,7 +260,7 @@ const getLeafletLayerBounds = async (layer) => {
 
     const geojsonId = layer._geojsonId
     if (layer instanceof L.GeoJSON && geojsonId) {
-        const geojson = await fetchGeoJSON(geojsonId)
+        const geojson = (await getFromGeoJSONDB(dbKey))?.geojson
         return L.geoJSON(geojson ?? {}).getBounds()
     }
 
@@ -443,7 +443,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
-                return await fetchGeoJSON(layer._geojsonId)
+                return (await getFromGeoJSONDB(dbKey))?.geojson
             }
         }
     })()
