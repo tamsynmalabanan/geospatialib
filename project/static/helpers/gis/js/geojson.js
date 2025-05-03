@@ -101,6 +101,8 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const features = geojson.features
         if (!features?.length) continue
 
+        sortGeoJSONFeatures(geojson, {reverse:true})
+
         const geojsonLayer = await getLeafletGeoJSONLayer({
             geojson,
             group,
@@ -445,10 +447,7 @@ const fetchGeoJSON = async (dbKey, {
         return geojson
     })()
     
-    if (!geojson) return new Error('Cached data not found.')
-
-    if (geojson?.features?.length) sortGeoJSONFeatures(geojson, {reverse:true})
-    return geojson
+    return geojson ?? new Error('Cached data not found.')
 }
 
 const downloadGeoJSON = (geojson, fileName) => {

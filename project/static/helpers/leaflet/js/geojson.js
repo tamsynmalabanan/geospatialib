@@ -328,10 +328,9 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
     const handler = (data) => {
-        if (data instanceof Error) {
-            layer.fire('dataerror')
-            return
-        }
+        if (data instanceof Error) return layer.fire('dataerror')
+        
+        // web worker here
         
         if (controller?.signal.aborted) return
         
@@ -343,8 +342,10 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
                 controller
             })
             console.log('done filtering.', new Date())
+            sortGeoJSONFeatures(data, {reverse:true})
         }
-        
+
+        // post.message
         const featureCount = data?.features?.length ?? 0
         const renderer = featureCount > 1000 ? L.Canvas : L.SVG
         if (layer.options.renderer instanceof renderer === false) {
@@ -364,9 +365,7 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
             layer.addData(data)
             console.log('done adding data.', new Date())
         }
-        layer.fire('dataupdate')
-
-        return layer
+        return layer.fire('dataupdate')
     }
 
     const mapKey = [
