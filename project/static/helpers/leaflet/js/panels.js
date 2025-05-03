@@ -3440,7 +3440,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
-                
+                console.log(queryGeom)
+
                 const geojsons = {}
 
                 const lat = turf.centroid(queryGeom).geometry.coordinates[1]
