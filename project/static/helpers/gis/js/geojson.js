@@ -460,7 +460,7 @@ const fetchGeoJSON = async (dbKey, {
                 return geojson
             })()
             
-            sortGeoJSONFeatures(data, {reverse:true})
+            sortGeoJSONFeatures(geojson, {reverse:true})
             return geojson
         } catch (error) {
             return error
