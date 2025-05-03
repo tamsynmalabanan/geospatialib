@@ -3444,10 +3444,9 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                 const geojsons = {}
 
-                const lat = turf.centroid(queryGeom).geometry.coordinates[1]
-                const lons = turf.getCoords(queryGeom).map(i => i[0])
-                const start = turf.point([Math.min(...lons), lat])
-                const end = turf.point([Math.max(...lons), lat])
+                const [w, s, e, n] = turf.bbox(queryGeom)
+                const start = turf.point([w, n-s])
+                const end = turf.point([e, n-s])
                 const distance = turf.distance(start, end)/1000
                 const zoom = scaleToLeafletZoom(distance)
                 console.log(lat, lons, start, end, distance, zoom)
