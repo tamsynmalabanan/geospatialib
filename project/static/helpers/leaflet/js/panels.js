@@ -3439,6 +3439,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
+                console.log('here')
                 const geojson = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
                     zoom: map.getZoom(),
