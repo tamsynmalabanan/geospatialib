@@ -390,7 +390,7 @@ const fetchGeoJSON = async (dbKey, {queryGeom, zoom=20, controller, abortBtns} =
             let geojson
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
-                queryGeom, getLeafletMeterScale(zoom)/2/1000
+                queryGeom, leafletZoomToMeter(zoom)/2/1000
             ).geometry : queryGeom : null
 
             geojson = await (async () => {
