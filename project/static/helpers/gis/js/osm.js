@@ -1,13 +1,14 @@
-const fetchNominatim = async (e, {
+const fetchNominatim = async ({
+    queryGeom,
+    zoom,
     abortBtns,
     controller,
 } = {}) => {
-    const map = [e.target, e._leafletMap].find(m => m instanceof L.Map)
-
+    const [lon, lat] = turf.centroid(queryGeom).geometry.coordinates
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {
-        lat: e.latlng.lat,
-        lon: e.latlng.lng,
-        zoom: map.getZoom(),
+        lat,
+        lon,
+        zoom,
         format: 'geojson',
         polygon_geojson: 1,
         polygon_threshold: 0,
@@ -33,15 +34,15 @@ const fetchNominatim = async (e, {
     })
 }
 
-const getOverpassRequestBody = (latlng, map) => {
-    if (!map) return
-
+const getOverpassRequestBody = (queryGeom, zoom) => {
     let params
-    if (latlng) {
-        const buffer = getLeafletMeterScale(map)/2
-        params = `around:${buffer},${latlng.lat},${latlng.lng}`
+
+    if (turf.getType(queryGeom) === 'Point') {
+        const [lon, lat] = turf.centroid(queryGeom).geometry.coordinates
+        const buffer = getLeafletMeterScale(zoom)/2
+        params = `around:${buffer},${lat},${lon}`
     } else {
-        const [w,s,e,n] = getLeafletMapBbox(map)
+        const [w,s,e,n] = turf.bbox(queryGeom)
         params = s + ',' + w + ',' + n + ',' + e
     }
 
@@ -56,19 +57,19 @@ const getOverpassRequestBody = (latlng, map) => {
     `)
 }
 
-const fetchOverpass = async (e, {
+const fetchOverpass = async ({
+    queryGeom,
+    zoom,
     abortBtns,
     controller,
 } = {}) => {
-    const map = [e.target, e._leafletMap].find(m => m instanceof L.Map)
-
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
         abortBtns,
         controller,
         fetchParams: {
             method: "POST",
-            body: getOverpassRequestBody(e.latlng, map)
+            body: getOverpassRequestBody(queryGeom, zoom)
         }
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {

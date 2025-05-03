@@ -367,6 +367,107 @@ const createFeaturePropertiesTable = (properties, {
     return table
 }
 
+const fetchGeoJSONHandlers = (name) => {
+    return {
+        fetchNominatim,
+        fetchOverpass,
+    }[name]
+}
+
+const mapForFetchGeoJSON = new Map()
+const fetchGeoJSON = async (dbKey, {queryGeom, zoom=20, controller, abortBtns} = {}) => {
+    if (!dbKey) return
+
+    const [handlerName, handlerParams] = dbKey.split(';', 2)
+    const isClient = handlerName === 'client'
+
+    const geomBbox = queryGeom ? turf.bbox(queryGeom).join(',') : null
+    const mapKey = [dbKey, geomBbox, controller?.id].join(';')
+    if (mapForFetchGeoJSON.has(mapKey)) return mapForFetchGeoJSON.get(mapKey)
+
+    const geojsonPromise = (async () => {
+        try {
+            let geojson
+            
+            const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
+                queryGeom, getLeafletMeterScale(zoom)/2/1000
+            ).geometry : queryGeom : null
+
+            geojson = await (async () => {
+                if (controller?.signal.aborted) return
+                
+                const cachedData = await getFromGeoJSONDB(dbKey)
+                if (!cachedData) {
+                    if (isClient) {
+                        throw new Error('Cached data not found.')
+                    } else {
+                        return
+                    }
+                } 
+
+                const cachedGeoJSON = cachedData.geojson
+                const cachedQueryExtent = cachedData.queryExtent
+
+                if (queryExtent) {
+                    if (isClient) {
+                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
+                    } else {
+                        try {
+                            const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
+                            const withinBounds = turf.booleanWithin(queryExtent, cachedQueryExtent)
+                            if (!equalBounds && !withinBounds) return
+                        } catch (error) {
+                            return
+                        }
+                    }
+                    
+                    cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                        if (controller?.signal.aborted) return
+                        return turf.booleanIntersects(queryExtent, feature)
+                    })
+                }
+                
+                if (cachedGeoJSON.features.length === 0) return
+                return cachedGeoJSON
+            })()
+            
+            if (!isClient && !geojson) geojson = await (async () => {
+                const geojson = await fetchGeoJSONHandlers(handlerName)(
+                    ...Object.values(JSON.parse(handlerParams)), {
+                        queryGeom,
+                        zoom, 
+                        controller, 
+                        abortBtns,
+                    }
+                )
+                if (!geojson?.features?.length) return
+                
+                if (controller?.signal.aborted) return
+                normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
+                
+                if (controller?.signal.aborted) return
+                await updateGeoJSONOnDB(
+                    dbKey, 
+                    turf.clone(geojson),
+                    queryExtent,
+                )
+
+                return geojson
+            })()
+            
+            return geojson
+        } catch (error) {
+            return error
+        } finally {
+            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
+        }
+    })()
+
+    mapForFetchGeoJSON.set(mapKey, geojsonPromise)
+    return geojsonPromise
+
+}
+
 const mapForFilterGeoJSON = new Map()
 const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
     if (!dbKey) return
@@ -410,88 +511,6 @@ const fetchClientGeoJSON = async (dbKey, {map, controller} = {}) => {
     
     mapForFilterGeoJSON.set(mapKey, geojsonPromise)
 
-    return geojsonPromise
-}
-
-const mapForFetchGeoJSON = new Map()
-const fetchURLGeoJSON = async ({handler, event, options = {}}, {controller, abortBtns} = {}) => {
-    const map = ['target', '_leafletMap'].map(p => event[p]).find(p => p instanceof L.Map)
-    const latlng = event.latlng
-    const queryGeom = (latlng ? turf.point(
-        Object.values(latlng).reverse()
-    ) : L.rectangle(map.getBounds()).toGeoJSON()).geometry
-
-    const dbKey = [handler.name, JSON.stringify(options)].join(';')
-    const mapKey = [dbKey, turf.bbox(queryGeom).join(','), controller.id].join(';')
-
-    if (mapForFetchGeoJSON.has(mapKey)) {
-        return await mapForFetchGeoJSON.get(mapKey)
-    }
-
-    const geojsonPromise = (async () => {
-        try {
-            let geojson
-            
-            const queryExtent = latlng ? turf.buffer(
-                queryGeom, 
-                getLeafletMeterScale(map)/2/1000
-            ).geometry : queryGeom
-
-            geojson = await (async () => {
-                if (controller?.signal.aborted) return
-                
-                const cachedData = await getFromGeoJSONDB(dbKey)
-                if (!cachedData) return
-
-                const cachedGeoJSON = cachedData.geojson
-                const cachedQueryExtent = cachedData.queryExtent
-                
-                try {
-                    const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
-                    const withinBounds = turf.booleanWithin(queryExtent, cachedQueryExtent)
-                    if (!equalBounds && !withinBounds) return
-                } catch (error) {
-                    return
-                }
-                
-                cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                    if (controller?.signal.aborted) return
-                    return turf.booleanIntersects(queryExtent, feature)
-                })
-                
-                if (cachedGeoJSON.features.length === 0) return
-                return cachedGeoJSON
-            })()
-            
-            if (!geojson) {
-                geojson = await (async () => {
-                    const geojson = await handler(event, {...options, controller, abortBtns})
-                    if (!geojson?.features?.length) return
-                    
-                    if (controller?.signal.aborted) return
-                    normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
-                    
-                    if (controller?.signal.aborted) return
-                    await updateGeoJSONOnDB(
-                        dbKey, 
-                        turf.clone(geojson),
-                        queryExtent,
-                        'url',
-                    )
-
-                    return geojson
-                })()
-            }
-            
-            return geojson
-        } catch (error) {
-            return error
-        } finally {
-            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
-        }
-    })()
-
-    mapForFetchGeoJSON.set(mapKey, geojsonPromise)
     return geojsonPromise
 }
 

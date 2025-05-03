@@ -3409,19 +3409,19 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
+                const queryGeom = turf.point(Object.values(e.latlng).reverse())
                 const fetchers = {
-                    'OpenStreetMap via Nominatim': {
-                        handler: fetchNominatim,
-                        event:e,
-                    },
-                    'OpenStreetMap via Overpass': {
-                        handler: fetchOverpass,
-                        event:e,
-                    },
+                    'OpenStreetMap via Nominatim': 'fetchNominatim;{}',
+                    'OpenStreetMap via Overpass': 'fetchOverpass;{}',
                 }
 
-                const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(fetcher => {
-                    return fetchURLGeoJSON(fetcher, {abortBtns, controller})
+                const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(dbKey => {
+                    return fetchGeoJSON(dbKey, {
+                        queryGeom,
+                        zoom: map.getZoom(),
+                        abortBtns, 
+                        controller
+                    })
                 }))
             
                 if (controller.signal.aborted) return
@@ -3439,10 +3439,12 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
-                const geojson = await fetchURLGeoJSON({
-                    handler: fetchOverpass,
-                    event: e,
-                }, {abortBtns, controller})
+                const geojson = await fetchGeoJSON('fetchOverpass;{}', {
+                    queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
+                    zoom: map.getZoom(),
+                    abortBtns, 
+                    controller
+                })
                 return {'OpenStreetMap via Overpass': geojson}
             }
         },
