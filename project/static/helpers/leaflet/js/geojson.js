@@ -316,15 +316,16 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const updateGeoJSONData = async (layer, {controller} = {}) => {
+const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     
-    const data = await fetchClientGeoJSON(geojsonId, {
+    const map = layer._group?._map
+    const data = await fetchGeoJSON(geojsonId, {
+        queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
+        queryZoom: map.getZoom(),
         controller,
-        map: layer._group?._map,
-        filters: layer._styles.filters,
-        groups: layer._styles.symbology.groups ?? {},
+        abortBtns,
     })
 
     if (data instanceof Error) {
