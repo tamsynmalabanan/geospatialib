@@ -3439,10 +3439,27 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
+                const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
+                
                 const geojsons = {}
+
+                const lat = turf.centroid(queryGeom).geometry.coordinates[1]
+                const lons = turf.getCoords().map(i => i[0])
+                const start = turf.point([Math.min(...lons), lat])
+                const end = turf.point([Math.max(...lons), lat])
+                const distance = turf.distance(start, end)/1000
+                const zoom = scaleToLeafletZoom(distance)
+                console.log(lat, lons, start, end, distance, zoom)
+
+                // geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
+                //     queryGeom,
+                //     zoom: map.getZoom(),
+                //     abortBtns, 
+                //     controller
+                // })
                 
                 geojsons['OpenStreetMap via Overpass'] = await fetchGeoJSON('fetchOverpass;{}', {
-                    queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
+                    queryGeom,
                     zoom: map.getZoom(),
                     abortBtns, 
                     controller
