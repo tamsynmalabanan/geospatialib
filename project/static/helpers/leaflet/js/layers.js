@@ -443,7 +443,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
-                return await fetchClientGeoJSON(layer._geojsonId)
+                return await fetchGeoJSON(layer._geojsonId)
             }
         }
     })()
