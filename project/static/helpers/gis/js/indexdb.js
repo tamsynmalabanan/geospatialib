@@ -28,7 +28,6 @@ const saveToGeoJSONDB = (geojson, {
         objectStore.put({id, geojson, queryExtent, expirationTime})
     }
 
-    console.log(id)
     return id
 }
 
