@@ -376,7 +376,6 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     ].join(';')
     
     if (mapForUpdateGeoJSONData.has(mapKey)) {
-        console.log('here')
         const data = await mapForUpdateGeoJSONData.get(mapKey)
         return handler(data)
     }
