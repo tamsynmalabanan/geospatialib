@@ -3409,17 +3409,13 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM at point',
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
-                console.log('start')
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                console.log(queryGeom)
                 const fetchers = {
                     'OpenStreetMap via Nominatim': 'fetchNominatim;{}',
                     'OpenStreetMap via Overpass': 'fetchOverpass;{}',
                 }
-                console.log(fetchers)
                 
                 const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(dbKey => {
-                    console.log(dbKey)
                     return fetchGeoJSON(dbKey, {
                         queryGeom,
                         zoom: map.getZoom(),
@@ -3427,7 +3423,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                         controller
                     })
                 }))
-                console.log(fetchedGeoJSONs)
                 
                 if (controller.signal.aborted) return
                 
@@ -3435,7 +3430,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                 for (let i = 0; i < fetchedGeoJSONs.length; i++) {
                     geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
                 }
-                console.log(geojsons)
             
                 return geojsons
             }
@@ -3445,13 +3439,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
-                const geojson = await fetchGeoJSON('fetchOverpass;{}', {
+                const geojsons = {}
+                
+                geojsons['OpenStreetMap via Overpass'] = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
                     zoom: map.getZoom(),
                     abortBtns, 
                     controller
                 })
-                return {'OpenStreetMap via Overpass': geojson}
+                return geojsons
             }
         },
         layerPoint: {
