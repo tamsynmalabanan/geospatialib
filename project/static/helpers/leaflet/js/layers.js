@@ -260,7 +260,7 @@ const getLeafletLayerBounds = async (layer) => {
 
     const geojsonId = layer._geojsonId
     if (layer instanceof L.GeoJSON && geojsonId) {
-        const geojson = await fetchClientGeoJSON(geojsonId)
+        const geojson = await fetchGeoJSON(geojsonId)
         return L.geoJSON(geojson ?? {}).getBounds()
     }
 
