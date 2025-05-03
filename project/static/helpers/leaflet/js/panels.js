@@ -3438,7 +3438,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             iconSpecs: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             altShortcut: 'e',
-            btnClickHandler: async (e, {abortBtns, controller} = {}) => {
+            btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
                 console.log(queryGeom)
 
