@@ -324,27 +324,32 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     if (!geojsonId) return
     
     const map = layer._group?._map
+    
+    console.log('fetching...', new Date())
     const data = await fetchGeoJSON(geojsonId, {
         queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
         controller,
         abortBtns,
     })
-
+    console.log('done fetching.', new Date())
+    
     if (data instanceof Error) {
         layer.fire('dataerror')
         return
     }
-
+    
     if (controller?.signal.aborted) return
-
+    
     if (data?.features?.length) {
+        console.log('filtering...', new Date())
         filterGeoJSONFeatures(data, {
             filters: layer._styles.filters,
             groups: layer._styles.symbology.groups ?? {},
             controller
         })
+        console.log('done filtering.', new Date())
     }
-
+    
     const featureCount = data?.features?.length ?? 0
     const renderer = featureCount > 1000 ? L.Canvas : L.SVG
     if (layer.options.renderer instanceof renderer === false) {
@@ -357,11 +362,15 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     layer.options.renderer._container?.classList.remove('d-none')
     
     if (controller?.signal.aborted) return
-
+    
     layer.clearLayers()
     if (featureCount) {
+        console.log('sorting...', new Date())
         sortGeoJSONFeatures(data, {reverse:true})
+        console.log('done sorting.', new Date())
+        console.log('adding data...', new Date())
         layer.addData(data)
+        console.log('done adding data.', new Date())
     }
     layer.fire('dataupdate')
     
