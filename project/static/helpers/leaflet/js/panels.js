@@ -3445,6 +3445,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     abortBtns, 
                     controller
                 })
+                console.log(geojson)
                 return {'OpenStreetMap via Overpass': geojson}
             }
         },
