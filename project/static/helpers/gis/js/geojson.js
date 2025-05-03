@@ -101,8 +101,6 @@ const createGeoJSONChecklist = async (geojsonList, group, {
         const features = geojson.features
         if (!features?.length) continue
 
-        sortGeoJSONFeatures(geojson, {reverse:true})
-
         const geojsonLayer = await getLeafletGeoJSONLayer({
             geojson,
             group,
@@ -376,7 +374,6 @@ const fetchGeoJSONHandlers = (name) => {
 
 const mapForFetchGeoJSON = new Map()
 const fetchGeoJSON = async (dbKey, {
-    callback, 
     queryGeom, 
     zoom=20, 
     filters={},
@@ -463,6 +460,7 @@ const fetchGeoJSON = async (dbKey, {
                 return geojson
             })()
             
+            sortGeoJSONFeatures(data, {reverse:true})
             return geojson
         } catch (error) {
             return error

@@ -319,62 +319,89 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
+const mapForUpdateGeoJSONData = new Map()
 const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     
     const map = layer._group?._map
-    
-    console.log('fetching...', new Date())
-    const data = await fetchGeoJSON(geojsonId, {
-        queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
-        controller,
-        abortBtns,
-    })
-    console.log('done fetching.', new Date())
-    
-    if (data instanceof Error) {
-        layer.fire('dataerror')
-        return
+    const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
+
+    const handler = (data) => {
+        if (data instanceof Error) {
+            layer.fire('dataerror')
+            return
+        }
+        
+        if (controller?.signal.aborted) return
+        
+        if (data?.features?.length) {
+            console.log('filtering...', new Date())
+            filterGeoJSONFeatures(data, {
+                filters: layer._styles.filters,
+                groups: layer._styles.symbology.groups ?? {},
+                controller
+            })
+            console.log('done filtering.', new Date())
+        }
+        
+        const featureCount = data?.features?.length ?? 0
+        const renderer = featureCount > 1000 ? L.Canvas : L.SVG
+        if (layer.options.renderer instanceof renderer === false) {
+            layer.options.renderer._container?.classList.add('d-none')
+            layer.options.renderer = layer._renderers.find(r => {
+                const match = r instanceof renderer
+                return match
+            })
+        }
+        layer.options.renderer._container?.classList.remove('d-none')
+        
+        if (controller?.signal.aborted) return
+        
+        layer.clearLayers()
+        if (featureCount) {
+            console.log('adding data...', new Date())
+            layer.addData(data)
+            console.log('done adding data.', new Date())
+        }
+        layer.fire('dataupdate')
+
+        return layer
     }
+
+    const mapKey = [
+        geojsonId, 
+        (queryGeom ? turf.bbox(queryGeom).join(',') : null), 
+        controller?.id
+    ].join(';')
     
-    if (controller?.signal.aborted) return
-    
-    if (data?.features?.length) {
-        console.log('filtering...', new Date())
-        filterGeoJSONFeatures(data, {
-            filters: layer._styles.filters,
-            groups: layer._styles.symbology.groups ?? {},
-            controller
-        })
-        console.log('done filtering.', new Date())
+    if (mapForUpdateGeoJSONData.has(mapKey)) {
+        console.log('here')
+        const data = await mapForUpdateGeoJSONData.get(mapKey)
+        return handler(data)
     }
+
+    const dataPromise = (async () => {
+        try {
+            console.log('fetching...', new Date())
+            const data = await fetchGeoJSON(geojsonId, {
+                queryGeom,
+                controller,
+                abortBtns,
+            })
+            console.log('done fetching.', new Date())
+            return data
+        } catch (error) {
+            console.log(error)
+            return error
+        } finally {
+            setTimeout(() => mapForUpdateGeoJSONData.delete(mapKey), 1000);
+        }
+    })()
     
-    const featureCount = data?.features?.length ?? 0
-    const renderer = featureCount > 1000 ? L.Canvas : L.SVG
-    if (layer.options.renderer instanceof renderer === false) {
-        layer.options.renderer._container?.classList.add('d-none')
-        layer.options.renderer = layer._renderers.find(r => {
-            const match = r instanceof renderer
-            return match
-        })
-    }
-    layer.options.renderer._container?.classList.remove('d-none')
-    
-    if (controller?.signal.aborted) return
-    
-    layer.clearLayers()
-    if (featureCount) {
-        console.log('sorting...', new Date())
-        sortGeoJSONFeatures(data, {reverse:true})
-        console.log('done sorting.', new Date())
-        console.log('adding data...', new Date())
-        layer.addData(data)
-        console.log('done adding data.', new Date())
-    }
-    layer.fire('dataupdate')
-    
-    return layer
+    mapForUpdateGeoJSONData.set(mapKey, dataPromise)
+    const data = await dataPromise
+    return handler(data)
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {
