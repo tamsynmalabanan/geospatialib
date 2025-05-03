@@ -3458,7 +3458,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     controller
                 })
 
-                console.log(geojsons)
                 return geojsons
             }
         },
