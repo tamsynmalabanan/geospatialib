@@ -445,7 +445,7 @@ const fetchGeoJSON = async (dbKey, {
         return geojson
     })()
     
-    if (!(geojson instanceof Error)) sortGeoJSONFeatures(geojson, {reverse:true})
+    if (geojson?.features?.length) sortGeoJSONFeatures(geojson, {reverse:true})
     return geojson
 }
 
