@@ -280,6 +280,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     const simplify = isQuery = layer._group._name !== 'query'
 
     const handler = (data) => {
+        console.log(data)
         if (!isQuery) {
             const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
             if (layer.options.renderer instanceof renderer === false) {
