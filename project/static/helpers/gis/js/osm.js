@@ -39,7 +39,7 @@ const getOverpassRequestBody = (queryGeom, zoom) => {
 
     if (turf.getType(queryGeom) === 'Point') {
         const [lon, lat] = turf.centroid(queryGeom).geometry.coordinates
-        const buffer = getLeafletMeterScale(zoom)/2
+        const buffer = leafletZoomToMeter(zoom)/2
         params = `around:${buffer},${lat},${lon}`
     } else {
         const [w,s,e,n] = turf.bbox(queryGeom)
