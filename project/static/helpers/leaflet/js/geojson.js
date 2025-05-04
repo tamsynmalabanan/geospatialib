@@ -374,6 +374,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
 
     layer.clearLayers()
     layer.addData(data)
+    console.log(layer)
     return layer.fire('dataupdate')
 }
 
