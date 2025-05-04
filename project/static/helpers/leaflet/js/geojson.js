@@ -142,7 +142,7 @@ const getLeafletGeoJSONLayer = async ({
 
         geojsonLayer.on('add', () => {
             if (layerIsVisible(geojsonLayer)) {
-                updateGeoJSONData(geojsonLayer)
+                updateLeafletGeoJSONLayer(geojsonLayer)
             }
         })
 
@@ -314,7 +314,7 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 // web worker this
-const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
+const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
     if (data instanceof Error) return layer.fire('dataerror')
 
     if (controller?.signal.aborted) return
@@ -368,13 +368,13 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
 
     if (controller?.signal.aborted) return
 
-    layer.clearLayers()
+    if (clear) layer.clearLayers()
     layer.addData(data)
     return layer.fire('dataupdate')
 }
 
-const mapForUpdateGeoJSONData = new Map()
-const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
+const mapForupdateLeafletGeoJSONLayer = new Map()
+const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     
@@ -387,8 +387,8 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
         controller?.id
     ].join(';')
 
-    if (mapForUpdateGeoJSONData.has(mapKey)) {
-        const data = await mapForUpdateGeoJSONData.get(mapKey)
+    if (mapForupdateLeafletGeoJSONLayer.has(mapKey)) {
+        const data = await mapForupdateLeafletGeoJSONLayer.get(mapKey)
         return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
     }
 
@@ -402,11 +402,11 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
         } catch (error) {
             return error
         } finally {
-            setTimeout(() => mapForUpdateGeoJSONData.delete(mapKey), 1000);
+            setTimeout(() => mapForupdateLeafletGeoJSONLayer.delete(mapKey), 1000);
         }
     })()
     
-    mapForUpdateGeoJSONData.set(mapKey, dataPromise)
+    mapForupdateLeafletGeoJSONLayer.set(mapKey, dataPromise)
     const data = await dataPromise
     return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
 }
