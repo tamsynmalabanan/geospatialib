@@ -310,7 +310,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
         })
 
         worker.onmessage = (e) => {
-            console.log(e)
+            console.log(e.data.geojson)
             handler(e.data.geojson)
             worker.terminate()
         }
