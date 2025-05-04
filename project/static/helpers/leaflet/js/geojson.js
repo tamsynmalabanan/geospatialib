@@ -21,7 +21,7 @@ const getLeafletGeoJSONLayer = async ({
 
     const isQuery = group?._name === 'query'
     if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
-        geojson ? saveToGeoJSONDB(turf.clone(geojson), {normalize:true}) : null
+        geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
     )
 
     geojsonLayer._styles = styles || {
@@ -135,7 +135,7 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     if (geojson && isQuery) {
-        addLeafletGeoJSONData(geojsonLayer, geojson, {
+        addLeafletGeoJSONData(geojsonLayer, turf.clone(geojson), {
             queryGeom: L.rectangle(group._map.getBounds()).toGeoJSON().geometry
         })
     } else if (geojsonLayer._geojsonId && !isQuery) {
