@@ -3436,9 +3436,19 @@ const handleLeafletQueryPanel = (map, parent) => {
                         title: Object.keys(fetchers)[i],
                         attribution: createAttributionTable(geojson)?.outerHTML,
                     })
-                    addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
+                    
+                    const layerPromise = new Promise((resolve) => {
+                        layer.once('dataupdate', () => {
+                            resolve(layer)
+                        })
+
+                        addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
+                    });
+            
+                    layer.push(layerPromise);
                 }
             
+                await Promise.all(layers)
                 return layers
             }
         },
@@ -3468,9 +3478,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     layer.once('dataupdate', () => {
                         resolve([layer])
                     })
-                    
+
                     addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
-                });
+                })
             }
         },
         layerPoint: {
