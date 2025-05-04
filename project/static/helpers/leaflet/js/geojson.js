@@ -148,7 +148,7 @@ const getLeafletGeoJSONLayer = async ({
 
         geojsonLayer.on('add', () => {
             if (layerIsVisible(geojsonLayer)) {
-                updateGeoJSONData(geojsonLayer)
+                updateLeafletGeoJSONLayer(geojsonLayer)
             }
         })
 
@@ -362,6 +362,8 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
         return valid
     })
 
+    console.log(data)
+
     if (controller?.signal.aborted) return
     sortGeoJSONFeatures(data, {reverse:true})
 
@@ -388,8 +390,8 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     return layer.fire('dataupdate')
 }
 
-const mapForUpdateGeoJSONData = new Map()
-const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
+const mapForupdateLeafletGeoJSONLayer = new Map()
+const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     
@@ -402,8 +404,8 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
         controller?.id
     ].join(';')
 
-    if (mapForUpdateGeoJSONData.has(mapKey)) {
-        const data = await mapForUpdateGeoJSONData.get(mapKey)
+    if (mapForupdateLeafletGeoJSONLayer.has(mapKey)) {
+        const data = await mapForupdateLeafletGeoJSONLayer.get(mapKey)
         if (controller?.signal.aborted) return
         return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
     }
@@ -420,12 +422,12 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
         } catch (error) {
             return error
         } finally {
-            setTimeout(() => mapForUpdateGeoJSONData.delete(mapKey), 1000);
+            setTimeout(() => mapForupdateLeafletGeoJSONLayer.delete(mapKey), 1000);
         }
     })()
    
     if (controller?.signal.aborted) return
-    mapForUpdateGeoJSONData.set(mapKey, dataPromise)
+    mapForupdateLeafletGeoJSONLayer.set(mapKey, dataPromise)
     const data = await dataPromise
     if (controller?.signal.aborted) return
     return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
