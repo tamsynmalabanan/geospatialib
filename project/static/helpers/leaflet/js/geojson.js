@@ -362,8 +362,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
         return valid
     })
 
-    console.log(data)
-
     if (controller?.signal.aborted) return
     sortGeoJSONFeatures(data, {reverse:true})
 
