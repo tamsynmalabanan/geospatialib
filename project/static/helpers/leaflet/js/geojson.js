@@ -305,7 +305,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     const simplify = isQuery = layer._group._name !== 'query'
 
     const handler = (data) => {
-        console.log(controller?.signal?.aborted)
         if (controller?.signal?.aborted) return
 
         if (!isQuery) {
