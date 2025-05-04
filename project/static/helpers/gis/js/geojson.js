@@ -104,7 +104,7 @@ const createGeoJSONChecklist = async (layerList, group, {
 
         const pCheckbox = geojsonLayer._checkbox = createFormCheck({
             parent: geojsonContainer,
-            labelInnerText: `${title} (${formatNumberWithCommas(featureLayers.length)})`,
+            labelInnerText: `${geojsonLayer._title} (${formatNumberWithCommas(featureLayers.length)})`,
             formCheckClass: `d-flex gap-2 `,
             disabled: disableCheck,
         }).querySelector('input')
