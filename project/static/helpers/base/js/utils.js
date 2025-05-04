@@ -58,8 +58,6 @@ const addClassListToSelection = (parent, selector, classList) => {
 
 const isViewHeight = (element) => element.offsetHeight === window.innerHeight
 
-const removeWhitespace = (str) => (str.replace(/\s{2,}/g, ' ')).trim()
-
 const generateRandomString = (length=16) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     let result = ''
