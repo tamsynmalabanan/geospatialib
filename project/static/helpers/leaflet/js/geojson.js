@@ -19,11 +19,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
-    const isQuery = group?._name === 'query'
-    if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
-        geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
-    )
-
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
@@ -90,25 +85,23 @@ const getLeafletGeoJSONLayer = async ({
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
-        if (isCanvas 
-            && styleParams.fillPattern !== 'solid' 
-            && turf.getType(feature).endsWith('Polygon')
-            && document.querySelector(`#${styleParams.fillPatternId}-img`)
-            ?.getAttribute('src')
-        ) {
-            layer.once('add', () => {
-                geojsonLayer.removeLayer(layer)
-                const poly = L.polygon(
-                    layer.getLatLngs(), 
-                    getLeafletLayerStyle(feature, styleParams, {renderer})
-                )
-                poly.feature = feature
-                handler(poly)
-                poly.addTo(geojsonLayer)
-            })
-        } else {
-            handler(layer)
-        }
+        const patternImg = document.querySelector(`#${styleParams.fillPatternId}-img`) 
+        if (!isCanvas 
+            || styleParams.fillPattern === 'solid' 
+            || !turf.getType(feature).endsWith('Polygon')
+            || !patternImg?.getAttribute('src')
+        ) return handler(layer)
+    
+        layer.once('add', () => {
+            geojsonLayer.removeLayer(layer)
+            const poly = L.polygon(
+                layer.getLatLngs(), 
+                getLeafletLayerStyle(feature, styleParams, {renderer})
+            )
+            poly.feature = feature
+            handler(poly)
+            poly.addTo(geojsonLayer)
+        })
     }
 
     const getStyle = (feature) => {
@@ -134,9 +127,11 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (geojson && isQuery) {
-        geojsonLayer.addData(geojson)
-    } else if (geojsonLayer._geojsonId && !isQuery) {
+    if (!group?._name === 'query') {
+        geojsonLayer._geojsonId = geojsonId || (
+            geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
+        )
+
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
         })
@@ -154,6 +149,8 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer.on('remove', () => {
             geojsonLayer.clearLayers()
         })
+    } else {
+        geojsonLayer.addData(geojson)
     }
 
     return geojsonLayer
@@ -367,8 +364,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
             })
         }
         layer.options.renderer._container?.classList.remove('d-none')
-
-        console.log(layer.options.renderer)
     }
 
     if (controller?.signal.aborted) return
