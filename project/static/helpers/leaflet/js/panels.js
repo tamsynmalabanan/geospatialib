@@ -3408,7 +3408,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                const fetchers = {
+                   const fetchers = {
                     'OpenStreetMap via Nominatim': 'fetchNominatim;{}',
                     'OpenStreetMap via Overpass': 'fetchOverpass;{}',
                 }
@@ -3445,12 +3445,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                         addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
                     });
             
-                    layers.push(layerPromise);
+                    layers.push(layerPromise)
                 }
             
-                await Promise.all(layers)
-                console.log(layers)
-                return layers
+                return await Promise.all(layers)
             }
         },
         osmView: {
