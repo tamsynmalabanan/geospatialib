@@ -325,7 +325,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
     ).geometry : queryGeom : null
 
     const filters = layer._styles.filters
-    const groups = Object.entries((layer._styles.symbology.groups)).sort(([keyA, valueA], [keyB, valueB]) => {
+    const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
         return valueA.rank - valueB.rank
     })
 
