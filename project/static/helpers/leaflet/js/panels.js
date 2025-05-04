@@ -3333,7 +3333,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             cancelBtn.disabled = false
 
             if (!(e.target instanceof L.Map)) e._leafletMap = map
-            const layers = await handler(e, {
+            const geojsonLayers = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
             })
@@ -3342,8 +3342,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             if (controllerId !== controller.id) return
             
-            if (layers?.length) {
-                const content = await createGeoJSONChecklist(layers, queryGroup, {
+            if (geojsonLayers?.length) {
+                const content = await createGeoJSONChecklist(geojsonLayers, queryGroup, {
                     controller, 
                     pane: 'queryPane',
                     customStyleParams, 
@@ -3450,6 +3450,16 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'e',
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
+
+                // const [w, s, e, n] = turf.bbox(queryGeom)
+                // const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/4*1000
+
+                // geojsonLayers['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
+                //     queryGeom,
+                //     zoom: parseInt(scaleToLeafletZoom(scale)),
+                //     abortBtns, 
+                //     controller
+                // })
 
                 const geojson = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom,
