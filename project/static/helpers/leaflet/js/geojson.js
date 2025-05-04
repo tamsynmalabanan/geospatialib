@@ -135,8 +135,7 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     if (geojson && isQuery) {
-        geojsonLayer.addData(geojson)
-        // addLeafletGeoJSONData(geojsonLayer, geojson)
+        addLeafletGeoJSONData(geojsonLayer, geojson)
     } else if (geojsonLayer._geojsonId && !isQuery) {
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
@@ -318,14 +317,14 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const addLeafletGeoJSONData = (layer, data, {queryGeom, filters, groups}={}) => {
-    data.features = data.features.filter(feature => {
-        // filter with query geom
+    // data.features = data.features.filter(feature => {
+    //     // filter with query geom
     
 
-        // if in query geom, filter with filters
+    //     // if in query geom, filter with filters
 
-        // if in filters, group and rank
-    })
+    //     // if in filters, group and rank
+    // })
 
     // sort
 
