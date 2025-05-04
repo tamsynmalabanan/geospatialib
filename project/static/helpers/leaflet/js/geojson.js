@@ -280,6 +280,9 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     const simplify = isQuery = layer._group._name !== 'query'
 
     const handler = (data) => {
+        console.log(controller?.signal?.aborted)
+        if (controller?.signal?.aborted) return
+
         if (!isQuery) {
             const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
             if (layer.options.renderer instanceof renderer === false) {
@@ -291,7 +294,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
             layer.options.renderer._container?.classList.remove('d-none')
         }
         
-        if (controller?.signal?.aborted) return
         if (clear) layer.clearLayers()
         layer.addData(data)
         return layer.fire('dataupdate')
