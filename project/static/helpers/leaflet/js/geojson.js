@@ -339,7 +339,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
             const properties = feature.properties
             for (const [id, group] of groups) {
                 if (!group.active) continue
-                if (!validateGeoJSONFeature(feature, group.filters)) continue
+                if (!validateGeoJSONFeature(feature, group.filters ?? {})) continue
                 
                 properties.__groupId__ = id
                 properties.__groupRank__ = group.rank
