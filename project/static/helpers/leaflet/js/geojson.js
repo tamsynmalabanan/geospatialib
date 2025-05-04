@@ -301,7 +301,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     if (data?.features?.length) {
         const worker = new Worker('/static/helpers/leaflet/js/workers/process-geojson.js')
         
-        console.log(data)
         worker.postMessage({
             data,
             queryExtent,
@@ -311,14 +310,13 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
         })
 
         worker.onmessage = (e) => {
-            console.log(e.data.geojson)
-            handler(e.data.geojson)
             worker.terminate()
+            return handler(e.data.geojson)
         }
         
         worker.onerror = (error) => {
-            console.log(error)
             worker.terminate()
+            console.log(error)
         }
     } else {
         return handler(data)
