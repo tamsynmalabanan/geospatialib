@@ -3441,7 +3441,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     layers.push(layers)
                 }
             
-                console.log(layers)
                 return layers
             }
         },
@@ -3479,6 +3478,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                 addLeafletGeoJSONData(layer, geojson, {queryGeom})
 
+                console.log(layer, geojson)
                 return [layer]
             }
         },
