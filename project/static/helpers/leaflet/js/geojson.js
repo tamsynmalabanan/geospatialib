@@ -266,6 +266,31 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
+const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
+    if (!geojson?.features?.length) return
+    
+    geojson.features.sort((a, b) => {
+        const featureOrder = [
+            "Point",
+            "MultiPoint",
+            "LineString",
+            "MultiLineString",
+            "Polygon",
+            "MultiPolygon",
+        ]
+        const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
+        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
+
+        const comparison = (
+            typeComparison !== 0 ? typeComparison : 
+            rankComparison !== 0 ? rankComparison : 
+            (a.properties?.name ?? '').localeCompare(b.properties?.name ?? '')
+        )
+
+        return reverse ? -comparison : comparison
+    })
+}
+
 const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
     if (!data || !layer) return
     if (data instanceof Error) return layer.fire('dataerror')
@@ -300,28 +325,75 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     }
 
     if (data?.features?.length) {
-        const worker = new Worker('/static/helpers/leaflet/js/workers/process-geojson.js')
+        // const worker = new Worker('/static/helpers/leaflet/js/workers/process-geojson.js')
         
-        worker.postMessage({
-            data,
-            queryExtent,
-            filters,
-            groups,
-            simplify,
-        })
+        // worker.postMessage({
+        //     data,
+        //     queryExtent,
+        //     filters,
+        //     groups,
+        //     simplify,
+        // })
 
-        worker.onmessage = (e) => {
-            worker.terminate()
-            return handler(e.data.geojson)
+        // worker.onmessage = (e) => {
+        //     worker.terminate()
+        //     return handler(e.data.geojson)
+        // }
+        
+        // worker.onerror = (error) => {
+        //     worker.terminate()
+        //     console.log(error)
+        // }
+
+        if (queryExtent) {
+            data.features = data.features.filter(feature => {
+                if (controller?.signal?.aborted) return
+                return turf.booleanIntersects(queryExtent, feature)
+            })
         }
         
-        worker.onerror = (error) => {
-            worker.terminate()
-            console.log(error)
+        if (Object.values(filters).some(i => {
+            if (!i.active) return false
+            return Object.values(i.values).some(j => {
+                if (!j.hasOwnProperty('active')) return true
+                return j.active
+            })
+        })) {
+            data.features = data.features.filter(feature => {
+                if (controller?.signal?.aborted) return
+                return validateGeoJSONFeature(feature, filters)
+            })
         }
-    } else {
-        return handler(data)
+    
+        if (groups.some(i => i[1].active)) {
+            data.features.forEach(feature => {
+                if (controller?.signal?.aborted) return
+
+                const properties = feature.properties
+                for (const [id, group] of groups) {
+                    if (controller?.signal?.aborted) return
+
+                    if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
+                    properties.__groupId__ = id
+                    properties.__groupRank__ = group.rank
+                    break
+                }
+    
+                if (!properties.__groupId__) properties.__groupId__ = ''
+                if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
+            })
+        }
+    
+        if (controller?.signal?.aborted) return
+        sortGeoJSONFeatures(data, {reverse:true})
+    
+        if (simplify) {
+            if (controller?.signal?.aborted) return
+            // simplify / cluster if not query // reconfigure legend feature count
+        }
     }
+
+    return handler(data)
 }
 
 const mapForupdateLeafletGeoJSONLayer = new Map()
