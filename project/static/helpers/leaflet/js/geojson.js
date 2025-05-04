@@ -330,37 +330,55 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     ).geometry : queryGeom : null
 
     const filters = layer._styles.filters
+    const hasActiveFilters = filters.some(i => {
+        if (!i.active) return false
+        return Object.values(i.values).some(j => {
+            if (!j.hasOwnProperty('active')) return true
+            return j.active
+        })
+    })
+
     const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
         return valueA.rank - valueB.rank
     })
 
-    data.features = (data.features ?? []).filter(feature => {
-        if (controller?.signal.aborted) return
-
-        const valid = (
-            (queryExtent ? turf.booleanIntersects(queryExtent, feature) : true) 
-            && validateGeoJSONFeature(feature, filters)
-        )
-
-        if (controller?.signal.aborted) return
-
-        if (valid && groups.length) {
-            const properties = feature.properties
-            for (const [id, group] of groups) {
-                if (controller?.signal.aborted) break
-
-                if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
-                properties.__groupId__ = id
-                properties.__groupRank__ = group.rank
-                break
-            }
-
-            if (!properties.__groupId__) properties.__groupId__ = ''
-            if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
+    if (data?.features?.length) {
+        if (queryExtent) {
+            data.features = data.features.filter(feature => {
+                if (controller?.signal.aborted) return
+                return turf.booleanIntersects(queryExtent, feature)
+            })
         }
+        
+        if (hasActiveFilters) {
+            data.features = data.features.filter(feature => {
+                if (controller?.signal.aborted) return
+                return validateGeoJSONFeature(feature, filters)
+            })
+        }
+
+        if (groups.length && groups.some(i => i[0].active)) {
+            data.features.forEach(feature => {
+                if (controller?.signal.aborted) return
+        
+                const properties = feature.properties
+                for (const [id, group] of groups) {
+                    if (controller?.signal.aborted) break
     
-        return valid
-    })
+                    if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
+                    properties.__groupId__ = id
+                    properties.__groupRank__ = group.rank
+                    break
+                }
+    
+                if (!properties.__groupId__) properties.__groupId__ = ''
+                if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
+                if (valid && groups.length) {
+                }
+            })
+        }
+    }
+
 
     if (controller?.signal.aborted) return
     sortGeoJSONFeatures(data, {reverse:true})
