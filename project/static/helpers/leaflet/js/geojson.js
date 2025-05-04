@@ -135,7 +135,6 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     if (geojson && isQuery) {
-        console.log(geojson)
         addLeafletGeoJSONData(geojsonLayer, geojson, {
             queryGeom: L.rectangle(group._map.getBounds()).toGeoJSON().geometry
         })
@@ -337,7 +336,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
             && validateGeoJSONFeature(feature, filters)
         )
 
-        if (valid) {
+        if (valid && groups.length) {
             const properties = feature.properties
             for (const [id, group] of groups) {
                 if (!group.active) continue
