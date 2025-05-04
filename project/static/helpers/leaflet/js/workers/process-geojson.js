@@ -35,13 +35,6 @@ self.onmessage = (e) => {
         simplify
     } = e.data
     
-
-    console.log(        data,
-        queryExtent,
-        filters,
-        groups,
-        simplify)
-
     if (queryExtent) {
         data.features = data.features.filter(feature => {
             return turf.booleanIntersects(queryExtent, feature)
@@ -80,6 +73,8 @@ self.onmessage = (e) => {
     if (simplify) {
         // simplify / cluster if not query // reconfigure legend feature count
     }
+
+    console.log(data)
 
     self.postMessage({data})
 }
