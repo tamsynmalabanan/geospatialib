@@ -318,7 +318,6 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-
 // web worker this
 const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
     if (data instanceof Error) return layer.fire('dataerror')
@@ -344,9 +343,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
         if (valid && groups.length) {
             const properties = feature.properties
             for (const [id, group] of groups) {
-                if (!group.active) continue
-                if (!validateGeoJSONFeature(feature, group.filters ?? {})) continue
-                
+                if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
                 properties.__groupId__ = id
                 properties.__groupRank__ = group.rank
                 break
@@ -361,10 +358,8 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
 
     sortGeoJSONFeatures(data, {reverse:true})
 
-    const isQuery = layer._group._name === 'query'
-    
-    if (!isQuery) {
-        // simplify / cluster if not query
+    if (layer._group._name !== 'query') {
+        // simplify / cluster if not query // reconfigure legend feature count
         
         const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
         if (layer.options.renderer instanceof renderer === false) {
