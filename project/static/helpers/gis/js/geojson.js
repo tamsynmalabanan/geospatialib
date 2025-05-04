@@ -418,11 +418,6 @@ const fetchGeoJSON = async (dbKey, {
                     return
                 }
             }
-            
-            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                if (controller?.signal.aborted) return
-                return turf.booleanIntersects(queryExtent, feature)
-            })
         }
         
         if (cachedGeoJSON.features.length === 0) return
