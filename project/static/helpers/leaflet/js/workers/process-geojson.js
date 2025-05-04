@@ -74,5 +74,5 @@ self.onmessage = (e) => {
         // simplify / cluster if not query // reconfigure legend feature count
     }
 
-    self.postMessage({data})
+    self.postMessage({geojson:data})
 }
