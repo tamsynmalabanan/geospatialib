@@ -36,6 +36,12 @@ self.onmessage = (e) => {
     } = e.data
     
 
+    console.log(        data,
+        queryExtent,
+        filters,
+        groups,
+        simplify)
+
     if (queryExtent) {
         data.features = data.features.filter(feature => {
             return turf.booleanIntersects(queryExtent, feature)
