@@ -41,7 +41,7 @@ self.onmessage = (e) => {
         })
     }
     
-    if (filters.some(i => {
+    if (Object.values(filters).some(i => {
         if (!i.active) return false
         return Object.values(i.values).some(j => {
             if (!j.hasOwnProperty('active')) return true
