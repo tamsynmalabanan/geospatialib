@@ -84,31 +84,14 @@ const createAttributionTable = (geojson) => {
     }
 }
 
-const createGeoJSONChecklist = async (geojsonList, group, {
-    pane,
+const createGeoJSONChecklist = async (layerList, group, {
     controller,
-    customStyleParams,
 } = {}) => {
     const container = document.createElement('div')
     container.className = 'd-flex flex-column gap-2 geojson-checklist'
 
-    for (const title in geojsonList) {
+    for (const geojsonLayer of layerList) {
         if (controller?.signal.aborted) return
-        
-        const geojson = geojsonList[title]
-        if (!geojson) continue
-
-        const features = geojson.features
-        if (!features?.length) continue
-
-        const geojsonLayer = await getLeafletGeoJSONLayer({
-            geojson,
-            group,
-            pane,
-            title,
-            attribution: createAttributionTable(geojson)?.outerHTML,
-            customStyleParams,
-        })
 
         const featureLayers = geojsonLayer.getLayers()
         if (!featureLayers.length) continue

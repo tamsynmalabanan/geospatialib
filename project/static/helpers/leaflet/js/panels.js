@@ -3424,12 +3424,24 @@ const handleLeafletQueryPanel = (map, parent) => {
                 
                 if (controller.signal.aborted) return
                 
-                const geojsons = {}
+                const layers = []
                 for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-                    geojsons[Object.keys(fetchers)[i]] = fetchedGeoJSONs[i]
+                    const geojson = fetchedGeoJSONs[i]
+                    if (!geojson?.features?.length) continue
+
+                    const layer = await getLeafletGeoJSONLayer({
+                        pane: 'queryPane',
+                        group: queryGroup,
+                        customStyleParams,
+                        title: Object.keys(fetchers)[i],
+                        attribution: createAttributionTable(geojson)?.outerHTML,
+                    })
+
+                    addLeafletGeoJSONData(layer, geojson, {queryGeom})
+                    layers.push(layers)
                 }
             
-                return geojsons
+                return layers
             }
         },
         osmView: {
@@ -3439,26 +3451,34 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
-                const geojsons = {}
+                // const [w, s, e, n] = turf.bbox(queryGeom)
+                // const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/4*1000
 
-                const [w, s, e, n] = turf.bbox(queryGeom)
-                const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/4*1000
+                // geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
+                //     queryGeom,
+                //     zoom: parseInt(scaleToLeafletZoom(scale)),
+                //     abortBtns, 
+                //     controller
+                // })
 
-                geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
-                    queryGeom,
-                    zoom: parseInt(scaleToLeafletZoom(scale)),
-                    abortBtns, 
-                    controller
-                })
-                
-                geojsons['OpenStreetMap via Overpass'] = await fetchGeoJSON('fetchOverpass;{}', {
+                const geojson = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom,
                     zoom: map.getZoom(),
                     abortBtns, 
                     controller
                 })
 
-                return geojsons
+                const layer = await getLeafletGeoJSONLayer({
+                    pane: 'queryPane',
+                    group: queryGroup,
+                    customStyleParams,
+                    title: 'OpenStreetMap via Overpass',
+                    attribution: createAttributionTable(geojson)?.outerHTML,
+                })
+
+                addLeafletGeoJSONData(layer, geojson, {queryGeom})
+
+                return [layer]
             }
         },
         layerPoint: {
