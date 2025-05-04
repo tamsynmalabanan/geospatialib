@@ -329,8 +329,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
         return valueA.rank - valueB.rank
     })
 
-    const clone = turf.clone(data)
-    clone.features = clone.features.filter(feature => {
+    data.features = data.features.filter(feature => {
         const valid = (
             (queryExtent ? turf.booleanIntersects(queryExtent, feature) : true) 
             && validateGeoJSONFeature(feature, filters)
@@ -354,9 +353,9 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
         return valid
     })
 
-    sortGeoJSONFeatures(clone, {reverse:true})
+    sortGeoJSONFeatures(data, {reverse:true})
 
-    layer.addData(clone)
+    layer.addData(data)
 }
 
 const mapForUpdateGeoJSONData = new Map()
