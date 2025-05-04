@@ -335,7 +335,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
         return valueA.rank - valueB.rank
     })
 
-    data.features = data.features.filter(feature => {
+    data.features = (data.features ?? []).filter(feature => {
         const valid = (
             (queryExtent ? turf.booleanIntersects(queryExtent, feature) : true) 
             && validateGeoJSONFeature(feature, filters)
@@ -362,12 +362,11 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
     sortGeoJSONFeatures(data, {reverse:true})
 
     const isQuery = layer._group._name === 'query'
-    const featureCount = data?.features?.length ?? 0
-
+    
     if (!isQuery) {
         // simplify / cluster if not query
-    
-        const renderer = featureCount > 1000 ? L.Canvas : L.SVG
+        
+        const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
         if (layer.options.renderer instanceof renderer === false) {
             layer.options.renderer._container?.classList.add('d-none')
             layer.options.renderer = layer._renderers.find(r => {
@@ -381,7 +380,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
     if (controller?.signal.aborted) return
 
     layer.clearLayers()
-    if (featureCount) layer.addData(data)
+    layer.addData(data)
     return layer.fire('dataupdate')
 }
 
