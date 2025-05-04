@@ -378,7 +378,7 @@ const fetchGeoJSON = async (dbKey, {
     queryGeom, 
     zoom=20, 
     controller, 
-    abortBtns
+    abortBtns,
 } = {}) => {
     if (!dbKey) return
         

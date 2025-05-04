@@ -609,8 +609,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     const geojson = JSON.parse(text)
                     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
 
-                    await normalizeGeoJSON(geojson)
-                    geojsonLayer._geojsonId = saveToGeoJSONDB(geojson)                
+                    geojsonLayer._geojsonId = saveToGeoJSONDB(geojson, {normalize:true})                
                     updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
