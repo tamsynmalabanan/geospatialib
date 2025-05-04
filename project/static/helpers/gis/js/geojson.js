@@ -93,7 +93,6 @@ const createGeoJSONChecklist = async (layerList, group, {
     for (const geojsonLayer of layerList) {
         if (controller?.signal.aborted) return
 
-        console.log(geojsonLayer)
         const featureLayers = geojsonLayer.getLayers()
         if (!featureLayers.length) continue
 

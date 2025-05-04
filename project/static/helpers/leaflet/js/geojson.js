@@ -134,11 +134,7 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (geojson && isQuery) {
-        addLeafletGeoJSONData(geojsonLayer, geojson, {
-            queryGeom: L.rectangle(group._map.getBounds()).toGeoJSON().geometry
-        })
-    } else if (geojsonLayer._geojsonId && !isQuery) {
+    if (geojsonLayer._geojsonId && !isQuery) {
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
         })
