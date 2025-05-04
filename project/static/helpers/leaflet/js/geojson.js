@@ -267,8 +267,6 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
-    const controllerId = controller.id
-
     if (!data || !layer) return
     if (data instanceof Error) return layer.fire('dataerror')
 
@@ -293,7 +291,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
             layer.options.renderer._container?.classList.remove('d-none')
         }
     
-        if (controller?.signal.aborted || controllerId !== controller.id) return
+        if (controller?.signal.aborted) return
         if (clear) layer.clearLayers()
         layer.addData(data)
         return layer.fire('dataupdate')
