@@ -291,8 +291,8 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
             layer.options.renderer._container?.classList.remove('d-none')
         }
         
-        console.log(controller)
-        if (controller?.signal.aborted) return
+        if (controller?.signal?.aborted) return
+        console.log(data)
         if (clear) layer.clearLayers()
         layer.addData(data)
         return layer.fire('dataupdate')
@@ -325,7 +325,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
 
 const mapForupdateLeafletGeoJSONLayer = new Map()
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
-    console.log(controller)
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     

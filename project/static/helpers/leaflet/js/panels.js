@@ -3437,7 +3437,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         attribution: createAttributionTable(geojson)?.outerHTML,
                     })
 
-                    addLeafletGeoJSONData(layer, geojson, {queryGeom})
+                    addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
                     layers.push(layer)
                 }
             
@@ -3476,7 +3476,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     attribution: createAttributionTable(geojson)?.outerHTML,
                 })
 
-                addLeafletGeoJSONData(layer, geojson, {queryGeom})
+                addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
                 return [layer]
             }
         },
