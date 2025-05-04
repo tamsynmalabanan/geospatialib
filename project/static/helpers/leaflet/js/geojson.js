@@ -21,7 +21,7 @@ const getLeafletGeoJSONLayer = async ({
 
     const isQuery = group?._name === 'query'
     if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
-        geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
+        geojson ? saveToGeoJSONDB(turf.clone(geojson), {normalize:true}) : null
     )
 
     geojsonLayer._styles = styles || {
