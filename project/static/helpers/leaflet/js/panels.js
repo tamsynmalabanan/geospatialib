@@ -3445,7 +3445,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
                     });
             
-                    layer.push(layerPromise);
+                    layers.push(layerPromise);
                 }
             
                 await Promise.all(layers)
