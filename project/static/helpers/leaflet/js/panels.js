@@ -3438,10 +3438,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
 
                     addLeafletGeoJSONData(layer, geojson, {queryGeom})
-                    layers.push(layers)
+                    layers.push(layer)
                 }
             
-                console.log(layers)
                 return layers
             }
         },
