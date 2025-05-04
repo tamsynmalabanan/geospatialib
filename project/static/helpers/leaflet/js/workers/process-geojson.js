@@ -74,7 +74,5 @@ self.onmessage = (e) => {
         // simplify / cluster if not query // reconfigure legend feature count
     }
 
-    console.log(data)
-
     self.postMessage({data})
 }

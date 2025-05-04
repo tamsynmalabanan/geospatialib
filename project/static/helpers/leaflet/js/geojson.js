@@ -314,6 +314,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
         }
         
         worker.onerror = (error) => {
+            console.log(error)
             worker.terminate()
         }
     } else {
