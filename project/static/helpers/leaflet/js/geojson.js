@@ -316,7 +316,7 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const addLeafletGeoJSONData = (layer, data, {queryGeom, filters, groups}) => {
+const addLeafletGeoJSONData = (layer, data, {queryGeom, filters, groups}={}) => {
     data.features = data.features.filter(feature => {
         // filter with query geom
     
