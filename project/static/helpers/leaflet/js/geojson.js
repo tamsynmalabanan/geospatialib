@@ -19,6 +19,11 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
+    const isQuery = group?._name === 'query'
+    if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
+        geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
+    )
+
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
@@ -85,23 +90,25 @@ const getLeafletGeoJSONLayer = async ({
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
-        const patternImg = document.querySelector(`#${styleParams.fillPatternId}-img`) 
-        if (!isCanvas 
-            || styleParams.fillPattern === 'solid' 
-            || !turf.getType(feature).endsWith('Polygon')
-            || !patternImg?.getAttribute('src')
-        ) return handler(layer)
-    
-        layer.once('add', () => {
-            geojsonLayer.removeLayer(layer)
-            const poly = L.polygon(
-                layer.getLatLngs(), 
-                getLeafletLayerStyle(feature, styleParams, {renderer})
-            )
-            poly.feature = feature
-            handler(poly)
-            poly.addTo(geojsonLayer)
-        })
+        if (isCanvas 
+            && styleParams.fillPattern !== 'solid' 
+            && turf.getType(feature).endsWith('Polygon')
+            && document.querySelector(`#${styleParams.fillPatternId}-img`)
+            ?.getAttribute('src')
+        ) {
+            layer.once('add', () => {
+                geojsonLayer.removeLayer(layer)
+                const poly = L.polygon(
+                    layer.getLatLngs(), 
+                    getLeafletLayerStyle(feature, styleParams, {renderer})
+                )
+                poly.feature = feature
+                handler(poly)
+                poly.addTo(geojsonLayer)
+            })
+        } else {
+            handler(layer)
+        }
     }
 
     const getStyle = (feature) => {
@@ -127,11 +134,10 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
     
-    if (!group?._name === 'query') {
-        geojsonLayer._geojsonId = geojsonId || (
-            geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
-        )
-
+    if (geojson && isQuery) {
+        geojsonLayer.addData(geojson)
+    } else 
+    if (geojsonLayer._geojsonId && !isQuery) {
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
         })
@@ -142,15 +148,13 @@ const getLeafletGeoJSONLayer = async ({
 
         geojsonLayer.on('add', () => {
             if (layerIsVisible(geojsonLayer)) {
-                updateLeafletGeoJSONLayer(geojsonLayer)
+                updateGeoJSONData(geojsonLayer)
             }
         })
 
         geojsonLayer.on('remove', () => {
             geojsonLayer.clearLayers()
         })
-    } else {
-        if (geojson) geojsonLayer.addData(geojson)
     }
 
     return geojsonLayer
@@ -314,7 +318,7 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 // web worker this
-const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
+const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
     if (data instanceof Error) return layer.fire('dataerror')
 
     if (controller?.signal.aborted) return
@@ -368,13 +372,13 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
 
     if (controller?.signal.aborted) return
 
-    if (clear) layer.clearLayers()
+    layer.clearLayers()
     layer.addData(data)
     return layer.fire('dataupdate')
 }
 
-const mapForupdateLeafletGeoJSONLayer = new Map()
-const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
+const mapForUpdateGeoJSONData = new Map()
+const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     
@@ -387,8 +391,8 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
         controller?.id
     ].join(';')
 
-    if (mapForupdateLeafletGeoJSONLayer.has(mapKey)) {
-        const data = await mapForupdateLeafletGeoJSONLayer.get(mapKey)
+    if (mapForUpdateGeoJSONData.has(mapKey)) {
+        const data = await mapForUpdateGeoJSONData.get(mapKey)
         return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
     }
 
@@ -402,11 +406,11 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
         } catch (error) {
             return error
         } finally {
-            setTimeout(() => mapForupdateLeafletGeoJSONLayer.delete(mapKey), 1000);
+            setTimeout(() => mapForUpdateGeoJSONData.delete(mapKey), 1000);
         }
     })()
     
-    mapForupdateLeafletGeoJSONLayer.set(mapKey, dataPromise)
+    mapForUpdateGeoJSONData.set(mapKey, dataPromise)
     const data = await dataPromise
     return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
 }

@@ -571,7 +571,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     const oldStyles = structuredClone(geojsonLayer._styles)
                     geojsonLayer._styles = cloneLeafletLayerStyles({_styles:styles})
                     deleteLeafletLayerFillPatterns({_styles:oldStyles})
-                    updateLeafletGeoJSONLayer(geojsonLayer)
+                    updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
         },
@@ -595,7 +595,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!geojsonId) return
 
                     geojsonLayer._geojsonId = geojsonId
-                    updateLeafletGeoJSONLayer(geojsonLayer)
+                    updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
         },
@@ -610,7 +610,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
 
                     geojsonLayer._geojsonId = saveToGeoJSONDB(geojson, {normalize:true})                
-                    updateLeafletGeoJSONLayer(geojsonLayer)
+                    updateGeoJSONData(geojsonLayer)
                 } catch { return }
             }
         },
