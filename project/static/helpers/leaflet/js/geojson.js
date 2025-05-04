@@ -135,7 +135,8 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     if (geojson && isQuery) {
-        addLeafletGeoJSONData(geojsonLayer, turf.clone(geojson), {
+        console.log(geojson)
+        addLeafletGeoJSONData(geojsonLayer, geojson, {
             queryGeom: L.rectangle(group._map.getBounds()).toGeoJSON().geometry
         })
     } else if (geojsonLayer._geojsonId && !isQuery) {
@@ -329,7 +330,8 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
         return valueA.rank - valueB.rank
     })
 
-    data.features = data.features.filter(feature => {
+    const clone = turf.clone(data)
+    clone.features = clone.features.filter(feature => {
         const valid = (
             (queryExtent ? turf.booleanIntersects(queryExtent, feature) : true) 
             && validateGeoJSONFeature(feature, filters)
@@ -353,9 +355,9 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
         return valid
     })
 
-    sortGeoJSONFeatures(data, {reverse:true})
+    sortGeoJSONFeatures(clone, {reverse:true})
 
-    layer.addData(data)
+    layer.addData(clone)
 }
 
 const mapForUpdateGeoJSONData = new Map()
