@@ -3449,16 +3449,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
-                // const [w, s, e, n] = turf.bbox(queryGeom)
-                // const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/4*1000
-
-                // geojsonLayers['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
-                //     queryGeom,
-                //     zoom: parseInt(scaleToLeafletZoom(scale)),
-                //     abortBtns, 
-                //     controller
-                // })
-
                 const geojson = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom,
                     zoom: map.getZoom(),
@@ -3474,9 +3464,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                     attribution: createAttributionTable(geojson)?.outerHTML,
                 })
 
-                layer.once('dataupdate', () => console.log(layer))
-                addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
-                return [layer]
+                return new Promise((resolve) => {
+                    layer.once('dataupdate', () => {
+                        resolve([layer])
+                    })
+                    
+                    addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
+                });
             }
         },
         layerPoint: {
