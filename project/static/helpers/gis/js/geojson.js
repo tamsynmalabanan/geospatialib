@@ -420,6 +420,7 @@ const fetchGeoJSON = async (dbKey, {
         }
         
         if (cachedGeoJSON.features.length === 0) return
+        console.log(cachedGeoJSON)
         return cachedGeoJSON
     })()
     
