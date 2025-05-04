@@ -317,20 +317,22 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const addLeafletGeoJSONData = (layer, data, {queryGeom, filters, groups}={}) => {
-    // const map = layer._map
-    // const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
-    //     queryGeom, getLeafletMeterScale(map)/2/1000
-    // ).geometry : queryGeom : null
+    const map = layer._group._map
+    const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
+        queryGeom, getLeafletMeterScale(map)/2/1000
+    ).geometry : queryGeom : null
 
-    // data.features = data.features.filter(feature => {
-    //     const inQueryExtent = queryExtent ? turf.booleanIntersects(queryExtent, feature) : true
-    //     // filter with query geom
+    data.features = data.features.filter(feature => {
+        const inQueryExtent = queryExtent ? turf.booleanIntersects(queryExtent, feature) : true
+        // filter with query geom
     
 
-    //     // if in query geom, filter with filters
+        // if in query geom, filter with filters
 
-    //     // if in filters, group and rank
-    // })
+        // if in filters, group and rank
+    
+        return inQueryExtent
+    })
 
     // sort
 
