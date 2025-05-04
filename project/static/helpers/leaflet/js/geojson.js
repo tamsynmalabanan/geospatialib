@@ -150,7 +150,7 @@ const getLeafletGeoJSONLayer = async ({
             geojsonLayer.clearLayers()
         })
     } else {
-        geojsonLayer.addData(geojson)
+        if (geojson) geojsonLayer.addData(geojson)
     }
 
     return geojsonLayer
