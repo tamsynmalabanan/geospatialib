@@ -335,14 +335,20 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     })
 
     data.features = (data.features ?? []).filter(feature => {
+        if (controller?.signal.aborted) return
+
         const valid = (
             (queryExtent ? turf.booleanIntersects(queryExtent, feature) : true) 
             && validateGeoJSONFeature(feature, filters)
         )
 
+        if (controller?.signal.aborted) return
+
         if (valid && groups.length) {
             const properties = feature.properties
             for (const [id, group] of groups) {
+                if (controller?.signal.aborted) break
+
                 if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
                 properties.__groupId__ = id
                 properties.__groupRank__ = group.rank
@@ -356,9 +362,12 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
         return valid
     })
 
+    if (controller?.signal.aborted) return
     sortGeoJSONFeatures(data, {reverse:true})
 
     if (layer._group._name !== 'query') {
+        if (controller?.signal.aborted) return
+
         // simplify / cluster if not query // reconfigure legend feature count
         
         const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
@@ -373,6 +382,7 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
 
     if (controller?.signal.aborted) return
 
+    if (controller?.signal.aborted) return
     if (clear) layer.clearLayers()
     layer.addData(data)
     return layer.fire('dataupdate')
@@ -394,25 +404,30 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
 
     if (mapForUpdateGeoJSONData.has(mapKey)) {
         const data = await mapForUpdateGeoJSONData.get(mapKey)
+        if (controller?.signal.aborted) return
         return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
     }
 
     const dataPromise = (async () => {
         try {
-            return await fetchGeoJSON(geojsonId, {
+            const data = await fetchGeoJSON(geojsonId, {
                 queryGeom,
                 controller,
                 abortBtns,
             })
+            if (controller?.signal.aborted) return
+            return data
         } catch (error) {
             return error
         } finally {
             setTimeout(() => mapForUpdateGeoJSONData.delete(mapKey), 1000);
         }
     })()
-    
+   
+    if (controller?.signal.aborted) return
     mapForUpdateGeoJSONData.set(mapKey, dataPromise)
     const data = await dataPromise
+    if (controller?.signal.aborted) return
     return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
 }
 
