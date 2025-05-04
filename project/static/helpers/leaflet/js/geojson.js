@@ -364,9 +364,9 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
             layer.options.renderer._container?.classList.add('d-none')
             layer.options.renderer = layer._renderers.find(r => {
                 const match = r instanceof renderer
-                if (match) r._container?.classList.remove('d-none')
                 return match
             })
+            layer.options.renderer._container?.classList.remove('d-none')
         }
     }
 
