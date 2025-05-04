@@ -363,18 +363,18 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
         if (layer.options.renderer instanceof renderer === false) {
             layer.options.renderer._container?.classList.add('d-none')
             layer.options.renderer = layer._renderers.find(r => {
-                const match = r instanceof renderer
-                return match
+                return r instanceof renderer
             })
             layer.options.renderer._container?.classList.remove('d-none')
         }
+
+        console.log(layer.options.renderer)
     }
 
     if (controller?.signal.aborted) return
 
     layer.clearLayers()
     layer.addData(data)
-    console.log(layer)
     return layer.fire('dataupdate')
 }
 
