@@ -3449,6 +3449,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
             
                 await Promise.all(layers)
+                console.log(layers)
                 return layers
             }
         },
