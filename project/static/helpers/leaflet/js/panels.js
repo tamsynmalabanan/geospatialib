@@ -3441,6 +3441,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     layers.push(layers)
                 }
             
+                console.log(layers)
                 return layers
             }
         },
