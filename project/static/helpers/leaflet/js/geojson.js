@@ -318,7 +318,13 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
+
+// web worker this
+const addLeafletGeoJSONData = (layer, data, {queryGeom, controller}={}) => {
+    if (data instanceof Error) return layer.fire('dataerror')
+
+    if (controller?.signal.aborted) return
+
     const map = layer._group._map
     const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
         queryGeom, getLeafletMeterScale(map)/2/1000
@@ -355,7 +361,28 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
 
     sortGeoJSONFeatures(data, {reverse:true})
 
-    layer.addData(data)
+    const isQuery = layer._group._name === 'query'
+    const featureCount = data?.features?.length ?? 0
+
+    if (!isQuery) {
+        // simplify / cluster if not query
+    
+        const renderer = featureCount > 1000 ? L.Canvas : L.SVG
+        if (layer.options.renderer instanceof renderer === false) {
+            layer.options.renderer._container?.classList.add('d-none')
+            layer.options.renderer = layer._renderers.find(r => {
+                const match = r instanceof renderer
+                if (match) r._container?.classList.remove('d-none')
+                return match
+            })
+        }
+    }
+
+    if (controller?.signal.aborted) return
+
+    layer.clearLayers()
+    if (featureCount) layer.addData(data)
+    return layer.fire('dataupdate')
 }
 
 const mapForUpdateGeoJSONData = new Map()
@@ -366,56 +393,25 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const map = layer._group?._map
     const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
-    const handler = (data) => {
-        if (data instanceof Error) return layer.fire('dataerror')
-        
-        if (controller?.signal.aborted) return
-
-        const featureCount = data?.features?.length ?? 0
-        const renderer = featureCount > 1000 ? L.Canvas : L.SVG
-        if (layer.options.renderer instanceof renderer === false) {
-            layer.options.renderer._container?.classList.add('d-none')
-            layer.options.renderer = layer._renderers.find(r => {
-                const match = r instanceof renderer
-                return match
-            })
-        }
-        layer.options.renderer._container?.classList.remove('d-none')
-        
-        if (controller?.signal.aborted) return
-        
-        layer.clearLayers()
-        if (featureCount) {
-            console.log('adding data...', new Date())
-            addLeafletGeoJSONData(layer, data, {queryGeom})
-            console.log('done adding data.', new Date())
-        }
-        return layer.fire('dataupdate')
-    }
-
     const mapKey = [
         geojsonId, 
         (queryGeom ? turf.bbox(queryGeom).join(',') : null), 
         controller?.id
     ].join(';')
-    
+
     if (mapForUpdateGeoJSONData.has(mapKey)) {
         const data = await mapForUpdateGeoJSONData.get(mapKey)
-        return handler(data)
+        return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
     }
 
     const dataPromise = (async () => {
         try {
-            console.log('fetching...', new Date())
-            const data = await fetchGeoJSON(geojsonId, {
+            return await fetchGeoJSON(geojsonId, {
                 queryGeom,
                 controller,
                 abortBtns,
             })
-            console.log('done fetching.', new Date())
-            return data
         } catch (error) {
-            console.log(error)
             return error
         } finally {
             setTimeout(() => mapForUpdateGeoJSONData.delete(mapKey), 1000);
@@ -424,7 +420,7 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     
     mapForUpdateGeoJSONData.set(mapKey, dataPromise)
     const data = await dataPromise
-    return handler(data)
+    return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {
