@@ -3333,7 +3333,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             cancelBtn.disabled = false
 
             if (!(e.target instanceof L.Map)) e._leafletMap = map
-            const geojsons = await handler(e, {
+            const layers = await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
             })
@@ -3342,8 +3342,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             if (controllerId !== controller.id) return
             
-            if (geojsons && Object.values(geojsons).some(g => g?.features?.length)) {
-                const content = await createGeoJSONChecklist(geojsons, queryGroup, {
+            if (layers?.length) {
+                const content = await createGeoJSONChecklist(layers, queryGroup, {
                     controller, 
                     pane: 'queryPane',
                     customStyleParams, 
@@ -3451,16 +3451,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
-                // const [w, s, e, n] = turf.bbox(queryGeom)
-                // const scale = turf.distance(turf.point([w, s+(n-s)]), turf.point([e, s+(n-s)]))/4*1000
-
-                // geojsons['OpenStreetMap via Nominatim'] = await fetchGeoJSON('fetchNominatim;{}', {
-                //     queryGeom,
-                //     zoom: parseInt(scaleToLeafletZoom(scale)),
-                //     abortBtns, 
-                //     controller
-                // })
-
                 const geojson = await fetchGeoJSON('fetchOverpass;{}', {
                     queryGeom,
                     zoom: map.getZoom(),
@@ -3477,8 +3467,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                 })
 
                 addLeafletGeoJSONData(layer, geojson, {queryGeom})
-
-                console.log(layer, geojson)
                 return [layer]
             }
         },
