@@ -267,6 +267,7 @@ const getGeoJSONLayerStyles = (layer) => {
 }
 
 const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
+    console.log(controller)
     if (!data || !layer) return
     if (data instanceof Error) return layer.fire('dataerror')
 
