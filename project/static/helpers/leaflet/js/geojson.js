@@ -318,25 +318,42 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const addLeafletGeoJSONData = (layer, data, {queryGeom, filters, groups}={}) => {
+const addLeafletGeoJSONData = (layer, data, {queryGeom}={}) => {
     const map = layer._group._map
     const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
         queryGeom, getLeafletMeterScale(map)/2/1000
     ).geometry : queryGeom : null
 
-    data.features = data.features.filter(feature => {
-        const inQueryExtent = queryExtent ? turf.booleanIntersects(queryExtent, feature) : true
-        // filter with query geom
-    
-
-        // if in query geom, filter with filters
-
-        // if in filters, group and rank
-    
-        return inQueryExtent
+    const filters = layer._styles.filters
+    const groups = Object.entries((layer._styles.symbology.groups)).sort(([keyA, valueA], [keyB, valueB]) => {
+        return valueA.rank - valueB.rank
     })
 
-    // sort
+    data.features = data.features.filter(feature => {
+        const valid = (
+            (queryExtent ? turf.booleanIntersects(queryExtent, feature) : true) 
+            && validateGeoJSONFeature(feature, filters)
+        )
+
+        if (valid) {
+            const properties = feature.properties
+            for (const [id, group] of groups) {
+                if (!group.active) continue
+                if (!validateGeoJSONFeature(feature, group.filters)) continue
+                
+                properties.__groupId__ = id
+                properties.__groupRank__ = group.rank
+                break
+            }
+
+            if (!properties.__groupId__) properties.__groupId__ = ''
+            if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
+        }
+    
+        return valid
+    })
+
+    sortGeoJSONFeatures(data, {reverse:true})
 
     layer.addData(data)
 }
@@ -353,17 +370,6 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
         if (data instanceof Error) return layer.fire('dataerror')
         
         if (controller?.signal.aborted) return
-        
-        if (data?.features?.length) {
-            console.log('filtering...', new Date())
-            filterGeoJSONFeatures(data, {
-                filters: layer._styles.filters,
-                groups: layer._styles.symbology.groups ?? {},
-                controller
-            })
-            console.log('done filtering.', new Date())
-            sortGeoJSONFeatures(data, {reverse:true})
-        }
 
         const featureCount = data?.features?.length ?? 0
         const renderer = featureCount > 1000 ? L.Canvas : L.SVG
