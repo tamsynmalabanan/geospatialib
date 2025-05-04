@@ -135,7 +135,7 @@ const getLeafletGeoJSONLayer = async ({
     }
     
     if (geojson && isQuery) {
-        geojsonLayer.addData(geojson)
+        addLeafletGeoJSONData(geojsonLayer, geojson)
     } else if (geojsonLayer._geojsonId && !isQuery) {
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
@@ -316,6 +316,21 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
+const addLeafletGeoJSONData = (layer, data, {queryGeom, filters, groups}) => {
+    data.features = data.features.filter(feature => {
+        // filter with query geom
+    
+
+        // if in query geom, filter with filters
+
+        // if in filters, group and rank
+    })
+
+    // sort
+
+    layer.addData(data)
+}
+
 const mapForUpdateGeoJSONData = new Map()
 const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
     const geojsonId = layer._geojsonId
@@ -326,8 +341,6 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
 
     const handler = (data) => {
         if (data instanceof Error) return layer.fire('dataerror')
-        
-        // web worker here - filter, group/rank, symplify/cluster, sort
         
         if (controller?.signal.aborted) return
         
@@ -342,7 +355,6 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
             sortGeoJSONFeatures(data, {reverse:true})
         }
 
-        // post.message
         const featureCount = data?.features?.length ?? 0
         const renderer = featureCount > 1000 ? L.Canvas : L.SVG
         if (layer.options.renderer instanceof renderer === false) {
@@ -359,7 +371,7 @@ const updateGeoJSONData = async (layer, {controller, abortBtns} = {}) => {
         layer.clearLayers()
         if (featureCount) {
             console.log('adding data...', new Date())
-            layer.addData(data)
+            addLeafletGeoJSONData(layer, data, {queryGeom})
             console.log('done adding data.', new Date())
         }
         return layer.fire('dataupdate')
