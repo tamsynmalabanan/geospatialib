@@ -266,31 +266,6 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
-    if (!geojson?.features?.length) return
-    
-    geojson.features.sort((a, b) => {
-        const featureOrder = [
-            "Point",
-            "MultiPoint",
-            "LineString",
-            "MultiLineString",
-            "Polygon",
-            "MultiPolygon",
-        ]
-        const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
-        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
-
-        const comparison = (
-            typeComparison !== 0 ? typeComparison : 
-            rankComparison !== 0 ? rankComparison : 
-            (a.properties?.name ?? '').localeCompare(b.properties?.name ?? '')
-        )
-
-        return reverse ? -comparison : comparison
-    })
-}
-
 const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
     if (!data || !layer) return
     if (data instanceof Error) return layer.fire('dataerror')
