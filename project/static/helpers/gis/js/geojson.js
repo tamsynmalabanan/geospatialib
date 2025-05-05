@@ -195,7 +195,7 @@ const createGeoJSONChecklist = async (geojsonLayer, {
             })
         }
     } catch (error) {
-        console.assert.log(error)
+        console.log(error)
         return
     }
 
