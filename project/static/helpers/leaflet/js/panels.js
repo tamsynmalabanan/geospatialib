@@ -1182,7 +1182,12 @@ const handleLeafletStylePanel = (map, parent) => {
 
             if (iconType === 'property') {
                 // update to retrieve properties from wfs/wms
-                const geojson = (await getFromGeoJSONDB(layer._geojsonId))?.geojson || layer.toGeoJSON()
+                const geojson = (await getLeafletGeoJSONData(layer, {
+                    controller,
+                    group:false,
+                    sort:false,
+                    simplify:false
+                })) || layer.toGeoJSON()
                 console.log(geojson)
                 if (geojson) {
                     const filters = layer._styles.filters

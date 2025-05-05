@@ -267,7 +267,7 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const handlerLeafletGeoJSON = async (layer, {
+const getLeafletGeoJSONData = async (layer, {
     controller, 
     abortBtns,
     filter=true,
@@ -306,7 +306,7 @@ const handlerLeafletGeoJSON = async (layer, {
     })
     const hasActiveGroups = group && groups.some(i => i[1].active)
     
-    if (hasActiveFilters && hasActiveGroups) {
+    if (hasActiveFilters || hasActiveGroups) {
         data.features = data.features.filter(feature => {
             if (controller?.signal?.aborted) return
             const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
@@ -360,7 +360,7 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     })
     if (!data) return
 
-    await handlerLeafletGeoJSON(layer, {controller, abortBtns})
+    await getLeafletGeoJSONData(layer, {controller, abortBtns})
 
     if (controller?.signal?.aborted) return
     const renderer = (data.features.length ?? 0) > 1000 ? L.Canvas : L.SVG
