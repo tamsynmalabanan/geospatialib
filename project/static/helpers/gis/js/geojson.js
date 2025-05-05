@@ -84,7 +84,7 @@ const createAttributionTable = (geojson) => {
     }
 }
 
-const createGeoJSONChecklist = async (geojsonLayer, {
+const createGeoJSONChecklist = (geojsonLayer, {
     controller,
 } = {}) => {
     const featureLayers = geojsonLayer.getLayers()
