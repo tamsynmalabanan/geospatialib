@@ -204,6 +204,7 @@ const createGeoJSONChecklist = async (geojsonLayer, {
     infoContainer.innerHTML = geojsonLayer._attribution || ''
     contentCollapse.appendChild(infoContainer)
 
+    console.log(geojsonContainer)
     return geojsonContainer
 }
 
