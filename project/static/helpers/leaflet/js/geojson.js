@@ -6,7 +6,7 @@ const getLeafletGeoJSONLayer = async ({
     attribution = '',
     geojsonId,
     styles,
-    customStyleParams,
+    customStyleParams = {},
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
@@ -19,9 +19,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
-    const defaultStyleParams = getLeafletStyleParams(customStyleParams ?? {})
-    if (styles) styles.symbology.default.styleParams = defaultStyleParams
-
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
@@ -30,7 +27,7 @@ const getLeafletGeoJSONLayer = async ({
                 rank: 1,
                 showCount: true,
                 showLabel: true,
-                styleParams: defaultStyleParams,
+                styleParams: getLeafletStyleParams(customStyleParams),
             },
             case: true,
             method: 'single',
