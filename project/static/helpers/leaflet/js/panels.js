@@ -2250,7 +2250,14 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     // update to fetch properties from wfs (wms?)
                     const options = []
-                    const geojson = (await getFromGeoJSONDB(layer._geojsonId))?.geojson || layer.toGeoJSON()
+                    const geojson = (await getLeafletGeoJSONData(layer, {
+                        controller,
+                        filter:false,
+                        queryGeom:false,
+                        group:false,
+                        sort:false,
+                        simplify:false
+                    })) || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         Object.keys(currentProperties).forEach(i => options.push(i))
                     })
@@ -2389,7 +2396,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     const options = []
     
                     if (Array('equals').includes(filter.handler) && filter.property) {
-                        const geojson = (await getFromGeoJSONDB(layer._geojsonId))?.geojson || layer.toGeoJSON()
+                        const geojson = (await getLeafletGeoJSONData(layer, {
+                            controller,
+                            filter:false,
+                            queryGeom:false,
+                            group:false,
+                            sort:false,
+                            simplify:false
+                        })) || layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
                             value = value === '' ? '[blank]' : value
@@ -2590,14 +2604,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
                             events: {
                                 focus: async (e) => {
-                                    const geojson = (await getFromGeoJSONDB(layer._geojsonId))?.geojson || layer.toGeoJSON()
+                                    const geojson = (await getLeafletGeoJSONData(layer, {
+                                        controller,
+                                        filter:false,
+                                        queryGeom:false,
+                                        group:false,
+                                        sort:false,
+                                        simplify:false
+                                    })) || layer.toGeoJSON()
                                     if (!geojson) return
                                     
-                                    const filters = layer._styles.filters
-                                    if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
-                                        geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
-                                    }
-    
                                     const tagify = Tagify(form.elements['groupBy'])
                                     const options = symbology.method === 'categorized' ? ['[geometry_type]'] : []
                                     turf.propEach(geojson, (currentProperties, featureIndex) => {
