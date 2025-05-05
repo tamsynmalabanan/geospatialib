@@ -267,7 +267,14 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
+const handlerLeafletGeoJSON = async (layer, {
+    controller, 
+    abortBtns,
+    filter=true,
+    group=true,
+    sort=true,
+    simplify=true,
+} = {}) => {
     if (!layer) return
 
     const geojsonId = layer._geojsonId
@@ -287,7 +294,7 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     if (data instanceof Error) return layer.fire('dataerror')
 
     const filters = layer._styles.filters
-    const hasActiveFilters = Object.values(filters).some(i => {
+    const hasActiveFilters = filter && Object.values(filters).some(i => {
         if (!i.active) return false
         return Object.values(i.values).some(j => {
             return !j.hasOwnProperty('active') || j.active
@@ -297,36 +304,63 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
         return valueA.rank - valueB.rank
     })
-    const hasActiveGroups = groups.some(i => i[1].active)
+    const hasActiveGroups = group && groups.some(i => i[1].active)
     
-    data.features = data.features.filter(feature => {
-        if (controller?.signal?.aborted) return
-        const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+    if (hasActiveFilters && hasActiveGroups) {
+        data.features = data.features.filter(feature => {
+            if (controller?.signal?.aborted) return
+            const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+        
+            if (valid && hasActiveGroups) {
+                const properties = feature.properties
+                for (const [id, group] of groups) {
+                    if (controller?.signal?.aborted) break
     
-        if (valid && hasActiveGroups) {
-            const properties = feature.properties
-            for (const [id, group] of groups) {
-                if (controller?.signal?.aborted) break
-
-                if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
-                
-                properties.__groupId__ = id
-                properties.__groupRank__ = group.rank
-                break
+                    if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
+                    
+                    properties.__groupId__ = id
+                    properties.__groupRank__ = group.rank
+                    break
+                }
+    
+                if (!properties.__groupId__) properties.__groupId__ = ''
+                if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
             }
-
-            if (!properties.__groupId__) properties.__groupId__ = ''
-            if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
-        }
-
-        return valid
-    })
     
-    if (controller?.signal?.aborted) return
-    // simplify / cluster if not query // reconfigure legend feature count
+            return valid
+        })
+    }
+    
+    if (simplify) {
+        if (controller?.signal?.aborted) return
+        // simplify / cluster if not query // reconfigure legend feature count
+    }
 
-    if (controller?.signal?.aborted) return
-    sortGeoJSONFeatures(data, {reverse:true})
+    if (sort) {
+        if (controller?.signal?.aborted) return
+        sortGeoJSONFeatures(data, {reverse:true})
+    }
+
+    return data
+}
+
+const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
+    if (!layer) return
+
+    const geojsonId = layer._geojsonId
+    if (!geojsonId) return
+    
+    const map = layer._map ?? layer._group?._map
+    if (!map) return
+
+    const data = await fetchGeoJSON(geojsonId, {
+        queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
+        controller,
+        abortBtns,
+    })
+    if (!data) return
+
+    await handlerLeafletGeoJSON(layer, {controller, abortBtns})
 
     if (controller?.signal?.aborted) return
     const renderer = (data.features.length ?? 0) > 1000 ? L.Canvas : L.SVG

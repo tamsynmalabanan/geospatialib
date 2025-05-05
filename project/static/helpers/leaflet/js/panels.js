@@ -1185,10 +1185,10 @@ const handleLeafletStylePanel = (map, parent) => {
                 const geojson = (await getFromGeoJSONDB(layer._geojsonId))?.geojson || layer.toGeoJSON()
                 console.log(geojson)
                 if (geojson) {
-                    // const filters = layer._styles.filters
-                    // if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
-                    //     geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
-                    // }
+                    const filters = layer._styles.filters
+                    if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
+                        geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
+                    }
                     
                     const options = []
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
