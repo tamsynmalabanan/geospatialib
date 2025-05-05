@@ -346,7 +346,7 @@ const getLeafletGeoJSONData = async (layer, {
 }
 
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
-    await getLeafletGeoJSONData(layer, {controller, abortBtns})
+    const data = await getLeafletGeoJSONData(layer, {controller, abortBtns})
 
     if (controller?.signal?.aborted) return
     const renderer = (data.features.length ?? 0) > 1000 ? L.Canvas : L.SVG
