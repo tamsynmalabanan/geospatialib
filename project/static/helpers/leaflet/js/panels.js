@@ -3332,8 +3332,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
             cancelBtn.disabled = false
 
-            layers.classList.remove('d-none')
-
             await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
@@ -3370,6 +3368,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
             }
         }
+
+        layers.classList.remove('d-none')
     }
 
     const tools = toolsHandler({
