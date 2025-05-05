@@ -87,10 +87,11 @@ const createAttributionTable = (geojson) => {
 const createGeoJSONChecklist = async (geojsonLayer, {
     controller,
 } = {}) => {
-    if (controller?.signal.aborted) return
+    console.log(geojsonLayer)
+    if (controller?.signal.aborted) throw new Error()
     
     const featureLayers = geojsonLayer.getLayers()
-    if (!featureLayers.length) return
+    if (!featureLayers.length) throw new Error('No feature layers.')
 
     const group = geojsonLayer._group
     
