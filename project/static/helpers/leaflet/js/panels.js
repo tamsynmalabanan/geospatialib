@@ -3408,8 +3408,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     controller
                 })
 
-                console.log(geojson)
-
                 const layer = await getLeafletGeoJSONLayer({
                     pane: 'queryPane',
                     group: queryGroup,
@@ -3418,6 +3416,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     attribution: createAttributionTable(geojson)?.outerHTML,
                 })
 
+                console.log(layer)
                 return layer
             }
         },
