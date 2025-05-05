@@ -350,7 +350,7 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     if (!data) return
 
     if (controller?.signal?.aborted) return
-    const renderer = (data.features.length ?? 0) > 1000 ? L.Canvas : L.SVG
+    const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
     if (!(layer.options.renderer instanceof renderer)) {
         layer.options.renderer._container?.classList.add('d-none')
         layer.options.renderer = layer._renderers.find(r => {
