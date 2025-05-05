@@ -3409,6 +3409,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 })
 
                 const layer = await getLeafletGeoJSONLayer({
+                    geojson, 
                     pane: 'queryPane',
                     group: queryGroup,
                     customStyleParams,

@@ -87,7 +87,6 @@ const createAttributionTable = (geojson) => {
 const createGeoJSONChecklist = async (geojsonLayer, {
     controller,
 } = {}) => {
-    console.log(geojsonLayer)
     if (controller?.signal.aborted) throw new Error()
     
     const featureLayers = geojsonLayer.getLayers()
@@ -196,7 +195,6 @@ const createGeoJSONChecklist = async (geojsonLayer, {
             })
         }
     } catch (error) {
-        console.log(error)
         return
     }
 
@@ -205,7 +203,6 @@ const createGeoJSONChecklist = async (geojsonLayer, {
     infoContainer.innerHTML = geojsonLayer._attribution || ''
     contentCollapse.appendChild(infoContainer)
 
-    console.log(geojsonContainer)
     return geojsonContainer
 }
 
