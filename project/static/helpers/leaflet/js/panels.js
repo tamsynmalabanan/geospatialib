@@ -3435,22 +3435,34 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
-                const geojson = await fetchGeoJSON('overpass;{}', {
-                    queryGeom,
-                    zoom: map.getZoom(),
-                    abortBtns, 
-                    controller
-                })
+                const fetchers = {
+                    'OpenStreetMap via Nominatim': 'nominatim;{}',
+                    'OpenStreetMap via Overpass': 'overpass;{}',
+                }
 
-                const layer = await getLeafletGeoJSONLayer({
-                    pane: 'queryPane',
-                    group: queryGroup,
-                    customStyleParams,
-                    title: 'OpenStreetMap via Overpass',
-                    attribution: createAttributionTable(geojson)?.outerHTML,
-                })
+                for (const title in fetchers) {
+                    const geojson = await fetchGeoJSON(fetchers[title], {
+                        queryGeom,
+                        zoom: map.getZoom(),
+                        abortBtns, 
+                        controller
+                    })
+                
+                    const layer = await getLeafletGeoJSONLayer({
+                        geojson,
+                        pane: 'queryPane',
+                        group: queryGroup,
+                        customStyleParams,
+                        title: title,
+                        attribution: createAttributionTable(geojson)?.outerHTML,
+                    })
 
-                return [layer]
+                    const content = createGeoJSONChecklist(layer, {controller})
+                    if (content) {
+                        layers.appendChild(content)
+                        if (layers.classList.contains('d-none')) enableToolbar()
+                    }
+                }
             }
         },
         layerPoint: {
