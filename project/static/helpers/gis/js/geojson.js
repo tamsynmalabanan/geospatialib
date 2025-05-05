@@ -426,7 +426,7 @@ const fetchGeoJSON = async (dbKey, {
         normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
         
         if (controller?.signal.aborted) return
-        await updateGeoJSONOnDB(
+        if (handlerName !== 'nominatim') await updateGeoJSONOnDB(
             dbKey, 
             turf.clone(geojson),
             queryExtent,
