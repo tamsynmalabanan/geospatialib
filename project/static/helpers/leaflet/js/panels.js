@@ -310,43 +310,33 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            console.log('updating layers...', new Date())
-
-            const newBbox = L.rectangle(map.getBounds()).toGeoJSON()
-            
             const controllerId = controller.id
             const promises = []
 
-            if (!map._previousBbox || !turf.booleanWithin(newBbox, map._previousBbox)) {
-                console.log('here')
+            Array.from(layers.children).reverse().forEach(legend => {
+                if (controllerId !== controller.id) return
                 
-                Array.from(layers.children).reverse().forEach(legend => {
+                const leafletId = parseInt(legend.dataset.layerId)
+                const layer = map._ch.getLegendLayer(leafletId)
+                if (!layer) return
+
+                const isHidden = map._ch.hasHiddenLegendLayer(layer)
+                const isInvisible = !layerIsVisible(layer)
+                if (isHidden || isInvisible) return clearLegend(legend, {isHidden, isInvisible})
+
+                if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
-                    const leafletId = parseInt(legend.dataset.layerId)
-                    const layer = map._ch.getLegendLayer(leafletId)
-                    if (!layer) return
-    
-                    const isHidden = map._ch.hasHiddenLegendLayer(layer)
-                    const isInvisible = !layerIsVisible(layer)
-                    if (isHidden || isInvisible) return clearLegend(legend, {isHidden, isInvisible})
-    
-                    if (layer instanceof L.GeoJSON) {
-                        if (controllerId !== controller.id) return
-                        
-                        promises.push(updateLeafletGeoJSONLayer(layer, {controller}).then((layer) => {
-                            if (layer && layer._openpopup) {
-                                layer._openpopup.openOn(map)
-                                delete layer._openpopup
-                            }
-                        }))
-                    }
-                })
-            }
+                    promises.push(updateLeafletGeoJSONLayer(layer, {controller}).then((layer) => {
+                        if (layer && layer._openpopup) {
+                            layer._openpopup.openOn(map)
+                            delete layer._openpopup
+                        }
+                    }))
+                }
+            })
 
             Promise.all(promises).then(() => {
-                console.log('layers udpated.', new Date())
-                map._previousBbox = newBbox
             })
         }, 100)
     })
