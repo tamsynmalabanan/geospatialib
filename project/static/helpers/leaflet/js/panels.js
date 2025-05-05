@@ -3389,6 +3389,7 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                 const content = createPointCoordinatesTable(feature, {precision:6})
                 layers.appendChild(content)
+                if (layers.classList.contains('d-none')) enableToolbar()
             },
         },
         osmPoint: {
