@@ -336,6 +336,7 @@ const getLeafletGeoJSONData = async (layer, {
         if (controller?.signal?.aborted) return
         const scale = getLeafletMeterScale(map)
         const tolerance = scale > 1000 ?  scale/5000000 : 0
+        console.log(map.getZoom(), scale, tolerance)
         turf.simplify(data, {
             mutate: true,
             tolerance, 
