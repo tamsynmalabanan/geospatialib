@@ -1190,11 +1190,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 })) || layer.toGeoJSON()
                 console.log(geojson)
                 if (geojson) {
-                    const filters = layer._styles.filters
-                    if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
-                        geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
-                    }
-                    
                     const options = []
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         Object.keys(currentProperties).forEach(i => options.push(i))
