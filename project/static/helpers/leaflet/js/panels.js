@@ -1188,7 +1188,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     sort:false,
                     simplify:false
                 })) || layer.toGeoJSON()
-                console.log(geojson)
                 if (geojson) {
                     const options = []
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
