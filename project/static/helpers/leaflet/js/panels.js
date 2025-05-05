@@ -311,7 +311,9 @@ const handleLeafletLegendPanel = (map, parent) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
             console.log('updating layers...', new Date())
-            console.log(map._previousBbox)
+
+            const newBbox = L.rectangle(map.getBounds()).toGeoJSON()
+            if (map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox)) return console.log('no update', new Date())
 
             const controllerId = controller.id
             const promises = []
@@ -341,7 +343,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
             Promise.all(promises).then(() => {
                 console.log('layers udpated.', new Date())
-                map._previousBbox = L.rectangle(map.getBounds()).toGeoJSON()
+                map._previousBbox = newBbox
             })
         }, 100)
     })
