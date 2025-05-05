@@ -334,6 +334,7 @@ const getLeafletGeoJSONData = async (layer, {
     
     if (simplify) {
         if (controller?.signal?.aborted) return
+        console.log(getLeafletMeterScale(map))
         turf.simplify(data, {
             mutate: true,
             tolerance: 0.01, 
