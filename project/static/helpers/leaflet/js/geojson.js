@@ -334,6 +334,11 @@ const getLeafletGeoJSONData = async (layer, {
     
     if (simplify) {
         if (controller?.signal?.aborted) return
+        turf.simplify(data, {
+            mutate: true,
+            tolerance: 0.01, 
+            highQuality: false
+        })
         // simplify / cluster if not query // reconfigure legend feature count
     }
 
