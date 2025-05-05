@@ -310,6 +310,8 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
+            const newBbox = L.rectangle(map.getBounds()).toGeoJSON()
+            
             const controllerId = controller.id
             const promises = []
 
@@ -327,7 +329,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
-                    promises.push(updateLeafletGeoJSONLayer(layer, {controller}).then((layer) => {
+                    promises.push(updateLeafletGeoJSONLayer(layer, {
+                        geojson: map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) ? layer.toGeoJSON() : null,
+                        controller
+                    }).then((layer) => {
                         if (layer && layer._openpopup) {
                             layer._openpopup.openOn(map)
                             delete layer._openpopup
@@ -337,6 +342,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
 
             Promise.all(promises).then(() => {
+                map._previousBbox = newBbox
             })
         }, 100)
     })

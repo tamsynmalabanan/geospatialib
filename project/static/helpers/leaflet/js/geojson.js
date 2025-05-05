@@ -355,11 +355,11 @@ const getLeafletGeoJSONData = async (layer, {
     return data
 }
 
-const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
+const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns} = {}) => {
     if (!layer) return
 
     layer.fire('dataupdating')
-    const data = await getLeafletGeoJSONData(layer, {controller, abortBtns})
+    const data = geojson ?? (await getLeafletGeoJSONData(layer, {controller, abortBtns}))
     if (!data) return
 
     if (controller?.signal?.aborted) return
