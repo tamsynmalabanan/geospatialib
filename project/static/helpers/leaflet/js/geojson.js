@@ -387,6 +387,7 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     })
 
     if (controller?.signal.aborted) return
+    console.log(data)
     return data
 }
 
