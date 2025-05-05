@@ -266,3 +266,52 @@ const resetController = ({
     controller.id = generateRandomString()
     return controller
 }
+
+const relationHandlers = (name) => {
+    return {
+        equals: (v1, v2, {caseSensitive=true}={}) => {
+            const v1Str = String(v1)
+            const v2Str = String(v2)
+            if (caseSensitive) {
+                return v1Str === v2Str
+            } else {
+                return v1Str.toLowerCase() === v2Str.toLowerCase()
+            }
+        },
+        contains: (v1, v2, {caseSensitive=true}={}) => {
+            const v1Str = String(v1)
+            const v2Str = String(v2)
+            if (caseSensitive) {
+                return v1Str.includes(v2Str)
+            } else {
+                return v1Str.toLowerCase().includes(v2Str.toLowerCase())
+            }
+        },
+        greaterThan: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num > v2Num
+        },
+        greaterThanEqualTo: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num >= v2Num
+        },
+        lessThan: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num < v2Num
+        },
+        lessThanEqualTo: (v1, v2) => {
+            const v1Num = Number(v1)
+            const v2Num = Number(v2)
+            if (isNaN(v1Num) || isNaN(v2Num)) throw new Error('NaN')
+            return v1Num <= v2Num
+        },
+    }[name]
+}
+
+const removeWhitespace = (str) => (str.replace(/\s{2,}/g, ' ')).trim()
