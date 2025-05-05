@@ -3406,12 +3406,12 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                   const fetchers = {
-                    'OpenStreetMap via Nominatim': 'fetchNominatim;{}',
-                    'OpenStreetMap via Overpass': 'fetchOverpass;{}',
+                const fetchers = {
+                    'OpenStreetMap via Nominatim': 'nominatim;{}',
+                    'OpenStreetMap via Overpass': 'overpass;{}',
                 }
                 
-                const fetchedGeoJSONs = await Promise.all(Object.values(fetchers).map(dbKey => {
+                const geojsonPromise = await Promise.all(Object.values(fetchers).map(dbKey => {
                     return fetchGeoJSON(dbKey, {
                         queryGeom,
                         zoom: map.getZoom(),
@@ -3423,30 +3423,21 @@ const handleLeafletQueryPanel = (map, parent) => {
                 if (controller.signal.aborted) return
                 
                 const layers = []
-                for (let i = 0; i < fetchedGeoJSONs.length; i++) {
-                    const geojson = fetchedGeoJSONs[i]
+                for (let i = 0; i < geojsonPromise.length; i++) {
+                    const geojson = geojsonPromise[i]
                     if (!geojson?.features?.length) continue
 
-                    const layer = await getLeafletGeoJSONLayer({
+                    layers.push((await getLeafletGeoJSONLayer({
+                        geojson,
                         pane: 'queryPane',
                         group: queryGroup,
                         customStyleParams,
                         title: Object.keys(fetchers)[i],
                         attribution: createAttributionTable(geojson)?.outerHTML,
-                    })
-                    
-                    const layerPromise = new Promise((resolve) => {
-                        layer.once('dataupdate', () => {
-                            resolve(layer)
-                        })
-
-                        addLeafletGeoJSONData(layer, geojson, {queryGeom, controller})
-                    });
-            
-                    layers.push(layerPromise)
+                    })))
                 }
             
-                return await Promise.all(layers)
+                return layers
             }
         },
         osmView: {
@@ -3456,7 +3447,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
                 const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
-                const geojson = await fetchGeoJSON('fetchOverpass;{}', {
+                const geojson = await fetchGeoJSON('overpass;{}', {
                     queryGeom,
                     zoom: map.getZoom(),
                     abortBtns, 

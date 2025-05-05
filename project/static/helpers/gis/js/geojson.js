@@ -350,8 +350,8 @@ const createFeaturePropertiesTable = (properties, {
 
 const fetchGeoJSONHandlers = (name) => {
     return {
-        fetchNominatim,
-        fetchOverpass,
+        nominatim: fetchNominatim,
+        overpass: fetchOverpass,
     }[name]
 }
 
@@ -366,11 +366,11 @@ const fetchGeoJSON = async (dbKey, {
     const [handlerName, handlerParams] = dbKey.split(';', 2)
     const isClient = handlerName === 'client'
     
-    let geojson
-    
     const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
         queryGeom, leafletZoomToMeter(zoom)/2/1000
     ).geometry : queryGeom : null
+    
+    let geojson
 
     geojson = await (async () => {
         if (controller?.signal.aborted) return
@@ -387,7 +387,7 @@ const fetchGeoJSON = async (dbKey, {
         const cachedGeoJSON = cachedData.geojson
         const cachedQueryExtent = cachedData.queryExtent
 
-        if (queryExtent) {
+        if (queryExtent && cachedGeoJSON.features.length) {
             if (isClient) {
                 if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
             } else {
@@ -399,6 +399,11 @@ const fetchGeoJSON = async (dbKey, {
                     return
                 }
             }
+
+            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                if (controller?.signal?.aborted) return
+                return turf.booleanIntersects(queryExtent, feature)
+            })
         }
         
         if (cachedGeoJSON.features.length === 0) return
@@ -406,6 +411,7 @@ const fetchGeoJSON = async (dbKey, {
     })()
     
     if (!isClient && !geojson) geojson = await (async () => {
+        if (controller?.signal.aborted) return
         const geojson = await fetchGeoJSONHandlers(handlerName)(
             ...Object.values(JSON.parse(handlerParams)), {
                 queryGeom,

@@ -19,11 +19,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
-    const isQuery = group?._name === 'query'
-    if (!isQuery) geojsonLayer._geojsonId = geojsonId || (
-        geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
-    )
-
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
@@ -133,11 +128,12 @@ const getLeafletGeoJSONLayer = async ({
         const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
-    
-    if (geojson && isQuery) {
-        geojsonLayer.addData(geojson)
-    } else
-    if (geojsonLayer._geojsonId && !isQuery) {
+
+    if (group?._name !== 'query') {
+        geojsonLayer._geojsonId = geojsonId || (
+            geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
+        )
+
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
         })
@@ -145,16 +141,18 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer.on('popupclose', (e) => {
             delete geojsonLayer._openpopup 
         })
-
+    
         geojsonLayer.on('add', () => {
             if (layerIsVisible(geojsonLayer)) {
                 updateLeafletGeoJSONLayer(geojsonLayer)
             }
         })
-
+    
         geojsonLayer.on('remove', () => {
             geojsonLayer.clearLayers()
         })
+    } else if (geojson) {
+        geojsonLayer.addData(geojson)
     }
 
     return geojsonLayer
