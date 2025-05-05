@@ -3332,8 +3332,9 @@ const handleLeafletQueryPanel = (map, parent) => {
             const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
             cancelBtn.disabled = false
 
-            if (!(e.target instanceof L.Map)) e._leafletMap = map
-            const geojsonLayers = await handler(e, {
+            layers.classList.remove('d-none')
+
+            await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
             })
@@ -3343,8 +3344,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             spinner.classList.add('d-none')
             
             if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
-                layers.classList.remove('d-none')
-
                 toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
 
                 if (layers.querySelectorAll('.collapse').length) {
