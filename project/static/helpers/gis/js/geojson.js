@@ -355,6 +355,7 @@ const fetchGeoJSON = async (dbKey, {
     zoom=20, 
     controller, 
     abortBtns,
+    sort=false,
 } = {}) => {
     if (!dbKey) return
 
@@ -365,6 +366,7 @@ const fetchGeoJSON = async (dbKey, {
     ].join(';')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
+        console.log('here')
         const data = await mapForFetchGeoJSON.get(mapKey)
         if (controller?.signal.aborted) return
         return data
@@ -446,6 +448,10 @@ const fetchGeoJSON = async (dbKey, {
             
                     return geojson
                 })()
+            }
+
+            if (geojson?.features?.length && sort) {
+                sortGeoJSONFeatures(geojson, {reverse:true})
             }
             
             return geojson

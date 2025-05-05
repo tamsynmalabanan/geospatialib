@@ -155,7 +155,6 @@ const getLeafletGeoJSONLayer = async ({
             geojsonLayer.clearLayers()
         })
     } else if (geojson) {
-        sortGeoJSONFeatures(geojson, {reverse:true})
         geojsonLayer.addData(geojson)
     }
 
@@ -372,7 +371,6 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     return handler(data)
 }
 
-const mapForUpdateLeafletGeoJSONLayer = new Map()
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
     if (!layer) return
 
@@ -382,41 +380,14 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     const map = layer._map ?? layer._group?._map
     if (!map) return
 
-    const mapKey = [
-        geojsonId, 
-        map.getContainer().id, 
-        controller?.id
-    ].join(';')
+    const data = await fetchGeoJSON(geojsonId, {
+        queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
+        controller,
+        abortBtns,
+    })
 
-    if (mapForUpdateLeafletGeoJSONLayer.has(mapKey)) {
-        const data = await mapForUpdateLeafletGeoJSONLayer.get(mapKey)
-        if (controller?.signal.aborted) return
-        return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
-    }
-
-    const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
-
-    const dataPromise = (async () => {
-        try {
-            const data = await fetchGeoJSON(geojsonId, {
-                queryGeom,
-                controller,
-                abortBtns,
-            })
-            if (controller?.signal.aborted) return
-            return data
-        } catch (error) {
-            return error
-        } finally {
-            setTimeout(() => mapForUpdateLeafletGeoJSONLayer.delete(mapKey), 1000);
-        }
-    })()
-   
     if (controller?.signal.aborted) return
-    mapForUpdateLeafletGeoJSONLayer.set(mapKey, dataPromise)
-    const data = await dataPromise
-    if (controller?.signal.aborted) return
-    return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
+    return data
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {

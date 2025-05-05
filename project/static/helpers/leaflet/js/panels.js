@@ -3408,7 +3408,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                         queryGeom,
                         zoom: map.getZoom(),
                         abortBtns, 
-                        controller
+                        controller,
+                        sort:true,
                     })
                 
                     const layer = await getLeafletGeoJSONLayer({
@@ -3445,7 +3446,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                         queryGeom,
                         zoom: map.getZoom(),
                         abortBtns, 
-                        controller
+                        controller,
+                        sort:true,
                     })
                 
                     const layer = await getLeafletGeoJSONLayer({
