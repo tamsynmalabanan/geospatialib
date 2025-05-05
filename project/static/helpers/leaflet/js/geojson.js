@@ -346,6 +346,9 @@ const getLeafletGeoJSONData = async (layer, {
 }
 
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
+    if (!layer) return
+
+    layer.fire('dataupdating')
     const data = await getLeafletGeoJSONData(layer, {controller, abortBtns})
     if (!data) return
 

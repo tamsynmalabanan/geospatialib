@@ -520,6 +520,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
             if (layer instanceof L.GeoJSON) {
+                layer.on('dataupdating', () => {
+                    legendDetails.innerHTML = ''
+                    const spinner = customCreateElement({
+                        innerHTML:'<div class="spinner-border spinner-border-sm" role="status"></div><div>Updating...</div>'
+
+                    })
+                })
+
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
                     createGeoJSONLayerLegend(
