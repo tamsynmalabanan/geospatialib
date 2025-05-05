@@ -3340,7 +3340,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         
             cancelBtn.disabled = true
             
-            if (controllerId !== controller.id) return
+            // if (controllerId !== controller.id) return
             
             if (geojsonLayers?.length) {
                 const content = await createGeoJSONChecklist(geojsonLayers, queryGroup, {
@@ -3406,6 +3406,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
+                
                 const fetchers = {
                     'OpenStreetMap via Nominatim': 'nominatim;{}',
                     'OpenStreetMap via Overpass': 'overpass;{}',
