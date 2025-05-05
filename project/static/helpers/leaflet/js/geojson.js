@@ -136,7 +136,7 @@ const getLeafletGeoJSONLayer = async ({
     
     if (geojson && isQuery) {
         geojsonLayer.addData(geojson)
-    } else 
+    } else
     if (geojsonLayer._geojsonId && !isQuery) {
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup

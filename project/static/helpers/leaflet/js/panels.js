@@ -3389,16 +3389,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'q',
             mapClickHandler: async (e) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
+                const content = createPointCoordinatesTable(feature, {precision:6})
+                layers.appendChild(content)
                 
-                await getLeafletGeoJSONLayer({
+                queryGroup.addLayer((await getLeafletGeoJSONLayer({
                     geojson: feature, 
                     pane: 'queryPane',
                     group: queryGroup,
                     customStyleParams,
-                })
-
-                const content = createPointCoordinatesTable(feature, {precision:6})
-                layers.appendChild(content)
+                })))
             },
         },
         osmPoint: {
