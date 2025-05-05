@@ -313,33 +313,36 @@ const handleLeafletLegendPanel = (map, parent) => {
             console.log('updating layers...', new Date())
 
             const newBbox = L.rectangle(map.getBounds()).toGeoJSON()
-            if (map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox)) return console.log('no update', new Date())
-
+            
             const controllerId = controller.id
             const promises = []
 
-            Array.from(layers.children).reverse().forEach(legend => {
-                if (controllerId !== controller.id) return
+            if (!map._previousBbox || !turf.booleanWithin(newBbox, map._previousBbox)) {
+                console.log('here')
                 
-                const leafletId = parseInt(legend.dataset.layerId)
-                const layer = map._ch.getLegendLayer(leafletId)
-                if (!layer) return
-
-                const isHidden = map._ch.hasHiddenLegendLayer(layer)
-                const isInvisible = !layerIsVisible(layer)
-                if (isHidden || isInvisible) return clearLegend(legend, {isHidden, isInvisible})
-
-                if (layer instanceof L.GeoJSON) {
+                Array.from(layers.children).reverse().forEach(legend => {
                     if (controllerId !== controller.id) return
                     
-                    promises.push(updateLeafletGeoJSONLayer(layer, {controller}).then((layer) => {
-                        if (layer && layer._openpopup) {
-                            layer._openpopup.openOn(map)
-                            delete layer._openpopup
-                        }
-                    }))
-                }
-            })
+                    const leafletId = parseInt(legend.dataset.layerId)
+                    const layer = map._ch.getLegendLayer(leafletId)
+                    if (!layer) return
+    
+                    const isHidden = map._ch.hasHiddenLegendLayer(layer)
+                    const isInvisible = !layerIsVisible(layer)
+                    if (isHidden || isInvisible) return clearLegend(legend, {isHidden, isInvisible})
+    
+                    if (layer instanceof L.GeoJSON) {
+                        if (controllerId !== controller.id) return
+                        
+                        promises.push(updateLeafletGeoJSONLayer(layer, {controller}).then((layer) => {
+                            if (layer && layer._openpopup) {
+                                layer._openpopup.openOn(map)
+                                delete layer._openpopup
+                            }
+                        }))
+                    }
+                })
+            }
 
             Promise.all(promises).then(() => {
                 console.log('layers udpated.', new Date())
