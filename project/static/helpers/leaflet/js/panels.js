@@ -3342,6 +3342,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             if (controllerId !== controller.id) return
             
+            console.log(geojsonLayer)
             if (geojsonLayer) {
                 const content = await createGeoJSONChecklist(geojsonLayer, {controller})
                 if (content) layers.appendChild(content)
