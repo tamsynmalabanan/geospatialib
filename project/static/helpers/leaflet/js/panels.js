@@ -3396,8 +3396,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     group: queryGroup,
                     customStyleParams,
                 })
-                queryGroup.addLayer(layer)
-    
+
                 const content = createPointCoordinatesTable(feature, {precision:6})
                 layers.appendChild(content)
             },
