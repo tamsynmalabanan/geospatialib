@@ -614,6 +614,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 } catch { return }
             }
         },
+        clearData: !isLegendGroup || !geojsonLayer ? null : {
+            innerText: `Clear cached data`,
+            btnCallback: async () => {
+                deleteFromGeoJSONDB(geojsonLayer._geojsonId)
+            }
+        },
         divider4: !isLegendGroup ? null : {
             divider: true,
         },
