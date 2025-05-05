@@ -287,26 +287,23 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
     if (data instanceof Error) return layer.fire('dataerror')
 
     const filters = layer._styles.filters
-    const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
-        return valueA.rank - valueB.rank
-    })
-    
-    if (Object.values(filters).some(i => {
+    const hasActiveFilters = Object.values(filters).some(i => {
         if (!i.active) return false
         return Object.values(i.values).some(j => {
             return !j.hasOwnProperty('active') || j.active
         })
-    })) {
-        data.features = data.features.filter(feature => {
-            if (controller?.signal?.aborted) return
-            return validateGeoJSONFeature(feature, filters)
-        })
-    }
+    })
 
-    if (groups.some(i => i[1].active)) {
-        data.features.forEach(feature => {
-            if (controller?.signal?.aborted) return
-
+    const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
+        return valueA.rank - valueB.rank
+    })
+    const hasActiveGroups = groups.some(i => i[1].active)
+    
+    data.features = data.features.filter(feature => {
+        if (controller?.signal?.aborted) return
+        const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+    
+        if (valid && hasActiveGroups) {
             const properties = feature.properties
             for (const [id, group] of groups) {
                 if (controller?.signal?.aborted) break
@@ -320,8 +317,10 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
 
             if (!properties.__groupId__) properties.__groupId__ = ''
             if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
-        })
-    }
+        }
+
+        return valid
+    })
     
     if (controller?.signal?.aborted) return
     // simplify / cluster if not query // reconfigure legend feature count

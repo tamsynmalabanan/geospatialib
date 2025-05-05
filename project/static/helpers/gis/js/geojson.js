@@ -366,7 +366,6 @@ const fetchGeoJSON = async (dbKey, {
     ].join(';')
 
     if (mapForFetchGeoJSON.has(mapKey)) {
-        console.log('here')
         const data = await mapForFetchGeoJSON.get(mapKey)
         if (controller?.signal.aborted) return
         return data
