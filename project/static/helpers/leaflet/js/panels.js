@@ -3422,6 +3422,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
 
                     const content = createGeoJSONChecklist(layer, {controller})
+                    console.log(content)
                     if (content) layers.appendChild(content)
                 }
             }
