@@ -1184,6 +1184,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 // update to retrieve properties from wfs/wms
                 const geojson = (await getLeafletGeoJSONData(layer, {
                     controller,
+                    queryGeom:false,
                     group:false,
                     sort:false,
                     simplify:false

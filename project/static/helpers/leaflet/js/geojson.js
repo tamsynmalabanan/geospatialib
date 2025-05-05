@@ -270,6 +270,7 @@ const getGeoJSONLayerStyles = (layer) => {
 const getLeafletGeoJSONData = async (layer, {
     controller, 
     abortBtns,
+    queryGeom=true,
     filter=true,
     group=true,
     sort=true,
@@ -284,7 +285,7 @@ const getLeafletGeoJSONData = async (layer, {
     if (!map) return
 
     const data = await fetchGeoJSON(geojsonId, {
-        queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
+        queryGeom: queryGeom ? L.rectangle(map.getBounds()).toGeoJSON().geometry : null,
         controller,
         abortBtns,
     })
@@ -345,21 +346,6 @@ const getLeafletGeoJSONData = async (layer, {
 }
 
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
-    if (!layer) return
-
-    const geojsonId = layer._geojsonId
-    if (!geojsonId) return
-    
-    const map = layer._map ?? layer._group?._map
-    if (!map) return
-
-    const data = await fetchGeoJSON(geojsonId, {
-        queryGeom: L.rectangle(map.getBounds()).toGeoJSON().geometry,
-        controller,
-        abortBtns,
-    })
-    if (!data) return
-
     await getLeafletGeoJSONData(layer, {controller, abortBtns})
 
     if (controller?.signal?.aborted) return
