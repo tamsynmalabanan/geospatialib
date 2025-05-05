@@ -455,7 +455,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     
     const checkbox = layer._checkbox
     const disabledCheckbox = checkbox?.disabled
-    const checkboxContainer = checkbox?.closest('.geojson-checklist')
+    const checkboxContainer = checkbox ? geojsonLayer._checkbox.parentElement.parentElement.parentElement : null
     
     const checkboxArray = checkboxContainer ? Array.from(
         checkboxContainer?.querySelectorAll('input.form-check-input')

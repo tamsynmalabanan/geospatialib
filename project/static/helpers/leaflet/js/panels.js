@@ -18,7 +18,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
     const layers = document.createElement('div')
     layers.id = `${baseId}-layers`
-    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()}`
+    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()} d-flex flex-column gap-2`
     parent.appendChild(layers)
     template.layers = layers
     
@@ -3364,8 +3364,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
     })
 
-    layers.classList.add('d-flex','flex-column','gap-2','geojson-checklist')
-
     const customStyleParams = {
         fillColor: 'hsla(111, 100%, 54%, 1)',
         strokeWidth: 1,
@@ -3422,7 +3420,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
 
                     const content = createGeoJSONChecklist(layer, {controller})
-                    console.log(content)
                     if (content) layers.appendChild(content)
                 }
             }
