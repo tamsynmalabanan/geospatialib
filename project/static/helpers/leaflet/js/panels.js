@@ -521,7 +521,11 @@ const handleLeafletLegendPanel = (map, parent) => {
             
             if (layer instanceof L.GeoJSON) {
                 layer.on('dataupdating', () => {
-                    legendDetails.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-3">Updating...</div>'
+                    legendDetails.innerHTML = ''
+                    legendDetails.appendChild(customCreateElement({
+                        className: 'py-1',
+                        innerHTML: '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-3">Updating...</div>'
+                    }))
                 })
 
                 layer.on('dataupdate', () => {
