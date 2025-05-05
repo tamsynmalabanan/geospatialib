@@ -349,6 +349,7 @@ const fetchGeoJSONHandlers = (name) => {
     }[name]
 }
 
+const mapForFetchGeoJSON = new Map()
 const fetchGeoJSON = async (dbKey, {
     queryGeom, 
     zoom=20, 
@@ -356,80 +357,109 @@ const fetchGeoJSON = async (dbKey, {
     abortBtns,
 } = {}) => {
     if (!dbKey) return
-        
-    const [handlerName, handlerParams] = dbKey.split(';', 2)
-    const isClient = handlerName === 'client'
-    
-    const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
-        queryGeom, leafletZoomToMeter(zoom)/2/1000
-    ).geometry : queryGeom : null
-    
-    let geojson
 
-    geojson = await (async () => {
+    const mapKey = [
+        dbKey, 
+        (queryGeom ? turf.bbox(queryGeom).join(',') : null), 
+        controller?.id
+    ].join(';')
+
+    if (mapForFetchGeoJSON.has(mapKey)) {
+        const data = await mapForFetchGeoJSON.get(mapKey)
         if (controller?.signal.aborted) return
+        return data
+    }
         
-        const cachedData = await getFromGeoJSONDB(dbKey)
-        if (!cachedData) {
-            if (isClient) {
-                return new Error('Cached data not found.')
-            } else {
-                return
-            }
-        }
-
-        const cachedGeoJSON = cachedData.geojson
-        const cachedQueryExtent = cachedData.queryExtent
-
-        if (queryExtent && cachedGeoJSON.features.length) {
-            if (isClient) {
-                if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
-            } else {
-                try {
-                    const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
-                    const withinBounds = turf.booleanWithin(queryExtent, cachedQueryExtent)
-                    if (!equalBounds && !withinBounds) return
-                } catch (error) {
-                    return
+    const dataPromise = (async () => {
+        try {
+            const [handlerName, handlerParams] = dbKey.split(';', 2)
+            const isClient = handlerName === 'client'
+            
+            const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
+                queryGeom, leafletZoomToMeter(zoom)/2/1000
+            ).geometry : queryGeom : null
+            
+            let geojson
+        
+            geojson = await (async () => {
+                if (controller?.signal.aborted) return
+                
+                const cachedData = await getFromGeoJSONDB(dbKey)
+                if (!cachedData) {
+                    if (isClient) {
+                        return new Error('Cached data not found.')
+                    } else {
+                        return
+                    }
                 }
+        
+                const cachedGeoJSON = cachedData.geojson
+                const cachedQueryExtent = cachedData.queryExtent
+        
+                if (queryExtent && cachedGeoJSON.features.length) {
+                    if (isClient) {
+                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
+                    } else {
+                        try {
+                            const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
+                            const withinBounds = turf.booleanWithin(queryExtent, cachedQueryExtent)
+                            if (!equalBounds && !withinBounds) return
+                        } catch (error) {
+                            return
+                        }
+                    }
+        
+                    cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
+                        if (controller?.signal?.aborted) return
+                        return turf.booleanIntersects(queryExtent, feature)
+                    })
+                }
+                
+                if (cachedGeoJSON.features.length === 0) return
+                return cachedGeoJSON
+            })()
+            
+            if (!isClient && !geojson) {
+                geojson = await (async () => {
+                    if (controller?.signal.aborted) return
+                    const geojson = await fetchGeoJSONHandlers(handlerName)(
+                        ...Object.values(JSON.parse(handlerParams)), {
+                            queryGeom,
+                            zoom, 
+                            controller, 
+                            abortBtns,
+                        }
+                    )
+                    if (!geojson?.features?.length) return
+                    
+                    if (controller?.signal.aborted) return
+                    normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
+                    
+                    if (controller?.signal.aborted) return
+                    if (handlerName !== 'nominatim') {
+                        await updateGeoJSONOnDB(
+                            dbKey, 
+                            turf.clone(geojson),
+                            queryExtent,
+                        )
+                    }
+            
+                    return geojson
+                })()
             }
-
-            cachedGeoJSON.features = cachedGeoJSON.features.filter(feature => {
-                if (controller?.signal?.aborted) return
-                return turf.booleanIntersects(queryExtent, feature)
-            })
+            
+            return geojson
+        } catch (error) {
+            return error
+        } finally {
+            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
         }
-        
-        if (cachedGeoJSON.features.length === 0) return
-        return cachedGeoJSON
     })()
-    
-    if (!isClient && !geojson) geojson = await (async () => {
-        if (controller?.signal.aborted) return
-        const geojson = await fetchGeoJSONHandlers(handlerName)(
-            ...Object.values(JSON.parse(handlerParams)), {
-                queryGeom,
-                zoom, 
-                controller, 
-                abortBtns,
-            }
-        )
-        if (!geojson?.features?.length) return
-        
-        if (controller?.signal.aborted) return
-        normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
-        
-        if (controller?.signal.aborted) return
-        if (handlerName !== 'nominatim') await updateGeoJSONOnDB(
-            dbKey, 
-            turf.clone(geojson),
-            queryExtent,
-        )
 
-        return geojson
-    })()
-    
-    return geojson
+    mapForFetchGeoJSON.set(mapKey, dataPromise)
+    const data = await dataPromise
+    if (controller?.signal.aborted) return
+    return data
 }
 
 const downloadGeoJSON = (geojson, fileName) => {

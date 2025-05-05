@@ -6,7 +6,7 @@ const getLeafletGeoJSONLayer = async ({
     attribution = '',
     geojsonId,
     styles,
-    customStyleParams,
+    customStyleParams = {},
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
@@ -19,6 +19,9 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
+    const defaultStyleParams = getLeafletStyleParams(customStyleParams ?? {})
+    if (styles) styles.symbology.default.styleParams = defaultStyleParams
+
     geojsonLayer._styles = styles || {
         symbology: {
             default: {
@@ -27,7 +30,7 @@ const getLeafletGeoJSONLayer = async ({
                 rank: 1,
                 showCount: true,
                 showLabel: true,
-                styleParams: getLeafletStyleParams(customStyleParams),
+                styleParams: defaultStyleParams,
             },
             case: true,
             method: 'single',
@@ -85,11 +88,11 @@ const getLeafletGeoJSONLayer = async ({
         const renderer = geojsonLayer.options.renderer
         const isCanvas = renderer instanceof L.Canvas
         const styleParams = getStyle(feature)
+        const patternImg = document.querySelector(`#${styleParams.fillPatternId}-img`)
         if (isCanvas 
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
-            && document.querySelector(`#${styleParams.fillPatternId}-img`)
-            ?.getAttribute('src')
+            && patternImg?.getAttribute('src')
         ) {
             layer.once('add', () => {
                 geojsonLayer.removeLayer(layer)
@@ -114,11 +117,11 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.style = (feature) => {
         const styleParams = getStyle(feature)
         const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
+        const imgPattern = document.querySelector(`#${styleParams.fillPatternId}-img`)
         if (isCanvas 
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
-            && document.querySelector(`#${styleParams.fillPatternId}-img`)
-            ?.getAttribute('src')
+            && imgPattern?.getAttribute('src')
         ) return
         return getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
     }
@@ -369,25 +372,29 @@ const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}=
     return handler(data)
 }
 
-const mapForupdateLeafletGeoJSONLayer = new Map()
+const mapForUpdateLeafletGeoJSONLayer = new Map()
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
+    if (!layer) return
+
     const geojsonId = layer._geojsonId
     if (!geojsonId) return
     
-    const map = layer._group?._map
-    const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
+    const map = layer._map ?? layer._group?._map
+    if (!map) return
 
     const mapKey = [
         geojsonId, 
-        (queryGeom ? turf.bbox(queryGeom).join(',') : null), 
+        map.getContainer().id, 
         controller?.id
     ].join(';')
 
-    if (mapForupdateLeafletGeoJSONLayer.has(mapKey)) {
-        const data = await mapForupdateLeafletGeoJSONLayer.get(mapKey)
+    if (mapForUpdateLeafletGeoJSONLayer.has(mapKey)) {
+        const data = await mapForUpdateLeafletGeoJSONLayer.get(mapKey)
         if (controller?.signal.aborted) return
         return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
     }
+
+    const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
 
     const dataPromise = (async () => {
         try {
@@ -401,12 +408,12 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
         } catch (error) {
             return error
         } finally {
-            setTimeout(() => mapForupdateLeafletGeoJSONLayer.delete(mapKey), 1000);
+            setTimeout(() => mapForUpdateLeafletGeoJSONLayer.delete(mapKey), 1000);
         }
     })()
    
     if (controller?.signal.aborted) return
-    mapForupdateLeafletGeoJSONLayer.set(mapKey, dataPromise)
+    mapForUpdateLeafletGeoJSONLayer.set(mapKey, dataPromise)
     const data = await dataPromise
     if (controller?.signal.aborted) return
     return addLeafletGeoJSONData(layer, data, {queryGeom, controller})
