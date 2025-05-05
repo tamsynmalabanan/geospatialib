@@ -3408,6 +3408,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                     controller
                 })
 
+                console.log(geojson)
+
                 const layer = await getLeafletGeoJSONLayer({
                     pane: 'queryPane',
                     group: queryGroup,
