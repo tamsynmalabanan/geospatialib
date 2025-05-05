@@ -310,11 +310,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            // const mapParent = mapContainer.parentElement
-            
-            // disableMapInteractivity(map)
-            // mapParent.style.pointerEvents = 'none !important'
-            // mapParent.style.cursor = 'wait !important'
+            console.log('updating layers...', new Date())
 
             const controllerId = controller.id
             const promises = []
@@ -343,9 +339,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
 
             Promise.all(promises).then(() => {
-                // enableMapInteractivity(map)
-                // mapParent.style.pointerEvents = ''
-                // mapParent.style.cursor = ''
+                console.log('layers udpated.', new Date())
             })
         }, 100)
     })
