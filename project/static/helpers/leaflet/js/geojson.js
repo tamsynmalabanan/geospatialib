@@ -289,7 +289,10 @@ const getLeafletGeoJSONData = async (layer, {
     if (!data) return
 
     if (controller?.signal.aborted) return
-    if (data instanceof Error) return layer.fire('dataerror')
+    if (data instanceof Error) {
+        layer.fire('dataerror')
+        return
+    }
 
     const filters = layer._styles.filters
     const hasActiveFilters = filter && Object.values(filters).some(i => {
