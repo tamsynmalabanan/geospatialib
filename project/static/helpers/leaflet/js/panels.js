@@ -3338,6 +3338,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 abortBtns: [getCancelBtn()], 
             })
         
+            console.log(geojsonLayer)
+
             cancelBtn.disabled = true
             
             if (controllerId !== controller.id) return
@@ -3416,7 +3418,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     attribution: createAttributionTable(geojson)?.outerHTML,
                 })
 
-                console.log(layer)
                 return layer
             }
         },
