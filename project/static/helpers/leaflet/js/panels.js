@@ -523,7 +523,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 layer.on('dataupdating', () => {
                     legendDetails.innerHTML = ''
                     legendDetails.appendChild(customCreateElement({
-                        className: 'py-1',
+                        className: 'py-1 d-flex flex-nowrap',
                         innerHTML: '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-3">Updating...</div>'
                     }))
                 })
