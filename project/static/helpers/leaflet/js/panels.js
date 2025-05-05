@@ -3422,8 +3422,8 @@ const handleLeafletQueryPanel = (map, parent) => {
 
                     const content = createGeoJSONChecklist(layer, {controller})
                     if (content) {
-                        if (layers.innerHTML === '') enableToolbar()
                         layers.appendChild(content)
+                        if (layers.classList.contains('d-none')) enableToolbar()
                     }
                 }
             }
