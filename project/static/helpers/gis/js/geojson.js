@@ -194,7 +194,8 @@ const createGeoJSONChecklist = async (geojsonLayer, {
                 getLeafletLayerContextMenu(e, layer)
             })
         }
-    } catch {
+    } catch (error) {
+        console.assert.log(error)
         return
     }
 

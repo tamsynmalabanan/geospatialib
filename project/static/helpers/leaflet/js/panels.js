@@ -3337,8 +3337,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                 controller,
                 abortBtns: [getCancelBtn()], 
             })
-        
-            console.log(geojsonLayer)
 
             cancelBtn.disabled = true
             
