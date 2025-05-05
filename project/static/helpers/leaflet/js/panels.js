@@ -3325,11 +3325,10 @@ const handleLeafletQueryPanel = (map, parent) => {
             if (typeof handler !== 'function') return
     
             controller = resetController({controller, message: 'New query started.'})
-            const controllerId = controller.id
     
             spinner.classList.remove('d-none')
             
-            const cancelBtn = toolbar.querySelector(`#${toolbar.id}-cancel`)
+            const cancelBtn = getCancelBtn()
             cancelBtn.disabled = false
 
             await handler(e, {
