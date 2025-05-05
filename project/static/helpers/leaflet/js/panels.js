@@ -3390,7 +3390,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             mapClickHandler: async (e) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
                 
-                const layer = await getLeafletGeoJSONLayer({
+                await getLeafletGeoJSONLayer({
                     geojson: feature, 
                     pane: 'queryPane',
                     group: queryGroup,
