@@ -267,110 +267,6 @@ const getGeoJSONLayerStyles = (layer) => {
     return styles
 }
 
-const addLeafletGeoJSONData = (layer, data, {queryGeom, controller, clear=true}={}) => {
-    if (!data || !layer) return
-    if (data instanceof Error) return layer.fire('dataerror')
-
-    const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
-        queryGeom, getLeafletMeterScale(layer._group._map)/2/1000
-    ).geometry : queryGeom : null
-    const filters = layer._styles.filters
-    const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
-        return valueA.rank - valueB.rank
-    })
-    const simplify = isQuery = layer._group._name !== 'query'
-
-    const handler = (data) => {
-        if (controller?.signal?.aborted) return
-
-        if (!isQuery) {
-            const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
-            if (layer.options.renderer instanceof renderer === false) {
-                layer.options.renderer._container?.classList.add('d-none')
-                layer.options.renderer = layer._renderers.find(r => {
-                    return r instanceof renderer
-                })
-            }
-            layer.options.renderer._container?.classList.remove('d-none')
-        }
-        
-        if (clear) layer.clearLayers()
-        layer.addData(data)
-        return layer.fire('dataupdate')
-    }
-
-    if (data?.features?.length) {
-        // const worker = new Worker('/static/helpers/leaflet/js/workers/process-geojson.js')
-        
-        // worker.postMessage({
-        //     data,
-        //     queryExtent,
-        //     filters,
-        //     groups,
-        //     simplify,
-        // })
-
-        // worker.onmessage = (e) => {
-        //     worker.terminate()
-        //     return handler(e.data.geojson)
-        // }
-        
-        // worker.onerror = (error) => {
-        //     worker.terminate()
-        //     console.log(error)
-        // }
-
-        if (queryExtent) {
-            data.features = data.features.filter(feature => {
-                if (controller?.signal?.aborted) return
-                return turf.booleanIntersects(queryExtent, feature)
-            })
-        }
-        
-        if (Object.values(filters).some(i => {
-            if (!i.active) return false
-            return Object.values(i.values).some(j => {
-                if (!j.hasOwnProperty('active')) return true
-                return j.active
-            })
-        })) {
-            data.features = data.features.filter(feature => {
-                if (controller?.signal?.aborted) return
-                return validateGeoJSONFeature(feature, filters)
-            })
-        }
-    
-        if (groups.some(i => i[1].active)) {
-            data.features.forEach(feature => {
-                if (controller?.signal?.aborted) return
-
-                const properties = feature.properties
-                for (const [id, group] of groups) {
-                    if (controller?.signal?.aborted) return
-
-                    if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
-                    properties.__groupId__ = id
-                    properties.__groupRank__ = group.rank
-                    break
-                }
-    
-                if (!properties.__groupId__) properties.__groupId__ = ''
-                if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
-            })
-        }
-    
-        if (controller?.signal?.aborted) return
-        sortGeoJSONFeatures(data, {reverse:true})
-    
-        if (simplify) {
-            if (controller?.signal?.aborted) return
-            // simplify / cluster if not query // reconfigure legend feature count
-        }
-    }
-
-    return handler(data)
-}
-
 const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) => {
     if (!layer) return
 
@@ -385,10 +281,67 @@ const updateLeafletGeoJSONLayer = async (layer, {controller, abortBtns} = {}) =>
         controller,
         abortBtns,
     })
+    if (!data) return
 
     if (controller?.signal.aborted) return
-    console.log(data)
-    return data
+    if (data instanceof Error) return layer.fire('dataerror')
+
+    const filters = layer._styles.filters
+    const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
+        return valueA.rank - valueB.rank
+    })
+    
+    if (Object.values(filters).some(i => {
+        if (!i.active) return false
+        return Object.values(i.values).some(j => {
+            return !j.hasOwnProperty('active') || j.active
+        })
+    })) {
+        data.features = data.features.filter(feature => {
+            if (controller?.signal?.aborted) return
+            return validateGeoJSONFeature(feature, filters)
+        })
+    }
+
+    if (groups.some(i => i[1].active)) {
+        data.features.forEach(feature => {
+            if (controller?.signal?.aborted) return
+
+            const properties = feature.properties
+            for (const [id, group] of groups) {
+                if (controller?.signal?.aborted) break
+
+                if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
+                
+                properties.__groupId__ = id
+                properties.__groupRank__ = group.rank
+                break
+            }
+
+            if (!properties.__groupId__) properties.__groupId__ = ''
+            if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
+        })
+    }
+    
+    if (controller?.signal?.aborted) return
+    // simplify / cluster if not query // reconfigure legend feature count
+
+    if (controller?.signal?.aborted) return
+    sortGeoJSONFeatures(data, {reverse:true})
+
+    if (controller?.signal?.aborted) return
+    const renderer = (data.features.length ?? 0) > 1000 ? L.Canvas : L.SVG
+    if (!(layer.options.renderer instanceof renderer)) {
+        layer.options.renderer._container?.classList.add('d-none')
+        layer.options.renderer = layer._renderers.find(r => {
+            return r instanceof renderer
+        })
+    }
+    layer.options.renderer._container?.classList.remove('d-none')
+    
+    layer.clearLayers()
+    layer.addData(data)
+    return layer.fire('dataupdate')
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {
