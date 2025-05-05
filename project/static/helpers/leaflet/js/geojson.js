@@ -282,6 +282,7 @@ const getLeafletGeoJSONData = async (layer, {
     const map = layer._map ?? layer._group?._map
     if (!map) return
 
+    queryGeom = queryGeom ? L.rectangle(map.getBounds()).toGeoJSON().geometry : null
     const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
         queryGeom, leafletZoomToMeter(zoom)/2/1000
     ).geometry : queryGeom : null
@@ -294,7 +295,7 @@ const getLeafletGeoJSONData = async (layer, {
     }
 
     const data = geojson ?? (await fetchGeoJSON(geojsonId, {
-        queryGeom: queryGeom ? L.rectangle(map.getBounds()).toGeoJSON().geometry : null,
+        queryGeom,
         controller,
         abortBtns,
     }))
