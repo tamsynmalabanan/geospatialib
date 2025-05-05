@@ -84,127 +84,121 @@ const createAttributionTable = (geojson) => {
     }
 }
 
-const createGeoJSONChecklist = async (layerList, group, {
+const createGeoJSONChecklist = async (geojsonLayer, {
     controller,
 } = {}) => {
+    const featureLayers = geojsonLayer.getLayers()
+    if (!featureLayers.length) return
+
+    const group = geojsonLayer._group
+
+    const listFeatures = featureLayers.length <= 100
+    const disableCheck = featureLayers.length > 1000
+
     const container = document.createElement('div')
-    container.className = 'd-flex flex-column gap-2 geojson-checklist'
 
-    for (const geojsonLayer of layerList) {
-        if (controller?.signal.aborted) return
+    const pCheckbox = geojsonLayer._checkbox = createFormCheck({
+        parent: container,
+        labelInnerText: `${geojsonLayer._title} (${formatNumberWithCommas(featureLayers.length)})`,
+        formCheckClass: `d-flex gap-2 `,
+        disabled: disableCheck,
+    }).querySelector('input')
 
-        const featureLayers = geojsonLayer.getLayers()
-        if (!featureLayers.length) continue
+    const contentCollapse = document.createElement('div')
+    contentCollapse.id = generateRandomString()
+    contentCollapse.className = `ps-3 collapse`
+    container.appendChild(contentCollapse)
+    
+    if (listFeatures) {
+        const featuresContainer = document.createElement('div')
+        contentCollapse.appendChild(featuresContainer)
 
-        const listFeatures = featureLayers.length <= 100
-        const disableCheck = featureLayers.length > 1000
-
-        const geojsonContainer = document.createElement('div')
-        container.appendChild(geojsonContainer)
-
-        const pCheckbox = geojsonLayer._checkbox = createFormCheck({
-            parent: geojsonContainer,
-            labelInnerText: `${geojsonLayer._title} (${formatNumberWithCommas(featureLayers.length)})`,
-            formCheckClass: `d-flex gap-2 `,
-            disabled: disableCheck,
-        }).querySelector('input')
-
-        const contentCollapse = document.createElement('div')
-        contentCollapse.id = generateRandomString()
-        contentCollapse.className = `ps-3 collapse`
-        geojsonContainer.appendChild(contentCollapse)
-        
-        if (listFeatures) {
-            const featuresContainer = document.createElement('div')
-            contentCollapse.appendChild(featuresContainer)
-
-            for (const featureLayer of featureLayers.reverse()) {
-                if (controller?.signal.aborted) return
-                
-                featureLayer._checkbox = createFormCheck({
-                    parent: featuresContainer,
-                    labelInnerText: featureLayer._title,
-                    formCheckClass: `d-flex gap-2 `,
-                }).querySelector('input')
-            }
+        for (const featureLayer of featureLayers.reverse()) {
+            if (controller?.signal.aborted) return
+            
+            featureLayer._checkbox = createFormCheck({
+                parent: featuresContainer,
+                labelInnerText: featureLayer._title,
+                formCheckClass: `d-flex gap-2 `,
+            }).querySelector('input')
         }
+    }
 
-        try {
-            for (const layer of Array(geojsonLayer, ...featureLayers)) {
-                if (controller?.signal.aborted) return
-        
-                const checkbox = layer._checkbox
-                
-                layer.on('add remove', (e) => {
-                    const added = e.type === 'add'
-                    if (checkbox) {
-                        if (checkbox.checked === added || pCheckbox.checked === added) {
-                            checkbox.checked = added
-                        } else {
-                            checkbox.click()
-                        }
+    try {
+        for (const layer of Array(geojsonLayer, ...featureLayers)) {
+            if (controller?.signal.aborted) return
+    
+            const checkbox = layer._checkbox
+            
+            layer.on('add remove', (e) => {
+                const added = e.type === 'add'
+                if (checkbox) {
+                    if (checkbox.checked === added || pCheckbox.checked === added) {
+                        checkbox.checked = added
                     } else {
-                        pCheckbox.checked = added || Array.from(
-                            geojsonContainer.querySelectorAll('input.form-check-input')
-                        ).filter(i => i !== pCheckbox).some(i => i.checked)
+                        checkbox.click()
                     }
-                })
-
-                if (!checkbox) continue
-        
-                checkbox._leafletLayer = layer
-
-                const feature = layer.feature
-
-
-                checkbox.addEventListener('click', (e) => {
-                    const isChecked = e.target.checked
-                    isChecked ? group.addLayer(layer) : group.removeLayer(layer)
-                    
-                    if (feature) {
-                        pCheckbox.checked = isChecked ? true : Array.from(
-                            geojsonContainer.querySelectorAll('input.form-check-input')
-                        ).filter(i => i !== pCheckbox).some(i => i.checked)
-                        if (!pCheckbox.checked) group.removeLayer(geojsonLayer)
-                    } else {
-                        layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
-                    }
-                })
-        
-                const toggleContainer = document.createElement('div')
-                toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-                checkbox.parentElement.appendChild(toggleContainer)    
-        
-                if (!feature && typeof layer.getLayers === 'function') {
-                    const contentToggle = createIcon({
-                        parent: toggleContainer,
-                        peNone: false,
-                        className: 'dropdown-toggle ms-5'
-                    })
-                    contentToggle.setAttribute('data-bs-toggle', 'collapse')
-                    contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
-                    contentToggle.setAttribute('aria-controls', contentCollapse.id)
-                    contentToggle.setAttribute('aria-expanded', 'false')        
+                } else {
+                    pCheckbox.checked = added || Array.from(
+                        container.querySelectorAll('input.form-check-input')
+                    ).filter(i => i !== pCheckbox).some(i => i.checked)
                 }
-        
-                const menuToggle = createIcon({
+            })
+
+            if (!checkbox) continue
+    
+            checkbox._leafletLayer = layer
+
+            const feature = layer.feature
+
+
+            checkbox.addEventListener('click', (e) => {
+                const isChecked = e.target.checked
+                isChecked ? group.addLayer(layer) : group.removeLayer(layer)
+                
+                if (feature) {
+                    pCheckbox.checked = isChecked ? true : Array.from(
+                        container.querySelectorAll('input.form-check-input')
+                    ).filter(i => i !== pCheckbox).some(i => i.checked)
+                    if (!pCheckbox.checked) group.removeLayer(geojsonLayer)
+                } else {
+                    layer.eachLayer(f => isChecked ? group.addLayer(f) : group.removeLayer(f))
+                }
+            })
+    
+            const toggleContainer = document.createElement('div')
+            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
+            checkbox.parentElement.appendChild(toggleContainer)    
+    
+            if (!feature && typeof layer.getLayers === 'function') {
+                const contentToggle = createIcon({
                     parent: toggleContainer,
                     peNone: false,
-                    className: 'bi bi-three-dots'
+                    className: 'dropdown-toggle ms-5'
                 })
-                menuToggle.addEventListener('click', (e) => {
-                    getLeafletLayerContextMenu(e, layer)
-                })
+                contentToggle.setAttribute('data-bs-toggle', 'collapse')
+                contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
+                contentToggle.setAttribute('aria-controls', contentCollapse.id)
+                contentToggle.setAttribute('aria-expanded', 'false')        
             }
-        } catch {
-            return
+    
+            const menuToggle = createIcon({
+                parent: toggleContainer,
+                peNone: false,
+                className: 'bi bi-three-dots'
+            })
+            menuToggle.addEventListener('click', (e) => {
+                getLeafletLayerContextMenu(e, layer)
+            })
         }
-
-        const infoContainer = document.createElement('div')
-        infoContainer.className = 'd-flex'
-        infoContainer.innerHTML = geojsonLayer._attribution || ''
-        contentCollapse.appendChild(infoContainer)
+    } catch {
+        return
     }
+
+    const infoContainer = document.createElement('div')
+    infoContainer.className = 'd-flex'
+    infoContainer.innerHTML = geojsonLayer._attribution || ''
+    contentCollapse.appendChild(infoContainer)
 
     return container
 }

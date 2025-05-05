@@ -3340,17 +3340,6 @@ const handleLeafletQueryPanel = (map, parent) => {
         
             cancelBtn.disabled = true
             
-            // if (controllerId !== controller.id) return
-            
-            if (geojsonLayers?.length) {
-                const content = await createGeoJSONChecklist(geojsonLayers, queryGroup, {
-                    controller, 
-                    pane: 'queryPane',
-                    customStyleParams, 
-                })
-                if (content) layers.appendChild(content)
-            }
-            
             spinner.classList.add('d-none')
             
             if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
@@ -3375,6 +3364,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
     })
 
+    layers.classList.add('d-flex','flex-column','gap-2','geojson-checklist')
+
     const customStyleParams = {
         fillColor: 'hsla(111, 100%, 54%, 1)',
         strokeWidth: 1,
@@ -3389,8 +3380,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'q',
             mapClickHandler: async (e) => {
                 const feature = turf.point(Object.values(e.latlng).reverse())
-                const content = createPointCoordinatesTable(feature, {precision:6})
-                layers.appendChild(content)
                 
                 queryGroup.addLayer((await getLeafletGeoJSONLayer({
                     geojson: feature, 
@@ -3398,6 +3387,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     group: queryGroup,
                     customStyleParams,
                 })))
+
+                const content = createPointCoordinatesTable(feature, {precision:6})
+                layers.appendChild(content)
             },
         },
         osmPoint: {
@@ -3411,34 +3403,27 @@ const handleLeafletQueryPanel = (map, parent) => {
                     'OpenStreetMap via Nominatim': 'nominatim;{}',
                     'OpenStreetMap via Overpass': 'overpass;{}',
                 }
-                
-                const geojsonPromise = await Promise.all(Object.values(fetchers).map(dbKey => {
-                    return fetchGeoJSON(dbKey, {
+
+                for (const title in fetchers) {
+                    const geojson = await fetchGeoJSON(fetchers[title], {
                         queryGeom,
                         zoom: map.getZoom(),
                         abortBtns, 
                         controller
                     })
-                }))
                 
-                if (controller.signal.aborted) return
-                
-                const layers = []
-                for (let i = 0; i < geojsonPromise.length; i++) {
-                    const geojson = geojsonPromise[i]
-                    if (!geojson?.features?.length) continue
-
-                    layers.push((await getLeafletGeoJSONLayer({
+                    const layer = await getLeafletGeoJSONLayer({
                         geojson,
                         pane: 'queryPane',
                         group: queryGroup,
                         customStyleParams,
-                        title: Object.keys(fetchers)[i],
+                        title: title,
                         attribution: createAttributionTable(geojson)?.outerHTML,
-                    })))
+                    })
+
+                    const content = createGeoJSONChecklist(layer, {controller})
+                    if (content) layers.appendChild(content)
                 }
-            
-                return layers
             }
         },
         osmView: {
