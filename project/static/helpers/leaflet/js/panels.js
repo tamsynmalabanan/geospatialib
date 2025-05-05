@@ -1744,15 +1744,14 @@ const handleLeafletStylePanel = (map, parent) => {
         container.innerHTML = ''
 
         if (symbology.method !== 'single' && symbology.groupBy?.length) {
-            const geojson = (await getFromGeoJSONDB(layer._geojsonId))?.geojson || layer.toGeoJSON()
+            const geojson = (await getLeafletGeoJSONData(layer, {
+                controller,
+                queryGeom:false,
+                group:false,
+                sort:false,
+                simplify:false
+            })) || layer.toGeoJSON()
             if (geojson) {
-                if (controllerId !== controller.id) return
-                
-                const filters = layer._styles.filters
-                if (geojson?.features?.length && Object.values(filters).some(i => i.active)) {
-                    geojson.features = geojson.features.filter(feature => validateGeoJSONFeature(feature, filters))
-                }
-                
                 if (controllerId !== controller.id) return
 
                 if (symbology.method === 'categorized') {
