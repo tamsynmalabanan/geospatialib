@@ -3343,21 +3343,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             
             spinner.classList.add('d-none')
             
-            if (layers.innerHTML !== '' || queryGroup.getLayers().length > 0) {
-                toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
-
-                if (layers.querySelectorAll('.collapse').length) {
-                    toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
-                }
-                
-                const checkboxes = layers.querySelectorAll('input.form-check-input[type="checkbox"]')
-                if (checkboxes.length) {
-                    toolbar.querySelector(`#${toolbar.id}-zoomin`).disabled = false
-                    if (Array.from(checkboxes).some(c => !c.disabled)) {
-                        toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
-                    }
-                }
-            } else {
+            if (layers.innerHTML === '') {
                 error.classList.remove('d-none')
             }
         }
@@ -3369,6 +3355,22 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
+
+    const enableToolbar = () => {
+        toolbar.querySelector(`#${toolbar.id}-clear`).disabled = false
+
+        if (layers.querySelectorAll('.collapse').length) {
+            toolbar.querySelector(`#${toolbar.id}-collapse`).disabled = false
+        }
+        
+        const checkboxes = layers.querySelectorAll('input.form-check-input[type="checkbox"]')
+        if (checkboxes.length) {
+            toolbar.querySelector(`#${toolbar.id}-zoomin`).disabled = false
+            if (Array.from(checkboxes).some(c => !c.disabled)) {
+                toolbar.querySelector(`#${toolbar.id}-visibility`).disabled = false
+            }
+        }
+    }
 
     const tools = toolsHandler({
         locationCoords: {
@@ -3419,8 +3421,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
 
                     const content = createGeoJSONChecklist(layer, {controller})
-                    console.log(content)
-                    if (content) layers.appendChild(content)
+                    if (content) {
+                        if (layers.innerHTML === '') enableToolbar()
+                        layers.appendChild(content)
+                    }
                 }
             }
         },
