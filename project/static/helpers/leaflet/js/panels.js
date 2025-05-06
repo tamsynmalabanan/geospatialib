@@ -2533,9 +2533,29 @@ const handleLeafletStylePanel = (map, parent) => {
             'Legend': {
                 'Identification': {
                     fields: {
+                        toggleLegend: {
+                            handler: createFormCheck,
+                            checked: filters.type.active,
+                            formCheckClass: 'w-100 flex-grow-1',
+                            labelInnerText: 'Show layer legend',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const mapContainer = map.getContainer()
+                                    const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
+                                    layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
+                    
+                                    layers.classList.toggle(
+                                        'd-none', 
+                                        Array.from(layers.children)
+                                        .every(el => el.classList.contains('d-none'))
+                                    )                    
+                                }
+                            }
+                        },
                         title: {
                             handler: createFormFloating,
-                            containerClass: 'w-50 flex-grow-1',
+                            containerClass: 'w-100 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: layer._title,
@@ -2587,7 +2607,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                     },
-                    className: 'gap-2 flex-wrap'
+                    className: 'gap-2 flex-column'
                 },
                 'Symbology': {
                     fields: {   
