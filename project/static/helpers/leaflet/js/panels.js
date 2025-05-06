@@ -603,6 +603,7 @@ const handleLeafletStylePanel = (map, parent) => {
         className: 'ms-3 bi bi-clipboard',
         events: async () => {
             const text = await navigator.clipboard.readText()
+            console.log(text)
             if (!text) return
 
             try {

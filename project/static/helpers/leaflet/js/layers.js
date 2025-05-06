@@ -526,7 +526,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
         
-        divider2: !isLegendGroup? null : {
+        divider3: !isLegendGroup || !geojsonLayer ? null : {
             divider: true,
         },
         style: !isLegendGroup || isLegendFeature ? null : {
@@ -544,37 +544,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     cancelable: true,
                 })) 
             }
-        },
-        copyStyle: !isLegendGroup || !geojsonLayer ? null : {
-            innerText: `Copy layer style`,
-            btnCallback: async () => {
-                navigator.clipboard.writeText(JSON.stringify(geojsonLayer._styles))
-            }
-        },
-        pasteStyle: !isLegendGroup || !geojsonLayer ? null : {
-            innerText: `Paste layer style`,
-            btnCallback: async () => {
-                const text = await navigator.clipboard.readText()
-                if (!text) return
-
-                try {
-                    const styles = JSON.parse(text)
-                    if (!Object.keys(geojsonLayer._styles).every(i => {
-                        return Object.keys(styles).includes(i)
-                    })) return
-
-                    const oldStyles = structuredClone(geojsonLayer._styles)
-                    geojsonLayer._styles = cloneLeafletLayerStyles({_styles:styles})
-                    deleteLeafletLayerFillPatterns({_styles:oldStyles})
-                    updateLeafletGeoJSONLayer(geojsonLayer, {
-                        geojson: geojsonLayer.toGeoJSON()
-                    })
-                } catch { return }
-            }
-        },
-        
-        divider3: !isLegendGroup || !geojsonLayer ? null : {
-            divider: true,
         },
         copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Copy data source`,
