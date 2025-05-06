@@ -618,6 +618,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     updateLeafletGeoJSONLayer(layer, {
                         geojson: layer.toGeoJSON()
                     })
+
+                    const event = new Event("change", { bubbles: true })
+                    select.dispatchEvent(event)
                 } catch { return }
             }
         }
@@ -2547,7 +2550,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
     select.addEventListener('change', () => {
         const newLayerId = parseInt(select.value)
-        if (layer && newLayerId && newLayerId === layer._leaflet_id) return
 
         body.innerHTML = ''
         layer = map._ch.getLegendLayer(newLayerId)
