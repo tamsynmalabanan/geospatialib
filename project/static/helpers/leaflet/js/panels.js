@@ -204,6 +204,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const show = elements.some(el => el.classList.contains('d-none'))
                 elements.forEach(el =>  el.classList.toggle('d-none', !show))
                 layers.classList.toggle('d-none', !show)
+
+                getStyleBody().querySelector('form').elements.showLegend.checked = show
             },
         },
         toggleAttribution: {
@@ -2570,6 +2572,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     labelInnerText: 'Show legend',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
+                                    name: 'showLegend',
                                     events: {
                                         click: (e) => {
                                             const layers = layerLegend.parentElement
@@ -2586,9 +2589,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                 container.appendChild(createFormCheck({
                                     checked: !attribution.classList.contains('d-none'),
-                                    labelInnerText: 'Show legend',
+                                    labelInnerText: 'Show attribution',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
+                                    name: 'showAttr',
                                     events: {
                                         click: (e) => {
                                             attribution.classList.toggle('d-none')

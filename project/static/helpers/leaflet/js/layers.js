@@ -618,38 +618,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 deleteFromGeoJSONDB(geojsonLayer._geojsonId)
             }
         },
-        divider4: !isLegendGroup ? null : {
-            divider: true,
-        },
-        toggleAttribution: !isLegendGroup? null : {
-            innerText: `Toggle attribution`,
-            btnCallback: () => {
-                const mapContainer = map.getContainer()
-                const mapId = mapContainer.id
-                mapContainer.querySelector(
-                    `#${mapId}-panels-legend-layers-${layer._leaflet_id}-attribution`
-                )?.classList.toggle('d-none')
-            }
-        },
-        remove: !isLegendGroup || isLegendFeature ? null : {
-            innerText: `Remove ${typeLabel}`,
-            keepMenuOn: true,
-            btnCallback: (e) => {
-                const parentElement = e.target.parentElement
-                parentElement.innerHTML = ''
-                
-                const btn = document.createElement('button')
-                btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
-                btn.addEventListener('click', () => group._ch.clearLayer(layer))
-                parentElement.appendChild(btn)
-                
-                const label = createSpan(
-                    'Confirm to remove layer', 
-                    {className:'pe-none text-wrap'}
-                )
-                btn.appendChild(label)
-            }
-        },
 
         divider5: {
             divider: true,
@@ -687,6 +655,25 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: 'Download GeoJSON',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
+            }
+        },
+        remove: !isLegendGroup || isLegendFeature ? null : {
+            innerText: `Remove ${typeLabel}`,
+            keepMenuOn: true,
+            btnCallback: (e) => {
+                const parentElement = e.target.parentElement
+                parentElement.innerHTML = ''
+                
+                const btn = document.createElement('button')
+                btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
+                btn.addEventListener('click', () => group._ch.clearLayer(layer))
+                parentElement.appendChild(btn)
+                
+                const label = createSpan(
+                    'Confirm to remove layer', 
+                    {className:'pe-none text-wrap'}
+                )
+                btn.appendChild(label)
             }
         },
     })
