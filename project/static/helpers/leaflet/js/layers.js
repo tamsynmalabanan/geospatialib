@@ -573,7 +573,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
         download: !layerGeoJSON ? null : {
-            innerText: 'Download data',
+            innerText: 'Download visible data',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
             }
