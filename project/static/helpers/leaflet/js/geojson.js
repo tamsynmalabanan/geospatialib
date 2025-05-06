@@ -345,7 +345,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
     
-    // if you simplify, remove map._previousBbox config
+    // if simplify is implemented, remove map._previousBbox config
     if (simplify) {
         if (controller?.signal?.aborted) return
         // const scale = getLeafletMeterScale(map)

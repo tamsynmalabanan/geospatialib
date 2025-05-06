@@ -329,10 +329,11 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
-                    const geojson = map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) ? layer.toGeoJSON() : null
-
                     promises.push(updateLeafletGeoJSONLayer(layer, {
-                        geojson,
+                        geojson: (
+                            map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) 
+                            ? layer.toGeoJSON() : null
+                        ),
                         controller
                     }).then((layer) => {
                         if (layer && layer._openpopup) {
