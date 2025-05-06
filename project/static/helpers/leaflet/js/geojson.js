@@ -148,9 +148,9 @@ const getLeafletGeoJSONLayer = async ({
             }
         })
     
-        geojsonLayer.on('remove', () => {
-            geojsonLayer.clearLayers()
-        })
+        // geojsonLayer.on('remove', () => {
+        //     geojsonLayer.clearLayers()
+        // })
     } else if (geojson) {
         geojsonLayer.addData(geojson)
     }
