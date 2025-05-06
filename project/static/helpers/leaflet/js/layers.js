@@ -469,6 +469,8 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
     
     return contextMenuHandler(e, {
+        
+
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
