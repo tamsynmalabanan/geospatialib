@@ -572,6 +572,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 } catch { return }
             }
         },
+        
         divider3: !isLegendGroup || !geojsonLayer ? null : {
             divider: true,
         },
