@@ -2535,7 +2535,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fields: {
                         title: {
                             handler: createFormFloating,
-                            containerClass: 'w-100',
+                            containerClass: 'w-50 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: layer._title,
@@ -2556,7 +2556,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         attribution: {
                             handler: createFormFloating,
-                            containerClass: 'w-100',
+                            containerClass: 'w-100 flex-grow-1',
                             fieldTag: 'textarea',
                             currentValue: layer._attribution,
                             labelText: 'Attribution (HTML-frieldly)',
