@@ -2535,7 +2535,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fields: {
                         toggleLegend: {
                             handler: createFormCheck,
-                            checked: filters.type.active,
+                            checked: !getLayerLegend().classList.contains('d-none'),
                             formCheckClass: 'w-100 flex-grow-1',
                             labelInnerText: 'Show layer legend',
                             role: 'switch',
