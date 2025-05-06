@@ -474,7 +474,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
         zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer ? null : {
-            innerText: `Zoom to current features`,
+            innerText: `Zoom to visible features`,
             btnCallback: async () => {
                 if (layer.getLayers().length) zoomLeafletMapToBounds(map, layer.getBounds())
             }

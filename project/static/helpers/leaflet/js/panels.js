@@ -330,7 +330,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                     if (controllerId !== controller.id) return
                     
                     const geojson = map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) ? layer.toGeoJSON() : null
-                    console.log(geojson)
 
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson,
