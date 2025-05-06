@@ -579,10 +579,12 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const styleOptions = customCreateElement({})
     styleOptions.appendChild(createIcon({
+        peNone: false,
         className: 'bi bi-copy'
     }))
     styleOptions.appendChild(createIcon({
-        className: 'bi bi-clipboard'
+        peNone: false,
+        className: 'ms-3 bi bi-clipboard'
     }))
 
     const select = createInputGroup({
