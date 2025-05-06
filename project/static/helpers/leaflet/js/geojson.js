@@ -375,8 +375,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
     if (!layer) return
 
     if (!layerIsVisible(layer)) return
-
-    // hidden
+    if (!layer._map || layer._map._ch.hasHiddenLegendLayer(layer)) return
 
     layer.fire('dataupdating')
     const data = await getLeafletGeoJSONData(layer, {geojson, controller, abortBtns})
