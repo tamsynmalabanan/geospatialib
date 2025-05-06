@@ -2558,7 +2558,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     parent,
-                                    className: 'd-flex flex-column justify-content-center w-25 flex-grow-1',
+                                    className: 'd-flex flex-column justify-content-center w-10 flex-grow-1 border rounded px-3 pt-1',
                                     style: {height:'58px'}
                                 })
 
