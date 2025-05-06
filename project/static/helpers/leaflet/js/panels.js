@@ -627,7 +627,6 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const updateSymbology = async (styleParams, {refresh=true}={}) => {
-        controller = resetController({controller, message: 'New symbology update.'})
         const controllerId = controller.id
 
         let defs
