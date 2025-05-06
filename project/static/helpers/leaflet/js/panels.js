@@ -205,7 +205,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 elements.forEach(el =>  el.classList.toggle('d-none', !show))
                 layers.classList.toggle('d-none', !show)
 
-                getStyleBody().querySelector('form').elements.showLegend.checked = show
+                getStyleBody().querySelector('[name="showLegend"]').checked = show
             },
         },
         toggleAttribution: {
