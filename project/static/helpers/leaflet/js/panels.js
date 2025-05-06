@@ -903,7 +903,7 @@ const handleLeafletStylePanel = (map, parent) => {
             if (defs) defs.remove()
         } finally {
             if (refresh && controllerId === controller.id) {
-                updateLeafletGeoJSONLayer(layer, {geojson: layer.getGeoJSON()}).then(() => {
+                updateLeafletGeoJSONLayer(layer, {geojson: layer.toGeoJSON()}).then(() => {
                     map.setZoom(map.getZoom())
                 })
             }
