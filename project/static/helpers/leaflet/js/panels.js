@@ -889,7 +889,10 @@ const handleLeafletStylePanel = (map, parent) => {
             if (defs) defs.remove()
         } finally {
             if (refresh && controllerId === controller.id) {
-                updateLeafletGeoJSONLayer(layer, {geojson: layer.toGeoJSON()}).then(() => {
+                updateLeafletGeoJSONLayer(layer, {
+                    geojson: layer.toGeoJSON(),
+                    controller,
+                }).then(() => {
                     map.setZoom(map.getZoom())
                 })
             }
@@ -1998,7 +2001,10 @@ const handleLeafletStylePanel = (map, parent) => {
         spinner.classList.add('d-none')
 
         if (controllerId !== controller.id) return
-        await updateLeafletGeoJSONLayer(layer, {geojson: layer.toGeoJSON()})
+        updateLeafletGeoJSONLayer(layer, {
+            geojson: layer.toGeoJSON(),
+            controller,
+        })
     }
 
     const getGeomFilterForm = (id) => {
