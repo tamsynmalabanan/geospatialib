@@ -2535,7 +2535,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     fields: {
                         title: {
                             handler: createFormFloating,
-                            containerClass: 'w-75 flex-grow-1',
+                            containerClass: 'w-50 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: layer._title,
@@ -2558,7 +2558,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     parent,
-                                    className: 'd-flex flex-column justify-content-center w-10 flex-grow-1'
+                                    className: 'd-flex flex-column justify-content-center w-25 flex-grow-1',
+                                    style: {height:'58px'}
                                 })
 
                                 container.appendChild(createFormCheck({
