@@ -529,22 +529,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
         divider3: !isLegendGroup || !geojsonLayer ? null : {
             divider: true,
         },
-        style: !isLegendGroup || isLegendFeature ? null : {
-            innerText: `Style ${typeLabel}`,
-            btnCallback: async () => {
-                const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
-                mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()
-
-                const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
-                const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
-                layerSelect.focus()
-                layerSelect.value = layer._leaflet_id
-                layerSelect.dispatchEvent(new Event('change', {
-                    bubbles: true,
-                    cancelable: true,
-                })) 
-            }
-        },
         copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
@@ -588,9 +572,31 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 deleteFromGeoJSONDB(geojsonLayer._geojsonId)
             }
         },
+        download: !layerGeoJSON ? null : {
+            innerText: 'Download data',
+            btnCallback: () => {
+                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
+            }
+        },
 
         divider5: {
             divider: true,
+        },
+        style: !isLegendGroup || isLegendFeature ? null : {
+            innerText: `Style ${typeLabel}`,
+            btnCallback: async () => {
+                const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
+                mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()
+
+                const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
+                const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
+                layerSelect.focus()
+                layerSelect.value = layer._leaflet_id
+                layerSelect.dispatchEvent(new Event('change', {
+                    bubbles: true,
+                    cancelable: true,
+                })) 
+            }
         },
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
@@ -619,12 +625,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 }
 
                 if (newLayer) targetGroup.addLayer(newLayer)
-            }
-        },
-        download: !layerGeoJSON ? null : {
-            innerText: 'Download data',
-            btnCallback: () => {
-                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
