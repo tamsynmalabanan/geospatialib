@@ -2558,7 +2558,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
                                     parent,
-                                    className: 'd-flex flex-column justify-content-center'
+                                    className: 'd-flex flex-column justify-content-center w-10 flex-grow-1'
                                 })
 
                                 container.appendChild(createFormCheck({
