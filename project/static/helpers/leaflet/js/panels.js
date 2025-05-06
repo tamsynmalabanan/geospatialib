@@ -601,24 +601,25 @@ const handleLeafletStylePanel = (map, parent) => {
     styleOptions.appendChild(createIcon({
         peNone: false,
         className: 'ms-3 bi bi-clipboard',
-        events: async () => {
-            const text = await navigator.clipboard.readText()
-            console.log(text)
-            if (!text) return
-
-            try {
-                const styles = JSON.parse(text)
-                if (!Object.keys(layer._styles).every(i => {
-                    return Object.keys(styles).includes(i)
-                })) return
-
-                const oldStyles = structuredClone(layer._styles)
-                layer._styles = cloneLeafletLayerStyles({_styles:styles})
-                deleteLeafletLayerFillPatterns({_styles:oldStyles})
-                updateLeafletGeoJSONLayer(layer, {
-                    geojson: layer.toGeoJSON()
-                })
-            } catch { return }
+        events: {
+            click: async () => {
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+    
+                try {
+                    const styles = JSON.parse(text)
+                    if (!Object.keys(layer._styles).every(i => {
+                        return Object.keys(styles).includes(i)
+                    })) return
+    
+                    const oldStyles = structuredClone(layer._styles)
+                    layer._styles = cloneLeafletLayerStyles({_styles:styles})
+                    deleteLeafletLayerFillPatterns({_styles:oldStyles})
+                    updateLeafletGeoJSONLayer(layer, {
+                        geojson: layer.toGeoJSON()
+                    })
+                } catch { return }
+            }
         }
     }))
 
