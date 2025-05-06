@@ -577,9 +577,18 @@ const handleLeafletStylePanel = (map, parent) => {
     toolbar.className = 'd-flex p-3 flex-column gap-3'
     form.appendChild(toolbar)
 
+    const styleOptions = customCreateElement({})
+    styleOptions.appendChild(createIcon({
+        className: 'bi bi-copy'
+    }))
+    styleOptions.appendChild(createIcon({
+        className: 'bi bi-clipboard'
+    }))
+
     const select = createInputGroup({
         parent: toolbar,
         prefixHTML: 'Layer',
+        suffixHTML: styleOptions.innerHTML,
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
         fieldAttrs: {name: 'layer'},
