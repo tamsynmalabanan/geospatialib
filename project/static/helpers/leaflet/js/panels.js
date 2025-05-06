@@ -2533,29 +2533,9 @@ const handleLeafletStylePanel = (map, parent) => {
             'Legend': {
                 'Identification': {
                     fields: {
-                        toggleLegend: {
-                            handler: createFormCheck,
-                            checked: !getLayerLegend().classList.contains('d-none'),
-                            formCheckClass: 'w-100 flex-grow-1',
-                            labelInnerText: 'Show layer legend',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const mapContainer = map.getContainer()
-                                    const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-                                    layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
-                    
-                                    layers.classList.toggle(
-                                        'd-none', 
-                                        Array.from(layers.children)
-                                        .every(el => el.classList.contains('d-none'))
-                                    )                    
-                                }
-                            }
-                        },
                         title: {
                             handler: createFormFloating,
-                            containerClass: 'w-100 flex-grow-1',
+                            containerClass: 'w-75 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: layer._title,
@@ -2571,6 +2551,26 @@ const handleLeafletStylePanel = (map, parent) => {
                                     if (element) element.innerText = field.value
 
                                     select.options[select.selectedIndex].text = field.value
+                                }
+                            }
+                        },
+                        toggleLegend: {
+                            handler: createFormCheck,
+                            checked: !getLayerLegend().classList.contains('d-none'),
+                            formCheckClass: 'w-10 flex-shrink-1',
+                            labelInnerText: 'Show layer legend',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const mapContainer = map.getContainer()
+                                    const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
+                                    layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
+                    
+                                    layers.classList.toggle(
+                                        'd-none', 
+                                        Array.from(layers.children)
+                                        .every(el => el.classList.contains('d-none'))
+                                    )                    
                                 }
                             }
                         },

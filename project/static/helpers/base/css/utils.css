@@ -2,6 +2,10 @@
     width: 10%;
 }
 
+.w-90 {
+    width: 90%;
+}
+
 .fs-12 {
     font-size: 12px;
 }
