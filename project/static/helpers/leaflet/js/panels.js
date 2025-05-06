@@ -692,8 +692,6 @@ const handleLeafletStylePanel = (map, parent) => {
             defs = document.createElementNS(svgNS, 'defs')
             defs.id = id
             svgFillDefs.appendChild(defs)
-    
-            if (controllerId !== controller.id) throw new Error('Aborted.')
 
             let icon
             const img = customCreateElement({
@@ -705,8 +703,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 style: {opacity:fillOpacity}
             })
 
-            if (controllerId !== controller.id) throw new Error('Aborted.')
-            
             if (!iconSpecs) throw new Error('No icon specification.')
 
             const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
@@ -748,8 +744,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 return [bounds.width, bounds.height, tempElement.outerHTML]
             })()
-
-            if (controllerId !== controller.id) throw new Error('Aborted.')
 
             const svgWidth = width + buffer
             const svgHeight = height + buffer
@@ -798,8 +792,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.appendChild(icon)
             }
 
-            if (controllerId !== controller.id) throw new Error('Aborted.')
-
             const dataUrl = iconType === 'svg' ? await svgToDataURL(outerHTML) : await outerHTMLToDataURL(outerHTML, {
                 width:svgWidth,
                 height:svgHeight,
@@ -807,15 +799,11 @@ const handleLeafletStylePanel = (map, parent) => {
                 y:0-(buffer/2),
             })
 
-            if (controllerId !== controller.id) throw new Error('Aborted.')
-
             if (iconType === 'html' && dataUrl) {
                 icon = document.createElementNS(svgNS, 'image')
                 icon.setAttribute('href', dataUrl)
                 defs.appendChild(icon)
             }
-
-            if (controllerId !== controller.id) throw new Error('Aborted.')
 
             img.setAttribute('src', await createNewImage(
                 iconType === 'img' ? iconSpecs :  dataUrl, {
@@ -825,8 +813,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     height: patternHeight,
                 }
             ))
-
-            if (controllerId !== controller.id) throw new Error('Aborted.')
 
             defs.appendChild(img)
 
