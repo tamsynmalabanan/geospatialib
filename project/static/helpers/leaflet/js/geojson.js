@@ -283,11 +283,11 @@ const getLeafletGeoJSONData = async (layer, {
     if (!map) return
 
     queryGeom = queryGeom ? L.rectangle(map.getBounds()).toGeoJSON().geometry : null
-    const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
-        queryGeom, leafletZoomToMeter(zoom)/2/1000
-    ).geometry : queryGeom : null
-
-    if (queryExtent && geojson) {
+    
+    if (geojson && queryGeom) {
+        const queryExtent = turf.getType(queryGeom) === 'Point' ? turf.buffer(
+            queryGeom, leafletZoomToMeter(zoom)/2/1000
+        ).geometry : queryGeom
         geojson.features = geojson.features.filter(feature => {
             if (controller?.signal?.aborted) return
             return turf.booleanIntersects(queryExtent, feature)
@@ -345,6 +345,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
     
+    // if you simplify, remove map._previousBbox config
     if (simplify) {
         if (controller?.signal?.aborted) return
         // const scale = getLeafletMeterScale(map)
@@ -387,7 +388,9 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
     
     layer.clearLayers()
     layer.addData(data)
-    return layer.fire('dataupdate')
+    layer.fire('dataupdate')
+    
+    return layer
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {
