@@ -2562,23 +2562,36 @@ const handleLeafletStylePanel = (map, parent) => {
                                     style: {height:'58px'}
                                 })
 
+                                const layerLegend = getLayerLegend()
+                                const attribution = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
+
                                 container.appendChild(createFormCheck({
-                                    checked: !getLayerLegend().classList.contains('d-none'),
-                                    // formCheckClass: 'w-10 flex-shrink-1',
+                                    checked: !layerLegend.classList.contains('d-none'),
                                     labelInnerText: 'Show legend',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
                                     events: {
                                         click: (e) => {
-                                            const mapContainer = map.getContainer()
-                                            const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-                                            layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
+                                            const layers = layerLegend.parentElement
+                                            layerLegend.classList.toggle('d-none')
                             
                                             layers.classList.toggle(
                                                 'd-none', 
                                                 Array.from(layers.children)
                                                 .every(el => el.classList.contains('d-none'))
                                             )                    
+                                        }
+                                    }
+                                }))
+
+                                container.appendChild(createFormCheck({
+                                    checked: !attribution.classList.contains('d-none'),
+                                    labelInnerText: 'Show legend',
+                                    labelClass: 'text-nowrap',
+                                    role: 'checkbox',
+                                    events: {
+                                        click: (e) => {
+                                            attribution.classList.toggle('d-none')
                                         }
                                     }
                                 }))

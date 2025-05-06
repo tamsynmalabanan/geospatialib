@@ -469,7 +469,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
     
     return contextMenuHandler(e, {
-        
+
 
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
@@ -620,20 +620,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
         },
         divider4: !isLegendGroup ? null : {
             divider: true,
-        },
-        toggleLegend: !isLegendGroup ? null : {
-            innerText: `Toggle legend`,
-            btnCallback: () => {
-                const mapContainer = map.getContainer()
-                const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-                layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
-
-                layers.classList.toggle(
-                    'd-none', 
-                    Array.from(layers.children)
-                    .every(el => el.classList.contains('d-none'))
-                )
-            }
         },
         toggleAttribution: !isLegendGroup? null : {
             innerText: `Toggle attribution`,
