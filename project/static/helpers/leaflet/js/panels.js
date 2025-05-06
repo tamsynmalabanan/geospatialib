@@ -204,7 +204,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const show = elements.some(el => el.classList.contains('d-none'))
                 elements.forEach(el =>  el.classList.toggle('d-none', !show))
                 layers.classList.toggle('d-none', !show)
-
                 getStyleBody().querySelector('[name="showLegend"]').checked = show
             },
         },
@@ -218,6 +217,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
                 const show = elements.some(el => el.classList.contains('d-none'))
                 elements.forEach(el =>  el.classList.toggle('d-none', !show))
+                getStyleBody().querySelector('[name="showAttr"]').checked = show
             },
         },
         clear: {
