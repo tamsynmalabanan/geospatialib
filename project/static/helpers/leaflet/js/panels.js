@@ -577,7 +577,18 @@ const handleLeafletStylePanel = (map, parent) => {
     toolbar.className = 'd-flex p-3 flex-column gap-3'
     form.appendChild(toolbar)
 
-    const styleOptions = customCreateElement({})
+    const select = createInputGroup({
+        parent: toolbar,
+        prefixHTML: 'Layer',
+        suffixHTML: `<div class='d-flex flex-nowrap gap-2'></div>`,
+        fieldTag: 'select', 
+        fieldClass: 'form-select-sm',
+        fieldAttrs: {name: 'layer'},
+        // labelText: 'Layer'
+    }).querySelector('select')
+    select.disabled = true
+
+    const styleOptions = select.nextElementSibling
     styleOptions.appendChild(createIcon({
         peNone: false,
         className: 'bi bi-copy'
@@ -586,17 +597,6 @@ const handleLeafletStylePanel = (map, parent) => {
         peNone: false,
         className: 'ms-3 bi bi-clipboard'
     }))
-
-    const select = createInputGroup({
-        parent: toolbar,
-        prefixHTML: 'Layer',
-        suffixHTML: styleOptions.innerHTML,
-        fieldTag: 'select', 
-        fieldClass: 'form-select-sm',
-        fieldAttrs: {name: 'layer'},
-        // labelText: 'Layer'
-    }).querySelector('select')
-    select.disabled = true
 
     const body = document.createElement('div')
     body.id = `${map.getContainer().id}-panels-style-body`
