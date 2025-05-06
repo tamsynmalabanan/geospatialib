@@ -2029,7 +2029,10 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.geoms?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.geoms?.length) updateLeafletGeoJSONLayer(layer, {
+                        geojson: layer.toGeoJSON(),
+                        controller,
+                    })
                 }
             }
         })
