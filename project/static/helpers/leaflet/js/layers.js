@@ -476,7 +476,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
         zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer ? null : {
-            innerText: `Zoom to visible features`,
+            innerText: `Zoom to visible`,
             btnCallback: async () => {
                 if (layer.getLayers().length) zoomLeafletMapToBounds(map, layer.getBounds())
             }
@@ -573,7 +573,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
         download: !layerGeoJSON ? null : {
-            innerText: 'Download visible data',
+            innerText: 'Download visible',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
             }
