@@ -143,14 +143,14 @@ const getLeafletGeoJSONLayer = async ({
         })
     
         geojsonLayer.on('add', () => {
-            if (layerIsVisible(geojsonLayer) && !geojsonLayer.getLayers().length) {
+            if (layerIsVisible(geojsonLayer)) {
                 updateLeafletGeoJSONLayer(geojsonLayer)
             }
         })
     
-        // geojsonLayer.on('remove', () => {
-        //     geojsonLayer.clearLayers()
-        // })
+        geojsonLayer.on('remove', () => {
+            geojsonLayer.clearLayers()
+        })
     } else if (geojson) {
         geojsonLayer.addData(geojson)
     }

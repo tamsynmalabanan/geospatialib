@@ -322,16 +322,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const layer = map._ch.getLegendLayer(leafletId)
                 if (!layer) return
 
-                const isGeoJSON = layer instanceof L.GeoJSON
-
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !layerIsVisible(layer)
                 if (isHidden || isInvisible) {
-                    if (isGeoJSON) layer.clearLayers()
                     return clearLegend(legend, {isHidden, isInvisible})
                 }
 
-                if (isGeoJSON) {
+                if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     
                     promises.push(updateLeafletGeoJSONLayer(layer, {
