@@ -2554,25 +2554,33 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        toggleLegend: {
-                            handler: createFormCheck,
-                            checked: !getLayerLegend().classList.contains('d-none'),
-                            formCheckClass: 'w-10 flex-shrink-1',
-                            labelInnerText: 'Show legend',
-                            labelClass: 'text-nowrap',
-                            role: 'checkbox',
-                            events: {
-                                click: (e) => {
-                                    const mapContainer = map.getContainer()
-                                    const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-                                    layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
-                    
-                                    layers.classList.toggle(
-                                        'd-none', 
-                                        Array.from(layers.children)
-                                        .every(el => el.classList.contains('d-none'))
-                                    )                    
-                                }
+                        idChecks: {
+                            handler: ({parent}={}) => {
+                                const container = customCreateElement({
+                                    parent,
+                                    className: 'd-flex flex-column justify-content-center'
+                                })
+
+                                container.appendChild(createFormCheck({
+                                    checked: !getLayerLegend().classList.contains('d-none'),
+                                    // formCheckClass: 'w-10 flex-shrink-1',
+                                    labelInnerText: 'Show legend',
+                                    labelClass: 'text-nowrap',
+                                    role: 'checkbox',
+                                    events: {
+                                        click: (e) => {
+                                            const mapContainer = map.getContainer()
+                                            const layers = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
+                                            layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)?.classList.toggle('d-none')
+                            
+                                            layers.classList.toggle(
+                                                'd-none', 
+                                                Array.from(layers.children)
+                                                .every(el => el.classList.contains('d-none'))
+                                            )                    
+                                        }
+                                    }
+                                }))
                             }
                         },
                         attribution: {
