@@ -2554,14 +2554,16 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                         title: {
-                            handler: createFormFloating,
+                            // handler: createFormFloating,
+                            handler: createInputGroup,
                             containerClass: 'w-100 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: layer._title,
+                                placeholder: 'Title',
                             },
+                            // labelText: 'Title',
                             fieldClass: 'form-control-sm',
-                            labelText: 'Title',
                             events: {
                                 input: (e) => {
                                     const field = e.target
