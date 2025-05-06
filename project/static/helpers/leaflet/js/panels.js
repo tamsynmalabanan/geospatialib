@@ -2524,7 +2524,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const layerLegend = getLayerLegend()
         const layerStyles = layer._styles
-        const symbology = layerStyles.symbology
+        const symbology = layerStyles.symbology 
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
         const filterContainerId = generateRandomString()
@@ -2536,7 +2536,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         toggleLegend: {
                             handler: createFormCheck,
                             checked: !getLayerLegend().classList.contains('d-none'),
-                            formCheckClass: 'w-10 flex-grow-1',
+                            formCheckClass: 'w-100 flex-grow-1',
                             labelInnerText: 'Show layer legend',
                             role: 'switch',
                             events: {
@@ -2555,7 +2555,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         title: {
                             handler: createFormFloating,
-                            containerClass: 'w-50 flex-grow-1',
+                            containerClass: 'w-100 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: layer._title,
