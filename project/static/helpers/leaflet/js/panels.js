@@ -2607,7 +2607,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
                     },
-                    className: 'gap-2 flex-column'
+                    className: 'gap-2 flex-wrap'
                 },
                 'Symbology': {
                     fields: {   
