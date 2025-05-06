@@ -143,9 +143,7 @@ const getLeafletGeoJSONLayer = async ({
         })
     
         geojsonLayer.on('add', () => {
-            if (layerIsVisible(geojsonLayer)) {
-                updateLeafletGeoJSONLayer(geojsonLayer)
-            }
+            updateLeafletGeoJSONLayer(geojsonLayer)
         })
     
         geojsonLayer.on('remove', () => {
@@ -375,6 +373,8 @@ const getLeafletGeoJSONData = async (layer, {
 
 const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns} = {}) => {
     if (!layer) return
+
+    if (!layerIsVisible(geojsonLayer)) return
 
     layer.fire('dataupdating')
     const data = await getLeafletGeoJSONData(layer, {geojson, controller, abortBtns})

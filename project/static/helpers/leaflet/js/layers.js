@@ -508,13 +508,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
         
-        // refreshData: !isLegendGroup || isLegendFeature ? null : {
-            //     innerText: `Refresh ${typeLabel}`,
-            //     btnCallback: async () => {
-                
-                //     }
-                // },
-                
         divider1: !feature ? null : {
             divider: true,
         },
