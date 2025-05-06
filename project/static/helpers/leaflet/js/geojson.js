@@ -133,24 +133,6 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer._geojsonId = geojsonId || (
             geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
         )
-
-        geojsonLayer.on('popupopen', (e) => {
-            geojsonLayer._openpopup = e.popup
-        })
-        
-        geojsonLayer.on('popupclose', (e) => {
-            delete geojsonLayer._openpopup 
-        })
-    
-        geojsonLayer.on('add', () => {
-            if (layerIsVisible(geojsonLayer)) {
-                updateLeafletGeoJSONLayer(geojsonLayer)
-            }
-        })
-    
-        geojsonLayer.on('remove', () => {
-            geojsonLayer.clearLayers()
-        })
     } else if (geojson) {
         geojsonLayer.addData(geojson)
     }
