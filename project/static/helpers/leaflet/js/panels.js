@@ -627,6 +627,9 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const updateSymbology = async (styleParams, {refresh=true}={}) => {
+        controller = resetController({controller, message: 'New symbology update.'})
+        const controllerId = controller.id
+
         let defs
         
         try {
@@ -690,6 +693,8 @@ const handleLeafletStylePanel = (map, parent) => {
             defs.id = id
             svgFillDefs.appendChild(defs)
     
+            if (controllerId !== controller.id) throw new Error('Aborted.')
+
             let icon
             const img = customCreateElement({
                 tag:'img',
@@ -699,6 +704,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 },
                 style: {opacity:fillOpacity}
             })
+
+            if (controllerId !== controller.id) throw new Error('Aborted.')
             
             if (!iconSpecs) throw new Error('No icon specification.')
 
@@ -709,6 +716,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     (iconType !== 'html' && italicFont ? iconSize*0.5 : 0),
                 )                
             : 0)
+            
             const [width, height, outerHTML] = (() => {
                 const style = getLeafletLayerStyle(
                     {geometry:{type:'MultiPoint'}}, {
@@ -740,6 +748,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 return [bounds.width, bounds.height, tempElement.outerHTML]
             })()
+
+            if (controllerId !== controller.id) throw new Error('Aborted.')
+
             const svgWidth = width + buffer
             const svgHeight = height + buffer
             const patternGap = iconType === 'img' ? 0 : iconSize
@@ -787,6 +798,8 @@ const handleLeafletStylePanel = (map, parent) => {
                 defs.appendChild(icon)
             }
 
+            if (controllerId !== controller.id) throw new Error('Aborted.')
+
             const dataUrl = iconType === 'svg' ? await svgToDataURL(outerHTML) : await outerHTMLToDataURL(outerHTML, {
                 width:svgWidth,
                 height:svgHeight,
@@ -794,11 +807,15 @@ const handleLeafletStylePanel = (map, parent) => {
                 y:0-(buffer/2),
             })
 
+            if (controllerId !== controller.id) throw new Error('Aborted.')
+
             if (iconType === 'html' && dataUrl) {
                 icon = document.createElementNS(svgNS, 'image')
                 icon.setAttribute('href', dataUrl)
                 defs.appendChild(icon)
             }
+
+            if (controllerId !== controller.id) throw new Error('Aborted.')
 
             img.setAttribute('src', await createNewImage(
                 iconType === 'img' ? iconSpecs :  dataUrl, {
@@ -808,6 +825,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     height: patternHeight,
                 }
             ))
+
+            if (controllerId !== controller.id) throw new Error('Aborted.')
 
             defs.appendChild(img)
 
@@ -883,9 +902,11 @@ const handleLeafletStylePanel = (map, parent) => {
             if (styleParams.fillPatternId) delete styleParams.fillPatternId
             if (defs) defs.remove()
         } finally {
-            if (refresh) updateLeafletGeoJSONLayer(layer).then(() => {
-                map.setZoom(map.getZoom())
-            })
+            if (refresh && controllerId === controller.id) {
+                updateLeafletGeoJSONLayer(layer, {geojson: layer.getGeoJSON()}).then(() => {
+                    map.setZoom(map.getZoom())
+                })
+            }
             return styleParams
         }
     }
