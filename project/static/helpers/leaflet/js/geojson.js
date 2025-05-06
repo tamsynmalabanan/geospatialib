@@ -238,13 +238,11 @@ const getGeoJSONLayerStyles = (layer) => {
         })
     })
 
-    console.log(styles)
-
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
-        console.log(feature.properties.__groupId__, styles[feature.properties.__groupId__ ?? ""])
-        styles[feature.properties.__groupId__ ?? ""].types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
+        const groupId = feature.properties.__groupId__ ?? ""
+        (styles[groupId] ?? styles['']).types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
     })
 
     Object.keys(styles).forEach(i => {
