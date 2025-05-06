@@ -2559,7 +2559,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             checked: !getLayerLegend().classList.contains('d-none'),
                             formCheckClass: 'w-10 flex-shrink-1',
                             labelInnerText: 'Show layer legend',
-                            role: 'switch',
+                            role: 'checkbox',
                             events: {
                                 click: (e) => {
                                     const mapContainer = map.getContainer()
