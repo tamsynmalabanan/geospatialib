@@ -2030,7 +2030,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     filter.active = value
                     if (filter.geoms?.length) updateLeafletGeoJSONLayer(layer, {
-                        geojson: layer.toGeoJSON(),
                         controller,
                     })
                 }
@@ -2062,7 +2061,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.handler) return
 
                     filter.handler = value
-                    if (filter.active && filter.geoms?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.geoms?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2086,7 +2087,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.value) return
 
                     filter.value = value
-                    if (filter.active && filter.geoms?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.geoms?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2155,7 +2158,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     parent.remove()
                     const update = filter.active && filter.geoms?.length
                     delete filters.geom.values[id]
-                    if (update) updateLeafletGeoJSONLayer(layer)
+                    if (update) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2222,7 +2227,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     ) return
                     
                     filter.geoms = value
-                    if (filter.active) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2252,7 +2259,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.active) return
 
                     filter.active = value
-                    if (filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2302,7 +2311,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.property) return
 
                     filter.property = value
-                    if (filter.active && filter.values?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.values?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2330,7 +2341,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.handler) return
 
                     filter.handler = value
-                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2354,7 +2367,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.value) return
 
                     filter.value = value
-                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2372,7 +2387,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === filter.case) return
 
                     filter.case = value
-                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2393,7 +2410,9 @@ const handleLeafletStylePanel = (map, parent) => {
                 click: (e) => {
                     parent.remove()
                     delete filters.properties.values[id]
-                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.property && filter.values?.length) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }
             }
         })
@@ -2452,7 +2471,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     ) return
         
                     filter.values = values
-                    if (filter.active && filter.property) updateLeafletGeoJSONLayer(layer)
+                    if (filter.active && filter.property) updateLeafletGeoJSONLayer(layer, {
+                        controller,
+                    })
                 }])))() //, 'add', 'remove', 'edit'
             }
         })
@@ -2912,7 +2933,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     })
 
                                     filters.type.active = value
-                                    updateLeafletGeoJSONLayer(layer)
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
                                 }
                             }
                         },
@@ -2938,7 +2962,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                         filters.type.values[name] = check
                                     })
 
-                                    updateLeafletGeoJSONLayer(layer)
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })
                                 }
                             }
                         },
@@ -2961,7 +2987,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                                     const option = form.querySelector(`label[for="${field.id}"]`).innerText
                                                     filters.type.values[option] = field.checked
                                                 })
-                                                updateLeafletGeoJSONLayer(layer)
+                                                updateLeafletGeoJSONLayer(layer, {
+                                                    controller,
+                                                })
                                             }
                                         }
                                     }
@@ -2993,7 +3021,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     propertyFilters.active = value
                                     if (Object.values(propertyFilters.values ?? {}).some(i => {
                                         return i.active && i.property && i.values.length
-                                    })) updateLeafletGeoJSONLayer(layer)
+                                    })) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
                                 }
                             }
                         },
@@ -3018,7 +3049,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     propertyFilters.operator = value
                                     if (Object.values(propertyFilters.values ?? {}).some(i => {
                                         return i.active && i.property && i.values.length
-                                    })) updateLeafletGeoJSONLayer(layer)
+                                    })) updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })
                                 }
                             },
                             currentValue: filters.properties.operator,
@@ -3065,7 +3098,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     Object.values(filters.properties.values).forEach(f => f.active = check)
 
-                                    updateLeafletGeoJSONLayer(layer)
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })
                                 }
                             }
                         },
@@ -3084,7 +3119,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     propertyFilters.values = {}
                                     if (Object.values(propertyFilters.values ?? {}).some(i => {
                                         return i.active && i.property && i.values.length
-                                    })) updateLeafletGeoJSONLayer(layer)                
+                                    })) updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })                
                                 }
                             }
                         },
@@ -3118,7 +3155,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                     })
 
                                     filters.geom.active = value
-                                    if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer)
+                                    if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
                                 }
                             }
                         },
@@ -3140,7 +3180,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     if (value === filters.geom.operator) return
 
                                     filters.geom.operator = value
-                                    if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer)
+                                    if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })
                                 }
                             },
                         },
@@ -3181,7 +3223,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                         geoms: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
-                                    updateLeafletGeoJSONLayer(layer)                
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })                
                                 }
                             }
                         },
@@ -3207,7 +3251,9 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     Object.values(filters.geom.values).forEach(f => f.active = check)
 
-                                    updateLeafletGeoJSONLayer(layer)
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })
                                 }
                             }
                         },
@@ -3223,7 +3269,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                     body.querySelector(`#${filterContainerId}-geom`).innerHTML = ''
                                     const update = Object.values(filters.geom.values).some(f => f.active && f.geoms?.length)
                                     filters.geom.values = {}
-                                    if (update) updateLeafletGeoJSONLayer(layer)                
+                                    if (update) updateLeafletGeoJSONLayer(layer, {
+                                        controller,
+                                    })                
                                 }
                             }
                         },

@@ -325,20 +325,22 @@ const getLeafletGeoJSONData = async (layer, {
             if (controller?.signal?.aborted) return
             const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
         
-            if (valid && hasActiveGroups) {
+            if (valid) {
                 const properties = feature.properties
-                for (const [id, group] of groups) {
-                    if (controller?.signal?.aborted) break
+                properties.__groupId__ = ''
+                properties.__groupRank__ = groups.length + 1
     
-                    if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
-                    
-                    properties.__groupId__ = id
-                    properties.__groupRank__ = group.rank
-                    break
+                if (hasActiveGroups) {
+                    for (const [id, group] of groups) {
+                        if (controller?.signal?.aborted) break
+        
+                        if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
+                        
+                        properties.__groupId__ = id
+                        properties.__groupRank__ = group.rank
+                        break
+                    }
                 }
-    
-                if (!properties.__groupId__) properties.__groupId__ = ''
-                if (!properties.__groupRank__) properties.__groupRank__ = groups.length + 1
             }
     
             return valid
