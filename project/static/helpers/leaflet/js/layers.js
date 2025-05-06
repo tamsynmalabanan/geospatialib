@@ -612,7 +612,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
 
                     await normalizeGeoJSON(geojson)
-                    geojsonLayer._geojsonId = saveToGeoJSONDB(geojson)                
+                    geojsonLayer._geojsonId = saveToGeoJSONDB(turf.clone(geojson))                
                     updateLeafletGeoJSONLayer(geojsonLayer, {geojson})
                 } catch { return }
             }
