@@ -546,24 +546,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                     layer.clearLayers()
                     clearLegend(container, {error: true})
                 })
-
-                layer.on('popupopen', (e) => {
-                    layer._openpopup = e.popup
-                })
-                
-                layer.on('popupclose', (e) => {
-                    delete layer._openpopup 
-                })
-            
-                layer.on('add', () => {
-                    if (layerIsVisible(layer)) {
-                        updateLeafletGeoJSONLayer(layer)
-                    }
-                })
-            
-                layer.on('remove', () => {
-                    layer.clearLayers()
-                })
             }
         }
 
