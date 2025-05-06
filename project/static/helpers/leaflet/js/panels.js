@@ -2000,7 +2000,7 @@ const handleLeafletStylePanel = (map, parent) => {
         spinner.classList.add('d-none')
 
         if (controllerId !== controller.id) return
-        await updateLeafletGeoJSONLayer(layer, {
+        updateLeafletGeoJSONLayer(layer, {
             geojson: layer.toGeoJSON(),
             controller,
         })
