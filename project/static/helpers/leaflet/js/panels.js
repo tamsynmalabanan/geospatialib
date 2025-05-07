@@ -316,12 +316,11 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }),
                     fieldClass: 'form-control-sm fs-12',
                     suffixHTML: createIcon({
-                        className: 'bi bi-trash fs-12',
+                        className: 'bi bi-arrow-counterclockwise fs-12',
                         peNone: false,
                         events: {
                             click: (e) => {
                                 const urlField = form.elements.newLayerUrl
-                                console.log(urlField)
                                 if (!urlField.value) return
 
                                 urlField.value = ''
@@ -352,7 +351,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                         type: 'url',
                         name: 'newLayerFormat',
                     },
+                    disabled: true,
                     options: {
+                        '': 'Select format',
                         'geojson': 'GeoJSON',
                     },
                     events: {
@@ -361,6 +362,52 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     },
                 })
+
+                const namesField = createTagifyField({
+                    parent: form,
+                    inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+                    inputTag: 'textarea',
+                    delimiters: null,
+                    enabled: 0,
+                    // disabled: true,
+                    dropdownClass:  `my-1 border-0`,
+                    userInput: true,
+                    // scopeStyle: {
+                    //     minHeight: '58px',
+                    // },
+                    name:  `newLayerNames`,
+                    placeholder: 'Select layer names',
+                    // currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
+                    events: {
+                        focus: async (e) => {
+                            const tagify = Tagify(form.elements[`newLayerNames`])
+                            
+                            const options = []
+            
+                            
+            
+                            const optionsSet = options.length ? new Set(options) : []
+                            const sortedOptions = [...optionsSet].sort()
+            
+                            tagify.settings.whitelist = sortedOptions
+                        },
+                    },
+                    // callbacks: {
+                    //     ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                    //         const tagify = e.detail.tagify
+                    //         const values = tagify.value.map(i => i.value)
+                
+                    //         if (values.every(i => filter.values.includes(i))
+                    //             && filter.values.every(i => values.includes(i))
+                    //         ) return
+                
+                    //         filter.values = values
+                    //         if (filter.active && filter.property) updateLeafletGeoJSONLayer(layer, {
+                    //             controller,
+                    //         })
+                    //     }])))() //, 'add', 'remove', 'edit'
+                    // }
+                })        
 
                 const menuContainer = contextMenuHandler(e, {
                     file: {
