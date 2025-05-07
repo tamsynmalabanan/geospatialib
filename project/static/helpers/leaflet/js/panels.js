@@ -289,8 +289,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             click: (e) => {
                                 L.DomEvent.stopPropagation(e)
                                 L.DomEvent.preventDefault(e)
-
-                                console.log(e)
+                                form.elements.newLayerUrl.value = ''
                             }
                         }
                     }),
@@ -302,8 +301,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         click: (e) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
-
-                            console.log(e)
                         }
                     },
                 })
