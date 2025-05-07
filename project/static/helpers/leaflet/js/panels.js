@@ -245,10 +245,18 @@ const handleLeafletLegendPanel = (map, parent) => {
             title: 'Add new file layer',
             btnClass: 'ms-auto',
             btnClickHandler: (e) => {
+                const fileInput = customCreateElement({
+                    tag: 'input',
+                    className: 'form-control form-control-sm',
+                    attrs: {
+                        type: 'file'
+                    }
+                })
+
                 const menuContainer = contextMenuHandler(e, {
                     file: {
-                        child: customCreateElement({}),
-                    },            
+                        child: fileInput,
+                    },
                 })
                 menuContainer.classList.add('bg-danger')
             }            
