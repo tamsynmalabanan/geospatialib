@@ -88,6 +88,7 @@ const manageHSLAColor = (color) => {
         l,
         a: a ?? 1,
     }
+    
     obj.toString = (up=obj) => {
         const {h,s,l,a} = up
         return `hsla(${h}, ${s}%, ${l}%, ${a})`

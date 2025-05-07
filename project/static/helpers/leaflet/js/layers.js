@@ -43,9 +43,10 @@ const getLeafletStyleParams = ({
     const hslaColor = manageHSLAColor(fillColor)
     console.log(fillColor)
     fillColor = hslaColor.toString()
-    console.log(fillColor)
-
+    console.log(hslaColor, fillColor)
+    
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
+    console.log('strokeColor', strokeColor)
     if (!patternBgColor) patternBgColor = hslaColor.toString({h:(hslaColor.h + 180) % 360, l:hslaColor.l/2})
 
     return  {
