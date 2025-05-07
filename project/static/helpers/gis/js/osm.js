@@ -85,8 +85,7 @@ const fetchOverpass = async ({
         if (!properties) return
         const elements = properties.elements?.filter(element => element.tags)
         delete properties.elements
-        return await overpassToGeoJSON(elements, {controller, properties}
-        )
+        return await overpassToGeoJSON(elements, {controller, properties})
     }).catch(error => {})
 }
 

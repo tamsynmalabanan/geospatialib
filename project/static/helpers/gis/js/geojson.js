@@ -399,7 +399,7 @@ const fetchGeoJSON = async (dbKey, {
         
                 if (queryExtent && cachedGeoJSON.features.length) {
                     if (isClient) {
-                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return
+                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return turf.featureCollection()
                     } else {
                         try {
                             const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
@@ -416,11 +416,10 @@ const fetchGeoJSON = async (dbKey, {
                     })
                 }
                 
-                if (cachedGeoJSON.features.length === 0) return
                 return cachedGeoJSON
             })()
             
-            if (!isClient && !geojson) {
+            if (!isClient && !geojson?.features?.length) {
                 geojson = await (async () => {
                     if (controller?.signal.aborted) return
                     const geojson = await fetchGeoJSONHandlers(handlerName)(
@@ -431,18 +430,20 @@ const fetchGeoJSON = async (dbKey, {
                             abortBtns,
                         }
                     )
-                    if (!geojson?.features?.length) return
+                    if (!geojson) return new Error('No geojson retrieved.')
                     
-                    if (controller?.signal.aborted) return
-                    normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
-                    
-                    if (controller?.signal.aborted) return
-                    if (handlerName !== 'nominatim') {
-                        await updateGeoJSONOnDB(
-                            dbKey, 
-                            turf.clone(geojson),
-                            queryExtent,
-                        )
+                    if (geojson.features?.length) {
+                        if (controller?.signal.aborted) return
+                        normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
+                        
+                        if (controller?.signal.aborted) return
+                        if (handlerName !== 'nominatim') {
+                            await updateGeoJSONOnDB(
+                                dbKey, 
+                                turf.clone(geojson),
+                                queryExtent,
+                            )
+                        }
                     }
             
                     return geojson
@@ -481,7 +482,6 @@ const downloadGeoJSON = (geojson, fileName) => {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 }
-
 
 const validateGeoJSONFeature = (feature, filters) => {
     if (filters.type.active && !filters.type.values[feature.geometry.type]) return false

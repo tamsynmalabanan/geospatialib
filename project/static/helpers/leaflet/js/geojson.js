@@ -225,76 +225,76 @@ const getLeafletGeoJSONData = async (layer, {
         controller,
         abortBtns,
     }))
-    if (!data) return
 
     if (controller?.signal.aborted) return
     if (data instanceof Error) {
         layer.fire('dataerror')
         return
     }
-
-    data = turf.clone(data)
-
-    const filters = layer._styles.filters
-    const hasActiveFilters = filter && Object.values(filters).some(i => {
-        if (!i.active) return false
-        return Object.values(i.values).some(j => {
-            return !j.hasOwnProperty('active') || j.active
+    
+    data = data ? turf.clone(data) : turf.featureCollection()
+    if (data.features?.length) {
+        const filters = layer._styles.filters
+        const hasActiveFilters = filter && Object.values(filters).some(i => {
+            if (!i.active) return false
+            return Object.values(i.values).some(j => {
+                return !j.hasOwnProperty('active') || j.active
+            })
         })
-    })
-
-    const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
-        return valueA.rank - valueB.rank
-    })
-    const hasActiveGroups = group && groups.some(i => i[1].active)
     
-    if (hasActiveFilters || hasActiveGroups) {
-        data.features = data.features.filter(feature => {
-            if (controller?.signal?.aborted) return
-            const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+        const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
+            return valueA.rank - valueB.rank
+        })
+        const hasActiveGroups = group && groups.some(i => i[1].active)
         
-            if (valid) {
-                const properties = feature.properties
-                properties.__groupId__ = ''
-                properties.__groupRank__ = groups.length + 1
-    
-                if (hasActiveGroups) {
-                    for (const [id, group] of groups) {
-                        if (controller?.signal?.aborted) break
+        if (hasActiveFilters || hasActiveGroups) {
+            data.features = data.features.filter(feature => {
+                if (controller?.signal?.aborted) return
+                const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
+            
+                if (valid) {
+                    const properties = feature.properties
+                    properties.__groupId__ = ''
+                    properties.__groupRank__ = groups.length + 1
         
-                        if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
-                        
-                        properties.__groupId__ = id
-                        properties.__groupRank__ = group.rank
-                        break
+                    if (hasActiveGroups) {
+                        for (const [id, group] of groups) {
+                            if (controller?.signal?.aborted) break
+            
+                            if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
+                            
+                            properties.__groupId__ = id
+                            properties.__groupRank__ = group.rank
+                            break
+                        }
                     }
                 }
-            }
+        
+                return valid
+            })
+        }
+        
+        // if simplify is implemented, remove map._previousBbox config
+        if (simplify) {
+            if (controller?.signal?.aborted) return
+            // const scale = getLeafletMeterScale(map)
+            // const tolerance = scale > 1000 ? scale/10000000 : 0
+            // console.log(map.getZoom(), scale, tolerance)
+            // if (tolerance > 0) {
+            //     turf.simplify(data, {
+            //         mutate: true,
+            //         tolerance, 
+            //         highQuality: false
+            //     })
+            //     // simplify / cluster if not query // reconfigure legend feature count
+            // }
+        }
     
-            return valid
-        })
-    }
-    
-    // if simplify is implemented, remove map._previousBbox config
-    if (simplify) {
-        if (controller?.signal?.aborted) return
-        // const scale = getLeafletMeterScale(map)
-        // const tolerance = scale > 1000 ? scale/10000000 : 0
-        // console.log(map.getZoom(), scale, tolerance)
-        // if (tolerance > 0) {
-        //     turf.simplify(data, {
-        //         mutate: true,
-        //         tolerance, 
-        //         highQuality: false
-        //     })
-        //     // simplify / cluster if not query // reconfigure legend feature count
-        // }
-    }
-
-    if (sort) {
-        if (controller?.signal?.aborted) return
-        sortGeoJSONFeatures(data, {reverse:true})
-    }
+        if (sort) {
+            if (controller?.signal?.aborted) return
+            sortGeoJSONFeatures(data, {reverse:true})
+        }
+    }    
 
     return data
 }
@@ -325,7 +325,6 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
     
     return layer
 }
-
 
 const getGeoJSONLayerStyles = (layer) => {
     const symbology = layer._styles.symbology
