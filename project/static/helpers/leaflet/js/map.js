@@ -19,6 +19,8 @@ const enableMapInteractivity = (map) => {
 }
 
 const getLeafletMeterScale = (map) => {
+    console.log(map._scaleBar._mScale)
+
     const scales = map.getContainer().querySelectorAll('.leaflet-control-scale-line')
     for (const scale of scales) {
         const text = scale.innerText
