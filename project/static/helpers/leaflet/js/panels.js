@@ -1998,15 +1998,10 @@ const handleLeafletStylePanel = (map, parent) => {
                         const min = Math.min(...values)
                         const max = Math.max(...values)
                         const diff = max - min
-                        const groupCount = symbology.groupCount ?? (() => {
-                            return symbology.groupCount = form.elements.groupCount.value = 5
-                        })()
-                        const interval = diff/(groupCount-1)
-                        const precision = symbology.groupPrecision || (() => {
-                            return symbology.groupPrecision = form.elements.groupPrecision.value = Number(
-                                `1${'0'.repeat(Math.floor((String(interval).length)/2))}`
-                            )
-                        })()
+                        const groupCount = symbology.groupCount = form.elements.groupCount.value = diff === 0 ? 1 : symbology.groupCount ?? 5
+                        const interval = diff === 0 ? 0 : diff/(groupCount-1)
+                        const precision = symbology.groupPrecision = form.elements.groupPrecision.value = diff === 0 
+                        ? 1 : symbology.groupPrecision ?? Number(`1${'0'.repeat(Math.floor((String(interval).length)/2))}`)
 
                         const groups = []
                         let currentMin = min
@@ -2015,7 +2010,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                             const currentMax = Math.round((currentMin + interval)/precision) * precision
 
-                            console.log(currentMin, currentMax, min, max)
                             groups.push({
                                 min: currentMin,
                                 max: currentMax > max ? max : currentMax
