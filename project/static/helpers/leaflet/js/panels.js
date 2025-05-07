@@ -278,7 +278,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     tag: 'form',
                 })
 
-                createInputGroup({
+                const urlField = createInputGroup({
                     parent: form,
                     prefixHTML: 'URL',
                     fieldClass: 'form-control-sm',
@@ -341,6 +341,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                     file: {
                         child: parent,
                     },
+                }, {
+                    title: 'Add new layer',
+                    dismissBtn: true,
                 })
             }            
         },

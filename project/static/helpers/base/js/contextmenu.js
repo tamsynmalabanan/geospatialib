@@ -1,4 +1,7 @@
-const contextMenuHandler = (e, menuItems) => {
+const contextMenuHandler = (e, menuItems, {
+    title,
+    dismissBtn = false,
+} = {}) => {
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
 
@@ -11,6 +14,26 @@ const contextMenuHandler = (e, menuItems) => {
         dropdown-menu show
         small shadow-sm
     `)
+
+    if (title || dismissBtn) {
+        const header = customCreateElement({
+            parent: menuContainer,
+            className: 'd-flex flex-nowrap',
+        })
+
+        if (title) {
+            const title = createSpan(title, {
+                parent: header
+            })
+        }
+
+        if (dismissBtn) {
+            const dismiss = createIcon({
+                parent: header
+                className: 'bi bi-x'
+            })
+        }
+    }
 
     for (const item in menuItems) {
         const data = menuItems[item]
