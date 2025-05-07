@@ -1030,6 +1030,7 @@ const handleLeafletStylePanel = (map, parent) => {
             title: 'Copy group symbology',
             events: {
                 click: (e) => {
+                    console.log(styleParams)
                     const text = JSON.stringify(styleParams)
                     console.log(text)
                     navigator.clipboard.writeText(text)
