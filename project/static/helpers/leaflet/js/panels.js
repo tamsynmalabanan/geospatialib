@@ -1990,7 +1990,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (symbology.method === 'graduated') {
                     const property = symbology.groupBy[0]
                     const validFeatures = geojson.features.filter(i => !isNaN(parseFloat(i.properties[property] ?? '')))
-                    console.log(validFeatures)
                     if (validFeatures.length) {
                         if (controllerId !== controller.id) return
                         
