@@ -372,9 +372,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                     disabled: true,
                     dropdownClass:  `my-1 border-0`,
                     userInput: true,
-                    // scopeStyle: {
-                    //     minHeight: '58px',
-                    // },
+                    scopeStyle: {
+                        minHeight: '58px',
+                    },
                     name:  `newLayerNames`,
                     placeholder: 'Select layer names',
                     // currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
