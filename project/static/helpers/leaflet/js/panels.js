@@ -18,7 +18,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     
     const layers = document.createElement('div')
     layers.id = `${baseId}-layers`
-    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top border-2 rounded-bottom text-bg-${getPreferredTheme()} d-flex flex-column gap-2`
+    layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()} d-flex flex-column gap-2`
     parent.appendChild(layers)
     template.layers = layers
     
@@ -31,7 +31,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
         
         const spinner = document.createElement('div')
         spinner.id = `${status.id}-spinner`
-        spinner.className = 'p-3 border-top border-2 d-none gap-2 flex-nowrap d-flex align-items-center'
+        spinner.className = 'p-3 border-top d-none gap-2 flex-nowrap d-flex align-items-center'
         status.appendChild(spinner)
         template.spinner = spinner
 
