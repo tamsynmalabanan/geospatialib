@@ -278,13 +278,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                     tag: 'form',
                 })
 
-                customCreateElement({
+                createInputGroup({
                     parent: form,
-                    tag: 'input',
-                    className: 'form-control form-control-sm',
-                    attrs: {
-                        name: 'newLayerUrl',
+                    prefixHTML: 'URL',
+                    fieldClass: 'form-control form-control-sm',
+                    suffixHTML: 'Clear',
+                    fieldAttrs: {
                         type: 'url',
+                        name: 'newLayerUrl',
                     },
                     events: {
                         click: (e) => {
