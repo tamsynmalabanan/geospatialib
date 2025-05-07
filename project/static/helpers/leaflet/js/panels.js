@@ -243,7 +243,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         newFile: {
             iconSpecs: 'bi-file-earmark-plus',
             title: 'Add new file layers',
-            btnClass: 'ms-auto',
+            // btnClass: 'ms-auto',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
                     className: 'px-2'
@@ -256,7 +256,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     attrs: {
                         type: 'file',
                         multiple: true,
-                        accept: '.geojson'
+                        accept: '.geojson, .json'
                     }
                 })
 
@@ -265,13 +265,22 @@ const handleLeafletLegendPanel = (map, parent) => {
                     console.log(files)
                     if (!files.length) return
                 
-                    for (file of files) {
+                    const group = map._ch.getLayerGroups().client
+
+                    for (const file of files) {
                         const reader = new FileReader()
-                        reader.onload = (e) => {
-                            if (file.name.endsWith('.geojson')) {
+                        reader.onload = async (e) => {
+                            const [title, type] = file.name.split('.', 2)
+                            if (type.toLowerCase().endsWith('json')) {
                                 try {
                                     const geojson = JSON.parse(e.target.result)
-                                    console.log(geojson)
+                                    const layer = await getLeafletGeoJSONLayer({
+                                        geojson,
+                                        group,
+                                        pane: createCustomPane(map),
+                                        title,
+                                    })
+                                    if (layer) group.addLayer(layer)
                                 } catch (error) {
                                     console.log(error)
                                 }
