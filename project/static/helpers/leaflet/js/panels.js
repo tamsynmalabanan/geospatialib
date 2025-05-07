@@ -247,8 +247,8 @@ const handleLeafletLegendPanel = (map, parent) => {
         },
         newLayer: {
             iconSpecs: 'bi-plus-lg',
-            title: 'Add new file layers',
-            innerText: 'Add layer',
+            title: 'Add new layers',
+            innerText: 'Add layers',
             toolHandler: false,
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
@@ -268,9 +268,23 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 parent.appendChild(customCreateElement({tag:'hr', className:'my-3'}))
-                parent.appendChild(createSpan('test'))
-
+                
+                
                 // get new dataset form
+                const form = customCreateElement({
+                    tag: 'form',
+                })
+
+                form.appendChild(customCreateElement({
+                    tag: 'input',
+                    className: 'form-control form-control-sm',
+                    attrs: {
+                        name: 'newLayerUrl',
+                        type: 'search',
+                    }
+                }))
+                
+                parent.appendChild(createSpan('test'))
 
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
