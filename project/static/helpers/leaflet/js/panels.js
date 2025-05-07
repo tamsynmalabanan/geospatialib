@@ -3371,7 +3371,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         active: true,
                                         handler: 'booleanIntersects',
                                         value: true,
-                                        geoms: [L.rectangle(map.getBounds()).toGeoJSON().geometry]
+                                        geoms: [turf.bboxPolygon(getLeafletMapBbox(map)).geometry]
                                     }
                                     body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
                                     updateLeafletGeoJSONLayer(layer, {
