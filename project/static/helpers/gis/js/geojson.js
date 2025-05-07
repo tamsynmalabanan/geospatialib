@@ -399,7 +399,7 @@ const fetchGeoJSON = async (dbKey, {
         
                 if (queryExtent && cachedGeoJSON.features.length) {
                     if (isClient) {
-                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return turf.featureCollection()
+                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return turf.featureCollection([])
                     } else {
                         try {
                             const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
