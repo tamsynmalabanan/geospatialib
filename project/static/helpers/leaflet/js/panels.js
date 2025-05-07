@@ -296,7 +296,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const menuContainer = contextMenuHandler(e, {
                     file: {
-                        child: container,
+                        child: parent,
                     },
                 })
             }            
