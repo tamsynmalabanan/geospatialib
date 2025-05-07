@@ -258,7 +258,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         child: fileInput,
                     },
                 })
-                menuContainer.classList.add('bg-danger')
             }            
         },
         // newURL: {
