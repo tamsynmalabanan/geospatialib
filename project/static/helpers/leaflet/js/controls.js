@@ -28,6 +28,7 @@ const handleLeafletScaleBar = (map, include=true) => {
     if (!include) return
 
     const scaleBar = L.control.scale({ position: 'bottomright' }).addTo(map)
+    map._scaleBar = scaleBar
     console.log(scaleBar)
 }
 
