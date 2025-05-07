@@ -31,7 +31,12 @@ const contextMenuHandler = (e, menuItems, {
             const dismissIcon = createIcon({
                 parent: header,
                 peNone: false,
-                className: 'bi bi-x ms-auto',
+                className: 'bi bi-x ms-auto custom-context-menu-dismiss',
+                events: {
+                    click: (e) => {
+                        menuContainer.remove()                        
+                    }
+                }
             })
         }
     }
@@ -69,7 +74,11 @@ const contextMenuHandler = (e, menuItems, {
 document.addEventListener('DOMContentLoaded', () => {
     ['wheel', 'click'].forEach(trigger => {
         document.addEventListener(trigger, (e) => {
-            document.querySelector(`.custom-context-menu`)?.remove()
+            const menu = document.querySelector(`.custom-context-menu`)
+            if (menu) {
+                const dismiss = menu.querySelector('.custom-context-menu-dismiss')
+                if (!dismiss) menu.remove()
+            }
         })
     })
 })
