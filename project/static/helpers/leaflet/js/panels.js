@@ -105,14 +105,11 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
                             document.querySelector(`#${mapContainer.id}-panels-${panelName}-toolbar-${currentMode}`).click()
                         }
                         
-                        btn.classList.toggle('btn-primary', (
-                            btn.classList.contains(`btn-${getPreferredTheme()}`)
-                            && mapClickHandler
-                        ))
-                        btn.classList.toggle(`btn-${getPreferredTheme()}`, (
-                            btn.classList.contains(`btn-primary`)
-                            && !mapClickHandler
-                        ))
+                        if (!skipToolHandler) {
+                            btn.classList.toggle('btn-primary', mapClickHandler)
+                            btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
+                        }
+
                         mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
                         map._panelMode = [name, mapClickHandler ? toolId : undefined]
         
