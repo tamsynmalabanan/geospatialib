@@ -238,10 +238,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
-        // divider2: {
-        //     tag: 'div',
-        //     className: 'vr m-2',
-        // },
+        divider2: {
+            tag: 'div',
+            className: 'me-5',
+        },
         newLayer: {
             iconSpecs: 'bi-plus-lg',
             title: 'Add new file layers',
