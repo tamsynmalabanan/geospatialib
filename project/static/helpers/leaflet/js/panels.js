@@ -246,7 +246,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconSpecs: 'bi-plus-lg',
             title: 'Add new file layers',
             innerText: 'Add layer',
-            className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center',
+            className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center text-bg-primary',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
                     className: 'px-2'
