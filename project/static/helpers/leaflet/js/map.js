@@ -19,7 +19,7 @@ const enableMapInteractivity = (map) => {
 }
 
 const getLeafletMeterScale = (map) => {
-    console.log(map._scaleBar._mScale)
+    console.log(map._scaleBar._mScale.innerText)
 
     const scales = map.getContainer().querySelectorAll('.leaflet-control-scale-line')
     for (const scale of scales) {
