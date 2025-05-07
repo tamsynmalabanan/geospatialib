@@ -91,7 +91,7 @@ const manageHSLAColor = (color) => {
     }
     
     obj.toString = (up) => {
-        return `hsla(${up.h ?? obj.h}, ${up.s ?? obj.s}%, ${up.l ?? obj.l}%, ${up.a ?? obj.a})`
+        return `hsla(${up.h ?? this.h}, ${up.s ?? this.s}%, ${up.l ?? this.l}%, ${up.a ?? this.a})`
     }
     return obj
 }
