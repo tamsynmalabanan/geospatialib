@@ -350,7 +350,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     fieldClass: 'form-select-sm fs-12',
                     fieldAttrs: {
                         type: 'url',
-                        name: 'newLayerUrl',
+                        name: 'newLayerFormat',
                     },
                     options: {
                         'geojson': 'GeoJSON',
