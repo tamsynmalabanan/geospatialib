@@ -46,7 +46,6 @@ const handleLeafletSearchBar = (map, include=true) => {
             bbox.getNorthWest(),
             bbox.getSouthWest()
         ]);
-        console.log(bbox)
         map.fitBounds(poly.getBounds());
     })
     .addTo(map);

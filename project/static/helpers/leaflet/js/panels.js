@@ -375,7 +375,7 @@ const handleLeafletLegendPanel = (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
-            const newBbox = L.rectangle(map.getBounds()).toGeoJSON()
+            const newBbox = turf.bboxPolygon(getLeafletMapBbox(map))
             
             const controllerId = controller.id
             const promises = []
