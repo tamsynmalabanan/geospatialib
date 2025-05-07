@@ -22,13 +22,13 @@ const contextMenuHandler = (e, menuItems, {
         })
 
         if (title) {
-            const title = createSpan(title, {
+            const titleSpan = createSpan(title, {
                 parent: header
             })
         }
 
         if (dismissBtn) {
-            const dismiss = createIcon({
+            const dismissIcon = createIcon({
                 parent: header,
                 className: 'bi bi-x',
             })
