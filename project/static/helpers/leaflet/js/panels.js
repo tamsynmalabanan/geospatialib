@@ -2033,15 +2033,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                 
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
                                     ...symbology.default.styleParams,
-                                    fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1))*(rank-1))}),
+                                    fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1 || 1))*(rank-1))}),
                                     fillOpacity: 0.5,
                                     strokeColor: true,
                                     strokeOpacity: 1,
                                     patternBgColor: null,
                                     fillPatternId: null,
                                     iconStroke: false,
-                                    iconSize: 10 + (((50-10)/(groups.length-1))*(rank-1)),
-                                    strokeWidth: 1 + (((5-1)/(groups.length-1))*(rank-1))
+                                    iconSize: 10 + (((50-10)/(groups.length-1 || 1))*(rank-1)),
+                                    strokeWidth: 1 + (((5-1)/(groups.length-1 || 1))*(rank-1))
                                 }), {refresh:false})
 
                                 if (controllerId !== controller.id) return
