@@ -3007,7 +3007,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createFormCheck,
                             checked: filters.type.active,
                             formCheckClass: 'flex-grow-1',
-                            labelInnerText: 'Filter by geometry type',
+                            labelInnerText: 'Filter by type',
                             role: 'switch',
                             events: {
                                 click: (e) => {
