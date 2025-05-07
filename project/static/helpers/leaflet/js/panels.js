@@ -369,7 +369,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     inputTag: 'textarea',
                     delimiters: null,
                     enabled: 0,
-                    // disabled: true,
+                    disabled: true,
                     dropdownClass:  `my-1 border-0`,
                     userInput: true,
                     // scopeStyle: {
@@ -378,20 +378,20 @@ const handleLeafletLegendPanel = (map, parent) => {
                     name:  `newLayerNames`,
                     placeholder: 'Select layer names',
                     // currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
-                    events: {
-                        focus: async (e) => {
-                            const tagify = Tagify(form.elements[`newLayerNames`])
+                    // events: {
+                    //     focus: async (e) => {
+                    //         const tagify = Tagify(form.elements[`newLayerNames`])
                             
-                            const options = []
+                    //         const options = []
             
                             
             
-                            const optionsSet = options.length ? new Set(options) : []
-                            const sortedOptions = [...optionsSet].sort()
+                    //         const optionsSet = options.length ? new Set(options) : []
+                    //         const sortedOptions = [...optionsSet].sort()
             
-                            tagify.settings.whitelist = sortedOptions
-                        },
-                    },
+                    //         tagify.settings.whitelist = sortedOptions
+                    //     },
+                    // },
                     // callbacks: {
                     //     ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
                     //         const tagify = e.detail.tagify
