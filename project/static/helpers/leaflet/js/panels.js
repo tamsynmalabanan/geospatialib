@@ -241,10 +241,10 @@ const handleLeafletLegendPanel = (map, parent) => {
         //     className: 'vr m-2',
         // },
         newLayer: {
-            iconSpecs: 'bi-plus-square-fill',
+            iconSpecs: 'bi-plus-lg',
             title: 'Add new file layers',
             innerText: 'Add layer',
-            className: 'ms-auto',
+            className: 'ms-auto d-flex flex-nowrap gap-2',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
                     className: 'px-2'
