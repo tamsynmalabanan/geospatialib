@@ -83,7 +83,7 @@ const manageHSLAColor = (color) => {
     
     const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
     let obj = {
-        h,
+        h: h || 1,
         s,
         l,
         a: a ?? 1,
