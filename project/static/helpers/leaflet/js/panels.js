@@ -1994,7 +1994,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (validFeatures.length) {
                         if (controllerId !== controller.id) return
                         
-                        const values = validFeatures.map(i => parseFloat(i.properties[property] ? ''))
+                        const values = validFeatures.map(i => parseFloat(i.properties[property] ?? ''))
                         const min = Math.min(...values)
                         const max = Math.max(...values)
                         const diff = max - min
