@@ -289,9 +289,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                         peNone: false,
                         events: {
                             click: (e) => {
-                                L.DomEvent.stopPropagation(e)
-                                L.DomEvent.preventDefault(e)
-                                form.elements.newLayerUrl.value = ''
+                                const urlField = form.elements.newLayerUrl
+                                if (!urlField.value) return
+
+                                urlField.value = ''
+                                const event = new Event("change", { bubbles: true })
+                                urlField.dispatchEvent(event)
                             }
                         }
                     }),
