@@ -301,6 +301,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                         click: (e) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
+                        },
+                        change: (e) => {
+                            console.log(e)
                         }
                     },
                 })
