@@ -263,7 +263,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                parent.appendChild(customCreateElement({className:'vr'}))
+                parent.appendChild(customCreateElement({className:'hr'}))
 
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
