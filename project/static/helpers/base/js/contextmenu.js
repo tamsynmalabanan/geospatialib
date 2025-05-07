@@ -18,12 +18,12 @@ const contextMenuHandler = (e, menuItems, {
     if (title || dismissBtn) {
         const header = customCreateElement({
             parent: menuContainer,
-            className: 'd-flex flex-nowrap px-3',
+            className: 'd-flex flex-nowrap px-3 mb-2',
         })
 
         if (title) {
             const titleSpan = createSpan(title, {
-                parent: header
+                parent: header,
             })
         }
 
