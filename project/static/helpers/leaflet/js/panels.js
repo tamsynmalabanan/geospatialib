@@ -263,13 +263,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
                     console.log(files)
-                    // if (!file) return;
+                    if (!files.length) return
                 
-                    // const reader = new FileReader();
-                    // reader.onload = function(e) {
-                    //     document.getElementById("fileContent").textContent = e.target.result; // Display file content
-                    // };
-                    // reader.readAsText(file); // Read
+                    for (file of files) {
+                        const reader = new FileReader()
+                        reader.onload = (e) => {
+                            console.log(e.target.result)
+                        };
+                        reader.readAsText(file)
+                    }
                 })
 
                 const menuContainer = contextMenuHandler(e, {
