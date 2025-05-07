@@ -88,7 +88,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
-                className:`btn-sm btn-${getPreferredTheme()}`,
+                className:`btn-sm btn-${getPreferredTheme()} ${data.btnClass}`,
                 events: {
                     click: async (event) => {
                         L.DomEvent.stopPropagation(event);
@@ -243,6 +243,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         newFile: {
             iconSpecs: 'bi-file-earmark-plus',
             title: 'Add new file layer',
+            btnClass: 'ms-auto',
             btnClickHandler: (e) => {
                 const menuContainer = contextMenuHandler(e, {
                     file: {
