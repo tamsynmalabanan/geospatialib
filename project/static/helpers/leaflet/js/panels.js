@@ -256,6 +256,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     attrs: {
                         type: 'file',
                         multiple: true,
+                        accept: '.geojson'
                     }
                 })
 
