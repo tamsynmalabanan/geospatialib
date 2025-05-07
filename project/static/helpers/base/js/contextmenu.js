@@ -29,8 +29,8 @@ const contextMenuHandler = (e, menuItems, {
 
         if (dismissBtn) {
             const dismiss = createIcon({
-                parent: header
-                className: 'bi bi-x'
+                parent: header,
+                className: 'bi bi-x',
             })
         }
     }
