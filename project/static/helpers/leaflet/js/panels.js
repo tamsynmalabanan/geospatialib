@@ -88,7 +88,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
-                className:`btn-sm btn-${getPreferredTheme()} ${data.className}`,
+                className: data.className ?? `btn-sm btn-${getPreferredTheme()}`,
                 events: {
                     click: async (event) => {
                         L.DomEvent.stopPropagation(event);
@@ -204,7 +204,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const show = elements.some(el => el.classList.contains('d-none'))
                 elements.forEach(el =>  el.classList.toggle('d-none', !show))
                 layers.classList.toggle('d-none', !show)
-                getStyleBody().querySelector('[name="showLegend"]').checked = show
+                const checkbox = getStyleBody().querySelector('[name="showLegend"]')
+                if (checkbox) checkbox.checked = show
             },
         },
         toggleAttribution: {
@@ -217,7 +218,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
                 const show = elements.some(el => el.classList.contains('d-none'))
                 elements.forEach(el =>  el.classList.toggle('d-none', !show))
-                getStyleBody().querySelector('[name="showAttr"]').checked = show
+                const checkbox = getStyleBody().querySelector('[name="showAttr"]')
+                if (checkbox) checkbox.checked = show
             },
         },
         clear: {
@@ -244,7 +246,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             iconSpecs: 'bi-plus-lg',
             title: 'Add new file layers',
             innerText: 'Add layer',
-            className: 'ms-auto d-flex flex-nowrap gap-2',
+            className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
                     className: 'px-2'
