@@ -293,6 +293,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 };
                                 reader.readAsText(file)
                             }
+
+                            menuContainer.remove()
                         }
                     }
                 })
