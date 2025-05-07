@@ -268,7 +268,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                     for (file of files) {
                         const reader = new FileReader()
                         reader.onload = (e) => {
-                            console.log(e.target.result)
+                            if (file.name.endsWith('.geojson')) {
+                                try {
+                                    const geojson = JSON.parse(e.target.result)
+                                    console.log(geojson)
+                                } catch (error) {
+                                    console.log(error)
+                                }
+                            }
                         };
                         reader.readAsText(file)
                     }
