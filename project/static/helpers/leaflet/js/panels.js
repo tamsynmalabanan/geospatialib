@@ -1052,6 +1052,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             return Object.keys(newStyleParams).includes(i)
                         })) throw new Error('Invalid style params')
 
+                        console.log(newStyleParams)
+
                         style.styleParams = await updateSymbology({
                             ...newStyleParams,
                             fillPatternId: styleParams.fillPatternId
