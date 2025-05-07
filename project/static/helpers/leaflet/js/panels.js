@@ -248,13 +248,13 @@ const handleLeafletLegendPanel = (map, parent) => {
             innerText: 'Add layer',
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn-primary',
             btnClickHandler: (e) => {
-                const container = customCreateElement({
+                const parent = customCreateElement({
                     className: 'px-2'
                 })
 
                 const fileInput = customCreateElement({
                     tag: 'input',
-                    parent: container,
+                    parent,
                     className: 'form-control form-control-sm',
                     attrs: {
                         type: 'file',
@@ -262,6 +262,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                         accept: '.geojson, .json'
                     }
                 })
+
+                parent.appendChild(customCreateElement({className:'vr'}))
 
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
