@@ -30,8 +30,6 @@ const createButton = ({
     btnAttrs = {},
     name,
 } = {}) => {
-    console.log(className)
-
     const btn = document.createElement('button')
     if (id) btn.id = id
     btn.className = `btn ${className}`

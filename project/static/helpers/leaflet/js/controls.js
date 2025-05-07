@@ -29,7 +29,6 @@ const handleLeafletScaleBar = (map, include=true) => {
 
     const scaleBar = L.control.scale({ position: 'bottomright' }).addTo(map)
     map._scaleBar = scaleBar
-    console.log(scaleBar)
 }
 
 const handleLeafletSearchBar = (map, include=true) => {
