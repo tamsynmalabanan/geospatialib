@@ -226,14 +226,15 @@ const getLeafletGeoJSONData = async (layer, {
         abortBtns,
     }))
 
+    if (!data) return
+
     if (controller?.signal.aborted) return
     if (data instanceof Error) {
         layer.fire('dataerror')
         return
     }
     
-    console.log(data)
-    data = data ? turf.clone(data) : turf.featureCollection()
+    data = turf.clone(data)
     if (data.features?.length) {
         const filters = layer._styles.filters
         const hasActiveFilters = filter && Object.values(filters).some(i => {
