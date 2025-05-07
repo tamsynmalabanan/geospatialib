@@ -284,7 +284,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     className: 'form-control form-control-sm',
                     attrs: {
                         name: 'newLayerUrl',
-                        type: 'search',
+                        type: 'url',
                     },
                     events: {
                         click: (e) => {
