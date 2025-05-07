@@ -366,11 +366,13 @@ const handleLeafletLegendPanel = (map, parent) => {
         }
     }
 
+    let timeout
+    
     map.on('movestart zoomstart', () => {
+        clearTimeout(timeout)
         controller = resetController({controller, message: 'Map moved.'})
     })
     
-    let timeout
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
