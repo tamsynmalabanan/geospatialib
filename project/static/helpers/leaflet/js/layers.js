@@ -41,6 +41,8 @@ const getLeafletStyleParams = ({
     dashOffset,
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
+    console.log(hslaColor)
+
     strokeColor = strokeColor === true ? hslaColor.toString({l:hslaColor.l/2}) : strokeColor || 'transparent'
     if (!patternBgColor) patternBgColor = hslaColor.toString({h:(hslaColor.h + 180) % 360, l:hslaColor.l/2})
 

@@ -1030,9 +1030,7 @@ const handleLeafletStylePanel = (map, parent) => {
             title: 'Copy group symbology',
             events: {
                 click: (e) => {
-                    console.log(styleParams)
                     const text = JSON.stringify(styleParams)
-                    console.log(text)
                     navigator.clipboard.writeText(text)
                 }
             }
@@ -1055,14 +1053,11 @@ const handleLeafletStylePanel = (map, parent) => {
                             return Object.keys(newStyleParams).includes(i)
                         })) throw new Error('Invalid style params')
 
-                        console.log(newStyleParams)
 
                         style.styleParams = await updateSymbology({
                             ...newStyleParams,
                             fillPatternId: styleParams.fillPatternId
                         }, {refresh:style.active})
-
-                        console.log(style.styleParams)
 
                         parent.parentElement.insertBefore(getSymbologyForm(id), parent)
                         parent.remove()               
