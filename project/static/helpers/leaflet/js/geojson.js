@@ -188,82 +188,6 @@ const assignFeatureLayerTitle = (layer) => {
     return layer._title
 }
 
-const getGeoJSONLayerStyles = (layer) => {
-    const symbology = layer._styles.symbology
-    
-    const styles = {}
-    Array(...Object.keys(symbology.groups ?? {}), '').forEach(id => {
-        const origStyle = symbology.groups?.[id] || symbology.default
-        if (!origStyle.active) return
-
-        const style = styles[id] = {
-            ...origStyle,
-            types: {}
-        }
-
-        let typeNames
-
-        const styleTypeFilter = style.filters?.type
-        if (styleTypeFilter?.active) {
-            typeNames = [...new Set(Object.keys(styleTypeFilter.values).filter(i => {
-                return styleTypeFilter.values[i]
-            }))]
-        } else {
-            const layerTypeFilter = layer._styles.filters.type
-            if (layerTypeFilter.active) {
-                typeNames = [...new Set(Object.keys(layerTypeFilter.values).filter(i => {
-                    return layerTypeFilter.values[i]
-                }))]
-            }
-        }
-        
-        typeNames = typeNames?.map(i => i.toLowerCase().replace('multi', '')) || Array('point', 'linestring', 'polygon')
-
-        const styleParams = style.styleParams
-        typeNames.forEach(typeName => {
-            style.types[typeName] = {
-                count: 0,
-                html: leafletLayerStyleToHTML(
-                    getLeafletLayerStyle({
-                        properties: styleParams.iconType === 'property' ? {
-                            [styleParams.iconSpecs]:styleParams.iconSpecs
-                        } : {},
-                        geometry: {type:typeName}
-                    }, styleParams),
-                    typeName
-                )
-            }
-        })
-    })
-
-    layer.eachLayer(featureLayer => {
-        const feature = featureLayer.feature
-        const featureType = feature.geometry.type.toLowerCase()
-        const groupId = feature.properties.__groupId__ ?? ""
-        const style = styles[groupId] ?? styles['']
-        style.types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
-    })
-
-    Object.keys(styles).forEach(i => {
-        const style = styles[i]
-        const totalCount = Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)
-        i === '' && totalCount === 0 && Object.keys(styles).length > 1 ? delete styles[i] : style.totalCount = totalCount
-    })
-
-    const typesString = [...new Set(Object.values(styles).map(i => Object.keys(i.types).filter(j => i.types[j].count > 0).join(',')))]
-    if (typesString.length === 1) {
-        const types = typesString[0].split(',')
-        Object.keys(styles).forEach(i => {
-            const style = styles[i]
-            Object.keys(style.types).forEach(j => {
-                if (!types.includes(j) && !style.types[j].count) delete style.types[j]
-            })
-        })
-    }
-
-    return styles
-}
-
 const getLeafletGeoJSONData = async (layer, {
     geojson,
     controller, 
@@ -400,6 +324,84 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
     layer.fire('dataupdate')
     
     return layer
+}
+
+
+const getGeoJSONLayerStyles = (layer) => {
+    const symbology = layer._styles.symbology
+    
+    const styles = {}
+    Array(...Object.keys(symbology.groups ?? {}), '').forEach(id => {
+        const origStyle = symbology.groups?.[id] || symbology.default
+        if (!origStyle.active) return
+
+        const style = styles[id] = {
+            ...origStyle,
+            types: {}
+        }
+
+        let typeNames
+
+        const styleTypeFilter = style.filters?.type
+        if (styleTypeFilter?.active) {
+            typeNames = [...new Set(Object.keys(styleTypeFilter.values).filter(i => {
+                return styleTypeFilter.values[i]
+            }))]
+        } else {
+            const layerTypeFilter = layer._styles.filters.type
+            if (layerTypeFilter.active) {
+                typeNames = [...new Set(Object.keys(layerTypeFilter.values).filter(i => {
+                    return layerTypeFilter.values[i]
+                }))]
+            }
+        }
+        
+        typeNames = typeNames?.map(i => i.toLowerCase().replace('multi', '')) || Array('point', 'linestring', 'polygon')
+
+        const styleParams = style.styleParams
+        typeNames.forEach(typeName => {
+            style.types[typeName] = {
+                count: 0,
+                html: leafletLayerStyleToHTML(
+                    getLeafletLayerStyle({
+                        properties: styleParams.iconType === 'property' ? {
+                            [styleParams.iconSpecs]:styleParams.iconSpecs
+                        } : {},
+                        geometry: {type:typeName}
+                    }, styleParams),
+                    typeName
+                )
+            }
+        })
+    })
+
+    layer.eachLayer(featureLayer => {
+        const feature = featureLayer.feature
+        const featureType = feature.geometry.type.toLowerCase()
+        const groupId = feature.properties.__groupId__ ?? ""
+        const style = styles[groupId] ?? styles['']
+        style.types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
+    })
+
+    Object.keys(styles).forEach(i => {
+        const style = styles[i]
+        const totalCount = Object.values(style.types).map(type => type.count || 0).reduce((a, b) => a + b, 0)
+        i === '' && totalCount === 0 && Object.keys(styles).length > 1 ? delete styles[i] : style.totalCount = totalCount
+    })
+
+    const typesString = [...new Set(Object.values(styles).map(i => Object.keys(i.types).filter(j => i.types[j].count > 0).join(',')))]
+    console.log(typesString)
+    if (typesString.length === 1) {
+        const types = typesString[0].split(',')
+        Object.keys(styles).forEach(i => {
+            const style = styles[i]
+            Object.keys(style.types).forEach(j => {
+                if (!types.includes(j) && !style.types[j].count) delete style.types[j]
+            })
+        })
+    }
+
+    return styles
 }
 
 const createGeoJSONLayerLegend = (layer, parent) => {
