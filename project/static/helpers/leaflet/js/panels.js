@@ -242,7 +242,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         },
         newFile: {
             iconSpecs: 'bi-file-earmark-plus',
-            title: 'Add new file layer',
+            title: 'Add new file layers',
             btnClass: 'ms-auto',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
@@ -254,7 +254,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     parent: container,
                     className: 'form-control form-control-sm',
                     attrs: {
-                        type: 'file'
+                        type: 'file',
+                        multiple: true,
                     }
                 })
 
