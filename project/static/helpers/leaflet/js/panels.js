@@ -281,8 +281,18 @@ const handleLeafletLegendPanel = (map, parent) => {
                 createInputGroup({
                     parent: form,
                     prefixHTML: 'URL',
-                    fieldClass: 'form-control form-control-sm',
-                    suffixHTML: 'Clear',
+                    fieldClass: 'form-control-sm',
+                    suffixHTML: createIcon({
+                        className: 'bi bi-trash',
+                        events: {
+                            click: (e) => {
+                                L.DomEvent.stopPropagation(e)
+                                L.DomEvent.preventDefault(e)
+
+                                console.log(e)
+                            }
+                        }
+                    }),
                     fieldAttrs: {
                         type: 'url',
                         name: 'newLayerUrl',
