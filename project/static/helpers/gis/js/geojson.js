@@ -368,7 +368,7 @@ const fetchGeoJSON = async (dbKey, {
     if (mapForFetchGeoJSON.has(mapKey)) {
         const data = await mapForFetchGeoJSON.get(mapKey)
         if (controller?.signal.aborted) return
-        return data
+        return turf.clone(data)
     }
         
     const dataPromise = (async () => {
@@ -464,7 +464,7 @@ const fetchGeoJSON = async (dbKey, {
     mapForFetchGeoJSON.set(mapKey, dataPromise)
     const data = await dataPromise
     if (controller?.signal.aborted) return
-    return data
+    return turf.clone(data)
 }
 
 const downloadGeoJSON = (geojson, fileName) => {

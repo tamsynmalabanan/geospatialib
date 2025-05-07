@@ -243,7 +243,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         newFile: {
             iconSpecs: 'bi-file-earmark-plus',
             title: 'Add new file layers',
-            // btnClass: 'ms-auto',
+            btnClass: 'ms-auto',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
                     className: 'px-2'
@@ -262,7 +262,6 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
-                    console.log(files)
                     if (!files.length) return
                 
                     const group = map._ch.getLayerGroups().client
