@@ -320,6 +320,7 @@ const createAccordion = (id, tabData, {
 const createDropdownMenuLi = ({
     innerText, 
     innerHTML,
+    child,
     parent,
     btnCallback,
     divider = false,
@@ -333,12 +334,14 @@ const createDropdownMenuLi = ({
         element.className = 'dropdown-divider'
     } else if (innerHTML) {
         element = customCreateElement({innerHTML}).firstChild
-    } else {
+    } else if (child) {
+        element = child
+    } else if (innerText || btnCallback) {
         element = document.createElement('button')
         element.className = 'dropdown-item bg-transparent border-0 btn btn-sm fs-12'
         if (btnCallback) element.addEventListener('click', btnCallback)
             
-        const label = createSpan(innerText, {className:'pe-none'})
+        const label = createSpan(innerText ?? '', {className:'pe-none'})
         element.appendChild(label)
     }
     

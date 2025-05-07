@@ -241,7 +241,16 @@ const handleLeafletLegendPanel = (map, parent) => {
             className: 'vr m-2',
         },
         newFile: {
-            
+            iconSpecs: 'bi-file-earmark-plus',
+            title: 'Add new file layer',
+            btnClickHandler: (e) => {
+                const menuContainer = contextMenuHandler(e, {
+                    file: {
+                        child: customCreateElement({}),
+                    },            
+                })
+                menuContainer.classList.add('bg-danger')
+            }            
         },
         // newURL: {
 
