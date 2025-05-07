@@ -19,17 +19,14 @@ const enableMapInteractivity = (map) => {
 }
 
 const getLeafletMeterScale = (map) => {
-    console.log(map._scaleBar._mScale.innerText)
+    if (!map) return 
 
-    const scales = map.getContainer().querySelectorAll('.leaflet-control-scale-line')
-    for (const scale of scales) {
-        const text = scale.innerText
-        const lastChar = text?.charAt(text.length - 1)
-        if (lastChar === 'm') {
-            const value = parseInt(text)
-            return text.includes('km') ? (value * 1000) : value
-        }
+    const meterScale = map._scaleBar?._mScale?.innerText
+    if (meterScale) {
+        const value = parseInt(meterScale)
+        return meterScale.includes('km') ? (value * 1000) : value
     }
+
     return leafletZoomToMeter(map.getZoom())
 }
 
