@@ -2000,7 +2000,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         const groupCount = symbology.groupCount = form.elements.groupCount.value = diff === 0 ? 1 : symbology.groupCount || 5
                         const interval = diff === 0 ? 0 : diff/(groupCount-1)
                         const precision = symbology.groupPrecision = form.elements.groupPrecision.value = diff === 0 
-                        ? 1 : symbology.groupPrecision ?? Number(`1${'0'.repeat(Math.floor((String(interval).length)/2))}`)
+                        ? 1 : symbology.groupPrecision || Number(`1${'0'.repeat(Math.floor((String(interval).length)/2))}`)
 
                         const groups = []
                         let currentMin = min
