@@ -259,7 +259,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const fileInput = customCreateElement({
                     tag: 'input',
                     parent,
-                    className: 'form-control form-control-sm',
+                    className: 'form-control form-control-sm fs-12',
                     attrs: {
                         type: 'file',
                         multiple: true,
@@ -281,9 +281,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const urlField = createInputGroup({
                     parent: form,
                     prefixHTML: 'URL',
-                    fieldClass: 'form-control-sm',
+                    fieldClass: 'form-control-sm fs-12',
                     suffixHTML: createIcon({
-                        className: 'bi bi-trash',
+                        className: 'bi bi-trash fs-12',
                         peNone: false,
                         events: {
                             click: (e) => {
