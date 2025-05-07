@@ -260,8 +260,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                fileInput.addEventListener('input', (e) => {
-                    console.log(e)
+                fileInput.addEventListener('change', (e) => {
+                    const files = e.target.files
+                    console.log(files)
+                    // if (!file) return;
+                
+                    // const reader = new FileReader();
+                    // reader.onload = function(e) {
+                    //     document.getElementById("fileContent").textContent = e.target.result; // Display file content
+                    // };
+                    // reader.readAsText(file); // Read
                 })
 
                 const menuContainer = contextMenuHandler(e, {
