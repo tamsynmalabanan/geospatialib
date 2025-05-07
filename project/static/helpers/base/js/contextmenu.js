@@ -12,13 +12,13 @@ const contextMenuHandler = (e, menuItems, {
         text-bg-${getPreferredTheme()} 
         custom-context-menu
         dropdown-menu show
-        small shadow-sm
+        small shadow-sm fs-12
     `)
 
     if (title || dismissBtn) {
         const header = customCreateElement({
             parent: menuContainer,
-            className: 'd-flex flex-nowrap',
+            className: 'd-flex flex-nowrap px-3',
         })
 
         if (title) {
@@ -30,7 +30,8 @@ const contextMenuHandler = (e, menuItems, {
         if (dismissBtn) {
             const dismissIcon = createIcon({
                 parent: header,
-                className: 'bi bi-x',
+                peNone: false,
+                className: 'bi bi-x ms-auto',
             })
         }
     }
