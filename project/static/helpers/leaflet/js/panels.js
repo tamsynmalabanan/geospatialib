@@ -264,6 +264,36 @@ const handleLeafletLegendPanel = (map, parent) => {
                         type: 'file',
                         multiple: true,
                         accept: '.geojson, .json'
+                    },
+                    events: {
+                        change: (e) => {
+                            const files = e.target.files
+                            if (!files.length) return
+                        
+                            const group = map._ch.getLayerGroups().client
+        
+                            for (const file of files) {
+                                const reader = new FileReader()
+                                reader.onload = async (e) => {
+                                    const [title, type] = file.name.split('.', 2)
+                                    if (type.toLowerCase().endsWith('json')) {
+                                        try {
+                                            const geojson = JSON.parse(e.target.result)
+                                            const layer = await getLeafletGeoJSONLayer({
+                                                geojson,
+                                                group,
+                                                pane: createCustomPane(map),
+                                                title,
+                                            })
+                                            if (layer) group.addLayer(layer)
+                                        } catch (error) {
+                                            console.log(error)
+                                        }
+                                    }
+                                };
+                                reader.readAsText(file)
+                            }
+                        }
                     }
                 })
 
@@ -303,43 +333,31 @@ const handleLeafletLegendPanel = (map, parent) => {
                         name: 'newLayerUrl',
                     },
                     events: {
-                        click: (e) => {
-                            L.DomEvent.stopPropagation(e)
-                            L.DomEvent.preventDefault(e)
-                        },
                         change: (e) => {
                             console.log(e)
                         }
                     },
                 })
 
-                fileInput.addEventListener('change', (e) => {
-                    const files = e.target.files
-                    if (!files.length) return
-                
-                    const group = map._ch.getLayerGroups().client
-
-                    for (const file of files) {
-                        const reader = new FileReader()
-                        reader.onload = async (e) => {
-                            const [title, type] = file.name.split('.', 2)
-                            if (type.toLowerCase().endsWith('json')) {
-                                try {
-                                    const geojson = JSON.parse(e.target.result)
-                                    const layer = await getLeafletGeoJSONLayer({
-                                        geojson,
-                                        group,
-                                        pane: createCustomPane(map),
-                                        title,
-                                    })
-                                    if (layer) group.addLayer(layer)
-                                } catch (error) {
-                                    console.log(error)
-                                }
-                            }
-                        };
-                        reader.readAsText(file)
-                    }
+                const formatField = createInputGroup({
+                    parent: form,
+                    prefixHTML: createSpan('Format', {
+                        className: 'fs-12'
+                    }),
+                    fieldTag: 'select',
+                    fieldClass: 'form-select-sm fs-12',
+                    fieldAttrs: {
+                        type: 'url',
+                        name: 'newLayerUrl',
+                    },
+                    options: {
+                        'geojson': 'GeoJSON',
+                    },
+                    events: {
+                        change: (e) => {
+                            console.log(e)
+                        }
+                    },
                 })
 
                 const menuContainer = contextMenuHandler(e, {
