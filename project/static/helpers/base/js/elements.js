@@ -6,6 +6,7 @@ const customCreateElement = ({
     style = {},
     innerHTML = '',
     attrs = {},
+    events = {}
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
@@ -13,6 +14,7 @@ const customCreateElement = ({
     parent?.appendChild(element)
     Object.keys(style).forEach(k => element.style[k] = style[k])
     Object.keys(attrs).forEach(k => element.setAttribute(k, attrs[k]))
+    Object.keys(events).forEach(k => element.addEventListener(k, events[k]))
     element.innerHTML = innerHTML
     return element
 }

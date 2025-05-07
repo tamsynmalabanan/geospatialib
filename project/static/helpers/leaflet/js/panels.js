@@ -285,7 +285,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                     attrs: {
                         name: 'newLayerUrl',
                         type: 'search',
-                    }
+                    },
+                    events: {
+                        click: (e) => {
+                            L.DomEvent.stopPropagation(e)
+                            L.DomEvent.preventDefault(e)
+
+                            console.log(e)
+                        }
+                    },
                 })
 
                 fileInput.addEventListener('change', (e) => {
