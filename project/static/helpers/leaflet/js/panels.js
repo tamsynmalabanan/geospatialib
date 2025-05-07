@@ -284,6 +284,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     fieldClass: 'form-control-sm',
                     suffixHTML: createIcon({
                         className: 'bi bi-trash',
+                        peNone: false,
                         events: {
                             click: (e) => {
                                 L.DomEvent.stopPropagation(e)
