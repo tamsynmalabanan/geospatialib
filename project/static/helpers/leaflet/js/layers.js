@@ -572,12 +572,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 deleteFromGeoJSONDB(geojsonLayer._geojsonId)
             }
         },
-        download: !layerGeoJSON ? null : {
-            innerText: 'Download visible',
-            btnCallback: () => {
-                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
-            }
-        },
 
         divider5: {
             divider: true,
@@ -625,6 +619,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 }
 
                 if (newLayer) targetGroup.addLayer(newLayer)
+            }
+        },
+        download: !layerGeoJSON ? null : {
+            innerText: 'Download visible',
+            btnCallback: () => {
+                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
