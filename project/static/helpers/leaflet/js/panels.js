@@ -267,24 +267,26 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                parent.appendChild(customCreateElement({tag:'hr', className:'my-3'}))
+                customCreateElement({
+                    parent,
+                    tag:'hr', 
+                    className:'my-3'
+                })
                 
-                
-                // get new dataset form
                 const form = customCreateElement({
+                    parent,
                     tag: 'form',
                 })
 
-                form.appendChild(customCreateElement({
+                customCreateElement({
+                    parent: form,
                     tag: 'input',
                     className: 'form-control form-control-sm',
                     attrs: {
                         name: 'newLayerUrl',
                         type: 'search',
                     }
-                }))
-                
-                parent.appendChild(createSpan('test'))
+                })
 
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
