@@ -82,17 +82,23 @@ const manageHSLAColor = (color) => {
     if (!color || !color.startsWith('hsla')) return
     
     const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
+    
     const obj = {
         h: h || 1,
         s,
         l,
         a: a ?? 1,
     }
-    
-    obj.toString = (up=obj) => {
-        const {h,s,l,a} = up
+
+    obj.toString = ({
+        h=obj.h,
+        s=obj.s,
+        l=obj.l,
+        a=obj.a,
+    }={}) => {
         return `hsla(${h}, ${s}%, ${l}%, ${a})`
     }
+    
     return obj
 }
 
