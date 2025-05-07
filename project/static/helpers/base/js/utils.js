@@ -79,18 +79,17 @@ const parseNumberFromString = (string) => {
 }
 
 const manageHSLAColor = (color) => {
-    if (!color || !color.startsWith('hsl')) return
+    if (!color || !color.startsWith('hsla')) return
     
     const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
     const obj = {
-        h: h || 1,
+        h,
         s,
         l,
-        a: a ?? 1,
+        a,
     }
-    
     obj.toString = (up) => {
-        return `hsla(${up.h ?? this.h}, ${up.s ?? this.s}%, ${up.l ?? this.l}%, ${up.a ?? this.a})`
+        return `hsla(${up.h ?? obj.h}, ${up.s ?? obj.s}%, ${up.l ?? obj.l}%, ${up.a ?? obj.a})`
     }
     return obj
 }
