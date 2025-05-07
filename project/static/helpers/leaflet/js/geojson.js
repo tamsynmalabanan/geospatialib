@@ -294,7 +294,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    const data = geojson ?? (await fetchGeoJSON(geojsonId, {
+    let data = geojson ?? (await fetchGeoJSON(geojsonId, {
         queryGeom,
         controller,
         abortBtns,
@@ -306,6 +306,8 @@ const getLeafletGeoJSONData = async (layer, {
         layer.fire('dataerror')
         return
     }
+
+    data = turf.clone(data)
 
     const filters = layer._styles.filters
     const hasActiveFilters = filter && Object.values(filters).some(i => {
