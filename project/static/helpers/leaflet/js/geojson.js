@@ -234,6 +234,7 @@ const getLeafletGeoJSONData = async (layer, {
         return
     }
     
+    console.log(data)
     data = turf.clone(data)
     if (data.features?.length) {
         const filters = layer._styles.filters
