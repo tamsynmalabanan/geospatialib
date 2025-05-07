@@ -83,12 +83,12 @@ const manageHSLAColor = (color) => {
     
     const [h,s,l,a] = color.split(',').map(str => parseNumberFromString(str))
     const obj = {
-        h,
+        h: h || 1,
         s,
         l,
-        a,
+        a: a ?? 1,
     }
-    obj.toString = (up) => {
+    obj.toString = (up={}) => {
         return `hsla(${up.h ?? obj.h}, ${up.s ?? obj.s}%, ${up.l ?? obj.l}%, ${up.a ?? obj.a})`
     }
     return obj
