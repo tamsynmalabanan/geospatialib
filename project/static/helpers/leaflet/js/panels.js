@@ -413,7 +413,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             Promise.all(promises).then(() => {
                 map._previousBbox = newBbox
             })
-        }, 250)
+        }, 500)
     })
 
     map.on('layerremove', (event) => {
