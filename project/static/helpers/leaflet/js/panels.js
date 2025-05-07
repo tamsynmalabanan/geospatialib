@@ -1989,11 +1989,12 @@ const handleLeafletStylePanel = (map, parent) => {
                 
                 if (symbology.method === 'graduated') {
                     const property = symbology.groupBy[0]
-                    const validFeatures = geojson.features.filter(i => !isNaN(Number(i.properties[property])))
+                    const validFeatures = geojson.features.filter(i => !isNaN(parseFloat(i.properties[property])))
+                    console.log(validFeatures)
                     if (validFeatures.length) {
                         if (controllerId !== controller.id) return
                         
-                        const values = validFeatures.map(i => Number(i.properties[property]))
+                        const values = validFeatures.map(i => parseFloat(i.properties[property]))
                         const min = Math.min(...values)
                         const max = Math.max(...values)
                         const diff = max - min
