@@ -3672,7 +3672,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query OSM in map view',
             altShortcut: 'e',
             btnClickHandler: async (event, {abortBtns, controller} = {}) => {
-                const queryGeom = L.rectangle(map.getBounds()).toGeoJSON().geometry
+                const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry
 
                 const fetchers = {
                     'OpenStreetMap via Nominatim': 'nominatim;{}',
