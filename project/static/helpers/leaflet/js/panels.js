@@ -263,7 +263,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                parent.appendChild(customCreateElement({className:'hr m-2'}))
+                parent.appendChild(customCreateElement({tag:'hr', className:'my-3'}))
                 parent.appendChild(createSpan('test'))
 
                 // get new dataset form
