@@ -2014,6 +2014,8 @@ const handleLeafletStylePanel = (map, parent) => {
                             if (controllerId !== controller.id) break
 
                             const currentMax = Math.round((currentMin + interval)/precision) * precision
+
+                            console.log(currentMin, currentMax)
                             groups.push({
                                 min: currentMin,
                                 max: currentMax > max ? max : currentMax
