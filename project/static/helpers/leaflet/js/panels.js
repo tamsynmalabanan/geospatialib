@@ -88,7 +88,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
             customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
-                className:`btn-sm btn-${getPreferredTheme()} ${data.btnClass}`,
+                className:`btn-sm btn-${getPreferredTheme()} ${data.className}`,
                 events: {
                     click: async (event) => {
                         L.DomEvent.stopPropagation(event);
@@ -236,14 +236,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
-        divider2: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
-        newFile: {
-            iconSpecs: 'bi-file-earmark-plus',
+        // divider2: {
+        //     tag: 'div',
+        //     className: 'vr m-2',
+        // },
+        newLayer: {
+            iconSpecs: 'bi-plus-square-fill',
             title: 'Add new file layers',
-            btnClass: 'ms-auto',
+            innerText: 'Add layer',
+            className: 'ms-auto',
             btnClickHandler: (e) => {
                 const container = customCreateElement({
                     className: 'px-2'
@@ -296,9 +297,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
             }            
         },
-        // newURL: {
-
-        // },
     })
 
     const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
