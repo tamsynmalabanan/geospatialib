@@ -328,6 +328,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 urlField.value = ''
                                 const event = new Event("change", { bubbles: true })
                                 urlField.dispatchEvent(event)
+
+                                form.elements.newLayerFormat.disabled = true
+                                Tagify(form.elements.newLayerNames).setAttribute('disabled', true)
                             }
                         }
                     }),
@@ -353,7 +356,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         type: 'url',
                         name: 'newLayerFormat',
                     },
-                    disabled: true,
+                    // disabled: true,
                     options: {
                         '': 'Select format',
                         'geojson': 'GeoJSON',
@@ -371,7 +374,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     inputTag: 'textarea',
                     delimiters: null,
                     enabled: 0,
-                    disabled: true,
+                    // disabled: true,
                     dropdownClass:  `my-1 border-0`,
                     userInput: true,
                     scopeStyle: {
