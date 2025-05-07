@@ -330,7 +330,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 urlField.dispatchEvent(event)
 
                                 form.elements.newLayerFormat.disabled = true
-                                Tagify(form.elements.newLayerNames).setAttribute('disabled', true)
+                                Tagify(form.elements.newLayerNames).DOM.scope.setAttribute('disabled', true)
                             }
                         }
                     }),
