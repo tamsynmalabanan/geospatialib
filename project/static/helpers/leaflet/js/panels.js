@@ -2015,7 +2015,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                             const currentMax = Math.round((currentMin + interval)/precision) * precision
 
-                            console.log(currentMin, currentMax)
+                            console.log(currentMin, currentMax, min, max)
                             groups.push({
                                 min: currentMin,
                                 max: currentMax > max ? max : currentMax
