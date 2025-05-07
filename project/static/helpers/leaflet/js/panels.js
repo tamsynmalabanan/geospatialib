@@ -2777,7 +2777,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     parent,
                                     id: `${body.id}-categoryParams`,
                                     style: {width:'20%', height:'58px'},
-                                    className: `d-flex flex-column justify-content-center gap-1 w-25 ${symbology.method !== 'categorized' ? 'd-none' : ''}`
+                                    className: `d-flex flex-column justify-content-center gap-1 w-25 border rounded px-3 py-1 ${symbology.method !== 'categorized' ? 'd-none' : ''}`
                                 })
 
                                 div.appendChild(createFormCheck({
