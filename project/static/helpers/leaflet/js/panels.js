@@ -263,7 +263,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                parent.appendChild(customCreateElement({className:'hr'}))
+                parent.appendChild(customCreateElement({className:'hr m-2'}))
+                parent.appendChild(createSpan('test'))
+
+                // get new dataset form
 
                 fileInput.addEventListener('change', (e) => {
                     const files = e.target.files
