@@ -248,7 +248,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const container = customCreateElement({
                     className: 'px-2'
                 })
-                
+
                 const fileInput = customCreateElement({
                     tag: 'input',
                     parent: container,
@@ -256,6 +256,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                     attrs: {
                         type: 'file'
                     }
+                })
+
+                fileInput.addEventListener('input', (e) => {
+                    console.log(e)
                 })
 
                 const menuContainer = contextMenuHandler(e, {
