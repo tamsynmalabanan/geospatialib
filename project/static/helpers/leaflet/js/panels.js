@@ -381,10 +381,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                             const formatField = parent.elements.newLayerFormat
                             const namesField = Tagify(parent.elements.newLayerNames)
 
-                            let url
+                            let data
                             try {
-                                url = new URL(e.target.value).href
-                                const data = await htmxFetch(`/htmx/add_layers/`, {
+                                const url = new URL(e.target.value).href
+                                data = await htmxFetch(`/htmx/add_layers/`, {
                                     method: 'POST',
                                     data: {
                                         url,
@@ -393,16 +393,17 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 }).then(response => {
                                     return response.json()
                                 })
-                                console.log(data)
                                 // url value based on htmx validation response
                             } catch (error) {
                                 console.log(error)
                             } finally {
-                                const hasURL = url ? true : false
+                                const hasURL = data?.url
                                 formatField.disabled = !hasURL
+                                e.target.classList.toggle('is-invalid', hasURL === false)
                                 if (hasURL) {
-
+                                    
                                 } else {
+
                                     formatField.value = ''
                                 }
                                 
