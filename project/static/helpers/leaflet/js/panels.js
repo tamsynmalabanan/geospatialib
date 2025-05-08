@@ -262,7 +262,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     type: 'radio',
                     containerClass: 'flex-nowrap gap-2 fs-12',
                     options: {
-                        'File': {
+                        'Upload files': {
                             checked: true,
                             labelAttrs: {},
                             events: {
@@ -271,7 +271,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 }
                             }
                         },
-                        'URL': {
+                        'Connect to URL': {
                             checked: false,
                             labelAttrs: {},
                         },
