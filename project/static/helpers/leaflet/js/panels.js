@@ -400,21 +400,25 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 console.log(data)
                                 
                                 const url = data?.url
+                                const format = data?.format
+                                const names = data?.names
+
                                 e.target.classList.toggle('is-invalid', url === false)
                                 formatField.disabled = !url
                                 
-                                const format = data?.format
                                 formatField.classList.toggle('is-invalid', format === false)
-                                console.log(url, format, formatField.value)
                                 formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
-                                // formatField.value = url ? format || format === false ? formatField.value : '' : ''
-                                namesField.DOM.scope.setAttribute('disabled', !format)
+                                namesField.DOM.scope.setAttribute('disabled', !format || !names?.length)
                                 
-                                // if (hasFormat) {
-
-                                // } else {
-                                //     namesField.removeAllTags()
-                                // }
+                                if (url && format && names?.length) {
+                                    if (names.length === 1) {
+                                        tagify.addTags(names)
+                                        submitBtn.disabled = false
+                                    }
+                                } else {
+                                    namesField.removeAllTags()
+                                    submitBtn.disabled = true
+                                }
                             }
                         }
                     },
