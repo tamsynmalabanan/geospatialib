@@ -35,7 +35,7 @@ function getCSSRules() {
 
 const bootstrapIcons = {}
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(document.styleSheets.find(i => i.href.contains('bootstrap-icons')))
+    console.log(Array.from(document.styleSheets).find(i => i.href.contains('bootstrap-icons')))
 
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
