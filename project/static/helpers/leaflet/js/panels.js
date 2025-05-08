@@ -408,17 +408,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 ? namesField.DOM.scope.setAttribute('disabled', true) 
                                 : namesField.DOM.scope.removeAttribute('disabled')
                                 
+                                namesField.removeAllTags()
+                                submitBtn.disabled = true
                                 if (url && format && names?.length) {
                                     namesField.settings.whitelist = names
                                     if (names.length === 1) {
                                         namesField.addTags(names)
                                         submitBtn.disabled = false
-                                    } else {
-                                        submitBtn.disabled = true
                                     }
-                                } else {
-                                    namesField.removeAllTags()
-                                    submitBtn.disabled = true
                                 }
                             }
                         }
