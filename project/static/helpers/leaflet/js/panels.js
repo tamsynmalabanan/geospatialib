@@ -442,7 +442,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const sumbit = createButton({
                     parent,
-                    className: 'btn-sm',
+                    className: 'btn-sm fs-12 d-flex flex-nowrap- gap-2',
                     iconSpecs: 'bi-stack',
                     innerText: 'Add layers',
                     btnAttrs: {
