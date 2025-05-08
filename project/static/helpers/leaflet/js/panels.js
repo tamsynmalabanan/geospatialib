@@ -397,8 +397,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                             } catch (error) {
                                 data = {url:false}
                             } finally {
-                                console.log(data)
-
                                 const {url, format, names} = data
 
                                 e.target.classList.toggle('is-invalid', url === false)
@@ -412,11 +410,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 
                                 if (url && format && names?.length) {
                                     namesField.settings.whitelist = names
-                                    // if (names.length === 1) {
-                                    //     namesField.addTags(names)
-                                    //     submitBtn.disabled = false
-                                    // } else {
-                                    // }
+                                    if (names.length === 1) {
+                                        namesField.addTags(names)
+                                        submitBtn.disabled = false
+                                    } else {
+                                        submitBtn.disabled = true
+                                    }
                                 } else {
                                     namesField.removeAllTags()
                                     submitBtn.disabled = true
@@ -463,36 +462,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                     },
                     name:  `newLayerNames`,
                     placeholder: 'Select layer names',
-                    // currentValue: JSON.stringify((filter.values || []).map(i => {return {value:i}})),
-                    // events: {
-                    //     focus: async (e) => {
-                    //         const tagify = Tagify(form.elements[`newLayerNames`])
-                            
-                    //         const options = []
-            
-                            
-            
-                    //         const optionsSet = options.length ? new Set(options) : []
-                    //         const sortedOptions = [...optionsSet].sort()
-            
-                    //         tagify.settings.whitelist = sortedOptions
-                    //     },
-                    // },
-                    // callbacks: {
-                    //     ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
-                    //         const tagify = e.detail.tagify
-                    //         const values = tagify.value.map(i => i.value)
-                
-                    //         if (values.every(i => filter.values.includes(i))
-                    //             && filter.values.every(i => values.includes(i))
-                    //         ) return
-                
-                    //         filter.values = values
-                    //         if (filter.active && filter.property) updateLeafletGeoJSONLayer(layer, {
-                    //             controller,
-                    //         })
-                    //     }])))() //, 'add', 'remove', 'edit'
-                    // }
+                    callbacks: {
+                        ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                            const tagify = e.detail.tagify
+                            const values = tagify.value.map(i => i.value)
+                            submitBtn.disabled = !values.length
+                        }])))()
+                    }
                 })
 
                 const submitBtn = createButton({
