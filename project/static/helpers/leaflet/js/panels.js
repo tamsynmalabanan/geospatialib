@@ -386,7 +386,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 console.log(error)
                             } finally {
                                 const hasURL = url ? true : false
-                                const formatField = form.elements.newLayerFormat
+                                const formatField = parent.elements.newLayerFormat
                                 formatField.disabled = !hasURL
                                 formatField.value = '' // assign format
                                 
