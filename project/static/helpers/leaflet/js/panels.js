@@ -406,7 +406,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const format = data?.format
                                 formatField.classList.toggle('is-invalid', format === false)
                                 console.log(url, format, formatField.value)
-                                formatField.value = url ? 'geojson' : ''
+                                formatField.value = url ? format : ''
                                 // formatField.value = url ? format || format === false ? formatField.value : '' : ''
                                 namesField.DOM.scope.setAttribute('disabled', !format)
                                 
