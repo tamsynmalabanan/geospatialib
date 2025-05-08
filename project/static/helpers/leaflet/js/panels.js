@@ -285,7 +285,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     reader.readAsText(file)
                                 }
                             } else {
-
+                                console.log(e.target.elements)
                             }
                             
                             menuContainer.remove()
