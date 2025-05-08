@@ -6,18 +6,25 @@ import validators
 import json
 import requests
 
-from main.models import SpatialRefSys
+from main.models import SpatialRefSys, URL
 
 @require_http_methods(['POST'])
 def add_layers(request):
     data = json.loads(request.body.decode('utf-8'))
+    
     url = data.get('url')
+    url = url if validators.url(url) else False
+    
     format = data.get('format')
 
 
 
     # return format and layer names
-    return JsonResponse(data)
+    return JsonResponse({
+        'url': url,
+        'format': format,
+        'names': [],
+    })
 
 
 @require_http_methods(['POST', 'GET'])
