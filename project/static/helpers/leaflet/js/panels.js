@@ -267,6 +267,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
+                                    console.log(e)
                                     const checked = e.target.checked
                                     fileInput.classList.toggle('d-none', checked)
                                     urlContainer.classList.toggle('d-none', !checked)
@@ -278,6 +279,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
+                                    console.log(e)
                                     const checked = e.target.checked
                                     fileInput.classList.toggle('d-none', !checked)
                                     urlContainer.classList.toggle('d-none', checked)
