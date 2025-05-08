@@ -38,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const sheet of document.styleSheets) {
         if (!sheet.href?.includes('bootstrap-icons')) continue
 
-        console.log(sheet)
+        for (const rule of sheet.cssRules) {
+            console.log(rule.cssText)
+        }
+
         break
     }
 
