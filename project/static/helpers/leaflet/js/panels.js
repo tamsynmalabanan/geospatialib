@@ -391,7 +391,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 formatField.value = '' // assign format
                                 
                                 const hasFormat = hasURL && formatField.value
-                                const namesField = Tagify(form.elements.newLayerNames)
+                                const namesField = Tagify(parent.elements.newLayerNames)
                                 namesField.DOM.scope.setAttribute('disabled', !hasFormat)
                                 if (hasFormat) {
 
