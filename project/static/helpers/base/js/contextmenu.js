@@ -25,6 +25,7 @@ const contextMenuHandler = (e, menuItems, {
         if (title) {
             const titleSpan = createSpan(title, {
                 parent: header,
+                className: 'fw-medium'
             })
         }
 
