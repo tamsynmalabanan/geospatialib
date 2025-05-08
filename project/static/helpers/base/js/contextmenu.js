@@ -12,13 +12,14 @@ const contextMenuHandler = (e, menuItems, {
         text-bg-${getPreferredTheme()} 
         custom-context-menu
         dropdown-menu show
-        small shadow-sm fs-14
+        small shadow-sm
     `)
 
     if (title || dismissBtn) {
         const header = customCreateElement({
             parent: menuContainer,
             className: 'd-flex flex-nowrap px-3 mb-2',
+            style: {fontSize:'14px'}
         })
 
         if (title) {
