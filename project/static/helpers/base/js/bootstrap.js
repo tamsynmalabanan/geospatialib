@@ -22,30 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })
 
-function getCSSRules() {
-    const styleSheets = document.styleSheets;
-    for (let sheet of styleSheets) {
-        if (sheet.href && sheet.href.includes("bootstrap-icons")) { // Filter the desired stylesheet
-            for (let rule of sheet.cssRules) {
-                console.log(rule.cssText); // Logs individual CSS rules
-            }
-        }
-    }
-}
-
 const bootstrapIcons = {}
 document.addEventListener('DOMContentLoaded', () => {
-    for (const sheet of document.styleSheets) {
-        if (!sheet.href?.includes('bootstrap-icons')) continue
-
-        console.log(sheet)
-        // for (const rule of sheet.cssRules) {
-        //     console.log(rule.cssText)
-        // }
-
-        break
-    }
-
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
         if (!response.ok) throw new Error('Response not ok.')
