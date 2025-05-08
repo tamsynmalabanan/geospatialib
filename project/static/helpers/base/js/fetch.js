@@ -1,7 +1,7 @@
 const htmxFetch = async (url, {
     method='GET',
     data,
-}) => {
+} = {}) => {
     return fetch(url, {
         method,
         headers: {
