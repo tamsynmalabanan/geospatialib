@@ -36,6 +36,7 @@ function getCSSRules() {
 const bootstrapIcons = {}
 document.addEventListener('DOMContentLoaded', () => {
     for (const sheet in document.styleSheets) {
+        console.log(sheet.href?.includes('bootstrap-icons'))
         if (!sheet.href?.includes('bootstrap-icons')) continue
 
         console.log(sheet)
