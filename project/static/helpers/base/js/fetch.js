@@ -1,3 +1,22 @@
+const htmxFetch = async (url, {
+    method='GET',
+    data,
+}) => {
+    return fetch(url, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'HX-Request': 'true',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        return response
+    })
+    .catch(error => console.error('Error:', error))    
+}
+
 const fetchCORSProxy = async (url, fetchParams={}) => {
     const params = {
         method: 'GET',

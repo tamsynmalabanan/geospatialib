@@ -246,7 +246,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             className: 'me-5',
         },
         newLayer: {
-            iconSpecs: 'bi-plus-lg',
+            iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
             toolHandler: false,
@@ -377,10 +377,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                         name: 'newLayerUrl',
                     },
                     events: {
-                        change: (e) => {
+                        change: async (e) => {
                             let url
                             try {
                                 url = new URL(e.target.value).href
+                                const response = await htmxFetch(`/htmx/add_layers/`)
+                                console.log(response)
                                 // url value based on htmx validation response
                             } catch (error) {
                                 console.log(error)
