@@ -285,7 +285,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     reader.readAsText(file)
                                 }
                             } else {
-                                
+
                             }
                             
                             menuContainer.remove()
@@ -369,11 +369,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 urlField.value = ''
                                 const event = new Event("change", { bubbles: true })
                                 urlField.dispatchEvent(event)
-
-                                form.elements.newLayerFormat.disabled = true
-                                const namesField = Tagify(form.elements.newLayerNames)
-                                namesField.DOM.scope.setAttribute('disabled', true)
-                                namesField.removeAllTags()
                             }
                         }
                     }),
@@ -383,7 +378,27 @@ const handleLeafletLegendPanel = (map, parent) => {
                     },
                     events: {
                         change: (e) => {
-                            console.log(e)
+                            let url
+                            try {
+                                url = new URL(e.target.value).href
+                                // url value based on htmx validation response
+                            } catch (error) {
+                                console.log(error)
+                            } finally {
+                                const hasURL = url ? true : false
+                                const formatField = form.elements.newLayerFormat
+                                formatField.disabled = !hasURL
+                                formatField.value = '' // assign format
+                                
+                                const hasFormat = hasURL && formatField.value
+                                const namesField = Tagify(form.elements.newLayerNames)
+                                namesField.DOM.scope.setAttribute('disabled', !hasFormat)
+                                if (hasFormat) {
+
+                                } else {
+                                    namesField.removeAllTags()
+                                }
+                            }
                         }
                     },
                 })
