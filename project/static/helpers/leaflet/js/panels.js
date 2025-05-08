@@ -391,7 +391,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     }   
                                 }).then(response => {
                                     return response.json()
-                                })
+                                }).catch (error) {
+                                    throw error
+                                }
                             } catch (error) {
                                 console.log(error)
                             } finally {
