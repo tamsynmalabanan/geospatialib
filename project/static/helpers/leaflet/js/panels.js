@@ -269,8 +269,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 click: (e) => {
                                     console.log(e)
                                     const checked = e.target.checked
-                                    fileInput.classList.toggle('d-none', checked)
-                                    urlContainer.classList.toggle('d-none', !checked)
+                                    fileInput.classList.toggle('d-none', !checked)
+                                    urlContainer.classList.toggle('d-none', checked)
                                 }
                             }
                         },
@@ -281,8 +281,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 click: (e) => {
                                     console.log(e)
                                     const checked = e.target.checked
-                                    fileInput.classList.toggle('d-none', !checked)
-                                    urlContainer.classList.toggle('d-none', checked)
+                                    fileInput.classList.toggle('d-none', checked)
+                                    urlContainer.classList.toggle('d-none', !checked)
                                 }
                             }
                         },
