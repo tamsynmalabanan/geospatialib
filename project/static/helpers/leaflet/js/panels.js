@@ -409,7 +409,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 formatField.classList.toggle('is-invalid', format === false)
                                 formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
                                 console.log(format, names.length)
-                                namesField.DOM.scope.setAttribute('disabled', !(format && names?.length))
+
+                                if (!format || !names?.length) {
+                                    namesField.DOM.scope.setAttribute('disabled', true)
+                                } else {
+                                    namesField.DOM.scope.removeAttribute('disabled')
+                                }
                                 
                                 if (url && format && names?.length) {
                                     if (names.length === 1) {
@@ -450,7 +455,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const namesField = createTagifyField({
                     parent: urlContainer,
-                    inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+                    inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12`,
                     inputTag: 'textarea',
                     delimiters: null,
                     enabled: 0,
