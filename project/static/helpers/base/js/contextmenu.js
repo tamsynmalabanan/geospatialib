@@ -12,7 +12,7 @@ const contextMenuHandler = (e, menuItems, {
         text-bg-${getPreferredTheme()} 
         custom-context-menu
         dropdown-menu show
-        small shadow-sm fs-12
+        small shadow-sm fs-14
     `)
 
     if (title || dismissBtn) {
