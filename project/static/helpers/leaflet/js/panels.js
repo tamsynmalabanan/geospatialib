@@ -254,7 +254,15 @@ const handleLeafletLegendPanel = (map, parent) => {
             btnClickHandler: (e) => {
                 const parent = customCreateElement({
                     tag: 'form',
-                    className: 'py-2 px-3 d-flex flex-column gap-2'
+                    className: 'py-2 px-3 d-flex flex-column gap-2',
+                    events: {
+                        submit: (e) => {
+                            L.DomEvent.stopPropagation(e)
+                            L.DomEvent.preventDefault(e)
+                        
+                            console.log(e)
+                        }
+                    }
                 })
 
                 const sourceRadios = createCheckboxOptions({
