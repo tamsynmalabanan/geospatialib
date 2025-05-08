@@ -260,7 +260,32 @@ const handleLeafletLegendPanel = (map, parent) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
                         
-                            console.log(e)
+                            console.log(e.target.elements['newLayerSource'])
+
+                            // if (e.target.elements['newLayerSource'].value === 'Upload files') {
+                            //     const group = map._ch.getLayerGroups().client
+                            //     for (const file of files) {
+                            //         const reader = new FileReader()
+                            //         reader.onload = async (e) => {
+                            //             const [title, type] = file.name.split('.', 2)
+                            //             if (type.toLowerCase().endsWith('json')) {
+                            //                 try {
+                            //                     const geojson = JSON.parse(e.target.result)
+                            //                     const layer = await getLeafletGeoJSONLayer({
+                            //                         geojson,
+                            //                         group,
+                            //                         pane: createCustomPane(map),
+                            //                         title,
+                            //                     })
+                            //                     if (layer) group.addLayer(layer)
+                            //                 } catch (error) {
+                            //                     console.log(error)
+                            //                 }
+                            //             }
+                            //         };
+                            //         reader.readAsText(file)
+                            //     }
+                            // }
                             
                             menuContainer.remove()
                         }
@@ -317,29 +342,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         change: (e) => {
                             const files = e.target.files
                             submitBtn.disabled = !files?.length
-                        
-                            // const group = map._ch.getLayerGroups().client
-                            // for (const file of files) {
-                            //     const reader = new FileReader()
-                            //     reader.onload = async (e) => {
-                            //         const [title, type] = file.name.split('.', 2)
-                            //         if (type.toLowerCase().endsWith('json')) {
-                            //             try {
-                            //                 const geojson = JSON.parse(e.target.result)
-                            //                 const layer = await getLeafletGeoJSONLayer({
-                            //                     geojson,
-                            //                     group,
-                            //                     pane: createCustomPane(map),
-                            //                     title,
-                            //                 })
-                            //                 if (layer) group.addLayer(layer)
-                            //             } catch (error) {
-                            //                 console.log(error)
-                            //             }
-                            //         }
-                            //     };
-                            //     reader.readAsText(file)
-                            // }
                         }
                     }
                 })
