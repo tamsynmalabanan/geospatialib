@@ -269,6 +269,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const sourceRadios = createCheckboxOptions({
                     parent,
+                    name: 'newLayerSource',
                     type: 'radio',
                     containerClass: 'flex-nowrap gap-2 fs-12',
                     options: {
@@ -278,7 +279,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                             events: {
                                 click: (e) => {
                                     const checked = e.target.checked
+
                                     fileInput.classList.toggle('d-none', !checked)
+                                    submitBtn.disabled = !fileInput.files?.length
+                                    
                                     urlContainer.classList.toggle('d-none', checked)
                                 }
                             }
@@ -289,8 +293,11 @@ const handleLeafletLegendPanel = (map, parent) => {
                             events: {
                                 click: (e) => {
                                     const checked = e.target.checked
+                                    
                                     fileInput.classList.toggle('d-none', checked)
+                                    
                                     urlContainer.classList.toggle('d-none', !checked)
+                                    console.log(Tagify(form.elements['newLayerNames']))
                                 }
                             }
                         },
