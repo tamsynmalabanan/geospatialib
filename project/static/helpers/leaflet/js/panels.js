@@ -384,21 +384,27 @@ const handleLeafletLegendPanel = (map, parent) => {
                             let url
                             try {
                                 url = new URL(e.target.value).href
-                                const response = await htmxFetch(`/htmx/add_layers/`, {
+                                const data = await htmxFetch(`/htmx/add_layers/`, {
                                     method: 'POST',
                                     data: {
                                         url,
                                         format: formatField.value
                                     }   
+                                }).then(response => {
+                                    return response.json()
                                 })
-                                console.log(response.text())
+                                console.log(data)
                                 // url value based on htmx validation response
                             } catch (error) {
                                 console.log(error)
                             } finally {
                                 const hasURL = url ? true : false
                                 formatField.disabled = !hasURL
-                                formatField.value = '' // assign format
+                                if (hasURL) {
+
+                                } else {
+                                    formatField.value = ''
+                                }
                                 
                                 const hasFormat = hasURL && formatField.value
                                 namesField.DOM.scope.setAttribute('disabled', !hasFormat)

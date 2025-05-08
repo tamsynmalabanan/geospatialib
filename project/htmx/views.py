@@ -91,7 +91,7 @@ def add_layers(request):
     #     'dataset':dataset_instance,
     # })
 
-    return HttpResponse('test')
+    return JsonResponse({'value': 'test'})
 
 
 @require_http_methods(['POST', 'GET'])

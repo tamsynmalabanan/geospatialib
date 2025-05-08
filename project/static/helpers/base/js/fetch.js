@@ -14,7 +14,7 @@ const htmxFetch = async (url, {
         });
 
         if (response.ok && response.status >= 200 && response.status <= 300) {
-            return await response.json()
+            return response
         }
 
         throw new Error('Response not ok.')
