@@ -254,7 +254,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             btnClickHandler: (e) => {
                 const parent = customCreateElement({
                     tag: 'form',
-                    className: 'py-2 px-3 d-flex flex-column gap-2'
+                    className: 'py-2 px-3'
                 })
 
                 const sourceRadios = createCheckboxOptions({
@@ -334,7 +334,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const urlContainer = customCreateElement({
                     parent,
-                    className: 'd-none'
+                    className: 'd-none d-flex flex-column gap-2'
                 })
 
                 const urlField = createInputGroup({
