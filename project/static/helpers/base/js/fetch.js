@@ -1,25 +1,29 @@
 const htmxFetch = async (url, {
-    method='GET',
-    data,
+    method = 'GET',
+    data
 } = {}) => {
-    return await fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            'HX-Request': 'true',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'HX-Request': 'true',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        });
+
         if (response.ok && response.status >= 200 && response.status <= 300) {
-            return response
+            return await response.json()
         }
 
         throw new Error('Response not ok.')
-    })
-    .catch(error => console.error('Error:', error))    
-}
+    } catch (error) {
+        console.error('Error:', error)
+        return null
+    }
+};
+
 
 const fetchCORSProxy = async (url, fetchParams={}) => {
     const params = {
