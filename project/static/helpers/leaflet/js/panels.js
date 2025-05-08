@@ -398,29 +398,25 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 data = {url:false}
                             } finally {
                                 console.log(data)
-                                
-                                const url = data?.url
-                                const format = data?.format
-                                const names = data?.names
+
+                                const {url, format, names} = data
 
                                 e.target.classList.toggle('is-invalid', url === false)
                                 formatField.disabled = !url
                                 
                                 formatField.classList.toggle('is-invalid', format === false)
                                 formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
-                                console.log(format, names.length)
-
-                                if (!format || !names?.length) {
-                                    namesField.DOM.scope.setAttribute('disabled', true)
-                                } else {
-                                    namesField.DOM.scope.removeAttribute('disabled')
-                                }
+                                !(format && names?.length) 
+                                ? namesField.DOM.scope.setAttribute('disabled', true) 
+                                : namesField.DOM.scope.removeAttribute('disabled')
                                 
                                 if (url && format && names?.length) {
-                                    if (names.length === 1) {
-                                        namesField.addTags(names)
-                                        submitBtn.disabled = false
-                                    }
+                                    namesField.settings.whitelist = names
+                                    // if (names.length === 1) {
+                                    //     namesField.addTags(names)
+                                    //     submitBtn.disabled = false
+                                    // } else {
+                                    // }
                                 } else {
                                     namesField.removeAllTags()
                                     submitBtn.disabled = true
