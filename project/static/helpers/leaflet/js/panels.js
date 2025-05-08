@@ -260,11 +260,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const sourceRadios = createCheckboxOptions({
                     parent,
                     type: 'radio',
-                    containerClass: 'flex-nowrap gap-2',
+                    containerClass: 'flex-nowrap gap-2 fs-12',
                     options: {
                         'File': {
                             checked: true,
                             labelAttrs: {},
+                            events: {
+                                click: (e) => {
+                                    
+                                }
+                            }
                         },
                         'URL': {
                             checked: false,
