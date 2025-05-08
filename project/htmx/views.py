@@ -2,6 +2,7 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.http import JsonResponse
 
+import validators
 import json
 import requests
 
@@ -10,6 +11,10 @@ from main.models import SpatialRefSys
 @require_http_methods(['POST'])
 def add_layers(request):
     data = json.loads(request.body.decode('utf-8'))
+    url = data.get('url')
+    format = data.get('format')
+
+
 
     # return format and layer names
     return JsonResponse(data)
