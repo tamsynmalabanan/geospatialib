@@ -412,7 +412,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 
                                 if (url && format && names?.length) {
                                     if (names.length === 1) {
-                                        tagify.addTags(names)
+                                        namesField.addTags(names)
                                         submitBtn.disabled = false
                                     }
                                 } else {
