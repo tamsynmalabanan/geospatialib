@@ -33,4 +33,8 @@
     --tag-text-color: white;
     --tag-text-color--edit: white;
     --tag-remove-btn-color: white;
+
+    .tagify__input {
+        min-height: 24px;
+    }
 }
