@@ -2,7 +2,7 @@ const htmxFetch = async (url, {
     method='GET',
     data,
 } = {}) => {
-    return fetch(url, {
+    return await fetch(url, {
         method,
         headers: {
             'Content-Type': 'application/json',
