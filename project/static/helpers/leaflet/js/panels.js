@@ -346,7 +346,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const urlContainer = customCreateElement({
                     parent,
-                    className: 'd-none d-flex flex-column gap-3'
+                    className: 'd-none d-flex flex-column gap-2'
                 })
 
                 const urlField = createInputGroup({
