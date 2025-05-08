@@ -267,13 +267,22 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
-                                    
+                                    const checked = e.target.checked
+                                    fileInput.classList.toggle('d-none', checked)
+                                    urlContainer.classList.toggle('d-none', !checked)
                                 }
                             }
                         },
                         'Connect to URL': {
                             checked: false,
                             labelAttrs: {},
+                            events: {
+                                click: (e) => {
+                                    const checked = e.target.checked
+                                    fileInput.classList.toggle('d-none', !checked)
+                                    urlContainer.classList.toggle('d-none', checked)
+                                }
+                            }
                         },
                     },
                 })
@@ -321,8 +330,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                     // }
                 })
 
+                const urlContainer = customCreateElement({
+                    className: 'd-none'
+                })
+
                 const urlField = createInputGroup({
-                    parent,
+                    parent: urlContainer,
                     prefixHTML: createSpan('URL', {
                         className: 'fs-12'
                     }),
@@ -358,7 +371,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const formatField = createInputGroup({
-                    parent,
+                    parent: urlContainer,
                     prefixHTML: createSpan('Format', {
                         className: 'fs-12'
                     }),
@@ -381,7 +394,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const namesField = createTagifyField({
-                    parent,
+                    parent: urlContainer,
                     inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
                     inputTag: 'textarea',
                     delimiters: null,
@@ -424,7 +437,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     //         })
                     //     }])))() //, 'add', 'remove', 'edit'
                     // }
-                })        
+                })     
 
                 const menuContainer = contextMenuHandler(e, {
                     file: {
