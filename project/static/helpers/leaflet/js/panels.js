@@ -253,66 +253,55 @@ const handleLeafletLegendPanel = (map, parent) => {
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
                 const parent = customCreateElement({
-                    className: 'py-2 px-3'
+                    tag: 'form',
+                    className: 'py-2 px-3 d-flex flex-column gap-2'
                 })
 
                 const fileInput = customCreateElement({
-                    tag: 'input',
                     parent,
+                    tag: 'input',
                     className: 'form-control form-control-sm fs-12',
                     attrs: {
                         type: 'file',
                         multiple: true,
                         accept: '.geojson, .json'
                     },
-                    events: {
-                        change: (e) => {
-                            const files = e.target.files
-                            if (!files.length) return
+                    // events: {
+                    //     change: (e) => {
+                    //         const files = e.target.files
+                    //         if (!files.length) return
                         
-                            const group = map._ch.getLayerGroups().client
+                    //         const group = map._ch.getLayerGroups().client
         
-                            for (const file of files) {
-                                const reader = new FileReader()
-                                reader.onload = async (e) => {
-                                    const [title, type] = file.name.split('.', 2)
-                                    if (type.toLowerCase().endsWith('json')) {
-                                        try {
-                                            const geojson = JSON.parse(e.target.result)
-                                            const layer = await getLeafletGeoJSONLayer({
-                                                geojson,
-                                                group,
-                                                pane: createCustomPane(map),
-                                                title,
-                                            })
-                                            if (layer) group.addLayer(layer)
-                                        } catch (error) {
-                                            console.log(error)
-                                        }
-                                    }
-                                };
-                                reader.readAsText(file)
-                            }
+                    //         for (const file of files) {
+                    //             const reader = new FileReader()
+                    //             reader.onload = async (e) => {
+                    //                 const [title, type] = file.name.split('.', 2)
+                    //                 if (type.toLowerCase().endsWith('json')) {
+                    //                     try {
+                    //                         const geojson = JSON.parse(e.target.result)
+                    //                         const layer = await getLeafletGeoJSONLayer({
+                    //                             geojson,
+                    //                             group,
+                    //                             pane: createCustomPane(map),
+                    //                             title,
+                    //                         })
+                    //                         if (layer) group.addLayer(layer)
+                    //                     } catch (error) {
+                    //                         console.log(error)
+                    //                     }
+                    //                 }
+                    //             };
+                    //             reader.readAsText(file)
+                    //         }
 
-                            menuContainer.remove()
-                        }
-                    }
-                })
-
-                customCreateElement({
-                    parent,
-                    tag:'hr', 
-                    className:'my-3'
-                })
-                
-                const form = customCreateElement({
-                    parent,
-                    tag: 'form',
-                    className: 'd-flex flex-column gap-2'
+                    //         menuContainer.remove()
+                    //     }
+                    // }
                 })
 
                 const urlField = createInputGroup({
-                    parent: form,
+                    parent,
                     prefixHTML: createSpan('URL', {
                         className: 'fs-12'
                     }),
@@ -348,7 +337,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const formatField = createInputGroup({
-                    parent: form,
+                    parent,
                     prefixHTML: createSpan('Format', {
                         className: 'fs-12'
                     }),
@@ -371,7 +360,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const namesField = createTagifyField({
-                    parent: form,
+                    parent,
                     inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
                     inputTag: 'textarea',
                     delimiters: null,
