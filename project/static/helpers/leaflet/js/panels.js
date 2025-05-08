@@ -306,38 +306,35 @@ const handleLeafletLegendPanel = (map, parent) => {
                         multiple: true,
                         accept: '.geojson, .json'
                     },
-                    // events: {
-                    //     change: (e) => {
-                    //         const files = e.target.files
-                    //         if (!files.length) return
+                    events: {
+                        change: (e) => {
+                            const files = e.target.files
+                            submitBtn.disabled = !files?.length
                         
-                    //         const group = map._ch.getLayerGroups().client
-        
-                    //         for (const file of files) {
-                    //             const reader = new FileReader()
-                    //             reader.onload = async (e) => {
-                    //                 const [title, type] = file.name.split('.', 2)
-                    //                 if (type.toLowerCase().endsWith('json')) {
-                    //                     try {
-                    //                         const geojson = JSON.parse(e.target.result)
-                    //                         const layer = await getLeafletGeoJSONLayer({
-                    //                             geojson,
-                    //                             group,
-                    //                             pane: createCustomPane(map),
-                    //                             title,
-                    //                         })
-                    //                         if (layer) group.addLayer(layer)
-                    //                     } catch (error) {
-                    //                         console.log(error)
-                    //                     }
-                    //                 }
-                    //             };
-                    //             reader.readAsText(file)
-                    //         }
-
-                    //         menuContainer.remove()
-                    //     }
-                    // }
+                            // const group = map._ch.getLayerGroups().client
+                            // for (const file of files) {
+                            //     const reader = new FileReader()
+                            //     reader.onload = async (e) => {
+                            //         const [title, type] = file.name.split('.', 2)
+                            //         if (type.toLowerCase().endsWith('json')) {
+                            //             try {
+                            //                 const geojson = JSON.parse(e.target.result)
+                            //                 const layer = await getLeafletGeoJSONLayer({
+                            //                     geojson,
+                            //                     group,
+                            //                     pane: createCustomPane(map),
+                            //                     title,
+                            //                 })
+                            //                 if (layer) group.addLayer(layer)
+                            //             } catch (error) {
+                            //                 console.log(error)
+                            //             }
+                            //         }
+                            //     };
+                            //     reader.readAsText(file)
+                            // }
+                        }
+                    }
                 })
 
                 const urlContainer = customCreateElement({
@@ -450,7 +447,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     // }
                 })
 
-                const sumbit = createButton({
+                const submitBtn = createButton({
                     parent,
                     className: 'btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success',
                     iconSpecs: 'me-2 bi-stack',
