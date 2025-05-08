@@ -254,7 +254,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             btnClickHandler: (e) => {
                 const parent = customCreateElement({
                     tag: 'form',
-                    className: 'py-2 px-3 d-flex flex-column gap-2',
+                    className: 'py-2 px-3 d-flex flex-column gap-3',
                     events: {
                         submit: (e) => {
                             L.DomEvent.stopPropagation(e)
@@ -340,7 +340,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const urlContainer = customCreateElement({
                     parent,
-                    className: 'd-none d-flex flex-column gap-2'
+                    className: 'd-none d-flex flex-column gap-3'
                 })
 
                 const urlField = createInputGroup({
@@ -450,7 +450,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const sumbit = createButton({
                     parent,
-                    className: 'btn-sm fs-12 mx-auto btn-success',
+                    className: 'btn-sm fs-12 d-flex flex-nowrap btn-success',
                     iconSpecs: 'me-2 bi-stack',
                     innerText: 'Add layers',
                     btnAttrs: {
