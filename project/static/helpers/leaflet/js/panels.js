@@ -383,37 +383,32 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                             let data
                             try {
-                                const url = new URL(e.target.value).href
                                 data = await htmxFetch(`/htmx/add_layers/`, {
                                     method: 'POST',
                                     data: {
-                                        url,
+                                        url: new URL(e.target.value).href,
                                         format: formatField.value
                                     }   
                                 }).then(response => {
                                     return response.json()
                                 })
-                                // url value based on htmx validation response
                             } catch (error) {
                                 console.log(error)
                             } finally {
-                                const hasURL = data?.url
-                                formatField.disabled = !hasURL
-                                e.target.classList.toggle('is-invalid', hasURL === false)
-                                if (hasURL) {
-                                    
-                                } else {
-
-                                    formatField.value = ''
-                                }
+                                const url = data?.url
+                                e.target.classList.toggle('is-invalid', url === false)
+                                formatField.disabled = !url
                                 
-                                const hasFormat = hasURL && formatField.value
-                                namesField.DOM.scope.setAttribute('disabled', !hasFormat)
-                                if (hasFormat) {
+                                const format = data?.format
+                                formatField.classList.toggle('is-invalid', url && format === false)
+                                formatField.value = url ? format ?? format === false ? formatField.value : '' : ''
+                                namesField.DOM.scope.setAttribute('disabled', !format)
+                                
+                                // if (hasFormat) {
 
-                                } else {
-                                    namesField.removeAllTags()
-                                }
+                                // } else {
+                                //     namesField.removeAllTags()
+                                // }
                             }
                         }
                     },
