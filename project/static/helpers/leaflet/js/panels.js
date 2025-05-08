@@ -260,7 +260,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
                         
-                            console.log(e.target.elements['newLayerSource'])
+                            console.log(Array.from(e.target.elements['newLayerSource']).find(i => i.checked))
 
                             // if (e.target.elements['newLayerSource'].value === 'Upload files') {
                             //     const group = map._ch.getLayerGroups().client
