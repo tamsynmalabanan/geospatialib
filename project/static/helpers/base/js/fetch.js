@@ -12,7 +12,11 @@ const htmxFetch = async (url, {
         body: JSON.stringify(data)
     })
     .then(response => {
-        return response
+        if (response.ok && response.status >= 200 && response.status <= 300) {
+            return response
+        }
+
+        throw new Error('Response not ok.')
     })
     .catch(error => console.error('Error:', error))    
 }

@@ -391,7 +391,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                         format: formatField.value
                                     }   
                                 })
-                                console.log(response)
+                                console.log(response.text())
                                 // url value based on htmx validation response
                             } catch (error) {
                                 console.log(error)
