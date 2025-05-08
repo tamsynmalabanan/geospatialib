@@ -395,9 +395,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     throw error
                                 })
                             } catch (error) {
-                                console.log(error)
+                                data = {url:false}
                             } finally {
                                 console.log(data)
+                                
                                 const url = data?.url
                                 e.target.classList.toggle('is-invalid', url === false)
                                 formatField.disabled = !url
