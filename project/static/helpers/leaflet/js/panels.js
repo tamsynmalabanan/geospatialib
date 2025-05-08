@@ -331,6 +331,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const urlContainer = customCreateElement({
+                    parent,
                     className: 'd-none'
                 })
 
