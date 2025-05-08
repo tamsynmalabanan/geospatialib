@@ -267,7 +267,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
-                                    console.log(e)
                                     const checked = e.target.checked
                                     fileInput.classList.toggle('d-none', !checked)
                                     urlContainer.classList.toggle('d-none', checked)
@@ -279,7 +278,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
-                                    console.log(e)
                                     const checked = e.target.checked
                                     fileInput.classList.toggle('d-none', checked)
                                     urlContainer.classList.toggle('d-none', !checked)
@@ -440,14 +438,24 @@ const handleLeafletLegendPanel = (map, parent) => {
                     //         })
                     //     }])))() //, 'add', 'remove', 'edit'
                     // }
-                })     
+                })
+
+                const sumbit = createButton({
+                    parent,
+                    className: '',
+                    iconSpecs: 'bi-stack',
+                    innerText: 'Add layers',
+                    btnAttrs: {
+                        type: 'submit'
+                    }
+                })
 
                 const menuContainer = contextMenuHandler(e, {
                     file: {
                         child: parent,
                     },
                 }, {
-                    title: 'Add new layer',
+                    title: 'Add new layers',
                     dismissBtn: true,
                 })
             }            
