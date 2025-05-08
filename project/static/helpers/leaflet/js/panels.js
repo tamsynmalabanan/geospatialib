@@ -260,7 +260,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
                         
-                            if (Array.from(e.target.elements['newLayerSource']).find(i => i.checked).value === 'Upload files') {
+                            const fileSource = Array.from(e.target.elements['newLayerSource']).find(i => i.checked).value === 'Upload files'
+                            if (fileSource) {
                                 const group = map._ch.getLayerGroups().client
                                 for (const file of fileInput.files) {
                                     const reader = new FileReader()
@@ -283,6 +284,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     };
                                     reader.readAsText(file)
                                 }
+                            } else {
+                                
                             }
                             
                             menuContainer.remove()
