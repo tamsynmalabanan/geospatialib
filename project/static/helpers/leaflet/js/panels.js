@@ -297,7 +297,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     fileInput.classList.toggle('d-none', checked)
                                     
                                     urlContainer.classList.toggle('d-none', !checked)
-                                    console.log(Tagify(form.elements['newLayerNames']))
+                                    console.log(Tagify(parent.elements['newLayerNames']))
                                 }
                             }
                         },
