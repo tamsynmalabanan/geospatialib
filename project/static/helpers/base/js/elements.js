@@ -402,6 +402,7 @@ const createCheckboxOptions = ({
 
         const input = document.createElement('input')
         input.id = id
+        input.value = option
         input.className = 'form-check-input'
         input.setAttribute('type', type)
         input.setAttribute('name', type === 'radio' ? name : `${name}-${generateRandomString()}`)
