@@ -462,6 +462,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     placeholder: 'Select layer names',
                     callbacks: {
                         ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
+                            console.log(e.detail.tagify.value)
                             submitBtn.disabled = !e.detail.tagify.value.length
                         }])))()
                     }
