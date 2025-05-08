@@ -257,6 +257,22 @@ const handleLeafletLegendPanel = (map, parent) => {
                     className: 'py-2 px-3 d-flex flex-column gap-2'
                 })
 
+                const sourceRadios = createCheckboxOptions({
+                    parent,
+                    type: 'radio',
+                    containerClass: 'flex-nowrap gap-2',
+                    options: {
+                        'File': {
+                            checked: true,
+                            labelAttrs: {},
+                        },
+                        'URL': {
+                            checked: false,
+                            labelAttrs: {},
+                        },
+                    },
+                })
+
                 const fileInput = customCreateElement({
                     parent,
                     tag: 'input',
