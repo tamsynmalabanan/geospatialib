@@ -363,7 +363,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         peNone: false,
                         events: {
                             click: (e) => {
-                                const urlField = form.elements.newLayerUrl
+                                const urlField = parent.elements.newLayerUrl
                                 if (!urlField.value) return
 
                                 urlField.value = ''
