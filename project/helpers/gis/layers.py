@@ -1,16 +1,17 @@
 import validators
 from urllib.parse import unquote
 
+def get_format(url):
+    if url.endswith('.geojson'):
+        return 'geojson'
+    return None
+
 def get_layers_names(url, format):
     url_clean = unquote(url)
     if format == 'geojson':
         return [url_clean.split('/')[-1].replace('.geojson', '')]
     return []
 
-def get_format(url):
-    if url.endswith('.geojson'):
-        return 'geojson'
-    return None
 
 def get_collection(url, format=None):
     # check if url and or format already an existing collection
