@@ -673,3 +673,30 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
 
     return isVisible
 }
+
+const fileToLeafletLayer = (file, { group } = {}) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+            const [title, type] = file.name.split('.', 2)
+            if (type.toLowerCase().endsWith('json')) {
+                try {
+                    const geojson = JSON.parse(e.target.result)
+                    const layer = await getLeafletGeoJSONLayer({
+                        geojson,
+                        group,
+                        pane: createCustomPane(map),
+                        title,
+                    });
+                    resolve(layer);
+                } catch (error) {
+                    console.log(error);
+                    reject(error);
+                }
+            } else {
+                reject(new Error("Unsupported file type"));
+            }
+        };
+        reader.readAsText(file);
+    });
+};

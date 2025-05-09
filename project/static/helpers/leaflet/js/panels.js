@@ -261,32 +261,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                     tag: 'form',
                     className: 'py-2 px-3 d-flex flex-column gap-3',
                     events: {
-                        submit: (e) => {
+                        submit: async (e) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
                         
                             const group = map._ch.getLayerGroups().client
                             if (isFileSource()) {
                                 for (const file of fileInput.files) {
-                                    const reader = new FileReader()
-                                    reader.onload = async (e) => {
-                                        const [title, type] = file.name.split('.', 2)
-                                        if (type.toLowerCase().endsWith('json')) {
-                                            try {
-                                                const geojson = JSON.parse(e.target.result)
-                                                const layer = await getLeafletGeoJSONLayer({
-                                                    geojson,
-                                                    group,
-                                                    pane: createCustomPane(map),
-                                                    title,
-                                                })
-                                                if (layer) group.addLayer(layer)
-                                            } catch (error) {
-                                                console.log(error)
-                                            }
-                                        }
-                                    };
-                                    reader.readAsText(file)
+                                    const layer = await fileToLeafletLayer(file, {group})
+                                    if (layer) group.addLayer(layer)
                                 }
                             } else {
                                 console.log(e.target.elements)
