@@ -30,7 +30,7 @@ ALLOWED_HOSTS = [
     '139.59.35.171',
     'www.geospatialib.com',
     'geospatialib.com',
-    '127.0.0.1',
+    # '127.0.0.1',
 ]
 
 AUTHENTICATION_BACKENDS = (
