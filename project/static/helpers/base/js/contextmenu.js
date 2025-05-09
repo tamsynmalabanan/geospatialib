@@ -79,8 +79,6 @@ const contextMenuHandler = (e, menuItems, {
     ? ((windowHeight - menuContainerHeight) / 2)
     : ((windowHeight - y - menuContainerHeight - 10) >= 0 ? y : y - menuContainerHeight)
 
-    console.log(left, top)
-
     menuContainer.style.left = `${left > 0 ? left : 0}px`
     menuContainer.style.top = `${top > 0 ? top : 0}px`
 
