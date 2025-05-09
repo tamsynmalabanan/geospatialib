@@ -3,7 +3,7 @@ from urllib.parse import unquote
 
 def get_layers_names(url, format):
     url_clean = unquote(url)
-    if url_clean.endswith('.geojson') and format == 'geojson':
+    if format == 'geojson':
         return [url_clean.split('/')[-1].replace('.geojson', '')]
     return []
 
@@ -21,8 +21,6 @@ def get_collection(url, format=None):
     names_value = []
 
     if url_value:
-        # if there format value, try to get url layers as format, if no layers, format = false
-        # if no format value, guess format and try to get url layers as format, if no layers format = ''
         format_value = format if format and format != '' else get_format(url)
 
     if url_value and format_value:
