@@ -473,7 +473,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                             urlField.value = ''
                             const event = new Event("change", { bubbles: true })
                             urlField.dispatchEvent(event)
-
                         }
                     }
                 })
