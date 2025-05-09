@@ -371,7 +371,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                     } catch (error) {
                         data = {url:false}
                     } finally {
-                        console.log(data)
                         const {url, format, names} = data
 
                         urlField.classList.toggle('is-invalid', url === false && urlField.value !== '')
@@ -386,6 +385,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                         : namesField.DOM.scope.setAttribute('disabled', true) 
                         if (namesField.value.length) namesField.removeAllTags()
                         if (url && format && properNames?.length) {
+                            console.log(Object.entries(names).map(([key, value]) => ({
+                                value: key,
+                                properName: value
+                            })))
                             namesField.settings.whitelist = Object.entries(names).map(([key, value]) => ({
                                 value: key,
                                 properName: value
