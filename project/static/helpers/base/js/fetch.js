@@ -43,7 +43,12 @@ const fetchCORSProxy = async (url, fetchParams={}) => {
     ).then(response => {
         console.log(response.json())
         return response
-    }).catch(error => {
+    })
+    .then(response => {
+        console.log(response.json())
+        return
+    })
+    .catch(error => {
         throw error
     })
 }
