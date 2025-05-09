@@ -352,20 +352,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                         className: 'fs-12'
                     }),
                     fieldClass: 'form-control-sm fs-12',
-                    suffixHTML: createIcon({
-                        className: 'bi bi-arrow-counterclockwise fs-12',
-                        peNone: false,
-                        events: {
-                            click: (e) => {
-                                const urlField = form.elements.newLayerUrl
-                                if (!urlField.value) return
-
-                                urlField.value = ''
-                                const event = new Event("change", { bubbles: true })
-                                urlField.dispatchEvent(event)
-                            }
-                        }
-                    }),
                     fieldAttrs: {
                         type: 'url',
                         name: 'newLayerUrl',
@@ -467,8 +453,31 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                const submitBtn = createButton({
+                const controls = customElements({
                     parent: form,
+                    className: 'd-flex flex-nowrap gap2'
+                })
+
+                const resetBtn = createIcon({
+                    parent: controls,
+                    className: 'bi bi-arrow-counterclockwise fs-12',
+                    peNone: false,
+                    events: {
+                        click: (e) => {
+                            fileInput.value = ''
+
+                            const urlField = form.elements.newLayerUrl
+                            if (!urlField.value) return
+
+                            urlField.value = ''
+                            const event = new Event("change", { bubbles: true })
+                            urlField.dispatchEvent(event)
+                        }
+                    }
+                })
+
+                const submitBtn = createButton({
+                    parent: controls,
                     className: 'btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success',
                     iconSpecs: 'me-2 bi-stack',
                     innerText: 'Add layers',
