@@ -483,7 +483,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     title: 'Add new layers',
                     dismissBtn: true,
                     style: {
-                        'max-width': '500px',
+                        'max-width': '400px',
                         'width': `${window.innerWidth*0.9}px`
                     }
                 })
