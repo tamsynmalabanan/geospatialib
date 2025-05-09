@@ -385,17 +385,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                         : namesField.DOM.scope.setAttribute('disabled', true) 
                         if (namesField.value.length) namesField.removeAllTags()
                         if (url && format && properNames?.length) {
-                            console.log(Object.entries(names).map(([key, value]) => ({
-                                value: key,
-                                properName: value
-                            })))
-                            namesField.settings.whitelist = Object.entries(names).map(([key, value]) => ({
+                            const whitelist = Object.entries(names).map(([key, value]) => ({
                                 value: key,
                                 properName: value
                             }))
+                            namesField.settings.whitelist = whitelist
                         
                             if (names.length === 1) {
-                                namesField.addTags(names)
+                                namesField.addTags(whitelist)
                             }
                         }
                         toggleSubmitBtn()
