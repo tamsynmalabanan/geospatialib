@@ -68,22 +68,21 @@ const contextMenuHandler = (e, menuItems, {
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
 
-    // const x = e.x
-    // const y = e.y
-    // menuContainer.style.left = `${(windowWidth-x-menuContainerWidth-10) >= 0 ? x : x-menuContainerWidth}px`
-    // menuContainer.style.top = `${(windowHeight-y-menuContainerHeight-10) >= 0 ? y : y-menuContainerHeight}px`
-
     const x = e.x
     const y = e.y
 
-    if (x === 0 && y === 0) {
-        menuContainer.style.left = `${(windowWidth - menuContainerWidth) / 2}px`
-        menuContainer.style.top = `${(windowHeight - menuContainerHeight) / 2}px`
-    } else {
-        menuContainer.style.left = `${(windowWidth - x - menuContainerWidth - 10) >= 0 ? x : x - menuContainerWidth}px`
-        menuContainer.style.top = `${(windowHeight - y - menuContainerHeight - 10) >= 0 ? y : y - menuContainerHeight}px`
-    }
+    const left = x === 0 
+    ? ((windowWidth - menuContainerWidth) / 2) 
+    : ((windowWidth - x - menuContainerWidth - 10) >= 0 ? x : x - menuContainerWidth)
 
+    const top = y === 0
+    ? ((windowHeight - menuContainerHeight) / 2)
+    : ((windowHeight - y - menuContainerHeight - 10) >= 0 ? y : y - menuContainerHeight)
+
+    console.log(left, top)
+
+    menuContainer.style.left = `${left}px`
+    menuContainer.style.top = `${top}px`
 
     return menuContainer
 }
