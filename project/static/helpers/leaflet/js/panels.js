@@ -3804,6 +3804,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const fetchOSMData = async (queryGeom, abortBtns, controller) => {
+        console.log(queryGeom, abortBtns, controller)
         const fetchers = {
             'OpenStreetMap via Nominatim': 'nominatim;{}',
             'OpenStreetMap via Overpass': 'overpass;{}',
@@ -3818,7 +3819,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                 sort:true,
             })
 
-            if (!geojson || geojson instanceof Error) continue
+            if (!geojson || geojson instanceof Error) {
+                console.log(geojson)
+            }
         
             const layer = await getLeafletGeoJSONLayer({
                 geojson,
