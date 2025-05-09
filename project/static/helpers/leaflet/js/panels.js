@@ -272,7 +272,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     if (layer) group.addLayer(layer)
                                 }
                             } else {
-                                console.log(e.target.elements)
+                                const urlField = form.elements.newLayerUrl
+                                const formatField = form.elements.newLayerFormat
+                                const namesField = Tagify(form.elements.newLayerNames)
+                                console.log(namesField)
                             }
                             
                             menuContainer.remove()
