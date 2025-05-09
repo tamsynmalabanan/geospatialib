@@ -485,6 +485,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     btnAttrs: {
                         type: 'submit',
                         disabled: true,
+                        tabindex: '-1'
                     }
                 })
 
