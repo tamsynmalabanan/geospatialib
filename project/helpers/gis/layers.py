@@ -2,8 +2,8 @@ import validators
 from urllib.parse import unquote
 
 def get_layers_names(url, format):
-    if url.endswith('.geojson') and format == 'geojson':
-        return [unquote(url.split('/')[-1].replace('.geojson', ''))]
+    if unquote(url).endswith('.geojson') and format == 'geojson':
+        return [url.split('/')[-1].replace('.geojson', '')]
     return []
 
 def get_format(url):
