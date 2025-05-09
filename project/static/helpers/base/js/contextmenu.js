@@ -3,7 +3,6 @@ const contextMenuHandler = (e, menuItems, {
     dismissBtn = false,
     style = {},
 } = {}) => {
-    console.log(e)
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
 
@@ -39,9 +38,7 @@ const contextMenuHandler = (e, menuItems, {
                 peNone: false,
                 className: 'bi bi-x ms-auto custom-context-menu-dismiss',
                 events: {
-                    click: (e) => {
-                        menuContainer.remove()                        
-                    }
+                    click: (e) => menuContainer.remove()
                 }
             })
         }
@@ -71,8 +68,22 @@ const contextMenuHandler = (e, menuItems, {
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
 
-    menuContainer.style.left = `${(windowWidth-e.x-menuContainerWidth-10) >= 0 ? e.x : e.x-menuContainerWidth}px`
-    menuContainer.style.top = `${(windowHeight-e.y-menuContainerHeight-10) >= 0 ? e.y : e.y-menuContainerHeight}px`
+    // const x = e.x
+    // const y = e.y
+    // menuContainer.style.left = `${(windowWidth-x-menuContainerWidth-10) >= 0 ? x : x-menuContainerWidth}px`
+    // menuContainer.style.top = `${(windowHeight-y-menuContainerHeight-10) >= 0 ? y : y-menuContainerHeight}px`
+
+    const x = e.x
+    const y = e.y
+
+    if (x === 0 && y === 0) {
+        menuContainer.style.left = `${(windowWidth - menuContainerWidth) / 2}px`
+        menuContainer.style.top = `${(windowHeight - menuContainerHeight) / 2}px`
+    } else {
+        menuContainer.style.left = `${(windowWidth - x - menuContainerWidth - 10) >= 0 ? x : x - menuContainerWidth}px`
+        menuContainer.style.top = `${(windowHeight - y - menuContainerHeight - 10) >= 0 ? y : y - menuContainerHeight}px`
+    }
+
 
     return menuContainer
 }
