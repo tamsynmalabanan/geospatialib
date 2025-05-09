@@ -449,7 +449,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 let namesFieldTimeout
                 const namesFieldChangeHandler = () => {
                     clearTimeout(namesFieldTimeout)
-                    namesFieldTimeout = setTimeout(() => {
+                    namesFieldTimeout = setTimeout((e) => {
                         console.log(e.detail.tagify.value)
                         submitBtn.disabled = !e.detail.tagify.value.length
                     }, 100);
