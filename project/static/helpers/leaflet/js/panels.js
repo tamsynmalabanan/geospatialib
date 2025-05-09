@@ -391,7 +391,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             }))
                             namesField.settings.whitelist = whitelist
                         
-                            if (names.length === 1) {
+                            if (properNames.length === 1) {
                                 namesField.addTags(whitelist)
                             }
                         }
