@@ -32,6 +32,7 @@ const contextMenuHandler = (e, menuItems, {
         }
 
         if (dismissBtn) {
+            makeMovable(menuContainer)
             const dismissIcon = createIcon({
                 parent: header,
                 peNone: false,
