@@ -41,7 +41,7 @@ const fetchCORSProxy = async (url, fetchParams={}) => {
         `/htmx/cors_proxy/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
-        console.log(response)
+        console.log(response.json())
         return response
     }).catch(error => {
         throw error
