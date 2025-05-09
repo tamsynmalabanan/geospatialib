@@ -79,9 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const handler = (e) => {
         const menu = document.querySelector(`.custom-context-menu`)
         if (menu) {
-            console.log(e)
             const dismiss = menu.querySelector('.custom-context-menu-dismiss')
-            if (!dismiss) menu.remove()
+            if (!dismiss || e.type === 'resize') menu.remove()
         }
     }
 
