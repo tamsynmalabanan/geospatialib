@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (menu) {
             const dismiss = menu.querySelector('.custom-context-menu-dismiss')
             if (e.type === 'click') {
-                console.log(document.elementsFromPoint(e.clientX, e.clientY))
+                console.log(document.elementsFromPoint(e.clientX, e.clientY).find(i => i === menu))
             }
             if (!dismiss || e.type === 'resize') menu.remove()
         }
