@@ -250,6 +250,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             title: 'Add new layers',
             innerText: 'Add layers',
             toolHandler: false,
+            altShortcut: 'n',
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
                 const isFileSource = () => {
