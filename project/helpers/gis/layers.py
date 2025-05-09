@@ -12,12 +12,11 @@ LAYER_FORMATS = {
 }
 
 def get_format(url):
-    return get_first_substring_match(unquote(url), LAYER_FORMATS)
+    return get_first_substring_match(url, LAYER_FORMATS)
 
 def get_layers_names(url, format):
-    url_clean = unquote(url)
     if format == 'geojson':
-        return [url_clean.split('/')[-1].replace('.geojson', '')]
+        return [url.split('/')[-1].replace('.geojson', '')]
     return []
 
 
@@ -25,12 +24,12 @@ def get_collection(url, format=None):
     # check if url and or format already an existing collection
     # if not existing, and if valid, onboard
 
-    url_value = url if validators.url(url) else False
+    url_value = unquote(url) if validators.url(url) else False
     format_value = format
     names_value = []
 
     if url_value:
-        format_value = format if format and format != '' else get_format(url)
+        format_value = format if format and format != '' else get_format(url_value)
 
     if url_value and format_value:
         names_value = get_layers_names(url_value, format_value)
