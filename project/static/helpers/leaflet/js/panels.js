@@ -455,7 +455,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const controls = customCreateElement({
                     parent: form,
-                    className: 'd-flex flex-nowrap gap2'
+                    className: 'd-flex flex-nowrap gap-2'
                 })
 
                 const resetBtn = createButton({
@@ -478,7 +478,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const submitBtn = createButton({
                     parent: controls,
-                    className: 'btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success',
+                    className: 'btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success flex-grow-1',
                     iconSpecs: 'me-2 bi-stack',
                     innerText: 'Add layers',
                     btnAttrs: {
