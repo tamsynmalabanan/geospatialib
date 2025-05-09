@@ -1,3 +1,5 @@
+from django.utils.text import slugify
+
 import validators
 from urllib.parse import unquote
 
@@ -17,7 +19,7 @@ def get_format(url):
 def get_layers_names(url, format):
     if format == 'geojson':
         name = url.split('/')[-1].replace('.geojson', '')
-        return {name:name}
+        return {slugify(name):name}
     return {}
 
 
