@@ -3866,7 +3866,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                fetchOSMData(queryGeom, abortBtns, controller)
+                await fetchOSMData(queryGeom, abortBtns, controller)
             }
         },
         osmView: {
@@ -3875,7 +3875,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry
-                fetchOSMData(queryGeom, abortBtns, controller)
+                await fetchOSMData(queryGeom, abortBtns, controller)
             }
         },
         layerPoint: {
