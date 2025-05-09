@@ -458,10 +458,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                     className: 'd-flex flex-nowrap gap2'
                 })
 
-                const resetBtn = createIcon({
+                const resetBtn = createButton({
                     parent: controls,
-                    className: 'bi bi-arrow-counterclockwise fs-12',
-                    peNone: false,
+                    className: `btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-${getPreferredTheme()}`,
+                    iconSpecs: 'bi bi-arrow-counterclockwise fs-12',
                     events: {
                         click: (e) => {
                             fileInput.value = ''
