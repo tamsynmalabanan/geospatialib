@@ -252,6 +252,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             toolHandler: false,
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
+                const isFileSource = () => {
+                    return Array.from(form.elements.newLayerSource).find(i => i.checked).value === 'Upload files'
+                }
+
                 const form = customCreateElement({
                     tag: 'form',
                     className: 'py-2 px-3 d-flex flex-column gap-3',
@@ -260,8 +264,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
                         
-                            const fileSource = Array.from(e.target.elements['newLayerSource']).find(i => i.checked).value === 'Upload files'
-                            if (fileSource) {
+                            if (isFileSource()) {
                                 const group = map._ch.getLayerGroups().client
                                 for (const file of fileInput.files) {
                                     const reader = new FileReader()
@@ -293,6 +296,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
+                let toggleSubmitBtnTimeout
+                const toggleSubmitBtn = () => {
+                    clearTimeout(toggleSubmitBtnTimeout)
+                    toggleSubmitBtnTimeout = setTimeout(() => {
+                        submitBtn.disabled = isFileSource() ? !fileInput.files.length : !Tagify(form.elements.newLayerNames).value.length
+                    }, 100);
+                }
+
                 const sourceRadios = createCheckboxOptions({
                     parent: form,
                     name: 'newLayerSource',
@@ -306,7 +317,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 click: (e) => {
                                     urlContainer.classList.add('d-none')
                                     fileInput.classList.remove('d-none')
-                                    submitBtn.disabled = !fileInput.files?.length
+                                    toggleSubmitBtn()
                                 }
                             }
                         },
@@ -317,8 +328,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 click: (e) => {
                                     fileInput.classList.add('d-none')
                                     urlContainer.classList.remove('d-none')
-                                    submitBtn.disabled = !Tagify(form.elements['newLayerNames'])?.value?.length
-                                    
+                                    toggleSubmitBtn()
                                 }
                             }
                         },
@@ -335,9 +345,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         accept: '.geojson, .json'
                     },
                     events: {
-                        change: (e) => {
-                            submitBtn.disabled = !e.target.files?.length
-                        }
+                        change: toggleSubmitBtn
                     }
                 })
 
@@ -345,6 +353,49 @@ const handleLeafletLegendPanel = (map, parent) => {
                     parent: form,
                     className: 'd-none d-flex flex-column gap-2'
                 })
+
+                const validateCollection = async () => {
+                    const urlField = form.elements.newLayerUrl
+                    const formatField = form.elements.newLayerFormat
+                    const namesField = Tagify(form.elements.newLayerNames)
+
+                    let data
+                    try {
+                        data = await htmxFetch(`/htmx/validate_collection/`, {
+                            method: 'POST',
+                            data: {
+                                url: new URL(urlField.value).href,
+                                format: formatField.value
+                            }   
+                        }).then(response => {
+                            return response.json()
+                        }).catch(error => {
+                            throw error
+                        })
+                    } catch (error) {
+                        data = {url:false}
+                    } finally {
+                        const {url, format, names} = data
+
+                        urlField.classList.toggle('is-invalid', url === false && urlField.value !== '')
+                        
+                        formatField.disabled = !url
+                        formatField.classList.toggle('is-invalid', format === false && formatField.value !== '')
+                        formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
+                        
+                        format && names?.length 
+                        ? namesField.DOM.scope.removeAttribute('disabled')
+                        : namesField.DOM.scope.setAttribute('disabled', true) 
+                        if (namesField.value.length) namesField.removeAllTags()
+                        if (url && format && names?.length) {
+                            namesField.settings.whitelist = names
+                            if (names.length === 1) {
+                                namesField.addTags(names)
+                            }
+                        }
+                        toggleSubmitBtn()
+                    }
+                }
 
                 const urlField = createInputGroup({
                     parent: urlContainer,
@@ -357,49 +408,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         name: 'newLayerUrl',
                     },
                     events: {
-                        change: async (e) => {
-                            const formatField = form.elements.newLayerFormat
-                            const namesField = Tagify(form.elements.newLayerNames)
-
-                            let data
-                            try {
-                                data = await htmxFetch(`/htmx/add_layers/`, {
-                                    method: 'POST',
-                                    data: {
-                                        url: new URL(e.target.value).href,
-                                        format: formatField.value
-                                    }   
-                                }).then(response => {
-                                    return response.json()
-                                }).catch(error => {
-                                    throw error
-                                })
-                            } catch (error) {
-                                data = {url:false}
-                            } finally {
-                                const {url, format, names} = data
-
-                                console.log(url)
-                                e.target.classList.toggle('is-invalid', url === false && e.target.value !== '')
-                                formatField.disabled = !url
-                                
-                                formatField.classList.toggle('is-invalid', format === false)
-                                formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
-                                !(format && names?.length) 
-                                ? namesField.DOM.scope.setAttribute('disabled', true) 
-                                : namesField.DOM.scope.removeAttribute('disabled')
-                                
-                                namesField.removeAllTags()
-                                submitBtn.disabled = true
-                                if (url && format && names?.length) {
-                                    namesField.settings.whitelist = names
-                                    if (names.length === 1) {
-                                        namesField.addTags(names)
-                                        submitBtn.disabled = false
-                                    }
-                                }
-                            }
-                        }
+                        change: validateCollection
                     },
                 })
 
@@ -420,19 +429,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                         'geojson': 'GeoJSON',
                     },
                     events: {
-                        change: (e) => {
-                            console.log(e)
-                        }
+                        change: (e) => validateCollection
                     },
                 })
-
-                let namesFieldTimeout
-                const namesFieldChangeHandler = (e) => {
-                    clearTimeout(namesFieldTimeout)
-                    namesFieldTimeout = setTimeout(() => {
-                        submitBtn.disabled = !e.detail.tagify.value.length
-                    }, 100);
-                }
 
                 const namesField = createTagifyField({
                     parent: urlContainer,
@@ -449,7 +448,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     name:  `newLayerNames`,
                     placeholder: 'Select layer names',
                     callbacks: {
-                        ...(() => Object.fromEntries(['add', 'remove', 'edit'].map(i => [i, namesFieldChangeHandler])))()
+                        ...(() => Object.fromEntries(['add', 'remove', 'edit'].map(i => [i, toggleSubmitBtn])))()
                     }
                 })
 
@@ -464,15 +463,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                     iconSpecs: 'bi bi-arrow-counterclockwise fs-12',
                     events: {
                         click: (e) => {
-                            submitBtn.disabled = true
                             fileInput.value = ''
 
                             const urlField = form.elements.newLayerUrl
-                            if (!urlField.value) return
+                            if (urlField.value) {
+                                urlField.value = ''
+                                const event = new Event("change", { bubbles: true })
+                                urlField.dispatchEvent(event)
+                            }
 
-                            urlField.value = ''
-                            const event = new Event("change", { bubbles: true })
-                            urlField.dispatchEvent(event)
+                            toggleSubmitBtn()
                         }
                     }
                 })

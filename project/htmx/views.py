@@ -9,7 +9,7 @@ from helpers.gis.layers import get_collection
 from main.models import SpatialRefSys, URL
 
 @require_http_methods(['POST'])
-def add_layers(request):
+def validate_collection(request):
     data = json.loads(request.body.decode('utf-8'))
     return JsonResponse(get_collection(
         data.get('url'),
