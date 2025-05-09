@@ -373,8 +373,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                             throw error
                         })
                     } catch (error) {
+                        console.log(error)
                         data = {url:false}
                     } finally {
+                        console.log(data)
                         const {url, format, names} = data
 
                         urlField.classList.toggle('is-invalid', url === false && urlField.value !== '')
