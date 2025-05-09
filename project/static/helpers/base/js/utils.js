@@ -329,8 +329,7 @@ const makeMovable = (element) => {
     let isDragging = false, offsetX, offsetY
   
     element.addEventListener("mousedown", (e) => {
-        console.log(e.target, e.target.getAttribute('name'))
-        if (!e.target.getAttribute('name')) return
+        if (e.target.getAttribute('name')) return
     
         isDragging = true
         offsetX = e.clientX - element.offsetLeft
