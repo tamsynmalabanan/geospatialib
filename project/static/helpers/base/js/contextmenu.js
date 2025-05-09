@@ -92,11 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const handler = (e) => {
         const menu = document.querySelector(`.custom-context-menu`)
         if (menu) {
-            const dismiss = menu.querySelector('.custom-context-menu-dismiss')
-            if (e.type === 'click') {
-                console.log(document.elementsFromPoint(e.clientX, e.clientY).find(i => i === menu))
-            }
-            if (!dismiss || e.type === 'resize') menu.remove()
+            const dismissBtn = menu.querySelector('.custom-context-menu-dismiss')
+            const escape = e.type !== 'click' || !document.elementsFromPoint(
+                e.clientX, e.clientY
+            ).find(i => i === menu)
+            if (!dismissBtn || escape) menu.remove()
         }
     }
 
