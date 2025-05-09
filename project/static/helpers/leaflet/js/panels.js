@@ -3817,6 +3817,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                 controller,
                 sort:true,
             })
+
+            if (!geojson || geojson instanceof Error) continue
         
             const layer = await getLeafletGeoJSONLayer({
                 geojson,
