@@ -8,12 +8,11 @@ class HTMXDomainRestriction:
 
     def __call__(self, request):
         path = resolve(request.path)
-        # if path.app_name == 'htmx':
-        #     if path.url_name != 'cors_proxy':
-        #         not_htmx = not request.htmx
-        #         not_allowed_host = request.META.get('HTTP_HOST') not in settings.ALLOWED_HOSTS
-        #         if not_htmx or not_allowed_host:
-        #             return redirect('main:index')
+        if path.app_name == 'htmx':
+            not_htmx = not request.htmx
+            not_allowed_host = request.META.get('HTTP_HOST') not in settings.ALLOWED_HOSTS
+            if not_htmx or not_allowed_host:
+                return redirect('main:index')
 
         response = self.get_response(request)
         return response
