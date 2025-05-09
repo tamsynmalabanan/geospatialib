@@ -1,10 +1,18 @@
 import validators
 from urllib.parse import unquote
 
+from helpers.general.utils import get_first_substring_match
+
+LAYER_FORMATS = {
+    'geojson': [
+        'geojson',
+        'gjson',
+        'json',
+    ]
+}
+
 def get_format(url):
-    if url.endswith('.geojson'):
-        return 'geojson'
-    return None
+    return get_first_substring_match(unquote(url), LAYER_FORMATS)
 
 def get_layers_names(url, format):
     url_clean = unquote(url)
