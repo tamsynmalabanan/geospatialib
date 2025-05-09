@@ -3803,6 +3803,38 @@ const handleLeafletQueryPanel = (map, parent) => {
         layers.classList.remove('d-none')
     }
 
+    const fetchOSMData = async (queryGeom, abortBtns, controller) => {
+        const fetchers = {
+            'OpenStreetMap via Nominatim': 'nominatim;{}',
+            'OpenStreetMap via Overpass': 'overpass;{}',
+        }
+
+        for (const title in fetchers) {
+            const geojson = await fetchGeoJSON(fetchers[title], {
+                queryGeom,
+                zoom: map.getZoom(),
+                abortBtns, 
+                controller,
+                sort:true,
+            })
+        
+            const layer = await getLeafletGeoJSONLayer({
+                geojson,
+                pane: 'queryPane',
+                group: queryGroup,
+                customStyleParams,
+                title: title,
+                attribution: createAttributionTable(geojson)?.outerHTML,
+            })
+
+            const content = createGeoJSONChecklist(layer, {controller})
+            if (content) {
+                layers.appendChild(content)
+                if (layers.classList.contains('d-none')) enableToolbar()
+            }
+        }
+    }
+
     const tools = toolsHandler({
         locationCoords: {
             iconSpecs: 'bi-geo-alt-fill',
@@ -3829,74 +3861,16 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                
-                const fetchers = {
-                    'OpenStreetMap via Nominatim': 'nominatim;{}',
-                    'OpenStreetMap via Overpass': 'overpass;{}',
-                }
-
-                for (const title in fetchers) {
-                    const geojson = await fetchGeoJSON(fetchers[title], {
-                        queryGeom,
-                        zoom: map.getZoom(),
-                        abortBtns, 
-                        controller,
-                        sort:true,
-                    })
-                
-                    const layer = await getLeafletGeoJSONLayer({
-                        geojson,
-                        pane: 'queryPane',
-                        group: queryGroup,
-                        customStyleParams,
-                        title: title,
-                        attribution: createAttributionTable(geojson)?.outerHTML,
-                    })
-
-                    const content = createGeoJSONChecklist(layer, {controller})
-                    if (content) {
-                        layers.appendChild(content)
-                        if (layers.classList.contains('d-none')) enableToolbar()
-                    }
-                }
+                fetchOSMData(queryGeom, abortBtns, controller)
             }
         },
         osmView: {
             iconSpecs: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             altShortcut: 'e',
-            btnClickHandler: async (event, {abortBtns, controller} = {}) => {
+            btnClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry
-
-                const fetchers = {
-                    'OpenStreetMap via Nominatim': 'nominatim;{}',
-                    'OpenStreetMap via Overpass': 'overpass;{}',
-                }
-
-                for (const title in fetchers) {
-                    const geojson = await fetchGeoJSON(fetchers[title], {
-                        queryGeom,
-                        zoom: map.getZoom(),
-                        abortBtns, 
-                        controller,
-                        sort:true,
-                    })
-                
-                    const layer = await getLeafletGeoJSONLayer({
-                        geojson,
-                        pane: 'queryPane',
-                        group: queryGroup,
-                        customStyleParams,
-                        title: title,
-                        attribution: createAttributionTable(geojson)?.outerHTML,
-                    })
-
-                    const content = createGeoJSONChecklist(layer, {controller})
-                    if (content) {
-                        layers.appendChild(content)
-                        if (layers.classList.contains('d-none')) enableToolbar()
-                    }
-                }
+                fetchOSMData(queryGeom, abortBtns, controller)
             }
         },
         layerPoint: {
