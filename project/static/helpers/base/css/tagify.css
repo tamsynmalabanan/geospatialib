@@ -39,7 +39,6 @@
     }
 
     .tagify__tag {
-        max-width: 50%;
         word-break: break-all;
         word-wrap: break-word;
     }
