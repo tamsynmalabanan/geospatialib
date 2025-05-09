@@ -81,8 +81,8 @@ const contextMenuHandler = (e, menuItems, {
 
     console.log(left, top)
 
-    menuContainer.style.left = `${left}px`
-    menuContainer.style.top = `${top}px`
+    menuContainer.style.left = `${left > 0 ? left : 0}px`
+    menuContainer.style.top = `${top > 0 ? top : 0}px`
 
     return menuContainer
 }
