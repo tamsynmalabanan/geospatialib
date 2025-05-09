@@ -278,7 +278,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 
                                 namesField.value.forEach(name => {
                                     const value = name.value
-                                    console.log(value)
+                                    console.log(urlField.value, formatField.value, value)
                                 })
                             }
                             
