@@ -3818,8 +3818,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 sort:true,
             })
 
-            console.log(geojson)
-            if (!geojson || geojson instanceof Error) {
+            if (!geojson?.features?.length) {
                 continue
             }
         
