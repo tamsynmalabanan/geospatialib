@@ -43,5 +43,6 @@
         word-break: break-all;
         word-wrap: break-word;
         background-color: var(--bs-primary) !important;
+        border-radius: var(--bs-border-radius);
     }
 }
