@@ -429,7 +429,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         'geojson': 'GeoJSON',
                     },
                     events: {
-                        change: (e) => validateCollection
+                        change: validateCollection
                     },
                 })
 
