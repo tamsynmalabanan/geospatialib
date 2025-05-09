@@ -275,7 +275,11 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const urlField = form.elements.newLayerUrl
                                 const formatField = form.elements.newLayerFormat
                                 const namesField = Tagify(form.elements.newLayerNames)
-                                console.log(namesField.value)
+                                
+                                namesField.value.forEach(name => {
+                                    const value = name.value
+                                    console.log(value)
+                                })
                             }
                             
                             menuContainer.remove()
