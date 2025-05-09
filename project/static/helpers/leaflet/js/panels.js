@@ -461,6 +461,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                     parent: controls,
                     className: `btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-${getPreferredTheme()}`,
                     iconSpecs: 'bi bi-arrow-counterclockwise fs-12',
+                    btnAttrs: {
+                        tabindex: '-1'
+                    },
                     events: {
                         click: (e) => {
                             fileInput.value = ''
@@ -485,7 +488,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                     btnAttrs: {
                         type: 'submit',
                         disabled: true,
-                        tabindex: '-1'
                     }
                 })
 
