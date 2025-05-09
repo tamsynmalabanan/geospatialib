@@ -1,6 +1,7 @@
 const contextMenuHandler = (e, menuItems, {
     title,
     dismissBtn = false,
+    style = {},
 } = {}) => {
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
@@ -14,6 +15,7 @@ const contextMenuHandler = (e, menuItems, {
         dropdown-menu show
         small shadow-sm
     `)
+    Object.keys(style).forEach(k => menuContainer.style[k] = style[k])
 
     if (title || dismissBtn) {
         const header = customCreateElement({

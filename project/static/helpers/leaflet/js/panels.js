@@ -495,6 +495,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                 }, {
                     title: 'Add new layers',
                     dismissBtn: true,
+                    style: {
+                        'minWidth': '300px'
+                    }
                 })
             }            
         },
