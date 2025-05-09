@@ -76,13 +76,18 @@ const contextMenuHandler = (e, menuItems, {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const handler = (e) => {
+        const menu = document.querySelector(`.custom-context-menu`)
+        if (menu) {
+            console.log(e)
+            const dismiss = menu.querySelector('.custom-context-menu-dismiss')
+            if (!dismiss) menu.remove()
+        }
+    }
+
     ['wheel', 'click'].forEach(trigger => {
-        document.addEventListener(trigger, (e) => {
-            const menu = document.querySelector(`.custom-context-menu`)
-            if (menu) {
-                const dismiss = menu.querySelector('.custom-context-menu-dismiss')
-                if (!dismiss) menu.remove()
-            }
-        })
+        document.addEventListener(trigger, handler)
     })
+
+    window.addEventListener("resize", handler)
 })
