@@ -464,6 +464,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     iconSpecs: 'bi bi-arrow-counterclockwise fs-12',
                     events: {
                         click: (e) => {
+                            submitBtn.disabled = true
                             fileInput.value = ''
 
                             const urlField = form.elements.newLayerUrl
@@ -473,7 +474,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                             const event = new Event("change", { bubbles: true })
                             urlField.dispatchEvent(event)
 
-                            submitBtn.disabled = true
                         }
                     }
                 })
