@@ -283,7 +283,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                         name.value,
                                         {group}
                                     )
-
+                                    if (layer) group.addLayer(layer)
                                 })
                             }
                             

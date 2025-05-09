@@ -686,7 +686,6 @@ const urlToLeafletLayer = async (url, format, name, {
 
     if (format === 'geojson') {
         const geojson = await handler(url)
-        console.log(geojson)
         if (!geojson) return
         return await getLeafletGeoJSONLayer({
             geojson,
