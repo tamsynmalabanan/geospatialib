@@ -276,9 +276,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const formatField = form.elements.newLayerFormat
                                 const namesField = Tagify(form.elements.newLayerNames)
                                 
-                                namesField.value.forEach(name => {
-                                    const value = name.value
-                                    console.log(urlField.value, formatField.value, value)
+                                namesField.value.forEach(async (name) => {
+                                    const layer = await urlToLeafletLayer(
+                                        urlField.value, 
+                                        formatField.value, 
+                                        name.value,
+                                        {group}
+                                    )
+
                                 })
                             }
                             
@@ -366,6 +371,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     } catch (error) {
                         data = {url:false}
                     } finally {
+                        console.log(data)
                         const {url, format, names} = data
 
                         urlField.classList.toggle('is-invalid', url === false && urlField.value !== '')
@@ -374,12 +380,17 @@ const handleLeafletLegendPanel = (map, parent) => {
                         formatField.classList.toggle('is-invalid', format === false && formatField.value !== '')
                         formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
                         
-                        format && names?.length 
+                        const properNames = Object.values(names)
+                        format && properNames?.length 
                         ? namesField.DOM.scope.removeAttribute('disabled')
                         : namesField.DOM.scope.setAttribute('disabled', true) 
                         if (namesField.value.length) namesField.removeAllTags()
-                        if (url && format && names?.length) {
-                            namesField.settings.whitelist = names
+                        if (url && format && properNames?.length) {
+                            namesField.settings.whitelist = Object.entries(names).map(([key, value]) => ({
+                                value: key,
+                                properName: value
+                            }))
+                        
                             if (names.length === 1) {
                                 namesField.addTags(names)
                             }
@@ -3800,7 +3811,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         }
 
         for (const title in fetchers) {
-            const geojson = await fetchGeoJSON(fetchers[title], {
+            const geojson = await getGeoJSON(fetchers[title], {
                 queryGeom,
                 zoom: map.getZoom(),
                 abortBtns, 

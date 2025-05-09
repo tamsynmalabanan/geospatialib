@@ -349,8 +349,8 @@ const fetchGeoJSONHandlers = (name) => {
     }[name]
 }
 
-const mapForFetchGeoJSON = new Map()
-const fetchGeoJSON = async (dbKey, {
+const mapForGetGeoJSON = new Map()
+const getGeoJSON = async (dbKey, {
     queryGeom, 
     zoom=20, 
     controller, 
@@ -365,8 +365,8 @@ const fetchGeoJSON = async (dbKey, {
         controller?.id
     ].join(';')
 
-    if (mapForFetchGeoJSON.has(mapKey)) {
-        const data = await mapForFetchGeoJSON.get(mapKey)
+    if (mapForGetGeoJSON.has(mapKey)) {
+        const data = await mapForGetGeoJSON.get(mapKey)
         if (controller?.signal.aborted) return
         return data
     }
@@ -458,11 +458,11 @@ const fetchGeoJSON = async (dbKey, {
         } catch (error) {
             return error
         } finally {
-            setTimeout(() => mapForFetchGeoJSON.delete(mapKey), 1000);
+            setTimeout(() => mapForGetGeoJSON.delete(mapKey), 1000);
         }
     })()
 
-    mapForFetchGeoJSON.set(mapKey, dataPromise)
+    mapForGetGeoJSON.set(mapKey, dataPromise)
     const data = await dataPromise
     if (controller?.signal.aborted) return
     return data

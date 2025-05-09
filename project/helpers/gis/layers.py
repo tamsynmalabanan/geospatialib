@@ -16,8 +16,9 @@ def get_format(url):
 
 def get_layers_names(url, format):
     if format == 'geojson':
-        return [url.split('/')[-1].replace('.geojson', '')]
-    return []
+        name = url.split('/')[-1].replace('.geojson', '')
+        return {name:name}
+    return {}
 
 
 def get_collection(url, format=None):
@@ -26,14 +27,14 @@ def get_collection(url, format=None):
 
     url_value = unquote(url) if validators.url(url) else False
     format_value = format
-    names_value = []
+    names_value = {}
 
     if url_value:
         format_value = format if format and format != '' else get_format(url_value)
 
     if url_value and format_value:
         names_value = get_layers_names(url_value, format_value)
-        if len(names_value) == 0:
+        if len(names_value.keys()) == 0:
             format_value = False if format and format != '' else ''
 
     return {

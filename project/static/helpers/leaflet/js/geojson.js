@@ -220,7 +220,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    let data = geojson ?? (await fetchGeoJSON(geojsonId, {
+    let data = geojson ?? (await getGeoJSON(geojsonId, {
         queryGeom,
         controller,
         abortBtns,

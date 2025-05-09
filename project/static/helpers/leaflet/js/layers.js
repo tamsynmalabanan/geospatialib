@@ -674,6 +674,28 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
     return isVisible
 }
 
+const urlToLeafletLayer = async (url, format, name, {
+    group,
+} = {}) => {
+    if (!group) return
+
+    const map = group._map
+
+    const handler = dataFetchHandler(format)
+    if (!handler) return
+
+    if (format === 'geojson') {
+        const geojson = handler(url)
+        if (!geojson) return
+        return await getLeafletGeoJSONLayer({
+            geojson,
+            group,
+            pane: createCustomPane(map),
+            title: name,
+        })
+    }
+}
+
 const fileToLeafletLayer = (file, { group } = {}) => {
     if (!group) return
 
