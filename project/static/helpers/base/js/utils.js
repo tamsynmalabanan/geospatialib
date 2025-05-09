@@ -324,3 +324,25 @@ const relationHandlers = (name) => {
 }
 
 const removeWhitespace = (str) => (str.replace(/\s{2,}/g, ' ')).trim()
+
+const makeMovable = (element) => {
+    let isDragging = false, offsetX, offsetY
+  
+    element.addEventListener("mousedown", (e) => {
+      isDragging = true
+      offsetX = e.clientX - element.offsetLeft
+      offsetY = e.clientY - element.offsetTop
+      element.style.cursor = "grabbing"
+    })
+  
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return
+        element.style.left = `${e.clientX - offsetX}px`
+        element.style.top = `${e.clientY - offsetY}px`
+    })
+  
+    document.addEventListener("mouseup", () => {
+      isDragging = false
+      element.style.cursor = ""
+    })
+}

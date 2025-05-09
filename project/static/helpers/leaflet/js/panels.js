@@ -264,8 +264,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                             L.DomEvent.stopPropagation(e)
                             L.DomEvent.preventDefault(e)
                         
+                            const group = map._ch.getLayerGroups().client
                             if (isFileSource()) {
-                                const group = map._ch.getLayerGroups().client
                                 for (const file of fileInput.files) {
                                     const reader = new FileReader()
                                     reader.onload = async (e) => {
