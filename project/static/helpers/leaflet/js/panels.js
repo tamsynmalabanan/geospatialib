@@ -453,7 +453,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     }
                 })
 
-                const controls = customElements({
+                const controls = customCreateElement({
                     parent: form,
                     className: 'd-flex flex-nowrap gap2'
                 })
