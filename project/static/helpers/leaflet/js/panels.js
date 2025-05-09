@@ -427,6 +427,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     },
                     disabled: true,
                     options: {
+                        '': 'Select format',
                         'geojson': 'GeoJSON',
                     },
                     events: {
