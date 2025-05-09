@@ -275,7 +275,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const urlField = form.elements.newLayerUrl
                                 const formatField = form.elements.newLayerFormat
                                 const namesField = Tagify(form.elements.newLayerNames)
-                                console.log(namesField)
+                                console.log(namesField.value)
                             }
                             
                             menuContainer.remove()
