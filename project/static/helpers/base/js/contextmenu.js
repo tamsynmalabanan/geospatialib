@@ -3,6 +3,7 @@ const contextMenuHandler = (e, menuItems, {
     dismissBtn = false,
     style = {},
 } = {}) => {
+    console.log(e)
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
 
