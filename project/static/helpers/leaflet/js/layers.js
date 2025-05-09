@@ -675,6 +675,10 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
 }
 
 const fileToLeafletLayer = (file, { group } = {}) => {
+    if (!group) return
+
+    const map = group._map
+
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = async (e) => {

@@ -33,6 +33,8 @@ const isLeafletControlElement = (element) => {
 }
 
 const createCustomPane = (map) => {
+    if (!map) return 
+    
     const paneName = `custom-${generateRandomString()}`
     map.getPane(paneName) || map.createPane(paneName)
     return paneName
