@@ -277,6 +277,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const namesField = Tagify(form.elements.newLayerNames)
                                 
                                 namesField.value.forEach(async (name) => {
+                                    console.log(name)
                                     const layer = await urlToLeafletLayer(
                                         urlField.value, 
                                         formatField.value, 
