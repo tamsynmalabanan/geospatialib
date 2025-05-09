@@ -446,6 +446,15 @@ const handleLeafletLegendPanel = (map, parent) => {
                     },
                 })
 
+                let namesFieldTimeout
+                const namesFieldChangeHandler = () => {
+                    clearTimeout(namesFieldTimeout)
+                    namesFieldTimeout = setTimeout(() => {
+                        console.log(e.detail.tagify.value)
+                        submitBtn.disabled = !e.detail.tagify.value.length
+                    }, 100);
+                }
+
                 const namesField = createTagifyField({
                     parent: urlContainer,
                     inputClass: `w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12`,
@@ -461,10 +470,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     name:  `newLayerNames`,
                     placeholder: 'Select layer names',
                     callbacks: {
-                        ...(() => Object.fromEntries(['add', 'remove'].map(i => [i, (e) => {
-                            console.log(e.detail.tagify.value)
-                            submitBtn.disabled = !e.detail.tagify.value.length
-                        }])))()
+                        ...(() => Object.fromEntries(['add', 'remove', 'edit'].map(i => [i, namesFieldChangeHandler])))()
                     }
                 })
 
