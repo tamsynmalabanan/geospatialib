@@ -252,7 +252,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             toolHandler: false,
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
-                const parent = customCreateElement({
+                const form = customCreateElement({
                     tag: 'form',
                     className: 'py-2 px-3 d-flex flex-column gap-3',
                     events: {
@@ -294,7 +294,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const sourceRadios = createCheckboxOptions({
-                    parent,
+                    parent: form,
                     name: 'newLayerSource',
                     type: 'radio',
                     containerClass: 'flex-nowrap gap-2 fs-12',
@@ -304,12 +304,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
-                                    const checked = e.target.checked
-
-                                    fileInput.classList.toggle('d-none', !checked)
+                                    urlContainer.classList.add('d-none')
+                                    fileInput.classList.remove('d-none')
                                     submitBtn.disabled = !fileInput.files?.length
-                                    
-                                    urlContainer.classList.toggle('d-none', checked)
                                 }
                             }
                         },
@@ -318,12 +315,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                             labelAttrs: {},
                             events: {
                                 click: (e) => {
-                                    const checked = e.target.checked
+                                    fileInput.classList.add('d-none')
+                                    urlContainer.classList.remove('d-none')
+                                    submitBtn.disabled = !Tagify(form.elements['newLayerNames'])?.value?.length
                                     
-                                    fileInput.classList.toggle('d-none', checked)
-                                    
-                                    urlContainer.classList.toggle('d-none', !checked)
-                                    submitBtn.disabled = !Tagify(parent.elements['newLayerNames'])?.value?.length
                                 }
                             }
                         },
@@ -331,7 +326,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const fileInput = customCreateElement({
-                    parent,
+                    parent: form,
                     tag: 'input',
                     className: 'form-control form-control-sm fs-12',
                     attrs: {
@@ -341,14 +336,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                     },
                     events: {
                         change: (e) => {
-                            const files = e.target.files
-                            submitBtn.disabled = !files?.length
+                            submitBtn.disabled = !e.target.files?.length
                         }
                     }
                 })
 
                 const urlContainer = customCreateElement({
-                    parent,
+                    parent: form,
                     className: 'd-none d-flex flex-column gap-2'
                 })
 
@@ -363,7 +357,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         peNone: false,
                         events: {
                             click: (e) => {
-                                const urlField = parent.elements.newLayerUrl
+                                const urlField = form.elements.newLayerUrl
                                 if (!urlField.value) return
 
                                 urlField.value = ''
@@ -378,8 +372,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     },
                     events: {
                         change: async (e) => {
-                            const formatField = parent.elements.newLayerFormat
-                            const namesField = Tagify(parent.elements.newLayerNames)
+                            const formatField = form.elements.newLayerFormat
+                            const namesField = Tagify(form.elements.newLayerNames)
 
                             let data
                             try {
@@ -450,7 +444,6 @@ const handleLeafletLegendPanel = (map, parent) => {
                 const namesFieldChangeHandler = (e) => {
                     clearTimeout(namesFieldTimeout)
                     namesFieldTimeout = setTimeout(() => {
-                        console.log(e.detail.tagify.value)
                         submitBtn.disabled = !e.detail.tagify.value.length
                     }, 100);
                 }
@@ -475,7 +468,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 })
 
                 const submitBtn = createButton({
-                    parent,
+                    parent: form,
                     className: 'btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success',
                     iconSpecs: 'me-2 bi-stack',
                     innerText: 'Add layers',
@@ -487,7 +480,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
                 const menuContainer = contextMenuHandler(e, {
                     file: {
-                        child: parent,
+                        child:form,
                     },
                 }, {
                     title: 'Add new layers',
