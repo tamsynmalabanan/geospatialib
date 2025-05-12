@@ -709,7 +709,7 @@ const fileToLeafletLayer = (file, { group } = {}) => {
             const typeLower = type.toLowerCase()
 
             if (typeLower === 'zip') {
-                handleZippedFiles(file, (fullPath, content) => {console.log(fullPath, content)})
+                console.log(getZippedFiles(file))
             } else if (typeLower === 'geojson') {
                 try {
                     const geojson = JSON.parse(e.target.result)
