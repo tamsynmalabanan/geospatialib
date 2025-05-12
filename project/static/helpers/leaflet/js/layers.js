@@ -697,7 +697,11 @@ const urlToLeafletLayer = async (url, format, name, {
     }
 }
 
-const fileToLeafletLayer = (file, { group } = {}) => {
+const fileToLeafletLayer = (file, {
+    title,
+    type,   
+    group,
+} = {}) => {
     if (!group) return
 
     const map = group._map
@@ -705,11 +709,7 @@ const fileToLeafletLayer = (file, { group } = {}) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
-            console.log(file, e)
-
-            const [title, type] = file.name.split('.', 2)
             const typeLower = type.toLowerCase()
-
             if (typeLower === 'zip') {
                 const files = await getZippedFiles(file)
                 console.log(files)

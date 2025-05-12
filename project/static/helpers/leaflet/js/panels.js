@@ -269,7 +269,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                             if (isFileSource()) {
                                 for (const file of fileInput.files) {
                                     console.log(file)
-                                    const layer = await fileToLeafletLayer(file, {group})
+                                    const [title, type] = file.name.split('.', 2)
+                                    const layer = await fileToLeafletLayer(file, {
+                                        title, 
+                                        type,
+                                        group,
+                                    })
                                     if (layer) group.addLayer(layer)
                                 }
                             } else {
