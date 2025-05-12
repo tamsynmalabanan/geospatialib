@@ -358,6 +358,7 @@ const getZippedFiles = async (zipFile) => {
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
                 const content = await entry.async('blob')
+                console.log(content)
                 const file = new File([content], relativePath, {
                     lastModified: entry.date.getTime(),
                 })
