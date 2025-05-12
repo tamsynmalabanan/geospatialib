@@ -14,7 +14,9 @@ const fetchFiles = async (url, {abortBtns, controller} = {}) => {
         controller,
         callback: async (response) => {
             const content = await response.blob()
-            console.log(content)
+            const file = new File([content], relativePath, {
+                lastModified: entry.date.getTime(),
+            })
         },
     }).catch(error => {
         console.log(error)
