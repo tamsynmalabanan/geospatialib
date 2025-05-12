@@ -17,7 +17,7 @@ const fetchFiles = async (url, names, {abortBtns, controller} = {}) => {
             const filename = url.split('/')[url.split('/').length-1]
             const file = new File([content], filename)
             if (isCompressedFile(file)) {
-                const files = await getZippedFiles()
+                const files = await getZippedFiles(file)
                 return files
             } else {
                 return [file]
