@@ -17,19 +17,8 @@ const fetchNominatim = async ({
     return await fetchTimeout(url, {
         abortBtns,
         controller,
-        
-    }).then(response => {
-        if (!response.ok && (response.status < 200 || response.status > 300)) {
-            throw new Error('Response not ok.')
-        }
+        callback: parseJSONResponse
 
-        try {
-            return parseJSONResponse(response)
-        } catch {
-            throw new Error('Failed to parse JSON.')
-        }
-    }).then(data => {
-        return data
     }).catch(error => {
         console.log(error)
     })
