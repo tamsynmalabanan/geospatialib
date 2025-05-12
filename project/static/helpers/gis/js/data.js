@@ -15,11 +15,17 @@ const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
 
         console.log(response)
 
-        try {
-            return parseJSONResponse(response)
-        } catch {
-            throw new Error('Failed to parse JSON.')
+        const contentType = response.headers.get("content-type")
+        console.log(contentType)
+
+        if (contentType && contentType.includes("application/json")) {
+            try {
+                return parseJSONResponse(response)
+            } catch {
+                throw new Error('Failed to parse JSON.')
+            }
         }
+
     }).then(data => {
         return data
     }).catch(error => {
