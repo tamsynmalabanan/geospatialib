@@ -2,8 +2,11 @@ from django.utils.text import slugify
 
 import validators
 from urllib.parse import unquote
+import requests
+import mimetypes
 
 from helpers.general.utils import get_first_substring_match
+from helpers.general.files import get_file_info
 
 LAYER_FORMATS = {
     'file': [
@@ -23,11 +26,10 @@ def get_format(url):
 def get_layers_names(url, format):
     if format == 'geojson':
         name = url.split('/')[-1].split('.')[0]
-        return {slugify(name):name}
+        return {slugify(name): name}
     
     if format == 'file': 
-        pass # fetch file/s
-
+        return get_file_info(url)
     return {}
 
 
