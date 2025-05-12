@@ -338,7 +338,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     attrs: {
                         type: 'file',
                         multiple: true,
-                        accept: '.geojson, .json'
+                        accept: '.geojson'
                     },
                     events: {
                         change: toggleSubmitBtn
