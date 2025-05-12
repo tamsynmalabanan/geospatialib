@@ -701,37 +701,49 @@ const urlToLeafletLayer = async (url, format, name, {
     }
 }
 
-const fileToLeafletLayer = (file, {
+const filesToLeafletLayers = async (filesArray, {
     group,
     add=false,
 } = {}) => {
     if (!group) return
-
     const map = group._map
 
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = async (e) => {
-            const [title, type] = file.name.split('.', 2)
-            const typeLower = type.toLowerCase()
-            if (typeLower === 'geojson') {
-                try {
-                    const geojson = JSON.parse(e.target.result)
-                    const layer = await getLeafletGeoJSONLayer({
-                        geojson,
-                        group,
-                        pane: createCustomPane(map),
-                        title,
-                    })
-                    if (layer && add) group.addLayer(layer)
-                    resolve(layer)
-                } catch (error) {
-                    reject(error)
-                }
+    const layers = []
+
+    const handler = async (filesArray) => {
+        for (const file of filesArray) {
+            if (isCompressedFile(file)) {
+                handler(await getZippedFiles(file))
             } else {
-                reject(new Error("Unsupported file type"))
+                const reader = new FileReader()
+                reader.onload = async (e) => {
+                    const [title, type] = file.name.split('.', 2)
+                    const typeLower = type.toLowerCase()
+                    if (typeLower === 'geojson') {
+                        try {
+                            const geojson = JSON.parse(e.target.result)
+                            const layer = await getLeafletGeoJSONLayer({
+                                geojson,
+                                group,
+                                pane: createCustomPane(map),
+                                title,
+                            })
+                            if (layer) {
+                                layer.push(layers)
+                                if (add) group.addLayer(layer)
+                            }
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    } else {
+                        console.log("Unsupported file type")
+                    }
+                }
+                reader.readAsText(file)
             }
         }
-        reader.readAsText(file)
-    })
+    }
+
+    await handler(filesArray)
+    return layers
 }
