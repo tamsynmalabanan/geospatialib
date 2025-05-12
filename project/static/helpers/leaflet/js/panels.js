@@ -267,10 +267,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                         
                             const group = map._ch.getLayerGroups().client
                             if (isFileSource()) {
-                                const handler = (filesArray) => {
+                                const handler = async (filesArray) => {
                                     for (const file of filesArray) {
                                         if (isCompressedFile(file)) {
-                                            handler(getZippedFiles(file))
+                                            handler(await getZippedFiles(file))
                                         } else {
                                             fileToLeafletLayer(file, {
                                                 group,
