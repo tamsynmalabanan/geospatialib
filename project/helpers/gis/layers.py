@@ -8,7 +8,8 @@ import mimetypes
 from helpers.general.utils import get_first_substring_match
 from helpers.general.files import get_file_info
 
-LAYER_FORMATS = {
+def get_format(url):
+    return get_first_substring_match(url, {
     'file': [
         'download',
         '.zip',
@@ -18,10 +19,7 @@ LAYER_FORMATS = {
         'gjson',
         'json',
     ],
-}
-
-def get_format(url):
-    return get_first_substring_match(url, LAYER_FORMATS)
+})
 
 def get_layers_names(url, format):
     if format == 'geojson':
@@ -30,6 +28,7 @@ def get_layers_names(url, format):
     
     if format == 'file': 
         return get_file_info(url)
+    
     return {}
 
 

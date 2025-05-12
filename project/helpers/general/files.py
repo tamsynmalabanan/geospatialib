@@ -14,9 +14,9 @@ def get_file_info(url):
     content_type = response.headers.get('Content-Type', '')
     extension = mimetypes.guess_extension(content_type)
 
-    filename = url.split("/")[-1]
+    filename = {url.split("/")[-1]}
     if extension:
-        filename += extension
+        filename += f'.{extension}'
 
     if "zip" in content_type:
         files = {}
