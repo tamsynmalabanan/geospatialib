@@ -349,18 +349,15 @@ const makeMovable = (element) => {
     })
 }
 
-const handleZippedFiles = async (zipFile, callback) => {
+const handleZippedFiles = async (zipFile) => {
     try {
         const zip = await JSZip.loadAsync(zipFile)
+        const filesArray = []
 
-        const handler = async (zipObj, path ="") => {
-            console.log('zipObj, path', zipObj, path)
-
+        const handler = async (zipObj, path = "") => {
             for (const relativePath in zipObj.files) {
-                console.log('relativePath', relativePath)
                 const entry = zipObj.files[relativePath]
-                console.log('entry', entry)
-                
+
                 if (!relativePath.startsWith(path)) {
                     continue
                 }
@@ -370,14 +367,16 @@ const handleZippedFiles = async (zipFile, callback) => {
                 if (entry.dir) {
                     await handler(zipObj, fullPath)
                 } else {
-                    const content = await entry.async('uint8array')
-                    callback(fullPath, content)
+                    const content = await entry.async("uint8array")
+                    console.log(fullPath, content)
+                    filesArray.push({ path: fullPath, content })
                 }
             }
         }
 
         await handler(zip)
+        return filesArray
     } catch (error) {
         throw new Error(`Error processing zip file: ${error.message}`)
-    }    
-}
+    }
+};
