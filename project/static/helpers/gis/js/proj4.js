@@ -20,6 +20,8 @@ const fetchProj4Def = async (crs, {
             console.error(error)
         })
 
+
+        console.log(def)
         if (def) return def
     }
 }
