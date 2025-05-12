@@ -678,6 +678,8 @@ const urlToLeafletLayers = async (url, format, names=[], {
     group,
     add=false,
 } = {}) => {
+    console.log(url, format, names)
+    
     if (!names.length) return
 
     if (!group) return
