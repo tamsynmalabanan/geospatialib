@@ -23,11 +23,9 @@ const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
         }
 
         const contentDisposition = response.headers.get('Content-Disposition')
-        console.log(contentDisposition)
         if (contentDisposition && contentDisposition.includes('attachment')) {
-            console.log('This response is a downloadable file.')
-        } else {
-            console.log('This response is not a downloadable file.')
+            const blob = response.blob()
+            console.log(blob)
         }
 
     }).then(data => {
