@@ -53,12 +53,12 @@ const fetchTimeout = async (url, {
     timeoutMs = 60000,
     controller = new AbortController(),
     abortBtns,
-    callback,
+    callback=(response) => response,
 } = {}) => {
     const mapKey = `${url}_${JSON.stringify(fetchParams)}` 
     if (mapForFetchTimeout.has(mapKey)) {
         const response = await mapForFetchTimeout.get(mapKey)
-        return response
+        return callback(response)
     }
 
     const abortController = () => controller.abort('Fetch timed out or manually aborted.')
@@ -83,7 +83,7 @@ const fetchTimeout = async (url, {
 
     mapForFetchTimeout.set(mapKey, fetchPromise)
     const response = await fetchPromise
-    return response
+    return callback(response)
 }
 
 const mapForParseJSONResponse = new Map()
