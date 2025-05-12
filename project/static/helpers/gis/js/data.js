@@ -14,6 +14,8 @@ const fetchFiles = async (url, {abortBtns, controller} = {}) => {
         controller,
         callback: async (response) => {
             const content = await response.blob()
+            const filename = url.split('/')[url.split('/').length-1]
+            console.log(filename)
             const file = new File([content], relativePath, {
                 lastModified: entry.date.getTime(),
             })
