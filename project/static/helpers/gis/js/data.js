@@ -13,6 +13,8 @@ const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
             throw new Error('Response not ok.')
         }
 
+        console.log(response)
+
         try {
             return parseJSONResponse(response)
         } catch {
