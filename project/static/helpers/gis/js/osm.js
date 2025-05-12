@@ -57,26 +57,21 @@ const fetchOverpass = async ({
     return fetchTimeout(url, {
         abortBtns,
         controller,
+        callback: async (response) => {
+            const data = await parseJSONResponse(response)
+            if (!data) return
+
+            const elements = data.elements?.filter(element => element.tags)
+            delete data.elements
+            return await overpassToGeoJSON(elements, {controller, data})
+        },
         fetchParams: {
             method: "POST",
             body: getOverpassRequestBody(queryGeom, zoom)
         }
-    }).then(response => {
-        if (!response.ok && (response.status < 200 || response.status > 300)) {
-            throw new Error('Response not ok.')
-        }
-        
-        try {
-            return parseJSONResponse(response)
-        } catch {
-            throw new Error('Failed to parse JSON.')
-        }    
-    }).then(async properties => {
-        if (!properties) return
-        const elements = properties.elements?.filter(element => element.tags)
-        delete properties.elements
-        return await overpassToGeoJSON(elements, {controller, properties})
-    }).catch(error => {})
+    }).catch(error => {
+        console.log(error)
+    })
 }
 
 const overpassToGeoJSON = async (data, {
