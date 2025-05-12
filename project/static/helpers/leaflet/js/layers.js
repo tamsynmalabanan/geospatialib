@@ -705,6 +705,8 @@ const fileToLeafletLayer = (file, { group } = {}) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
+            console.log(file, e)
+
             const [title, type] = file.name.split('.', 2)
             const typeLower = type.toLowerCase()
 
