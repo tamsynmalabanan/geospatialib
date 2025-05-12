@@ -12,8 +12,8 @@ const fetchFiles = async (url, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
-        callback: (response) => {
-            const content = response.blob()
+        callback: async (response) => {
+            const content = await response.blob()
             console.log(content)
         },
     }).catch(error => {
