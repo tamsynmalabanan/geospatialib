@@ -23,6 +23,7 @@ const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
         }
 
         const contentDisposition = response.headers.get('Content-Disposition')
+        console.log(contentDisposition.includes('attachment'))
         if (contentDisposition && contentDisposition.includes('attachment')) {
             const blob = response.blob()
             console.log(blob)
