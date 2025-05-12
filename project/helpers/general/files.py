@@ -14,15 +14,15 @@ def get_file_info(url):
     content_type = response.headers.get('Content-Type', '')
     extension = mimetypes.guess_extension(content_type)
 
-    filename = {url.split("/")[-1]}
+    filename = url.split("/")[-1]
     if extension:
-        filename += f'.{extension}'
+        filename += extension
 
     if "zip" in content_type:
         files = {}
         with zipfile.ZipFile(BytesIO(response.content), 'r') as zf:
             for file in zf.namelist():
-                files[slugify(file)] = file
+                files[file] = file
         return files
     
     return {slugify(filename): filename}
