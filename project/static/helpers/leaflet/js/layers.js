@@ -705,7 +705,8 @@ const urlToLeafletLayers = async (url, format, names=[], {
     }
 
     if (format === 'file') {
-        const file = fetchFiles(url)
+        const files = await fetchFiles(url, names)
+        console.log(names, files)
     }
 }
 
