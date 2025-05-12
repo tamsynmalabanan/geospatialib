@@ -367,9 +367,10 @@ const handleZippedFiles = async (zipFile) => {
                 if (entry.dir) {
                     await handler(zipObj, fullPath)
                 } else {
-                    const content = await entry.async("uint8array")
-                    console.log(fullPath, content)
-                    filesArray.push({ path: fullPath, content })
+                    // const content = await entry.async("uint8array")
+                    // console.log(fullPath, content)
+                    console.log(entry)
+                    filesArray.push(entry)
                 }
             }
         }
