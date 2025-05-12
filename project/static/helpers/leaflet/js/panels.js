@@ -270,12 +270,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 for (const file of fileInput.files) {
                                     if (isCompressedFile(file)) {
                                         console.log(file)
+                                    } else {
+                                        fileToLeafletLayer(file, {
+                                            group,
+                                            add: true,
+                                        })
                                     }
                                     
-                                    fileToLeafletLayer(file, {
-                                        group,
-                                        add: true,
-                                    })
                                 }
                             } else {
                                 const urlField = form.elements.newLayerUrl
