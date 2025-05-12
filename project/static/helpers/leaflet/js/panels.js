@@ -276,17 +276,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const formatField = form.elements.newLayerFormat
                                 const namesField = Tagify(form.elements.newLayerNames)
                                 
-                                namesField.value.forEach(async (name) => {
-                                    const layer = await urlToLeafletLayer(
-                                        urlField.value, 
-                                        formatField.value, 
-                                        name.value, {
-                                            group, 
-                                            title:name.properName,
-                                            add:true,
-                                        }
-                                    )
-                                })
+                                urlToLeafletLayers(
+                                    urlField.value,
+                                    formatField.value,
+                                    namesField.value, {
+                                        group,
+                                        add:true
+                                    }
+                                )
                             }
                             
                             menuContainer.remove()

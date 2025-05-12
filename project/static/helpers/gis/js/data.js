@@ -1,9 +1,3 @@
-const dataFetchHandler = (format) => {
-    return {
-        geojson: fetchGeoJSON,
-    }[format]
-}
-
 const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
     return fetchTimeout(url, {
         abortBtns,

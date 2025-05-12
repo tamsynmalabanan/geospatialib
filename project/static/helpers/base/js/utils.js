@@ -364,7 +364,6 @@ const getZippedFiles = async (zipFile) => {
                 filesArray.push(file)
             }
         } 
-        console.log(filesArray)
         return filesArray
     } catch (error) {
         throw new Error(`Error processing zip file: ${error.message}`)
