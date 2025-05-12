@@ -64,20 +64,22 @@ const getLeafletGeoJSONLayer = async ({
         const handler = (layer) => {
             layer.options.pane = geojsonLayer.options.pane
             
-            if (assignFeatureLayerTitle(layer)) layer.bindTooltip(layer._title, {sticky:true})
-            
-            // const properties = feature.properties
-            // if (Object.keys(properties).length) {
-            //     layer.bindPopup(createFeaturePropertiesTable(properties, {
-            //         header: (() => {
-            //             const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
-            //             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-            //             return popupHeader()
-            //         })()
-            //     }).outerHTML, {
-            //         autoPan: false,
-            //     })
+            // if (assignFeatureLayerTitle(layer)) {
+            //     layer.bindTooltip(layer._title, {sticky:true})
             // }
+            
+            const properties = feature.properties
+            if (Object.keys(properties).length) {
+                layer.bindPopup(createFeaturePropertiesTable(properties, {
+                    header: (() => {
+                        const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                        layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                        return popupHeader()
+                    })()
+                }).outerHTML, {
+                    autoPan: false,
+                })
+            }
     
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
         }
