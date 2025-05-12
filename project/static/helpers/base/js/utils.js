@@ -355,7 +355,6 @@ const getZippedFiles = async (zipFile) => {
         const filesArray = []
 
         for (const relativePath in zip.files) {
-            console.log(relativePath)
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
                 const content = await entry.async('blob')
@@ -365,7 +364,7 @@ const getZippedFiles = async (zipFile) => {
                 filesArray.push(file)
             }
         } 
-
+        console.log(filesArray)
         return filesArray
     } catch (error) {
         throw new Error(`Error processing zip file: ${error.message}`)
