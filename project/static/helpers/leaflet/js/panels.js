@@ -268,6 +268,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             const group = map._ch.getLayerGroups().client
                             if (isFileSource()) {
                                 for (const file of fileInput.files) {
+                                    console.log(file)
                                     const layer = await fileToLeafletLayer(file, {group})
                                     if (layer) group.addLayer(layer)
                                 }
