@@ -370,3 +370,10 @@ const getZippedFiles = async (zipFile) => {
         throw new Error(`Error processing zip file: ${error.message}`)
     }
 }
+
+const isCompressedFile = (file) => {
+    const compressedExtensions = ['zip', 'rar', '7z', 'tar', 'gz']
+    const fileName = file.name.toLowerCase()
+    const fileExtension = fileName.split('.').pop()
+    return compressedExtensions.includes(fileExtension)
+}

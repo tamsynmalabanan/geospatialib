@@ -698,9 +698,8 @@ const urlToLeafletLayer = async (url, format, name, {
 }
 
 const fileToLeafletLayer = (file, {
-    title,
-    type,   
     group,
+    add=false,
 } = {}) => {
     if (!group) return
 
@@ -709,11 +708,9 @@ const fileToLeafletLayer = (file, {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
+            const [title, type] = file.name.split('.', 2)
             const typeLower = type.toLowerCase()
-            if (typeLower === 'zip') {
-                const files = await getZippedFiles(file)
-                console.log(files)
-            } else if (typeLower === 'geojson') {
+            if (typeLower === 'geojson') {
                 try {
                     const geojson = JSON.parse(e.target.result)
                     const layer = await getLeafletGeoJSONLayer({
@@ -722,6 +719,7 @@ const fileToLeafletLayer = (file, {
                         pane: createCustomPane(map),
                         title,
                     })
+                    if (layer && add) group.addLayer(layer)
                     resolve(layer)
                 } catch (error) {
                     reject(error)
