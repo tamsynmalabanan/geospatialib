@@ -57,7 +57,16 @@ const getLeafletGeoJSONLayer = async ({
                 values: {},
                 operator: '&&',
             },
-        }
+        },
+        // info: {
+        //     active: false,
+        //     values: {
+        //         tooltip: {
+        //             active: false,
+        //             properties: []
+        //         }
+        //     }
+        // }
     }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
