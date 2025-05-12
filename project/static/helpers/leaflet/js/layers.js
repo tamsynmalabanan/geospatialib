@@ -706,7 +706,7 @@ const fileToLeafletLayer = (file, { group } = {}) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
             const [title, type] = file.name.split('.', 2)
-            if (type.toLowerCase().endsWith('json')) {
+            if (type.toLowerCase() === 'geojson') {
                 try {
                     const geojson = JSON.parse(e.target.result)
                     const layer = await getLeafletGeoJSONLayer({
@@ -714,16 +714,15 @@ const fileToLeafletLayer = (file, { group } = {}) => {
                         group,
                         pane: createCustomPane(map),
                         title,
-                    });
-                    resolve(layer);
+                    })
+                    resolve(layer)
                 } catch (error) {
-                    console.log(error);
-                    reject(error);
+                    reject(error)
                 }
             } else {
-                reject(new Error("Unsupported file type"));
+                reject(new Error("Unsupported file type"))
             }
-        };
-        reader.readAsText(file);
-    });
-};
+        }
+        reader.readAsText(file)
+    })
+}
