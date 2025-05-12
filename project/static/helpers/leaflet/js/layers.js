@@ -729,7 +729,7 @@ const filesToLeafletLayers = async (filesArray, {
                                 title,
                             })
                             if (layer) {
-                                layer.push(layers)
+                                layers.push(layers)
                                 if (add) group.addLayer(layer)
                             }
                         } catch (error) {
