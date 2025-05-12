@@ -370,7 +370,6 @@ const handleZippedFiles = async (zipFile, callback) => {
                     await handler(zipObj, fullPath)
                 } else {
                     const content = await entry.async('uint8array')
-                    console.log(content)
                     callback(fullPath, content)
                 }
             }
