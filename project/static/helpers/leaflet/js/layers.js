@@ -711,7 +711,8 @@ const fileToLeafletLayer = (file, { group } = {}) => {
             const typeLower = type.toLowerCase()
 
             if (typeLower === 'zip') {
-                console.log(getZippedFiles(file))
+                const files = await getZippedFiles(file)
+                console.log(files)
             } else if (typeLower === 'geojson') {
                 try {
                     const geojson = JSON.parse(e.target.result)
