@@ -14,9 +14,10 @@ const fetchNominatim = async ({
         polygon_threshold: 0,
     })
 
-    return fetchTimeout(url, {
+    return await fetchTimeout(url, {
         abortBtns,
         controller,
+        
     }).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {
             throw new Error('Response not ok.')
