@@ -379,7 +379,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         formatField.classList.toggle('is-invalid', format === false && formatField.value !== '')
                         formatField.value = url ? format ? format : format === false ? formatField.value : '' : ''
                         
-                        const properNames = Object.values(names)
+                        const properNames = Object.values(names ?? {})
                         format && properNames?.length 
                         ? namesField.DOM.scope.removeAttribute('disabled')
                         : namesField.DOM.scope.setAttribute('disabled', true) 
