@@ -65,6 +65,7 @@ const getLeafletGeoJSONLayer = async ({
             layer.options.pane = geojsonLayer.options.pane
             
             if (assignFeatureLayerTitle(layer)) {
+                console.log(layer, layer._title)
                 layer.bindTooltip(layer._title, {sticky:true})
             }
             
