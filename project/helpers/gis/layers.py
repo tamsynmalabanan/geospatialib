@@ -24,6 +24,10 @@ def get_layers_names(url, format):
     if format == 'geojson':
         name = url.split('/')[-1].split('.')[0]
         return {slugify(name):name}
+    
+    if format == 'file': 
+        pass # fetch file/s
+
     return {}
 
 
