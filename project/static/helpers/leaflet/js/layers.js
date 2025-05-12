@@ -706,7 +706,11 @@ const fileToLeafletLayer = (file, { group } = {}) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
             const [title, type] = file.name.split('.', 2)
-            if (type.toLowerCase() === 'geojson') {
+            const typeLower = type.toLowerCase()
+
+            if (typeLower === 'zip') {
+                handleZippedFiles(file, (fullPath, content) => {console.log(fullPath, content)})
+            } else if (typeLower === 'geojson') {
                 try {
                     const geojson = JSON.parse(e.target.result)
                     const layer = await getLeafletGeoJSONLayer({
