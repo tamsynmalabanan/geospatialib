@@ -6,11 +6,15 @@ from urllib.parse import unquote
 from helpers.general.utils import get_first_substring_match
 
 LAYER_FORMATS = {
+    'file': [
+        'download',
+        '.zip',
+    ],
     'geojson': [
         'geojson',
         'gjson',
         'json',
-    ]
+    ],
 }
 
 def get_format(url):

@@ -677,6 +677,7 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
 const urlToLeafletLayer = async (url, format, name, {
     group,
     title,
+    add=false,
 } = {}) => {
     if (!group) return
 
@@ -688,12 +689,15 @@ const urlToLeafletLayer = async (url, format, name, {
     if (format === 'geojson') {
         const geojson = await handler(url)
         if (!geojson) return
-        return await getLeafletGeoJSONLayer({
+        const layer = await getLeafletGeoJSONLayer({
             geojson,
             group,
             pane: createCustomPane(map),
             title: title ?? name,
         })
+        if (layer && add) {
+            group.addLayer(layer)
+        }
     }
 }
 

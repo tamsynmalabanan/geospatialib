@@ -289,10 +289,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     const layer = await urlToLeafletLayer(
                                         urlField.value, 
                                         formatField.value, 
-                                        name.value,
-                                        {group, title:name.properName}
+                                        name.value, {
+                                            group, 
+                                            title:name.properName,
+                                            add:true,
+                                        }
                                     )
-                                    if (layer) group.addLayer(layer)
                                 })
                             }
                             
@@ -437,7 +439,8 @@ const handleLeafletLegendPanel = (map, parent) => {
                     disabled: true,
                     options: {
                         '': 'Select format',
-                        'geojson': 'GeoJSON',
+                        'file': 'Attachment File',
+                        'geojson': 'GeoJSON API',
                     },
                     events: {
                         change: validateCollection

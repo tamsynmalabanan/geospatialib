@@ -13,22 +13,11 @@ const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
             throw new Error('Response not ok.')
         }
 
-        const contentType = response.headers.get("content-type")
-        if (contentType && contentType.includes("application/json")) {
-            try {
-                return parseJSONResponse(response)
-            } catch {
-                throw new Error('Failed to parse JSON.')
-            }
+        try {
+            return parseJSONResponse(response)
+        } catch {
+            throw new Error('Failed to parse JSON.')
         }
-
-        const contentDisposition = response.headers.get('Content-Disposition')
-        console.log(contentDisposition.includes('attachment'))
-        if (contentDisposition && contentDisposition.includes('attachment')) {
-            const blob = response.blob()
-            console.log(blob)
-        }
-
     }).then(data => {
         return data
     }).catch(error => {
