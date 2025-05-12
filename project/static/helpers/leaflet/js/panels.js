@@ -267,17 +267,19 @@ const handleLeafletLegendPanel = (map, parent) => {
                         
                             const group = map._ch.getLayerGroups().client
                             if (isFileSource()) {
-                                for (const file of fileInput.files) {
-                                    if (isCompressedFile(file)) {
-                                        console.log(file)
-                                    } else {
-                                        fileToLeafletLayer(file, {
-                                            group,
-                                            add: true,
-                                        })
+                                const handler = (filesArray) => {
+                                    for (const file of filesArray) {
+                                        if (isCompressedFile(file)) {
+                                            handler(getZippedFiles(file))
+                                        } else {
+                                            fileToLeafletLayer(file, {
+                                                group,
+                                                add: true,
+                                            })
+                                        }
                                     }
-                                    
                                 }
+                                handler(fileInput.files)
                             } else {
                                 const urlField = form.elements.newLayerUrl
                                 const formatField = form.elements.newLayerFormat
