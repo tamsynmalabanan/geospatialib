@@ -13,13 +13,10 @@ const fetchFiles = async (url, {abortBtns, controller} = {}) => {
         abortBtns,
         controller,
         callback: async (response) => {
-            console.log(response)
             const content = await response.blob()
             const filename = url.split('/')[url.split('/').length-1]
-            console.log(filename)
-            const file = new File([content], filename, {
-                lastModified: entry.date.getTime(),
-            })
+            const file = new File([content], filename)
+            console.log(file)
         },
     }).catch(error => {
         console.log(error)
