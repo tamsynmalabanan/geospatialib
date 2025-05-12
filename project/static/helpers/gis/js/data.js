@@ -13,7 +13,6 @@ const fetchFiles = async (url, {filenames=[], abortBtns, controller} = {}) => {
         abortBtns,
         controller,
         callback: async (response) => {
-            console.log(filenames)
             const content = await response.blob()
             const filename = url.split('/')[url.split('/').length-1]
             const file = new File([content], filename)
