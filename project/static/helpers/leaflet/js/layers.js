@@ -678,8 +678,6 @@ const urlToLeafletLayers = async (url, format, names=[], {
     group,
     add=false,
 } = {}) => {
-    console.log(url, format, names)
-
     if (!names.length) return
 
     if (!group) return
@@ -705,7 +703,9 @@ const urlToLeafletLayers = async (url, format, names=[], {
     }
 
     if (format === 'file') {
-        const files = await fetchFiles(url)
+        const files = await fetchFiles(url, {
+            filenames: names.map(i => i.value)
+        })
         console.log(names, files)
     }
 }
