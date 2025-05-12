@@ -41,6 +41,10 @@ const fetchCORSProxy = async (url, fetchParams={}) => {
         `/htmx/cors_proxy/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
+        if (!response.ok && (response.status < 200 || response.status > 300)) {
+            throw new Error('Response not ok.')
+        }
+
         return response
     }).catch(error => {
         throw error
@@ -70,6 +74,11 @@ const fetchTimeout = async (url, {
         {...fetchParams, signal: controller.signal}
     ).then(async response => {
         clearTimeout(timeoutId)
+
+        if (!response.ok && (response.status < 200 || response.status > 300)) {
+            throw new Error('Response not ok.')
+        }
+
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {

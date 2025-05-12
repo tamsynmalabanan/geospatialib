@@ -2,19 +2,12 @@ const fetchGeoJSON = (url, {abortBtns, controller} = {}) => {
     return fetchTimeout(url, {
         abortBtns,
         controller,
-    }).then(response => {
-        if (!response.ok && (response.status < 200 || response.status > 300)) {
-            throw new Error('Response not ok.')
+        callback: async (response) => {
+            try {
+                return await parseJSONResponse(response)
+            } catch {
+                throw new Error('Failed to parse JSON.')
+            }
         }
-
-        try {
-            return parseJSONResponse(response)
-        } catch {
-            throw new Error('Failed to parse JSON.')
-        }
-    }).then(data => {
-        return data
-    }).catch(error => {
-        console.log(error)
     })
 }
