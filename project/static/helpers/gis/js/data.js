@@ -2,7 +2,7 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
-        callback: async (response) => await parseJSONResponse(response)
+        callback: parseJSONResponse
     }).catch(error => {
         console.log(error)
     })
