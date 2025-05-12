@@ -267,7 +267,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                         
                             const group = map._ch.getLayerGroups().client
                             if (isFileSource()) {
-                                filesToLeafletLayers(fileInput.files)
+                                filesToLeafletLayers(fileInput.files, {
+                                    group,
+                                    add:true
+                                })
                             } else {
                                 const urlField = form.elements.newLayerUrl
                                 const formatField = form.elements.newLayerFormat
