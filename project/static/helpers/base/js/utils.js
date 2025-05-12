@@ -357,6 +357,7 @@ const handleZippedFiles = async (zipFile, callback) => {
             console.log(zipObj, path)
 
             for (const relativePath in zipObj.files) {
+                console.log(relativePath)
                 const entry = zipObj.files[relativePath]
                 console.log(entry)
                 
