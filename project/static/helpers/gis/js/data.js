@@ -13,7 +13,8 @@ const fetchFiles = async (url, {abortBtns, controller} = {}) => {
         abortBtns,
         controller,
         callback: (response) => {
-            return response.blob()
+            const content = response.blob()
+            console.log(content)
         },
     }).catch(error => {
         console.log(error)
