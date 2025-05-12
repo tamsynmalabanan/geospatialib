@@ -173,7 +173,7 @@ const assignFeatureLayerTitle = (layer) => {
         if (!matches.length) {
             continue
         } else {
-            layer._title = properties[matches[0]]
+            layer._title = String(properties[matches[0]])
             break
         }
     }
