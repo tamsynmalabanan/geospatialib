@@ -354,12 +354,12 @@ const handleZippedFiles = async (zipFile, callback) => {
         const zip = await JSZip.loadAsync(zipFile)
 
         const handler = async (zipObj, path ="") => {
-            console.log(zipObj, path)
+            console.log('zipObj, path', zipObj, path)
 
             for (const relativePath in zipObj.files) {
-                console.log(relativePath)
+                console.log('relativePath', relativePath)
                 const entry = zipObj.files[relativePath]
-                console.log(entry)
+                console.log('entry', entry)
                 
                 if (!relativePath.startsWith(path)) {
                     continue
