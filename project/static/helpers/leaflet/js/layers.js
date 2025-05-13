@@ -430,6 +430,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
     const feature = layer.feature
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
+    const featureInfo = geojsonLayer?._styles.info
 
     const group = layer._group || geojsonLayer?._group
     if (!group) return
@@ -471,8 +472,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
     
     return contextMenuHandler(e, {
-
-
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
@@ -503,7 +502,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 : removeLayer(layer, isLegendGroup) 
             }
         },
-        propertiesTable: !feature || !Object.keys(feature.properties).length ? null : {
+        propertiesTable: (
+            !feature 
+            || !featureInfo.active 
+            || !featureInfo.values.popup.active 
+            || !Object.keys(feature.properties).length
+        ) ? null : {
             innerText: `Show properties table`,
             btnCallback: async () => {
                 await zoomToLeafletLayer(layer, map)

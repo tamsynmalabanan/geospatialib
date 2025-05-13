@@ -69,7 +69,10 @@ const getLeafletGeoJSONLayer = async ({
                 popup: {
                     active: true,
                     properties: []
-                }
+                },
+                menu: {
+                    active: true,
+                },
             }
         }
     }
@@ -115,10 +118,11 @@ const getLeafletGeoJSONLayer = async ({
                         autoPan: false,
                     })
                 }
+                
+                if (info.values.menu.active) {
+                    layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
+                }
             }
-            
-    
-            layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
         }
 
         const renderer = geojsonLayer.options.renderer
