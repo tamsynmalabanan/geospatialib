@@ -69,9 +69,6 @@ const getLeafletGeoJSONLayer = async ({
             popup: {
                 active: false,
                 properties: [],
-                format: 'table', // badge
-                prefix: '',
-                suffix: '',
             },
         }
     }
@@ -95,10 +92,12 @@ const getLeafletGeoJSONLayer = async ({
                             value = value ?? 'null'
                             return String(value)
                         })
-                        return values.some(i => i !== 'null') ? values.join(tooltip.delimiter) : null
+                        return values.some(i => i !== 'null') ? [tooltip.prefix, values.join(tooltip.delimiter), tooltip.suffix].join(' ') : null
                     })() : getFeatureTitle(properties)
                     if (title) layer.bindTooltip(title, {sticky:true})
                 }
+
+                if (!layer._title) layer._title = getFeatureTitle(properties)
 
                 const popup = info.popup
                 if (popup.active) {
@@ -111,15 +110,14 @@ const getLeafletGeoJSONLayer = async ({
                         popupProperties = properties
                     }
 
-                    layer.bindPopup(createFeaturePropertiesTable(popupProperties, {
+                    const popupContent = createFeaturePropertiesTable(popupProperties, {
                         header: (() => {
                             const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
                             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
                             return popupHeader()
                         })()
-                    }).outerHTML, {
-                        autoPan: false,
-                    })
+                    }).outerHTML
+                    layer.bindPopup(popupContent, {autoPan: false})
                 }
                 
             }

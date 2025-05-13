@@ -2933,11 +2933,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-
+                    },
+                    className: 'gap-2 flex-wrap'
+                },
+                'Feature Interactivity': {
+                    fields: {
                         enableTooltip: {
                             handler: createFormCheck,
                             checked: info.tooltip.active,
-                            formCheckClass: 'w-100 flex-grow-1',
+                            formCheckClass: 'w-100 flex-grow-1 mt-2',
                             labelInnerText: 'Feature tooltip',
                             role: 'switch',
                             events: {
@@ -3029,6 +3033,53 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+                        tooltipPrefix: {
+                            handler: createFormFloating,
+                            containerClass: 'w-25 flex-grow-1',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: info.tooltip.prefix,
+                            },
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Tooltip prefix',
+                            labelClass: 'text-wrap',
+                            events: {
+                                input: (e) => {
+                                    const value = e.target.value
+                                    if (value === info.tooltip.prefix) return
+                
+                                    info.tooltip.prefix = value
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+                        tooltipSuffix: {
+                            handler: createFormFloating,
+                            containerClass: 'w-25 flex-grow-1',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: info.tooltip.suffix,
+                            },
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Tooltip suffix',
+                            labelClass: 'text-wrap',
+                            events: {
+                                input: (e) => {
+                                    const value = e.target.value
+                                    if (value === info.tooltip.suffix) return
+                
+                                    info.tooltip.suffix = value
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+
 
                         enablePopup: {
                             handler: createFormCheck,
@@ -3101,6 +3152,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }])))()
                             }
                         },
+
                     },
                     className: 'gap-2 flex-wrap'
                 },
