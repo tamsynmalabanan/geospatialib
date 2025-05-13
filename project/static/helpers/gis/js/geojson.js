@@ -302,7 +302,7 @@ const createFeaturePropertiesTable = (properties, {
         const theadth = document.createElement('th')
         theadth.setAttribute('scope', 'col')
         theadth.setAttribute('colspan', '2')
-        theadth.className = 'fw-medium'
+        theadth.className = 'fw-medium text-break'
         theadth.innerText = header
         theadtr.appendChild(theadth)
     }
