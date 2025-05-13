@@ -2121,6 +2121,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     ${Math.round(Math.random()*(100-75))+75}%,
                                     ${Math.round(Math.random()*(55-45))+45}%,
                                 1)`),
+                                fillPattern: count <= 10 ? symbology.default.styleParams.fillPattern : 'solid',
                                 fillOpacity: 0.5,
                                 strokeColor: true,
                                 strokeOpacity: 1,
