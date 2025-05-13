@@ -3012,7 +3012,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         tooltipDel: {
                             handler: createFormFloating,
-                            containerClass: 'w-25 flex-grow-1',
+                            containerClass: 'w-10 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: info.tooltip.delimiter,
@@ -3035,7 +3035,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         tooltipPrefix: {
                             handler: createFormFloating,
-                            containerClass: 'w-25 flex-grow-1',
+                            containerClass: 'w-10 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: info.tooltip.prefix,
@@ -3058,7 +3058,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         tooltipSuffix: {
                             handler: createFormFloating,
-                            containerClass: 'w-25 flex-grow-1',
+                            containerClass: 'w-10 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: info.tooltip.suffix,
