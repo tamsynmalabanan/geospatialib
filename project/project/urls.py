@@ -22,5 +22,5 @@ from decouple import config
 urlpatterns = [
     path(f'{config('ADMIN_PATH')}/admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('htmx/', include('htmx.urls')),
+    path(f'htmx/', include('htmx.urls')),
 ]
