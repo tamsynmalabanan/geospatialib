@@ -936,9 +936,7 @@ const handleLeafletStylePanel = (map, parent) => {
         try {
             if (!styleParams) throw new Error('No style params.')
 
-            console.log(styleParams)
-
-            let {
+                let {
                 strokeWidth,
                 strokeColor,
                 strokeOpacity,
