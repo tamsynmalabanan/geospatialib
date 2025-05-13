@@ -833,7 +833,7 @@ const handleLeafletStylePanel = (map, parent) => {
     parent.appendChild(form)
 
     const toolbar = document.createElement('div')
-    toolbar.className = 'd-flex p-3 flex-column gap-3'
+    toolbar.className = 'd-flex p-3 flex-c olumn gap-3'
     form.appendChild(toolbar)
 
     const select = createInputGroup({
@@ -2828,6 +2828,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const symbology = layerStyles.symbology 
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
+        const info = layerStyles.info
         const filterContainerId = generateRandomString()
 
         const styleFields = {
@@ -2932,6 +2933,31 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+
+                        enableInfo: {
+                            handler: createFormCheck,
+                            checked: info.active,
+                            // formCheckClass: 'flex-grow-1',
+                            labelInnerText: 'Enable feature info',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === filters.type.active) return
+                
+                                    Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
+                                        form.elements[i].disabled = !value
+                                    })
+
+                                    info.active = value
+                                    updateLeafletGeoJSONLayer(layer, {//
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+
                     },
                     className: 'gap-2 flex-wrap'
                 },
