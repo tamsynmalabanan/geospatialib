@@ -3008,13 +3008,14 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         tooltipDel: {
                             handler: createFormFloating,
-                            containerClass: 'w-25 flex-grow-1',
+                            containerClass: 'w-10 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
                                 value: info.tooltip.delimiter,
                             },
                             fieldClass: 'form-control-sm',
                             labelText: 'Tooltip delimiter',
+                            labelClass: 'text-wrap',
                             events: {
                                 input: (e) => {
                                     const value = e.target.value
