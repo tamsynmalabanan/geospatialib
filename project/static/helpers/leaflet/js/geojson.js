@@ -90,7 +90,7 @@ const getLeafletGeoJSONLayer = async ({
                             value = value ?? 'null'
                             return String(value)
                         })
-                        return values.some(i => i !== 'undefined') ? values.join(tooltip.delimiter) : null
+                        return values.some(i => i !== 'null') ? values.join(tooltip.delimiter) : null
                     })() : getFeatureTitle(properties)
                     if (title) layer.bindTooltip(title, {sticky:true})
                 }
