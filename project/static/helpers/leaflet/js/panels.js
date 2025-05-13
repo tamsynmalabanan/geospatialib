@@ -3030,7 +3030,79 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
 
-
+                        
+                        enablePopup: {
+                            handler: createFormCheck,
+                            checked: info.popup.active,
+                            formCheckClass: 'w-10 flex-grow-1',
+                            labelInnerText: 'Feature popup',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === info.popup.active) return
+                
+                                    info.popup.active = value
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+                        popupProps: {
+                            handler: createTagifyField,
+                            inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                            inputTag: 'textarea',
+                            enabled: 0,
+                            dropdownClass: `my-1 border-0`,
+                            userInput: true,
+                            maxTags: 5,
+                            scopeStyle: {
+                                height: '58px',
+                            },
+                            name:  `popupProps`,
+                            placeholder: 'Select properties',
+                            currentValue: JSON.stringify((info.popup.properties || []).map(i => {return {value:i}})),
+                            events: {
+                                focus: async (e) => {
+                                    const geojson = (await getLeafletGeoJSONData(layer, {
+                                        controller,
+                                        filter:false,
+                                        queryGeom:false,
+                                        group:false,
+                                        sort:false,
+                                        simplify:false
+                                    })) || layer.toGeoJSON()
+                                    if (!geojson) return
+                                    
+                                    const tagify = Tagify(form.elements['popupProps'])
+                                    const options = []
+                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                    })
+                                    const optionsSet = options.length ? new Set(options) : []
+                                    const sortedOptions = [...optionsSet].filter(i => {
+                                        return !(info.popup.properties || []).includes(i)
+                                    }).sort()
+                                    tagify.settings.whitelist = sortedOptions
+                                },
+                            },
+                            callbacks: {
+                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                    const tagify = e.detail.tagify
+                                    const values = tagify.value.map(i => i.value)
+                        
+                                    if (values.every(i => info.popup.properties.includes(i)) && info.popup.properties.every(i => values.includes(i)) ) return
+                        
+                                    info.popup.properties = values
+                                    if (info.popup.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }])))()
+                            }
+                        },
                     },
                     className: 'gap-2 flex-wrap'
                 },
