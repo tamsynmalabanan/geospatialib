@@ -83,10 +83,11 @@ const getLeafletGeoJSONLayer = async ({
                 if (tooltip.active) {
                     const title = layer._title = tooltip.properties.length ? (() => {
                         const values = tooltip.properties.map(i => {
-                            const value = properties[i]
+                            let value = properties[i]
                             if (!isNaN(Number(value))) {
                                 return formatNumberWithCommas(Number(value))
                             }
+                            value = value ?? 'null'
                             return String(value)
                         })
                         return values.some(i => i !== 'undefined') ? values.join(tooltip.delimiter) : null
