@@ -2936,7 +2936,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                         enableTooltip: {
                             handler: createFormCheck,
-                            checked: info.tooltip.ative,
+                            checked: info.tooltip.active,
                             formCheckClass: 'w-10 flex-grow-1',
                             labelInnerText: 'Feature tooltip',
                             role: 'switch',
@@ -2999,10 +2999,36 @@ const handleLeafletStylePanel = (map, parent) => {
                                     if (values.every(i => info.tooltip.properties.includes(i)) && info.tooltip.properties.every(i => values.includes(i)) ) return
                         
                                     info.tooltip.properties = values
-                                    updateSymbologyGroups()
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
                                 }])))()
                             }
                         },
+                        tooltipDel: {
+                            handler: createFormFloating,
+                            containerClass: 'w-25 flex-grow-1',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: info.tooltip.delimiter,
+                            },
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Tooltip delimiter',
+                            events: {
+                                input: (e) => {
+                                    const value = e.target.value
+                                    if (value === info.tooltip.delimiter) return
+                
+                                    info.tooltip.delimiter = value
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+
 
                     },
                     className: 'gap-2 flex-wrap'
