@@ -2934,22 +2934,18 @@ const handleLeafletStylePanel = (map, parent) => {
                             }
                         },
 
-                        enableInfo: {
+                        enableTooltip: {
                             handler: createFormCheck,
-                            checked: info.active,
-                            formCheckClass: 'w-100 flex-grow-1',
-                            labelInnerText: 'Enable feature info',
+                            checked: info.tooltip.ative,
+                            formCheckClass: 'w-10 flex-grow-1',
+                            labelInnerText: 'Feature tooltip',
                             role: 'switch',
                             events: {
                                 click: (e) => {
                                     const value = e.target.checked
-                                    if (value === info.active) return
+                                    if (value === info.tooltip.active) return
                 
-                                    Object.keys(form.elements).filter(i => i.startsWith('info-')).forEach(i => {
-                                        form.elements[i].disabled = !value
-                                    })
-
-                                    info.active = value
+                                    info.tooltip.active = value
                                     updateLeafletGeoJSONLayer(layer, {
                                         geojson: value ? layer.toGeoJSON() : null,
                                         controller,
@@ -2957,6 +2953,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
+
 
                     },
                     className: 'gap-2 flex-wrap'

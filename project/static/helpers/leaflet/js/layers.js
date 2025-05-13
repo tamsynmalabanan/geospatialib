@@ -504,8 +504,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         },
         propertiesTable: (
             !feature 
-            || !featureInfo.active 
-            || !featureInfo.values.popup.active 
+            || !featureInfo.popup.active 
             || !Object.keys(feature.properties).length
         ) ? null : {
             innerText: `Show properties table`,

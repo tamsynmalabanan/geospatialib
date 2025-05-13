@@ -59,21 +59,18 @@ const getLeafletGeoJSONLayer = async ({
             },
         },
         info: {
-            active: false,
-            values: {
-                tooltip: {
-                    active: true,
-                    properties: [],
-                    delimiter: '; '
-                },
-                popup: {
-                    active: true,
-                    properties: []
-                },
-                menu: {
-                    active: true,
-                },
-            }
+            tooltip: {
+                active: true,
+                properties: [],
+                delimiter: '; '
+            },
+            popup: {
+                active: true,
+                properties: []
+            },
+            menu: {
+                active: true,
+            },
         }
     }
 
@@ -81,11 +78,11 @@ const getLeafletGeoJSONLayer = async ({
         const handler = (layer) => {
             layer.options.pane = geojsonLayer.options.pane
             
-            const properties = feature.properties
-            const hasProperties = Object.keys(properties).length
             const info = geojsonLayer._styles.info
-            if (hasProperties && info.active) {
-                const tooltip = info.values.tooltip
+            
+            const properties = feature.properties
+            if (Object.keys(properties).length) {
+                const tooltip = info.tooltip
                 if (tooltip.active) {
                     const title = layer._title = tooltip.properties.length ? tooltip.properties.map(i => {
                         const value = properties[i]
@@ -97,7 +94,7 @@ const getLeafletGeoJSONLayer = async ({
                     layer.bindTooltip(title, {sticky:true})
                 }
 
-                const popup = info.values.popup
+                const popup = info.popup
                 if (popup.active) {
                     let popupProperties = {}
                     if (popup.properties.length) {
@@ -119,9 +116,10 @@ const getLeafletGeoJSONLayer = async ({
                     })
                 }
                 
-                if (info.values.menu.active) {
-                    layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
-                }
+            }
+
+            if (info.menu.active) {
+                layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
             }
         }
 
