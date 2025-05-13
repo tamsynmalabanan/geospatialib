@@ -3033,7 +3033,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         enablePopup: {
                             handler: createFormCheck,
                             checked: info.popup.active,
-                            formCheckClass: 'w-25 flex-shirnk-1',
+                            formCheckClass: 'w-20 flex-shirnk-1',
                             labelInnerText: 'Feature popup',
                             role: 'switch',
                             events: {
@@ -3051,7 +3051,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         popupProps: {
                             handler: createTagifyField,
-                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                            inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
                             inputTag: 'textarea',
                             enabled: 0,
                             dropdownClass: `my-1 border-0`,
