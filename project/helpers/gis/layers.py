@@ -2,8 +2,6 @@ from django.utils.text import slugify
 
 import validators
 from urllib.parse import unquote
-import requests
-import mimetypes
 
 from helpers.general.utils import get_first_substring_match
 from helpers.general.files import get_file_info

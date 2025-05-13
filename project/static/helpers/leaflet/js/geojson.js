@@ -58,37 +58,65 @@ const getLeafletGeoJSONLayer = async ({
                 operator: '&&',
             },
         },
-        // info: {
-        //     active: false,
-        //     values: {
-        //         tooltip: {
-        //             active: false,
-        //             properties: []
-        //         }
-        //     }
-        // }
+        info: {
+            active: false,
+            values: {
+                tooltip: {
+                    active: false,
+                    properties: [],
+                    delimiter: '; '
+                },
+                popup: {
+                    active: false,
+                    properties: []
+                }
+            }
+        }
     }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const handler = (layer) => {
             layer.options.pane = geojsonLayer.options.pane
             
-            if (assignFeatureLayerTitle(layer)) {
-                layer.bindTooltip(layer._title, {sticky:true})
+            const properties = feature.properties
+            const hasProperties = Object.keys(properties).length
+            const info = geojsonLayer._styles.info
+            if (hasProperties && info.active) {
+                const tooltip = info.values.tooltip
+                if (tooltip.active) {
+                    const title = layer._title = tooltip.properties.length ? tooltip.properties.map(i => {
+                        const value = properties[i]
+                        if (!isNaN(Number(value))) {
+                            return formatNumberWithCommas(Number(value))
+                        }
+                        return String(value)
+                    }).join(tooltip.delimiter) : getFeatureTitle(properties)
+                    layer.bindTooltip(title, {sticky:true})
+                }
+
+                const popup = info.values.popup
+                if (popup.active) {
+                    let popupProperties = {}
+                    if (popup.properties.length) {
+                        for (const i of popup.properties) {
+                            popupProperties[i] = properties[i]
+                        }
+                    } else {
+                        popupProperties = properties
+                    }
+
+                    layer.bindPopup(createFeaturePropertiesTable(popupProperties, {
+                        header: (() => {
+                            const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                            layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                            return popupHeader()
+                        })()
+                    }).outerHTML, {
+                        autoPan: false,
+                    })
+                }
             }
             
-            const properties = feature.properties
-            if (Object.keys(properties).length) {
-                layer.bindPopup(createFeaturePropertiesTable(properties, {
-                    header: (() => {
-                        const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
-                        layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                        return popupHeader()
-                    })()
-                }).outerHTML, {
-                    autoPan: false,
-                })
-            }
     
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
         }
@@ -167,8 +195,8 @@ const getLeafletGeoJSONLayer = async ({
     return geojsonLayer
 }
 
-const assignFeatureLayerTitle = (layer) => {
-    const properties = layer.feature.properties
+const getFeatureTitle = (properties) => {
+    let title
 
     for (const key of [
         'display_name',
@@ -181,22 +209,22 @@ const assignFeatureLayerTitle = (layer) => {
         if (!matches.length) {
             continue
         } else {
-            layer._title = String(properties[matches[0]])
+            title = String(properties[matches[0]])
             break
         }
     }
 
-    if (!layer._title) {
+    if (!title) {
         for (const key in properties) {
             const value = properties[key]
             if (typeof value !== 'object' && value.length < 50) {
-                layer._title = `${key}: ${value}`
+                title = `${key}: ${value}`
                 break
             }
         }
     }
 
-    return layer._title
+    return title
 }
 
 const getLeafletGeoJSONData = async (layer, {
