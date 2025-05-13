@@ -2942,7 +2942,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createFormCheck,
                             checked: info.tooltip.active,
                             formCheckClass: 'w-100 flex-grow-1 mt-2',
-                            labelInnerText: 'Feature tooltip',
+                            labelInnerText: 'Tooltip',
                             role: 'switch',
                             events: {
                                 click: (e) => {
@@ -3018,7 +3018,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 value: info.tooltip.delimiter,
                             },
                             fieldClass: 'form-control-sm',
-                            labelText: 'Tooltip delimiter',
+                            labelText: 'Delimiter',
                             labelClass: 'text-wrap',
                             events: {
                                 input: (e) => {
@@ -3041,7 +3041,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 value: info.tooltip.prefix,
                             },
                             fieldClass: 'form-control-sm',
-                            labelText: 'Tooltip prefix',
+                            labelText: 'Prefix',
                             labelClass: 'text-wrap',
                             events: {
                                 input: (e) => {
@@ -3064,7 +3064,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 value: info.tooltip.suffix,
                             },
                             fieldClass: 'form-control-sm',
-                            labelText: 'Tooltip suffix',
+                            labelText: 'Suffix',
                             labelClass: 'text-wrap',
                             events: {
                                 input: (e) => {
@@ -3085,7 +3085,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createFormCheck,
                             checked: info.popup.active,
                             formCheckClass: 'w-100 flex-shirnk-1 mt-2',
-                            labelInnerText: 'Feature popup',
+                            labelInnerText: 'Popup',
                             role: 'switch',
                             events: {
                                 click: (e) => {
