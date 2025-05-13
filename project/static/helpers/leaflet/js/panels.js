@@ -2937,20 +2937,20 @@ const handleLeafletStylePanel = (map, parent) => {
                         enableInfo: {
                             handler: createFormCheck,
                             checked: info.active,
-                            // formCheckClass: 'flex-grow-1',
+                            formCheckClass: 'w-100 flex-grow-1',
                             labelInnerText: 'Enable feature info',
                             role: 'switch',
                             events: {
                                 click: (e) => {
                                     const value = e.target.checked
-                                    if (value === filters.type.active) return
+                                    if (value === info.active) return
                 
-                                    Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
+                                    Object.keys(form.elements).filter(i => i.startsWith('info-')).forEach(i => {
                                         form.elements[i].disabled = !value
                                     })
 
                                     info.active = value
-                                    updateLeafletGeoJSONLayer(layer, {//
+                                    updateLeafletGeoJSONLayer(layer, {
                                         geojson: value ? layer.toGeoJSON() : null,
                                         controller,
                                     })

@@ -62,12 +62,12 @@ const getLeafletGeoJSONLayer = async ({
             active: false,
             values: {
                 tooltip: {
-                    active: false,
+                    active: true,
                     properties: [],
                     delimiter: '; '
                 },
                 popup: {
-                    active: false,
+                    active: true,
                     properties: []
                 }
             }
