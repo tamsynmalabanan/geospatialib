@@ -2937,7 +2937,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         enableTooltip: {
                             handler: createFormCheck,
                             checked: info.tooltip.active,
-                            formCheckClass: 'w-10 flex-grow-1',
+                            formCheckClass: 'w-100 flex-grow-1',
                             labelInnerText: 'Feature tooltip',
                             role: 'switch',
                             events: {
@@ -3033,7 +3033,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         enablePopup: {
                             handler: createFormCheck,
                             checked: info.popup.active,
-                            formCheckClass: 'w-15 flex-shirnk-1',
+                            formCheckClass: 'w-100 flex-shirnk-1',
                             labelInnerText: 'Feature popup',
                             role: 'switch',
                             events: {
