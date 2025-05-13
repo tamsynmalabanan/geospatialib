@@ -68,9 +68,6 @@ const getLeafletGeoJSONLayer = async ({
                 active: false,
                 properties: []
             },
-            menu: {
-                active: false,
-            },
         }
     }
 
@@ -84,14 +81,17 @@ const getLeafletGeoJSONLayer = async ({
             if (Object.keys(properties).length) {
                 const tooltip = info.tooltip
                 if (tooltip.active) {
-                    const title = layer._title = tooltip.properties.length ? tooltip.properties.map(i => {
-                        const value = properties[i]
-                        if (!isNaN(Number(value))) {
-                            return formatNumberWithCommas(Number(value))
-                        }
-                        return String(value)
-                    }).join(tooltip.delimiter) : getFeatureTitle(properties)
-                    layer.bindTooltip(title, {sticky:true})
+                    const title = layer._title = tooltip.properties.length ? (() => {
+                        const values = tooltip.properties.map(i => {
+                            const value = properties[i]
+                            if (!isNaN(Number(value))) {
+                                return formatNumberWithCommas(Number(value))
+                            }
+                            return String(value)
+                        })
+                        return values.some(i => i) ? values.join(tooltip.delimiter) : null
+                    })() : getFeatureTitle(properties)
+                    if (title) layer.bindTooltip(title, {sticky:true})
                 }
 
                 const popup = info.popup
@@ -118,9 +118,7 @@ const getLeafletGeoJSONLayer = async ({
                 
             }
 
-            if (info.menu.active) {
-                layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
-            }
+            layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
         }
 
         const renderer = geojsonLayer.options.renderer

@@ -2953,7 +2953,56 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-
+                        tooltipProps: {
+                            handler: createTagifyField,
+                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                            inputTag: 'textarea',
+                            enabled: 0,
+                            dropdownClass: `my-1 border-0`,
+                            userInput: true,
+                            maxTags: 5,
+                            scopeStyle: {
+                                height: '58px',
+                            },
+                            name:  `tooltipProps`,
+                            placeholder: 'Select properties',
+                            currentValue: JSON.stringify((info.tooltip.properties || []).map(i => {return {value:i}})),
+                            events: {
+                                focus: async (e) => {
+                                    const geojson = (await getLeafletGeoJSONData(layer, {
+                                        controller,
+                                        filter:false,
+                                        queryGeom:false,
+                                        group:false,
+                                        sort:false,
+                                        simplify:false
+                                    })) || layer.toGeoJSON()
+                                    if (!geojson) return
+                                    
+                                    const tagify = Tagify(form.elements['tooltipProps'])
+                                    const options = []
+                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                    })
+                                    const optionsSet = options.length ? new Set(options) : []
+                                    const sortedOptions = [...optionsSet].filter(i => {
+                                        return !(info.tooltip.properties || []).includes(i)
+                                    }).sort()
+                                    tagify.settings.whitelist = sortedOptions
+                                },
+                            },
+                            callbacks: {
+                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                    const tagify = e.detail.tagify
+                                    const values = tagify.value.map(i => i.value)
+                        
+                                    if (values.every(i => info.tooltip.properties.includes(i)) && info.tooltip.properties.every(i => values.includes(i)) ) return
+                        
+                                    info.tooltip.properties = values
+                                    updateSymbologyGroups()
+                                }])))()
+                            }
+                        },
 
                     },
                     className: 'gap-2 flex-wrap'
