@@ -2102,7 +2102,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const count = groupsSetSorted.length
                     symbology.default.rank = count + 1
-                    if (groupsSetSorted.length) {
+                    if (count) {
                         symbology.groups = {}
                         
                         let rank = 0
@@ -2112,7 +2112,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             rank +=1
                             const filters = JSON.parse(group)
 
-                            const styleParams = getLeafletStyleParams({
+                            let styleParams = getLeafletStyleParams({
                                 ...symbology.default.styleParams,
                                 fillColor: removeWhitespace(`hsla(
                                     ${Math.round(Math.random()*(
@@ -2128,22 +2128,10 @@ const handleLeafletStylePanel = (map, parent) => {
                                 fillPatternId: null,
                             })
 
-                            // const styleParams = await updateSymbology(getLeafletStyleParams({
-                            //     ...symbology.default.styleParams,
-                            //     fillColor: removeWhitespace(`hsla(
-                            //         ${Math.round(Math.random()*(
-                            //             ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
-                            //         ))+(360/count*(rank-1))},
-                            //         ${Math.round(Math.random()*(100-75))+75}%,
-                            //         ${Math.round(Math.random()*(55-45))+45}%,
-                            //     1)`),
-                            //     fillOpacity: 0.5,
-                            //     strokeColor: true,
-                            //     strokeOpacity: 1,
-                            //     patternBgColor: null,
-                            //     fillPatternId: null,
-                            // }), {refresh:false})
-        
+                            if (count <= 10) {
+                                styleParams = await updateSymbology(styleParams, {refresh:false})
+                            }
+
                             if (controllerId !== controller.id) return
                             if (!symbology.groups) return
                             
