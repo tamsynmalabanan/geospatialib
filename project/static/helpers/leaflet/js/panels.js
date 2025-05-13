@@ -3154,7 +3154,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
 
                     },
-                    className: 'flex-wrap gap-2'
+                    className: 'flex-wrap gap-1'
                 },
                 'Symbology': {
                     fields: {   
