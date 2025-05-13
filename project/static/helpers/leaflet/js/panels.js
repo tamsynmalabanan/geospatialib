@@ -19,6 +19,7 @@ const createLeafletMapPanelTemplate = (map, parent, name, {
     const layers = document.createElement('div')
     layers.id = `${baseId}-layers`
     layers.className = `flex-grow-1 overflow-auto p-3 d-none border-top rounded-bottom text-bg-${getPreferredTheme()} d-flex flex-column gap-2`
+    layers.style.minHeight = '90px'
     parent.appendChild(layers)
     template.layers = layers
     
