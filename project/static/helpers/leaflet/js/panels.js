@@ -272,14 +272,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     add:true
                                 })
                             } else {
-                                const urlField = form.elements.newLayerUrl
-                                const formatField = form.elements.newLayerFormat
-                                const namesField = Tagify(form.elements.newLayerNames)
-                                
                                 urlToLeafletLayers(
-                                    urlField.value,
-                                    formatField.value,
-                                    namesField.value, {
+                                    form.elements.newLayerUrl.value,
+                                    form.elements.newLayerFormat.value,
+                                    Tagify(form.elements.newLayerNames).value, {
                                         group,
                                         add:true
                                     }

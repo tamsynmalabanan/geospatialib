@@ -63,7 +63,7 @@ const fetchOverpass = async ({
 
             const elements = data.elements?.filter(element => element.tags)
             delete data.elements
-            return await overpassToGeoJSON(elements, {controller, data})
+            return await overpassToGeoJSON(elements, {controller, properties:data})
         },
         fetchParams: {
             method: "POST",
