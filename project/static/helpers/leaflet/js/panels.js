@@ -3084,7 +3084,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         enablePopup: {
                             handler: createFormCheck,
                             checked: info.popup.active,
-                            formCheckClass: 'w-100 flex-shirnk-1',
+                            formCheckClass: 'w-100 flex-shirnk-1 mt-2',
                             labelInnerText: 'Feature popup',
                             role: 'switch',
                             events: {
