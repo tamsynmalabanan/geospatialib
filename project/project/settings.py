@@ -120,7 +120,6 @@ LEAFLET_CONFIG = {
 }
 
 MIDDLEWARE = [
-    'csp.middleware.CSPMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -223,14 +222,3 @@ SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-
-
-# Content Security Policy
-
-CSP_IMG_SRC = ("'self'")
-
-CSP_STYLE_SRC = ("'self'")
-
-CSP_SCRIPT_SRC = ("'self'")
-
-CSP_INCLUDE_NONCE_IN = ['script-src']
