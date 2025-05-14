@@ -377,7 +377,7 @@ const getZippedFiles = async (zipFile, base_path) => {
                 }
             }
         }
-
+        console.log(filesArray)
         return filesArray
     } catch (error) {
         console.log(error)
