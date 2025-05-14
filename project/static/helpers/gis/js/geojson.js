@@ -384,7 +384,7 @@ const getGeoJSON = async (dbKey, {
                 || isGeoJSON
                 || isFile
             )
-            console.log(dbKey, isFile)
+            console.log(dbKey, isFile, isStatic)
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
                 queryGeom, leafletZoomToMeter(zoom)/2/1000
