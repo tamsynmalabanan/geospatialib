@@ -989,7 +989,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 delete styleParams.fillPatternId
             }
     
-            if (fillPattern !== 'solid') {
+            if (fillPattern !== 'solid' || iconType === 'svg') {
                 const id = styleParams.fillPatternId = generateRandomString()
                 defs = document.createElementNS(svgNS, 'defs')
                 defs.id = id
