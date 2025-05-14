@@ -356,7 +356,7 @@ const isCompressedFile = (file) => {
     return compressedExtensions.includes(fileExtension)
 }
 
-const getZippedFiles = async (zipFile) => {
+const getZippedFiles = async (zipFile, base_path='') => {
     try {
         const zip = await JSZip.loadAsync(zipFile)
         const filesArray = []
@@ -365,12 +365,18 @@ const getZippedFiles = async (zipFile) => {
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
                 const content = await entry.async('blob')
-                const file = new File([content], relativePath, {
+                const file = new File([content], [base_path, relativePath].join('/'), {
                     lastModified: entry.date.getTime(),
                 })
-                filesArray.push(file)
+
+                if (isCompressedFile(file)) {
+                    (await getZippedFiles(file, relativePath)).forEach(i => filesArray.push(i))
+                } else {
+                    filesArray.push(file)
+                }
             }
-        } 
+        }
+
         return filesArray
     } catch (error) {
         console.log(error)

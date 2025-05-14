@@ -16,7 +16,7 @@ def extract_zip(zip_file, base_path=""):
             full_path = os.path.join(base_path, file)
             if file.endswith('.zip'):
                 with zf.open(file) as sub_zip:
-                    files.update(extract_zip(BytesIO(sub_zip.read())))
+                    files.update(extract_zip(BytesIO(sub_zip.read()), full_path))
             else:
                 files[full_path] = file
     return files
