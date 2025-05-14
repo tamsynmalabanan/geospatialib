@@ -428,7 +428,7 @@ const getGeoJSON = async (dbKey, {
                 return cachedGeoJSON
             })()
             
-            if (!isStatic && !geojson?.features?.length) {
+            if (!isClient && !geojson?.features?.length) {
                 geojson = await (async () => {
                     if (controller?.signal.aborted) return
                     const geojson = await fetchGeoJSONHandlers(handlerName)(
@@ -462,7 +462,6 @@ const getGeoJSON = async (dbKey, {
             if (geojson?.features?.length && sort) {
                 sortGeoJSONFeatures(geojson, {reverse:true})
             }
-            console.log(geojson)
             return geojson
         } catch (error) {
             return error
