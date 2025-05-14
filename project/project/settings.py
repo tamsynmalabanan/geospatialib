@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,23 +26,19 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool) 
-# DEBUG = True
 
 ALLOWED_HOSTS = [
-    '139.59.35.171',
-    'www.geospatialib.com',
-    'geospatialib.com',
-    # '127.0.0.1',
+    config('HOST_IP'),
+    config('HOST_DOMAIN'),
+    f'www.{config('HOST_DOMAIN')}',
 ]
 
+AUTH_USER_MODEL = 'customuser.User'
 AUTHENTICATION_BACKENDS = (
     'customuser.backends.CustomAuthenticationBackend',
 )
 
-AUTH_USER_MODEL = 'customuser.User'
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -160,11 +156,11 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'geospatialib',
-        'USER': 'gsl_admin',
-        'PASSWORD': 'case-wildlife-dumping',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': config('DB_DEFAULT_NAME'),
+        'USER': config('DB_DEFAULT_USER'),
+        'PASSWORD': config('DB_DEFAULT_PASSWORD'),
+        'HOST': config('DB_DEFAULT_HOST'),
+        'PORT': config('DB_DEFAULT_POST'),
     }
 }
 
