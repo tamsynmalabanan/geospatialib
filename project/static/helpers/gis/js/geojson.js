@@ -384,7 +384,6 @@ const getGeoJSON = async (dbKey, {
                 || isGeoJSON
                 || isFile
             )
-            console.log(dbKey, isFile, isStatic)
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
                 queryGeom, leafletZoomToMeter(zoom)/2/1000
@@ -463,7 +462,7 @@ const getGeoJSON = async (dbKey, {
             if (geojson?.features?.length && sort) {
                 sortGeoJSONFeatures(geojson, {reverse:true})
             }
-            
+            console.log(geojson)
             return geojson
         } catch (error) {
             return error
