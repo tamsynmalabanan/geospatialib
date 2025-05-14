@@ -91,7 +91,7 @@ const fetchTimeout = async (url, {
     })
 
     mapForFetchTimeout.set(mapKey, fetchPromise)
-    const response = await fetchPromise
+    const response = (await fetchPromise).clone()
     return callback(response)
 }
 
