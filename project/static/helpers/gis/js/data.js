@@ -14,9 +14,10 @@ const fetchFileData = async (url, filename, {abortBtns, controller} = {}) => {
         controller,
         callback: async (response) => {
             const content = await response.blob()
-            const filename = url.split('/')[url.split('/').length-1]
-            
-            const filesArray = await getValidFilesArray([new File([content], filename)])
+            const filesArray = await getValidFilesArray([
+                new File([content],
+                url.split('/')[url.split('/').length-1])
+            ])
             const file = filesArray.find(file => file.name === filename)
             if (!file) throw new Error('Filename not found.')
 
