@@ -8,7 +8,7 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
-const fetchFileData = async (url, filename, {abortBtns, controller} = {}) => {
+const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
@@ -18,7 +18,7 @@ const fetchFileData = async (url, filename, {abortBtns, controller} = {}) => {
                 new File([content],
                 url.split('/')[url.split('/').length-1])
             ])
-            const file = filesArray.find(file => file.name === filename)
+            const file = filesArray.find(file => file.name === name)
             if (!file) throw new Error('Filename not found.')
 
             return await getFileData(file)

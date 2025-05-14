@@ -687,21 +687,22 @@ const urlToLeafletLayer = async ({
 }) => {
     if (!url || !format || !name || !group) return
 
-    const map = group._map
-    let layer
-
+    let dbindexKey
+    let type
     if (format === 'geojson') {
-        layer = await getLeafletGeoJSONLayer({
-            group,
-            pane: createCustomPane(map),
-            title: title ?? name,
-            dbindexKey: Array(format, JSON.stringify({url})).join(';')
-        })
+        type = format
+        dbindexKey = Array(format, JSON.stringify({url})).join(';')
+    }
+    if (format === 'file') {
+        type = name.split('.', 2)[1]
+        dbindexKey = Array(format, JSON.stringify({url,name})).join(';')
     }
 
-    if (format === 'file') {
-        console.log(await fetchFileData(url,name))
-    }
+    const layer = await createLeafletLayer(type, {
+        group,
+        title,
+        dbindexKey
+    })
 
     if (layer && add) group.addLayer(layer)
     return layer
