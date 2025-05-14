@@ -674,7 +674,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const legendTitle = document.createElement('div')
             legendTitle.id = `${container.id}-title`
             legendTitle.className = 'd-flex flex-nowrap gap-2'
-            legendTitle.appendChild(createSpan(layer._title))
+            legendTitle.appendChild(createSpan(layer._title, {className:'text-break text-wrap'}))
             container.appendChild(legendTitle)
             
             const moveToggle = createIcon({

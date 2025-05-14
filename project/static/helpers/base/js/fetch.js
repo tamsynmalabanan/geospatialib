@@ -61,7 +61,6 @@ const fetchTimeout = async (url, {
 } = {}) => {
     const mapKey = `${url}_${JSON.stringify(fetchParams)}` 
     if (mapForFetchTimeout.has(mapKey)) {
-        console.log('here')
         const response = (await mapForFetchTimeout.get(mapKey)).clone()
         return callback(response)
     }
