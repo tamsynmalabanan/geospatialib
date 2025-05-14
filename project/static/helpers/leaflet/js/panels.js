@@ -936,7 +936,7 @@ const handleLeafletStylePanel = (map, parent) => {
         try {
             if (!styleParams) throw new Error('No style params.')
 
-                let {
+            let {
                 strokeWidth,
                 strokeColor,
                 strokeOpacity,
@@ -983,6 +983,7 @@ const handleLeafletStylePanel = (map, parent) => {
             ).filter(i => i !== '').join(',')
     
             const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
+            
             if (fillPatternId) {
                 svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
                 delete styleParams.fillPatternId

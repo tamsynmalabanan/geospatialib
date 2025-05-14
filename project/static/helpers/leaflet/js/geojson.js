@@ -125,11 +125,18 @@ const getLeafletGeoJSONLayer = async ({
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
         }
 
+        geojsonLayer._ch = {
+            rendererIsCanvas: () => geojsonLayer.options.renderer instanceof L.Canvas,
+            getFeatureStyleParams: (feature) => {
+                const symbology = geojsonLayer._styles?.symbology
+                return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
+            }
+        }
+    
         const renderer = geojsonLayer.options.renderer
-        const isCanvas = renderer instanceof L.Canvas
-        const styleParams = getStyle(feature)
+        const styleParams = geojsonLayer._ch.getFeatureStyleParams(feature)
         const patternImg = document.querySelector(`#${styleParams.fillPatternId}-img`)
-        if (isCanvas 
+        if (geojsonLayer._ch.rendererIsCanvas() 
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
             && patternImg?.getAttribute('src')
@@ -149,16 +156,10 @@ const getLeafletGeoJSONLayer = async ({
         }
     }
 
-    const getStyle = (feature) => {
-        const symbology = geojsonLayer._styles?.symbology
-        return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
-    }
-
     geojsonLayer.options.style = (feature) => {
-        const styleParams = getStyle(feature)
-        const isCanvas = geojsonLayer.options.renderer instanceof L.Canvas
+        const styleParams = geojsonLayer._ch.getFeatureStyleParams(feature)
         const imgPattern = document.querySelector(`#${styleParams.fillPatternId}-img`)
-        if (isCanvas 
+        if (geojsonLayer._ch.rendererIsCanvas()
             && styleParams.fillPattern !== 'solid' 
             && turf.getType(feature).endsWith('Polygon')
             && imgPattern?.getAttribute('src')
@@ -167,7 +168,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
-        const styleParams = getStyle(feature)
+        const styleParams = geojsonLayer._ch.getFeatureStyleParams(feature)
         const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
