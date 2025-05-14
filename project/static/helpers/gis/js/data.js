@@ -1,4 +1,4 @@
-const fetchGeoJSONData = async (url, {abortBtns, controller} = {}) => {
+const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,

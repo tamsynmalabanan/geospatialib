@@ -689,7 +689,7 @@ const urlToLeafletLayers = async (url, format, names=[], {
     const layers = []
 
     if (format === 'geojson') {
-        const geojson = await fetchGeoJSONData(url)
+        const geojson = await fetchGeoJSON(url)
         if (!geojson) return
 
         const layer = await getLeafletGeoJSONLayer({
@@ -697,7 +697,7 @@ const urlToLeafletLayers = async (url, format, names=[], {
             group,
             pane: createCustomPane(map),
             title: names[0].properName,
-            // fetch params
+            geojsonId: Array('geojson',JSON.stringify({url})).join(';')
         })
         
         if (layer) {
