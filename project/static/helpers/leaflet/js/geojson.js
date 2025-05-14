@@ -73,6 +73,14 @@ const getLeafletGeoJSONLayer = async ({
         }
     }
 
+    geojsonLayer._ch = {
+        rendererIsCanvas: () => geojsonLayer.options.renderer instanceof L.Canvas,
+        getFeatureStyleParams: (feature) => {
+            const symbology = geojsonLayer._styles?.symbology
+            return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
+        }
+    }
+
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const handler = (layer) => {
             layer.options.pane = geojsonLayer.options.pane
@@ -123,14 +131,6 @@ const getLeafletGeoJSONLayer = async ({
             }
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
-        }
-
-        geojsonLayer._ch = {
-            rendererIsCanvas: () => geojsonLayer.options.renderer instanceof L.Canvas,
-            getFeatureStyleParams: (feature) => {
-                const symbology = geojsonLayer._styles?.symbology
-                return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
-            }
         }
     
         const renderer = geojsonLayer.options.renderer
