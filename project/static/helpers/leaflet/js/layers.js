@@ -688,8 +688,6 @@ const urlToLeafletLayer = async ({
     if (!url || !format || !name || !group) return
 
     const map = group._map
-    // const geojsonId = Array(format, JSON.stringify({url,name})).join(';')
-
     let layer
 
     if (format === 'geojson') {
@@ -716,59 +714,42 @@ const urlToLeafletLayer = async ({
     return layer
 }
 
-const filesToLeafletLayer = async ({
+const fileToLeafletLayer = async ({
     file,
-    title,
     group,
     add=false,
+    suppFiles=[],
 } ={}) => {
     if (!file || !group) return
-
-
-}
-
-const filesToLeafletLayers = async (filesArray, {
-    group,
-    add=false,
-} = {}) => {
-    if (!group) return
     const map = group._map
+    const [title, type] = file.name.split('.', 2)
 
-    const layers = []
-
-    const handler = async (filesArray) => {
-        for (const file of filesArray) {
-            if (isCompressedFile(file)) {
-                handler(await getZippedFiles(file))
-            } else {
-                const reader = new FileReader()
-                reader.onload = async (e) => {
-                    const [title, type] = file.name.split('.', 2)
-                    const typeLower = type.toLowerCase()
-                    if (typeLower === 'geojson') {
-                        try {
-                            const geojson = JSON.parse(e.target.result)
-                            const layer = await getLeafletGeoJSONLayer({
-                                geojson,
-                                group,
-                                pane: createCustomPane(map),
-                                title,
-                            })
-                            if (layer) layers.push(layers)
-                        } catch (error) {
-                            console.log(error)
-                        }
-                    } else {
-                        console.log("Unsupported file type")
-                    }
+    let layer
+    const reader = new FileReader()
+    return new Promise((resolve, reject) => {
+        reader.onload = async (e) => {
+            const typeLower = type.toLowerCase()
+            if (typeLower === 'geojson') {
+                try {
+                    const geojson = JSON.parse(e.target.result)
+                    layer = await getLeafletGeoJSONLayer({
+                        geojson,
+                        group,
+                        pane: createCustomPane(map),
+                        title,
+                    })
+                } catch (error) {
+                    reject(error)
                 }
-                reader.readAsText(file)
+            }
+
+            if (layer) {
+                if (add) group.addLayer(layer)
+                resolve(layer)
+            } else {
+                reject(new Error('Failed to create layer.'))
             }
         }
-    }
-
-    await handler(filesArray)
-
-    if (add) layers.forEach(layer => group.addLayer(layer))
-    return layers
+        reader.readAsText(file)
+    })
 }

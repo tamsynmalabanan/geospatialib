@@ -376,3 +376,20 @@ const isCompressedFile = (file) => {
     const fileExtension = fileName.split('.').pop()
     return compressedExtensions.includes(fileExtension)
 }
+
+const getValidFilesArray = async (filesArray) => {
+    const files = []
+
+    const handler = async (filesArray) => {
+        for (const file of filesArray) {
+            if (isCompressedFile(file)) {
+                handler(await getZippedFiles(file))
+            } else {
+                files.push(file)
+            }
+        }
+    }
+
+    await handler(filesArray)
+    return files
+}
