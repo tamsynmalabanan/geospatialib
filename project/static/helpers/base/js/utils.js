@@ -407,6 +407,7 @@ const getFileData = async (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
+            console.log(e.target.result)
             const type = file.name.split('.', 2)[1].toLowerCase()
             if (type === 'geojson') {
                 try {
