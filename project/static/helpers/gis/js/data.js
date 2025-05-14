@@ -18,12 +18,11 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
                 new File([content],
                 url.split('/')[url.split('/').length-1])
             ])
+            console.log(name, filesArray)
             const file = filesArray.find(file => file.name === name)
-            console.log(name, file)
             if (!file) throw new Error('Filename not found.')
                 
             const data = await getFileData(file)
-            console.log(data)
             return data
         },
     }).catch(error => {
