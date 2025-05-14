@@ -453,6 +453,13 @@ const getGeoJSON = async (dbKey, {
                                 queryExtent,
                             )
                         }
+                        
+                        if (isStatic) {
+                            geojson.features = geojson.features.filter(feature => {
+                                if (controller?.signal?.aborted) return
+                                return turf.booleanIntersects(queryExtent, feature)
+                            })
+                        }
                     }
             
                     return geojson
