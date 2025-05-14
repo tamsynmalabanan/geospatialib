@@ -694,7 +694,6 @@ const urlToLeafletLayer = async ({
         dbindexKey = Array(format, JSON.stringify({url})).join(';')
     }
     if (format === 'file') {
-        console.log(url, format, name)
         type = name.split('.', 2)[1]
         dbindexKey = Array(format, JSON.stringify({url,name})).join(';')
         title = title.split('.', 2)[0]
@@ -705,6 +704,8 @@ const urlToLeafletLayer = async ({
         title,
         dbindexKey
     })
+
+    console.log(layer)
 
     if (layer && add) group.addLayer(layer)
     return layer
