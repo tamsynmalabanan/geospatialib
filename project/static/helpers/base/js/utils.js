@@ -349,16 +349,24 @@ const makeMovable = (element) => {
     })
 }
 
+const isCompressedFile = (file) => {
+    const compressedExtensions = ['zip', 'rar', '7z', 'tar', 'gz']
+    const fileName = file.name.toLowerCase()
+    const fileExtension = fileName.split('.').pop()
+    return compressedExtensions.includes(fileExtension)
+}
+
 const getZippedFiles = async (zipFile) => {
     try {
         const zip = await JSZip.loadAsync(zipFile)
         const filesArray = []
 
+        const zipFilename = zipFile.name
         for (const relativePath in zip.files) {
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
                 const content = await entry.async('blob')
-                const file = new File([content], relativePath, {
+                const file = new File([content], `${zipFilename}/${relativePath}`, {
                     lastModified: entry.date.getTime(),
                 })
                 filesArray.push(file)
@@ -370,17 +378,10 @@ const getZippedFiles = async (zipFile) => {
     }
 }
 
-const isCompressedFile = (file) => {
-    const compressedExtensions = ['zip', 'rar', '7z', 'tar', 'gz']
-    const fileName = file.name.toLowerCase()
-    const fileExtension = fileName.split('.').pop()
-    return compressedExtensions.includes(fileExtension)
-}
-
 const getValidFilesArray = async (filesArray) => {
     const files = []
 
-    const handler = async (filesArray) => {
+    const handler = async (filesArray, prefix='') => {
         for (const file of filesArray) {
             if (isCompressedFile(file)) {
                 await handler(await getZippedFiles(file))
