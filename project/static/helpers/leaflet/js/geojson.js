@@ -74,10 +74,18 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer._ch = {
-        rendererIsCanvas: () => geojsonLayer.options.renderer instanceof L.Canvas,
         getFeatureStyleParams: (feature) => {
             const symbology = geojsonLayer._styles?.symbology
             return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
+        },
+        isPatternFilledPolygonInCanvas: (feature) => {
+            const styleParams = geojsonLayer._ch.getFeatureStyleParams(feature)
+            return (
+                geojsonLayer.options.renderer instanceof L.Canvas
+                && turf.getType(feature).endsWith('Polygon')
+                && styleParams.fillPattern !== 'solid' 
+                && document.querySelector(`#${styleParams.fillPatternId}-img`)?.getAttribute('src')
+            )
         }
     }
 
@@ -133,20 +141,18 @@ const getLeafletGeoJSONLayer = async ({
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
         }
     
-        const renderer = geojsonLayer.options.renderer
         const styleParams = geojsonLayer._ch.getFeatureStyleParams(feature)
-        const patternImg = document.querySelector(`#${styleParams.fillPatternId}-img`)
-        if (geojsonLayer._ch.rendererIsCanvas() 
-            && styleParams.fillPattern !== 'solid' 
-            && turf.getType(feature).endsWith('Polygon')
-            && patternImg?.getAttribute('src')
-        ) {
+        if (geojsonLayer._ch.isPatternFilledPolygonInCanvas(feature)) {
             layer.once('add', () => {
                 geojsonLayer.removeLayer(layer)
+                
                 const poly = L.polygon(
                     layer.getLatLngs(), 
-                    getLeafletLayerStyle(feature, styleParams, {renderer})
+                    getLeafletLayerStyle(feature, styleParams, {
+                        renderer:geojsonLayer.options.renderer
+                    })
                 )
+                
                 poly.feature = feature
                 handler(poly)
                 poly.addTo(geojsonLayer)
@@ -158,12 +164,7 @@ const getLeafletGeoJSONLayer = async ({
 
     geojsonLayer.options.style = (feature) => {
         const styleParams = geojsonLayer._ch.getFeatureStyleParams(feature)
-        const imgPattern = document.querySelector(`#${styleParams.fillPatternId}-img`)
-        if (geojsonLayer._ch.rendererIsCanvas()
-            && styleParams.fillPattern !== 'solid' 
-            && turf.getType(feature).endsWith('Polygon')
-            && imgPattern?.getAttribute('src')
-        ) return
+        if (geojsonLayer._ch.isPatternFilledPolygonInCanvas(feature)) return
         return getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
     }
 
