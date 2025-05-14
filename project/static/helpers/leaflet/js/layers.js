@@ -715,6 +715,8 @@ const createLeafletLayer = async (type, {
     dbindexKey,
     title,
 } = {}) => {
+    if (!type) return
+
     const map = group._map
     const typeLower = type.toLowerCase()
     if (typeLower === 'geojson') {
