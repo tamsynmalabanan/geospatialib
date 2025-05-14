@@ -21,7 +21,9 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
             const file = filesArray.find(file => file.name === name)
             if (!file) throw new Error('Filename not found.')
 
-            return await getFileData(file)
+            const data = await getFileData(file)
+            console.log(data)
+            return data
         },
     }).catch(error => {
         console.log(error)
