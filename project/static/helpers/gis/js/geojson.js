@@ -376,6 +376,7 @@ const getGeoJSON = async (dbKey, {
         try {
             const [handlerName, handlerParams] = dbKey.split(';', 2)
             const isClient = handlerName === 'client'
+            const isGeoJSON = handlerName === 'geojson'
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
                 queryGeom, leafletZoomToMeter(zoom)/2/1000
@@ -399,7 +400,7 @@ const getGeoJSON = async (dbKey, {
                 const cachedQueryExtent = cachedData.queryExtent
         
                 if (queryExtent && cachedGeoJSON.features.length) {
-                    if (isClient) {
+                    if (isClient || isGeoJSON) {
                         if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return turf.featureCollection([])
                     } else {
                         try {
