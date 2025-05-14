@@ -8,7 +8,7 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
-const fetchFile = async (url, name, {abortBtns, controller} = {}) => {
+const fetchFile = async (url, format, name, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,

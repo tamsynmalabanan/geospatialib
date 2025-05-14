@@ -715,13 +715,13 @@ const fileToLeafletLayer = async ({
     add=false,
     suppFiles=[],
 } ={}) => {
-    if (!file || !group) return
-    const map = group._map
-    const [title, type] = file.name.split('.', 2)
-
-    let layer
-    const reader = new FileReader()
     return new Promise((resolve, reject) => {
+        if (!file || !group) reject(new Error('No file or group'))
+        const map = group._map
+        const [title, type] = file.name.split('.', 2)
+    
+        let layer
+        const reader = new FileReader()
         reader.onload = async (e) => {
             const typeLower = type.toLowerCase()
             if (typeLower === 'geojson') {
