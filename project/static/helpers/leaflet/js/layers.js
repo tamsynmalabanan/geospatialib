@@ -654,7 +654,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     })
 }
 
-const layerIsVisible = (layer, {addLayer=true}={}) => {
+const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
     if (!layer) return
 
     const group = layer._group
@@ -677,43 +677,40 @@ const layerIsVisible = (layer, {addLayer=true}={}) => {
     return isVisible
 }
 
-const urlToLeafletLayers = async (url, format, names=[], {
+const urlToLeafletLayer = async (url, format, name, {
+    title,
     group,
-    add=false,
-} = {}) => {
-    if (!names.length) return
+    add=false
+}) => {
+    if (!url || !format || !name || !group) return
 
-    if (!group) return
     const map = group._map
+    const geojsonId = Array(format, JSON.stringify({url,name})).join(';')
 
-    const layers = []
-
-    const geojsonId = Array(format,JSON.stringify({url,names:names.map(i => i.value)})).join(';')
+    let layer
 
     if (format === 'geojson') {
-        const layer = await getLeafletGeoJSONLayer({
+        layer = await getLeafletGeoJSONLayer({
             group,
             pane: createCustomPane(map),
-            title: names[0].properName,
+            title: title ?? name,
             geojsonId
         })
-        
-        if (layer) {
-            layers.push(layer)
-            if (add) group.addLayer(layer)
-        }
     }
 
-    if (format === 'file') {
-        const files = await fetchFileData(url, {
-            filenames: names.map(i => i.value)
-        })
+    // if (format === 'file') {
+    //     const files = await fetchFileData(url, {
+    //         filenames: names.map(i => i.value)
+    //     })
         
-        filesToLeafletLayers(files, {
-            group,
-            add
-        })
-    }
+    //     filesToLeafletLayers(files, {
+    //         group,
+    //         add
+    //     })
+    // }
+
+    if (layer && add) group.addLayer(layer)
+    return layer
 }
 
 const filesToLeafletLayers = async (filesArray, {

@@ -273,14 +273,20 @@ const handleLeafletLegendPanel = (map, parent) => {
                                     add:true
                                 })
                             } else {
-                                urlToLeafletLayers(
-                                    form.elements.newLayerUrl.value,
-                                    form.elements.newLayerFormat.value,
-                                    Tagify(form.elements.newLayerNames).value, {
-                                        group,
-                                        add:true
-                                    }
-                                )
+                                const url = form.elements.newLayerUrl.value
+                                const format = form.elements.newLayerFormat.value
+                                const names = Tagify(form.elements.newLayerNames).value
+                                for (const name of names) {
+                                    urlToLeafletLayers(
+                                        url,
+                                        format,
+                                        name.value, {
+                                            title: name.properName,
+                                            group,
+                                            add:true
+                                        }
+                                    )
+                                }
                             }
                             
                             menuContainer.remove()
@@ -584,7 +590,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 if (!layer) return
 
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
-                const isInvisible = !layerIsVisible(layer)
+                const isInvisible = !leafletLayerIsVisible(layer)
                 if (isHidden || isInvisible) {
                     return clearLegend(legend, {isHidden, isInvisible})
                 }
@@ -3406,7 +3412,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     form.elements.maxScale.disabled = !value
 
                                     visibility.active = value
-                                    layerIsVisible(layer)
+                                    leafletLayerIsVisible(layer)
                                 }
                             }
                         },
@@ -3441,7 +3447,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     visibility.min = parseInt(field.value)
                                     maxScaleField.setAttribute('min', field.value)
     
-                                    layerIsVisible(layer)
+                                    leafletLayerIsVisible(layer)
                                 },
                                 'click': visibilityFieldsClick,
                             }
@@ -3477,7 +3483,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     visibility.max = parseInt(field.value)
                                     minScaleField.setAttribute('max', field.value)
                                     
-                                    layerIsVisible(layer)
+                                    leafletLayerIsVisible(layer)
                                 },
                                 'click': visibilityFieldsClick,
                             }
