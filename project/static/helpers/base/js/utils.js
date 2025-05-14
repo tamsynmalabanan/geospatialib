@@ -361,7 +361,7 @@ const getZippedFiles = async (zipFile) => {
         const zip = await JSZip.loadAsync(zipFile)
         const filesArray = []
 
-        const zipFilename = zipFile.name
+        console.log(zipFile.name)
         for (const relativePath in zip.files) {
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
