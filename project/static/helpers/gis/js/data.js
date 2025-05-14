@@ -22,7 +22,6 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
             if (!file) throw new Error('Filename not found.')
 
             const data = await getFileData(file)
-            console.log(data)
             return data
         },
     }).catch(error => {
