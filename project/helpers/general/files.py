@@ -10,6 +10,9 @@ def extract_zip(zip_file, base_path=""):
     files = {}
     with zipfile.ZipFile(zip_file, 'r') as zf:
         for file in zf.namelist():
+            if file.endswith('/'):
+                continue
+
             full_path = os.path.join(base_path, file)
             if file.endswith('.zip'):
                 with zf.open(file) as sub_zip:
@@ -17,6 +20,7 @@ def extract_zip(zip_file, base_path=""):
             else:
                 files[full_path] = file
     return files
+
 
 def get_file_info(url):
     response = requests.get(url)
