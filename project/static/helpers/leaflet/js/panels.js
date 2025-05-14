@@ -276,6 +276,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const url = form.elements.newLayerUrl.value
                                 const format = form.elements.newLayerFormat.value
                                 const names = Tagify(form.elements.newLayerNames).value
+                                
                                 for (const name of names) {
                                     urlToLeafletLayers(
                                         url,
