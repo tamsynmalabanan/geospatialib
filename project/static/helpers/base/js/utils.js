@@ -391,6 +391,5 @@ const getValidFilesArray = async (filesArray) => {
     }
 
     await handler(filesArray)
-    console.log(files)
     return files
 }
