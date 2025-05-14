@@ -697,6 +697,7 @@ const urlToLeafletLayer = async ({
         type = name.split('.', 2)[1]
         dbindexKey = Array(format, JSON.stringify({url,name})).join(';')
         title = title.split('.', 2)[0]
+        console.log(type, dbindexKey, title)
     }
 
     const layer = await createLeafletLayer(type, {
@@ -704,8 +705,6 @@ const urlToLeafletLayer = async ({
         title,
         dbindexKey
     })
-
-    console.log(layer)
 
     if (layer && add) group.addLayer(layer)
     return layer
