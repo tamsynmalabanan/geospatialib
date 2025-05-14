@@ -8,25 +8,19 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
-const fetchFile = async (url, format, name, {abortBtns, controller} = {}) => {
+const fetchFileData = async (url, filename, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
         callback: async (response) => {
             const content = await response.blob()
             const filename = url.split('/')[url.split('/').length-1]
-            const file = new File([content], filename)
             
-            let files = [file]
-            if (isCompressedFile(file)) {
-                files = await getZippedFiles(file)
-            }
+            const filesArray = await getValidFilesArray([new File([content], filename)])
+            const file = filesArray.find(file => file.name === filename)
+            if (!file) throw new Error('Filename not found.')
 
-            if (filenames?.length) {
-                return files.filter(file => filenames.includes(file.name))
-            } else {
-                return files
-            }
+            return file
         },
     }).catch(error => {
         console.log(error)

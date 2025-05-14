@@ -700,9 +700,8 @@ const urlToLeafletLayer = async ({
     }
 
     if (format === 'file') {
-        console.log(
-            url,format, name,
-        )
+        console.log(url,format, name)
+        console.log(await fetchFileData(url,name))
     }
 
     if (layer && add) group.addLayer(layer)
@@ -715,14 +714,13 @@ const fileToLeafletLayer = async ({
     add=false,
     suppFiles=[],
 } ={}) => {
+    if (!file || !group) return
+    const map = group._map
     return new Promise((resolve, reject) => {
-        if (!file || !group) reject(new Error('No file or group'))
-        const map = group._map
-        const [title, type] = file.name.split('.', 2)
-    
-        let layer
         const reader = new FileReader()
         reader.onload = async (e) => {
+            const [title, type] = file.name.split('.', 2)
+            let layer
             const typeLower = type.toLowerCase()
             if (typeLower === 'geojson') {
                 try {

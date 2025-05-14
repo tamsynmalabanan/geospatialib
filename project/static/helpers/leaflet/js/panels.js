@@ -435,7 +435,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     disabled: true,
                     options: {
                         '': 'Select format',
-                        'file': 'File',
+                        'file': 'Downloadable File',
                         'geojson': 'GeoJSON API',
                     },
                     events: {
