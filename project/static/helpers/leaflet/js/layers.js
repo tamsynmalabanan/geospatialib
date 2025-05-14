@@ -699,16 +699,11 @@ const urlToLeafletLayer = async ({
         })
     }
 
-    // if (format === 'file') {
-    //     const files = await fetchFileData(url, {
-    //         filenames: names.map(i => i.value)
-    //     })
-        
-    //     filesToLeafletLayers(files, {
-    //         group,
-    //         add
-    //     })
-    // }
+    if (format === 'file') {
+        console.log(
+            url,format, name,
+        )
+    }
 
     if (layer && add) group.addLayer(layer)
     return layer
