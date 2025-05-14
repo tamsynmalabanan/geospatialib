@@ -715,34 +715,23 @@ const fileToLeafletLayer = async ({
     suppFiles=[],
 } ={}) => {
     if (!file || !group) return
+    const [title, type] = file.name.split('.', 2)
+    const typeLower = type.toLowerCase()
     const map = group._map
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = async (e) => {
-            const [title, type] = file.name.split('.', 2)
-            let layer
-            const typeLower = type.toLowerCase()
-            if (typeLower === 'geojson') {
-                try {
-                    const geojson = JSON.parse(e.target.result)
-                    layer = await getLeafletGeoJSONLayer({
-                        geojson,
-                        group,
-                        pane: createCustomPane(map),
-                        title,
-                    })
-                } catch (error) {
-                    reject(error)
-                }
-            }
+    
+    const data = await getFileData(file)
 
-            if (layer) {
-                if (add) group.addLayer(layer)
-                resolve(layer)
-            } else {
-                reject(new Error('Failed to create layer.'))
-            }
-        }
-        reader.readAsText(file)
-    })
+    let layer
+
+    if (typeLower === 'geojson') {
+        layer = await getLeafletGeoJSONLayer({
+            geojson: data,
+            group,
+            pane: createCustomPane(map),
+            title,
+        })
+    }
+    
+    if (layer && add) group.addLayer(layer)
+    return layer
 }

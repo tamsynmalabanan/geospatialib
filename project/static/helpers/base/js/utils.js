@@ -393,3 +393,22 @@ const getValidFilesArray = async (filesArray) => {
     await handler(filesArray)
     return files
 }
+
+
+const getFileData = async (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+            const type = file.name.split('.', 2)[1].toLowerCase()
+            if (type === 'geojson') {
+                try {
+                    const geojson = JSON.parse(e.target.result)
+                    resolve(geojson)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+        }
+        reader.readAsText(file)
+    })
+}
