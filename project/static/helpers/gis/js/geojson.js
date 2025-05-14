@@ -428,7 +428,7 @@ const getGeoJSON = async (dbKey, {
                 return cachedGeoJSON
             })()
             
-            if (!isClient && (((isGeoJSON || isFile) && !geojson) || !geojson?.features?.length)) {
+            if (!isClient && ((isStatic && !geojson) || (!isStatic && !geojson?.features?.length))) {
                 geojson = await (async () => {
                     if (controller?.signal.aborted) return
                     const geojson = await fetchGeoJSONHandlers(handlerName)(
