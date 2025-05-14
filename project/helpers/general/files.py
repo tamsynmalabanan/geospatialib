@@ -18,7 +18,7 @@ def extract_zip(zip_file, base_path=""):
                 with zf.open(file) as sub_zip:
                     files.update(extract_zip(BytesIO(sub_zip.read()), full_path))
             else:
-                files[full_path] = file
+                files[full_path] = file.split('.')[0]
     return files
 
 
@@ -37,4 +37,4 @@ def get_file_info(url):
     if "zip" in content_type:
         return extract_zip(BytesIO(response.content))
     
-    return {filename: filename}
+    return {filename: filename.split('.')[0]}
