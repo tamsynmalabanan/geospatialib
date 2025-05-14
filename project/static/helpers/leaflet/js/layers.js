@@ -688,7 +688,7 @@ const urlToLeafletLayers = async (url, format, names=[], {
 
     const layers = []
 
-    const geojsonId = Array(format,JSON.stringify({url,names})).join(';')
+    const geojsonId = Array(format,JSON.stringify({url,names:names.map(i => i.value)})).join(';')
 
     if (format === 'geojson') {
         
