@@ -688,7 +688,7 @@ const urlToLeafletLayer = async ({
     if (!url || !format || !name || !group) return
 
     const map = group._map
-    const geojsonId = Array(format, JSON.stringify({url,name})).join(';')
+    // const geojsonId = Array(format, JSON.stringify({url,name})).join(';')
 
     let layer
 
@@ -697,7 +697,7 @@ const urlToLeafletLayer = async ({
             group,
             pane: createCustomPane(map),
             title: title ?? name,
-            geojsonId
+            geojsonId: `geojson;{"url":${url}}`
         })
     }
 
