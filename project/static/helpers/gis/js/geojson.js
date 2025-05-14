@@ -347,6 +347,7 @@ const fetchGeoJSONHandlers = (name) => {
         nominatim: fetchNominatim,
         overpass: fetchOverpass,
         geojson: fetchGeoJSON,
+        file: fetchFileData,
     }[name]
 }
 

@@ -260,9 +260,9 @@ const getLeafletLayerBounds = async (layer) => {
         return L.latLangBounds([s,w],[n,e])
     }
 
-    const geojsonId = layer._geojsonId
-    if (layer instanceof L.GeoJSON && geojsonId) {
-        const geojson = (await getFromGeoJSONDB(geojsonId))?.geojson
+    const dbindexKey = layer._geojsonId
+    if (layer instanceof L.GeoJSON && dbindexKey) {
+        const geojson = (await getFromGeoJSONDB(dbindexKey))?.geojson
         return L.geoJSON(geojson ?? {}).getBounds()
     }
 
@@ -537,7 +537,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
-                navigator.clipboard.writeText(JSON.stringify({geojsonId:geojsonLayer._geojsonId}))
+                navigator.clipboard.writeText(JSON.stringify({dbindexKey:geojsonLayer._geojsonId}))
             }
         },
         pasteDataSource: !isLegendGroup || !geojsonLayer ? null : {
@@ -547,10 +547,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 if (!text) return
 
                 try {
-                    const geojsonId = JSON.parse(text)?.geojsonId
-                    if (!geojsonId) return
+                    const dbindexKey = JSON.parse(text)?.dbindexKey
+                    if (!dbindexKey) return
 
-                    geojsonLayer._geojsonId = geojsonId
+                    geojsonLayer._geojsonId = dbindexKey
                     updateLeafletGeoJSONLayer(geojsonLayer)
                 } catch { return }
             }
@@ -605,7 +605,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
-                const geojsonId = (await getFromGeoJSONDB(layer._geojsonId ?? '')) ? layer._geojsonId : null
+                const dbindexKey = (await getFromGeoJSONDB(layer._geojsonId ?? '')) ? layer._geojsonId : null
                 const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let newLayer
@@ -616,7 +616,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         pane,
                         title,
                         attribution,
-                        geojsonId,
+                        dbindexKey,
                         styles,
                     })
 
@@ -695,12 +695,11 @@ const urlToLeafletLayer = async ({
             group,
             pane: createCustomPane(map),
             title: title ?? name,
-            geojsonId: Array(format, JSON.stringify({url})).join(';')
+            dbindexKey: Array(format, JSON.stringify({url})).join(';')
         })
     }
 
     if (format === 'file') {
-        console.log(url,format, name)
         console.log(await fetchFileData(url,name))
     }
 
@@ -708,29 +707,42 @@ const urlToLeafletLayer = async ({
     return layer
 }
 
+const createLeafletLayer = async (type, {
+    data,
+    group,
+    dbindexKey,
+    title,
+} = {}) => {
+    const map = group._map
+    const typeLower = type.toLowerCase()
+    if (typeLower === 'geojson') {
+        return await getLeafletGeoJSONLayer({
+            geojson: data,
+            group,
+            pane: createCustomPane(map),
+            title,
+            dbindexKey,
+        })
+    }
+}
+
 const fileToLeafletLayer = async ({
     file,
     group,
     add=false,
     suppFiles=[],
+    dbindexKey
 } ={}) => {
     if (!file || !group) return
     const [title, type] = file.name.split('.', 2)
-    const typeLower = type.toLowerCase()
-    const map = group._map
     
     const data = await getFileData(file)
 
-    let layer
-
-    if (typeLower === 'geojson') {
-        layer = await getLeafletGeoJSONLayer({
-            geojson: data,
-            group,
-            pane: createCustomPane(map),
-            title,
-        })
-    }
+    const layer = await createLeafletLayer(type, {
+        data,
+        group,
+        title,
+    })
     
     if (layer && add) group.addLayer(layer)
     return layer
