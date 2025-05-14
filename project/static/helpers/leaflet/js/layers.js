@@ -696,6 +696,7 @@ const urlToLeafletLayer = async ({
     if (format === 'file') {
         type = name.split('.', 2)[1]
         dbindexKey = Array(format, JSON.stringify({url,name})).join(';')
+        title = title.split('.', 2)[0]
     }
 
     const layer = await createLeafletLayer(type, {
