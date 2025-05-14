@@ -691,12 +691,7 @@ const urlToLeafletLayers = async (url, format, names=[], {
     const geojsonId = Array(format,JSON.stringify({url,names:names.map(i => i.value)})).join(';')
 
     if (format === 'geojson') {
-        
-        // const geojson = await fetchGeoJSON(url)
-        // if (!geojson) return
-
         const layer = await getLeafletGeoJSONLayer({
-            // geojson,
             group,
             pane: createCustomPane(map),
             title: names[0].properName,
@@ -748,10 +743,7 @@ const filesToLeafletLayers = async (filesArray, {
                                 pane: createCustomPane(map),
                                 title,
                             })
-                            if (layer) {
-                                layers.push(layers)
-                                if (add) group.addLayer(layer)
-                            }
+                            if (layer) layers.push(layers)
                         } catch (error) {
                             console.log(error)
                         }
@@ -765,5 +757,7 @@ const filesToLeafletLayers = async (filesArray, {
     }
 
     await handler(filesArray)
+
+    if (add) layers.forEach(layer => group.addLayer(layer))
     return layers
 }
