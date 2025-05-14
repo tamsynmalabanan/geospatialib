@@ -696,7 +696,7 @@ const urlToLeafletLayers = async (url, format, names=[], {
         // if (!geojson) return
 
         const layer = await getLeafletGeoJSONLayer({
-            geojson,
+            // geojson,
             group,
             pane: createCustomPane(map),
             title: names[0].properName,
