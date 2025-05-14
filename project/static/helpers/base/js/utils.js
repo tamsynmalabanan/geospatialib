@@ -416,6 +416,7 @@ const getFileData = async (file) => {
                     reject(error)
                 }
             }
+            reject(new Error('unsupported file'))
         }
         reader.readAsText(file)
     })
