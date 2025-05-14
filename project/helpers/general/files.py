@@ -37,4 +37,4 @@ def get_file_info(url):
     if "zip" in content_type:
         return extract_zip(BytesIO(response.content))
     
-    return {slugify(filename): filename}
+    return {filename: filename}
