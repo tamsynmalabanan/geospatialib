@@ -278,15 +278,14 @@ const handleLeafletLegendPanel = (map, parent) => {
                                 const names = Tagify(form.elements.newLayerNames).value
 
                                 for (const name of names) {
-                                    urlToLeafletLayer(
+                                    urlToLeafletLayer({
                                         url,
                                         format,
-                                        name.value, {
-                                            title: name.properName,
-                                            group,
-                                            add:true
-                                        }
-                                    )
+                                        name: name.value, 
+                                        title: name.properName,
+                                        group,
+                                        add:true
+                                    })
                                 }
                             }
                             

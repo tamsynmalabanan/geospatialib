@@ -677,7 +677,10 @@ const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
     return isVisible
 }
 
-const urlToLeafletLayer = async (url, format, name, {
+const urlToLeafletLayer = async ({
+    url, 
+    format, 
+    name, 
     title,
     group,
     add=false
@@ -711,6 +714,17 @@ const urlToLeafletLayer = async (url, format, name, {
 
     if (layer && add) group.addLayer(layer)
     return layer
+}
+
+const filesToLeafletLayer = async ({
+    file,
+    title,
+    group,
+    add=false,
+} ={}) => {
+    if (!file || !group) return
+
+
 }
 
 const filesToLeafletLayers = async (filesArray, {
