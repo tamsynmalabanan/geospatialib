@@ -379,6 +379,11 @@ const getGeoJSON = async (dbKey, {
             const isClient = handlerName === 'client'
             const isGeoJSON = handlerName === 'geojson'
             const isFile = handlerName === 'file'
+            const isStatic = (
+                isClient
+                || isGeoJSON
+                || isFile
+            )
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
                 queryGeom, leafletZoomToMeter(zoom)/2/1000
@@ -402,7 +407,7 @@ const getGeoJSON = async (dbKey, {
                 const cachedQueryExtent = cachedData.queryExtent
         
                 if (queryExtent && cachedGeoJSON.features.length) {
-                    if (isClient || isGeoJSON || isFile) {
+                    if (isStatic) {
                         if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return turf.featureCollection([])
                     } else {
                         try {
@@ -423,7 +428,7 @@ const getGeoJSON = async (dbKey, {
                 return cachedGeoJSON
             })()
             
-            if (!isClient && !geojson?.features?.length) {
+            if (!isStatic && !geojson?.features?.length) {
                 geojson = await (async () => {
                     if (controller?.signal.aborted) return
                     const geojson = await fetchGeoJSONHandlers(handlerName)(
