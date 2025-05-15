@@ -45,8 +45,11 @@ def get_collection(url, format=None):
             format_value = False if format and format != '' else ''
         print(url_value, format_value)
 
-    return {
+    collection = {
         'url': url_value,
         'format': format_value,
         'names': names_value,
     }
+
+    print(collection)
+    return collection
