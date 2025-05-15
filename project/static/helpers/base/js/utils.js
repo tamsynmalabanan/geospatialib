@@ -384,12 +384,16 @@ const getZippedFiles = async (zipFile, basePath) => {
 }
 
 const getValidFilesArray = async (filesArray) => {
+    console.log('filesArray', filesArray)
+
     const files = []
 
     const handler = async (filesArray) => {
         for (const file of filesArray) {
+            console.log('file', file)
             if (isCompressedFile(file)) {
                 const zippedFiles = await getZippedFiles(file, file.name)
+                console.log('zippedFiles', zippedFiles)
                 await handler(zippedFiles)
             } else {
                 files.push(file)
@@ -398,6 +402,7 @@ const getValidFilesArray = async (filesArray) => {
     }
 
     await handler(filesArray)
+    console.log(files)
     return files
 }
 
