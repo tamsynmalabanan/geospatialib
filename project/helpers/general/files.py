@@ -9,7 +9,7 @@ from io import BytesIO
 def extract_zip(zip_file, base_path=""):
     files = {}
     
-    zip_filename = os.path.basename(zip_file)
+    zip_filename = os.path.basename(zip_file.name)
     print('zip_file', zip_file)
     prefix = os.path.join(base_path, zip_filename)
     print('prefix', prefix)
