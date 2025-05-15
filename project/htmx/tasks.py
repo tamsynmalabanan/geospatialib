@@ -5,5 +5,6 @@ def test_task(value):
     print(value)
     return {
         'task': 'test_task',
-        'value': value
+        'value': value,
+        'another variable': 'sdfcdsafsd'
     }

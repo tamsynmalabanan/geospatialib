@@ -11,5 +11,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         result = test_task.delay('sdgfdsg')
-        print(result)
         self.stdout.write(self.style.SUCCESS('Test'))
