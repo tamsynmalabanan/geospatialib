@@ -10,5 +10,5 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        result = test_task.delay('new task lined up while worker was down')
+        test_task.delay('new task lined up while worker was down')
         self.stdout.write(self.style.SUCCESS('Test'))
