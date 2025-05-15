@@ -4,11 +4,11 @@ from celery import Celery
 from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
-app = Celery('project')
+celery_app = Celery('project')
 
-app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks()#lambda: settings.INSTALLED_APPS)
+celery_app.config_from_object('django.conf:settings', namespace='CELERY')
+celery_app.autodiscover_tasks()#lambda: settings.INSTALLED_APPS)
 
-# @app.task(bind=True)
+# @celery_app.task(bind=True)
 # def debug_Task(self):
 #     print('Request: {0!r}'.format(self.request))
