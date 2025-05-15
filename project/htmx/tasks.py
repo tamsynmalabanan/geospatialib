@@ -2,4 +2,7 @@ from celery import shared_task
 
 @shared_task
 def test_task(value):
-    print('test task', value)
+    return {
+        'task': 'test_task',
+        'value': value
+    }

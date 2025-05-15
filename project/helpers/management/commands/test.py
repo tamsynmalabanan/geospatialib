@@ -10,5 +10,6 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        test_task.delay('sdgfdsg')
+        result = test_task.delay('sdgfdsg')
+        print(result)
         self.stdout.write(self.style.SUCCESS('Test'))
