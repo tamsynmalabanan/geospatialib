@@ -71,6 +71,17 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
+CELERY_TASK_DEFAULT_QUEUE = 'default'
+CELERY_TASK_ROUTES = {
+    'htmx.test_task': {'queue': 'high_priority'},
+    # 'htmx.test_task': {'queue': 'low_priority'},
+}
+CELERY_TASK_QUEUES = {
+    'high_priority': {'exchange': 'high_priority', 'routing_key': 'high_priority'},
+    'low_priority': {'exchange': 'low_priority', 'routing_key': 'low_priority'},
+    'default': {'exchange': 'default', 'routing_key': 'default'},
+}
+
 CELERY_BEAT_SCHEDULE = {
     'test_task': {
         'task': 'htmx.tasks.test_task',
