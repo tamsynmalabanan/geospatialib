@@ -26,6 +26,6 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
             return data
         },
     }).catch(error => {
-        console.log(error)
+        console.log(error, name)
     })
 }
