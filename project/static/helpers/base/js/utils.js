@@ -385,6 +385,8 @@ const getZippedFiles = async (zipFile, base_path) => {
 }
 
 const getValidFilesArray = async (filesArray) => {
+    console.log(filesArray)
+    
     const files = []
 
     const handler = async (filesArray) => {
