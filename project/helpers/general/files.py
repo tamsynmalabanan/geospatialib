@@ -10,13 +10,18 @@ def extract_zip(zip_file, base_path=""):
     files = {}
     
     zip_filename = os.path.basename(zip_file)
+    print('zip_file', zip_file)
     prefix = os.path.join(base_path, zip_filename)
+    print('prefix', prefix)
+
+
     with zipfile.ZipFile(zip_file, 'r') as zf:
         for file in zf.namelist():
             if file.endswith('/'):
                 continue
 
             full_path = os.path.join(prefix, file)
+            print('full_path', full_path)
             if file.endswith('.zip'):
                 with zf.open(file) as sub_zip:
                     files.update(extract_zip(BytesIO(sub_zip.read()), full_path))
