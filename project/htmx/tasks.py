@@ -1,11 +1,16 @@
 from celery import shared_task
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn
+)
 
 # @shared_task
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=0.5, retry_kwargs={'max_retries':5})
 def test_task(self, value):
     try:
-        if True:
-            raise Exception()
+        # if True:
+        #     raise Exception()
         print(value)
         return {
             'task': 'test_task',
