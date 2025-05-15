@@ -582,7 +582,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             divider: true,
         },
         style: !isLegendGroup || isLegendFeature ? null : {
-            innerText: `Style ${typeLabel}`,
+            innerText: `Layer properties`,
             btnCallback: async () => {
                 const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
                 mapContainer.querySelector(`[data-bs-target="${styleAccordionSelector}"]`).click()

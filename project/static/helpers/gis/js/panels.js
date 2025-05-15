@@ -16,15 +16,15 @@ const createMapPanels = (container, {} = {}) => {
             label: `Legend`,
             active: true
         },
-        'style': {
-            label: `Style`,
+        'properties': {
+            label: `Layer Properties`,
         },
         'query': {
             label: `Query`,
         },
-        'toolbox': {
-            label: `Toolbox`,
-        },
+        // 'toolbox': {
+        //     label: `Toolbox`,
+        // },
     }, {themed:true})
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)
