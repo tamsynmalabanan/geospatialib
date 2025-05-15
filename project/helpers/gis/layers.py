@@ -35,7 +35,6 @@ def get_collection(url, format=None):
     format_value = format or (get_format(url_value) if url_value else format)
     names_value = {}
 
-    print(url_value, format_value)
     if url_value and format_value:
         # check if url and or format already an existing collection
         # if not existing, and if valid, onboard
@@ -47,8 +46,6 @@ def get_collection(url, format=None):
 
         if len(names_value.keys()) == 0:
             format_value = False if format and format != '' else ''
-        
-        print(url_value, format_value)
 
     collection = {
         'url': url_value,
@@ -56,5 +53,4 @@ def get_collection(url, format=None):
         'names': names_value,
     }
 
-    print(collection)
     return collection
