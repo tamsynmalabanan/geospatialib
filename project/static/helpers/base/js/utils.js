@@ -350,6 +350,7 @@ const makeMovable = (element) => {
 }
 
 const isCompressedFile = (file) => {
+    console.log(file)
     const compressedExtensions = ['zip', 'rar', '7z', 'tar', 'gz']
     const fileName = file.name.toLowerCase()
     const fileExtension = fileName.split('.').pop()
