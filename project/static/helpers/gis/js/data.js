@@ -12,14 +12,15 @@ const mapForFetchFileData = new Map()
 const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
         const file = filesArray.find(file => file.name === name)
-        if (!file) throw new Error('Filename not found.')
-            
+        console.log(file)
+        if (!file) return
+        
         const data = await getFileData(file)
-        if (!data) throw new Error('No data.')
+        console.log(data)
+        if (!data) return
         
         const typeLower = name.split('.')[name.split('.')-1].toLowerCase()
-
-        console.log(data, typeLower)
+        console.log(typeLower)
 
         if (typeLower === 'geojson') {
             return data

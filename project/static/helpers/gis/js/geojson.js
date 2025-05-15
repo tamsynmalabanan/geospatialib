@@ -439,6 +439,9 @@ const getGeoJSON = async (dbKey, {
                             abortBtns,
                         }
                     )
+
+                    console.log(geojson)
+
                     if (!geojson) return new Error('No geojson retrieved.')
                     
                     if (geojson.features?.length) {
