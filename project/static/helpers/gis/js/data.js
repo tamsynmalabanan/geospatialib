@@ -18,6 +18,9 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
         if (!data) throw new Error('No data.')
         
         const typeLower = name.split('.')[name.split('.')-1].toLowerCase()
+
+        console.log(data, typeLower)
+
         if (typeLower === 'geojson') {
             return data
         }
