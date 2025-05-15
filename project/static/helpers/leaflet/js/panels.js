@@ -4193,7 +4193,7 @@ const handleLeafletMapPanels = (map) => {
         panel.appendChild(body)
         handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query .accordion-body`))
         handleLeafletLegendPanel(map, body.querySelector(`#${body.id}-accordion-legend .accordion-body`))
-        handleLeafletStylePanel(map, body.querySelector(`#${body.id}-accordion-style .accordion-body`))
+        handleLeafletStylePanel(map, body.querySelector(`#${body.id}-accordion-properties .accordion-body`))
         
         return panel
     }
