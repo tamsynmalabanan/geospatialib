@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from helpers.general.files import get_file_info
 from helpers.gis.layers import get_collection
-from htmx.tasks import onboard_collection
+from project.helpers.gis.tasks import onboard_collection
 
 class Command(BaseCommand):
     help = 'Test'
