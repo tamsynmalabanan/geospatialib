@@ -17,7 +17,6 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
         
         const data = await getFileData(file)
         console.log(data)
-        if (!data) return
         
         const typeLower = name.split('.')[name.split('.')-1].toLowerCase()
         console.log(typeLower)
