@@ -15,12 +15,16 @@ const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
         if (!file) throw new Error('Filename not found.')
             
         const data = await getFileData(file)
-        return data
+        if (!data) throw new Error('No data.')
+        
+        const typeLower = name.split('.')[name.split('.')-1].toLowerCase()
+        if (typeLower === 'geojson') {
+            return data
+        }
     }
 
     const mapKey = `${url};${controller?.id}` 
     if (mapForFetchFileData.has(mapKey)) {
-        console.log('here')
         return handler(await mapForFetchFileData.get(mapKey))
     }
 
