@@ -36,6 +36,6 @@ def get_file_info(url):
         filename += extension
 
     if "zip" in content_type:
-        return extract_zip(BytesIO(response.content))
+        return extract_zip(BytesIO(response.content), filename)
     
     return {filename: filename.split('.')[0]}
