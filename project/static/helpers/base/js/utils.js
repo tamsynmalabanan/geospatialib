@@ -374,7 +374,7 @@ const getZippedFiles = async (zipFile, basePath) => {
                 })
 
                 if (isCompressedFile(file)) {
-                    (await getZippedFiles(file, relativePath)).forEach(i => filesArray.push(i))
+                    (await getZippedFiles(file, filename)).forEach(i => filesArray.push(i))
                 } else {
                     filesArray.push(file)
                 }
