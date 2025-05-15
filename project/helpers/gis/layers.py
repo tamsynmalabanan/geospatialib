@@ -24,7 +24,7 @@ def get_layers_names(url, format):
         name = url.split('/')[-1].split('.')[0]
         return {name: name}
     
-    if format == 'file': 
+    if format == 'file':
         return get_file_info(url)
     
     return {}
@@ -40,9 +40,14 @@ def get_collection(url, format=None):
         # check if url and or format already an existing collection
         # if not existing, and if valid, onboard
 
-        names_value = get_layers_names(url_value, format_value)
+        try:
+            names_value = get_layers_names(url_value, format_value)
+        except Exception as e:
+            pass
+
         if len(names_value.keys()) == 0:
             format_value = False if format and format != '' else ''
+        
         print(url_value, format_value)
 
     collection = {
