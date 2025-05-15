@@ -9,5 +9,5 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        get_collection('https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip')
+        get_collection('https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip', 'geojson')
         self.stdout.write(self.style.SUCCESS('Test'))
