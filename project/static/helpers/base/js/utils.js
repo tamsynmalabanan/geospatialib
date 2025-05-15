@@ -365,6 +365,7 @@ const getZippedFiles = async (zipFile, basePath) => {
 
         for (const relativePath in zip.files) {
             const filename = [basePath, relativePath].filter(i => i).join('/')
+            console.log(relativePath, filename)
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
                 const content = await entry.async('blob')
