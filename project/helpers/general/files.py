@@ -32,7 +32,7 @@ def get_file_info(url):
     extension = mimetypes.guess_extension(content_type)
 
     filename = url.split("/")[-1]
-    if extension:
+    if extension and not filename.endswith(extension):
         filename += extension
 
     if "zip" in content_type:
