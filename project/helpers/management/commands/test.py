@@ -4,12 +4,11 @@ from django.db.models import Q
 
 from helpers.general.files import get_file_info
 from helpers.gis.layers import get_collection
-from htmx.tasks import test_task
+from helpers.gis.tasks import onboard_collection
 
 class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        # test_task('new task lined up while worker was down')
-        test_task.delay('new task lined up while worker was down')
+        onboard_collection.delay('new task lined up while worker was down')
         self.stdout.write(self.style.SUCCESS('Test'))

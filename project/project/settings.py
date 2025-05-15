@@ -73,22 +73,29 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_ROUTES = {
-    'htmx.tasks.test_task': {'queue': 'high_priority'},
+    # 'htmx.tasks.test_task': {'queue': 'high_priority'},
     # 'htmx.tasks.test_task': {'queue': 'low_priority'},
+    'helpers.gis.tasks.onboard_collection': {'queue': 'low_priority'},
 }
+
 CELERY_TASK_QUEUES = {
     'high_priority': {'exchange': 'high_priority', 'routing_key': 'high_priority'},
     'low_priority': {'exchange': 'low_priority', 'routing_key': 'low_priority'},
     'default': {'exchange': 'default', 'routing_key': 'default'},
 }
 
-CELERY_BEAT_SCHEDULE = {
-    'test_task': {
-        'task': 'htmx.tasks.test_task',
-        'schedule': timedelta(minutes=1),
-        'options': {'queue': 'high_priority', 'priority': 10}
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     # 'test_task': {
+#     #     'task': 'htmx.tasks.test_task',
+#     #     'schedule': timedelta(minutes=1),
+#     #     'options': {'queue': 'high_priority', 'priority': 10}
+#     # },
+#     'onboard_collection': {
+#         'task': 'helpers.gis.tasks.onboard_collection',
+#         'schedule': timedelta(minutes=1),
+#         'options': {'queue': 'low_priority', 'priority': 10}
+#     },
+# }
 
 # CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 # CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
