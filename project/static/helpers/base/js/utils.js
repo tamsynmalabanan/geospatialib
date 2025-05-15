@@ -357,15 +357,12 @@ const isCompressedFile = (file) => {
 }
 
 const getZippedFiles = async (zipFile, basePath) => {
-    console.log(zipFile, basePath)
-
     try {
         const zip = await JSZip.loadAsync(zipFile)
         const filesArray = []
 
         for (const relativePath in zip.files) {
             const filename = [basePath, relativePath].filter(i => i).join('/')
-            console.log(relativePath, filename)
             const entry = zip.files[relativePath]
             if (!entry.dir) { 
                 const content = await entry.async('blob')
@@ -382,7 +379,6 @@ const getZippedFiles = async (zipFile, basePath) => {
         }
         return filesArray
     } catch (error) {
-        console.log(error)
         throw new Error(`Error processing zip file: ${error.message}`)
     }
 }
@@ -393,7 +389,6 @@ const getValidFilesArray = async (filesArray) => {
     const handler = async (filesArray) => {
         for (const file of filesArray) {
             if (isCompressedFile(file)) {
-                console.log(file, file.name)
                 const zippedFiles = await getZippedFiles(file, file.name)
                 await handler(zippedFiles)
             } else {
