@@ -73,8 +73,8 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_ROUTES = {
-    'htmx.test_task': {'queue': 'high_priority'},
-    # 'htmx.test_task': {'queue': 'low_priority'},
+    'htmx.tasks.test_task': {'queue': 'high_priority'},
+    # 'htmx.tasks.test_task': {'queue': 'low_priority'},
 }
 CELERY_TASK_QUEUES = {
     'high_priority': {'exchange': 'high_priority', 'routing_key': 'high_priority'},
