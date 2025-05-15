@@ -390,7 +390,7 @@ const getValidFilesArray = async (filesArray) => {
     const handler = async (filesArray, prefix='') => {
         for (const file of filesArray) {
             if (isCompressedFile(file)) {
-                await handler(await getZippedFiles(file))
+                await handler(await getZippedFiles(file, file.name))
             } else {
                 files.push(file)
             }
