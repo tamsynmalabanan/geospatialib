@@ -1,0 +1,53 @@
+<div id='addLayersModal' class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new layers</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-nowrap gap-2 fs-12">
+                    <div class="form-check m-0">
+                        <input id="ZQuQELWPwcfYncnD" class="form-check-input" type="radio" value="Upload files" name="newLayerSource">
+                        <label class="form-check-label" for="ZQuQELWPwcfYncnD">Upload files</label>
+                    </div>
+                    <div class="form-check m-0">
+                        <input id="AvyNBLzTWljpnubM" class="form-check-input" type="radio" value="Connect to URL" name="newLayerSource">
+                        <label class="form-check-label" for="AvyNBLzTWljpnubM">Connect to URL</label>
+                    </div>
+                </div>
+                <input id="YQMTTRmAzcJrptDR" class="form-control form-control-sm fs-12" type="file" multiple="true" accept=".geojson, .zip">
+                <div id="PWnJmXrhQSkeljRe" class="d-none d-flex flex-column gap-2"><div class="input-group ">
+                    <div class="input-group-text" id="SCzfZZJbQVqOjESH">
+                        <span class="fs-12">URL</span>
+                    </div>
+                    <input type="url" name="newLayerUrl" class="form-control form-control-sm fs-12" aria-describedby="SCzfZZJbQVqOjESH">
+                </div>
+                <div class="input-group ">
+                    <div class="input-group-text" id="AFrxgiyGqPKvANyt">
+                        <span class="fs-12">Format</span>
+                    </div>
+                    <select type="url" name="newLayerFormat" class="form-select form-select-sm fs-12" disabled="" aria-describedby="AFrxgiyGqPKvANyt">
+                        <option value="">Select format</option>
+                        <option value="file">Downloadable File</option>
+                        <option value="geojson">GeoJSON API</option>
+                    </select>
+                </div>
+                <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="newLayerNames" placeholder="Select layer names" disabled="" tabindex="-1"></textarea>
+                {% comment %} <div id="QUuGnjAHhBaJtiuo" class="d-flex flex-nowrap gap-2">
+                    <button class="btn btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-dark" type="button" tabindex="-1">
+                        <i class="bi bi bi-arrow-counterclockwise fs-12 pe-none"></i>
+                    </button>
+                    <button class="btn btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success flex-grow-1" type="submit" disabled="true">
+                        <i class="bi me-2 bi-stack pe-none"></i>
+                        <span class="">Add layers</span>
+                    </button>
+                </div> {% endcomment %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary">Reset form</button>
+                <button type="button" class="btn btn-primary">Add layers</button>
+            </div>
+        </form>
+    </div>
+</div>

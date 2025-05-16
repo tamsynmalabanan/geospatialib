@@ -8,3 +8,7 @@
 {% block sidebar_toggle %}
     {% include "helpers/partials/sidebar/toggle.html" with icon='bi-search' label='Geospatialib' title='Search library' %}
 {% endblock sidebar_toggle %}
+
+{% block modals %}
+    {% include "main/add_layers/modal.html" %}
+{% endblock modals %}
