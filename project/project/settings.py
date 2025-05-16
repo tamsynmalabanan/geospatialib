@@ -72,16 +72,17 @@ CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CELERY_TASK_DEFAULT_QUEUE = 'default'
-CELERY_TASK_ROUTES = {
-    'main.tasks.onboard_collection': {'queue': 'high_priority'},
-    # 'main.tasks.onboard_collection': {'queue': 'low_priority'},
-}
-
 CELERY_TASK_QUEUES = {
     'high_priority': {'exchange': 'high_priority', 'routing_key': 'high_priority'},
     'low_priority': {'exchange': 'low_priority', 'routing_key': 'low_priority'},
     'default': {'exchange': 'default', 'routing_key': 'default'},
 }
+
+CELERY_TASK_ROUTES = {
+    'main.tasks.onboard_collection': {'queue': 'low_priority'},
+    # 'main.tasks.onboard_collection': {'queue': 'low_priority'},
+}
+
 
 # CELERY_BEAT_SCHEDULE = {
 #     'onboard_collection': {

@@ -17,27 +17,27 @@ def onboard_collection(self, cacheKey):
         if not cached_collection:
             return None
         
-        url_instance = URL.objects.get_or_create(path=cached_collection['url'])
-        print(url_instance)
+        url_instance, created = URL.objects.get_or_create(path=cached_collection['url'])
         if not url_instance:
             return
 
-        collection_instance = Collection.objects.get_or_create(
-            url__id=url_instance.id,
+        collection_instance, created = Collection.objects.get_or_create(
+            url=url_instance,
             format=cached_collection['format']
         )
-        print(collection_instance)
         if not collection_instance:
             return
 
         for name, title in cached_collection['names'].items():
-            Layer.objects.get_or_create(
-                collection__id=collection_instance.id,
+            layer_instance, created = Layer.objects.get_or_create(
+                collection=collection_instance,
                 name=name,
                 title=title,
             )
+
+            # populate layer fields
         
         cache.delete(cacheKey)
     except Exception as e:
-        print(e)
+        print('onboard_collection error', e)
         self.retry() 
