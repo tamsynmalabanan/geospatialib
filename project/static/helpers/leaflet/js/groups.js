@@ -201,17 +201,21 @@ const handleLeafletLayerGroups = (map) => {
                     const b = await getLeafletLayerBounds(layer)
                     console.log(b)
                     if (!b) return
-            
-                    if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
-                        return turf.point([b.getEast(), b.getNorth()])
-                    } else {
-                        return L.rectangle(b).toGeoJSON()
+                    
+                    try {
+                        if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
+                            return turf.point([b.getEast(), b.getNorth()])
+                        } else {
+                            return L.rectangle(b).toGeoJSON()
+                        }
+                    } catch (error) {
+                        return
                     }
                 })
-            );
+            )
             
+            bounds = bounds.filter(i => i)
             if (!bounds.length) return
-
             await zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
         },
     }
