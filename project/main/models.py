@@ -42,8 +42,11 @@ class Collection(models.Model):
     def __str__(self):
         return f'{self.url.domain} ({choices.COLLECTION_FORMATS(self.format)})'
     
+    def get_layer_names(self):
+        return {layer.name: layer.title for layer in self.layers.all()}
+    
 class Layer(models.Model):
-    collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE)
+    collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=255)
     title = models.CharField('Title', max_length=255, default='', blank=True, null=True)
 

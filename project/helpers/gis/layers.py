@@ -4,6 +4,7 @@ import validators
 from urllib.parse import unquote
 
 from main.tasks import onboard_collection
+from main.models import Collection
 from helpers.general.utils import get_first_substring_match, create_cache_key
 from helpers.general.files import get_file_names
 
@@ -43,8 +44,14 @@ def get_collection(url, format=None):
         if cached_collection and len(cached_collection['names'].keys()) > 0:
             return cached_collection
 
-        # 1. check if url and format already an existing collection
-        # 2. if collection exists, get collection layers and return collection {}
+        
+        collection_instance = Collection.objects.filter(
+            url__path=url_value,
+            format=format_value
+        ).first()
+        if collection_instance:
+            collection['names'] = collection_instance.get_layer_names()
+            return collection
 
         names_value = collection['names'] = get_layer_names(url_value, format_value)
         if len(names_value.keys()) > 0:
