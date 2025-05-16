@@ -24,18 +24,21 @@ def extract_zip(zip_file, base_path=""):
     return files
 
 def get_file_names(url):
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise Exception("Failed to download file.")
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception("Failed to download file.")
 
-    content_type = response.headers.get('Content-Type', '')
-    extension = mimetypes.guess_extension(content_type)
+        content_type = response.headers.get('Content-Type', '')
+        extension = mimetypes.guess_extension(content_type)
 
-    filename = url.split("/")[-1]
-    if extension and not filename.endswith(extension):
-        filename += extension
+        filename = url.split("/")[-1]
+        if extension and not filename.endswith(extension):
+            filename += extension
 
-    if "zip" in content_type:
-        return extract_zip(BytesIO(response.content), filename)
-    
-    return {filename: filename.split('.')[0]}
+        if "zip" in content_type:
+            return extract_zip(BytesIO(response.content), filename)
+        
+        return {filename: filename.split('.')[0]}
+    except Exception as e:
+        return {}

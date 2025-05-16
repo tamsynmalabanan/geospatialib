@@ -1,3 +1,5 @@
+from django.core.cache import cache
+
 from celery import shared_task
 
 # @shared_task
@@ -7,15 +9,10 @@ from celery import shared_task
     retry_backoff=0.5, 
     retry_kwargs={'max_retries':5}
 )
-def onboard_collection(self, value):
+def onboard_collection(self, cacheKey):
     try:
-        print('TEST TASK')
-        # if True:
-        #     raise Exception()
-        print(value)
         return {
             'task': 'test_task',
-            'value': value,
             'another variable': 'sdfcdsafsd'
         }
     except Exception as e:

@@ -1,3 +1,5 @@
+from django.utils.text import slugify
+
 import string
 import random
 
@@ -52,3 +54,6 @@ def get_first_substring_match(value, choices={}, case_sensitive=False):
                 current_key = key
 
     return current_key
+
+def create_cache_key(values):
+    return slugify([str(i) for i in values].join(';'))
