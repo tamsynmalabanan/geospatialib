@@ -805,7 +805,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                     legendDetails.innerHTML = ''
                     legendDetails.appendChild(customCreateElement({
                         className: 'py-1 d-flex flex-nowrap',
-                        innerHTML: '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-2">Updating...</div>'
+                        innerHTML: '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-2"></div>'
                     }))
                 })
 
