@@ -3865,16 +3865,30 @@ const handleLeafletQueryPanel = (map, parent) => {
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
 
-                const uniqueLayers = {}
-                map._legendLayerGroups.forEach(group => {
-                    group.eachLayer(layer => {
-                        const entry = uniqueLayers[layer._dbIndexedKey] ?? []
-                        if (entry.includes(layer._title)) return
-                        uniqueLayers[layer._dbIndexedKey] = [...entry, layer._title]
-                    })
-                })
+                // const uniqueLayers = {}
+                // map._legendLayerGroups.forEach(group => {
+                //     group.eachLayer(layer => {
+                //         const titles = uniqueLayers[layer._dbIndexedKey] ?? []
+                //         if (titles.includes(layer._title)) return
+                //         uniqueLayers[layer._dbIndexedKey] = [...entry, layer._title]
+                //     })
+                // })
                 
-                console.log(uniqueLayers)
+                // const fetchers = {}
+                // for (const key in uniqueLayers) {
+                //     fetchers[uniqueLayers[key].join(' / ')] = key
+                // }
+
+                const fetchers = Object.fromEntries(
+                    Object.entries(map._legendLayerGroups.reduce((acc, group) => {
+                        group.eachLayer(layer => {
+                            acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
+                        })
+                        return acc
+                    }, {})).map(([key, titles]) => [titles.join(' / '), key])
+                )
+                
+                console.log(fetchers)
             }
         },
         divider1: {
