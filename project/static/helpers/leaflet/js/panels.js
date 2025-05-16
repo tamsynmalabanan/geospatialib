@@ -3790,7 +3790,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                 sort:true,
             })
 
-
             if (!geojson?.features) continue
 
             if (!geojson.features.length) {
