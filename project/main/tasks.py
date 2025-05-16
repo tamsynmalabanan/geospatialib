@@ -18,19 +18,21 @@ def onboard_collection(self, cacheKey):
             return None
         
         url_instance = URL.objects.get_or_create(path=cached_collection['url'])
+        print(url_instance)
         if not url_instance:
             return
 
         collection_instance = Collection.objects.get_or_create(
-            url=url_instance.pk,
+            url__id=url_instance.id,
             format=cached_collection['format']
         )
+        print(collection_instance)
         if not collection_instance:
             return
 
         for name, title in cached_collection['names'].items():
             Layer.objects.get_or_create(
-                collection=collection_instance.pk,
+                collection__id=collection_instance.id,
                 name=name,
                 title=title,
             )
