@@ -1,4 +1,4 @@
-const createLeafletMapPanelTemplate = (map, parent, name, {
+const createLeafletMapPanel = (map, parent, name, {
     statusBar = false,
     spinnerRemark = '',
     errorRemark = '',
@@ -163,7 +163,7 @@ const handleLeafletLegendPanel = (map, parent) => {
         layers,
         clearLayers,
         toolsHandler,
-    } = createLeafletMapPanelTemplate(map, parent, 'legend', {
+    } = createLeafletMapPanel(map, parent, 'legend', {
         clearLayersHandler: async () => {
             await map._ch.clearLegendLayers()
             disableStyleLayerSelect()
@@ -3727,7 +3727,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         error,
         clearLayers,
         toolsHandler,
-    } = createLeafletMapPanelTemplate(map, parent, 'query', {
+    } = createLeafletMapPanel(map, parent, 'query', {
         statusBar: true,
         spinnerRemark: 'Running query...',
         errorRemark: 'Query was interrupted.',
