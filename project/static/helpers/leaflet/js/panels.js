@@ -3601,17 +3601,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             }
                         },
-                        helperGeom: {
-                            handler: ({parent}={}) => {
-                                const container = customCreateElement({
-                                    tag: 'p',
-                                    className: 'd-flex w-100 user-select-none text-muted p-0 m-0',
-                                    parent,
-                                })
-
-                                container.innerText = 'Using complex geometries as spatial constrains can make the map unresponsive; an input with more than 100 vertices will be simplified to minimize lags.'
-                            }
-                        },
                         geomFilter: {
                             handler: ({parent}={}) => {
                                 const container = customCreateElement({
