@@ -73,8 +73,8 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_ROUTES = {
-    'helpers.gis.tasks.onboard_collection': {'queue': 'high_priority'},
-    # 'helpers.gis.tasks.onboard_collection': {'queue': 'low_priority'},
+    'main.tasks.onboard_collection': {'queue': 'high_priority'},
+    # 'main.tasks.onboard_collection': {'queue': 'low_priority'},
 }
 
 CELERY_TASK_QUEUES = {
@@ -85,7 +85,7 @@ CELERY_TASK_QUEUES = {
 
 CELERY_BEAT_SCHEDULE = {
     'onboard_collection': {
-        'task': 'helpers.gis.tasks.test_task',
+        'task': 'main.tasks.test_task',
         'schedule': timedelta(minutes=1),
         'options': {'queue': 'high_priority', 'priority': 10}
     },
