@@ -3870,7 +3870,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
                     })
                     return acc
-                }, {})).map(i => { return {[i[0]]:i[1].join(' / ')} })
+                }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })
                 console.log(fetchers)
                 // await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
