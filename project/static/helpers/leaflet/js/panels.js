@@ -1,7 +1,6 @@
 const createLeafletMapPanel = (map, parent, name, {
     statusBar = false,
     spinnerRemark = '',
-    errorRemark = '',
     clearLayersHandler,
     toolHandler,
 } = {}) => {
@@ -56,7 +55,6 @@ const createLeafletMapPanel = (map, parent, name, {
         error.appendChild(errorIcon)
         
         const errorRemarkDiv = document.createElement('div')
-        errorRemarkDiv.innerText = errorRemark
         error.appendChild(errorRemarkDiv)    
     }
 
@@ -3719,7 +3717,6 @@ const handleLeafletQueryPanel = (map, parent) => {
     } = createLeafletMapPanel(map, parent, 'query', {
         statusBar: true,
         spinnerRemark: 'Running query...',
-        errorRemark,
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
             await clearLayers(tools)
@@ -3743,7 +3740,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             spinner.classList.add('d-none')
             
             if (layers.innerHTML === '') {
-                console.log(error)
+                error.lastChild.innerText = errorRemark
                 error.classList.remove('d-none')
             }
         }
