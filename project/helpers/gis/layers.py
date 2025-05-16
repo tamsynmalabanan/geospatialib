@@ -38,9 +38,9 @@ def get_collection(url, format=None):
         # normalize url based on format here
         cacheKey = create_cache_key(['onboard_collection', url_value, format_value])
 
-        cachedCollection = cache.get(cacheKey)
-        if cachedCollection and len(cachedCollection['names'].keys()) > 0:
-            return cachedCollection
+        cached_collection = cache.get(cacheKey)
+        if cached_collection and len(cached_collection['names'].keys()) > 0:
+            return cached_collection
 
         # 1. check if url and format already an existing collection
         # 2. if collection exists, get collection layers and return collection {}

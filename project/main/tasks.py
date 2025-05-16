@@ -11,9 +11,8 @@ from celery import shared_task
 )
 def onboard_collection(self, cacheKey):
     try:
-        return {
-            'task': 'test_task',
-            'another variable': 'sdfcdsafsd'
-        }
+        cached_collection = cache.get(cacheKey)
+        if cached_collection:
+            return cached_collection
     except Exception as e:
         self.retry() 
