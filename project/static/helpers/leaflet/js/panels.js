@@ -2558,7 +2558,7 @@ const handleLeafletStylePanel = (map, parent) => {
             return map._ch.getLegendLayer(leafletId)
         }).forEach(l => {
             const option = document.createElement('option')
-            option.className = 'text-wrap text-break'
+            option.className = 'text-wrap text-break text-truncate'
             option.value = l._leaflet_id
             option.text = l._title
             if (layer && layer._leaflet_id === l._leaflet_id) {
