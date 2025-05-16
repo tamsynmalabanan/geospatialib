@@ -56,4 +56,4 @@ def get_first_substring_match(value, choices={}, case_sensitive=False):
     return current_key
 
 def create_cache_key(values):
-    return slugify([str(i) for i in values].join(';'))
+    return slugify(';'.join([str(i) for i in values]))
