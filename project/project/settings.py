@@ -83,13 +83,13 @@ CELERY_TASK_QUEUES = {
     'default': {'exchange': 'default', 'routing_key': 'default'},
 }
 
-CELERY_BEAT_SCHEDULE = {
-    'onboard_collection': {
-        'task': 'main.tasks.test_task',
-        'schedule': timedelta(minutes=1),
-        'options': {'queue': 'high_priority', 'priority': 10}
-    },
-}
+# CELERY_BEAT_SCHEDULE = {
+#     'onboard_collection': {
+#         'task': 'main.tasks.test_task',
+#         'schedule': timedelta(minutes=1),
+#         'options': {'queue': 'high_priority', 'priority': 10}
+#     },
+# }
 
 # CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 # CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
