@@ -54,6 +54,7 @@ const handleAddLayersForm = () => {
         } catch (error) {
             data = {url:false}
         } finally {
+            console.log(data)
             const {url, format, names} = data
 
             urlField.classList.toggle('is-invalid', url === false && urlField.value !== '')
