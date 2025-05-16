@@ -3866,7 +3866,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
                 map._legendLayerGroups.forEach(group => {
                     group.eachLayer(layer => {
-                        console.log(group.name, layer)
+                        console.log(group._name, layer)
                     })
                 })
             }
