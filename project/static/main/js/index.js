@@ -7,6 +7,14 @@ const handleAddLayersForm = () => {
     const urlField = form.elements.addLayersUrl
     const formatField = form.elements.addLayersFormat
 
+    let toggleSubmitBtnTimeout
+    const toggleSubmitBtn = () => {
+        clearTimeout(toggleSubmitBtnTimeout)
+        toggleSubmitBtnTimeout = setTimeout(() => {
+            submitBtn.disabled = isFileSource() ? !fileInput.files.length : !namesTagify.value.length
+        }, 100);
+    }
+
     const namesTextfield = form.elements.addLayersNames
     const namesTagify = new Tagify(namesTextfield, {
         delimiters: null,
@@ -76,14 +84,6 @@ const handleAddLayersForm = () => {
         const modalElement = document.querySelector(`#addLayersModal`)
         const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
         modalInstance.hide()
-    }
-
-    let toggleSubmitBtnTimeout
-    const toggleSubmitBtn = () => {
-        clearTimeout(toggleSubmitBtnTimeout)
-        toggleSubmitBtnTimeout = setTimeout(() => {
-            submitBtn.disabled = isFileSource() ? !fileInput.files.length : !namesTagify.value.length
-        }, 100);
     }
 
     form.addEventListener('submit', async (e) => {
