@@ -745,7 +745,7 @@ const fileToLeafletLayer = async ({
     const layer = await createLeafletLayer(type, {
         data,
         group,
-        title,
+        title: title.split('/')[title.split('/').length-1],
     })
     
     if (layer && add) group.addLayer(layer)
