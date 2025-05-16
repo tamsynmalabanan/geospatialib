@@ -23,7 +23,7 @@ def extract_zip(zip_file, base_path=""):
     
     return files
 
-def get_file_info(url):
+def get_file_names(url):
     response = requests.get(url)
     if response.status_code != 200:
         raise Exception("Failed to download file.")
