@@ -199,6 +199,7 @@ const handleLeafletLayerGroups = (map) => {
             const bounds = await Promise.all(
                 layers.map(async layer => {
                     const b = await getLeafletLayerBounds(layer)
+                    console.log(b)
                     if (!b) return
             
                     if (b.getNorth() === b.getSouth() && b.getEast() === b.getWest()) {
