@@ -1,4 +1,6 @@
 const handleAddLayersForm = () => {
+    const modalElement = document.querySelector(`#addLayersModal`)
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
     const form = document.querySelector(`#addLayersForm`)
     const submitBtn = form.elements.addLayersSubmit
     const resetBtn = form.elements.addLayersReset
@@ -79,14 +81,10 @@ const handleAddLayersForm = () => {
             toggleSubmitBtn()
         }
     }
-
-    const hideModal = () => {
+    
+    modalElement.addEventListener('hide.bs.modal', () => {
         delete form._currentMap
-        
-        const modalElement = document.querySelector(`#addLayersModal`)
-        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-        modalInstance.hide()
-    }
+    })
 
     submitBtn.addEventListener('click', async (e) => {
         const map = form._currentMap
@@ -119,7 +117,7 @@ const handleAddLayersForm = () => {
             }
         }
         
-        hideModal()
+        modalInstance.hide()
     })
 
     sourceRadios.forEach(radio => {
