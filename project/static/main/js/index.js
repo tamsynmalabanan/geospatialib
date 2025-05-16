@@ -117,6 +117,7 @@ const handleAddLayersForm = () => {
             }
         }
         
+        resetBtn.click()
         modalInstance.hide()
     })
 
