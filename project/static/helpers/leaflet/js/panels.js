@@ -3784,14 +3784,14 @@ const handleLeafletQueryPanel = (map, parent) => {
         layers.classList.remove('d-none')
     }
 
-    const osmDataFetchers = {
-        'nominatim;{}': 'OpenStreetMap via Nominatim',
-        'overpass;{}': 'OpenStreetMap via Overpass',
-    }
+    const osmDataFetchers = [
+        {key: 'nominatim;{}', title: 'OpenStreetMap via Nominatim',},
+        {key: 'overpass;{}', title: 'OpenStreetMap via Overpass',},
+    ]
 
     const dataToChecklist = async (fetchers, queryGeom, abortBtns, controller) => {
-        for (const key in fetchers) {
-            const geojson = await getGeoJSON(key, {
+        for (const fetcher of fetchers) {
+            const geojson = await getGeoJSON(fetcher.key, {
                 queryGeom,
                 zoom: map.getZoom(),
                 abortBtns, 
@@ -3808,7 +3808,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 pane: 'queryPane',
                 group: queryGroup,
                 customStyleParams,
-                title: fetchers[key],
+                title: fetcher.title,
                 attribution: createAttributionTable(geojson)?.outerHTML,
             })
 
@@ -3864,17 +3864,15 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'r',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                const fetchers = Object.fromEntries(Object.entries(Object.fromEntries(
-                    Object.entries(map._legendLayerGroups.reduce((acc, group) => {
-                        group.eachLayer(layer => {
-                            if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
-                            acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
-                        })
-                        return acc
-                    }, {})).map(([key, titles]) => [titles.join(' / '), key])
-                )).map(([key, value]) => [value, key]))
+                const fetchers = map._legendLayerGroups.reduce((acc, group) => {
+                    group.eachLayer(layer => {
+                        if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
+                        acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
+                    })
+                    return acc
+                }, {})
                 console.log(fetchers)
-                await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
+                // await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
         },
         divider1: {
