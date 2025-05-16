@@ -4,7 +4,7 @@ const getLeafletGeoJSONLayer = async ({
     pane = 'overlayPane',
     title = '',
     attribution = '',
-    dbindexKey,
+    dbIndexedKey,
     styles,
     customStyleParams = {},
 } = {}) => {
@@ -175,7 +175,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     if (group?._name !== 'query') {
-        geojsonLayer._geojsonId = dbindexKey || (
+        geojsonLayer._dbIndexedKey = dbIndexedKey || (
             geojson ? saveToGeoJSONDB(geojson, {normalize:true}) : null
         )
 
@@ -245,8 +245,8 @@ const getLeafletGeoJSONData = async (layer, {
 } = {}) => {
     if (!layer) return
 
-    const dbindexKey = layer._geojsonId
-    if (!dbindexKey) return
+    const dbIndexedKey = layer._dbIndexedKey
+    if (!dbIndexedKey) return
     
     const map = layer._map ?? layer._group?._map
     if (!map) return
@@ -266,7 +266,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    let data = geojsonHasFeatures ? geojson : (await getGeoJSON(dbindexKey, {
+    let data = geojsonHasFeatures ? geojson : (await getGeoJSON(dbIndexedKey, {
         queryGeom,
         controller,
         abortBtns,

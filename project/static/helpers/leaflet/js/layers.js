@@ -260,10 +260,10 @@ const getLeafletLayerBounds = async (layer) => {
         return L.latLangBounds([s,w],[n,e])
     }
 
-    const dbindexKey = layer._geojsonId
-    if (layer instanceof L.GeoJSON && dbindexKey) {
-        const geojson = (await getFromGeoJSONDB(dbindexKey))?.geojson
-        return L.geoJSON(geojson ?? {}).getBounds()
+    const dbIndexedKey = layer._dbIndexedKey
+    if (layer instanceof L.GeoJSON && dbIndexedKey) {
+        const geojson = (await getFromGeoJSONDB(dbIndexedKey))?.geojson
+        if (geojson) L.geoJSON(geojson).getBounds()
     }
 
     if (layer.getBounds) {
@@ -537,7 +537,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
-                navigator.clipboard.writeText(JSON.stringify({dbindexKey:geojsonLayer._geojsonId}))
+                navigator.clipboard.writeText(JSON.stringify({dbIndexedKey:geojsonLayer._dbIndexedKey}))
             }
         },
         pasteDataSource: !isLegendGroup || !geojsonLayer ? null : {
@@ -547,10 +547,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 if (!text) return
 
                 try {
-                    const dbindexKey = JSON.parse(text)?.dbindexKey
-                    if (!dbindexKey) return
+                    const dbIndexedKey = JSON.parse(text)?.dbIndexedKey
+                    if (!dbIndexedKey) return
 
-                    geojsonLayer._geojsonId = dbindexKey
+                    geojsonLayer._dbIndexedKey = dbIndexedKey
                     updateLeafletGeoJSONLayer(geojsonLayer)
                 } catch { return }
             }
@@ -566,7 +566,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
 
                     await normalizeGeoJSON(geojson)
-                    geojsonLayer._geojsonId = saveToGeoJSONDB(turf.clone(geojson))                
+                    geojsonLayer._dbIndexedKey = saveToGeoJSONDB(turf.clone(geojson))                
                     updateLeafletGeoJSONLayer(geojsonLayer, {geojson})
                 } catch { return }
             }
@@ -574,7 +574,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         clearData: !isLegendGroup || !geojsonLayer ? null : {
             innerText: `Clear cached data`,
             btnCallback: async () => {
-                deleteFromGeoJSONDB(geojsonLayer._geojsonId)
+                deleteFromGeoJSONDB(geojsonLayer._dbIndexedKey)
             }
         },
 
@@ -605,7 +605,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
-                const dbindexKey = (await getFromGeoJSONDB(layer._geojsonId ?? '')) ? layer._geojsonId : null
+                const dbIndexedKey = (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null
                 const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let addLayers
@@ -616,11 +616,11 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         pane,
                         title,
                         attribution,
-                        dbindexKey,
+                        dbIndexedKey,
                         styles,
                     })
 
-                    if (type === 'geojson' && group._name === 'query') layer._geojsonId = addLayers._geojsonId
+                    if (type === 'geojson' && group._name === 'query') layer._dbIndexedKey = addLayers._dbIndexedKey
                 }
 
                 if (addLayers) targetGroup.addLayer(addLayers)
@@ -687,21 +687,21 @@ const urlToLeafletLayer = async ({
 }) => {
     if (!url || !format || !name || !group) return
 
-    let dbindexKey
+    let dbIndexedKey
     let type
     if (format === 'geojson') {
         type = format
-        dbindexKey = Array(format, JSON.stringify({url})).join(';')
+        dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
     }
     if (format === 'file') {
         type = name.split('.')[name.split('.').length-1]
-        dbindexKey = Array(format, JSON.stringify({url,name})).join(';')
+        dbIndexedKey = Array(format, JSON.stringify({url,name})).join(';')
     }
 
     const layer = await createLeafletLayer(type, {
         group,
         title,
-        dbindexKey
+        dbIndexedKey
     })
 
     if (layer && add) group.addLayer(layer)
@@ -711,7 +711,7 @@ const urlToLeafletLayer = async ({
 const createLeafletLayer = async (type, {
     data,
     group,
-    dbindexKey,
+    dbIndexedKey,
     title,
 } = {}) => {
     if (!type) return
@@ -724,7 +724,7 @@ const createLeafletLayer = async (type, {
             group,
             pane: createCustomPane(map),
             title,
-            dbindexKey,
+            dbIndexedKey,
         })
     }
 }
@@ -734,7 +734,7 @@ const fileToLeafletLayer = async ({
     group,
     add=false,
     suppFiles=[],
-    dbindexKey
+    dbIndexedKey
 } ={}) => {
     if (!file || !group) return
     const title = file.name.split('.').slice(0, -1).join('.')
