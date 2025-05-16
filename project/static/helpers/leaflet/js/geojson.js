@@ -272,6 +272,8 @@ const getLeafletGeoJSONData = async (layer, {
         abortBtns,
     }))
 
+    console.log(data)
+
     if (!data) return
 
     if (controller?.signal.aborted) return
