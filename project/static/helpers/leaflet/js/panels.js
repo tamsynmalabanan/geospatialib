@@ -3864,13 +3864,13 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'r',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                const fetchers = map._legendLayerGroups.reduce((acc, group) => {
+                const fetchers = Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                     group.eachLayer(layer => {
                         if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
                         acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
                     })
                     return acc
-                }, {})
+                }, {})).map(i => { return {[i[0]]:i[1].join(' / ')} })
                 console.log(fetchers)
                 // await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
