@@ -3882,6 +3882,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const fetchers = Object.fromEntries(
                     Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                         group.eachLayer(layer => {
+                            if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
                             acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
                         })
                         return acc
