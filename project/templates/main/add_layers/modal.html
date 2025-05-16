@@ -21,25 +21,28 @@
                     </div>
                 </div>
 
-                <input class="form-control" type="file" multiple="true" accept=".geojson, .zip">
+                <input name='newLayerFile' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
 
-                <div id="PWnJmXrhQSkeljRe" class="d-none d-flex flex-column gap-2"><div class="input-group ">
-                    <div class="input-group-text" id="SCzfZZJbQVqOjESH">
-                        <span class="fs-12">URL</span>
+                <div class="d-none d-flex flex-column gap-2">
+                    <div class="input-group ">
+                        <div class="input-group-text">
+                            <span class="">URL</span>
+                        </div>
+                        <input type="url" name="newLayerUrl" class="form-control">
                     </div>
-                    <input type="url" name="newLayerUrl" class="form-control form-control-sm fs-12" aria-describedby="SCzfZZJbQVqOjESH">
-                </div>
-                <div class="input-group ">
-                    <div class="input-group-text" id="AFrxgiyGqPKvANyt">
-                        <span class="fs-12">Format</span>
+                    <div class="input-group ">
+                        <div class="input-group-text">
+                            <span class="">Format</span>
+                        </div>
+                        <select name="newLayerFormat" class="form-select" disabled>
+                            <option value="">Select format</option>
+                            <option value="file">Downloadable File</option>
+                            <option value="geojson">GeoJSON API</option>
+                        </select>
                     </div>
-                    <select type="url" name="newLayerFormat" class="form-select form-select-sm fs-12" disabled="" aria-describedby="AFrxgiyGqPKvANyt">
-                        <option value="">Select format</option>
-                        <option value="file">Downloadable File</option>
-                        <option value="geojson">GeoJSON API</option>
-                    </select>
+                    <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="newLayerNames" placeholder="Select layer names" disabled tabindex="-1"></textarea>
                 </div>
-                <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="newLayerNames" placeholder="Select layer names" disabled="" tabindex="-1"></textarea>
+                
                 {% comment %} <div id="QUuGnjAHhBaJtiuo" class="d-flex flex-nowrap gap-2">
                     <button class="btn btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-dark" type="button" tabindex="-1">
                         <i class="bi bi bi-arrow-counterclockwise fs-12 pe-none"></i>
@@ -49,7 +52,6 @@
                         <span class="">Add layers</span>
                     </button>
                 </div> {% endcomment %}
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary">Reset form</button>
