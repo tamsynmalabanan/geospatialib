@@ -124,9 +124,8 @@ const handleAddLayersForm = () => {
 
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
-            const isFileSource = isFileSource()
-            fileInput.classList.toggle('d-none', !isFileSource)
-            fileInput.nextSibling.classList.toggle('d-none', isFileSource)
+            fileInput.classList.toggle('d-none', !isFileSource())
+            fileInput.nextSibling.classList.toggle('d-none', isFileSource())
             toggleSubmitBtn()
         })
     })
