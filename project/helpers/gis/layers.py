@@ -44,7 +44,6 @@ def get_collection(url, format=None):
         if cached_collection and len(cached_collection['names'].keys()) > 0:
             return cached_collection
 
-        
         collection_instance = Collection.objects.filter(
             url__path=url_value,
             format=format_value

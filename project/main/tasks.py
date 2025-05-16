@@ -18,11 +18,15 @@ def onboard_collection(self, cacheKey):
             return None
         
         url_instance = URL.objects.get_or_create(path=cached_collection['url'])
-        
+        if not url_instance:
+            return
+
         collection_instance = Collection.objects.get_or_create(
             url=url_instance,
             format=cached_collection['format']
         )
+        if not collection_instance:
+            return
 
         for name, title in cached_collection['names'].items():
             Layer.objects.get_or_create(
@@ -33,4 +37,5 @@ def onboard_collection(self, cacheKey):
         
         cache.delete(cacheKey)
     except Exception as e:
+        print(e)
         self.retry() 
