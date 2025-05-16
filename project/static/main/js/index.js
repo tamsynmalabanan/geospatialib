@@ -7,6 +7,10 @@ const handleAddLayersForm = () => {
     const urlField = form.elements.addLayersUrl
     const formatField = form.elements.addLayersFormat
 
+    const isFileSource = () => {
+        return sourceRadios.find(i => i.checked).value === 'files'
+    }
+
     let toggleSubmitBtnTimeout
     const toggleSubmitBtn = () => {
         clearTimeout(toggleSubmitBtnTimeout)
@@ -14,6 +18,7 @@ const handleAddLayersForm = () => {
             submitBtn.disabled = isFileSource() ? !fileInput.files.length : !namesTagify.value.length
         }, 100);
     }
+
 
     const namesTextfield = form.elements.addLayersNames
     const namesTagify = new Tagify(namesTextfield, {
@@ -28,9 +33,6 @@ const handleAddLayersForm = () => {
         }
     })
     
-    const isFileSource = () => {
-        return sourceRadios.find(i => i.checked).value === 'files'
-    }
 
     const validateCollection = async () => {
         let data
