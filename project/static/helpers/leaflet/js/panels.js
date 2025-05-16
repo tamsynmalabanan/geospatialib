@@ -3785,13 +3785,13 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const osmDataFetchers = {
-        'OpenStreetMap via Nominatim': 'nominatim;{}',
-        'OpenStreetMap via Overpass': 'overpass;{}',
+        'nominatim;{}': 'OpenStreetMap via Nominatim',
+        'overpass;{}': 'OpenStreetMap via Overpass',
     }
 
     const dataToChecklist = async (fetchers, queryGeom, abortBtns, controller) => {
-        for (const title in fetchers) {
-            const geojson = await getGeoJSON(fetchers[title], {
+        for (const key in fetchers) {
+            const geojson = await getGeoJSON(key, {
                 queryGeom,
                 zoom: map.getZoom(),
                 abortBtns, 
@@ -3808,7 +3808,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 pane: 'queryPane',
                 group: queryGroup,
                 customStyleParams,
-                title: title,
+                title: fetchers[key],
                 attribution: createAttributionTable(geojson)?.outerHTML,
             })
 
@@ -3864,7 +3864,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'r',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                const fetchers = Object.fromEntries(
+                const fetchers = Object.fromEntries(Object.entries(Object.fromEntries(
                     Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                         group.eachLayer(layer => {
                             if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
@@ -3872,7 +3872,8 @@ const handleLeafletQueryPanel = (map, parent) => {
                         })
                         return acc
                     }, {})).map(([key, titles]) => [titles.join(' / '), key])
-                )
+                )).map(([key, value]) => [value, key]))
+                console.log(fetchers)
                 await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
         },
