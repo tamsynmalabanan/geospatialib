@@ -30,9 +30,13 @@ def get_layer_names(url, format):
     return {}
 
 def get_collection(url, format=None):
+    print(url, format)
+
     collection = {'names': {}}
     url_value = collection['url'] = unquote(url) if validators.url(url) else False
     format_value = collection['format'] = format or guess_format_via_url(url_value) or ''
+
+    print(collection)
 
     if url_value and format_value:
         # normalize url based on format here

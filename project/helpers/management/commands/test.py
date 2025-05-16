@@ -10,5 +10,6 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        get_collection('https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip')
+        value = get_collection('https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip')
+        print(value)
         self.stdout.write(self.style.SUCCESS('Test'))
