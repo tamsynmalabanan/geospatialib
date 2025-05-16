@@ -50,10 +50,11 @@ def get_collection(url, format=None):
         ).first()
         if collection_instance:
             collection['names'] = collection_instance.get_layer_names()
-            return collection
+            if len(collection['names'].keys()) > 0:
+                return collection
 
-        names_value = collection['names'] = get_layer_names(url_value, format_value)
-        if len(names_value.keys()) > 0:
+        collection['names'] = get_layer_names(url_value, format_value)
+        if len(collection['names'].keys()) > 0:
             cache.set(cacheKey, collection, timeout=60*60*24*30)
             onboard_collection.delay(cacheKey)
         else: 
