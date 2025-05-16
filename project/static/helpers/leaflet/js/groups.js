@@ -214,7 +214,6 @@ const handleLeafletLayerGroups = (map) => {
                 })
             )
             
-            bounds = bounds.filter(i => i)
             if (!bounds.length) return
             await zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
         },
