@@ -3784,12 +3784,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         layers.classList.remove('d-none')
     }
 
-    const fetchOSMData = async (queryGeom, abortBtns, controller) => {
-        const fetchers = {
-            'OpenStreetMap via Nominatim': 'nominatim;{}',
-            'OpenStreetMap via Overpass': 'overpass;{}',
-        }
+    const osmDataFetchers = {
+        'OpenStreetMap via Nominatim': 'nominatim;{}',
+        'OpenStreetMap via Overpass': 'overpass;{}',
+    }
 
+    const dataToChecklist = async (fetchers, queryGeom, abortBtns, controller) => {
         for (const title in fetchers) {
             const geojson = await getGeoJSON(fetchers[title], {
                 queryGeom,
@@ -3846,7 +3846,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                await fetchOSMData(queryGeom, abortBtns, controller)
+                await dataToChecklist(osmDataFetchers, queryGeom, abortBtns, controller)
             }
         },
         osmView: {
@@ -3855,7 +3855,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'e',
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry
-                await fetchOSMData(queryGeom, abortBtns, controller)
+                await dataToChecklist(osmDataFetchers, queryGeom, abortBtns, controller)
             }
         },
         layerPoint: {
@@ -3864,21 +3864,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'r',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-
-                // const uniqueLayers = {}
-                // map._legendLayerGroups.forEach(group => {
-                //     group.eachLayer(layer => {
-                //         const titles = uniqueLayers[layer._dbIndexedKey] ?? []
-                //         if (titles.includes(layer._title)) return
-                //         uniqueLayers[layer._dbIndexedKey] = [...entry, layer._title]
-                //     })
-                // })
-                
-                // const fetchers = {}
-                // for (const key in uniqueLayers) {
-                //     fetchers[uniqueLayers[key].join(' / ')] = key
-                // }
-
                 const fetchers = Object.fromEntries(
                     Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                         group.eachLayer(layer => {
@@ -3888,8 +3873,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         return acc
                     }, {})).map(([key, titles]) => [titles.join(' / '), key])
                 )
-                
-                console.log(fetchers)
+                await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
         },
         divider1: {
