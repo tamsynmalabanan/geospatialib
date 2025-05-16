@@ -34,7 +34,6 @@ def onboard_collection(self, cacheKey):
                 name=name,
                 title=title,
             )
-
             # populate layer fields
         
         cache.delete(cacheKey)

@@ -23,7 +23,7 @@ def guess_format_via_url(url):
 
 def get_layer_names(url, format):
     if format == 'geojson':
-        name = url.split('/')[-1].split('.')[0]
+        name = url.split('/')[-1]
         return {name: name}
     
     if format == 'file':
