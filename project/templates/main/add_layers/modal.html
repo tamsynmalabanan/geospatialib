@@ -1,3 +1,5 @@
+{% load utility_tags %}
+
 <div id='addLayersModal' class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
         <form id='addLayersForm' class="modal-content">
@@ -6,16 +8,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="d-flex flex-nowrap gap-2 fs-12">
-                    <div class="form-check m-0">
-                        <input id="ZQuQELWPwcfYncnD" class="form-check-input" type="radio" value="Upload files" name="newLayerSource">
-                        <label class="form-check-label" for="ZQuQELWPwcfYncnD">Upload files</label>
+                <div class="d-flex flex-nowrap gap-2">
+                    <div class="form-check">
+                        {% random_string as id %}
+                        <input id="{{id}}" class="form-check-input" type="radio" value="Upload files" name="newLayerSource">
+                        <label class="form-check-label" for="{{id}}">Upload files</label>
                     </div>
                     <div class="form-check m-0">
-                        <input id="AvyNBLzTWljpnubM" class="form-check-input" type="radio" value="Connect to URL" name="newLayerSource">
-                        <label class="form-check-label" for="AvyNBLzTWljpnubM">Connect to URL</label>
+                        {% random_string as id %}
+                        <input id="{{id}}" class="form-check-input" type="radio" value="Connect to URL" name="newLayerSource">
+                        <label class="form-check-label" for="{{id}}">Connect to URL</label>
                     </div>
                 </div>
+
                 <input id="YQMTTRmAzcJrptDR" class="form-control form-control-sm fs-12" type="file" multiple="true" accept=".geojson, .zip">
                 <div id="PWnJmXrhQSkeljRe" class="d-none d-flex flex-column gap-2"><div class="input-group ">
                     <div class="input-group-text" id="SCzfZZJbQVqOjESH">
