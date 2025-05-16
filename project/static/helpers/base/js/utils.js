@@ -401,7 +401,6 @@ const getValidFilesArray = async (filesArray) => {
     return files
 }
 
-
 const getFileData = async (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
