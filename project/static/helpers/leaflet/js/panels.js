@@ -286,6 +286,8 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
         }
         
+        console.log(layerLegend, error)
+
         if (error) {
             createIcon({
                 className: 'bi-bug m-1',
