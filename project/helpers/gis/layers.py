@@ -30,13 +30,9 @@ def get_layer_names(url, format):
     return {}
 
 def get_collection(url, format=None):
-    print(url, format)
-
     collection = {'names': {}}
     url_value = collection['url'] = unquote(url) if validators.url(url) else False
     format_value = collection['format'] = format or guess_format_via_url(url_value) or ''
-
-    print(collection)
 
     if url_value and format_value:
         # normalize url based on format here
@@ -44,13 +40,11 @@ def get_collection(url, format=None):
 
         cachedCollection = cache.get(cacheKey)
         if cachedCollection and len(cachedCollection['names'].keys()) > 0:
-            print('cachedCollection', cachedCollection)
             return cachedCollection
 
         # 1. check if url and format already an existing collection
         # 2. if collection exists, get collection layers and return collection {}
 
-        print('collection does not exist')
         names_value = collection['names'] = get_layer_names(url_value, format_value)
         if len(names_value.keys()) > 0:
             # if layer names retrieved, cache collection variables
