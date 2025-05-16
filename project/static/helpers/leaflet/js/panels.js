@@ -3856,7 +3856,6 @@ const handleLeafletQueryPanel = (map, parent) => {
             title: 'Query layers at point',
             altShortcut: 'r',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
-                const queryGeom = turf.point(Object.values(e.latlng).reverse())
                 const fetchers = Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                     group.eachLayer(layer => {
                         if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
@@ -3864,6 +3863,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
                     return acc
                 }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })
+                
+                if (!fetchers.length) {
+                    errorRemark = 'No layers to query.'
+                    return
+                }
+                
+                const queryGeom = turf.point(Object.values(e.latlng).reverse())
                 await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
         },
