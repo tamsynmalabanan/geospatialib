@@ -3719,7 +3719,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     } = createLeafletMapPanel(map, parent, 'query', {
         statusBar: true,
         spinnerRemark: 'Running query...',
-        errorRemark: 'Query was interrupted.',
+        errorRemark,
         clearLayersHandler: () => queryGroup.clearLayers(),
         toolHandler: async (e, handler) => {
             await clearLayers(tools)
@@ -3743,6 +3743,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             spinner.classList.add('d-none')
             
             if (layers.innerHTML === '') {
+                console.log(error)
                 error.classList.remove('d-none')
             }
         }
@@ -3752,6 +3753,8 @@ const handleLeafletQueryPanel = (map, parent) => {
         fillColor: 'hsla(111, 100%, 54%, 1)',
         strokeWidth: 1,
     }
+
+    let errorRemark = 'Query was interrupted.'
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
