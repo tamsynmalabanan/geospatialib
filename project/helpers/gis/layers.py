@@ -3,6 +3,7 @@ from django.core.cache import cache
 import validators
 from urllib.parse import unquote
 
+from main.tasks import onboard_collection
 from helpers.general.utils import get_first_substring_match, create_cache_key
 from helpers.general.files import get_file_names
 
@@ -49,10 +50,7 @@ def get_collection(url, format=None):
         if len(names_value.keys()) > 0:
             # if layer names retrieved, cache collection variables
             cache.set(cacheKey, collection, timeout=60*60*24*30)
-
-            # call onboard_collection with cache key
-            # onboard_collection should get cached collection variables and create collection and layers
-            # when all layers are created, delete cached collection variables
+            onboard_collection.delay(cacheKey)
         else: 
             collection['format'] = False if format else ''
 
