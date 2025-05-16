@@ -42,20 +42,10 @@
                     </div>
                     <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="newLayerNames" placeholder="Select layer names" disabled tabindex="-1"></textarea>
                 </div>
-                
-                {% comment %} <div id="QUuGnjAHhBaJtiuo" class="d-flex flex-nowrap gap-2">
-                    <button class="btn btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-dark" type="button" tabindex="-1">
-                        <i class="bi bi bi-arrow-counterclockwise fs-12 pe-none"></i>
-                    </button>
-                    <button class="btn btn-sm fs-12 d-flex flex-nowrap justify-content-center btn-success flex-grow-1" type="submit" disabled="true">
-                        <i class="bi me-2 bi-stack pe-none"></i>
-                        <span class="">Add layers</span>
-                    </button>
-                </div> {% endcomment %}
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary">Reset form</button>
-                <button type="button" class="btn btn-primary">Add layers</button>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>
+                <button type="submit" disabled class="btn btn-primary">Add layers</button>
             </div>
         </form>
     </div>
