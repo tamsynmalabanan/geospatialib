@@ -3864,11 +3864,16 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'r',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
+
+                const uniqueLayers = {}
                 map._legendLayerGroups.forEach(group => {
                     group.eachLayer(layer => {
-                        console.log(group._name, layer)
+                        const entry = uniqueLayers[layer._dbIndexedKey] ?? []
+                        uniqueLayers[layer._dbIndexedKey] = [...entry, layer._title]
                     })
                 })
+                
+                console.log(uniqueLayers)
             }
         },
         divider1: {
