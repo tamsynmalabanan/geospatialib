@@ -355,24 +355,43 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
     if (!layer._map || layer._map._ch.hasHiddenLegendLayer(layer)) return
 
     layer.fire('dataupdating')
-    const data = await getLeafletGeoJSONData(layer, {geojson, controller, abortBtns})
-    if (!data) return
+    return getLeafletGeoJSONData(layer, {geojson, controller, abortBtns})
+    .then(data => {
+        if (!data) return
 
-    if (controller?.signal?.aborted) return
-    const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
-    if (!(layer.options.renderer instanceof renderer)) {
-        layer.options.renderer._container?.classList.add('d-none')
-        layer.options.renderer = layer._renderers.find(r => {
-            return r instanceof renderer
-        })
-    }
-    layer.options.renderer._container?.classList.remove('d-none')
+        if (controller?.signal?.aborted) return
+        const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
+        if (!(layer.options.renderer instanceof renderer)) {
+            layer.options.renderer._container?.classList.add('d-none')
+            layer.options.renderer = layer._renderers.find(r => {
+                return r instanceof renderer
+            })
+        }
+        layer.options.renderer._container?.classList.remove('d-none')
+        layer.clearLayers()
+        layer.addData(data)
+    })
+    .finally(() => {
+        layer.fire('dataupdate')
+    })
+
+
+    // const data = await getLeafletGeoJSONData(layer, {geojson, controller, abortBtns})
+    // if (!data) return
+
+    // if (controller?.signal?.aborted) return
+    // const renderer = (data?.features?.length ?? 0) > 1000 ? L.Canvas : L.SVG
+    // if (!(layer.options.renderer instanceof renderer)) {
+    //     layer.options.renderer._container?.classList.add('d-none')
+    //     layer.options.renderer = layer._renderers.find(r => {
+    //         return r instanceof renderer
+    //     })
+    // }
+    // layer.options.renderer._container?.classList.remove('d-none')
     
-    layer.clearLayers()
-    layer.addData(data)
-    layer.fire('dataupdate')
-    
-    return layer
+    // layer.clearLayers()
+    // layer.addData(data)
+    // layer.fire('dataupdate')
 }
 
 const getGeoJSONLayerStyles = (layer) => {
