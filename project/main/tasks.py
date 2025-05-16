@@ -15,7 +15,7 @@ def onboard_collection(self, cacheKey):
     try:
         cached_collection = cache.get(cacheKey)
         if not cached_collection:
-            return None
+            return
         
         url_instance, created = URL.objects.get_or_create(path=cached_collection['url'])
         if not url_instance:
