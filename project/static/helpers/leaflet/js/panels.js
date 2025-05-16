@@ -3730,6 +3730,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             const cancelBtn = getCancelBtn()
             cancelBtn.disabled = false
 
+            errorRemark = 'Query was interrupted.'
+
             await handler(e, {
                 controller,
                 abortBtns: [getCancelBtn()], 
@@ -3751,7 +3753,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         strokeWidth: 1,
     }
 
-    let errorRemark = 'Query was interrupted.'
+    let errorRemark
 
     const getCancelBtn = () => toolbar.querySelector(`#${toolbar.id}-cancel`)
 
@@ -3788,8 +3790,11 @@ const handleLeafletQueryPanel = (map, parent) => {
                 sort:true,
             })
 
-            if (!geojson?.features?.length) {
-                continue
+
+            if (!geojson?.features) continue
+
+            if (!geojson.features.length) {
+                errorRemark = 'Query returned no results.'
             }
         
             const layer = await getLeafletGeoJSONLayer({
