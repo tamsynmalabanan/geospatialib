@@ -3868,9 +3868,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const uniqueLayers = {}
                 map._legendLayerGroups.forEach(group => {
                     group.eachLayer(layer => {
-                        const entry = uniqueLayers[layer._dbIndexedKey] ?? []
-                        if (entry.includes(layer._title)) return
-                        uniqueLayers[layer._dbIndexedKey] = [...entry, layer._title]
+                        uniqueLayers[layer._dbIndexedKey] = layer._initTitle
                     })
                 })
                 

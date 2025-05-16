@@ -15,6 +15,7 @@ const getLeafletGeoJSONLayer = async ({
     })
 
     geojsonLayer._title = title
+    geojsonLayer._initTitle = title
     geojsonLayer._attribution = attribution
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
