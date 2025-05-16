@@ -254,7 +254,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
-                const modalInstance = new bootstrap.Modal.getOrCreateInstance(modalElement)
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
                 modalInstance.show()
 
                 // const createAddLayerForm = () => {
