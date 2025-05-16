@@ -86,7 +86,7 @@ const handleAddLayersForm = () => {
         modalInstance.hide()
     }
 
-    form.addEventListener('submit', async (e) => {
+    submitBtn.addEventListener('click', async (e) => {
         const map = form._currentMap
         const group = map._ch.getLayerGroups().client
         
