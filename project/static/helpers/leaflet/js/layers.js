@@ -608,9 +608,9 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const dbindexKey = (await getFromGeoJSONDB(layer._geojsonId ?? '')) ? layer._geojsonId : null
                 const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
-                let newLayer
+                let addLayers
                 if (['feature', 'geojson'].includes(type)) {
-                    newLayer = await getLeafletGeoJSONLayer({
+                    addLayers = await getLeafletGeoJSONLayer({
                         geojson: layerGeoJSON,
                         group: targetGroup,
                         pane,
@@ -620,10 +620,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         styles,
                     })
 
-                    if (type === 'geojson' && group._name === 'query') layer._geojsonId = newLayer._geojsonId
+                    if (type === 'geojson' && group._name === 'query') layer._geojsonId = addLayers._geojsonId
                 }
 
-                if (newLayer) targetGroup.addLayer(newLayer)
+                if (addLayers) targetGroup.addLayer(addLayers)
             }
         },
         download: !layerGeoJSON ? null : {

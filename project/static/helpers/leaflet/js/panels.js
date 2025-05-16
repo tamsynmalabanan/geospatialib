@@ -246,7 +246,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             tag: 'div',
             className: 'me-5',
         },
-        newLayer: {
+        addLayers: {
             iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
@@ -254,21 +254,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
+                modalElement.querySelector('form')._currentMap = map
+
                 const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
                 modalInstance.show()
-
-                // const menuContainer = contextMenuHandler(e, {
-                //     file: {
-                //         child:createAddLayerForm(),
-                //     },
-                // }, {
-                //     title: 'Add new layers',
-                //     dismissBtn: true,
-                //     style: {
-                //         'max-width': '400px',
-                //         'width': `${window.innerWidth*0.9}px`
-                //     }
-                // })
             }            
         },
     })
@@ -2202,7 +2191,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const geojson = turf.featureCollection(filter.geoms.map(i => turf.feature(i)))
 
-                    const newLayer = await getLeafletGeoJSONLayer({
+                    const addLayers = await getLeafletGeoJSONLayer({
                         geojson,
                         title: 'spatial constraint',
                         pane: createCustomPane(map),
@@ -2214,7 +2203,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                     })
 
-                    if (newLayer) newLayer._group.addLayer(newLayer)
+                    if (addLayers) addLayers._group.addLayer(addLayers)
                 }
             }
         })
@@ -2579,17 +2568,17 @@ const handleLeafletStylePanel = (map, parent) => {
     })
 
     select.addEventListener('change', () => {
-        const newLayerId = parseInt(select.value)
+        const addLayersId = parseInt(select.value)
 
         body.innerHTML = ''
-        layer = map._ch.getLegendLayer(newLayerId)
+        layer = map._ch.getLegendLayer(addLayersId)
         if (!layer) {
             body.removeAttribute('data-layer-id')
             body.classList.add('d-none')
             return
         }
 
-        body.setAttribute('data-layer-id', newLayerId)
+        body.setAttribute('data-layer-id', addLayersId)
         body.classList.remove('d-none')
 
         const layerLegend = getLayerLegend()

@@ -4,48 +4,48 @@
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
         <form id='addLayersForm' class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add new layers</h5>
+                <h5 class="modal-title">Add layers</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex flex-column gap-3">
                 <div class="d-flex flex-nowrap gap-3">
                     <div class="form-check">
                         {% random_string as id %}
-                        <input id="{{id}}" class="form-check-input" type="radio" value="Upload files" name="newLayerSource" checked>
+                        <input id="{{id}}" class="form-check-input" type="radio" value="files" name="addLayersSource" checked>
                         <label class="form-check-label" for="{{id}}">Upload files</label>
                     </div>
                     <div class="form-check m-0">
                         {% random_string as id %}
-                        <input id="{{id}}" class="form-check-input" type="radio" value="Connect to URL" name="newLayerSource">
+                        <input id="{{id}}" class="form-check-input" type="radio" value="url" name="addLayersSource">
                         <label class="form-check-label" for="{{id}}">Connect to URL</label>
                     </div>
                 </div>
 
-                <input name='newLayerFile' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
+                <input name='addLayersFile' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
 
                 <div class="d-none d-flex flex-column gap-2">
                     <div class="input-group ">
                         <div class="input-group-text">
                             <span class="">URL</span>
                         </div>
-                        <input type="url" name="newLayerUrl" class="form-control">
+                        <input type="url" name="addLayersUrl" class="form-control">
                     </div>
                     <div class="input-group ">
                         <div class="input-group-text">
                             <span class="">Format</span>
                         </div>
-                        <select name="newLayerFormat" class="form-select" disabled>
+                        <select name="addLayersFormat" class="form-select" disabled>
                             <option value="">Select format</option>
                             <option value="file">Downloadable File</option>
                             <option value="geojson">GeoJSON API</option>
                         </select>
                     </div>
-                    <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="newLayerNames" placeholder="Select layer names" disabled tabindex="-1"></textarea>
+                    <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="addLayersNames" placeholder="Select layer names" disabled tabindex="-1"></textarea>
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>
-                <button type="submit" disabled class="btn btn-primary">Add layers</button>
+                <button name='addLayersReset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>
+                <button name='addLayersSubmit' type="submit" disabled class="btn btn-primary">Add layers</button>
             </div>
         </form>
     </div>
