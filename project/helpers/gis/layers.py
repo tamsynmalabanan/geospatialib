@@ -48,7 +48,6 @@ def get_collection(url, format=None):
 
         names_value = collection['names'] = get_layer_names(url_value, format_value)
         if len(names_value.keys()) > 0:
-            # if layer names retrieved, cache collection variables
             cache.set(cacheKey, collection, timeout=60*60*24*30)
             onboard_collection.delay(cacheKey)
         else: 

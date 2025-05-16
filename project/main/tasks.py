@@ -2,6 +2,8 @@ from django.core.cache import cache
 
 from celery import shared_task
 
+from .models import URL, Collection, Layer
+
 # @shared_task
 @shared_task(
     bind=True, 
@@ -10,13 +12,25 @@ from celery import shared_task
     retry_kwargs={'max_retries':5}
 )
 def onboard_collection(self, cacheKey):
-    # onboard_collection should get cached collection variables and create collection and layers
-    # when all layers are created, delete cached collection variables
     try:
         cached_collection = cache.get(cacheKey)
         if not cached_collection:
             return None
         
-        return cached_collection
+        url_instance = URL.objects.get_or_create(path=cached_collection['url'])
+        
+        collection_instance = Collection.objects.get_or_create(
+            url=url_instance,
+            format=cached_collection['format']
+        )
+
+        for name, title in cached_collection['names'].items():
+            Layer.objects.get_or_create(
+                collection=collection_instance,
+                name=name,
+                title=title,
+            )
+        
+        cache.delete(cacheKey)
     except Exception as e:
         self.retry() 
