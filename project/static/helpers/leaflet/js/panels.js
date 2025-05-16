@@ -401,7 +401,6 @@ const handleLeafletLegendPanel = (map, parent) => {
         
         if (!map._ch.hasLegendLayer(layer)) return
 
-        
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
             const paneName = layer.options.pane
