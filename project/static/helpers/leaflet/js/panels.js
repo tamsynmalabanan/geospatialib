@@ -3871,8 +3871,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
                     return acc
                 }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })
-                console.log(fetchers)
-                // await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
+                await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
             }
         },
         divider1: {
