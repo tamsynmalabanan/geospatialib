@@ -3861,6 +3861,15 @@ const handleLeafletQueryPanel = (map, parent) => {
         layerPoint: {
             iconSpecs: 'bi-stack',
             title: 'Query layers at point',
+            altShortcut: 'r',
+            mapClickHandler: async (e, {abortBtns, controller} = {}) => {
+                const queryGeom = turf.point(Object.values(e.latlng).reverse())
+                map._legendLayerGroups.forEach(group => {
+                    group.eachLayer(layer => {
+                        console.log(group.name, layer)
+                    })
+                })
+            }
         },
         divider1: {
             tag: 'div',
