@@ -22,7 +22,7 @@ def onboard_collection(self, cacheKey):
             return
 
         collection_instance = Collection.objects.get_or_create(
-            url=url_instance,
+            url=url_instance.pk,
             format=cached_collection['format']
         )
         if not collection_instance:
@@ -30,7 +30,7 @@ def onboard_collection(self, cacheKey):
 
         for name, title in cached_collection['names'].items():
             Layer.objects.get_or_create(
-                collection=collection_instance,
+                collection=collection_instance.pk,
                 name=name,
                 title=title,
             )
