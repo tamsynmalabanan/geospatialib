@@ -26,3 +26,8 @@ def random_string():
 @register.simple_tag
 def get_class_name(form):
     return form.__class__.__name__
+
+@register.simple_tag
+def get_field_id(field):
+    return f'{field.form.__class__.__name__}_{field.name}'
+

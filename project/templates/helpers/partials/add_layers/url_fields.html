@@ -6,13 +6,11 @@
 
 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
     {% with field=form.url %}
-    {{field.name}}
-
         <div class="input-group ">
             <div class="input-group-text">
-                <span class="">{{field.label}} {{field.id_for_label}}</span>
+                {% include "helpers/partials/form/label.html" %}
             </div>
-            {% include "helpers/partials/form/render_field.html" with field=form.url %}
+            {% include "helpers/partials/form/field.html" %}
         </div>
     {% endwith %}
 

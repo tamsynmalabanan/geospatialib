@@ -1,8 +1,0 @@
-{% load widget_tweaks %}
-{% load utility_tags %}
-
-{% variable field.form as form %}
-{% get_class_name form as form_name %}
-{% variable form_name|add:'_'|add:field.name as field_id %}
-
-{% render_field field id=field_id%}
