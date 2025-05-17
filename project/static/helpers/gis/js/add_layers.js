@@ -116,7 +116,8 @@ const handleAddLayersForm = () => {
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
-        console.log(e)
+        if (e.detail.target.id !== 'addLayersForm-urlFields') return
+        toggleSubmitBtn()
     })
 }
 
