@@ -11,6 +11,7 @@ class ValidateCollectionForm(forms.Form):
         required=False,
         widget=forms.URLInput(attrs={
             'type':'search',
+            'class':'form-control',
             'hx-post':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
             'hx-target':'#addLayersForm-urlFields',
@@ -26,10 +27,11 @@ class ValidateCollectionForm(forms.Form):
             'required': 'Select a format.',
         },
         widget=forms.Select(attrs={
+            'disabled': True,
+            'class':'form-select',
             'hx-post':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
             'hx-target':'#addLayersForm-urlFields',
             'hx-swap': 'outerHTML',
-            'disabled': True
         })
     )

@@ -1,22 +1,26 @@
-<div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
+{% load widget_tweaks %}
 
-    {{ validate_collection_form }}
+{% variable validate_collection_form as form %}
+
+<div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
 
     <div class="input-group ">
         <div class="input-group-text">
             <span class="">URL</span>
         </div>
-        <input type="url" name="addLayersUrl" class="form-control">
+        {% render_field form.url %}
+        {% comment %} <input type="url" name="addLayersUrl" class="form-control"> {% endcomment %}
     </div>
     <div class="input-group ">
         <div class="input-group-text">
             <span class="">Format</span>
         </div>
-        <select name="addLayersFormat" class="form-select" disabled>
+        {% render_field form.format %}
+        {% comment %} <select name="addLayersFormat" class="form-select" disabled>
             <option value="">Select format</option>
             <option value="file">Downloadable File</option>
             <option value="geojson">GeoJSON API</option>
-        </select>
+        </select> {% endcomment %}
     </div>
     <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="addLayersNames" placeholder="Select layer names" disabled tabindex="-1"></textarea>
 </div>
