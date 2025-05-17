@@ -354,6 +354,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         controller
                     }).then((layer) => {
                         if (layer && layer._openpopup) {
+                            console.log(layer, layer._openpopup)
                             layer._openpopup.openOn(map)
                             delete layer._openpopup
                         }
