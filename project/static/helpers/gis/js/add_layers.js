@@ -57,21 +57,27 @@ const handleAddLayersForm = () => {
         }, 100);
     }
 
+    const resetLayerNames = () => {
+        const layerNames = form.querySelector(`#addLayersForm-layerNames`)
+        layerNames?.remove()
+    }
+
+    const resetFormatField = () => {
+        const formatField = form.elements.format
+        formatField.value = ''
+        formatField.disabled = true
+        resetLayerNames()
+    }
+
+    const resetUrlFields = () => {
+        const urlField = form.elements.url
+        urlField.value = ''
+        resetFormatField()
+    }
+
     resetBtn.addEventListener('click', (e) => {
         fileInput.value = ''
-        
-        const urlField = form.elements.url
-        if (urlField.value) {
-            urlField.value = ''
-
-            const formatField = form.elements.format
-            formatField.value = ''
-            formatField.disabled = true
-        
-            const layerNames = form.querySelector(`#addLayersForm-layerNames`)
-            layerNames?.remove()
-        }
-
+        resetUrlFields()        
         toggleSubmitBtn()
     })
 
@@ -94,7 +100,19 @@ const handleAddLayersForm = () => {
     
 
     document.addEventListener('htmx:beforeRequest', (e) => {
-        if (e.target.value.trim() === '') return e.preventDefault()
+        if (e.detail.target.id !== 'addLayersForm-urlFields') return
+        
+        if (e.target.value.trim() !== '') return
+
+        e.preventDefault()
+
+        if (e.target === form.elements.url) {
+            resetUrlFields()
+        }
+        
+        if (e.target === form.elements.format) {
+            resetFormatField()
+        }
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
