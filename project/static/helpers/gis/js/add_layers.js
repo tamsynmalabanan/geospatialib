@@ -69,7 +69,7 @@ const handleAddLayersForm = () => {
             formatField.disabled = true
         
             const layerNames = form.querySelector(`#addLayersForm-layerNames`)
-            layerNames.innerHTML = ''
+            layerNames?.remove()
         }
 
         toggleSubmitBtn()
