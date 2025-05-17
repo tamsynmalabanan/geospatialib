@@ -1,11 +1,8 @@
 {% load widget_tweaks %}
 {% load utility_tags %}
 
-{% variable validate_collection_form as form %}
-{% get_class_name form as form_name %}
-
 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
-    {% with field=form.url %}
+    {% with field=validate_collection_form.url %}
         <div class="input-group ">
             <div class="input-group-text">
                 {% include "helpers/partials/form/label.html" %}
@@ -14,7 +11,7 @@
         </div>
     {% endwith %}
 
-    {% with field=form.format %}
+    {% with field=validate_collection_form.format %}
         <div class="input-group ">
             <div class="input-group-text">
                 {% include "helpers/partials/form/label.html" %}
