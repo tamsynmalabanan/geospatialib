@@ -48,6 +48,15 @@ const handleAddLayersForm = () => {
         modalInstance.hide()
     })
 
+    let toggleSubmitBtnTimeout
+    const toggleSubmitBtn = () => {
+        clearTimeout(toggleSubmitBtnTimeout)
+        toggleSubmitBtnTimeout = setTimeout(() => {
+            const layerNames = form.querySelector(`#addLayersForm-layerNames`)
+            submitBtn.disabled = isFileSource() ? !fileInput.files.length : !layerNames.innerHTML
+        }, 100);
+    }
+
     resetBtn.addEventListener('click', (e) => {
         fileInput.value = ''
         
@@ -83,14 +92,6 @@ const handleAddLayersForm = () => {
 
     fileInput.addEventListener('change', toggleSubmitBtn)
     
-    let toggleSubmitBtnTimeout
-    const toggleSubmitBtn = () => {
-        clearTimeout(toggleSubmitBtnTimeout)
-        toggleSubmitBtnTimeout = setTimeout(() => {
-            const layerNames = form.querySelector(`#addLayersForm-layerNames`)
-            submitBtn.disabled = isFileSource() ? !fileInput.files.length : !layerNames.innerHTML
-        }, 100);
-    }
 
     document.addEventListener('htmx:beforeRequest', (e) => {
         console.log(e)
