@@ -23,7 +23,8 @@
         
         {% include "helpers/partials/resources/styles.html" %}
     </head>
-    <body class="vh-100 overflow-hidden">
+    <body class="vh-100 overflow-hidden"> 
+        {% comment %} hx-headers="{'X-CSRFToken':'{{csrf_token}}'}" {% endcomment %}
         {% block body %}
             <div class="container-fluid vh-100">
                 <div class='row vh-100'>
