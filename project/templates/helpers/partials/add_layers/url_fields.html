@@ -1,7 +1,7 @@
 {% load widget_tweaks %}
 {% load utility_tags %}
 
-<div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
+<div id='addLayersForm-urlFields' class="{% if not request.htmx %}d-none{% endif %} d-flex flex-column gap-3">
     {% csrf_token %}
 
     {% with field=form.url %}
