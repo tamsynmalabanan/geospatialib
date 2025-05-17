@@ -24,7 +24,10 @@
 
                 <input name='files' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
 
-                {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
+                <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
+                    {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
+                </div>
+                
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button name='reset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>

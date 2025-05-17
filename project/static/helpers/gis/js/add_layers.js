@@ -5,6 +5,7 @@ const handleAddLayersForm = () => {
     const form = document.querySelector(`#addLayersForm`)
     const sourceRadios = Array.from(form.elements.source)
     const fileInput = form.elements.files
+    const urlFields = form.querySelector(`#addLayersForm-urlFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
 
@@ -88,10 +89,7 @@ const handleAddLayersForm = () => {
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
             fileInput.classList.toggle('d-none', !isFileSource())
-            
-            const urlFields = form.querySelector(`#addLayersForm-urlFields`)
             urlFields.classList.toggle('d-none', isFileSource())
-
             toggleSubmitBtn()
         })
     })
@@ -100,7 +98,7 @@ const handleAddLayersForm = () => {
     
 
     document.addEventListener('htmx:beforeRequest', (e) => {
-        if (e.detail.target.id !== 'addLayersForm-urlFields') return
+        if (e.detail.target.id !== urlFields.id) return
         
         if (e.target.value.trim() !== '') return
 
@@ -116,7 +114,7 @@ const handleAddLayersForm = () => {
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
-        if (e.detail.target.id !== 'addLayersForm-urlFields') return
+        if (e.detail.target.id !== urlFields.id) return
         toggleSubmitBtn()
     })
 }
@@ -124,19 +122,3 @@ const handleAddLayersForm = () => {
 document.addEventListener('DOMContentLoaded', () => {
     handleAddLayersForm()
 })
-
-document.body.addEventListener('htmx:afterRequest', function (evt) {
-    const targetError = evt.target.attributes.getNamedItem('hx-target-error')
-    // if (evt.detail.failed && targetError) {
-    //   document.getElementById(targetError.value).style.display = "inline";
-    // }
-    console.log(targetError)
-});
-
-document.body.addEventListener('htmx:beforeRequest', function (evt) {
-    const targetError = evt.target.attributes.getNamedItem('hx-target-error')
-    // if (targetError) {
-    //     document.getElementById(targetError.value).style.display = "none";
-    // }
-    console.log(targetError)
-});

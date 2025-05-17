@@ -15,7 +15,7 @@ class ValidateCollectionForm(forms.Form):
             'hx-post':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
             'hx-target':'#addLayersForm-urlFields',
-            'hx-swap': 'outerHTML',
+            'hx-swap': 'innerHTML',
         })
     )
 
@@ -32,6 +32,6 @@ class ValidateCollectionForm(forms.Form):
             'hx-post':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
             'hx-target':'#addLayersForm-urlFields',
-            'hx-swap': 'outerHTML',
+            'hx-swap': 'innerHTML',
         })
     )

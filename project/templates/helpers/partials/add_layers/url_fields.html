@@ -1,30 +1,28 @@
 {% load widget_tweaks %}
 {% load utility_tags %}
 
-<div id='addLayersForm-urlFields' class="{% if not request.htmx %}d-none{% endif %} d-flex flex-column gap-3">
-    {% csrf_token %}
+{% csrf_token %}
 
-    {% with field=form.url %}
-        <div class="input-group ">
-            <div class="input-group-text">
-                {% include "helpers/partials/form/label.html" %}
-            </div>
-            {% include "helpers/partials/form/field.html" %}
+{% with field=form.url %}
+    <div class="input-group ">
+        <div class="input-group-text">
+            {% include "helpers/partials/form/label.html" %}
         </div>
-    {% endwith %}
+        {% include "helpers/partials/form/field.html" %}
+    </div>
+{% endwith %}
 
-    {% with field=form.format %}
-        <div class="input-group ">
-            <div class="input-group-text">
-                {% include "helpers/partials/form/label.html" %}
-            </div>
-            {% include "helpers/partials/form/field.html" %}
+{% with field=form.format %}
+    <div class="input-group ">
+        <div class="input-group-text">
+            {% include "helpers/partials/form/label.html" %}
         </div>
-    {% endwith %}
+        {% include "helpers/partials/form/field.html" %}
+    </div>
+{% endwith %}
 
-    {% if layers %}
-        <div id='addLayersForm-layerNames' class="w-100 flex-grow-1 border rounded p-1 d-flex flex-column gap-2">
-            {{layers}}
-        </div>
-    {% endif %}
-</div>
+{% if layers %}
+    <div id='addLayersForm-layerNames' class="w-100 flex-grow-1 border rounded p-1 d-flex flex-column gap-2">
+        {{layers}}
+    </div>
+{% endif %}
