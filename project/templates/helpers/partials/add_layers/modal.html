@@ -21,13 +21,13 @@
                         <label class="form-check-label" for="{{id}}">Connect to URL</label>
                     </div>
                 </div>
-
-                <input name='files' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
-
+                <div id='addLayersForm-fileFields' class="d-none d-flex flex-column gap-3">
+                    <input name='files' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
+                    <div id='addLayersForm-files-layerNames' class="w-100 flex-grow-1 border rounded p-1 d-flex flex-column gap-2"></div>
+                </div>
                 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
                     {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
                 </div>
-                
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button name='reset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>

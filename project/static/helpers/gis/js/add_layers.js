@@ -5,6 +5,7 @@ const handleAddLayersForm = () => {
     const form = document.querySelector(`#addLayersForm`)
     const sourceRadios = Array.from(form.elements.source)
     const fileInput = form.elements.files
+    const fileFields = form.querySelector(`#addLayersForm-fileFields`)
     const urlFields = form.querySelector(`#addLayersForm-urlFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
@@ -53,13 +54,13 @@ const handleAddLayersForm = () => {
     const toggleSubmitBtn = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
-            const layerNames = form.querySelector(`#addLayersForm-layerNames`)
+            const layerNames = form.querySelector(`#addLayersForm-url-layerNames`)
             submitBtn.disabled = isFileSource() ? !fileInput.files.length : !layerNames?.innerHTML
         }, 100);
     }
 
     const resetLayerNames = () => {
-        const layerNames = form.querySelector(`#addLayersForm-layerNames`)
+        const layerNames = form.querySelector(`#addLayersForm-url-layerNames`)
         layerNames?.remove()
     }
 
@@ -88,29 +89,25 @@ const handleAddLayersForm = () => {
 
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
-            fileInput.classList.toggle('d-none', !isFileSource())
+            fileFields.classList.toggle('d-none', !isFileSource())
             urlFields.classList.toggle('d-none', isFileSource())
             toggleSubmitBtn()
         })
     })
 
-    fileInput.addEventListener('change', toggleSubmitBtn)
+    // list 
     
-
+    fileInput.addEventListener('change', () => {
+        toggleSubmitBtn()
+    })
+    
     document.addEventListener('htmx:beforeRequest', (e) => {
         if (e.detail.target.id !== urlFields.id) return
-        
         if (e.target.value.trim() !== '') return
-
-        e.preventDefault()
-
-        if (e.target === form.elements.url) {
-            resetUrlFields()
-        }
         
-        if (e.target === form.elements.format) {
-            resetFormatField()
-        }
+        e.preventDefault()
+        if (e.target === form.elements.url) resetUrlFields()
+        if (e.target === form.elements.format) resetFormatField()
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
