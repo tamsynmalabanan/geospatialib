@@ -24,7 +24,7 @@
 
                 <input name='addLayersFile' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
 
-                {% include "helpers/partials/add_layers/url_fields.html" %}
+                {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button name='addLayersReset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>

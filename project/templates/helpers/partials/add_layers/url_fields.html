@@ -2,7 +2,7 @@
 {% load utility_tags %}
 
 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
-    {% with field=validate_collection_form.url %}
+    {% with field=form.url %}
         <div class="input-group ">
             <div class="input-group-text">
                 {% include "helpers/partials/form/label.html" %}
@@ -11,7 +11,7 @@
         </div>
     {% endwith %}
 
-    {% with field=validate_collection_form.format %}
+    {% with field=form.format %}
         <div class="input-group ">
             <div class="input-group-text">
                 {% include "helpers/partials/form/label.html" %}
@@ -19,6 +19,8 @@
             {% include "helpers/partials/form/field.html" %}
         </div>
     {% endwith %}
+
+    {{test}}
 
     {% comment %} <div class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="addLayersNames" placeholder="Select layer names" disabled tabindex="-1"></div> {% endcomment %}
 </div>

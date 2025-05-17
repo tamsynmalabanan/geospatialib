@@ -7,14 +7,21 @@ import requests
 
 from helpers.gis.layers import get_collection
 from main.models import SpatialRefSys, URL
+from main.forms import ValidateCollectionForm
 
 @require_http_methods(['POST'])
 def validate_collection(request):
-    data = json.loads(request.body.decode('utf-8'))
-    return JsonResponse(get_collection(
-        data.get('url'),
-        data.get('format'),
-    ))
+    form = ValidateCollectionForm(request.POST)
+    # data = json.loads(request.body.decode('utf-8'))
+    # return JsonResponse(get_collection(
+    #     data.get('url'),
+    #     data.get('format'),
+    # ))
+    return render(request, 'helpers/partials/add_layers.html', {
+        'form': form,
+        'test': 'sdvdfshdh'
+    })
+
 
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
