@@ -22,3 +22,7 @@ def get(dict, key, sub=None):
 def random_string():
     chars = string.ascii_letters
     return ''.join(random.choices(chars, k=16))
+
+@register.simple_tag
+def get_class_name(form):
+    return form.__class__.__name__
