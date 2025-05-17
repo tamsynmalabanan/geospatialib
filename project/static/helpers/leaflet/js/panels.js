@@ -352,7 +352,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                             ? layer.toGeoJSON() : null
                         ),
                         controller
-                    }).then((layer) => {
+                    }).then(() => {
                         if (layer && layer._openpopup) {
                             console.log(layer, layer._openpopup)
                             layer._openpopup.openOn(map)
