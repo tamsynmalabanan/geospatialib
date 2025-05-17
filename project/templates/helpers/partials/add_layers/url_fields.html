@@ -20,9 +20,8 @@
         </div>
     {% endwith %}
 
-    <div id='addLayersForm-layerNames' class="w-100 flex-grow-1 border rounded p-1 d-flex flex-column gap-2">
-        {% if layers %}
-            {{layers}}
-        {% endif %}
-    </div>
+    {% if layers %}
+        <div id='addLayersForm-layerNames' class="w-100 flex-grow-1 border rounded p-1 d-flex flex-column gap-2">
+        </div>
+    {% endif %}
 </div>
