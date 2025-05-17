@@ -24,25 +24,7 @@
 
                 <input name='addLayersFile' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
 
-                <div class="d-none d-flex flex-column gap-2">
-                    <div class="input-group ">
-                        <div class="input-group-text">
-                            <span class="">URL</span>
-                        </div>
-                        <input type="url" name="addLayersUrl" class="form-control">
-                    </div>
-                    <div class="input-group ">
-                        <div class="input-group-text">
-                            <span class="">Format</span>
-                        </div>
-                        <select name="addLayersFormat" class="form-select" disabled>
-                            <option value="">Select format</option>
-                            <option value="file">Downloadable File</option>
-                            <option value="geojson">GeoJSON API</option>
-                        </select>
-                    </div>
-                    <textarea class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="addLayersNames" placeholder="Select layer names" disabled tabindex="-1"></textarea>
-                </div>
+                {% include "helpers/partials/add_layers/url_fields.html" %}
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button name='addLayersReset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>

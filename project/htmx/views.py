@@ -16,7 +16,6 @@ def validate_collection(request):
         data.get('format'),
     ))
 
-
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
     url = request.GET.get('url')
@@ -41,8 +40,6 @@ def cors_proxy(request):
 
     content_type = response.headers.get('Content-Type')
     return HttpResponse(response.content, content_type=content_type, status=response.status_code)
-
-
 
 def srs_wkt(request, srid):
     srs = get_object_or_404(SpatialRefSys, srid=srid)
