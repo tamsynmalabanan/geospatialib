@@ -1,0 +1,7 @@
+{% load widget_tweaks %}
+{% load utility_tags %}
+
+{% variable field.form as form %}
+{% get_class_name form as form_name %}
+
+{% render_field field id=form_name|add:'_'|add:field.id_for_label%}

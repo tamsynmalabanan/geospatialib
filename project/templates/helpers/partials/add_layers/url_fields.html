@@ -1,20 +1,21 @@
 {% load widget_tweaks %}
 {% load utility_tags %}
 
-{% get_class_name form as form_name %}
 {% variable validate_collection_form as form %}
+{% get_class_name form as form_name %}
 
 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
     {% with field=form.url %}
-        {{field.form}}
+    {{field.name}}
+
         <div class="input-group ">
             <div class="input-group-text">
                 <span class="">{{field.label}} {{field.id_for_label}}</span>
             </div>
-            {% render_field field %}
-            {% comment %} <input type="url" name="addLayersUrl" class="form-control"> {% endcomment %}
+            {% include "helpers/partials/form/render_field.html" with field=form.url %}
         </div>
     {% endwith %}
+
     <div class="input-group ">
         <div class="input-group-text">
             <span class="">Format</span>
