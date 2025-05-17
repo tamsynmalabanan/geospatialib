@@ -8,7 +8,7 @@ from helpers.general.utils import dict_to_choices
 class ValidateCollectionForm(forms.Form):
     url = forms.URLField(
         label='URL',
-        required=False,
+        required=True,
         widget=forms.URLInput(attrs={
             'type':'search',
             'class':'form-control',

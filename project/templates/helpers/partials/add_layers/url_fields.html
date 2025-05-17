@@ -1,4 +1,4 @@
-{% load widget_tweaks %}
+{% comment %} {% load widget_tweaks %}
 {% load utility_tags %}
 
 <div id='addLayersForm-urlFields' class="{% if not request.htmx %}d-none{% endif %} d-flex flex-column gap-3">
@@ -27,4 +27,4 @@
             {{layers}}
         </div>
     {% endif %}
-</div>
+</div> {% endcomment %}

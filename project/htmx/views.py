@@ -12,16 +12,16 @@ from main.forms import ValidateCollectionForm
 @require_http_methods(['POST'])
 def validate_collection(request):
     form = ValidateCollectionForm(request.POST)
+    return render(request, 'helpers/partials/add_layers/url_fields.html', {
+        'form': form,
+    })
+
     # data = json.loads(request.body.decode('utf-8'))
     # return JsonResponse(get_collection(
     #     data.get('url'),
     #     data.get('format'),
     # ))
-    return render(request, 'helpers/partials/add_layers/url_fields.html', {
-        'form': form,
         # 'layers': 'sdvdfshdh'
-    })
-
 
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
