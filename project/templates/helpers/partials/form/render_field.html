@@ -3,5 +3,6 @@
 
 {% variable field.form as form %}
 {% get_class_name form as form_name %}
+{% variable form_name|add:'_'|add:field.id_for_label as field_id %}
 
-{% render_field field id=form_name|add:'_'|add:field.id_for_label%}
+{% render_field field id=field_id%}
