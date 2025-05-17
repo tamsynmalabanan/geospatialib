@@ -21,6 +21,8 @@
     {% endwith %}
 
     <div id='addLayersForm-layerNames' class="w-100 flex-grow-1 border rounded p-1 d-flex flex-column gap-2">
-        {{test}}
+        {% if layers %}
+            {{layers}}
+        {% endif %}
     </div>
 </div>

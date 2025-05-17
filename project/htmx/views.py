@@ -19,7 +19,7 @@ def validate_collection(request):
     # ))
     return render(request, 'helpers/partials/add_layers.html', {
         'form': form,
-        'test': 'sdvdfshdh'
+        'layers': 'sdvdfshdh'
     })
 
 
