@@ -55,6 +55,7 @@ const handleAddLayersForm = () => {
             const layerNames = form.querySelector(`#addLayersForm-layerNames`)
             console.log(layerNames, layerNames.innerHTML === '')
             submitBtn.disabled = isFileSource() ? !fileInput.files.length : layerNames.innerHTML === ''
+            console.log(submitBtn)
         }, 100);
     }
 
