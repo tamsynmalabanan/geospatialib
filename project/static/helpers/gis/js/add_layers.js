@@ -94,7 +94,7 @@ const handleAddLayersForm = () => {
     
 
     document.addEventListener('htmx:beforeRequest', (e) => {
-        console.log(e)
+        if (e.target.value.trim() === '') return e.preventDefault()
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
