@@ -325,7 +325,7 @@ const createFeaturePropertiesTable = (properties, {
                 tbody.appendChild(tr)
                 
                 const th = document.createElement('th')
-                th.className = 'fw-medium'
+                th.className = 'fw-medium me-2'
                 th.innerText = property
                 th.setAttribute('scope', 'row')
                 tr.appendChild(th)
