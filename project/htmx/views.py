@@ -17,7 +17,7 @@ def validate_collection(request):
     #     data.get('url'),
     #     data.get('format'),
     # ))
-    return render(request, 'helpers/partials/add_layers.html', {
+    return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
         'layers': 'sdvdfshdh'
     })
