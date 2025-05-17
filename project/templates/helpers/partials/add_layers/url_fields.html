@@ -14,16 +14,14 @@
         </div>
     {% endwith %}
 
-    <div class="input-group ">
-        <div class="input-group-text">
-            <span class="">Format</span>
+    {% with field=form.format %}
+        <div class="input-group ">
+            <div class="input-group-text">
+                {% include "helpers/partials/form/label.html" %}
+            </div>
+            {% include "helpers/partials/form/field.html" %}
         </div>
-        {% render_field form.format %}
-        {% comment %} <select name="addLayersFormat" class="form-select" disabled>
-            <option value="">Select format</option>
-            <option value="file">Downloadable File</option>
-            <option value="geojson">GeoJSON API</option>
-        </select> {% endcomment %}
-    </div>
-    <div class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="addLayersNames" placeholder="Select layer names" disabled tabindex="-1"></div>
+    {% endwith %}
+
+    {% comment %} <div class="w-100 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 fs-12" name="addLayersNames" placeholder="Select layer names" disabled tabindex="-1"></div> {% endcomment %}
 </div>
