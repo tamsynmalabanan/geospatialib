@@ -104,11 +104,14 @@ const handleAddLayersForm = () => {
     
     document.addEventListener('htmx:beforeRequest', (e) => {
         if (e.detail.target.id !== urlFields.id) return
-        if (e.target.value.trim() !== '') return
-        
-        e.preventDefault()
-        if (e.target === form.elements.url) resetUrlFields()
-        if (e.target === form.elements.format) resetFormatField()
+        if (e.target === form.elements.url) {
+            try {
+                return new URL(e.target.value)
+            } catch {
+                e.preventDefault()
+                resetUrlFields()
+            }
+        }
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
