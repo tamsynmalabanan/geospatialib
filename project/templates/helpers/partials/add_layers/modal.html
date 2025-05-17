@@ -12,23 +12,23 @@
                 <div class="d-flex flex-nowrap gap-3">
                     <div class="form-check">
                         {% random_string as id %}
-                        <input id="{{id}}" class="form-check-input" type="radio" value="files" name="addLayersSource" checked>
+                        <input id="{{id}}" class="form-check-input" type="radio" value="files" name="source" checked>
                         <label class="form-check-label" for="{{id}}">Upload files</label>
                     </div>
                     <div class="form-check m-0">
                         {% random_string as id %}
-                        <input id="{{id}}" class="form-check-input" type="radio" value="url" name="addLayersSource">
+                        <input id="{{id}}" class="form-check-input" type="radio" value="url" name="source">
                         <label class="form-check-label" for="{{id}}">Connect to URL</label>
                     </div>
                 </div>
 
-                <input name='addLayersFile' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
+                <input name='files' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
 
                 {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button name='addLayersReset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>
-                <button name='addLayersSubmit' type="button" disabled class="btn btn-primary">Add layers</button>
+                <button name='reset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>
+                <button name='submit' type="button" disabled class="btn btn-primary">Add layers</button>
             </div>
         </form>
     </div>
