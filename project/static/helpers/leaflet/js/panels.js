@@ -3730,7 +3730,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             const cancelBtn = getCancelBtn()
             cancelBtn.disabled = false
 
-            errorRemark = 'Query failed.'
+            errorRemark = 'Query was interrupted.'
 
             await handler(e, {
                 controller,
