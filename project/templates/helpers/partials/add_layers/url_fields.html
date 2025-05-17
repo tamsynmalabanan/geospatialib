@@ -2,6 +2,8 @@
 {% load utility_tags %}
 
 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
+    {% csrf_token %}
+
     {% with field=form.url %}
         <div class="input-group ">
             <div class="input-group-text">
