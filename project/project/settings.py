@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'leaflet',
     'django_htmx',
     'celery',
+    'widget_tweaks',
 
     # project apps
     'customuser',
