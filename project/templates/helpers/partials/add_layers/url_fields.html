@@ -1,6 +1,8 @@
 {% load widget_tweaks %}
 {% load utility_tags %}
 
+{{form.is_valid}}
+
 {% csrf_token %}
 
 {% with field=form.url %}

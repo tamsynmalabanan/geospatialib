@@ -97,9 +97,8 @@ const handleAddLayersForm = () => {
         } else {
             const url = form.elements.url.value
             const format = form.elements.format.value
-            const names = [] // update
 
-            for (const name of names) {
+            for (const name in includedLayers) {
                 urlToLeafletLayer({
                     url,
                     format,
