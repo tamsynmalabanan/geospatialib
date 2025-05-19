@@ -738,10 +738,9 @@ const fileToLeafletLayer = async ({
     title,
     x,y,
 } ={}) => {
-    console.log(title, file, group)
     if (!file || !group) return
     title = title ?? file.name.split('.').slice(0, -1).join('.')
-    const type = file.name.replace(`${title}.`, '')
+    const type = file.name.split('.')[file.name.split('.').length-1]
     
     const data = await getFileData(file)
 
