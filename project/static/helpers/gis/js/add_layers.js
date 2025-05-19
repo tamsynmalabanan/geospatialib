@@ -79,8 +79,9 @@ const handleAddLayersForm = () => {
         const map = form._leafletMap
         const group = map._ch.getLayerGroups().client
         
+        const source = isFileSource() ? 'files' : 'url'
+        const includedLayers = getIncludedLayers(source)
         if (isFileSource()) {
-            const includedLayers = getIncludedLayers('files')
             console.log(includedLayers)
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
