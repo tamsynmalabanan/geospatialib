@@ -39,10 +39,7 @@ def get_collection_layers(data):
     format = data.get('format') or guess_format_from_url(url)
     layers = {}
 
-    print(url, format)
-    print(validators.url(url))
-
-    if validators.url(url) and format:
+    if url and format:
         # normalize url based on format here
         cacheKey = create_cache_key(['onboard_collection', url, format])
 
