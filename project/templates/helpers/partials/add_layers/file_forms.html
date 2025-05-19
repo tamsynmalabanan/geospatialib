@@ -13,11 +13,13 @@
             <div class="input-group-text">
                 <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" data-layer-source='files' checked>
             </div>
-            <input type="text" class="form-control" value="{{filename}}" placeholder="{{filename}}" readonly>
-            {% if filename|endswith:'.json' %}
-                <div class="input-group-text">test</div>
-            {% else %}
-            {% endif %}
+            <input type="text" class="form-control" name='title' value="{{filename}}" placeholder="{{filename}}">
+            <div class="input-group-text">
+                {% if filename|endswith:'.json' %}
+                    test
+                {% else %}
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 {% endif %}

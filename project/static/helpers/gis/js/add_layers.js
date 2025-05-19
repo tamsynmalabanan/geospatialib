@@ -50,15 +50,20 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     }
 
-    const getLayerNames = (source) => {
+    const getIncludedLayers = (source) => {
         const container = getLayerNamesContainer(source)
         const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.value !== 'all')
-        const includedFiles = []
+        const includedLayers = {}
         layerCheckboxes.forEach(i => {
             if (!i.checked) return
-            includedFiles.push(i.value)
+
+            const inputGroup = i.closest('.input-group')
+            const params = {title: inputGroup.querySelector('input[name="title"]')?.value ?? i.value}
+            
+
+            // includedLayers[i.value] = 
         })
-        return includedFiles
+        return includedLayers
     }
     
     modalElement.addEventListener('hide.bs.modal', () => {
@@ -71,11 +76,11 @@ const handleAddLayersForm = () => {
         const group = map._ch.getLayerGroups().client
         
         if (isFileSource()) {
-            const includedFiles = getLayerNames('files')
+            const includedLayers = getIncludedLayers('files')
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
-                if (!includedFiles.includes(file.name)) continue
-                
+                if (!includedLayers.includes(file.name)) continue
+
                 fileToLeafletLayer({
                     file,
                     group,
