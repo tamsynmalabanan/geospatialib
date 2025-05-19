@@ -4,12 +4,9 @@
 {% if filenames|length > 0 %}
     <div class="input-group">
         <div class="input-group-text">
-            <input class="form-check-input" type="checkbox" value="all" id="{{id}}" checked>
+            <input class="form-check-input" type="checkbox" value="all" checked>
         </div>
-        <label class="form-check-label" for="{{id}}">Select all layers</label>
-    </div>
-    <div class="form-check">
-        {% random_string as id %}
+        <input type="text" class="form-control" value="Select all" readonly>
     </div>
     {% for filename in filenames %}
         {% if filename|endswith:'.geojson' %}
