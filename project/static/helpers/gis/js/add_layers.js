@@ -111,16 +111,17 @@ const handleAddLayersForm = () => {
     })
 
     form.addEventListener('click', (e) => {
-        if (!e.target.matches(`.form-check-input`)) return
+        if (!e.target.matches(`.form-check-input`) || !e.target.dataset.layerSource) return
         
-        if (e.target.value === 'all') {
-            const source = e.target.dataset.layerSource
-            const checkboxes = getLayerNamesContainer(source).querySelectorAll(`.form-check-input:not[value="all"]`)
-            Array.from(checkboxes).filter(i => i !== e.target).forEach(i => {
-                i.checked = e.target.checked
-            })
+        const source = e.target.dataset.layerSource
+        const container = getLayerNamesContainer(source)
+        const selectAllCheckbox = container.querySelector('.form-check-input[value="all"]')
+        const layerCheckboxes = Array.from(container.querySelectorAll(`.form-check-input`)).filter(i => i !== selectAllCheckbox)
+        
+        if (e.target === selectAllCheckbox) {
+            layerCheckboxes.forEach(i => i.checked = e.target.checked)
         } else {
-            console.log(e.target.closest(`.form-check-input[value="all"]`))
+            selectAllCheckbox.checked = layerCheckboxes.some(i => i.checked)
         }
     })
     
