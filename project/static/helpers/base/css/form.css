@@ -2,6 +2,7 @@ label {
     user-select: none;
 }
 
+.box-shadow-none:focus,
 .box-shadow-none {
     box-shadow: none;
 }
