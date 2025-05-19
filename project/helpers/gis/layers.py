@@ -40,6 +40,8 @@ def get_collection_layers(data):
     layers = {}
 
     if validators.url(url) and format:
+        url = unquote(url)
+        
         # normalize url based on format here
         cacheKey = create_cache_key(['onboard_collection', url, format])
 
