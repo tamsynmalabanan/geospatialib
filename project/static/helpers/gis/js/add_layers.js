@@ -101,7 +101,7 @@ const handleAddLayersForm = () => {
     fileInput.addEventListener('htmx:configRequest', async (e) => {
         if (fileInput.files.length) {
             const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-            console.log(e, fileNames)
+            e.detail.parameters.files = JSON.stringify(fileNames)
         }
 
         toggleSubmitBtn()
