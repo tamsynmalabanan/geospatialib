@@ -2,13 +2,18 @@
 {% load utility_tags %}
 
 {% if filenames|length > 0 %}
+    <div class="form-check">
+        {% random_string as id %}
+        <input class="form-check-input" type="checkbox" value="all" id="{{id}}" checked>
+        <label class="form-check-label" for="{{id}}">Select all layers</label>
+    </div>
     {% for filename in filenames %}
         {% if filename|endswith:'.geojson' %}
             <div class="input-group">
                 <div class="input-group-text">
                     <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" checked>
                 </div>
-                <input type="text" class="form-control" value="{{filename}}">
+                <input type="text" class="form-control" value="{{filename}}" placeholder='Layer name'>
             </div>
         {% endif %}
     {% endfor %}
