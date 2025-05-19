@@ -1,7 +1,7 @@
 {% load static %}
 {% load utility_tags %}
 
-{% if layer_names|length > 0 %}
+{% if layer_names and layer_names|length > 0 %}
     <div class="input-group">
         <div class="input-group-text border-0 bg-transparent">
             <input class="form-check-input" type="checkbox" value="all" data-layer-source='files' checked>
