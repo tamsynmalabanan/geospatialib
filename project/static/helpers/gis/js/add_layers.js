@@ -108,7 +108,7 @@ const handleAddLayersForm = () => {
         }
     })
     
-    document.addEventListener('htmx:beforeRequest', (e) => {
+    document.addEventListener('htmx:beforeRequest', async (e) => {
         if (!e.detail.target.id.startsWith('addLayersForm')) return
         if (e.target === form.elements.url) {
             try {
@@ -121,7 +121,8 @@ const handleAddLayersForm = () => {
 
         if (e.target === fileInput) {
             if (e.target.files.length) {
-                console.log(e.detail.requestConfig)
+                const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
+                e.detail.parameters['files'] = JSON.stringify(fileNames)    
                 return
             } else {
                 resetLayerNames('files')
