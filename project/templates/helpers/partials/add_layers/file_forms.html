@@ -1,14 +1,15 @@
 {% load static %}
 {% load utility_tags %}
 
-{% for filename in filenames %}
-    {% if filename|endswith:'.geojson' %}
-        <div class="input-group">
-            <span class="input-group-text">GeoJSON</span>
-            <div class="input-group-text">
-                <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" checked>
+{% if filenames|length > 0 %}
+    {% for filename in filenames %}
+        {% if filename|endswith:'.geojson' %}
+            <div class="input-group">
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" checked>
+                </div>
+                <input type="text" class="form-control" value="{{filename}}">
             </div>
-            <input type="text" class="form-control" value="{{filename}}">
-        </div>
-    {% endif %}
-{% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
