@@ -49,6 +49,6 @@ class ValidateCollectionForm(forms.Form):
         format = self.cleaned_data.get("format") if url else ''
         if url and not format:
             format = guess_format_from_url(url)
-        if format:
-            self.data.update({'format':format})
+        
+        self.data.update({'format':format})
         return format
