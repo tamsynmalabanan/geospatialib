@@ -81,6 +81,7 @@ const handleAddLayersForm = () => {
         
         const source = isFileSource() ? 'files' : 'url'
         const includedLayers = getIncludedLayers(source)
+
         if (isFileSource()) {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
@@ -145,7 +146,7 @@ const handleAddLayersForm = () => {
         if (e.target === selectAllCheckbox) {
             layerCheckboxes.forEach(i => i.checked = e.target.checked)
         } else {
-            selectAllCheckbox.checked = layerCheckboxes.some(i => i.checked)
+            selectAllCheckbox.checked = layerCheckboxes.every(i => i.checked)
         }
     })
     
