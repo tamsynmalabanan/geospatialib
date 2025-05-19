@@ -60,7 +60,7 @@ const handleAddLayersForm = () => {
 
             const inputGroup = i.closest('.input-group')
             const title = inputGroup.querySelector('input[name="title"]')?.value.trim()
-            const params = {title: title ? title : null}
+            const params = {title: title !== '' ? title : null}
             Array.from(inputGroup.lastElementChild.children).forEach(i => {
                 const name = i.getAttribute('name')
                 const value = i.value
@@ -106,10 +106,10 @@ const handleAddLayersForm = () => {
                 urlToLeafletLayer({
                     url,
                     format,
-                    name: name.value, 
-                    title: name.properName,
+                    name, 
                     group,
-                    add:true
+                    add:true,
+                    ...includedLayers[name]
                 })
             }
         }

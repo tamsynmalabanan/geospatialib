@@ -19,7 +19,7 @@
             <div class="input-group-text">
                 <input class="form-check-input mt-0" type="checkbox" value="{{name}}" data-layer-source="{{source}}" checked>
             </div>
-            <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}">
+            <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{attrs.title}}">
             <div class="input-group-text">
                 {% if name|endswith:'.csv' %}
                     <input type="text" name='x'>
