@@ -29,10 +29,10 @@
                         multiple="true" 
                         accept=".geojson, .zip"
                         hx-get="{% url 'htmx:get_file_forms' %}" 
-                        hx-trigger="change" 
+                        hx-trigger="get-file-forms" 
                         hx-target="#addLayersForm-files-layerNames"
                         hx-swap="innerHTML"
-                        {% comment %} hx-params='not files' {% endcomment %}
+                        hx-params='not files'
                     >
                     <div id='addLayersForm-files-layerNames'></div>
                 </div>
