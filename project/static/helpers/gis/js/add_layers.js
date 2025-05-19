@@ -32,6 +32,7 @@ const handleAddLayersForm = () => {
     const resetFormatField = () => {
         const formatField = form.elements.format
         formatField.value = ''
+        formatField.classList.remove('is-invalid')
         formatField.disabled = true
         resetLayerNames('url')
     }
@@ -39,6 +40,7 @@ const handleAddLayersForm = () => {
     const resetUrlFields = () => {
         const urlField = form.elements.url
         urlField.value = ''
+        urlField.classList.remove('is-invalid')
         resetFormatField()
     }
 
