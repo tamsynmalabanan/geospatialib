@@ -15,7 +15,11 @@ def validate_collection(request):
     raw_format = data.get('format')
     form = ValidateCollectionForm(data)
     if form.is_valid():
-        layers = get_collection_layers(form.cleaned_data)
+        clean_data = form.cleaned_data
+        layers = get_collection_layers({
+            'url': clean_data.get('url'),
+            'format': clean_data.get('format'),
+        })
         if layers == {}:
             form.data.update({'format':raw_format})
             if raw_format:
