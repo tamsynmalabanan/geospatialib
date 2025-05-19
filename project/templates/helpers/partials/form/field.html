@@ -6,6 +6,10 @@
 {% with WIDGET_ERROR_CLASS='is-invalid' %}
     {% render_field field id=field_id %}
     <div class="invalid-feedback">
-        {{field.errors}}
+        <ul class="unordered-list">
+            {% for error in field.errors %}
+                {{error}}
+            {% endfor %}
+        </ul>
     </div>
 {% endwith %}
