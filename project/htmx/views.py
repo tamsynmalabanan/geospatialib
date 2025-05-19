@@ -11,19 +11,23 @@ from main.forms import ValidateCollectionForm
 
 @require_http_methods(['POST'])
 def validate_collection(request):
+    temp = None
+
     collection = get_collection(
         request.POST.get('url'),
         request.POST.get('format'),
     )
 
     form = ValidateCollectionForm(collection)
-
-    # if form.is_valid():
-    #     pass
+    if form.is_valid():
+        pass
+    else:
+        temp = form.errors
 
     return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
-        'collection': collection
+        'collection': collection,
+        'temp': temp
     })
 
 
