@@ -103,9 +103,9 @@ const handleAddLayersForm = () => {
     
     fileInput.addEventListener('htmx:configRequest', async (e) => {
         if (fileInput.files.length) {
-            const filenames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join(',')
-            // fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
-            e.detail.parameters['file'] = filenames
+            // const filenames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join(',')
+            // // fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
+            // e.detail.parameters['file'] = filenames
             console.log(e)
         }
 
@@ -124,7 +124,11 @@ const handleAddLayersForm = () => {
         }
 
         if (e.target === fileInput) {
-            if (e.target.files.length) return
+            if (e.target.files.length) {
+                const filenames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join(',')
+                fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
+                return
+            }
             resetLayerNames('files')
         }
 
