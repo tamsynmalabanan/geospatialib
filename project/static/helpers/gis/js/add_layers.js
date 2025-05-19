@@ -107,19 +107,24 @@ const handleAddLayersForm = () => {
     })
     
     document.addEventListener('htmx:beforeRequest', (e) => {
-        if (e.detail.target.id !== urlFields.id) return
+        if (!e.detail.target.id.startsWith('addLayersForm')) return
         if (e.target === form.elements.url) {
             try {
-                return new URL(e.target.value)
+                new URL(e.target.value)
+                return
             } catch {
                 e.preventDefault()
                 resetUrlFields()
             }
         }
+
+        if (e.target === fileInput) {
+            console.log(e)   
+        }
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
-        if (e.detail.target.id !== urlFields.id) return
+        if (!e.detail.target.id.startsWith('addLayersForm')) return
         toggleSubmitBtn()
     })
 }
