@@ -16,7 +16,7 @@ def validate_collection(request):
         request.POST.get('format'),
     )
 
-    form = ValidateCollectionForm(request.POST)
+    form = ValidateCollectionForm(collection)
 
     # if form.is_valid():
     #     pass
