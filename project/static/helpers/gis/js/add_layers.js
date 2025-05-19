@@ -81,10 +81,10 @@ const handleAddLayersForm = () => {
         
         if (isFileSource()) {
             const includedLayers = getIncludedLayers('files')
+            console.log(includedLayers)
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
-                if (!includedLayers.includes(file.name)) continue
-
+                if (!Object.keys(includedLayers).includes(file.name)) continue
                 fileToLeafletLayer({
                     file,
                     group,
