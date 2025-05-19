@@ -11,19 +11,22 @@ from main.forms import ValidateCollectionForm
 
 @require_http_methods(['POST'])
 def validate_collection(request):
-    format = None
-    layers = {}
-    form = ValidateCollectionForm(request.POST)
-    if form.is_valid():
-        layers = get_collection_layers(form.cleaned_data)
-        format = form.cleaned_data.get('format')
-    else:
-        pass
-    return render(request, 'helpers/partials/add_layers/url_fields.html', {
-        'form': form,
-        'layers': layers,
-        'format': format,
-    })
+    try:
+        format = None
+        layers = {}
+        form = ValidateCollectionForm(request.POST)
+        if form.is_valid():
+            layers = get_collection_layers(form.cleaned_data)
+            format = form.cleaned_data.get('format')
+        else:
+            pass
+        return render(request, 'helpers/partials/add_layers/url_fields.html', {
+            'form': form,
+            'layers': layers,
+            'format': format,
+        })
+    except Exception as e:
+        return HttpResponse(e)
 
 @require_http_methods(['GET'])
 def get_file_forms(request):
