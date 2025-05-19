@@ -17,9 +17,10 @@ def validate_collection(request):
     form = ValidateCollectionForm(data)
     if form.is_valid():
         layers = get_collection_layers(form.cleaned_data)
-        if layers == {} and raw_format != '':
+        if layers == {}:
             form.data.update({'format':raw_format})
-            form.add_error('format', 'No layers retrieved.')
+            if raw_format != '':
+                form.add_error('format', 'No layers retrieved.')
     return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
         'layers': layers,
