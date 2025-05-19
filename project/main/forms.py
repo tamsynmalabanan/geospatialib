@@ -8,6 +8,7 @@ from urllib.parse import unquote
 
 from . import choices
 from helpers.general.utils import dict_to_choices
+from helpers.gis.layers import guess_format_from_url
 
 class ValidateCollectionForm(forms.Form):
     url = forms.URLField(
@@ -45,3 +46,10 @@ class ValidateCollectionForm(forms.Form):
         if not validators.url(url):
             raise forms.ValidationError("Invalid url.")
         return unquote(url)
+
+    def clean_format(self):
+        url = self.cleaned_data.get("url")
+        format = self.cleaned_data.get("format")
+        if url and not format:
+            format = guess_format_from_url(url)
+        return format
