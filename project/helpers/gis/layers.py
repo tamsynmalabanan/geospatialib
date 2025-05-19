@@ -26,6 +26,7 @@ def guess_format_from_url(url):
 def get_layers(url, format):
     if format == 'geojson':
         name = url.split('/')[-1]
+        raise Exception(name)
         return {name: {'title': name}}
     
     if format == 'file':
