@@ -57,6 +57,7 @@ const handleAddLayersForm = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             const urlLayerNames = form.querySelector(`#addLayersForm-url-layerNames`)
+            console.log(urlLayerNames.innerHTML)
             submitBtn.disabled = isFileSource() ? !filesLayerNames?.innerHTML : !urlLayerNames?.innerHTML
         }, 100);
     }
