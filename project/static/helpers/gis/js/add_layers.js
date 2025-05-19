@@ -103,8 +103,6 @@ const handleAddLayersForm = () => {
             const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
             e.detail.parameters.files = JSON.stringify(fileNames)
         }
-
-        toggleSubmitBtn()
     })
     
     document.addEventListener('htmx:beforeRequest', (e) => {
