@@ -1,5 +1,6 @@
 {% load widget_tweaks %}
 {% load utility_tags %}
+{% load static %}
 
 {% csrf_token %}
 
@@ -23,7 +24,6 @@
 
 <div id='addLayersForm-url-layerNames'>
     {% if layers %}
-        {{layers}}
-        {% comment %} {% include "helpers/partials/layer_forms.html" %} {% endcomment %}
+        {% include "helpers/partials/layer_forms.html" %}
     {% endif %}
 </div>
