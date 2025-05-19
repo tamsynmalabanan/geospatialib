@@ -50,14 +50,16 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     }
 
-    // const getLayerNames = (source) => {
-    //     const container = getLayerNamesContainer(source)
-    //     const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.value !== 'all')
-    //     const includedFiles = []
-    //     layerCheckboxes.forEach(i => {
-    //         if (!i.checked)
-    //     })
-    // }
+    const getLayerNames = (source) => {
+        const container = getLayerNamesContainer(source)
+        const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.value !== 'all')
+        const includedFiles = []
+        layerCheckboxes.forEach(i => {
+            if (!i.checked) return
+            includedFiles.push(i.value)
+        })
+        return includedFiles
+    }
     
     modalElement.addEventListener('hide.bs.modal', () => {
         delete form._leafletMap
