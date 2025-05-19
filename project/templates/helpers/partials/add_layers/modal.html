@@ -28,7 +28,7 @@
                         type="file" 
                         multiple="true" 
                         accept=".geojson, .zip"
-                        hx-post="{% url 'htmx:get_file_forms' %}" 
+                        hx-get="{% url 'htmx:get_file_forms' %}" 
                         hx-trigger="change" 
                         hx-target="#addLayersForm-files-layerNames"
                         hx-swap="innerHTML"
