@@ -15,7 +15,7 @@
             </div>
             <input type="text" class="form-control" name='title' value="{{filename}}" placeholder="{{filename}}">
             <div class="input-group-text">
-                {% if filename|endswith:'.json' %}
+                {% if filename|endswith:'.csv' %}
                     <input type="text" name='x'>
                 {% else %}
                 {% endif %}

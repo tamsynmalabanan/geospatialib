@@ -62,7 +62,6 @@ const handleAddLayersForm = () => {
             Array.from(inputGroup.lastElementChild.children).forEach(i => {
                 const name = i.getAttribute('name')
                 const value = i.value
-                console.log(name, value)
                 if (!value || !name) return
                 params[i.getAttribute('name')] = value
             })
@@ -83,7 +82,6 @@ const handleAddLayersForm = () => {
         const source = isFileSource() ? 'files' : 'url'
         const includedLayers = getIncludedLayers(source)
         if (isFileSource()) {
-            console.log(includedLayers)
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
@@ -92,6 +90,7 @@ const handleAddLayersForm = () => {
                     group,
                     add:true,
                     suppFiles:filesArray,
+                    ...includedLayers[file.name]
                 })
             }
         } else {
