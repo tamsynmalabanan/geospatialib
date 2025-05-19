@@ -12,27 +12,17 @@ from main.forms import ValidateCollectionForm
 @require_http_methods(['POST'])
 def validate_collection(request):
     format = None
-    error = None
     layers = {}
     form = ValidateCollectionForm(request.POST)
-    try:
-        if form.is_valid():
-            layers = get_collection_layers(form.cleaned_data)
-            format = form.clean_data.get('format')
-        else:
-            pass
-        return render(request, 'helpers/partials/add_layers/url_fields.html', {
-            'form': form,
-            'layers': layers,
-            'format': format,
-        })
-    except Exception as e:
-        error = e
+    if form.is_valid():
+        layers = get_collection_layers(form.cleaned_data)
+        format = form.cleaned_data.get('format')
+    else:
+        pass
     return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
         'layers': layers,
         'format': format,
-        'error': error,
     })
 
 @require_http_methods(['GET'])
