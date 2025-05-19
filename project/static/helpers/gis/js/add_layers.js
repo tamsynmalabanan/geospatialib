@@ -52,7 +52,7 @@ const handleAddLayersForm = () => {
             }
         }
         
-        resetBtn.click()
+        resetForm()
         modalInstance.hide()
     })
 
@@ -86,12 +86,14 @@ const handleAddLayersForm = () => {
         resetFormatField()
     }
 
-    resetBtn.addEventListener('click', (e) => {
+    const resetForm = (e) => {
         fileInput.value = ''
         resetLayerNames('files')
         resetUrlFields()        
         toggleSubmitBtn()
-    })
+    }
+
+    resetBtn.addEventListener('click', resetForm)
 
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
