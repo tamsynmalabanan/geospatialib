@@ -120,7 +120,7 @@ const handleAddLayersForm = () => {
         }
 
         if (e.target === fileInput) {
-            if (e.target.files.length) return
+            if (e.target.files.length) return console.log(e)
             resetLayerNames('files')
         }
 
