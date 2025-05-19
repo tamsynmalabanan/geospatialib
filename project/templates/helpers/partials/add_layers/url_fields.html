@@ -23,6 +23,7 @@
 
 <div id='addLayersForm-url-layerNames'>
     {% if layers %}
-        {% include "helpers/partials/layer_forms.html" %}
+        {{layers}}
+        {% comment %} {% include "helpers/partials/layer_forms.html" %} {% endcomment %}
     {% endif %}
 </div>
