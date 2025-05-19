@@ -1,3 +1,5 @@
 {% for filename in filenames %}
-    {{ filename }}
+    {% if filename|endswith:'.geojson' %}
+        {{ filename }}
+    {% endif %}
 {% endfor %}
