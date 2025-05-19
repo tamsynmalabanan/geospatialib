@@ -122,8 +122,9 @@ const handleAddLayersForm = () => {
             if (e.target.files.length) {
                 console.log(e.detail.requestConfig)
                 return
+            } else {
+                resetLayerNames('files')
             }
-            resetLayerNames('files')
         }
 
         e.preventDefault()
