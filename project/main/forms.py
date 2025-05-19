@@ -41,11 +41,11 @@ class ValidateCollectionForm(forms.Form):
         })
     )
 
-    def clean_url(self):
-        url = self.cleaned_data.get("url")
-        if not validators.url(url):
-            raise forms.ValidationError("Invalid url.")
-        return unquote(url)
+    # def clean_url(self):
+    #     url = self.cleaned_data.get("url")
+    #     if not validators.url(url):
+    #         raise forms.ValidationError("Invalid url.")
+    #     return unquote(url)
 
     def clean_format(self):
         url = self.cleaned_data.get("url")
