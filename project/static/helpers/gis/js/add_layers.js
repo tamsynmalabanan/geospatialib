@@ -11,17 +11,16 @@ const handleAddLayersForm = () => {
     const submitBtn = form.elements.submit
     const getLayerNamesContainer = (source) => form.querySelector(`#addLayersForm-${source}-layerNames`)
 
-    const isFileSource = () => {
-        return sourceRadios.find(i => i.checked).value === 'files'
-    }
+    const getFileSource = () => sourceRadios.find(i => i.checked).value
+
     let toggleSubmitBtnTimeout
     const toggleSubmitBtn = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
+            const container = getLayerNamesContainer(getFileSource())
             submitBtn.disabled = (
-                isFileSource() 
-                ? getLayerNamesContainer('files')?.innerHTML.trim() === '' 
-                : getLayerNamesContainer('url')?.innerHTML.trim() === ''
+                container?.innerHTML.trim() === ''
+                || Array.from(container.querySelectorAll('.form-check-input')).every(i => !i.checked) 
             )
         }, 100);
     }
@@ -79,10 +78,10 @@ const handleAddLayersForm = () => {
         const map = form._leafletMap
         const group = map._ch.getLayerGroups().client
         
-        const source = isFileSource() ? 'files' : 'url'
+        const source = getFileSource()
         const includedLayers = getIncludedLayers(source)
 
-        if (isFileSource()) {
+        if (source === 'files') {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
@@ -119,8 +118,9 @@ const handleAddLayersForm = () => {
 
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
-            fileFields.classList.toggle('d-none', !isFileSource())
-            urlFields.classList.toggle('d-none', isFileSource())
+            const source = getFileSource()
+            fileFields.classList.toggle('d-none', source === 'url')
+            urlFields.classList.toggle('d-none', source === 'files')
             toggleSubmitBtn()
         })
     })
@@ -148,6 +148,8 @@ const handleAddLayersForm = () => {
         } else {
             selectAllCheckbox.checked = layerCheckboxes.every(i => i.checked)
         }
+
+        toggleSubmitBtn()
     })
     
     form.addEventListener('htmx:beforeRequest', async (e) => {
