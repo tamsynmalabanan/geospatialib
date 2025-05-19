@@ -9,16 +9,50 @@ const handleAddLayersForm = () => {
     const urlFields = form.querySelector(`#addLayersForm-urlFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
-    const filesLayerNames = form.querySelector(`#addLayersForm-files-layerNames`)
-    const getUrlLayerNames = () => form.querySelector(`#addLayersForm-url-layerNames`)
-
-    modalElement.addEventListener('hide.bs.modal', () => {
-        delete form._leafletMap
-    })
+    const getLayerNamesContainer = (source) => form.querySelector(`#addLayersForm-${source}-layerNames`)
 
     const isFileSource = () => {
         return sourceRadios.find(i => i.checked).value === 'files'
     }
+    let toggleSubmitBtnTimeout
+    const toggleSubmitBtn = () => {
+        clearTimeout(toggleSubmitBtnTimeout)
+        toggleSubmitBtnTimeout = setTimeout(() => {
+            submitBtn.disabled = (
+                isFileSource() 
+                ? getLayerNamesContainer('files')?.innerHTML.trim() === '' 
+                : getLayerNamesContainer('url')?.innerHTML.trim() === ''
+            )
+        }, 100);
+    }
+
+    const resetLayerNames = (source) => {
+        getLayerNamesContainer(source).innerHTML = ''
+    }
+
+    const resetFormatField = () => {
+        const formatField = form.elements.format
+        formatField.value = ''
+        formatField.disabled = true
+        resetLayerNames('url')
+    }
+
+    const resetUrlFields = () => {
+        const urlField = form.elements.url
+        urlField.value = ''
+        resetFormatField()
+    }
+
+    const resetForm = (e) => {
+        fileInput.value = ''
+        resetLayerNames('files')
+        resetUrlFields()        
+        toggleSubmitBtn()
+    }
+    
+    modalElement.addEventListener('hide.bs.modal', () => {
+        delete form._leafletMap
+    })
 
     // update names value
     submitBtn.addEventListener('click', async (e) => {
@@ -56,43 +90,6 @@ const handleAddLayersForm = () => {
         modalInstance.hide()
     })
 
-    let toggleSubmitBtnTimeout
-    const toggleSubmitBtn = () => {
-        clearTimeout(toggleSubmitBtnTimeout)
-        toggleSubmitBtnTimeout = setTimeout(() => {
-            submitBtn.disabled = (
-                isFileSource() 
-                ? filesLayerNames?.innerHTML.trim() === '' 
-                : getUrlLayerNames()?.innerHTML.trim() === ''
-            )
-        }, 100);
-    }
-
-    const resetLayerNames = (source) => {
-        const layerNames = form.querySelector(`#addLayersForm-${source}-layerNames`)
-        layerNames.innerHTML = ''
-    }
-
-    const resetFormatField = () => {
-        const formatField = form.elements.format
-        formatField.value = ''
-        formatField.disabled = true
-        resetLayerNames('url')
-    }
-
-    const resetUrlFields = () => {
-        const urlField = form.elements.url
-        urlField.value = ''
-        resetFormatField()
-    }
-
-    const resetForm = (e) => {
-        fileInput.value = ''
-        resetLayerNames('files')
-        resetUrlFields()        
-        toggleSubmitBtn()
-    }
-
     resetBtn.addEventListener('click', resetForm)
 
     sourceRadios.forEach(radio => {
@@ -111,6 +108,22 @@ const handleAddLayersForm = () => {
 
         const event = new Event("get-file-forms", { bubbles: true })
         fileInput.dispatchEvent(event)
+    })
+
+    form.addEventListener('click', (e) => {
+        if (!e.target.matches(`.form-check-input`)) return
+        
+        if (e.target.value === 'all') {
+            const source = e.target.dataset.layerSource
+            Array.from(
+                getLayerNamesContainer(source)
+                .querySelectorAll(`.form-check-input:not[value="all"]`)
+            ).forEach(i => {
+                i.checked = e.target.checked
+            })
+        } else {
+
+        }
     })
     
     form.addEventListener('htmx:beforeRequest', async (e) => {
