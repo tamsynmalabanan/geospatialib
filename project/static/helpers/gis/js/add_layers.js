@@ -103,13 +103,13 @@ const handleAddLayersForm = () => {
     
     fileInput.addEventListener('change', async (e) => {
         if (fileInput.files.length) {
-            const filenames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join('|')
+            const filenames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join(',')
             console.log(filenames)
-            fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
+            fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}", "filenames": "TESTINGDUPLICATEFILEDNAME"}`)
         }
 
-        // const event = new Event("hx-vals-updated", { bubbles: true })
-        // fileInput.dispatchEvent(event)
+        const event = new Event("get-file-forms", { bubbles: true })
+        fileInput.dispatchEvent(event)
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
@@ -123,7 +123,7 @@ const handleAddLayersForm = () => {
         }
 
         if (e.target === fileInput) {
-            if (e.target.files.length) return console.log(e)
+            if (e.target.files.length) return
             resetLayerNames('files')
         }
 
