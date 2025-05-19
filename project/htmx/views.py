@@ -30,7 +30,7 @@ def validate_collection(request):
 def get_file_forms(request):
     layers = {i:{} for i in request.GET.get('layerNames','').split('|')}
     return render(request, 'helpers/partials/add_layers/layer_forms.html', {
-        'layers': layers
+        'layers': layers,
     })
 
 @require_http_methods(['POST', 'GET'])
