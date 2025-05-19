@@ -71,8 +71,8 @@ const handleAddLayersForm = () => {
         const group = map._ch.getLayerGroups().client
         
         if (isFileSource()) {
-            const filesArray = await getValidFilesArray(fileInput.files)
             const includedFiles = getLayerNames('files')
+            const filesArray = (await getValidFilesArray(fileInput.files)).filter(i => includedFiles.includes(i.name))
             console.log(filesArray, includedFiles)
             // for (const file of filesArray) {
             //     fileToLeafletLayer({
