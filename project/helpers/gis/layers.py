@@ -35,7 +35,7 @@ def get_layers(url, format):
     return {}
 
 def get_collection_layers(data):
-    url = unquote(data.get('url', ''))
+    url = data.get('url', '')
     format = data.get('format') or guess_format_from_url(url)
     layers = {}
 
