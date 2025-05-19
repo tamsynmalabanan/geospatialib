@@ -113,7 +113,6 @@ const handleAddLayersForm = () => {
                 new URL(e.target.value)
                 return
             } catch {
-                e.preventDefault()
                 resetUrlFields()
             }
         }
@@ -121,8 +120,10 @@ const handleAddLayersForm = () => {
         if (e.target === fileInput) {
             if (!e.target.files.length) return
             resetLayerNames('files')
-
         }
+
+        e.preventDefault()
+        toggleSubmitBtn()
     })
 
     document.addEventListener('htmx:afterSwap', (e) => {
