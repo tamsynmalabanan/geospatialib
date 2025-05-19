@@ -1,0 +1,31 @@
+{% load static %}
+{% load utility_tags %}
+
+{% if form %}
+    {% variable 'url' as source %}
+{% else %}
+    {% variable 'files' as source %}
+{% endif %}
+
+{% if layers and layers.keys|length > 0 %}
+    <div class="input-group">
+        <div class="input-group-text border-0 bg-transparent">
+            <input class="form-check-input" type="checkbox" value="all" data-layer-source="{{source}}" checked>
+        </div>
+        <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
+    </div>
+    {% for layer, attrs in layers.items %}
+        <div class="input-group">
+            <div class="input-group-text">
+                <input class="form-check-input mt-0" type="checkbox" value="{{layer}}" data-layer-source="{{source}}" checked>
+            </div>
+            <input type="text" class="form-control" name='title' placeholder="{{layer}}" title="{{layer}}">
+            <div class="input-group-text">
+                {% if layer|endswith:'.csv' %}
+                    <input type="text" name='x'>
+                {% else %}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
