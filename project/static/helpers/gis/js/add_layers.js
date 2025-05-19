@@ -49,6 +49,15 @@ const handleAddLayersForm = () => {
         resetUrlFields()        
         toggleSubmitBtn()
     }
+
+    // const getLayerNames = (source) => {
+    //     const container = getLayerNamesContainer(source)
+    //     const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.value !== 'all')
+    //     const includedFiles = []
+    //     layerCheckboxes.forEach(i => {
+    //         if (!i.checked)
+    //     })
+    // }
     
     modalElement.addEventListener('hide.bs.modal', () => {
         delete form._leafletMap
@@ -61,14 +70,16 @@ const handleAddLayersForm = () => {
         
         if (isFileSource()) {
             const filesArray = await getValidFilesArray(fileInput.files)
-            for (const file of filesArray) {
-                fileToLeafletLayer({
-                    file,
-                    group,
-                    add:true,
-                    suppFiles:filesArray,
-                })
-            }
+            const includedFiles = getLayerNames('files')
+            console.log(filesArray, includedFiles)
+            // for (const file of filesArray) {
+            //     fileToLeafletLayer({
+            //         file,
+            //         group,
+            //         add:true,
+            //         suppFiles:filesArray,
+            //     })
+            // }
         } else {
             const url = form.elements.url.value
             const format = form.elements.format.value
