@@ -90,7 +90,7 @@ const handleAddLayersForm = () => {
                     group,
                     add:true,
                     suppFiles:filesArray,
-                    ...includedLayers[file.name]
+                    // ...includedLayers[file.name]
                 })
             }
         } else {
