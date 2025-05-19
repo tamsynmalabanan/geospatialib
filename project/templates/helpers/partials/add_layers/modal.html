@@ -34,7 +34,7 @@
                         hx-swap="innerHTML"
                         hx-params='not files'
                     >
-                    <div id='addLayersForm-files-layerNames'></div>
+                    <div id='addLayersForm-files-layerNames' class='d-flex flex-column gap-2'></div>
                 </div>
                 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
                     {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
