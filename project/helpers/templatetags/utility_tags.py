@@ -31,3 +31,6 @@ def get_class_name(form):
 def get_field_id(field):
     return f'{field.form.__class__.__name__}_{field.name}'
 
+@register.filter
+def endswith(value, suffix):
+    return str(value).endswith(suffix)

@@ -1,3 +1,6 @@
+{% load static %}
+{% load utility_tags %}
+
 {% for filename in filenames %}
     {% if filename|endswith:'.geojson' %}
         {{ filename }}
