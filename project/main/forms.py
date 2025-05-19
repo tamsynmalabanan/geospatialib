@@ -54,4 +54,8 @@ class ValidateCollectionForm(forms.Form):
             format = guess_format_from_url(url)
             if format: 
                 self.data.update({'format':format})
+        if format:
+            attrs = self.fields['format'].widget.attrs
+            if attrs.get('disabled'):
+                del attrs['disabled']
         return format
