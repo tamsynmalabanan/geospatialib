@@ -14,8 +14,8 @@
                 <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" data-layer-source='files' checked>
             </div>
             <input type="text" class="form-control" value="{{filename}}" placeholder="{{filename}}" readonly>
-            {% if filename|endswith:'.csv' %}
-                <div class="input-group-text"></div>
+            {% if filename|endswith:'.json' %}
+                <div class="input-group-text">test</div>
             {% else %}
             {% endif %}
         </div>
