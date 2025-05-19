@@ -13,7 +13,7 @@
             <div class="input-group-text">
                 <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" data-layer-source='files' checked>
             </div>
-            <input type="text" class="form-control" name='title' placeholder="{{filename}}">
+            <input type="text" class="form-control" name='title' placeholder="{{filename}}" title="{{filename}}">
             <div class="input-group-text">
                 {% if filename|endswith:'.csv' %}
                     <input type="text" name='x'>
