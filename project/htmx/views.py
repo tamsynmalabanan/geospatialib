@@ -14,7 +14,7 @@ def validate_collection(request):
     try:
         format = None
         layers = {}
-        form = ValidateCollectionForm(request.POST)
+        form = ValidateCollectionForm(request.POST.dict())
         if form.is_valid():
             layers = get_collection_layers(form.cleaned_data)
             format = form.cleaned_data.get('format')
