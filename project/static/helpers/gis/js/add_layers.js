@@ -105,8 +105,7 @@ const handleAddLayersForm = () => {
         if (fileInput.files.length) {
             const filenames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join(',')
             // fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
-            // e.detail.parameters['filenames'] = filenames
-            console.log(e)
+            e.detail.parameters['filenames'] = filenames
         }
 
         // const event = new Event("get-file-forms", { bubbles: true })
@@ -124,7 +123,7 @@ const handleAddLayersForm = () => {
         }
 
         if (e.target === fileInput) {
-            if (e.target.files.length) return
+            if (e.target.files.length) return console.log(e)
             resetLayerNames('files')
         }
 
