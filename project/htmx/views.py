@@ -23,6 +23,10 @@ def validate_collection(request):
     # ))
         # 'layers': 'sdvdfshdh'
 
+@require_http_methods(['GET'])
+def get_file_forms(request):
+    return HttpResponse('test')
+
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
     url = request.GET.get('url')

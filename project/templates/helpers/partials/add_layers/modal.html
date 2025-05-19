@@ -22,7 +22,17 @@
                     </div>
                 </div>
                 <div id='addLayersForm-fileFields' class="d-flex flex-column gap-3">
-                    <input name='files' class="form-control" type="file" multiple="true" accept=".geojson, .zip">
+                    <input 
+                        name='files' 
+                        class="form-control"
+                        type="file" 
+                        multiple="true" 
+                        accept=".geojson, .zip"
+                        hx-post="{% url 'htmx:get_file_forms' %}" 
+                        hx-trigger="change" 
+                        hx-target="#addLayersForm-files-layerNames"
+                        hx-swap="innerHTML"
+                    >
                     <div id='addLayersForm-files-layerNames'></div>
                 </div>
                 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
