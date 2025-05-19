@@ -9,6 +9,8 @@ const handleAddLayersForm = () => {
     const urlFields = form.querySelector(`#addLayersForm-urlFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
+    const filesLayerNames = form.querySelector(`#addLayersForm-files-layerNames`)
+
 
     modalElement.addEventListener('hide.bs.modal', () => {
         delete form._leafletMap
@@ -55,21 +57,20 @@ const handleAddLayersForm = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             const urlLayerNames = form.querySelector(`#addLayersForm-url-layerNames`)
-            const filesLayerNames = form.querySelector(`#addLayersForm-files-layerNames`)
             submitBtn.disabled = isFileSource() ? !filesLayerNames?.innerHTML : !urlLayerNames?.innerHTML
         }, 100);
     }
 
-    const resetLayerNames = () => {
-        const layerNames = form.querySelector(`#addLayersForm-url-layerNames`)
-        layerNames?.remove()
+    const resetLayerNames = (source) => {
+        const layerNames = form.querySelector(`#addLayersForm-${source}-layerNames`)
+        layerNames.innerHTML = ''
     }
 
     const resetFormatField = () => {
         const formatField = form.elements.format
         formatField.value = ''
         formatField.disabled = true
-        resetLayerNames()
+        resetLayerNames('url')
     }
 
     const resetUrlFields = () => {
@@ -95,10 +96,10 @@ const handleAddLayersForm = () => {
             toggleSubmitBtn()
         })
     })
-
-    // list 
     
     fileInput.addEventListener('change', () => {
+        if (fileInput.files)
+
         toggleSubmitBtn()
     })
     

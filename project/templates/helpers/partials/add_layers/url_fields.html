@@ -21,8 +21,8 @@
     </div>
 {% endwith %}
 
-{% if layers %}
-    <div id='addLayersForm-url-layerNames'>
+<div id='addLayersForm-url-layerNames'>
+    {% if layers %}
         {{layers}}
-    </div>
-{% endif %}
+    {% endif %}
+</div>
