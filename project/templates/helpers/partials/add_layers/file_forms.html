@@ -6,7 +6,7 @@
         <div class="input-group-text border-0 bg-transparent">
             <input class="form-check-input" type="checkbox" value="all" checked>
         </div>
-        <input type="text" class="form-control border-0" value="Select all layers" readonly>
+        <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
     </div>
     {% for filename in filenames %}
         {% if filename|endswith:'.geojson' %}
@@ -14,7 +14,7 @@
                 <div class="input-group-text">
                     <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" checked>
                 </div>
-                <input type="text" class="form-control" value="{{filename}}" placeholder='Layer name'>
+                <input type="text" class="form-control" value="{{filename}}" placeholder='Layer title'>
             </div>
         {% endif %}
     {% endfor %}
