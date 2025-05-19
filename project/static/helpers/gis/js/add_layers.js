@@ -87,6 +87,7 @@ const handleAddLayersForm = () => {
         fileInput.value = ''
         resetUrlFields()        
         toggleSubmitBtn()
+        resetLayerNames('files')
     })
 
     sourceRadios.forEach(radio => {
