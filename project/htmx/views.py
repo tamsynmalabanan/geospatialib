@@ -25,7 +25,10 @@ def validate_collection(request):
 
 @require_http_methods(['GET'])
 def get_file_forms(request):
-    return render(request, 'helpers/partials/add_layers/file_forms.html')
+    
+    return render(request, 'helpers/partials/add_layers/file_forms.html', {
+        'request_vars': vars(request)
+    })
 
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
