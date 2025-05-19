@@ -108,8 +108,8 @@ const handleAddLayersForm = () => {
             fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
         }
 
-        const event = new Event("hx-vals-updated", { bubbles: true })
-        fileInput.dispatchEvent(event)
+        // const event = new Event("hx-vals-updated", { bubbles: true })
+        // fileInput.dispatchEvent(event)
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
