@@ -78,7 +78,7 @@ const handleAddLayersForm = () => {
 
     form.addEventListener('submit', (e) => {
         submitBtn.click()
-        e.preventDefault()
+        return e.preventDefault()
     })
 
     // update names value
