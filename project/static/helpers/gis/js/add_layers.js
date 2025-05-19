@@ -122,7 +122,7 @@ const handleAddLayersForm = () => {
         if (e.target === fileInput) {
             if (e.target.files.length) {
                 const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-                e.detail.parameters['files'] = JSON.stringify(fileNames)    
+                e.detail.configRequest.parameters['files'] = JSON.stringify(fileNames)    
                 return
             } else {
                 resetLayerNames('files')
