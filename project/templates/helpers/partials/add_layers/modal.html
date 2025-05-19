@@ -29,7 +29,7 @@
                         multiple="true" 
                         accept=".geojson, .zip"
                         hx-get="{% url 'htmx:get_file_forms' %}" 
-                        hx-trigger="change" 
+                        hx-trigger="hx-vals-updated" 
                         hx-target="#addLayersForm-files-layerNames"
                         hx-swap="innerHTML"
                         hx-params='not files'
