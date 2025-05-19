@@ -105,7 +105,8 @@ const handleAddLayersForm = () => {
         console.log(e)
         if (fileInput.files.length) {
             const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-            e.detail.parameters.files = JSON.stringify(fileNames)
+            console.log(fileNames)
+            e.detail.parameters['filenames'] = JSON.stringify(fileNames)
         }
     })
     
