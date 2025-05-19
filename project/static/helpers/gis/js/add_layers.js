@@ -104,13 +104,11 @@ const handleAddLayersForm = () => {
     fileInput.addEventListener('htmx:configRequest', async (e) => {
         if (fileInput.files.length) {
             const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-            // e.detail.parameters.files = JSON.stringify(fileNames)
-            e.detail.parameters['auth_token'] = 'test'
+            e.detail.parameters.files = JSON.stringify(fileNames)
         }
     })
     
-    document.addEventListener('htmx:beforeRequest', (e) => {
-        if (!e.detail.target.id.startsWith('addLayersForm')) return
+    form.addEventListener('htmx:beforeRequest', (e) => {
         if (e.target === form.elements.url) {
             try {
                 new URL(e.target.value)
@@ -133,8 +131,7 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     })
 
-    document.addEventListener('htmx:afterSwap', (e) => {
-        if (!e.detail.target.id.startsWith('addLayersForm')) return
+    form.addEventListener('htmx:afterSwap', (e) => {
         toggleSubmitBtn()
     })
 }
