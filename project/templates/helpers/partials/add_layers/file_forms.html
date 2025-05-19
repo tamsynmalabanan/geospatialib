@@ -1,21 +1,21 @@
 {% load static %}
 {% load utility_tags %}
 
-{% if filenames|length > 0 %}
+{% if layernames|length > 0 %}
     <div class="input-group">
         <div class="input-group-text border-0 bg-transparent">
             <input class="form-check-input" type="checkbox" value="all" data-layer-source='files' checked>
         </div>
         <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
     </div>
-    {% for filename in filenames %}
+    {% for layer_name in layernames %}
         <div class="input-group">
             <div class="input-group-text">
-                <input class="form-check-input mt-0" type="checkbox" value="{{filename}}" data-layer-source='files' checked>
+                <input class="form-check-input mt-0" type="checkbox" value="{{layer_name}}" data-layer-source='files' checked>
             </div>
-            <input type="text" class="form-control" name='title' placeholder="{{filename}}" title="{{filename}}">
+            <input type="text" class="form-control" name='title' placeholder="{{layer_name}}" title="{{layer_name}}">
             <div class="input-group-text">
-                {% if filename|endswith:'.csv' %}
+                {% if layer_name|endswith:'.csv' %}
                     <input type="text" name='x'>
                 {% else %}
                 {% endif %}

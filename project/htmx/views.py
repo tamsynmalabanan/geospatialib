@@ -25,9 +25,9 @@ def validate_collection(request):
 
 @require_http_methods(['GET'])
 def get_file_forms(request):
-    filenames = request.GET.get('filenames','').split('|')
+    layer_names = request.GET.get('layer_names','').split('|')
     return render(request, 'helpers/partials/add_layers/file_forms.html', {
-        'filenames': filenames
+        'layer_names': layer_names
     })
 
 @require_http_methods(['POST', 'GET'])
