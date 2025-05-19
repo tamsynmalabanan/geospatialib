@@ -26,7 +26,7 @@ def validate_collection(request):
             'format': format,
         })
     except Exception as e:
-        return HttpResponse(e, form.errors)
+        return HttpResponse(form.errors)
 
 
 @require_http_methods(['GET'])
