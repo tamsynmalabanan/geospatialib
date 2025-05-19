@@ -16,8 +16,6 @@ def validate_collection(request):
         form = ValidateCollectionForm(request.POST.dict())
         if form.is_valid():
             layers = get_collection_layers(form.cleaned_data)
-        else:
-            pass
         return render(request, 'helpers/partials/add_layers/url_fields.html', {
             'form': form,
             'layers': layers,
