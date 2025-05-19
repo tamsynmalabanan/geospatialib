@@ -115,11 +115,8 @@ const handleAddLayersForm = () => {
         
         if (e.target.value === 'all') {
             const source = e.target.dataset.layerSource
-            Array.from(
-                getLayerNamesContainer(source)
-                .querySelectorAll(`.form-check-input`)
-                .filter(i => i !== e.target)
-            ).forEach(i => {
+            const checkboxes = getLayerNamesContainer(source).querySelectorAll(`.form-check-input`)
+            Array.from(checkboxes).filter(i => i !== e.target).forEach(i => {
                 i.checked = e.target.checked
             })
         } else {
