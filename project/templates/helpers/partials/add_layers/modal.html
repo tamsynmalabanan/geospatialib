@@ -32,7 +32,8 @@
                         hx-trigger="change" 
                         hx-target="#addLayersForm-files-layerNames"
                         hx-swap="innerHTML"
-                        {% comment %} hx-params='not files' {% endcomment %}
+                        hx-params='not files'
+                        hx-vals='{"id": 123, "name": "Tamsyn"}'
                         
                     >
                     <div id='addLayersForm-files-layerNames'></div>
