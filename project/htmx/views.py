@@ -11,9 +11,9 @@ from main.forms import ValidateCollectionForm
 
 @require_http_methods(['POST'])
 def validate_collection(request):
+    format = None
+    form = ValidateCollectionForm(request.POST)
     try:
-        format = None
-        form = ValidateCollectionForm(request.POST)
         if form.is_valid():
             layers = get_collection_layers(form.cleaned_data)
             format = form.clean_data.get('format')
@@ -26,7 +26,7 @@ def validate_collection(request):
             'format': format,
         })
     except Exception as e:
-        return HttpResponse(e)
+        return HttpResponse(e, form.errors)
 
 
 @require_http_methods(['GET'])
