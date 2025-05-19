@@ -104,7 +104,8 @@ const handleAddLayersForm = () => {
     fileInput.addEventListener('change', async (e) => {
         if (fileInput.files.length) {
             const filenames = JSON.stringify((await getValidFilesArray(fileInput.files)).map(i => i.name))
-            fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
+            console.log(filenames)
+            // fileInput.setAttribute('hx-vals', `{"filenames": "${filenames}"}`)
         }
 
         const event = new Event("hx-vals-updated", { bubbles: true })
