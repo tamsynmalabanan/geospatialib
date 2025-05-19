@@ -76,7 +76,10 @@ const handleAddLayersForm = () => {
         delete form._leafletMap
     })
 
-    form.addEventListener('submit', (e) => e.preventDefault())
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        submitBtn.click()
+    })
 
     // update names value
     submitBtn.addEventListener('click', async (e) => {
