@@ -16,6 +16,7 @@ def validate_collection(request):
     if form.is_valid():
         layers = get_collection_layers(form.cleaned_data)
         if layers == {}:
+            form.data.update({'format':request.POST.get('format')})
             form.add_error('format', 'No layers retrieved.')
     return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
