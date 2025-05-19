@@ -7,7 +7,7 @@ import os
 from io import BytesIO
 
 def extract_zip(zip_file, base_path=""):
-    files = {}
+    files = []
     
     with zipfile.ZipFile(zip_file, 'r') as zf:
         for file in zf.namelist():
@@ -17,9 +17,9 @@ def extract_zip(zip_file, base_path=""):
             full_path = os.path.join(base_path, file)
             if file.endswith('.zip'):
                 with zf.open(file) as sub_zip:
-                    files.update(extract_zip(BytesIO(sub_zip.read()), full_path))
+                    files = files + extract_zip(BytesIO(sub_zip.read()), full_path)
             else:
-                files[full_path] = file.split('/')[-1].split('.')[0]
+                files.append(full_path)
     
     return files
 
@@ -39,6 +39,6 @@ def get_file_names(url):
         if "zip" in content_type:
             return extract_zip(BytesIO(response.content), filename)
         
-        return {filename: filename.split('/')[-1].split('.')[0]}
+        return [filename]
     except Exception as e:
-        return {}
+        return []

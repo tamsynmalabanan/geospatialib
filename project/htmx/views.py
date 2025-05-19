@@ -5,29 +5,22 @@ from django.http import JsonResponse
 import json
 import requests
 
-from helpers.gis.layers import get_collection
+from helpers.gis.layers import get_collection_layers
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 
 @require_http_methods(['POST'])
 def validate_collection(request):
-    temp = None
 
-    collection = get_collection(
-        request.POST.get('url'),
-        request.POST.get('format'),
-    )
-
-    form = ValidateCollectionForm(collection)
+    form = ValidateCollectionForm(request.POST)
     if form.is_valid():
-        pass
+        layers = get_collection_layers(form.cleaned_data)
     else:
-        temp = 'form.errors'
+        layers = {}
 
     return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
-        'collection': collection,
-        'temp': temp
+        'layers': layers,
     })
 
 

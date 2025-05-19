@@ -28,11 +28,11 @@ def onboard_collection(self, cacheKey):
         if not collection_instance:
             return
 
-        for name, title in cached_collection['names'].items():
+        for name, attrs in cached_collection['names'].items():
             layer_instance, created = Layer.objects.get_or_create(
                 collection=collection_instance,
                 name=name,
-                title=title,
+                title=attrs.get('title'),
             )
             # populate layer fields
         

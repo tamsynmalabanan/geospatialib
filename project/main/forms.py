@@ -2,6 +2,10 @@ from django import forms
 from django.urls import reverse_lazy
 from django.core.cache import cache
 
+import validators
+from urllib.parse import unquote
+
+
 from . import choices
 from helpers.general.utils import dict_to_choices
 
@@ -35,3 +39,9 @@ class ValidateCollectionForm(forms.Form):
             'hx-swap': 'innerHTML',
         })
     )
+
+    def clean_url(self):
+        url = self.cleaned_data.get("url")
+        if not validators.url(url):
+            raise forms.ValidationError("Invalid url.")
+        return unquote(url)

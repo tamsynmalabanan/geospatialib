@@ -8,7 +8,9 @@ from main.models import Collection
 from helpers.general.utils import get_first_substring_match, create_cache_key
 from helpers.general.files import get_file_names
 
-def guess_format_via_url(url):
+def guess_format_from_url(url):
+    if not url:
+        return
     return get_first_substring_match(url, {
         'file': [
             'download',
@@ -21,43 +23,48 @@ def guess_format_via_url(url):
         ],
     })
 
-def get_layer_names(url, format):
+def get_layers(url, format):
     if format == 'geojson':
         name = url.split('/')[-1]
-        return {name: name}
+        return {name: {'title': name}}
     
     if format == 'file':
-        return get_file_names(url)
+        filenames = get_file_names(url)
+        return {i:{'title': i.split('/')[-1].split('.')[0]} for i in filenames}
     
     return {}
 
-def get_collection(url, format=None):
-    collection = {'names': {}}
-    url_value = collection['url'] = unquote(url) if validators.url(url) else False
-    format_value = collection['format'] = format or guess_format_via_url(url_value) or ''
+def get_collection_layers(data):
+    url = unquote(data.get('url', ''))
+    format = data.get('format') or guess_format_from_url(url)
+    layers = {}
 
-    if url_value and format_value:
+    if validators.url(url) and format:
         # normalize url based on format here
-        cacheKey = create_cache_key(['onboard_collection', url_value, format_value])
+        cacheKey = create_cache_key(['onboard_collection', url, format])
 
         cached_collection = cache.get(cacheKey)
-        if cached_collection and len(cached_collection['names'].keys()) > 0:
-            return cached_collection
+        if cached_collection:
+            layers = cached_collection['layers']
+            if len(layers.keys()) > 0:
+                return layers
 
         collection_instance = Collection.objects.filter(
-            url__path=url_value,
-            format=format_value
+            url__path=url,
+            format=format
         ).first()
         if collection_instance:
-            collection['names'] = collection_instance.get_layer_names()
-            if len(collection['names'].keys()) > 0:
-                return collection
+            layers = collection_instance.get_layer_data()
+            if len(layers.keys()) > 0:
+                return layers
 
-        collection['names'] = get_layer_names(url_value, format_value)
-        if len(collection['names'].keys()) > 0:
-            cache.set(cacheKey, collection, timeout=60*60*24*30)
+        layers = get_layers(url, format)
+        if len(layers.keys()) > 0:
+            cache.set(cacheKey, {
+                'url': url,
+                'format': format,
+                'layers': layers,
+            }, timeout=60*60*24*30)
             onboard_collection.delay(cacheKey)
-        else: 
-            collection['format'] = False if format else ''
 
-    return collection
+    return layers
