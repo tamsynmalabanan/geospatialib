@@ -58,7 +58,7 @@ const handleAddLayersForm = () => {
 
             const inputGroup = i.closest('.input-group')
             const title = inputGroup.querySelector('input[name="title"]')?.value.trim()
-            const params = {title: title ? title : i.value}
+            const params = {title: title ? title : null}
             Array.from(inputGroup.lastElementChild.children).forEach(i => {
                 const name = i.getAttribute('name')
                 const value = i.value
