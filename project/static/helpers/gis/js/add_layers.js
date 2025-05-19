@@ -120,7 +120,7 @@ const handleAddLayersForm = () => {
                 i.checked = e.target.checked
             })
         } else {
-
+            console.log(e.target.closest(`.form-check-input["all"]`))
         }
     })
     
