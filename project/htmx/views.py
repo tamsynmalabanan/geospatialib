@@ -22,7 +22,7 @@ def validate_collection(request):
     if form.is_valid():
         pass
     else:
-        temp = form.errors
+        temp = 'form.errors'
 
     return render(request, 'helpers/partials/add_layers/url_fields.html', {
         'form': form,
