@@ -99,8 +99,8 @@ const handleAddLayersForm = () => {
     
     fileInput.addEventListener('change', async () => {
         if (fileInput.files.length) {
-            const filesArray = await getValidFilesArray(fileInput.files)
-            console.log(filesArray)
+            const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
+            console.log(fileNames)
         }
 
         toggleSubmitBtn()
