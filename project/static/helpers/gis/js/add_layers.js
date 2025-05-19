@@ -104,11 +104,12 @@ const handleAddLayersForm = () => {
     fileInput.addEventListener('htmx:configRequest', async (e) => {
         if (fileInput.files.length) {
             const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-            e.detail.parameters['files'] = JSON.stringify(fileNames)
+            // e.detail.parameters.files = JSON.stringify(fileNames)
+            e.detail.parameters['auth_token'] = 'test'
         }
     })
     
-    document.addEventListener('htmx:beforeRequest', async (e) => {
+    document.addEventListener('htmx:beforeRequest', (e) => {
         if (!e.detail.target.id.startsWith('addLayersForm')) return
         if (e.target === form.elements.url) {
             try {
@@ -121,8 +122,7 @@ const handleAddLayersForm = () => {
 
         if (e.target === fileInput) {
             if (e.target.files.length) {
-                const fileNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-                e.detail.configRequest.parameters['files'] = JSON.stringify(fileNames)    
+                console.log(e.detail.requestConfig)
                 return
             } else {
                 resetLayerNames('files')
