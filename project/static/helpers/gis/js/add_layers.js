@@ -16,6 +16,10 @@ const handleAddLayersForm = () => {
         delete form._leafletMap
     })
 
+    const isFileSource = () => {
+        return sourceRadios.find(i => i.checked).value === 'files'
+    }
+
     // update names value
     submitBtn.addEventListener('click', async (e) => {
         const map = form._leafletMap
@@ -57,7 +61,7 @@ const handleAddLayersForm = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             const urlLayerNames = form.querySelector(`#addLayersForm-url-layerNames`)
-            console.log(urlLayerNames.innerHTML)
+            console.log(urlLayerNames.innerHTML, isFileSource())
             submitBtn.disabled = isFileSource() ? !filesLayerNames?.innerHTML : !urlLayerNames?.innerHTML
         }, 100);
     }
@@ -85,10 +89,6 @@ const handleAddLayersForm = () => {
         resetUrlFields()        
         toggleSubmitBtn()
     })
-
-    const isFileSource = () => {
-        return sourceRadios.find(i => i.checked).value === 'files'
-    }
 
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
