@@ -22,6 +22,11 @@
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{attrs.title}}">
             <div class="input-group-text d-flex gap-2">
                 <input type="text" name='type' value="{{attrs.type}}" class='form-control form-control-sm' readonly>
+                <div class="form-floating">
+                    {% random_string as id %}
+                    <input id="{{id}}" type="text" name='type' value="{{attrs.type}}" class='form-control form-control-sm' readonly>
+                    <label for="{{id}}">Type</label>
+                </div>
                 {% if attrs.type == 'csv' %}
                     <input type="text" name='xField' class='form-control form-control-sm'>
                     <input type="text" name='yField' class='form-control form-control-sm'>
