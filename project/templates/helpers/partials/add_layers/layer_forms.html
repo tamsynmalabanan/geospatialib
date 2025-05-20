@@ -27,8 +27,16 @@
                     <label for="{{id}}">Type</label>
                 </div>
                 {% if attrs.type == 'csv' %}
-                    <input type="text" name='xField' class='form-control form-control-sm'>
-                    <input type="text" name='yField' class='form-control form-control-sm'>
+                    <div class="form-floating">
+                        {% random_string as id %}
+                        <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm'>
+                        <label for="{{id}}">X Field</label>
+                    </div>
+                    <div class="form-floating">
+                        {% random_string as id %}
+                        <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm'>
+                        <label for="{{id}}">Y Field</label>
+                    </div>
                 {% endif %}
             </div>
         </div>
