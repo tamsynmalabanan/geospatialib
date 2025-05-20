@@ -21,7 +21,7 @@
             </div>
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{attrs.title}}">
             <div class="input-group-text">
-                <input type="text" name='type' value="{{attrs.type}}">
+                <input type="text" name='type' value="{{attrs.type}}" class='form-control' readonly>
                 {% if attrs.type == 'csv' %}
                     <input type="number" name='xField'>
                     <input type="number" name='yField'>
