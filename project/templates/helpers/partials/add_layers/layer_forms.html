@@ -15,12 +15,12 @@
         <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
     </div>
     {% for name, attrs in layers.items %}
-        <div class="input-group d-flex gap-2" data-layer-source="{{source}}">
+        <div class="input-group" data-layer-source="{{source}}">
             <div class="input-group-text">
                 <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
             </div>
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{attrs.title}}">
-            <div class="input-group-text">
+            <div class="input-group-text d-flex gap-2">
                 <input type="text" name='type' value="{{attrs.type}}" class='form-control form-control-sm' readonly>
                 {% if attrs.type == 'csv' %}
                     <input type="text" name='xField' class='form-control form-control-sm'>
