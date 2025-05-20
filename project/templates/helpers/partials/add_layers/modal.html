@@ -27,7 +27,7 @@
                         class="form-control"
                         type="file" 
                         multiple="true" 
-                        accept=".geojson, .zip"
+                        accept=".geojson, .zip, .csv"
                         hx-get="{% url 'htmx:get_layer_forms' %}" 
                         hx-trigger="get-file-forms" 
                         hx-target="#addLayersForm-files-layerNames"
