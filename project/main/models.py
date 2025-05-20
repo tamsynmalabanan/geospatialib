@@ -46,13 +46,16 @@ class Collection(models.Model):
         format = self.format
         return {layer.name: {
             'title': layer.title,
-            'type': layer.name.split('.')[-1] if format == 'file' else format
+            'type': layer.name.split('.')[-1] if format == 'file' else format,
+            # 'xField': getattr(layer, 'xField'),
+            # 'yField': getattr(layer, 'yField'),
         } for layer in self.layers.all()}
     
 class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=512)
     title = models.CharField('Title', max_length=512, default='', blank=True, null=True)
+    params = models.JSONField('Params')
 
     class Meta:
         unique_together = ['collection', 'name']
