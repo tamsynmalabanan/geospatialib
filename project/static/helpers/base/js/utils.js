@@ -406,6 +406,7 @@ const getFileData = async (file, {
     xField,
     yField,
 }) => {
+    console.log(file, type, xField, yField)
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         
