@@ -13,12 +13,12 @@ from main.forms import ValidateCollectionForm
 def validate_collection(request):
     try:
         data = request.POST.dict()
-        raw_format = data.get('format')
         form = ValidateCollectionForm(data)
         if form.is_valid():
             clean_data = form.cleaned_data
             layers = get_collection_layers(clean_data)
             if layers == {}:
+                raw_format = data.get('format')
                 form.data.update({'format':raw_format})
                 if raw_format:
                     form.add_error('format', 'No layers retrieved.')
@@ -30,7 +30,6 @@ def validate_collection(request):
         })
     except Exception as e:
         return HttpResponse(e)
-
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):
