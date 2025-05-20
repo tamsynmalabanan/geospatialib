@@ -420,7 +420,7 @@ const getFileData = async (file, {
             }
             if (type === 'csv') {
                 try {
-                    console.log(csvToGeoJSON(e.target.result))
+                    console.log(csvToGeoJSON(e.target.result, xField, yField))
                     // const geojson = JSON.parse(e.target.result)
                     // resolve(geojson)
                 } catch (error) {
