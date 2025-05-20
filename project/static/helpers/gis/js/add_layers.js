@@ -62,6 +62,7 @@ const handleAddLayersForm = () => {
             const title = inputGroup.querySelector('input[name="title"]')?.value.trim()
             const params = {title: title !== '' ? title : null}
             Array.from(inputGroup.lastElementChild.children).forEach(i => {
+                console.log(i)
                 const name = i.getAttribute('name')
                 if (!name) return
                 
@@ -90,7 +91,6 @@ const handleAddLayersForm = () => {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
-                console.log(includedLayers[file.name])
                 fileToLeafletLayer({
                     file,
                     group,
