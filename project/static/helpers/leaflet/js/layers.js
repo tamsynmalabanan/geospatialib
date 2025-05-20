@@ -704,7 +704,7 @@ const urlToLeafletLayer = async ({
     const layer = await createLeafletLayer(type, {
         group,
         title,
-        dbIndexedKey
+        dbIndexedKey,
     })
 
     if (layer && add) group.addLayer(layer)
