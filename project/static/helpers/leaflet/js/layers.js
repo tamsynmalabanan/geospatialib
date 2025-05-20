@@ -745,7 +745,11 @@ const fileToLeafletLayer = async ({
     title = title ?? file.name.split('.').slice(0, -1).join('.')
     type = type ?? file.name.split('.')[file.name.split('.').length-1]
     
-    const data = await getFileData(file)
+    const data = await getFileData(file, {
+        type,
+        xField,
+        yField,
+    })
 
     const layer = await createLeafletLayer(type, {
         data,

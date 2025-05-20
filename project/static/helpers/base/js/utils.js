@@ -401,11 +401,15 @@ const getValidFilesArray = async (filesArray) => {
     return files
 }
 
-const getFileData = async (file) => {
+const getFileData = async (file, {
+    type,
+    xField,
+    yField,
+}) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = async (e) => {
-            const type = file.name.split('.')[file.name.split('.').length-1].toLowerCase()
+            type = (type ?? file.name.split('.')[file.name.split('.').length-1]).toLowerCase()
             if (type === 'geojson') {
                 try {
                     const geojson = JSON.parse(e.target.result)
