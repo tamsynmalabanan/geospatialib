@@ -19,7 +19,6 @@ const normalizeGeoJSON = async (geojson, {
         
         if (feature.id) feature.properties.feature_id = feature.id
         feature.properties = normalizeFeatureProperties(feature.properties)    
-        console.log(feature.properties)
     }
 }
 
@@ -334,6 +333,8 @@ const createFeaturePropertiesTable = (properties, {
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
     
+    console.log(properties)
+
     const handler = (properties) => {
         Object.keys(properties).forEach(property => {
             if (property.startsWith('__') && property.endsWith('__')) return
