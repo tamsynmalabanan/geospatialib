@@ -333,37 +333,25 @@ const createFeaturePropertiesTable = (properties, {
     const tbody = document.createElement('tbody')
     table.appendChild(tbody)
     
-    console.log(properties)
+    Object.keys(properties).forEach(property => {
+        if (property.startsWith('__') && property.endsWith('__')) return
+        
+        const data = properties[property] ?? null
 
-    const handler = (properties) => {
-        Object.keys(properties).forEach(property => {
-            if (property.startsWith('__') && property.endsWith('__')) return
-            
-            let data = properties[property]
-            
-            if (data && typeof data === 'object') {
-                handler(data)
-            } else {
-                if (!data) data = null
-
-                const tr = document.createElement('tr')
-                tbody.appendChild(tr)
-                
-                const th = document.createElement('th')
-                th.className = 'fw-medium pe-3'
-                th.innerText = property
-                th.setAttribute('scope', 'row')
-                tr.appendChild(th)
-                
-                const td = document.createElement('td')
-                td.className = 'text-wrap'
-                td.innerHTML = data
-                tr.appendChild(td)
-            }
-        })
-    }
-
-    handler(properties)
+        const tr = document.createElement('tr')
+        tbody.appendChild(tr)
+        
+        const th = document.createElement('th')
+        th.className = 'fw-medium pe-3'
+        th.innerText = property
+        th.setAttribute('scope', 'row')
+        tr.appendChild(th)
+        
+        const td = document.createElement('td')
+        td.className = 'text-wrap'
+        td.innerHTML = data
+        tr.appendChild(td)
+    })
 
     return table
 }
