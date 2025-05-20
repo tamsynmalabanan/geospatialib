@@ -181,9 +181,12 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     })
 
-    form.addEventListener('focusin', (e) => {
-        console.log(e)
-    })
+    // form.addEventListener('focusin', (e) => {
+    //     const list = e.target.getAttribute('list')
+    //     if (!list) return
+
+    //     const sournce = e.target.closest('.input-group').dataset.layerSource
+    // })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
