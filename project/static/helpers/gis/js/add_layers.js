@@ -63,8 +63,9 @@ const handleAddLayersForm = () => {
             const params = {title: title !== '' ? title : null}
             Array.from(inputGroup.lastElementChild.children).forEach(i => {
                 const name = i.getAttribute('name')
+                if (!name) return
+                
                 const value = i.value
-                if (!value || !name) return
                 params[i.getAttribute('name')] = value
             })
             includedLayers[i.value] = params
@@ -78,7 +79,6 @@ const handleAddLayersForm = () => {
 
     form.addEventListener('submit', (e) => e.preventDefault())
 
-    // update names value
     submitBtn.addEventListener('click', async (e) => {
         const map = form._leafletMap
         const group = map._ch.getLayerGroups().client
@@ -90,6 +90,7 @@ const handleAddLayersForm = () => {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
+                console.log(includedLayers[file.name])
                 fileToLeafletLayer({
                     file,
                     group,

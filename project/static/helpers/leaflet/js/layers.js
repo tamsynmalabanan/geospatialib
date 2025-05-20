@@ -736,7 +736,9 @@ const fileToLeafletLayer = async ({
     suppFiles=[],
     dbIndexedKey,
     title,
-    x,y,
+    type,
+    xField,
+    yField,
 } ={}) => {
     if (!file || !group) return
     title = title ?? file.name.split('.').slice(0, -1).join('.')
