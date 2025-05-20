@@ -46,13 +46,14 @@ def get_first_substring_match(value, choices={}, case_sensitive=False):
     if not current_key:
         current_per = 0
         for key, keywords in choices.items():
-            matches = [i for i in keywords if i in value]
-            per = len(matches) / len(keywords)
-            if per == 1.0   :
-                return key
-            if per > current_per:
-                current_per = per
-                current_key = key
+            if len(keywords) > 0:
+                matches = [i for i in keywords if i in value]
+                per = len(matches) / len(keywords)
+                if per == 1.0   :
+                    return key
+                if per > current_per:
+                    current_per = per
+                    current_key = key
 
     return current_key
 
