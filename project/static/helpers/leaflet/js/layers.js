@@ -692,10 +692,15 @@ const urlToLeafletLayer = async ({
 
     let dbIndexedKey
     
-    if (Array('geojson', 'csv').includes(format)) {
+    if (format === 'geojson') {
         type = format
         dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
     }
+    
+    // if (format === 'csv') {
+    //     type = format
+    //     dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
+    // }
 
     if (format === 'file') {
         type = type ?? name.split('.')[name.split('.').length-1]
@@ -707,6 +712,8 @@ const urlToLeafletLayer = async ({
         title,
         dbIndexedKey,
     })
+
+    console.log(layer)
 
     if (layer && add) group.addLayer(layer)
     return layer
