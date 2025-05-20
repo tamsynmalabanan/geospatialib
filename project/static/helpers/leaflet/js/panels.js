@@ -2693,226 +2693,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     className: 'gap-2 flex-wrap'
                 },
-                'Feature Interactivity': {
-                    fields: {
-                        enableTooltip: {
-                            handler: createFormCheck,
-                            checked: info.tooltip.active,
-                            formCheckClass: 'w-100 flex-grow-1 mt-2',
-                            labelInnerText: 'Tooltip',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === info.tooltip.active) return
-                
-                                    info.tooltip.active = value
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        tooltipProps: {
-                            handler: createTagifyField,
-                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
-                            inputTag: 'textarea',
-                            enabled: 0,
-                            dropdownClass: `my-1 border-0`,
-                            userInput: true,
-                            maxTags: 5,
-                            scopeStyle: {
-                                height: '58px',
-                            },
-                            name:  `tooltipProps`,
-                            placeholder: 'Select properties',
-                            currentValue: JSON.stringify((info.tooltip.properties || []).map(i => {return {value:i}})),
-                            events: {
-                                focus: async (e) => {
-                                    const geojson = (await getLeafletGeoJSONData(layer, {
-                                        controller,
-                                        filter:false,
-                                        queryGeom:false,
-                                        group:false,
-                                        sort:false,
-                                        simplify:false
-                                    })) || layer.toGeoJSON()
-                                    if (!geojson) return
-                                    
-                                    const tagify = Tagify(form.elements['tooltipProps'])
-                                    const options = []
-                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
-                                    })
-                                    const optionsSet = options.length ? new Set(options) : []
-                                    const sortedOptions = [...optionsSet].filter(i => {
-                                        return !(info.tooltip.properties || []).includes(i)
-                                    }).sort()
-                                    tagify.settings.whitelist = sortedOptions
-                                },
-                            },
-                            callbacks: {
-                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
-                                    const tagify = e.detail.tagify
-                                    const values = tagify.value.map(i => i.value)
-                        
-                                    if (values.every(i => info.tooltip.properties.includes(i)) && info.tooltip.properties.every(i => values.includes(i)) ) return
-                        
-                                    info.tooltip.properties = values
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }])))()
-                            }
-                        },
-                        tooltipDel: {
-                            handler: createFormFloating,
-                            containerClass: 'w-10 flex-grow-1',
-                            fieldAttrs: {
-                                type: 'text',
-                                value: info.tooltip.delimiter,
-                            },
-                            fieldClass: 'form-control-sm',
-                            labelText: 'Delimiter',
-                            labelClass: 'text-wrap',
-                            events: {
-                                input: (e) => {
-                                    const value = e.target.value
-                                    if (value === info.tooltip.delimiter) return
-                
-                                    info.tooltip.delimiter = value
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        tooltipPrefix: {
-                            handler: createFormFloating,
-                            containerClass: 'w-10 flex-grow-1',
-                            fieldAttrs: {
-                                type: 'text',
-                                value: info.tooltip.prefix,
-                            },
-                            fieldClass: 'form-control-sm',
-                            labelText: 'Prefix',
-                            labelClass: 'text-wrap',
-                            events: {
-                                input: (e) => {
-                                    const value = e.target.value
-                                    if (value === info.tooltip.prefix) return
-                
-                                    info.tooltip.prefix = value
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        tooltipSuffix: {
-                            handler: createFormFloating,
-                            containerClass: 'w-10 flex-grow-1',
-                            fieldAttrs: {
-                                type: 'text',
-                                value: info.tooltip.suffix,
-                            },
-                            fieldClass: 'form-control-sm',
-                            labelText: 'Suffix',
-                            labelClass: 'text-wrap',
-                            events: {
-                                input: (e) => {
-                                    const value = e.target.value
-                                    if (value === info.tooltip.suffix) return
-                
-                                    info.tooltip.suffix = value
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-
-
-                        enablePopup: {
-                            handler: createFormCheck,
-                            checked: info.popup.active,
-                            formCheckClass: 'w-100 flex-shirnk-1 mt-2',
-                            labelInnerText: 'Popup',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === info.popup.active) return
-                
-                                    info.popup.active = value
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        popupProps: {
-                            handler: createTagifyField,
-                            inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
-                            inputTag: 'textarea',
-                            enabled: 0,
-                            dropdownClass: `my-1 border-0`,
-                            userInput: true,
-                            scopeStyle: {
-                                height: '58px',
-                            },
-                            name:  `popupProps`,
-                            placeholder: 'Select properties',
-                            currentValue: JSON.stringify((info.popup.properties || []).map(i => {return {value:i}})),
-                            events: {
-                                focus: async (e) => {
-                                    const geojson = (await getLeafletGeoJSONData(layer, {
-                                        controller,
-                                        filter:false,
-                                        queryGeom:false,
-                                        group:false,
-                                        sort:false,
-                                        simplify:false
-                                    })) || layer.toGeoJSON()
-                                    if (!geojson) return
-                                    
-                                    const tagify = Tagify(form.elements['popupProps'])
-                                    const options = []
-                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
-                                    })
-                                    const optionsSet = options.length ? new Set(options) : []
-                                    const sortedOptions = [...optionsSet].filter(i => {
-                                        return !(info.popup.properties || []).includes(i)
-                                    }).sort()
-                                    tagify.settings.whitelist = sortedOptions
-                                },
-                            },
-                            callbacks: {
-                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
-                                    const tagify = e.detail.tagify
-                                    const values = tagify.value.map(i => i.value)
-                        
-                                    if (values.every(i => info.popup.properties.includes(i)) && info.popup.properties.every(i => values.includes(i)) ) return
-                        
-                                    info.popup.properties = values
-                                    if (info.popup.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }])))()
-                            }
-                        },
-
-                    },
-                    className: 'flex-wrap gap-1'
-                },
                 'Symbology': {
                     fields: {   
                         method: {
@@ -3141,6 +2921,226 @@ const handleLeafletStylePanel = (map, parent) => {
                         }
                     },
                     className: 'gap-2 flex-wrap'
+                },
+                'Feature Interactivity': {
+                    fields: {
+                        enableTooltip: {
+                            handler: createFormCheck,
+                            checked: info.tooltip.active,
+                            formCheckClass: 'w-100 flex-grow-1 mt-2',
+                            labelInnerText: 'Tooltip',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === info.tooltip.active) return
+                
+                                    info.tooltip.active = value
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+                        tooltipProps: {
+                            handler: createTagifyField,
+                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                            inputTag: 'textarea',
+                            enabled: 0,
+                            dropdownClass: `my-1 border-0`,
+                            userInput: true,
+                            maxTags: 5,
+                            scopeStyle: {
+                                height: '58px',
+                            },
+                            name:  `tooltipProps`,
+                            placeholder: 'Select properties',
+                            currentValue: JSON.stringify((info.tooltip.properties || []).map(i => {return {value:i}})),
+                            events: {
+                                focus: async (e) => {
+                                    const geojson = (await getLeafletGeoJSONData(layer, {
+                                        controller,
+                                        filter:false,
+                                        queryGeom:false,
+                                        group:false,
+                                        sort:false,
+                                        simplify:false
+                                    })) || layer.toGeoJSON()
+                                    if (!geojson) return
+                                    
+                                    const tagify = Tagify(form.elements['tooltipProps'])
+                                    const options = []
+                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                    })
+                                    const optionsSet = options.length ? new Set(options) : []
+                                    const sortedOptions = [...optionsSet].filter(i => {
+                                        return !(info.tooltip.properties || []).includes(i)
+                                    }).sort()
+                                    tagify.settings.whitelist = sortedOptions
+                                },
+                            },
+                            callbacks: {
+                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                    const tagify = e.detail.tagify
+                                    const values = tagify.value.map(i => i.value)
+                        
+                                    if (values.every(i => info.tooltip.properties.includes(i)) && info.tooltip.properties.every(i => values.includes(i)) ) return
+                        
+                                    info.tooltip.properties = values
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }])))()
+                            }
+                        },
+                        tooltipDel: {
+                            handler: createFormFloating,
+                            containerClass: 'w-10 flex-grow-1',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: info.tooltip.delimiter,
+                            },
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Delimiter',
+                            labelClass: 'text-wrap',
+                            events: {
+                                input: (e) => {
+                                    const value = e.target.value
+                                    if (value === info.tooltip.delimiter) return
+                
+                                    info.tooltip.delimiter = value
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+                        tooltipPrefix: {
+                            handler: createFormFloating,
+                            containerClass: 'w-10 flex-grow-1',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: info.tooltip.prefix,
+                            },
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Prefix',
+                            labelClass: 'text-wrap',
+                            events: {
+                                input: (e) => {
+                                    const value = e.target.value
+                                    if (value === info.tooltip.prefix) return
+                
+                                    info.tooltip.prefix = value
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+                        tooltipSuffix: {
+                            handler: createFormFloating,
+                            containerClass: 'w-10 flex-grow-1',
+                            fieldAttrs: {
+                                type: 'text',
+                                value: info.tooltip.suffix,
+                            },
+                            fieldClass: 'form-control-sm',
+                            labelText: 'Suffix',
+                            labelClass: 'text-wrap',
+                            events: {
+                                input: (e) => {
+                                    const value = e.target.value
+                                    if (value === info.tooltip.suffix) return
+                
+                                    info.tooltip.suffix = value
+                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+
+
+                        enablePopup: {
+                            handler: createFormCheck,
+                            checked: info.popup.active,
+                            formCheckClass: 'w-100 flex-shirnk-1 mt-2',
+                            labelInnerText: 'Popup',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === info.popup.active) return
+                
+                                    info.popup.active = value
+                                    updateLeafletGeoJSONLayer(layer, {
+                                        geojson: value ? layer.toGeoJSON() : null,
+                                        controller,
+                                    })
+                                }
+                            }
+                        },
+                        popupProps: {
+                            handler: createTagifyField,
+                            inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                            inputTag: 'textarea',
+                            enabled: 0,
+                            dropdownClass: `my-1 border-0`,
+                            userInput: true,
+                            scopeStyle: {
+                                height: '58px',
+                            },
+                            name:  `popupProps`,
+                            placeholder: 'Select properties',
+                            currentValue: JSON.stringify((info.popup.properties || []).map(i => {return {value:i}})),
+                            events: {
+                                focus: async (e) => {
+                                    const geojson = (await getLeafletGeoJSONData(layer, {
+                                        controller,
+                                        filter:false,
+                                        queryGeom:false,
+                                        group:false,
+                                        sort:false,
+                                        simplify:false
+                                    })) || layer.toGeoJSON()
+                                    if (!geojson) return
+                                    
+                                    const tagify = Tagify(form.elements['popupProps'])
+                                    const options = []
+                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                    })
+                                    const optionsSet = options.length ? new Set(options) : []
+                                    const sortedOptions = [...optionsSet].filter(i => {
+                                        return !(info.popup.properties || []).includes(i)
+                                    }).sort()
+                                    tagify.settings.whitelist = sortedOptions
+                                },
+                            },
+                            callbacks: {
+                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                    const tagify = e.detail.tagify
+                                    const values = tagify.value.map(i => i.value)
+                        
+                                    if (values.every(i => info.popup.properties.includes(i)) && info.popup.properties.every(i => values.includes(i)) ) return
+                        
+                                    info.popup.properties = values
+                                    if (info.popup.active) updateLeafletGeoJSONLayer(layer, {
+                                        geojson: layer.toGeoJSON(),
+                                        controller,
+                                    })
+                                }])))()
+                            }
+                        },
+
+                    },
+                    className: 'flex-wrap gap-1'
                 },
             },
             'Rendering': {
