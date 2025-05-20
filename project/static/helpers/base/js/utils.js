@@ -414,7 +414,6 @@ const getFileData = async (file, {
                 let data
                 
                 type = (type ?? file.name.split('.')[file.name.split('.').length-1]).toLowerCase()
-                console.log(type)
                 if (type === 'geojson') {
                     data = JSON.parse(e.target.result)
                 }
