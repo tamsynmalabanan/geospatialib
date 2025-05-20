@@ -12,7 +12,9 @@ const mapForFetchFileData = new Map()
 const fetchFileData = async (url, name, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
         const file = filesArray.find(file => file.name === name)
+        console.log(file)
         if (!file) return
+        console.log(file)
         
         const data = await getFileData(file)
         if (!data) return
