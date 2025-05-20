@@ -119,6 +119,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
             featureLayer._checkbox = createFormCheck({
                 parent: featuresContainer,
                 labelInnerText: featureLayer._title,
+                labelClass: 'text-break',
                 formCheckClass: `d-flex gap-2 `,
             }).querySelector('input')
         }
