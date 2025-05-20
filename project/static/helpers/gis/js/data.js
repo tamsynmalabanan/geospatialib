@@ -12,7 +12,11 @@ const fetchCSV = async (url, xField, yField, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
-        callback: async (response) => csvToGeoJSON(response.text(), xField, yField)
+        callback: async (response) => {
+            const csv = response.text()
+            console.log(csv)
+            return csvToGeoJSON(csv, xField, yField)
+        }
     }).catch(error => {
         console.log(error)
     })
