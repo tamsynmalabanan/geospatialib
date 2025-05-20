@@ -751,6 +751,8 @@ const fileToLeafletLayer = async ({
         yField,
     })
 
+    console.log(data)
+
     const layer = await createLeafletLayer(type, {
         data,
         group,

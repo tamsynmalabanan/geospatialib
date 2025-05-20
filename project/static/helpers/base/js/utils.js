@@ -408,6 +408,7 @@ const getFileData = async (file, {
 }) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
+        
         reader.onload = async (e) => {
             try {
                 let data
@@ -422,13 +423,14 @@ const getFileData = async (file, {
                     data = csvToGeoJSON(e.target.result, xField, yField)
                 }
     
-                console.log(data)
                 resolve(data)
             } catch (error) {
                 reject(error)
             }
+
             reject(new Error('unsupported file'))
         }
+
         reader.readAsText(file)
     })
 }
