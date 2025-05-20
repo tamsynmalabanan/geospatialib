@@ -90,7 +90,6 @@ const handleAddLayersForm = () => {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
-                console.log(includedLayers[file.name])
                 fileToLeafletLayer({
                     file,
                     group,
@@ -180,6 +179,10 @@ const handleAddLayersForm = () => {
 
     form.addEventListener('htmx:afterSwap', (e) => {
         toggleSubmitBtn()
+    })
+
+    form.addEventListener('focus', (e) => {
+        console.log(e)
     })
 }
 
