@@ -564,3 +564,34 @@ const validateGeoJSONFeature = (feature, filters) => {
 
     return true
 }
+
+const csvToGeoJSON = (csv, xField, yField, {
+    xDefault=0,
+    yDefault=0,
+}={}) => {
+    const lines = csv.split("\n")
+    const headers = lines[0].split(",")
+    const features = []
+
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(",")
+        if (values.length !== headers.length) continue
+
+        const properties = {}
+        headers.forEach((header, index) => {
+            properties[header] = values[index]
+        })
+
+        const lon = parseFloat(properties[xField])
+        const lat = parseFloat(properties[yField])
+
+        const feature = turf.point([
+            !NaN(lon) ? lon : xDefault, 
+            !NaN(lat) ? lat : yDefault, 
+        ], properties)
+
+        features.push(feature)
+    }
+
+    return turf.featureCollection(features)
+}
