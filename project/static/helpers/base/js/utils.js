@@ -401,30 +401,13 @@ const getValidFilesArray = async (filesArray) => {
     return files
 }
 
-const getFileData = async (file, {
-    type,
-    xField,
-    yField,
-}) => {
-    console.log(file, type, xField, yField)
+const getFileRawData = async (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
         
         reader.onload = async (e) => {
             try {
-                let data
-                
-                type = (type ?? file.name.split('.')[file.name.split('.').length-1]).toLowerCase()
-                
-                if (type === 'geojson') {
-                    data = JSON.parse(e.target.result)
-                }
-
-                if (type === 'csv') {
-                    data = csvToGeoJSON(e.target.result, xField, yField)
-                }
-                console.log(data)
-                resolve(data)
+                resolve(e.target.result)
             } catch (error) {
                 console.log(error)
                 reject(error)
@@ -433,7 +416,10 @@ const getFileData = async (file, {
             reject(new Error('unsupported file'))
         }
 
-        reader.onerror = async (e) => console.log(e)
+        reader.onerror = async (e) => {
+            console.log(e)
+            reject(error)
+        }
 
         reader.readAsText(file)
     })

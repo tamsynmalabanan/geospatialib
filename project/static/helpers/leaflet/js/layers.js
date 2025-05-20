@@ -754,11 +754,21 @@ const fileToLeafletLayer = async ({
     title = title ?? file.name.split('.').slice(0, -1).join('.')
     type = type ?? file.name.split('.')[file.name.split('.').length-1]
     
-    const data = await getFileData(file, {
-        type,
-        xField,
-        yField,
-    })
+    const rawData = await getFileRawData(file)
+    if (!rawData) return
+
+    let data
+    try {
+        if (type === 'geojson') {
+            data = JSON.parse(rawData)
+        }
+    
+        if (type === 'csv') {
+            data = csvToGeoJSON(rawData, xField, yField)
+        }
+    } catch (error) {
+        return
+    }
 
     const layer = await createLeafletLayer(type, {
         data,

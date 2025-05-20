@@ -27,14 +27,19 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
         const file = filesArray.find(file => file.name === name)
         if (!file) return
         
-        const data = await getFileData(file, {type, xField, yField})
-        if (!data) return
-        
-        const typeLower = type.toLowerCase()
+        const rawData = await getFileRawData(file)
 
-        if (typeLower === 'geojson') {
-            return data
-        }
+        try {
+            if (type === 'geojson') {
+                return JSON.parse(rawData)
+            }
+        
+            if (type === 'csv') {
+                return csvToGeoJSON(rawData, xField, yField)
+            }
+        } catch (error) {
+            return
+        }    
     }
 
     const mapKey = `${url};${controller?.id}` 
