@@ -43,8 +43,10 @@ class Collection(models.Model):
     #     return f'{self.url.domain} ({choices.COLLECTION_FORMATS(self.format)})'
     
     def get_layer_data(self):
+        format = self.format
         return {layer.name: {
             'title': layer.title,
+            'type': layer.name.split('.')[-1] if format == 'file' else format
         } for layer in self.layers.all()}
     
 class Layer(models.Model):

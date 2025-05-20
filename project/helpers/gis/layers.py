@@ -41,6 +41,9 @@ def get_layers(url, format):
     
     return {}
 
+def sort_layers(layers):
+    return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
+
 def get_collection_layers(data):
     url = data.get('url', '')
     format = data.get('format') or guess_format_from_url(url)

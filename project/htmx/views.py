@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 import requests
 
-from helpers.gis.layers import get_collection_layers
+from helpers.gis.layers import get_collection_layers, sort_layers
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 
@@ -22,6 +22,8 @@ def validate_collection(request):
                 form.data.update({'format':raw_format})
                 if raw_format:
                     form.add_error('format', 'No layers retrieved.')
+            else:
+                layers = sort_layers(layers)
         else:
             layers = {}
         return render(request, 'helpers/partials/add_layers/url_fields.html', {
@@ -41,6 +43,7 @@ def get_layer_forms(request):
             'title': title, 
             'type': type, 
         }
+    layers = sort_layers(layers)
     return render(request, 'helpers/partials/add_layers/layer_forms.html', {
         'layers': layers,
     })
