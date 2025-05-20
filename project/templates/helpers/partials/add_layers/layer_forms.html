@@ -15,6 +15,7 @@
         <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
     </div>
     {% for name, attrs in layers.items %}
+    {{attrs.type}}
         <div class="input-group" data-layer-source="{{source}}">
             <div class="input-group-text">
                 <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
