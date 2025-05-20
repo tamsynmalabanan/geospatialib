@@ -140,9 +140,9 @@ const handleAddLayersForm = () => {
     })
 
     form.addEventListener('click', (e) => {
-        if (!e.target.matches(`.form-check-input`) || !e.target.dataset.layerSource) return
+        const source = e.target.closest('.input-group')?.dataset.layerSource
+        if (!e.target.matches(`.form-check-input`) || !source) return
         
-        const source = e.target.dataset.layerSource
         const container = getLayerNamesContainer(source)
         const selectAllCheckbox = container.querySelector('.form-check-input[value="all"]')
         const layerCheckboxes = Array.from(container.querySelectorAll(`.form-check-input`)).filter(i => i !== selectAllCheckbox)
