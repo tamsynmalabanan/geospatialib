@@ -683,7 +683,10 @@ const urlToLeafletLayer = async ({
     name, 
     title,
     group,
-    add=false
+    add=false,
+    type,
+    xField,
+    yField,
 }) => {
     if (!url || !format || !name || !group) return
 
