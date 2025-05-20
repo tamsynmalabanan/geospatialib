@@ -411,7 +411,6 @@ const getFileData = async (file, {
         const reader = new FileReader()
         
         reader.onload = async (e) => {
-            console.log('read')
             try {
                 let data
                 
@@ -427,11 +426,14 @@ const getFileData = async (file, {
     
                 resolve(data)
             } catch (error) {
+                console.log(error)
                 reject(error)
             }
 
             reject(new Error('unsupported file'))
         }
+
+        reader.onerror = async (e) => console.log(e)
 
         reader.readAsText(file)
     })
