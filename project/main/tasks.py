@@ -1,6 +1,7 @@
 from django.core.cache import cache
 
 from celery import shared_task
+import requests
 
 from .models import URL, Collection, Layer
 
@@ -17,26 +18,41 @@ def onboard_collection(self, cacheKey):
         if not cached_collection:
             return
         
-        url_instance, created = URL.objects.get_or_create(path=cached_collection['url'])
+        url = cached_collection['url']
+        url_instance = URL.objects.filter(path=url).first()
+        if not url_instance:
+            try:
+                response = requests.head(url)
+                status = response.status_code
+                if status >= 200 and status <= 300:
+                    url_instance, created = URL.objects.get_or_create(path=url)
+                else:
+                    raise Exception('Response not ok.')
+            except requests.exceptions.RequestException as e:
+                print(f"Error accessing {url}: {e}")
         if not url_instance:
             return
 
-        collection_instance, created = Collection.objects.get_or_create(
-            url=url_instance,
-            format=cached_collection['format']
-        )
+        format = cached_collection['format']
+        collection_instance = Collection.objects.filter(url=url_instance, format=format)
+        if not collection_instance:
+            # validate collection: check if there are valid layers based on the format
+            collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
             return
 
-        for name, attrs in cached_collection['layers'].items():
-            layer_instance, created = Layer.objects.get_or_create(
-                collection=collection_instance,
-                name=name,
-                params=attrs,
-            )
-            # populate layer fields
+        # for name, attrs in cached_collection['layers'].items():
+        #     # get layer instance
+        #     # if not layer instance, validate layer
+        #     # if valid, create layer instance
+        #     layer_instance, created = Layer.objects.get_or_create(
+        #         collection=collection_instance,
+        #         name=name,
+        #         params=attrs,
+        #     )
+        #     # populate layer fields
         
-        cache.delete(cacheKey)
+        # cache.delete(cacheKey) # only delete if all layers have been created
     except Exception as e:
         print('onboard_collection error', e)
         self.retry() 

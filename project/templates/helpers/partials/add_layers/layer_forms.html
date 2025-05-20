@@ -28,12 +28,34 @@
                 {% if attrs.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
-                        <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm' value="{{attrs.xField}}">
+                        {% variable attrs.xField as value %}
+                        <input 
+                            id="{{id}}" 
+                            type="text" 
+                            name='xField' 
+                            class='form-control form-control-sm' 
+                            {% if value %}
+                                value="{{value}}"
+                            {% else %}
+                                {% comment %} hx-post {% endcomment %}
+                            {% endif %}
+                        >
                         <label for="{{id}}">X Field</label>
                     </div>
                     <div class="form-floating">
                         {% random_string as id %}
-                        <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm' value="{{attrs.yField}}">
+                        {% variable attrs.yField as value %}
+                        <input 
+                            id="{{id}}" 
+                            type="text" 
+                            name='yField' 
+                            class='form-control form-control-sm'
+                            {% if value %}
+                                value="{{value}}"
+                            {% else %}
+                                {% comment %} hx-post {% endcomment %}
+                            {% endif %}
+                        >
                         <label for="{{id}}">Y Field</label>
                     </div>
                 {% endif %}
