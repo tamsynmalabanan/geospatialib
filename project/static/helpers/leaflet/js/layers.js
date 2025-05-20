@@ -691,13 +691,13 @@ const urlToLeafletLayer = async ({
     if (!url || !format || !name || !group) return
 
     let dbIndexedKey
-    let type
+    
     if (format === 'geojson') {
         type = format
         dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
     }
     if (format === 'file') {
-        type = name.split('.')[name.split('.').length-1]
+        type = type ?? name.split('.')[name.split('.').length-1]
         dbIndexedKey = Array(format, JSON.stringify({url,name})).join(';')
     }
 
