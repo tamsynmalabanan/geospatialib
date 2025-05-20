@@ -408,13 +408,13 @@ const getFileData = async (file, {
 }) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
-        
+
         reader.onload = async (e) => {
             try {
                 let data
                 
                 type = (type ?? file.name.split('.')[file.name.split('.').length-1]).toLowerCase()
-
+                console.log(type)
                 if (type === 'geojson') {
                     data = JSON.parse(e.target.result)
                 }
