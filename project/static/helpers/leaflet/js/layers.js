@@ -713,8 +713,6 @@ const urlToLeafletLayer = async ({
         dbIndexedKey,
     })
 
-    console.log(layer)
-
     if (layer && add) group.addLayer(layer)
     return layer
 }
