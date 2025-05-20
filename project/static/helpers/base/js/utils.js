@@ -422,6 +422,7 @@ const getFileData = async (file, {
                     data = csvToGeoJSON(e.target.result, xField, yField)
                 }
     
+                console.log(data)
                 resolve(data)
             } catch (error) {
                 reject(error)
