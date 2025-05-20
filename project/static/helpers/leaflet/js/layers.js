@@ -741,6 +741,7 @@ const fileToLeafletLayer = async ({
     yField,
 } ={}) => {
     if (!file || !group) return
+    
     title = title ?? file.name.split('.').slice(0, -1).join('.')
     type = type ?? file.name.split('.')[file.name.split('.').length-1]
     

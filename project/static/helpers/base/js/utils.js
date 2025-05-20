@@ -414,6 +414,15 @@ const getFileData = async (file) => {
                     reject(error)
                 }
             }
+            if (type === 'csv') {
+                try {
+                    console.log(e.target.result)
+                    // const geojson = JSON.parse(e.target.result)
+                    // resolve(geojson)
+                } catch (error) {
+                    reject(error)
+                }
+            }
             reject(new Error('unsupported file'))
         }
         reader.readAsText(file)
