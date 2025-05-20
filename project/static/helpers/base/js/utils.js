@@ -406,10 +406,12 @@ const getFileData = async (file, {
     xField,
     yField,
 }) => {
+    console.log('here')
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
-
+        
         reader.onload = async (e) => {
+            console.log('read')
             try {
                 let data
                 
