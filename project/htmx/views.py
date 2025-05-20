@@ -29,8 +29,15 @@ def validate_collection(request):
     })
 
 @require_http_methods(['GET'])
-def get_file_forms(request):
-    layers = {i:{'title':i.split('/')[-1].split('.')[0]} for i in request.GET.get('layerNames','').split('|')}
+def get_layer_forms(request):
+    layer_names = request.GET.get('layerNames','').split('|')
+    layers = {}
+    for name in layer_names:
+        title, type = name.split('/')[-1].rsplit('.', 1)
+        layers[name] = {
+            'title': title, 
+            'type': type, 
+        }
     return render(request, 'helpers/partials/add_layers/layer_forms.html', {
         'layers': layers,
     })

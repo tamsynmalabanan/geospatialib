@@ -16,15 +16,16 @@ def guess_format_from_url(url):
             'download',
             'zip',
         ],
+        'csv': [
+            
+        ],
         'geojson': [
-            'geojson',
-            'gjson',
             'json',
         ],
     })
 
 def get_layers(url, format):
-    if format == 'geojson':
+    if format in ['geojson', 'csv']:
         name = url.split('/')[-1]
         return {name: {'title': name}}
     
