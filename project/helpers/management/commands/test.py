@@ -10,8 +10,9 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
+        url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
         value = get_collection_layers({
-            'url': 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
+            'url': url
         })
         print(value)
         self.stdout.write(self.style.SUCCESS('Test'))
