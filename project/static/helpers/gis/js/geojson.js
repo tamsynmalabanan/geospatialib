@@ -586,8 +586,8 @@ const csvToGeoJSON = (csv, xField, yField, {
         const lat = parseFloat(properties[yField])
 
         const feature = turf.point([
-            !NaN(lon) ? lon : xDefault, 
-            !NaN(lat) ? lat : yDefault, 
+            !isNaN(lon) ? lon : xDefault, 
+            !isNaN(lat) ? lat : yDefault, 
         ], properties)
 
         features.push(feature)
