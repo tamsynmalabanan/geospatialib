@@ -21,10 +21,10 @@
             </div>
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{attrs.title}}">
             <div class="input-group-text">
-                <input type="text" name='type' value="{{attrs.type}}" class='form-control' readonly>
+                <input type="text" name='type' value="{{attrs.type}}" class='form-control form-control-sm' readonly>
                 {% if attrs.type == 'csv' %}
-                    <input type="text" name='xField' class='form-control'>
-                    <input type="text" name='yField' class='form-control'>
+                    <input type="text" name='xField' class='form-control form-control-sm'>
+                    <input type="text" name='yField' class='form-control form-control-sm'>
                 {% endif %}
             </div>
         </div>
