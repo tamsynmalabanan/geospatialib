@@ -27,11 +27,17 @@ def guess_format_from_url(url):
 def get_layers(url, format):
     if format in ['geojson', 'csv']:
         name = url.split('/')[-1]
-        return {name: {'title': name}}
+        return {name: {
+            'title': name,
+            'type': format,
+        }}
     
     if format == 'file':
         filenames = get_file_names(url)
-        return {i:{'title': i.split('/')[-1].split('.')[0]} for i in filenames}
+        return {i:{
+            'title': i.split('/')[-1].split('.')[0],
+            'type': i.split('.')[-1],
+        } for i in filenames}
     
     return {}
 
