@@ -6,7 +6,6 @@
 {% else %}
     {% variable 'files' as source %}
 {% endif %}
-{{layers}}
 {% if layers and layers.keys|length > 0 %}
     <div class="input-group" data-layer-source="{{source}}">
         <div class="input-group-text border-0 bg-transparent">
