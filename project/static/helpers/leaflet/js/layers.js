@@ -697,10 +697,10 @@ const urlToLeafletLayer = async ({
         dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
     }
     
-    // if (format === 'csv') {
-    //     type = format
-    //     dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
-    // }
+    if (format === 'csv') {
+        type = format
+        dbIndexedKey = Array(format, JSON.stringify({url,xField,yField})).join(';')
+    }
 
     if (format === 'file') {
         type = type ?? name.split('.')[name.split('.').length-1]

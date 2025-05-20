@@ -362,6 +362,7 @@ const fetchGeoJSONHandlers = (name) => {
         overpass: fetchOverpass,
         geojson: fetchGeoJSON,
         file: fetchFileData,
+        csv: fetchCSV,
     }[name]
 }
 

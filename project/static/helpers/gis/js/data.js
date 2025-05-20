@@ -8,6 +8,16 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
+const fetchCSV = async (url, xField, yField, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(url, {
+        abortBtns,
+        controller,
+        callback: async (response) => csvToGeoJSON(response.text(), xField, yField)
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
 const mapForFetchFileData = new Map()
 const fetchFileData = async (url, name, type, xField, yField, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
