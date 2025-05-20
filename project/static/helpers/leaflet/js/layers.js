@@ -718,7 +718,7 @@ const createLeafletLayer = async (type, {
 
     const map = group._map
     const typeLower = type.toLowerCase()
-    if (typeLower === 'geojson') {
+    if (Array('geojson', 'csv').includes(typeLower)) {
         return await getLeafletGeoJSONLayer({
             geojson: data,
             group,
