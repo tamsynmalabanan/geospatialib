@@ -181,7 +181,7 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     })
 
-    form.addEventListener('focus', (e) => {
+    form.addEventListener('focusin', (e) => {
         console.log(e)
     })
 }
