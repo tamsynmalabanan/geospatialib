@@ -16,7 +16,7 @@ def onboard_collection(self, cacheKey):
     try:
         cached_collection = cache.get(cacheKey)
         if not cached_collection:
-            return
+            raise Exception('Cached collection not found.')
         
         url = cached_collection['url']
         url_instance = URL.objects.filter(path=url).first()
@@ -24,14 +24,14 @@ def onboard_collection(self, cacheKey):
             try:
                 response = requests.head(url)
                 status = response.status_code
-                if status >= 200 and status <= 300:
+                if  200 <= status < 300:
                     url_instance, created = URL.objects.get_or_create(path=url)
                 else:
                     raise Exception('Response not ok.')
-            except requests.exceptions.RequestException as e:
-                print(f"Error accessing {url}: {e}")
+            except Exception as e:
+                raise e
         if not url_instance:
-            return
+            raise Exception('No URL instance exists or created.')
 
         format = cached_collection['format']
         collection_instance = Collection.objects.filter(url=url_instance, format=format)
@@ -39,7 +39,7 @@ def onboard_collection(self, cacheKey):
             # validate collection: check if there are valid layers based on the format
             collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
-            return
+            raise Exception('No Collection instance exists or created.')
 
         # for name, attrs in cached_collection['layers'].items():
         #     # get layer instance
