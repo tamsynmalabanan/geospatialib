@@ -13,6 +13,5 @@ class Command(BaseCommand):
         url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
         value = get_collection_layers({
             'url': url
-        })
-        print(value)
-        self.stdout.write(self.style.SUCCESS('Test'))
+        }, delay=False)
+        self.stdout.write(self.style.SUCCESS(value))
