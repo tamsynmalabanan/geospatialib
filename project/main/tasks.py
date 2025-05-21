@@ -27,13 +27,11 @@ def onboard_collection(self, cacheKey):
                 if  200 <= status < 400:
                     url_instance, created = URL.objects.get_or_create(path=url)
                 else:
-                    print(response)
                     raise Exception('Response not ok.')
             except Exception as e:
                 raise e
         if not url_instance:
             raise Exception('No URL instance exists or created.')
-        print(url_instance)
 
         format = cached_collection['format']
         collection_instance = Collection.objects.filter(url=url_instance, format=format)
@@ -42,7 +40,6 @@ def onboard_collection(self, cacheKey):
             collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
-        print(collection_instance)
 
         # for name, attrs in cached_collection['layers'].items():
         #     # get layer instance
