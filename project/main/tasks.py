@@ -32,9 +32,6 @@ def onboard_collection(self, cacheKey):
         format = cached_collection['format']
         collection_instance = Collection.objects.filter(url=url_instance, format=format).first()
         if not collection_instance:
-            # validate collection: check if there are valid layers based on the format
-            # do not create collections that are invalid
-            
             collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
@@ -57,4 +54,5 @@ def onboard_collection(self, cacheKey):
             raise Exception('No all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
+        print(self.request.retries)
         self.retry()

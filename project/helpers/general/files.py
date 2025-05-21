@@ -1,12 +1,11 @@
 from django.utils.text import slugify
 
-import requests
 import mimetypes
 import zipfile
 import os
 from io import BytesIO
 
-from helpers.general.utils import REQUEST_HEADERS, get_response
+from helpers.general.utils import get_response
 
 def extract_zip(zip_file, base_path=""):
     files = []
