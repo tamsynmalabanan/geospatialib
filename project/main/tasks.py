@@ -11,8 +11,7 @@ from helpers.general.utils import ok_url_response
     bind=True, 
     autoretry_for=(Exception,), 
     retry_backoff=0.5, 
-    max_retries=0
-    # retry_kwargs={'max_retries':1}
+    max_retries=3
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)
@@ -54,16 +53,13 @@ def onboard_collection(self, cacheKey):
 
         onboarding_complete = set(layers.keys()) == set(onboarded_layers)
         last_retry = self.request.retries >= self.max_retries
-        print(set(layers.keys()), set(onboarded_layers), onboarding_complete)
-        print(self.request.retries, self.max_retries, last_retry)
 
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
             if collection_instance.layers.count() == 0:
-                print(collection_instance.delete())
+                collection_instance.delete()
                 return 
             else:
-                print(collection_instance)
                 return collection_instance
         else:
             raise Exception('Not all layers have been onboarded.')
