@@ -78,8 +78,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 def ok_url_response(url):
     try:
         print(url)
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.head(url, headers=headers)
+        response = requests.get(url)
         status = response.status_code
         if  200 <= status < 400:
             content_type = response.headers.get('Content-Type', '')
