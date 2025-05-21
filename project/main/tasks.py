@@ -27,6 +27,7 @@ def onboard_collection(self, cacheKey):
                 if  200 <= status < 300:
                     url_instance, created = URL.objects.get_or_create(path=url)
                 else:
+                    print(response)
                     raise Exception('Response not ok.')
             except Exception as e:
                 raise e
