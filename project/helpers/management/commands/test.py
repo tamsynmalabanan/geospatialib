@@ -11,7 +11,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
-        value = get_collection_layers({
-            'url': url
-        }, delay=False)
+        value = get_collection_layers(url, delay=False)
         self.stdout.write(self.style.SUCCESS(value))

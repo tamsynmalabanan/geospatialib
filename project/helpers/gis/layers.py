@@ -44,9 +44,8 @@ def get_layers(url, format):
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
 
-def get_collection_layers(data, delay=True):
-    url = data.get('url', '')
-    format = data.get('format') or guess_format_from_url(url)
+def get_collection_layers(url, format=None, delay=True):
+    format = format or guess_format_from_url(url)
     layers = {}
 
     if validators.url(url) and format:
@@ -77,7 +76,7 @@ def get_collection_layers(data, delay=True):
                 'format': format,
                 'layers': layers,
             }, timeout=60*60*24*30)
-            
+
             if delay:
                 onboard_collection.delay(cacheKey)
             else:

@@ -42,3 +42,10 @@ def get_file_names(url):
         return [filename]
     except Exception as e:
         return []
+    
+def get_file_raw_data(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except Exception as error:
+        raise error
