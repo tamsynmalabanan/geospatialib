@@ -78,8 +78,9 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 def ok_url_response(url):
     try:
         response = requests.head(url)
+        content_type = response.headers.get('Content-Type', '')
         if  200 <= response.status_code < 400:
-            return True
+            return content_type or True
         else:
             raise Exception('Response not ok.')
     except Exception as e:
