@@ -30,6 +30,7 @@ def guess_format_from_url(url):
 
 def get_layers(url, format):
     if format in ['geojson', 'csv']:
+        print(ok_url_response(url))
         if ok_url_response(url):
             name = url.split('/')[-1]
             return {name: {
