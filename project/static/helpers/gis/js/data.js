@@ -47,11 +47,11 @@ const rawDataToLayerData = (rawData, type, {
 const mapForFetchFileData = new Map()
 const fetchFileData = async (url, name, type, xField, yField, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
+        console.log(filesArray, name)
         const file = filesArray.find(file => file.name === name)
         if (!file) return
         
         const rawData = await getFileRawData(file)
-        console.log(rawData)
         return rawDataToLayerData(rawData, type, {
             xField,
             yField
