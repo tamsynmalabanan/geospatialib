@@ -34,7 +34,7 @@ def onboard_collection(self, cacheKey):
             raise Exception('No URL instance exists or created.')
 
         format = cached_collection['format']
-        collection_instance = Collection.objects.filter(url=url_instance, format=format)
+        collection_instance = Collection.objects.filter(url=url_instance, format=format).first()
         if not collection_instance:
             # validate collection: check if there are valid layers based on the format
             # do not create collections that are invalid
