@@ -41,6 +41,7 @@ def get_file_names(url):
         
         return [filename]
     except Exception as e:
+        print(e)
         return []
     
 def get_file_raw_data(file_path):
