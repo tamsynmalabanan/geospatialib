@@ -14,11 +14,11 @@ from helpers.general.utils import ok_url_response
     retry_kwargs={'max_retries':5}
 )
 def onboard_collection(self, cacheKey):
+    cached_collection = cache.get(cacheKey)
+    if not cached_collection:
+        return
+    
     try:
-        cached_collection = cache.get(cacheKey)
-        if not cached_collection:
-            raise Exception('Cached collection not found.')
-        
         url = cached_collection['url']
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
@@ -36,6 +36,7 @@ def onboard_collection(self, cacheKey):
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
 
+        onboarded_layers = []
         layers = cached_collection['layers']
         # for name, attrs in layers.items():
         #     # get layer instance
@@ -48,11 +49,19 @@ def onboard_collection(self, cacheKey):
         #     )
         #     # populate layer fields
         
-        if set(layers.keys()) == set(collection_instance.layers.all().values_list('name', flat=True)):
+        # onboared_layers = set(collection_instance.layers.all().values_list('name', flat=True))
+
+        onboarding_complete = set(layers.keys()) == set(onboarded_layers)
+        last_retry = self.request.retries >= self.max_retries
+
+        if onboarding_complete or last_retry:
             cache.delete(cacheKey)
+            if len(onboarded_layers) == 0:
+                return collection_instance.delete()
+            else:
+                return collection_instance
         else:
-            raise Exception('No all layers have been onboarded.')
+            raise Exception('Not all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
-        print(self.request.retries)
         self.retry()
