@@ -84,4 +84,5 @@ def ok_url_response(url):
         else:
             raise Exception('Response not ok.')
     except Exception as e:
+        print(e)
         return False
