@@ -4,9 +4,10 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
         controller,
         callback: async (response) => {
             try {
-
                 return parseJSONResponse(response)
-            } catch (error) { console.log(error)}
+            } catch (error) {
+                console.log(error)
+            }
         }
     }).catch(error => {
         console.log(error)
@@ -65,12 +66,16 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
         abortBtns,
         controller,
         callback: async (response) => {
-            const content = await response.blob()
-            const filesArray = await getValidFilesArray([
-                new File([content],
-                url.split('/')[url.split('/').length-1])
-            ])
-            return filesArray
+            try {
+                const content = await response.blob()
+                const filesArray = await getValidFilesArray([
+                    new File([content],
+                    url.split('/')[url.split('/').length-1])
+                ])
+                return filesArray
+            } catch (error) {
+                console.log(error)
+            }
         },
     }).catch(error => {
         console.log(error.message, url, name)
