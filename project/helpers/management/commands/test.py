@@ -12,7 +12,8 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
+        # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
+        url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
         # value = get_collection_layers(url, delay=False)
         
         response = requests.head(url)  # Sends a HEAD request to check headers
