@@ -24,7 +24,7 @@ def onboard_collection(self, cacheKey):
             try:
                 response = requests.head(url)
                 status = response.status_code
-                if  200 <= status < 300:
+                if  200 <= status < 400:
                     url_instance, created = URL.objects.get_or_create(path=url)
                 else:
                     print(response)
@@ -58,4 +58,4 @@ def onboard_collection(self, cacheKey):
         # cache.delete(cacheKey) # only delete if all layers have been created
     except Exception as e:
         print('onboard_collection error', e)
-        self.retry() 
+        self.retry()
