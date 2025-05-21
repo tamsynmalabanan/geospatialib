@@ -53,6 +53,7 @@ def onboard_collection(self, cacheKey):
 
         onboarding_complete = set(layers.keys()) == set(onboarded_layers)
         last_retry = self.request.retries >= self.max_retries
+        print(onboarding_complete, last_retry)
 
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
