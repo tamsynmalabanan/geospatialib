@@ -74,7 +74,7 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
                     new File([content],
                     url.split('/')[url.split('/').length-1])
                 ])
-                console.log(filesArray, type)
+                console.log(filesArray, name, type)
                 return filesArray
             } catch (error) {
                 console.log(error)
