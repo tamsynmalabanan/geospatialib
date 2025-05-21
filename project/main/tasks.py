@@ -57,8 +57,10 @@ def onboard_collection(self, cacheKey):
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
             if collection_instance.layers.count() == 0:
-                return collection_instance.delete()
+                print(collection_instance.delete())
+                return 
             else:
+                print(collection_instance)
                 return collection_instance
         else:
             raise Exception('Not all layers have been onboarded.')
