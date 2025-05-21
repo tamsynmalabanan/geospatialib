@@ -66,6 +66,7 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
         abortBtns,
         controller,
         callback: async (response) => {
+            console.log(response)
             try {
                 const content = await response.blob()
                 const filesArray = await getValidFilesArray([
