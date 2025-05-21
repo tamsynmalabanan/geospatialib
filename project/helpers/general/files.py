@@ -6,7 +6,7 @@ import zipfile
 import os
 from io import BytesIO
 
-from helpers.general.utils import REQUEST_HEADERS
+from helpers.general.utils import REQUEST_HEADERS, get_response
 
 def extract_zip(zip_file, base_path=""):
     files = []
@@ -27,14 +27,10 @@ def extract_zip(zip_file, base_path=""):
 
 def get_file_names(url):
     try:
-        response = requests.get(url)
-        status = response.status_code
-        if status < 200 or status >= 400:
-            response = requests.get(url, headers=REQUEST_HEADERS)
-            status = response.status_code
-            if status < 200 or status >= 400:
-                raise Exception("Failed to download file.")
-
+        response, status = get_response(url)
+        if status and (status < 200 or status >= 400):
+            raise Exception("Failed to download file.")
+        
         content_type = response.headers.get('Content-Type', '')
         extension = mimetypes.guess_extension(content_type)
 
