@@ -5,7 +5,11 @@ from urllib.parse import unquote
 
 from main.tasks import onboard_collection
 from main.models import Collection
-from helpers.general.utils import get_first_substring_match, create_cache_key
+from helpers.general.utils import (
+    get_first_substring_match, 
+    create_cache_key, 
+    ok_url_response
+)
 from helpers.general.files import get_file_names
 
 def guess_format_from_url(url):
@@ -26,11 +30,12 @@ def guess_format_from_url(url):
 
 def get_layers(url, format):
     if format in ['geojson', 'csv']:
-        name = url.split('/')[-1]
-        return {name: {
-            'title': name,
-            'type': format,
-        }}
+        if ok_url_response(url):
+            name = url.split('/')[-1]
+            return {name: {
+                'title': name,
+                'type': format,
+            }}
     
     if format == 'file':
         filenames = get_file_names(url)

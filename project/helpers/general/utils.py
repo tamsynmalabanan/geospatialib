@@ -78,8 +78,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 def ok_url_response(url):
     try:
         response = requests.head(url)
-        status = response.status_code
-        if  200 <= status < 400:
+        if  200 <= response.status_code < 400:
             return True
         else:
             raise Exception('Response not ok.')
