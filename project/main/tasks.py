@@ -54,7 +54,8 @@ def onboard_collection(self, cacheKey):
         #     )
         #     # populate layer fields
         
-        if set(layers.keys()) == set(collection_instance.layers.values_list('name', flat=True)):
+        print(collection_instance)
+        if set(layers.keys()) == set(collection_instance.layers.all().values_list('name', flat=True)):
             cache.delete(cacheKey)
         else:
             raise Exception('No all layers have been onboarded.')
