@@ -77,6 +77,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def ok_url_response(url):
     try:
+        print(url)
         response = requests.head(url)
         status = response.status_code
         if  200 <= status < 400:
