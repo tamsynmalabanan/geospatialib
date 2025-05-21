@@ -37,11 +37,13 @@ def onboard_collection(self, cacheKey):
         collection_instance = Collection.objects.filter(url=url_instance, format=format)
         if not collection_instance:
             # validate collection: check if there are valid layers based on the format
+            # do not create collections that are invalid
             collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
 
-        # for name, attrs in cached_collection['layers'].items():
+        layers = cached_collection['layers']
+        # for name, attrs in layers.items():
         #     # get layer instance
         #     # if not layer instance, validate layer
         #     # if valid, create layer instance
@@ -52,7 +54,10 @@ def onboard_collection(self, cacheKey):
         #     )
         #     # populate layer fields
         
-        # cache.delete(cacheKey) # only delete if all layers have been created
+        if set(layers.keys()) == set(collection_instance.layers.all().value_list('name', flat=True)):
+            cache.delete(cacheKey)
+        else:
+            raise Exception('No all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
         self.retry()
