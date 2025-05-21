@@ -13,8 +13,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
-        url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
-        
+        # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
+        url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/centroid.csv'
         get_layers(url, 'geojson')
         
         # self.stdout.write(self.style.SUCCESS(value))
