@@ -3,6 +3,7 @@ from django.utils.text import slugify
 import string
 import random
 from collections import OrderedDict
+import requests
 
 def get_special_characters(value):
     scs = (list(string.punctuation) + [' '])
@@ -73,3 +74,14 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
         dict_copy = OrderedDict(sorted(dict_copy.items(), key=lambda item: item[1]))
     
     return [(key, value) for key, value in dict_copy.items()]
+
+def ok_url_response(url):
+    try:
+        response = requests.head(url)
+        status = response.status_code
+        if  200 <= status < 400:
+            return True
+        else:
+            raise Exception('Response not ok.')
+    except Exception as e:
+        return False

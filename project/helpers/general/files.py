@@ -49,3 +49,5 @@ def get_file_raw_data(file_path):
             return file.read()
     except Exception as error:
         raise error
+    
+

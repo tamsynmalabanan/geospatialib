@@ -4,6 +4,7 @@ from celery import shared_task
 import requests
 
 from .models import URL, Collection, Layer
+from helpers.general.utils import ok_url_response
 
 # @shared_task
 @shared_task(
@@ -21,15 +22,10 @@ def onboard_collection(self, cacheKey):
         url = cached_collection['url']
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
-            try:
-                response = requests.head(url)
-                status = response.status_code
-                if  200 <= status < 400:
-                    url_instance, created = URL.objects.get_or_create(path=url)
-                else:
-                    raise Exception('Response not ok.')
-            except Exception as e:
-                raise e
+            if ok_url_response(url):
+                url_instance, created = URL.objects.get_or_create(path=url)
+            else:
+                raise Exception('URL response not ok.')
         if not url_instance:
             raise Exception('No URL instance exists or created.')
 
