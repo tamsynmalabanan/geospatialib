@@ -17,5 +17,5 @@ class Command(BaseCommand):
         # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
         # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/centroid.csv'
         url = 'https://nominatim.openstreetmap.org/reverse?lat=28.619166999999997&lon=77.4210995&zoom=18&format=geojson&polygon_geojson=1&polygon_threshold=0'
-        value = get_collection_layers(url)
+        value = get_collection_layers(url, delay=False)
         self.stdout.write(self.style.SUCCESS(value))
