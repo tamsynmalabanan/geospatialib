@@ -5,6 +5,8 @@ import random
 from collections import OrderedDict
 import requests
 
+REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
+
 def get_special_characters(value):
     scs = (list(string.punctuation) + [' '])
     return list(set(char for char in value if char in scs))
@@ -77,9 +79,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def ok_url_response(url):
     try:
-        print(url)
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=REQUEST_HEADERS)
         status = response.status_code
         if  200 <= status < 400:
             content_type = response.headers.get('Content-Type', '')
@@ -87,5 +87,4 @@ def ok_url_response(url):
         else:
             raise Exception(f'Response not ok: {status}')
     except Exception as e:
-        print(e)
         return False
