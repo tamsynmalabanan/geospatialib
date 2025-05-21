@@ -38,6 +38,7 @@ def onboard_collection(self, cacheKey):
         if not collection_instance:
             # validate collection: check if there are valid layers based on the format
             # do not create collections that are invalid
+            
             collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
