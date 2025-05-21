@@ -69,6 +69,7 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
             console.log(response)
             try {
                 const content = await response.blob()
+                console.log(content)
                 const filesArray = await getValidFilesArray([
                     new File([content],
                     url.split('/')[url.split('/').length-1])
