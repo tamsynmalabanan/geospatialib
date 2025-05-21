@@ -51,6 +51,7 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
         if (!file) return
         
         const rawData = await getFileRawData(file)
+        console.log(rawData)
         return rawDataToLayerData(rawData, type, {
             xField,
             yField
@@ -66,15 +67,12 @@ const fetchFileData = async (url, name, type, xField, yField, {abortBtns, contro
         abortBtns,
         controller,
         callback: async (response) => {
-            console.log(response)
             try {
                 const content = await response.blob()
-                console.log(content)
                 const filesArray = await getValidFilesArray([
                     new File([content],
                     url.split('/')[url.split('/').length-1])
                 ])
-                console.log(filesArray, name, type)
                 return filesArray
             } catch (error) {
                 console.log(error)
