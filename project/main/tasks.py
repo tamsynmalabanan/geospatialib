@@ -46,14 +46,20 @@ def onboard_collection(self, cacheKey):
         for name, params in layers.items():
             layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
             if not layer_instance:
-                if (LAYER_VALIDATORS[format](url, name)):
-                    pass
-                # layer_instance = create_layer_instance(url, format, name, params)
-                # layer_instance, created = Layer.objects.get_or_create(
-                #     collection=collection_instance,
-                #     name=name,
-                #     params=params,
-                # )
+                data = LAYER_VALIDATORS[format](url, name)
+                if not data:
+                    continue
+
+                data.update({
+                    'collection': collection_instance,
+                    'name': name,
+                    # 'params': params,
+                })
+                layer_instance, created = Layer.objects.get_or_create(
+                    collection=collection_instance,
+                    name=name,
+                    params=params,
+                )
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
         
