@@ -10,8 +10,8 @@ def validate_geojson(url, name=None):
         return
     
     try:
-        geojson_data = response.text()
-        geojson_obj = geojson.loads(geojson_data)
+        geojson_data = response.json()
+        geojson_obj = geojson.loads(json.dumps(geojson_data))
         if geojson.is_valid(geojson_obj):
             print("The data is valid GeoJSON!")
         else:
