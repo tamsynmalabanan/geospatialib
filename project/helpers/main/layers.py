@@ -63,11 +63,16 @@ def validate_csv(url, name, params):
 
         xField = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES]+[None])[0])
         yField = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES]+[None])[0])
+        if not xField or not yField:
+            return
+        
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
         geojson_str = gdf.to_json()
         geojson_obj = json.loads(geojson_str)
+        
         params['xField'] = xField
         params['yField'] = yField
+        
         return {
             'name': name,
             'params': params,
