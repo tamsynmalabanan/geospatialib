@@ -14,24 +14,24 @@ def validate_geojson(url, name=None):
     try:
         geojson_data = response.json()
         geojson_obj = geojson.loads(json.dumps(geojson_data))
-        if geojson_obj.is_valid:
-            print("The data is valid GeoJSON!")
-            geometries = [
-                GEOSGeometry(json.dumps(feature["geometry"])) 
-                for feature in geojson_obj.get("features", [])
-            ]
-            minx, miny, maxx, maxy = float("inf"), float("inf"), float("-inf"), float("-inf")
-            for geom in geometries:
-                bbox = geom.extent
-                minx = min(minx, bbox[0])
-                miny = min(miny, bbox[1])
-                maxx = max(maxx, bbox[2])
-                maxy = max(maxy, bbox[3])
+        if not geojson_obj.is_valid:
+            return
 
-            bbox = Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
-            print(bbox)
+        geometries = [
+            GEOSGeometry(json.dumps(feature["geometry"])) 
+            for feature in geojson_obj.get("features", [])
+        ]
+        
+        minx, miny, maxx, maxy = float("inf"), float("inf"), float("-inf"), float("-inf")
+        for geom in geometries:
+            bbox = geom.extent
+            minx = min(minx, bbox[0])
+            miny = min(miny, bbox[1])
+            maxx = max(maxx, bbox[2])
+            maxy = max(maxy, bbox[3])
 
-
+        bbox = Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
+        return {'bbox':bbox}
     except Exception as e:
         print(e)
 
