@@ -53,10 +53,7 @@ def onboard_collection(self, cacheKey):
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
         
-        onboarding_complete = set(layers.keys()) == set(onboarded_layers)
-        last_retry = self.request.retries >= self.max_retries
-        
-        if onboarding_complete or last_retry:
+        if (set(layers.keys()) == set(onboarded_layers)) or (self.request.retries >= self.max_retries):
             cache.delete(cacheKey)
             if collection_instance.layers.count() == 0:
                 return collection_instance.delete()
@@ -66,3 +63,7 @@ def onboard_collection(self, cacheKey):
             raise Exception('Not all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
+        if self.request.retries >= self.max_retries:
+            raise self.retry(exc=e)
+        else:
+            cache.delete(cacheKey)
