@@ -16,7 +16,7 @@ def validate_geojson(url, name=None):
         if geojson_obj.is_valid:
             print("The data is valid GeoJSON!")
         
-        geometry = GEOSGeometry(str(geojson_obj))
+        geometry = GEOSGeometry.json(str(geojson_obj))
         print(geometry)
     except Exception as e:
         print(e)
