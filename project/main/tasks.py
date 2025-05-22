@@ -9,7 +9,7 @@ from helpers.general.utils import ok_url_response
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,), 
-    retry_backoff=60, 
+    retry_backoff=0.5,#60, 
     max_retries=3
 )
 def onboard_collection(self, cacheKey):
