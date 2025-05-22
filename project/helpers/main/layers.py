@@ -1,8 +1,18 @@
+
+import json
+
 from helpers.base.utils import get_response
 
 def validate_geojson(url, name=None):
     response, status = get_response(url)
-    print(response, status)
+    if not status or (status < 200 or status >= 400):
+        return
+    
+    try:
+        geojson_data = response.json()
+        print(json.dumps(geojson_data, indent=4))
+    except:
+        pass
 
 def validate_csv(url, name=None):
     pass

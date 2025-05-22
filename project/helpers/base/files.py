@@ -5,7 +5,7 @@ import zipfile
 import os
 from io import BytesIO
 
-from helpers.base.utils import get_response
+from helpers.general.utils import get_response
 
 def extract_zip(zip_file, base_path=""):
     files = []
@@ -27,7 +27,7 @@ def extract_zip(zip_file, base_path=""):
 def get_file_names(url):
     try:
         response, status = get_response(url)
-        if status and (status < 200 or status >= 400):
+        if not status or (status < 200 or status >= 400):
             raise Exception("Failed to download file.")
         
         content_type = response.headers.get('Content-Type', '')
