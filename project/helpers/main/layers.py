@@ -60,7 +60,7 @@ def validate_csv(url, name, params):
 
         xField = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES]+[None])[0])
         yField = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES]+[None])[0])
-        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(xField, yField))
+        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
         print(gdf)
     except Exception as e:
         print(e)
