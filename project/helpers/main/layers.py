@@ -2,7 +2,9 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 
 import json
 import geojson
-from shapely.geometry import shape
+import pandas as pd
+import io
+
 
 from helpers.base.utils import get_response
 
@@ -30,16 +32,26 @@ def validate_geojson(url, name=None):
     
     try:
         geojson_data = response.json()
-        geojson_obj = geojson.loads(json.dumps(geojson_data))
+        geojson_obj = geojson.loads(geojson_data)
         if not geojson_obj.is_valid:
             return
-
         return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
     except Exception as e:
         print(e)
 
 def validate_csv(url, name=None):
-    pass
+    response, status = get_response(url)
+    if not status or (status < 200 or status >= 400):
+        return
+    
+    try:
+        geojson_data = response.json()
+        geojson_obj = geojson.loads(json.dumps(geojson_data))
+        # if not geojson_obj.is_valid:
+        #     return
+        # return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
+    except Exception as e:
+        print(e)
 
 def validate_file(url, name=None):
     pass
