@@ -15,8 +15,8 @@ def validate_geojson(url, name=None):
             print("The data is valid GeoJSON!")
         else:
             print("Invalid GeoJSON format.")
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 def validate_csv(url, name=None):
     pass
