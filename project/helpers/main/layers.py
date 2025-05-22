@@ -5,8 +5,19 @@ import geojson
 import pandas as pd, geopandas as gpd
 import io
 
-
 from helpers.base.utils import get_response
+
+LONGITUDE_ALIASES = [
+    'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
+    'lambda', 'meridian', 'geo_x', 'geom_x', 'x_coord', 
+    'east_west', 'west_east', 'horizontal_position', 'east', 'west'
+]
+
+LATITUDE_ALIASES = [
+    'y', 'lat', 'latitude', 'northing', 'southing',
+    'phi', 'parallel', 'geo_y', 'geom_y', 'y_coord',
+    'north_south', 'south_north', 'vertical_position', 'north', 'south'
+]
 
 def get_geojson_bbox_polygon(geojson):
     geometries = [
@@ -45,8 +56,13 @@ def validate_csv(url, name, params):
     try:
         data = io.StringIO(response.text)
         df = pd.read_csv(data)
-        print(df.columns)
-        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
+
+        xField = params.get('xField', ([i for i in LONGITUDE_ALIASES if i in df.columns]+[None])[0])
+        yField = params.get('yField', ([i for i in LATITUDE_ALIASES if i in df.columns]+[None])[0])
+
+        print(xField, yField)
+
+        # gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
     except Exception as e:
         print(e)
 
