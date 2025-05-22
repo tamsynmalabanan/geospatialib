@@ -31,8 +31,8 @@ def validate_geojson(url, name=None):
         return
     
     try:
-        geojson_data = response.json()
-        geojson_obj = geojson.loads(geojson_data)
+        # geojson_data = response.json()
+        geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
             return
         return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
