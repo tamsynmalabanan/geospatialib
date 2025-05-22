@@ -5,12 +5,12 @@ from urllib.parse import unquote
 
 from main.tasks import onboard_collection
 from main.models import Collection
-from helpers.general.utils import (
+from helpers.base.utils import (
     get_first_substring_match, 
     create_cache_key, 
     ok_url_response
 )
-from helpers.general.files import get_file_names
+from helpers.base.files import get_file_names
 
 def guess_format_from_url(url):
     if not url:

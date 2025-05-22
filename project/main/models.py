@@ -2,7 +2,7 @@ from django.contrib.gis.db import models
 
 from urllib.parse import urlparse
 
-from helpers.general.models import dict_to_choices
+from helpers.base.models import dict_to_choices
 from . import choices
 
 class SpatialRefSys(models.Model):

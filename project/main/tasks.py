@@ -4,7 +4,7 @@ from celery import shared_task
 import requests
 
 from .models import URL, Collection, Layer
-from helpers.general.utils import ok_url_response
+from helpers.base.utils import ok_url_response
 
 @shared_task(
     bind=True, 

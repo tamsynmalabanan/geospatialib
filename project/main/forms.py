@@ -7,8 +7,8 @@ from urllib.parse import unquote
 
 
 from . import choices
-from helpers.general.utils import dict_to_choices
-from helpers.gis.layers import guess_format_from_url
+from helpers.base.utils import dict_to_choices
+from helpers.main.layers import guess_format_from_url
 
 class ValidateCollectionForm(forms.Form):
     url = forms.URLField(
