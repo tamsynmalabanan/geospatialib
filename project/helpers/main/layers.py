@@ -62,7 +62,7 @@ def validate_csv(url, name, params):
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
         geojson_str = gdf.to_json()
         geojson_obj = json.loads(geojson_str)
-        print(geojson_obj)
+        return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
     except Exception as e:
         print(e)
 
