@@ -1,4 +1,4 @@
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, Polygon
 
 import json
 import geojson
@@ -28,8 +28,8 @@ def validate_geojson(url, name=None):
                 maxx = max(maxx, bbox[2])
                 maxy = max(maxy, bbox[3])
 
-            final_bbox = (minx, miny, maxx, maxy)
-            print(f"Overall Bounding Box: {final_bbox}")
+            bbox = Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
+            print(bbox)
 
 
     except Exception as e:
