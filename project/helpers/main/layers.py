@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import GEOSGeometry
 
 import json
 import geojson
@@ -14,8 +15,9 @@ def validate_geojson(url, name=None):
         geojson_obj = geojson.loads(json.dumps(geojson_data))
         if geojson_obj.is_valid:
             print("The data is valid GeoJSON!")
-        else:
-            print("Invalid GeoJSON format.")
+        
+        geometry = GEOSGeometry(json.dumps(geojson_data))
+        print(geometry)
     except Exception as e:
         print(e)
 
