@@ -10,6 +10,7 @@ def validate_geojson(url, name=None):
     
     try:
         geojson_data = response.json()
+        print(geojson_data)
         print(json.dumps(geojson_data, indent=4))
     except:
         pass
