@@ -5,12 +5,13 @@ import requests
 
 from .models import URL, Collection, Layer
 from helpers.general.utils import ok_url_response
+from helpers.gis.layers import create_layer_instance
 
 # @shared_task
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,), 
-    retry_backoff=0.5, 
+    retry_backoff=60, 
     max_retries=3
 )
 def onboard_collection(self, cacheKey):
@@ -38,31 +39,29 @@ def onboard_collection(self, cacheKey):
 
         onboarded_layers = []
         layers = cached_collection['layers']
-        # for name, attrs in layers.items():
-        #     # get layer instance
-        #     # if not layer instance, validate layer
-        #     # if valid, create layer instance
-        #     layer_instance, created = Layer.objects.get_or_create(
-        #         collection=collection_instance,
-        #         name=name,
-        #         params=attrs,
-        #     )
-        #     # populate layer fields
+        for name, params in layers.items():
+            layer_instance - Layer.objects.filter(collection=collection_instance, name=name).first()
+            if not layer_instance:
+                layer_instance = create_layer_instance(url, format, name, params)
+                # layer_instance, created = Layer.objects.get_or_create(
+                #     collection=collection_instance,
+                #     name=name,
+                #     params=params,
+                # )
+            if layer_instance:
+                onboarded_layers.append(layer_instance.name)
         
-        # onboared_layers = set(collection_instance.layers.all().values_list('name', flat=True))
-
         onboarding_complete = set(layers.keys()) == set(onboarded_layers)
         last_retry = self.request.retries >= self.max_retries
 
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
             if collection_instance.layers.count() == 0:
-                collection_instance.delete()
-                return 
+                return collection_instance.delete()
             else:
                 return collection_instance
         else:
             raise Exception('Not all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
-        self.retry()
+        # self.retry()
