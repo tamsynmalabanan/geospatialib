@@ -24,7 +24,6 @@ def get_geojson_bbox_polygon(geojson):
 
     return Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
 
-
 def validate_geojson(url, name=None):
     response, status = get_response(url)
     if not status or (status < 200 or status >= 400):
@@ -46,8 +45,8 @@ def validate_csv(url, name, params):
     try:
         data = io.StringIO(response.text)
         df = pd.read_csv(data)
-        print(df)
-        # gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
+        print(df.head())
+        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
     except Exception as e:
         print(e)
 
