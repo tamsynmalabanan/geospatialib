@@ -1,5 +1,5 @@
 
-import json, geojson
+import geojson
 
 from helpers.base.utils import get_response
 
