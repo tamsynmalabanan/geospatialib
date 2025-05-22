@@ -6,12 +6,11 @@ import requests
 from .models import URL, Collection, Layer
 from helpers.general.utils import ok_url_response
 
-# @shared_task
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,), 
     retry_backoff=60, 
-    max_retries=0
+    max_retries=3
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)
@@ -53,8 +52,6 @@ def onboard_collection(self, cacheKey):
         
         onboarding_complete = set(layers.keys()) == set(onboarded_layers)
         last_retry = self.request.retries >= self.max_retries
-
-        print(onboarding_complete, last_retry)
         
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
@@ -66,4 +63,3 @@ def onboard_collection(self, cacheKey):
             raise Exception('Not all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
-        # self.retry()
