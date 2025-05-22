@@ -9,16 +9,23 @@ from helpers.general.utils import ok_url_response
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,), 
-    retry_backoff=0.5,#60, 
-    max_retries=3
+    retry_backoff=0.1, 
+    max_retries=1
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)
     if not cached_collection:
         return
-    
+
+    url = cached_collection.get('url')
+    format = cached_collection.get('format')
+    layers = cached_collection.get('layers')
+    if not all([url, format, layers]):
+        return
+
+    collection_instance = None
+
     try:
-        url = cached_collection['url']
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
             if ok_url_response(url):
@@ -28,18 +35,13 @@ def onboard_collection(self, cacheKey):
         if not url_instance:
             raise Exception('No URL instance exists or created.')
 
-        format = cached_collection['format']
         collection_instance = Collection.objects.filter(url=url_instance, format=format).first()
         if not collection_instance:
             collection_instance, created = Collection.objects.get_or_create(url=url_instance, format=format)
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
-        else:
-            collection_instance.retries = self.request.retries
-            collection_instance.save()
 
         onboarded_layers = []
-        layers = cached_collection['layers']
         for name, params in layers.items():
             layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
             if not layer_instance:
@@ -53,17 +55,20 @@ def onboard_collection(self, cacheKey):
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
         
-        if (set(layers.keys()) == set(onboarded_layers)) or (self.request.retries >= self.max_retries):
-            cache.delete(cacheKey)
-            if collection_instance.layers.count() == 0:
-                return collection_instance.delete()
-            else:
-                return collection_instance
-        else:
+        if set(layers.keys()) != set(onboarded_layers):
             raise Exception('Not all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
+
         if self.request.retries < self.max_retries:
             raise self.retry(exc=e)
-        else:
-            cache.delete(cacheKey)
+        
+        cache.delete(cacheKey)
+
+        if not collection_instance:
+            return
+        
+        if collection_instance.layers.count() > 0:
+            return collection_instance
+        
+        collection_instance.delete()
