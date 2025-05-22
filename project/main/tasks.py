@@ -56,7 +56,6 @@ def onboard_collection(self, cacheKey):
 
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
-            print(collection_instance.layers.count())
             if collection_instance.layers.count() == 0:
                 return collection_instance.delete()
             else:
