@@ -12,7 +12,7 @@ def validate_geojson(url, name=None):
     try:
         geojson_data = response.json()
         geojson_obj = geojson.loads(json.dumps(geojson_data))
-        if geojson.is_valid(geojson_obj):
+        if geojson_obj.is_valid:
             print("The data is valid GeoJSON!")
         else:
             print("Invalid GeoJSON format.")
