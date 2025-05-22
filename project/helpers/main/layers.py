@@ -20,7 +20,17 @@ def validate_geojson(url, name=None):
                 GEOSGeometry(json.dumps(feature["geometry"])) 
                 for feature in geojson_obj.get("features", [])
             ]
-            print(geometries)
+            minx, miny, maxx, maxy = float("inf"), float("inf"), float("-inf"), float("-inf")
+            for geom in geometries:
+                bbox = geom.extent
+                minx = min(minx, bbox[0])
+                miny = min(miny, bbox[1])
+                maxx = max(maxx, bbox[2])
+                maxy = max(maxy, bbox[3])
+
+            final_bbox = (minx, miny, maxx, maxy)
+            print(f"Overall Bounding Box: {final_bbox}")
+
 
     except Exception as e:
         print(e)
