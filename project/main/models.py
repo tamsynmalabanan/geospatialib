@@ -49,6 +49,8 @@ class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=512)
     params = models.JSONField('Params', blank=True, null=True)
+    bbox = models.PolygonField('Bounding Box', blank=True, null=True)
+
 
     class Meta:
         unique_together = ['collection', 'name']
