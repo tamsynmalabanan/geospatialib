@@ -45,7 +45,7 @@ def validate_csv(url, name, params):
     try:
         data = io.StringIO(response.text)
         df = pd.read_csv(data)
-        print(df.head())
+        print(df.columns)
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
     except Exception as e:
         print(e)
