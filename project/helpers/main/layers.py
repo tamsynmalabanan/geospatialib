@@ -1,4 +1,5 @@
 
+import json
 import geojson
 
 from helpers.base.utils import get_response
@@ -10,7 +11,7 @@ def validate_geojson(url, name=None):
     
     try:
         geojson_data = response.json()
-        geojson_obj = geojson.loads(str(geojson_data))
+        geojson_obj = geojson.loads(json.dumps(geojson_data))
         if geojson.is_valid(geojson_obj):
             print("The data is valid GeoJSON!")
         else:
