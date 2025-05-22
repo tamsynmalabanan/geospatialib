@@ -110,10 +110,6 @@ const pushURLParams = (url, params) => {
     return urlObj.toString()
 }
 
-const formatNumberWithCommas = (number) => {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
 const formatDecimalWithCommas = (number) => {
     let [integer, decimal] = number.toString().split(".")
     integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
