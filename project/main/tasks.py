@@ -11,7 +11,7 @@ from helpers.general.utils import ok_url_response
     bind=True, 
     autoretry_for=(Exception,), 
     retry_backoff=60, 
-    max_retries=3
+    max_retries=0
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)
@@ -56,6 +56,7 @@ def onboard_collection(self, cacheKey):
 
         if onboarding_complete or last_retry:
             cache.delete(cacheKey)
+            print(collection_instance.layers.count())
             if collection_instance.layers.count() == 0:
                 return collection_instance.delete()
             else:
