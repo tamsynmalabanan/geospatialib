@@ -35,6 +35,7 @@ class URL(models.Model):
 class Collection(models.Model):
     url:URL = models.ForeignKey("main.URL", verbose_name='URL', on_delete=models.CASCADE)
     format = models.CharField('Format', max_length=16, choices=dict_to_choices(choices.COLLECTION_FORMATS))
+    retries = models.IntegerField('Retries', default=0)
 
     class Meta:
         unique_together = ['url', 'format']
