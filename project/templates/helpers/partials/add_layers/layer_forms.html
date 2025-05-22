@@ -25,6 +25,7 @@
                     <input id="{{id}}" type="text" name='type' value="{{attrs.type}}" class='form-control form-control-sm' readonly>
                     <label for="{{id}}">Type</label>
                 </div>
+                {{attrs}}
                 {% if attrs.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
@@ -34,8 +35,8 @@
                             type="text" 
                             name='xField' 
                             class='form-control form-control-sm' 
+                            value="{{value}}"
                             {% if value %}
-                                value="{{value}}"
                             {% else %}
                                 {% comment %} hx-post {% endcomment %}
                             {% endif %}
@@ -50,8 +51,8 @@
                             type="text" 
                             name='yField' 
                             class='form-control form-control-sm'
+                            value="{{value}}"
                             {% if value %}
-                                value="{{value}}"
                             {% else %}
                                 {% comment %} hx-post {% endcomment %}
                             {% endif %}
