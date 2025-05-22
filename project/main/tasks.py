@@ -52,8 +52,6 @@ def onboard_collection(self, cacheKey):
 
                 layer_instance, created = Layer.objects.get_or_create(**{
                     'collection': collection_instance,
-                    'name': name,
-                    'params': params,
                     **data
                 })
             if layer_instance:

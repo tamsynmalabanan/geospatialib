@@ -35,7 +35,7 @@ def get_geojson_bbox_polygon(geojson):
 
     return Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
 
-def validate_geojson(url, name=None):
+def validate_geojson(url, name, params):
     response, status = get_response(url)
     if not status or (status < 200 or status >= 400):
         return
@@ -44,7 +44,11 @@ def validate_geojson(url, name=None):
         geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
             return
-        return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
+        return {
+            'name': name,
+            'params': params,
+            'bbox':get_geojson_bbox_polygon(geojson_obj)
+        }
     except Exception as e:
         print(e)
 
@@ -62,7 +66,13 @@ def validate_csv(url, name, params):
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
         geojson_str = gdf.to_json()
         geojson_obj = json.loads(geojson_str)
-        return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
+        params['xField'] = xField
+        params['yField'] = yField
+        return {
+            'name': name,
+            'params': params,
+            'bbox':get_geojson_bbox_polygon(geojson_obj)
+        }
     except Exception as e:
         print(e)
 
