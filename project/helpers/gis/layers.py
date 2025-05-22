@@ -88,6 +88,3 @@ def get_collection_layers(url, format=None, delay=True):
                 onboard_collection(cacheKey)
 
     return layers
-
-def create_layer_instance(url, format, name, params):
-    pass
