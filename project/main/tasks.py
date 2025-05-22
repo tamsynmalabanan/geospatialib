@@ -36,6 +36,7 @@ def onboard_collection(self, cacheKey):
             raise Exception('No Collection instance exists or created.')
         else:
             collection_instance.retries = self.request.retries
+            collection_instance.save()
 
         onboarded_layers = []
         layers = cached_collection['layers']
