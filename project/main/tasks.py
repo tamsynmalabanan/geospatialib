@@ -5,13 +5,13 @@ import requests
 
 from .models import URL, Collection, Layer
 from helpers.base.utils import ok_url_response
-from helpers.main.models import LAYER_VALIDATORS
+from helpers.main.layers import LAYER_VALIDATORS
 
 @shared_task(
     bind=True, 
-    autoretry_for=(Exception,), 
-    retry_backoff=0.1, 
-    max_retries=1
+    autoretry_for=(Exception,),
+    retry_backoff=1, 
+    max_retries=3,
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)

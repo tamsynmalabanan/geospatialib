@@ -3,7 +3,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
 from helpers.base.files import get_file_names
-from helpers.main.layers import get_collection_layers, get_layers, get_file_names
+from helpers.main.collection import get_collection_layers, get_layers, get_file_names
 from main.tasks import onboard_collection
 
 import requests

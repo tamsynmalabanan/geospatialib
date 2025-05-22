@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 import requests
 
-from helpers.main.layers import get_collection_layers, sort_layers
+from helpers.main.collection import get_collection_layers, sort_layers
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 
