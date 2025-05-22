@@ -57,8 +57,6 @@ def onboard_collection(self, cacheKey):
         
         if set(layers.keys()) != set(onboarded_layers):
             raise Exception('Not all layers have been onboarded.')
-            
-        return collection_instance
     except Exception as e:
         print('onboard_collection error', e)
 
