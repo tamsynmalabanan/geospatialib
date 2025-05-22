@@ -58,9 +58,8 @@ def validate_csv(url, name, params):
         df = pd.read_csv(data)
         print(df.head())
 
-        fields = [i.strip().lower() for i in df.columns]
-        xField = params.get('xField', ([i for i in LONGITUDE_ALIASES if i in fields]+[None])[0])
-        yField = params.get('yField', ([i for i in LATITUDE_ALIASES if i in fields]+[None])[0])
+        xField = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES]+[None])[0])
+        yField = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES]+[None])[0])
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(xField, yField))
         print(gdf)
     except Exception as e:
