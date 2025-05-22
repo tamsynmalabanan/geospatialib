@@ -2,6 +2,7 @@ from django.contrib.gis.geos import GEOSGeometry
 
 import json
 import geojson
+from shapely.geometry import shape
 
 from helpers.base.utils import get_response
 
@@ -16,8 +17,8 @@ def validate_geojson(url, name=None):
         if geojson_obj.is_valid:
             print("The data is valid GeoJSON!")
         
-        geometry = GEOSGeometry.json(str(geojson_obj))
-        print(geometry)
+        geometry = shape(geojson_obj)
+        print(geometry.bounds)
     except Exception as e:
         print(e)
 
