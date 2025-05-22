@@ -5,6 +5,7 @@ import requests
 
 from .models import URL, Collection, Layer
 from helpers.base.utils import ok_url_response
+from helpers.main.models import LAYER_VALIDATORS
 
 @shared_task(
     bind=True, 
@@ -45,7 +46,8 @@ def onboard_collection(self, cacheKey):
         for name, params in layers.items():
             layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
             if not layer_instance:
-                pass
+                if (LAYER_VALIDATORS[format](url, name)):
+                    pass
                 # layer_instance = create_layer_instance(url, format, name, params)
                 # layer_instance, created = Layer.objects.get_or_create(
                 #     collection=collection_instance,
