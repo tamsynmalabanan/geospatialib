@@ -50,16 +50,12 @@ def onboard_collection(self, cacheKey):
                 if not data:
                     continue
 
-                data.update({
+                layer_instance, created = Layer.objects.get_or_create(**{
                     'collection': collection_instance,
                     'name': name,
-                    # 'params': params,
+                    'params': params,
+                    **data
                 })
-                layer_instance, created = Layer.objects.get_or_create(
-                    collection=collection_instance,
-                    name=name,
-                    params=params,
-                )
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
         

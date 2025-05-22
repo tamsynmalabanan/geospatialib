@@ -1,5 +1,8 @@
+from helpers.base.utils import get_response
+
 def validate_geojson(url, name=None):
-    pass
+    response, status = get_response(url)
+    print(response, status)
 
 def validate_csv(url, name=None):
     pass
