@@ -63,7 +63,7 @@ def onboard_collection(self, cacheKey):
             raise Exception('Not all layers have been onboarded.')
     except Exception as e:
         print('onboard_collection error', e)
-        if self.request.retries >= self.max_retries:
+        if self.request.retries < self.max_retries:
             raise self.retry(exc=e)
         else:
             cache.delete(cacheKey)
