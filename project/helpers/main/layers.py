@@ -2,7 +2,7 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 
 import json
 import geojson
-import pandas as pd
+import pandas as pd, geopandas as gpd
 import io
 
 
@@ -31,7 +31,6 @@ def validate_geojson(url, name=None):
         return
     
     try:
-        # geojson_data = response.json()
         geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
             return
@@ -39,17 +38,16 @@ def validate_geojson(url, name=None):
     except Exception as e:
         print(e)
 
-def validate_csv(url, name=None):
+def validate_csv(url, name, params):
     response, status = get_response(url)
     if not status or (status < 200 or status >= 400):
         return
     
     try:
-        geojson_data = response.json()
-        geojson_obj = geojson.loads(json.dumps(geojson_data))
-        # if not geojson_obj.is_valid:
-        #     return
-        # return {'bbox':get_geojson_bbox_polygon(geojson_obj)}
+        data = io.StringIO(response.text)
+        df = pd.read_csv(data)
+        print(df)
+        # gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
     except Exception as e:
         print(e)
 

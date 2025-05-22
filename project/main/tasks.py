@@ -46,7 +46,7 @@ def onboard_collection(self, cacheKey):
         for name, params in layers.items():
             layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
             if not layer_instance:
-                data = LAYER_VALIDATORS[format](url, name)
+                data = LAYER_VALIDATORS[format](url, name, params)
                 if not data:
                     continue
 
