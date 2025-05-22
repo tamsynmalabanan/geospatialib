@@ -114,6 +114,13 @@ const formatNumberWithCommas = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+const formatDecimalWithCommas = (number) => {
+    let [integer, decimal] = number.toString().split(".")
+    integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    return integer + "." + decimal
+}
+
+
 const toggleCollapseElements = (parent) => {
     const collapseElements = Array.from(parent.querySelectorAll('.collapse'))
     const hide = collapseElements.some(el => el.classList.contains('show'))
