@@ -5,7 +5,7 @@ import zipfile
 import os
 from io import BytesIO
 
-from helpers.base.utils import get_response
+from helpers.base.utils import get_response, get_response_file
 
 def extract_zip(zip_file, base_path=""):
     files = []
@@ -26,18 +26,17 @@ def extract_zip(zip_file, base_path=""):
 
 def get_file_names(url):
     try:
-        response = get_response(url)
-        response.raise_for_status()
-        
-        content_type = response.headers.get('Content-Type', '')
+        file, content_type = get_response_file(url)
+        if not file or not content_type:
+            raise Exception('Failed to download file.')
+            
         extension = mimetypes.guess_extension(content_type)
-
         filename = url.split("/")[-1]
         if extension and not filename.endswith(extension):
             filename += extension
 
         if "zip" in content_type:
-            return extract_zip(BytesIO(response.content), filename)
+            return extract_zip(file, filename)
         
         return [filename]
     except Exception as e:

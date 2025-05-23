@@ -82,7 +82,10 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 def ok_url_response(url):
     try:
         response = get_response(url, header_only=True)
+        if not response:
+            raise Exception('No response.')
         response.raise_for_status()
+
         content_type = response.headers.get('Content-Type', '')
         return content_type or True
     except Exception as e:
@@ -105,14 +108,12 @@ def get_response(url, header_only=False, with_default_headers=False):
         return get_response(url, header_only=header_only, with_default_headers=True)
     
 def get_response_file(url):
-    response = get_response(url)
-    response.raise_for_status()
-    
-    content_type = response.headers.get('Content-Type', '')
-    extension = mimetypes.guess_extension(content_type)
-
-    filename = url.split("/")[-1]
-    if extension and not filename.endswith(extension):
-        filename += extension
-    
-    
+    try:
+        response = get_response(url)
+        if not response:
+            raise Exception('No response.')
+        response.raise_for_status()        
+        return io.BytesIO(response.content), response.headers.get('Content-Type', '')
+    except Exception as e:
+        print(e)
+        return None, None

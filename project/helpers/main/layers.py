@@ -38,6 +38,8 @@ def get_geojson_bbox_polygon(geojson):
 def validate_geojson(url, name, params):
     try:
         response = get_response(url)
+        if not response:
+            raise Exception('No response.')
         response.raise_for_status()
 
         geojson_obj = geojson.loads(response.text)
@@ -54,6 +56,8 @@ def validate_geojson(url, name, params):
 def validate_csv(url, name, params):
     try:
         response = get_response(url)
+        if not response:
+            raise Exception('No response.')
         response.raise_for_status()
 
         data = io.StringIO(response.text)
