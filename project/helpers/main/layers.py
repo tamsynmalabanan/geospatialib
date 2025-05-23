@@ -115,11 +115,13 @@ def validate_file(url, name, params):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
-            features = []
-            file.seek(0)
-            for feature in stream_geojson(file):
-                features.append(feature)
-            print(features)
+            text = file.read().decode("utf-8")
+            print(text)
+            # features = []
+            # file.seek(0)
+            # for feature in stream_geojson(file):
+            #     features.append(feature)
+            # print(features)
             # geojson_obj = {'features': features}
 
         if not geojson_obj:
