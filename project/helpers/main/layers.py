@@ -117,7 +117,7 @@ def validate_file(url, name, params):
         if name.endswith('.geojson'):
             file.seek(0)
             for feature in stream_geojson(file):
-                print(feature) 
+                print(type(feature)) 
 
 
         if not geojson_obj:
