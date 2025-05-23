@@ -109,8 +109,8 @@ def validate_file(url, name, params):
             print('decoding...')
             geojson_text = file.read().decode("utf-8")
             print('creating geojson...', geojson_text[:100])
-            # geojson_obj = json.loads(geojson_text)
-            # print('done')
+            geojson_obj = json.loads(geojson_text)
+            print('done')
 
             # file.seek(0)
             # for feature in stream_json(file):
