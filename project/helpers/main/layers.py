@@ -69,6 +69,7 @@ def validate_geojson(url, name, params):
         geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
             raise Exception('Invalid geojson.')
+        
         return {
             'name': name,
             'params': params,
@@ -114,10 +115,11 @@ def validate_file(url, name, params):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
-            # geojson_text = file.read().decode("utf-8")
+            features = []
             file.seek(0)
             for feature in stream_geojson(file):
-                print(feature) 
+                features.append(geojson.loads(feature))
+            print(features)
 
 
         if not geojson_obj:
