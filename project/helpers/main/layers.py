@@ -88,17 +88,24 @@ def validate_csv(url, name, params):
         print(e)
 
 def validate_file(url, name, params):
-    file_details = get_response_file(url)
-    if not file_details:
-        raise Exception('Failed to download file.')
-    
-    file = file_details.get('file')
-    filename = file_details.get('filename','')
-    
-    if "zip" in file_details.get('content_type', ''):
-        file = extract_zip(file, filename).get(name)
-    
-    print(file)
+    try:
+        file_details = get_response_file(url)
+        if not file_details:
+            raise Exception('Failed to download file.')
+        
+        file = file_details.get('file')
+        filename = file_details.get('filename','')
+        
+        if "zip" in file_details.get('content_type', ''):
+            file = extract_zip(file, filename).get(name)
+        
+        if name.endswith('csv'):
+            geojson_obj, params = csv_to_geojson(file, params)
+            if not geojson_obj:
+                raise Exception('No valid geojson.')
+            print(geojson_obj, params)
+    except Exception as e:
+        print(e)
         
 
 LAYER_VALIDATORS = {
