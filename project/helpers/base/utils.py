@@ -4,8 +4,10 @@ import string
 import random
 from collections import OrderedDict
 import requests
+import mimetypes
+import io
 
-REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
+DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
 def get_special_characters(value):
     scs = (list(string.punctuation) + [' '])
@@ -87,20 +89,34 @@ def ok_url_response(url):
     except Exception as e:
         return False
     
-def get_response(url, header_only=False):
+def get_response(url, header_only=False, with_default_headers=False):
+    response = None
+
     try:
-        response = requests.head(url) if header_only else requests.get(url)
-        ok_status = 200 <= response.status_code < 400
-        if  not ok_status:
-            response = requests.get(url, headers=REQUEST_HEADERS)
-            ok_status = 200 <= response.status_code < 400
-        return [response, ok_status]
+        if header_only and not with_default_headers:
+            response = requests.head(url)
+        else:
+            response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else None)
+        if not with_default_headers:   
+            response.raise_for_status()
     except Exception as e:
-        return [None, None]
+        if with_default_headers:
+            return None
+        response = get_response(url, header_only=header_only, with_default_headers=True)
+    
+    return response, (response and 200 <= response.status_code < 400)
+
     
 def get_response_file(url):
     response, ok_status = get_response(url)
     if not ok_status:
         raise Exception("Failed to download file.")
+    
+    content_type = response.headers.get('Content-Type', '')
+    extension = mimetypes.guess_extension(content_type)
+
+    filename = url.split("/")[-1]
+    if extension and not filename.endswith(extension):
+        filename += extension
     
     
