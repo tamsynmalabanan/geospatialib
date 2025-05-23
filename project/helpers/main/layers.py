@@ -105,7 +105,8 @@ def validate_file(url, name, params):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
-            geojson_obj = geojson.loads(file.read().decode("utf-8"))
+            print(file)
+            # geojson_obj = geojson.loads(file.read().decode("utf-8"))
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
