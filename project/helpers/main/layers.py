@@ -111,7 +111,7 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         bbox = get_geojson_bbox_polygon(geojson_obj)
-        print(bbox)
+        print(name, bbox)
         return {
             'name': name,
             'params': params,
