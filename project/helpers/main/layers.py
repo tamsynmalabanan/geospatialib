@@ -112,9 +112,9 @@ def validate_file(url, name, params):
             geojson_obj = json.loads(geojson_text)
             print('done')
 
-            file.seek(0)
-            for feature in stream_json(file):
-                print(feature)  # Process each feature separately
+            # file.seek(0)
+            # for feature in stream_json(file):
+            #     print(feature)  # Process each feature separately
 
 
         if not geojson_obj:
