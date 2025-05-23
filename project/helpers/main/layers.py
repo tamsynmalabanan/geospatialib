@@ -36,6 +36,21 @@ def get_geojson_bbox_polygon(geojson):
 
     return Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
 
+def csv_to_geojson(file, params):
+    try:
+        df = pd.read_csv(file)
+
+        xField = params['xField'] = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES]+[None])[0])
+        yField = params['yField'] = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES]+[None])[0])
+        if not xField or not yField:
+            raise Exception('No valid coordinate fields.')
+        
+        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
+        return geojson.loads(gdf.to_json()), params
+    except Exception as e:
+        print(e)
+        return None, None
+
 def validate_geojson(url, name, params):
     try:
         response = get_valid_response(url)
@@ -60,20 +75,10 @@ def validate_csv(url, name, params):
             raise Exception('No valid response.')
 
         data = io.StringIO(response.text)
-        df = pd.read_csv(data)
+        geojson_obj, params = csv_to_geojson(data, params)
+        if not geojson_obj:
+            raise Exception('No valid geojson.')
 
-        xField = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES]+[None])[0])
-        yField = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES]+[None])[0])
-        if not xField or not yField:
-            return
-        
-        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
-        geojson_str = gdf.to_json()
-        geojson_obj = json.loads(geojson_str)
-        
-        params['xField'] = xField
-        params['yField'] = yField
-        
         return {
             'name': name,
             'params': params,
@@ -86,12 +91,14 @@ def validate_file(url, name, params):
     file_details = get_response_file(url)
     if not file_details:
         raise Exception('Failed to download file.')
+    
     file = file_details.get('file')
     filename = file_details.get('filename','')
+    
     if "zip" in file_details.get('content_type', ''):
-        files = extract_zip(file, filename)
-        print(files)
-    print(file_details)
+        file = extract_zip(file, filename).get(name)
+    
+    print(file)
         
 
 LAYER_VALIDATORS = {
