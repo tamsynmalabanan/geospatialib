@@ -59,7 +59,7 @@ def validate_geojson(url, name, params):
 
         geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
-            return
+            raise Exception('Invalif geojson.')
         return {
             'name': name,
             'params': params,
@@ -99,11 +99,21 @@ def validate_file(url, name, params):
         if "zip" in file_details.get('content_type', ''):
             file = extract_zip(file, filename).get(name)
         
+        geojson_obj = None
+
         if name.endswith('csv'):
             geojson_obj, params = csv_to_geojson(file, params)
             if not geojson_obj:
                 raise Exception('No valid geojson.')
-            print(geojson_obj, params)
+
+        if not geojson_obj:
+            raise Exception('No geojson.')
+
+        return {
+            'name': name,
+            'params': params,
+            'bbox':get_geojson_bbox_polygon(geojson_obj)
+        }
     except Exception as e:
         print(e)
         
