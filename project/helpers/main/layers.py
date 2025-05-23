@@ -90,6 +90,7 @@ def validate_file(url, name, params):
     filename = file_details.get('filename','')
     if "zip" in file_details.get('content_type', ''):
         files = extract_zip(file, filename)
+        print(files)
     print(file_details)
         
 
