@@ -5,7 +5,8 @@ import geojson
 import pandas as pd, geopandas as gpd
 import io
 
-from helpers.base.utils import get_response
+from helpers.base.utils import get_valid_response, get_response_file
+from helpers.base.files import extract_zip
 
 LONGITUDE_ALIASES = [
     'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
@@ -37,10 +38,9 @@ def get_geojson_bbox_polygon(geojson):
 
 def validate_geojson(url, name, params):
     try:
-        response = get_response(url)
+        response = get_valid_response(url)
         if not response:
-            raise Exception('No response.')
-        response.raise_for_status()
+            raise Exception('No valid response.')
 
         geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
@@ -55,10 +55,9 @@ def validate_geojson(url, name, params):
 
 def validate_csv(url, name, params):
     try:
-        response = get_response(url)
+        response = get_valid_response(url)
         if not response:
-            raise Exception('No response.')
-        response.raise_for_status()
+            raise Exception('No valid response.')
 
         data = io.StringIO(response.text)
         df = pd.read_csv(data)
@@ -84,7 +83,12 @@ def validate_csv(url, name, params):
         print(e)
 
 def validate_file(url, name=None):
-    pass
+    file_details = get_response_file(url)
+    if not file_details:
+        raise Exception('Failed to download file.')
+    filename = file_details.get('filename','')
+    if "zip" in file_details.get('content_type', ''):
+        files = extract_zip(file_details.get('file'), filename)
 
 LAYER_VALIDATORS = {
     'geojson': validate_geojson,

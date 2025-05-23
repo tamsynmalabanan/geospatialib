@@ -81,37 +81,44 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def ok_url_response(url):
     try:
-        response = get_response(url, header_only=True)
+        response = get_valid_response(url, header_only=True)
         if not response:
-            raise Exception('No response.')
-        response.raise_for_status()
+            raise Exception('No valid response.')
 
         content_type = response.headers.get('Content-Type', '')
         return content_type or True
     except Exception as e:
         return False
     
-def get_response(url, header_only=False, with_default_headers=False):
+def get_valid_response(url, header_only=False, with_default_headers=False):
     try:
         if header_only and not with_default_headers:
             response = requests.head(url)
         else:
             response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else None)
-        if not with_default_headers:
-            response.raise_for_status()
+        response.raise_for_status()
         return response
     except Exception as e:
         if with_default_headers:
             return None
-        return get_response(url, header_only=header_only, with_default_headers=True)
+        return get_valid_response(url, header_only=header_only, with_default_headers=True)
     
 def get_response_file(url):
     try:
-        response = get_response(url)
+        response = get_valid_response(url)
         if not response:
-            raise Exception('No response.')
-        response.raise_for_status()        
-        return io.BytesIO(response.content), response.headers.get('Content-Type', '')
+            raise Exception('No valid response.')
+        
+        content_type = response.headers.get('Content-Type', '')
+        extension = mimetypes.guess_extension(content_type)
+        filename = url.split("/")[-1]
+        if extension and not filename.endswith(extension):
+            filename += extension
+        return {
+            'file': io.BytesIO(response.content), 
+            'content_type': content_type,
+            'filename': filename
+        }
     except Exception as e:
         print(e)
-        return None, None
+        return None
