@@ -118,7 +118,7 @@ def validate_file(url, name, params):
             features = []
             file.seek(0)
             for feature in stream_geojson(file):
-                features.append(geojson.loads(feature))
+                features.append(feature)
             print(features)
 
 
