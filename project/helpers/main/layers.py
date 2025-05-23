@@ -119,9 +119,9 @@ def validate_file(url, name, params):
             file.seek(0)
             for feature in stream_geojson(file):
                 print(feature)
-                # features.append(features)
+                features.append(features)
             # geojson_obj = {'features': features}
-            # print(features)
+            print(features[0])
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
