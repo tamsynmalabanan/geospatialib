@@ -27,7 +27,6 @@ def stream_geojson(file):
         yield feature
 
 def features_to_geometries(features):
-    print(features[0])
     return [
         GEOSGeometry(json.dumps(feature["geometry"]))
         for feature in features
