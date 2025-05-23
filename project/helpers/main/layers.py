@@ -131,11 +131,14 @@ def validate_file(url, name, params):
             # geojson_obj = json.loads(text)
             # print(geojson_obj)
 
+            # try manually getting the min max coords to make the bbox
+
             features = []
             file.seek(0)
             for feature in stream_geojson(file):
                 features.append(convert_decimal(feature))
-            geojson_obj = {'features': features}
+            print(features)
+            # geojson_obj = {'features': features}
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
