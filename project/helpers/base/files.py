@@ -8,19 +8,20 @@ from io import BytesIO
 from helpers.base.utils import get_response, get_response_file
 
 def extract_zip(zip_file, base_path=""):
-    files = []
+    files = {}
     
     with zipfile.ZipFile(zip_file, 'r') as zf:
-        for file in zf.namelist():
-            if file.endswith('/'):
+        for filename in zf.namelist():
+            if filename.endswith('/'):
                 continue
 
-            full_path = os.path.join(base_path, file)
-            if file.endswith('.zip'):
-                with zf.open(file) as sub_zip:
-                    files = files + extract_zip(BytesIO(sub_zip.read()), full_path)
-            else:
-                files.append(full_path)
+            full_path = os.path.join(base_path, filename)
+            with zf.open(filename) as f:
+                file = BytesIO(f.read())
+                if filename.endswith('.zip'):
+                    files.update(extract_zip(file, full_path))
+                else:
+                    files[full_path] = file
     
     return files
 
@@ -36,7 +37,7 @@ def get_file_names(url):
             filename += extension
 
         if "zip" in content_type:
-            return extract_zip(file, filename)
+            return extract_zip(file, filename).keys()
         
         return [filename]
     except Exception as e:

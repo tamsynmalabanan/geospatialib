@@ -92,14 +92,12 @@ def ok_url_response(url):
         return False
     
 def get_response(url, header_only=False, with_default_headers=False):
-    response = None
-
     try:
         if header_only and not with_default_headers:
             response = requests.head(url)
         else:
             response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else None)
-        if not with_default_headers:   
+        if not with_default_headers:
             response.raise_for_status()
         return response
     except Exception as e:
