@@ -36,8 +36,8 @@ def get_geojson_bbox_polygon(geojson):
     return Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
 
 def validate_geojson(url, name, params):
-    response, status = get_response(url)
-    if not status or (status < 200 or status >= 400):
+    response, ok_status = get_response(url)
+    if not ok_status:
         return
     
     try:
@@ -53,8 +53,8 @@ def validate_geojson(url, name, params):
         print(e)
 
 def validate_csv(url, name, params):
-    response, status = get_response(url)
-    if not status or (status < 200 or status >= 400):
+    response, ok_status = get_response(url)
+    if not ok_status:
         return
     
     try:

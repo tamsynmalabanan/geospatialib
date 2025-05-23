@@ -79,21 +79,28 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def ok_url_response(url):
     try:
-        response, status = get_response(url, header_only=True)
-        if status and (200 <= status < 400):
+        response, ok_status = get_response(url, header_only=True)
+        if ok_status:
             content_type = response.headers.get('Content-Type', '')
             return content_type or True
-        raise Exception(f'Response not ok: {status}')
+        raise Exception(f'Response not ok: {response.status_code}')
     except Exception as e:
         return False
     
 def get_response(url, header_only=False):
     try:
         response = requests.head(url) if header_only else requests.get(url)
-        status = response.status_code
-        if  status < 200 or status >= 400:
+        ok_status = 200 <= response.status_code < 400
+        if  not ok_status:
             response = requests.get(url, headers=REQUEST_HEADERS)
-            status = response.status_code
-        return [response, status]
+            ok_status = 200 <= response.status_code < 400
+        return [response, ok_status]
     except Exception as e:
         return [None, None]
+    
+def get_response_file(url):
+    response, ok_status = get_response(url)
+    if not ok_status:
+        raise Exception("Failed to download file.")
+    
+    

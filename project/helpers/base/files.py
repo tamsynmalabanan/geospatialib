@@ -26,8 +26,8 @@ def extract_zip(zip_file, base_path=""):
 
 def get_file_names(url):
     try:
-        response, status = get_response(url)
-        if not status or (status < 200 or status >= 400):
+        response, ok_status = get_response(url)
+        if not ok_status:
             raise Exception("Failed to download file.")
         
         content_type = response.headers.get('Content-Type', '')
@@ -44,12 +44,3 @@ def get_file_names(url):
     except Exception as e:
         print(e)
         return []
-    
-def get_file_raw_data(file_path):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            return file.read()
-    except Exception as error:
-        raise error
-    
-
