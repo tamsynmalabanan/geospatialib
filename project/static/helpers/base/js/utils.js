@@ -113,7 +113,7 @@ const pushURLParams = (url, params) => {
 const formatNumberWithCommas = (number) => {
     let [integer, decimal] = number.toString().split(".")
     integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    return integer + "." + decimal
+    return integer + (decimal ? "." + decimal : '')
 }
 
 const toggleCollapseElements = (parent) => {
