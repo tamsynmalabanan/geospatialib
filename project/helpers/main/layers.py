@@ -5,6 +5,8 @@ import geojson
 import pandas as pd, geopandas as gpd
 import io
 import ijson
+from decimal import Decimal
+
 
 from helpers.base.utils import get_valid_response, get_response_file
 from helpers.base.files import extract_zip
@@ -97,6 +99,16 @@ def validate_csv(url, name, params):
     except Exception as e:
         print(e)
 
+def convert_decimal(obj):
+    """Recursively converts Decimal objects to float."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    elif isinstance(obj, list):
+        return [convert_decimal(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: convert_decimal(value) for key, value in obj.items()}
+    return obj
+
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
@@ -122,7 +134,7 @@ def validate_file(url, name, params):
             features = []
             file.seek(0)
             for feature in stream_geojson(file):
-                features.append(feature)
+                features.append(convert_decimal(feature))
             print(features)
             geojson_obj = {'features': features}
 
