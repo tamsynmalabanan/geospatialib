@@ -26,11 +26,14 @@ def stream_geojson(file):
     for feature in parser:
         yield feature
 
-def get_geojson_bbox_polygon(geojson):
-    geometries = [
-        GEOSGeometry(json.dumps(feature["geometry"])) 
-        for feature in geojson.get("features", [])
+def features_to_geometries(features):
+    return [
+        GEOSGeometry(json.dumps(feature["geometry"]))
+        for feature in features
     ]
+
+def get_geojson_bbox_polygon(geojson):
+    geometries = features_to_geometries(geojson.get("features", []))
 
     minx, miny, maxx, maxy = float("inf"), float("inf"), float("-inf"), float("-inf")
     for geom in geometries:
