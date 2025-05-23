@@ -27,12 +27,14 @@ def stream_geojson(file):
         yield feature
 
 def features_to_geometries(features):
+    print(features[0])
     return [
         GEOSGeometry(json.dumps(feature["geometry"]))
         for feature in features
     ]
 
 def get_geojson_bbox_polygon(geojson):
+    print(geojson.get("features", []))
     geometries = features_to_geometries(geojson.get("features", []))
 
     minx, miny, maxx, maxy = float("inf"), float("inf"), float("-inf"), float("-inf")
@@ -124,9 +126,7 @@ def validate_file(url, name, params):
         if not geojson_obj:
             raise Exception('No valid geojson.')
 
-        print('1')
         bbox = get_geojson_bbox_polygon(geojson_obj)
-        print('2')
         return {
             'name': name,
             'params': params,
