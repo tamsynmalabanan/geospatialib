@@ -21,8 +21,6 @@ def onboard_collection(self, cacheKey):
     url = cached_collection.get('url')
     format = cached_collection.get('format')
     layers = cached_collection.get('layers')
-    if not all([url, format, layers]):
-        return
 
     collection_instance = None
 
@@ -59,20 +57,14 @@ def onboard_collection(self, cacheKey):
         
         if set(layers.keys()) != set(onboarded_layers):
             raise Exception('Not all layers have been onboarded.')
-            
-        return collection_instance
     except Exception as e:
         print('onboard_collection error', e)
 
         if self.request.retries < self.max_retries:
             raise self.retry(exc=e)
-        
-        cache.delete(cacheKey)
 
-        if not collection_instance:
-            return
-        
-        if collection_instance.layers.count() > 0:
-            return collection_instance
-        
-        collection_instance.delete()
+        if collection_instance.layers.count() == 0:
+            collection_instance.delete()
+
+    cache.delete(cacheKey)
+    return collection_instance
