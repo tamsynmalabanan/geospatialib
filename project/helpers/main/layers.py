@@ -36,11 +36,10 @@ def get_geojson_bbox_polygon(geojson):
     return Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
 
 def validate_geojson(url, name, params):
-    response, ok_status = get_response(url)
-    if not ok_status:
-        return
-    
     try:
+        response = get_response(url)
+        response.raise_for_status()
+
         geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
             return
@@ -53,11 +52,10 @@ def validate_geojson(url, name, params):
         print(e)
 
 def validate_csv(url, name, params):
-    response, ok_status = get_response(url)
-    if not ok_status:
-        return
-    
     try:
+        response = get_response(url)
+        response.raise_for_status()
+
         data = io.StringIO(response.text)
         df = pd.read_csv(data)
 

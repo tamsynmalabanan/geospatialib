@@ -81,11 +81,10 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def ok_url_response(url):
     try:
-        response, ok_status = get_response(url, header_only=True)
-        if ok_status:
-            content_type = response.headers.get('Content-Type', '')
-            return content_type or True
-        raise Exception(f'Response not ok: {response.status_code}')
+        response = get_response(url, header_only=True)
+        response.raise_for_status()
+        content_type = response.headers.get('Content-Type', '')
+        return content_type or True
     except Exception as e:
         return False
     
@@ -99,18 +98,15 @@ def get_response(url, header_only=False, with_default_headers=False):
             response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else None)
         if not with_default_headers:   
             response.raise_for_status()
+        return response
     except Exception as e:
         if with_default_headers:
             return None
-        response = get_response(url, header_only=header_only, with_default_headers=True)
-    
-    return response, (response and 200 <= response.status_code < 400)
-
+        return get_response(url, header_only=header_only, with_default_headers=True)
     
 def get_response_file(url):
-    response, ok_status = get_response(url)
-    if not ok_status:
-        raise Exception("Failed to download file.")
+    response = get_response(url)
+    response.raise_for_status()
     
     content_type = response.headers.get('Content-Type', '')
     extension = mimetypes.guess_extension(content_type)

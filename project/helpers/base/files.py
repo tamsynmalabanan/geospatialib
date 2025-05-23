@@ -26,9 +26,8 @@ def extract_zip(zip_file, base_path=""):
 
 def get_file_names(url):
     try:
-        response, ok_status = get_response(url)
-        if not ok_status:
-            raise Exception("Failed to download file.")
+        response = get_response(url)
+        response.raise_for_status()
         
         content_type = response.headers.get('Content-Type', '')
         extension = mimetypes.guess_extension(content_type)
