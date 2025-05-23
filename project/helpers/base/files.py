@@ -4,6 +4,7 @@ import mimetypes
 import zipfile
 import os
 from io import BytesIO
+import json
 
 from helpers.base.utils import get_valid_response, get_response_file
 
@@ -37,3 +38,8 @@ def get_file_names(url):
     except Exception as e:
         print(e)
         return []
+
+def stream_json(file):
+    for line in file:
+        yield json.loads(line)
+

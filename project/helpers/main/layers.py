@@ -6,7 +6,7 @@ import pandas as pd, geopandas as gpd
 import io
 
 from helpers.base.utils import get_valid_response, get_response_file
-from helpers.base.files import extract_zip
+from helpers.base.files import extract_zip, stream_json
 
 LONGITUDE_ALIASES = [
     'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
@@ -105,15 +105,19 @@ def validate_file(url, name, params):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
-            print(name, 'creating geojson...')
-            geojson_obj = json.loads(file.read().decode("utf-8"))
-            print(name, 'done')
+            # print(name, 'creating geojson...')
+            # geojson_obj = json.loads(file.read().decode("utf-8"))
+            # print(name, 'done')
+
+            file.seek(0)
+            for feature in stream_json(file):
+                print(feature)  # Process each feature separately
+
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
 
         bbox = get_geojson_bbox_polygon(geojson_obj)
-        print(name, bbox)
         return {
             'name': name,
             'params': params,
