@@ -66,7 +66,7 @@ def validate_geojson(url, name, params):
         if not response:
             raise Exception('No valid response.')
 
-        geojson_obj = json.loads(response.text)
+        geojson_obj = geojson.loads(response.text)
         if not geojson_obj.is_valid:
             raise Exception('Invalid geojson.')
         return {
