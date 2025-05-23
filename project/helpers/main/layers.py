@@ -120,6 +120,7 @@ def validate_file(url, name, params):
             for feature in stream_geojson(file):
                 features.append(feature)
             print(features)
+            print(type(features[0]))
 
 
         if not geojson_obj:
