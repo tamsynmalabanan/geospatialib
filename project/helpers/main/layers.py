@@ -46,7 +46,7 @@ def csv_to_geojson(file, params):
             raise Exception('No valid coordinate fields.')
         
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
-        return geojson.loads(gdf.to_json()), params
+        return json.loads(gdf.to_json()), params
     except Exception as e:
         print(e)
         return None, None
@@ -57,7 +57,7 @@ def validate_geojson(url, name, params):
         if not response:
             raise Exception('No valid response.')
 
-        geojson_obj = geojson.loads(response.text)
+        geojson_obj = json.loads(response.text)
         if not geojson_obj.is_valid:
             raise Exception('Invalif geojson.')
         return {
@@ -106,7 +106,7 @@ def validate_file(url, name, params):
 
         if name.endswith('.geojson'):
             print(name, 'creating geojson...')
-            geojson_obj = geojson.loads(file.read().decode("utf-8"))
+            geojson_obj = json.loads(file.read().decode("utf-8"))
             print(name, 'done')
 
         if not geojson_obj:
