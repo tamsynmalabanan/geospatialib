@@ -131,8 +131,9 @@ def validate_file(url, name, params):
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
-                    for feature in src:
-                        print(shape(feature['geometry']))
+                    print(src.bounds)
+                    # for feature in src:
+                    #     print(shape(feature['geometry']))
 
             # text = file.read().decode("utf-8")
             # geojson_obj = json.loads(text)
