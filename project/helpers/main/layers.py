@@ -8,6 +8,7 @@ import io
 import ijson
 from decimal import Decimal
 from fiona.io import MemoryFile
+from shapely.geometry import shape
 
 from helpers.base.utils import get_valid_response, get_response_file
 from helpers.base.files import extract_zip
@@ -128,15 +129,14 @@ def validate_file(url, name, params):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
-            # text = file.read().decode("utf-8")
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
                     for feature in src:
-                        print(feature)
+                        print(shape(feature['geometry']))
+
+            # text = file.read().decode("utf-8")
             # geojson_obj = json.loads(text)
             # print(geojson_obj)
-
-            # try manually getting the min max coords to make the bbox
 
             # features = []
             # file.seek(0)
