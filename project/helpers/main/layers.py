@@ -132,15 +132,11 @@ def validate_file(url, name, params):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
                     w,s,e,n = src.bounds
-                    print(geojson.FeatureCollection([geojson.Feature(
+                    geojson_obj = geojson.FeatureCollection([geojson.Feature(
                             geometry=geojson.Polygon([[
-                            (w, s), 
-                            (e, s), 
-                            (e, n), 
-                            (w, n), 
-                            (w, s)
+                            (w, s), (e, s), (e, n), (w, n), (w, s)
                         ]])
-                    )]))
+                    )])
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
