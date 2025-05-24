@@ -39,15 +39,15 @@ def features_to_geometries(features):
 def get_geojson_bbox_polygon(geojson):
     geometries = features_to_geometries(geojson.get("features", []))
 
-    minx, miny, maxx, maxy = float("inf"), float("inf"), float("-inf"), float("-inf")
+    w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
     for geom in geometries:
         bbox = geom.extent
-        minx = min(minx, bbox[0])
-        miny = min(miny, bbox[1])
-        maxx = max(maxx, bbox[2])
-        maxy = max(maxy, bbox[3])
+        w = min(w, bbox[0])
+        s = min(s, bbox[1])
+        e = max(e, bbox[2])
+        n = max(n, bbox[3])
 
-    return Polygon(((minx, miny), (maxx, miny), (maxx, maxy), (minx, maxy), (minx, miny)))
+    return Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
 
 def csv_to_geojson(file, params):
     try:
@@ -131,20 +131,16 @@ def validate_file(url, name, params):
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
-                    print(src.bounds)
-                    # for feature in src:
-                    #     print(shape(feature['geometry']))
-
-            # text = file.read().decode("utf-8")
-            # geojson_obj = json.loads(text)
-            # print(geojson_obj)
-
-            # features = []
-            # file.seek(0)
-            # for feature in stream_geojson(file):
-            #     features.append(feature)
-            # print(features)
-            # geojson_obj = {'features': features}
+                    w,s,e,n = src.bounds
+                    geojson_obj = geojson.FeatureCollection([
+                        geojson.Polygon([[
+                            (w, s), 
+                            (e, s), 
+                            (e, n), 
+                            (w, n), 
+                            (w, s)
+                        ]])
+                    ])
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
