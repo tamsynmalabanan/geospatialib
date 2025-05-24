@@ -101,16 +101,6 @@ def validate_csv(url, name, params):
     except Exception as e:
         print(e)
 
-def convert_decimal(obj):
-    """Recursively converts Decimal objects to float."""
-    if isinstance(obj, Decimal):
-        return float(obj)
-    elif isinstance(obj, list):
-        return [convert_decimal(item) for item in obj]
-    elif isinstance(obj, dict):
-        return {key: convert_decimal(value) for key, value in obj.items()}
-    return obj
-
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
@@ -149,8 +139,7 @@ def validate_file(url, name, params):
         }
     except Exception as e:
         print('validate_file error', e)
-        
-
+       
 LAYER_VALIDATORS = {
     'geojson': validate_geojson,
     'csv': validate_csv,
