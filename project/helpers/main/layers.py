@@ -1,12 +1,13 @@
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 
+import fiona
 import json
 import geojson
 import pandas as pd, geopandas as gpd
 import io
 import ijson
 from decimal import Decimal
-
+from fiona.io import MemoryFile
 
 from helpers.base.utils import get_valid_response, get_response_file
 from helpers.base.files import extract_zip
@@ -127,17 +128,21 @@ def validate_file(url, name, params):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
-            # text = file.read().decode("utf-8")
+            geojson_data = file.read().decode("utf-8")
+            with MemoryFile(geojson_data) as memfile:
+                with memfile.open() as src:
+                    for feature in src:
+                        print(feature)
             # geojson_obj = json.loads(text)
             # print(geojson_obj)
 
             # try manually getting the min max coords to make the bbox
 
-            features = []
-            file.seek(0)
-            for feature in stream_geojson(file):
-                features.append(feature)
-            print(features)
+            # features = []
+            # file.seek(0)
+            # for feature in stream_geojson(file):
+            #     features.append(feature)
+            # print(features)
             # geojson_obj = {'features': features}
 
         if not geojson_obj:
