@@ -132,7 +132,7 @@ def validate_file(url, name, params):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
                     w,s,e,n = src.bounds
-                    geojson_obj = geojson.FeatureCollection([
+                    print(geojson.FeatureCollection([
                         geojson.Polygon([[
                             (w, s), 
                             (e, s), 
@@ -140,7 +140,7 @@ def validate_file(url, name, params):
                             (w, n), 
                             (w, s)
                         ]])
-                    ])
+                    ]))
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
@@ -152,7 +152,7 @@ def validate_file(url, name, params):
             'bbox': bbox
         }
     except Exception as e:
-        print(e)
+        print('validate_file error', e)
         
 
 LAYER_VALIDATORS = {
