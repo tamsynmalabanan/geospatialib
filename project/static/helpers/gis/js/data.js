@@ -20,6 +20,7 @@ const fetchCSV = async (url, xField, yField, {abortBtns, controller} = {}) => {
         controller,
         callback: async (response) => {
             const csv = await response.text()
+            console.log(csv)
             return csvToGeoJSON(csv, xField, yField)
         }
     }).catch(error => {
