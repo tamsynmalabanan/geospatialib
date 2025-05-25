@@ -14,15 +14,13 @@ const normalizeGeoJSON = async (geojson, {
         feature.geometry = featureGeom || defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
-            feature.geometry.coordinates = await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
-            console.log(feature.geometry.coordinates)
+            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
         }
         
         if (feature.id) feature.properties.feature_id = feature.id
         feature.properties = normalizeFeatureProperties(feature.properties)    
     }
 
-    console.log(geojson)
 }
 
 const normalizeFeatureProperties = (properties) => {
