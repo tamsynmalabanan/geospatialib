@@ -13,7 +13,7 @@ const normalizeGeoJSON = async (geojson, {
         feature.geometry = featureGeom || defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
-            await transformFeatureCoordinates(feature, crs, 4326)     
+            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
             delete geojson.crs   
         }
         
@@ -66,7 +66,7 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
     })
 }
 
-const transformFeatureCoordinates = async (feature, source, target) => {
+const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const source_text = `EPSG:${source}`
     if (!proj4.defs(source_text)) await fetchProj4Def(source)
 
