@@ -4,7 +4,7 @@ const fetchProj4Def = async (crs, {
 } = {}) => {
     for (const url of [
         `/htmx/srs_wkt/${crs}/`,
-        `https://spatialreference.org/ref/epsg/${crs}/ogcwkt`,
+        `https://spatialreference.org/ref/epsg/${crs.split(':')[crs.split(':').length-1]}/ogcwkt`,
     ]) {
         const def = await fetchTimeout(url, {
             abortBtns,
@@ -13,6 +13,7 @@ const fetchProj4Def = async (crs, {
                 const def = response.text()
                 const crs_text = `EPSG:${crs}`
                 proj4.defs(crs_text, def)
+
                 return proj4.defs(crs_text)
             },
             fetchParams: {headers: {'HX-Request': 'true'}}
