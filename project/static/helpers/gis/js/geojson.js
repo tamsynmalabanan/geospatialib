@@ -76,6 +76,8 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
         loopThroughCoordinates(coordinates, (coords) => {
             const newCoords = proj4(source_text, target_text, coords)
+            coords[0] = newCoords[0]
+            coords[1] = newCoords[1]
             console.log(coords, newCoords)
         })
 
