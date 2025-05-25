@@ -572,6 +572,8 @@ const csvToGeoJSON = (csv, xField, yField, {
     xDefault=0,
     yDefault=0,
 }={}) => {
+    console.log(csv, xField, yField)
+
     xField = xField.trim()
     yField = yField.trim()
 
