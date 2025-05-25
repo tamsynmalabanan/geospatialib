@@ -20,7 +20,6 @@ const normalizeGeoJSON = async (geojson, {
         if (feature.id) feature.properties.feature_id = feature.id
         feature.properties = normalizeFeatureProperties(feature.properties)    
     }
-
 }
 
 const normalizeFeatureProperties = (properties) => {
@@ -70,15 +69,15 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
 const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const source_text = `EPSG:${source}`
     if (!proj4.defs(source_text)) await fetchProj4Def(source)
-
+        
     const target_text = `EPSG:${target}`
     if (!proj4.defs(target_text)) await fetchProj4Def(target)
 
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
         loopThroughCoordinates(coordinates, (coords) => {
-            const projectedCoord = proj4(source_text, target_text, [coords[0], coords[1]]);
-            coords[0] = projectedCoord[0]
-            coords[1] = projectedCoord[1]
+            coords[0], coords[1] = proj4(source_text, target_text, [coords[0], coords[1]]);
+            // coords[0] = projectedCoord[0]
+            // coords[1] = projectedCoord[1]
         })
     }
 
