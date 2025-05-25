@@ -2,9 +2,10 @@ const fetchProj4Def = async (crs, {
     abortBtns,
     controller,
 } = {}) => {
+    const srid = crs.split(':')[crs.split(':').length-1]
     for (const url of [
-        `/htmx/srs_wkt/${crs}/`,
-        `https://spatialreference.org/ref/epsg/${crs.split(':')[crs.split(':').length-1]}/ogcwkt`,
+        `/htmx/srs_wkt/${srid}/`,
+        `https://spatialreference.org/ref/epsg/${srid}/ogcwkt`,
     ]) {
         const def = await fetchTimeout(url, {
             abortBtns,
