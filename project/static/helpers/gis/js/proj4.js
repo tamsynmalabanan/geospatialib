@@ -9,8 +9,8 @@ const fetchProj4Def = async (crs, {
         const def = await fetchTimeout(url, {
             abortBtns,
             controller,
-            callback: (response) => {
-                const def = response.text()
+            callback: async (response) => {
+                const def = await response.text()
                 const crs_text = `EPSG:${crs}`
                 proj4.defs(crs_text, def)
                 return proj4.defs(crs_text)
