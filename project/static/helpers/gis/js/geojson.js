@@ -86,7 +86,8 @@ const transformFeatureCoordinates = async (feature, source, target) => {
             multiFeatureIndex,
             geometryIndex
         ) => {
-            proj4(source_text, target_text, currentCoord)
+            const newCoords = proj4(source_text, target_text, currentCoord)
+            console.log(currentCoord, newCoords)
         })
     }
 }
