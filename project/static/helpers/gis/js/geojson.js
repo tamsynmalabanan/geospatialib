@@ -4,6 +4,7 @@ const normalizeGeoJSON = async (geojson, {
 } = {}) => {
     const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
     const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
+    delete geojson.crs   
     
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
@@ -13,10 +14,7 @@ const normalizeGeoJSON = async (geojson, {
         feature.geometry = featureGeom || defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
-            console.log(feature.geometry.coordinates)
-            const newCoords = await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
-            console.log(newCoords)
-            delete geojson.crs   
+            feature.geometry.coordinates = await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
         }
         
         if (feature.id) feature.properties.feature_id = feature.id
