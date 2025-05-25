@@ -70,10 +70,7 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const source_text = `EPSG:${source}`
     const target_text = `EPSG:${target}`
     
-    console.log(coordinates, source, target)
-    console.log(source_text, target_text)
-    console.log(proj4.defs(target_text))
-    console.log(proj4.defs(source_text))
+    console.log(fetchProj4Def(source_text))
     [source_text, target_text].forEach(async (crs) => {
         if (!proj4.defs(crs)) await fetchProj4Def(crs)
     })
