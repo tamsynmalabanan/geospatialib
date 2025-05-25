@@ -74,20 +74,20 @@ const transformFeatureCoordinates = async (feature, source, target) => {
     if (!proj4.defs(target_text)) await fetchProj4Def(target)
 
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
-        // loopThroughCoordinates(coordinates, (coords) => {
-        //     console.log(coords)
-        //     coords[0], coords[1] = proj4(source_text, target_text, coords)
-        // })
-
-        turf.coordEach(feature, (
-            currentCoord,
-            coordIndex,
-            featureIndex,
-            multiFeatureIndex,
-            geometryIndex
-        ) => {
-            currentCoord = proj4(source_text, target_text, currentCoord)
+        loopThroughCoordinates(coordinates, (coords) => {
+            const newCoords = proj4(source_text, target_text, coords)
+            console.log(coords, newCoords)
         })
+
+        // turf.coordEach(feature, (
+        //     currentCoord,
+        //     coordIndex,
+        //     featureIndex,
+        //     multiFeatureIndex,
+        //     geometryIndex
+        // ) => {
+        //     currentCoord = proj4(source_text, target_text, currentCoord)
+        // })
     }
 }
 
