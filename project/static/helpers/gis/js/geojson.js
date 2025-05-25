@@ -71,9 +71,9 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const target_text = `EPSG:${target}`
     
     console.log(proj4.defs(source_text), proj4.defs(target_text))
-    if (!proj4.defs(source_text)) await fetchProj4Def(source_text)
+    if (!proj4.defs(source_text)) await fetchProj4Def(source)
     console.log(proj4.defs(source_text), proj4.defs(target_text))
-    if (!proj4.defs(target_text)) await fetchProj4Def(target_text)
+    if (!proj4.defs(target_text)) await fetchProj4Def(target)
     console.log(proj4.defs(source_text), proj4.defs(target_text))
 
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
