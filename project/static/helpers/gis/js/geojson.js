@@ -578,28 +578,32 @@ const csvToGeoJSON = (csv, xField, yField, {
     
     const lines = csv.split("\n")
     const headers = lines[0].split(",").map(i => i.trim())
-    console.log(lines, headers)
     const features = []
 
     for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(",")
+        console.log(values)
         if (values.length !== headers.length) continue
-
+        
         const properties = {}
         headers.forEach((header, index) => {
             properties[header] = values[index]
         })
-
+        console.log(properties)
+        
         const lon = parseFloat(properties[xField])
         const lat = parseFloat(properties[yField])
-
+        console.log(lon, lat)
+        
         const feature = turf.point([
             !isNaN(lon) ? lon : xDefault, 
             !isNaN(lat) ? lat : yDefault, 
         ], properties)
-
+        console.log(feature)
+        
         features.push(feature)
     }
-
+    
+    console.log(features)
     return turf.featureCollection(features)
 }
