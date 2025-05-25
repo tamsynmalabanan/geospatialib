@@ -1,14 +1,10 @@
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 
-import fiona
 import json
 import geojson
 import pandas as pd, geopandas as gpd
 import io
-import ijson
-from decimal import Decimal
 from fiona.io import MemoryFile
-from shapely.geometry import shape
 
 from helpers.base.utils import get_valid_response, get_response_file
 from helpers.base.files import extract_zip
@@ -24,11 +20,6 @@ LATITUDE_ALIASES = [
     'phi', 'parallel', 'geo_y', 'geom_y', 'y_coord',
     'north_south', 'south_north', 'vertical_position', 'north', 'south'
 ]
-
-def stream_geojson(file):
-    parser = ijson.items(file, "features.item")
-    for feature in parser:
-        yield feature
 
 def features_to_geometries(features):
     return [
