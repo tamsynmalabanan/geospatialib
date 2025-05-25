@@ -13,7 +13,9 @@ const normalizeGeoJSON = async (geojson, {
         feature.geometry = featureGeom || defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
-            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
+            console.log(feature.geometry.coordinates)
+            const newCoords = await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
+            console.log(newCoords)
             delete geojson.crs   
         }
         
@@ -91,6 +93,8 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
         //     currentCoord = proj4(source_text, target_text, currentCoord)
         // })
     }
+
+    return coordinates
 }
 
 const createAttributionTable = (geojson) => {
