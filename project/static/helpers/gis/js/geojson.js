@@ -572,13 +572,13 @@ const csvToGeoJSON = (csv, xField, yField, {
     xDefault=0,
     yDefault=0,
 }={}) => {
-    console.log(csv, xField, yField)
-
+    
     xField = xField.trim()
     yField = yField.trim()
-
+    
     const lines = csv.split("\n")
     const headers = lines[0].split(",").map(i => i.trim())
+    console.log(lines, headers)
     const features = []
 
     for (let i = 1; i < lines.length; i++) {
