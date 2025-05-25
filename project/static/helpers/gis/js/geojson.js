@@ -21,6 +21,8 @@ const normalizeGeoJSON = async (geojson, {
         if (feature.id) feature.properties.feature_id = feature.id
         feature.properties = normalizeFeatureProperties(feature.properties)    
     }
+
+    console.log(geojson)
 }
 
 const normalizeFeatureProperties = (properties) => {
