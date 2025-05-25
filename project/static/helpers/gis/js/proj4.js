@@ -13,7 +13,6 @@ const fetchProj4Def = async (crs, {
                 const def = response.text()
                 const crs_text = `EPSG:${crs}`
                 proj4.defs(crs_text, def)
-
                 return proj4.defs(crs_text)
             },
             fetchParams: {headers: {'HX-Request': 'true'}}
