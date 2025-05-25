@@ -68,19 +68,18 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
 
 const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const source_text = `EPSG:${source}`
-    const target_text = `EPSG:${target}`
-    
-    console.log(proj4.defs(source_text), proj4.defs(target_text))
     if (!proj4.defs(source_text)) await fetchProj4Def(source)
-    console.log(proj4.defs(source_text), proj4.defs(target_text))
+
+    const target_text = `EPSG:${target}`
     if (!proj4.defs(target_text)) await fetchProj4Def(target)
-    console.log(proj4.defs(source_text), proj4.defs(target_text))
 
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
         loopThroughCoordinates(coordinates, (coords) => {
             coords[0], coords[1] = proj4(source_text, target_text, coords)
         })
     }
+
+    console.log(coordinates)
 
     return coordinates
 }
