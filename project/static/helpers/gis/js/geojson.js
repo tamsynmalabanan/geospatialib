@@ -13,7 +13,7 @@ const normalizeGeoJSON = async (geojson, {
         feature.geometry = featureGeom || defaultGeom
         
         if (crs && crs !== 4326 && !geomAssigned) {
-            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
+            await transformFeatureCoordinates(feature, crs, 4326)     
             delete geojson.crs   
         }
         
@@ -66,7 +66,7 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
     })
 }
 
-const transformGeoJSONCoordinates = async (coordinates, source, target) => {
+const transformFeatureCoordinates = async (feature, source, target) => {
     const source_text = `EPSG:${source}`
     if (!proj4.defs(source_text)) await fetchProj4Def(source)
 
@@ -78,11 +78,21 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
         //     console.log(coords)
         //     coords[0], coords[1] = proj4(source_text, target_text, coords)
         // })
+
+        turf.coordEach(feature, (
+            currentCoord,
+            coordIndex,
+            featureIndex,
+            multiFeatureIndex,
+            geometryIndex
+        ) => {
+            console.log(currentCoord,
+            coordIndex,
+            featureIndex,
+            multiFeatureIndex,
+            geometryIndex)
+        })
     }
-
-    console.log(coordinates)
-
-    return coordinates
 }
 
 const createAttributionTable = (geojson) => {
