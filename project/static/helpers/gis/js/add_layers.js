@@ -85,6 +85,7 @@ const handleAddLayersForm = () => {
         
         const source = getFileSource()
         const includedLayers = getIncludedLayers(source)
+        console.log(includedLayers)
 
         if (source === 'files') {
             const filesArray = await getValidFilesArray(fileInput.files)
