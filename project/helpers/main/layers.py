@@ -22,14 +22,14 @@ LATITUDE_ALIASES = [
     'north_south', 'south_north', 'vertical_position', 'north', 'south'
 ]
 
-def features_to_geometries(features):
+def features_to_geometries(features, srid):
     return [
-        GEOSGeometry(json.dumps(feature["geometry"]))
+        GEOSGeometry(json.dumps(feature["geometry"]), srid=srid.srid)
         for feature in features
     ]
 
-def get_geojson_bbox_polygon(geojson):
-    geometries = features_to_geometries(geojson.get("features", []))
+def get_geojson_bbox_polygon(geojson, srid):
+    geometries = features_to_geometries(geojson.get("features", []), srid)
 
     w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
     for geom in geometries:
@@ -73,7 +73,7 @@ def validate_geojson(url, name, params):
         ).first()
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid),
             'srid': srid
         })
 
@@ -122,7 +122,6 @@ def validate_file(url, name, params):
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
-                    print(vars(src.crs))
                     srid = SpatialRefSys.objects.filter(
                         srid=int(str(src.crs or '').split('EPSG:')[-1] or 4326)
                     ).first()
@@ -138,7 +137,7 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid),
             'srid': srid
         })
 
