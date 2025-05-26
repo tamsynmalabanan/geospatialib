@@ -111,20 +111,21 @@ def validate_file(url, name, params):
         
         if "zip" in file_details.get('content_type', ''):
             files = extract_zip(file, filename)
-            print(files, name)
             file = files.get(name)
         
         geojson_obj = None
+        srid = params.get('srid')
 
         if name.endswith('.csv'):
             geojson_obj, params = csv_to_geojson(file, params)
 
-        print(file)
-
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
-                    print(src.crs)
+                    srid = SpatialRefSys.objects.filter(
+                        srid=int((src.crs or '').split('EPSG:')[-1] or 4326)
+                    ).first()
+
                     w,s,e,n = src.bounds
                     geojson_obj = geojson.FeatureCollection([geojson.Feature(
                             geometry=geojson.Polygon([[
@@ -136,7 +137,8 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj)
+            'bbox':get_geojson_bbox_polygon(geojson_obj),
+            'srid': srid
         })
 
         return params
