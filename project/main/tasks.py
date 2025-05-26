@@ -47,7 +47,7 @@ def onboard_collection(self, cacheKey):
                 data = LAYER_VALIDATORS[format](url, name, params)
                 if not data:
                     continue
-
+                print(data)
                 layer_instance, created = Layer.objects.get_or_create(**{
                     'collection': collection_instance,
                     'name': name,
