@@ -45,9 +45,9 @@ const rawDataToLayerData = (rawData, type, {
             }
 
             if (geojson) {
-                // if (!geojson.crs && !isNaN(parseInt(srid)) && parseInt(srid) !== 4326) {
-                //     geojson.crs = {properties:{name:`EPSG::${srid}`}}
-                // }
+                if (!geojson.crs && !isNaN(parseInt(srid)) && parseInt(srid) !== 4326) {
+                    geojson.crs = {properties:{name:`EPSG::${srid}`}}
+                }
 
                 return geojson
             }
