@@ -175,7 +175,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     if (group?._name !== 'query') {
-        geojsonLayer._dbIndexedKey = dbIndexedKey || geojson ? (async () => {
+        geojsonLayer._dbIndexedKey = dbIndexedKey || geojson ? await (async () => {
             await normalizeGeoJSON(geojson)
             return saveToGeoJSONDB(geojson)
         })() : null
