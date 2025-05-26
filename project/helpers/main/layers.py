@@ -82,6 +82,8 @@ def validate_geojson(url, name, params):
                     ]])
                 )])
 
+                print(geojson_obj, srid)
+
 
         # geojson_obj = geojson.loads(response.text)
         # print(geojson_obj)
