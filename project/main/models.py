@@ -14,7 +14,7 @@ class SpatialRefSys(models.Model):
     proj4text = models.TextField()
 
     class Meta:
-        managed = False  # No migrations will be created for this model
+        managed = True
         db_table = 'spatial_ref_sys'
 
     def __str__(self):
