@@ -50,6 +50,7 @@ class Layer(models.Model):
     name = models.CharField('Name', max_length=512)
     params = models.JSONField('Params', blank=True, null=True)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
+    
 
     class Meta:
         unique_together = ['collection', 'name']
