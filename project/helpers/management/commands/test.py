@@ -26,7 +26,7 @@ class Command(BaseCommand):
         # # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/centroid.csv'
         # # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/cinemas.zip'
         # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-
-        # value = get_collection_layers(url, 'file', delay=False)
+        url = 'https://dataworks.calderdale.gov.uk/download/2w758/67h/cinemas.geojson'
+        value = get_collection_layers(url, 'file', delay=False)
         
         self.stdout.write(self.style.SUCCESS(value))
