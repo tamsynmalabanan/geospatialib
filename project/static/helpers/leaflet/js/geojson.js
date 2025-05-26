@@ -175,13 +175,10 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     if (group?._name !== 'query') {
-        console.log(dbIndexedKey ?? 'test')
         geojsonLayer._dbIndexedKey = dbIndexedKey ?? (geojson ? await (async () => {
             await normalizeGeoJSON(geojson)
             return saveToGeoJSONDB(geojson)
         })() : null)
-
-        console.log(geojsonLayer._dbIndexedKey)
 
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
