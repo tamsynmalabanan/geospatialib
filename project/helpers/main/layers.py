@@ -23,10 +23,12 @@ LATITUDE_ALIASES = [
 ]
 
 def features_to_geometries(features, srid):
-    return [
-        GEOSGeometry(json.dumps(feature["geometry"]), srid=srid.srid)
+    geometries =  [
+        GEOSGeometry(json.dumps(feature["geometry"]))#, srid=srid.srid)
         for feature in features
     ]
+
+    return geometries
 
 def get_geojson_bbox_polygon(geojson, srid):
     geometries = features_to_geometries(geojson.get("features", []), srid)
