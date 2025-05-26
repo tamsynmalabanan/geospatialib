@@ -21,18 +21,17 @@ const saveToGeoJSONDB = (geojson, {
 
     const request = requestGeoJSONDB()
     request.onsuccess = async (e) => {
-        const db = e.target.result
-        const transaction = db.transaction(['geojsons'], 'readwrite')
-        const objectStore = transaction.objectStore('geojsons')
-
         if (normalize) {
             await normalizeGeoJSON(geojson)
             queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry
         }
-
+        
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
-
         console.log(id, geojson, queryExtent, expirationTime)
+
+        const db = e.target.result
+        const transaction = db.transaction(['geojsons'], 'readwrite')
+        const objectStore = transaction.objectStore('geojsons')
         objectStore.put({id, geojson, queryExtent, expirationTime})
     }
 
