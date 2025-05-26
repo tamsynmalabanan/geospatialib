@@ -13,7 +13,7 @@ const requestGeoJSONDB = () => {
 
 const saveToGeoJSONDB = (geojson, {
     id = `client;${generateRandomString()}`, 
-    queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry, 
+    queryExtent, 
     expirationDays=7,
     normalize=false,
 }={}) => {
@@ -25,7 +25,10 @@ const saveToGeoJSONDB = (geojson, {
         const transaction = db.transaction(['geojsons'], 'readwrite')
         const objectStore = transaction.objectStore('geojsons')
 
-        if (normalize) await normalizeGeoJSON(geojson)
+        if (normalize) {
+            await normalizeGeoJSON(geojson)
+            queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry
+        }
 
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
 

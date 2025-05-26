@@ -37,7 +37,7 @@ const rawDataToLayerData = (rawData, type, {
             let geojson
 
             if (type === 'geojson') {
-                return JSON.parse(rawData)
+                geojson = JSON.parse(rawData)
             }
         
             if (type === 'csv') {
@@ -48,7 +48,7 @@ const rawDataToLayerData = (rawData, type, {
                 if (!geojson.crs && !isNaN(parseInt(srid)) && parseInt(srid) !== 4326) {
                     geojson.crs = {properties:{name:`EPSG::${srid}`}}
                 }
-
+                
                 return geojson
             }
         }
