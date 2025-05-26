@@ -44,7 +44,9 @@ def csv_to_geojson(file, params):
     try:
         df = pd.read_csv(file)
 
-        print()
+        print([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])])
+        print(([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])]+[None]))
+        print(([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])]+[None])[0])
 
         xField = params['xField'] = params.get('xField', ([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])]+[None])[0])
         yField = params['yField'] = params.get('yField', ([i for i in df.columns if any([j for j in LATITUDE_ALIASES if j in i.lower()])]+[None])[0])
