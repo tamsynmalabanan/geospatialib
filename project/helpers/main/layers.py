@@ -122,6 +122,7 @@ def validate_file(url, name, params):
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
+                    print(vars(src.crs))
                     srid = SpatialRefSys.objects.filter(
                         srid=int(str(src.crs or '').split('EPSG:')[-1] or 4326)
                     ).first()
