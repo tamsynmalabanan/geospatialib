@@ -29,7 +29,6 @@ const saveToGeoJSONDB = (geojson, {
 
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
 
-        console.log(db, geojson, queryExtent, expirationTime)
         objectStore.put({id, geojson, queryExtent, expirationTime})
     }
 
