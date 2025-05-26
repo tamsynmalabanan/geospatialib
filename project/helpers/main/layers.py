@@ -60,39 +60,32 @@ def csv_to_geojson(file, params):
         print(e)
         return None, None
 
+def get_geojson_metadata(data):
+    bounds = None
+    srid = None
+
+    with MemoryFile(data) as memfile:
+        with memfile.open() as src:
+            srid = SpatialRefSys.objects.filter(
+                srid=int(str(src.crs or '').split('EPSG:')[-1] or 4326)
+            ).first()
+
+            w,s,e,n = src.bounds
+            bounds = geojson.FeatureCollection([geojson.Feature(
+                    geometry=geojson.Polygon([[
+                    (w, s), (e, s), (e, n), (w, n), (w, s)
+                ]])
+            )])
+
+    return bounds, srid
+            
 def validate_geojson(url, name, params):
     try:
         response = get_valid_response(url)
         if not response:
             raise Exception('No valid response.')
 
-        geojson_obj = None
-        srid = params.get('srid')
-
-        with MemoryFile(json.dumps(response.json()).encode()) as memfile:
-            with memfile.open() as src:
-                srid = SpatialRefSys.objects.filter(
-                    srid=int(str(src.crs or '').split('EPSG:')[-1] or 4326)
-                ).first()
-
-                w,s,e,n = src.bounds
-                geojson_obj = geojson.FeatureCollection([geojson.Feature(
-                        geometry=geojson.Polygon([[
-                        (w, s), (e, s), (e, n), (w, n), (w, s)
-                    ]])
-                )])
-
-                print(geojson_obj, srid)
-
-
-        # geojson_obj = geojson.loads(response.text)
-        # print(geojson_obj)
-        # if not geojson_obj.is_valid:
-        #     raise Exception('Invalid geojson.')
-        
-        # srid = SpatialRefSys.objects.filter(
-        #     srid=int(geojson_obj.get('crs',{}).get('properties',{}).get('name','').split('EPSG::')[-1] or 4326)
-        # ).first()
+        geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
 
         params.update({
             'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
