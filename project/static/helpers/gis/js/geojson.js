@@ -8,18 +8,27 @@ const normalizeGeoJSON = async (geojson, {
     
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
-    
-        const featureGeom = feature.geometry
-        const geomAssigned = !featureGeom && defaultGeom
-        feature.geometry = featureGeom || defaultGeom
-        
-        if (crs && crs !== 4326 && !geomAssigned) {
-            await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
-        }
-        
-        if (feature.id) feature.properties.feature_id = feature.id
-        feature.properties = normalizeFeatureProperties(feature.properties)    
+        await normalizeGeoJSONFeature(feature, {
+            defaultGeom,
+            crs,
+        })
     }
+}
+
+const normalizeGeoJSONFeature = async (feature, {
+    defaultGeom,
+    crs
+}={}) => {
+    const featureGeom = feature.geometry
+    const geomAssigned = !featureGeom && defaultGeom
+    feature.geometry = featureGeom || defaultGeom
+    
+    if (crs && crs !== 4326 && !geomAssigned) {
+        await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
+    }
+    
+    if (feature.id) feature.properties.feature_id = feature.id
+    feature.properties = normalizeFeatureProperties(feature.properties)    
 }
 
 const normalizeFeatureProperties = (properties) => {
