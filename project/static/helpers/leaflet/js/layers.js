@@ -687,7 +687,7 @@ const urlToLeafletLayer = async ({
     type,
     xField,
     yField,
-    srid,
+    crs,
 }) => {
     if (!url || !format || !name || !group) return
 
@@ -700,12 +700,12 @@ const urlToLeafletLayer = async ({
     
     if (format === 'csv') {
         type = format
-        dbIndexedKey = Array(format, JSON.stringify({url,xField,yField,srid})).join(';')
+        dbIndexedKey = Array(format, JSON.stringify({url,xField,yField,crs})).join(';')
     }
 
     if (format === 'file') {
         type = type ?? name.split('.')[name.split('.').length-1]
-        dbIndexedKey = Array(format, JSON.stringify({url,name,type,xField,yField,srid})).join(';')
+        dbIndexedKey = Array(format, JSON.stringify({url,name,type,xField,yField,crs})).join(';')
     }
 
     console.log(dbIndexedKey)
@@ -751,7 +751,7 @@ const fileToLeafletLayer = async ({
     type,
     xField,
     yField,
-    srid,
+    crs,
 } ={}) => {
     if (!file || !group) return
     
@@ -764,7 +764,7 @@ const fileToLeafletLayer = async ({
     const data = rawDataToLayerData(rawData, type, {
         xField,
         yField,
-        srid,
+        crs,
     })
     if (!data) return
 

@@ -28,11 +28,11 @@
                 {% if params.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
-                        {% variable params.srid as value %}
+                        {% variable params.crs as value %}
                         <input 
                             id="{{id}}" 
                             type="number" 
-                            name='srid' 
+                            name='crs' 
                             class='form-control form-control-sm' 
                             value="{{value}}"
                             {% if value %}
