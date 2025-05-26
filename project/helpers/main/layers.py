@@ -22,12 +22,12 @@ LATITUDE_ALIASES = [
     'north_south', 'south_north', 'vertical_position', 'north', 'south'
 ]
 
-def features_to_geometries(features, srid):
+def features_to_geometries(features, srid=4326):
     geometries = []
     for feature in features:
         geometry = GEOSGeometry(json.dumps(feature["geometry"]))
-        geometry.srid = srid.srid
-        if srid.srid != 4326:
+        geometry.srid = srid
+        if srid != 4326:
             geometry.transform(4326)
         geometries.append(geometry)
     return geometries
@@ -77,7 +77,7 @@ def validate_geojson(url, name, params):
         ).first()
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
             'srid': srid
         })
 
@@ -141,7 +141,7 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
             'srid': srid
         })
 
