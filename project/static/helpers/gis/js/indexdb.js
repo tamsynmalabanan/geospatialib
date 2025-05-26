@@ -27,7 +27,6 @@ const saveToGeoJSONDB = (geojson, {
         }
         
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
-        console.log(id, geojson, queryExtent, expirationTime)
 
         const db = e.target.result
         const transaction = db.transaction(['geojsons'], 'readwrite')
