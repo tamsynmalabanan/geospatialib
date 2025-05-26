@@ -29,15 +29,26 @@ const fetchCSV = async (url, xField, yField, {abortBtns, controller} = {}) => {
 
 const rawDataToLayerData = (rawData, type, {
     xField,
-    yField
+    yField,
+    srid=4326
 } = {}) => {
     try {
-        if (type === 'geojson') {
-            return JSON.parse(rawData)
-        }
-    
-        if (type === 'csv') {
-            return csvToGeoJSON(rawData, xField, yField)
+        if (Array('geojson', 'csv').includes(type)) {
+            let geojson
+
+            if (type === 'geojson') {
+                geojson = JSON.parse(rawData)
+            }
+        
+            if (type === 'csv') {
+                geojson = csvToGeoJSON(rawData, xField, yField)
+            }
+
+            if (geojson) {
+                if (!geojson.crs && !isNaN(parseInt(srid)) && parseInt(srid) !== 4326) {
+                    geojson['crs']['properties']['name'] = `EPSG::${srid}`
+                }
+            }
         }
     } catch (error) {
         console.log(error)
