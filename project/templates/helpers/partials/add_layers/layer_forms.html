@@ -13,22 +13,22 @@
         </div>
         <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
     </div>
-    {% for name, attrs in layers.items %}
+    {% for name, params in layers.items %}
         <div class="input-group" data-layer-source="{{source}}">
             <div class="input-group-text">
                 <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
             </div>
-            <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{attrs.title}}">
+            <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{params.title}}">
             <div class="input-group-text d-flex gap-2 fs-12">
                 <div class="form-floating">
                     {% random_string as id %}
-                    <input id="{{id}}" type="text" name='type' value="{{attrs.type}}" class='form-control form-control-sm' readonly>
+                    <input id="{{id}}" type="text" name='type' value="{{params.type}}" class='form-control form-control-sm' readonly>
                     <label for="{{id}}">Type</label>
                 </div>
-                {% if attrs.type == 'csv' %}
+                {% if params.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
-                        {% variable attrs.xField as value %}
+                        {% variable params.xField as value %}
                         <input 
                             id="{{id}}" 
                             type="text" 
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-floating">
                         {% random_string as id %}
-                        {% variable attrs.yField as value %}
+                        {% variable params.yField as value %}
                         <input 
                             id="{{id}}" 
                             type="text" 

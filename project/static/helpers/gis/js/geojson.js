@@ -573,6 +573,11 @@ const csvToGeoJSON = (csv, xField, yField, {
     yDefault=0,
 }={}) => {
     console.log(csv)
+
+    console.log(Papa.parse(csvString, {
+        header: true
+    }))
+
     xField = xField.trim()
     yField = yField.trim()
     
