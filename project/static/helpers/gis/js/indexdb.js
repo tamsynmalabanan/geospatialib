@@ -13,10 +13,9 @@ const requestGeoJSONDB = () => {
 
 const saveToGeoJSONDB = (geojson, {
     id = `client;${generateRandomString()}`, 
-    queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry, 
+    queryExtent = geojson ? turf.bboxPolygon(turf.bbox(geojson)).geometry : null, 
     expirationDays=7,
 }={}) => {
-    console.log(geojson)
     if (!geojson) return
 
     const request = requestGeoJSONDB()
