@@ -2,9 +2,14 @@ const normalizeGeoJSON = async (geojson, {
     controller,
     defaultGeom,
 } = {}) => {
-    const crsInfo = geojson?.crs?.properties?.name?.split('EPSG::')
-    const crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
-    delete geojson.crs   
+    if (!geojson) return
+
+    let crs
+    if (geojson.crs) {
+        const crsInfo = geojson.crs.properties?.name?.split('EPSG::')
+        crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
+        delete geojson.crs   
+    }
     
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
