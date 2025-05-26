@@ -27,6 +27,6 @@ class Command(BaseCommand):
         # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/cinemas.zip'
         url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
 
-        value = get_collection_layers(url, delay=False)
+        value = get_collection_layers(url, 'file', delay=False)
         
         self.stdout.write(self.style.SUCCESS(value))
