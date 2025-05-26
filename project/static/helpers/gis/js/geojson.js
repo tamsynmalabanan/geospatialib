@@ -606,7 +606,6 @@ const csvToGeoJSON = (csv, xField, yField, crs=4326, {
         features.push(feature)
     }    
     
-    console.log(crs)
     geojson = turf.featureCollection(features)
     if (!isNaN(parseInt(crs)) && parseInt(crs) !== 4326) {
         geojson.crs = {properties:{name:`EPSG::${crs}`}}

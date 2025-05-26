@@ -38,6 +38,7 @@ const rawDataToLayerData = (rawData, type, {
         }
     
         if (type === 'csv') {
+            console.log(crs)
             return csvToGeoJSON(rawData, xField, yField, crs)
         }
     } catch (error) {
