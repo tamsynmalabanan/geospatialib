@@ -407,6 +407,7 @@ const getGeoJSON = async (dbKey, {
         
     const dataPromise = (async () => {
         try {
+            console.log(dbKey)
             const [handlerName, handlerParams] = dbKey.split(';', 2)
             const isClient = handlerName === 'client'
             const isStatic = staticFormats.includes(handlerName)
