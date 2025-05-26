@@ -50,8 +50,8 @@ class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=512)
     title = models.CharField('Title', max_length=512)
-    xField = models.CharField('X Field', max_length=64)
-    yField = models.CharField('Y Field', max_length=64)
+    xField = models.CharField('X Field', max_length=32)
+    yField = models.CharField('Y Field', max_length=32)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
 
