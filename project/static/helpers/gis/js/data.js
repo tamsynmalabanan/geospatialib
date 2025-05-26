@@ -54,7 +54,8 @@ const fetchFileData = async (url, name, type, xField, yField, crs, {abortBtns, c
         const rawData = await getFileRawData(file)
         return rawDataToLayerData(rawData, type, {
             xField,
-            yField
+            yField,
+            crs,
         })
     }
 
