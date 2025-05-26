@@ -118,7 +118,7 @@ def validate_file(url, name, params):
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
-                    print(src)
+                    print(vars(src))
                     w,s,e,n = src.bounds
                     geojson_obj = geojson.FeatureCollection([geojson.Feature(
                             geometry=geojson.Polygon([[
