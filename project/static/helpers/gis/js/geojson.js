@@ -592,6 +592,7 @@ const csvToGeoJSON = (csv, xField, yField, {
         features.push(feature)
     }    
     
-    console.log(features)
-    return turf.featureCollection(features)
+    geojson = turf.featureCollection(features)
+    console.log(geojson)
+    return geojson
 }
