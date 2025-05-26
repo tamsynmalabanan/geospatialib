@@ -29,7 +29,6 @@ def features_to_geometries(features, srid):
         geometry.srid = srid.srid
         if srid.srid != 4326:
             geometry.transform(4326)
-        print(geometry)
         geometries.append(geometry)
     return geometries
 
