@@ -576,18 +576,25 @@ const csvToGeoJSON = (csv, xField, yField, {
     yField = yField.trim()
 
     const parsedCSV = Papa.parse(csv, {header: true})
+    console.log(parsedCSV)
     const features = []
 
     for (const data of parsedCSV.data) {
+        console.log(data)
+        console.log(parsedCSV.meta.fields)
         if (Object.keys(data).length !== parsedCSV.meta.fields.length) continue
-
+        
         const lon = parseFloat(data[xField])
         const lat = parseFloat(data[yField])
-
-        features.push(turf.point([
+        console.log(lon, lat)
+        
+        const feature = turf.point([
             !isNaN(lon) ? lon : xDefault, 
             !isNaN(lat) ? lat : yDefault, 
-        ], data))
+        ], data)
+        console.log(feature)
+
+        features.push(feature)
     }    
     
     return turf.featureCollection(features)
