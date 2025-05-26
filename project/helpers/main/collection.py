@@ -19,6 +19,7 @@ def guess_format_from_url(url):
         'file': [
             'download',
             'zip',
+            '.zip',
         ],
         'csv': [
             
