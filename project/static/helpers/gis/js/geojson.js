@@ -572,43 +572,23 @@ const csvToGeoJSON = (csv, xField, yField, {
     xDefault=0,
     yDefault=0,
 }={}) => {
-    console.log(Papa.parse(csv, {
-        header: true
-    }))
-
     xField = xField.trim()
     yField = yField.trim()
-    
-    const lines = csv.split("\n")
-    const headers = lines[0].split(",").map(i => i.trim())
-    console.log(headers)
+
+    const parsedCSV = Papa.parse(csv, {header: true})
     const features = []
 
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(",")
-        console.log(values)
+    for (const data of parsedCSV.data) {
+        if (Object.keys(data).length !== parsedCSV.meta.fields.length) continue
 
-        if (values.length !== headers.length) continue
-        
-        const properties = {}
-        headers.forEach((header, index) => {
-            properties[header] = values[index]
-        })
-        console.log(properties)
-        
-        const lon = parseFloat(properties[xField])
-        const lat = parseFloat(properties[yField])
-        console.log(lon, lat)
-        
-        const feature = turf.point([
+        const lon = parseFloat(data[xField])
+        const lat = parseFloat(data[yField])
+
+        features.push(turf.point([
             !isNaN(lon) ? lon : xDefault, 
             !isNaN(lat) ? lat : yDefault, 
-        ], properties)
-        console.log(feature)
-        
-        features.push(feature)
-    }
+        ], data))
+    }    
     
-    console.log(features)
     return turf.featureCollection(features)
 }
