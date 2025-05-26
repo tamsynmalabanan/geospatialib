@@ -115,6 +115,8 @@ def validate_file(url, name, params):
         if name.endswith('.csv'):
             geojson_obj, params = csv_to_geojson(file, params)
 
+        print(file)
+
         if name.endswith('.geojson'):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
