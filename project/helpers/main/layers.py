@@ -66,8 +66,8 @@ def validate_geojson(url, name, params):
             raise Exception('Invalid geojson.')
         
         return {
+            **params,
             'name': name,
-            'params': params,
             'bbox':get_geojson_bbox_polygon(geojson_obj)
         }
     except Exception as e:
@@ -85,8 +85,8 @@ def validate_csv(url, name, params):
             raise Exception('No valid geojson.')
 
         return {
+            **params,
             'name': name,
-            'params': params,
             'bbox':get_geojson_bbox_polygon(geojson_obj)
         }
     except Exception as e:
@@ -124,8 +124,8 @@ def validate_file(url, name, params):
 
         bbox = get_geojson_bbox_polygon(geojson_obj)
         return {
+            **params,
             'name': name,
-            'params': params,
             'bbox': bbox
         }
     except Exception as e:

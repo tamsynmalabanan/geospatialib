@@ -16,7 +16,6 @@
     {% for name, params in layers.items %}
         <div class="input-group" data-layer-source="{{source}}">
             <div class="input-group-text">
-                <span class="badge bg-primary">{{params.type}}</span>
                 <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
             </div>
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{params.title}}">
@@ -24,19 +23,19 @@
                 {% if params.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
-                        {% variable params.crs as value %}
+                        {% variable params.srid as value %}
                         <input 
-                            id="{{id}}" 
+                            id="{{id}}"
                             type="number" 
-                            name='crs' 
+                            name='srid__pk' 
                             class='form-control form-control-sm' 
-                            value="{{value}}"
+                            value="{{value.pk}}"
                             {% if value %}
                             {% else %}
                                 {% comment %} hx-post {% endcomment %}
                             {% endif %}
                         >
-                        <label for="{{id}}">SRID</label>
+                        <label for="{{id}}">CRS SRID</label>
                     </div>
                     <div class="form-floating">
                         {% random_string as id %}

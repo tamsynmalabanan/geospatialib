@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.forms.models import model_to_dict
 
 from urllib.parse import urlparse
 
@@ -43,14 +44,16 @@ class Collection(models.Model):
     #     return f'{self.url.domain} ({choices.COLLECTION_FORMATS(self.format)})'
     
     def get_layer_data(self):
-        return {layer.name: layer.params for layer in self.layers.all()}
+        return {layer.name: model_to_dict(layer) for layer in self.layers.all()}
     
 class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=512)
-    params = models.JSONField('Params', blank=True, null=True)
+    title = models.CharField('Title', max_length=512)
+    xField = models.CharField('X Field', max_length=64)
+    yField = models.CharField('Y Field', max_length=64)
+    srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
-    
 
     class Meta:
         unique_together = ['collection', 'name']
