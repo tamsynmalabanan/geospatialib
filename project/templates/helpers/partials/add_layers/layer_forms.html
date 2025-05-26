@@ -22,7 +22,6 @@
             <div class="input-group-text d-flex gap-2 fs-12">
                 {% if params.type == 'csv' %}
                     <div class="form-floating">
-                        {{params.srid}}
                         {% random_string as id %}
                         {% variable params.srid as value %}
                         <input 
@@ -30,7 +29,7 @@
                             type="number" 
                             name='crs' 
                             class='form-control form-control-sm' 
-                            value="{{value.pk}}"
+                            value="{{value}}"
                             {% if value %}
                             {% else %}
                                 {% comment %} hx-post {% endcomment %}
