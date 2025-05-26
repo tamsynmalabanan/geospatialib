@@ -65,11 +65,11 @@ def validate_geojson(url, name, params):
         if not geojson_obj.is_valid:
             raise Exception('Invalid geojson.')
         
-        return {
-            **params,
-            'name': name,
+        params.update({
             'bbox':get_geojson_bbox_polygon(geojson_obj)
-        }
+        })
+
+        return params
     except Exception as e:
         print(e)
 
@@ -84,11 +84,11 @@ def validate_csv(url, name, params):
         if not geojson_obj:
             raise Exception('No valid geojson.')
 
-        return {
-            **params,
-            'name': name,
+        params.update({
             'bbox':get_geojson_bbox_polygon(geojson_obj)
-        }
+        })
+
+        return params
     except Exception as e:
         print(e)
 
@@ -122,12 +122,11 @@ def validate_file(url, name, params):
         if not geojson_obj:
             raise Exception('No valid geojson.')
 
-        bbox = get_geojson_bbox_polygon(geojson_obj)
-        return {
-            **params,
-            'name': name,
-            'bbox': bbox
-        }
+        params.update({
+            'bbox':get_geojson_bbox_polygon(geojson_obj)
+        })
+
+        return params
     except Exception as e:
         print('validate_file error', e)
        
