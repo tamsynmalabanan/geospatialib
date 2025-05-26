@@ -123,7 +123,7 @@ def validate_file(url, name, params):
             with MemoryFile(file) as memfile:
                 with memfile.open() as src:
                     srid = SpatialRefSys.objects.filter(
-                        srid=int((src.crs or '').split('EPSG:')[-1] or 4326)
+                        srid=int(str(src.crs or '').split('EPSG:')[-1] or 4326)
                     ).first()
 
                     w,s,e,n = src.bounds
