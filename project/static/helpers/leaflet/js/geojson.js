@@ -267,6 +267,8 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
+    console.log(geojson)
+
     let data = geojsonHasFeatures ? geojson : (await getGeoJSON(dbIndexedKey, {
         queryGeom,
         controller,
