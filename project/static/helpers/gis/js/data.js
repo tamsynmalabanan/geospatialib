@@ -14,7 +14,7 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
-const fetchCSV = async (url, xField, yField, {abortBtns, controller} = {}) => {
+const fetchCSV = async (url, xField, yField, srid, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
@@ -58,7 +58,7 @@ const rawDataToLayerData = (rawData, type, {
 }
 
 const mapForFetchFileData = new Map()
-const fetchFileData = async (url, name, type, xField, yField, {abortBtns, controller} = {}) => {
+const fetchFileData = async (url, name, type, xField, yField, srid {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
         const file = filesArray.find(file => file.name === name)
         if (!file) return

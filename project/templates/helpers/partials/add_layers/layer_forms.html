@@ -25,23 +25,23 @@
                     <input id="{{id}}" type="text" name='type' value="{{params.type}}" class='form-control form-control-sm' readonly>
                     <label for="{{id}}">Type</label>
                 </div> {% endcomment %}
-                <div class="form-floating">
-                    {% random_string as id %}
-                    {% variable params.srid as value %}
-                    <input 
-                        id="{{id}}" 
-                        type="number" 
-                        name='srid' 
-                        class='form-control form-control-sm' 
-                        value="{{value}}"
-                        {% if value %}
-                        {% else %}
-                            {% comment %} hx-post {% endcomment %}
-                        {% endif %}
-                    >
-                    <label for="{{id}}">SRID</label>
-                </div>
                 {% if params.type == 'csv' %}
+                    <div class="form-floating">
+                        {% random_string as id %}
+                        {% variable params.srid as value %}
+                        <input 
+                            id="{{id}}" 
+                            type="number" 
+                            name='srid' 
+                            class='form-control form-control-sm' 
+                            value="{{value}}"
+                            {% if value %}
+                            {% else %}
+                                {% comment %} hx-post {% endcomment %}
+                            {% endif %}
+                        >
+                        <label for="{{id}}">SRID</label>
+                    </div>
                     <div class="form-floating">
                         {% random_string as id %}
                         {% variable params.xField as value %}

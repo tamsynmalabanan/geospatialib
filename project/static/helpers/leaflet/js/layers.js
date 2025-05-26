@@ -695,7 +695,7 @@ const urlToLeafletLayer = async ({
     
     if (format === 'geojson') {
         type = format
-        dbIndexedKey = Array(format, JSON.stringify({url,srid})).join(';')
+        dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
     }
     
     if (format === 'csv') {
