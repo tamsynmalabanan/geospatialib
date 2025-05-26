@@ -14,7 +14,7 @@ class SpatialRefSys(models.Model):
     proj4text = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'spatial_ref_sys'
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Layer(models.Model):
     title = models.CharField('Title', max_length=512, blank=True, null=True)
     xField = models.CharField('X Field', max_length=32, blank=True, null=True)
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
-    srid = models.IntegerField('SRID', default=4326)
+    srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
 
     class Meta:

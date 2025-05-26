@@ -27,9 +27,9 @@
                         <input 
                             id="{{id}}"
                             type="number" 
-                            name='srid' 
+                            name='srid__pk' 
                             class='form-control form-control-sm' 
-                            value="{{value}}"
+                            value="{{value.pk}}"
                             {% if value %}
                             {% else %}
                                 {% comment %} hx-post {% endcomment %}
