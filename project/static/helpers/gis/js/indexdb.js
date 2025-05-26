@@ -16,6 +16,7 @@ const saveToGeoJSONDB = (geojson, {
     queryExtent = turf.bboxPolygon(turf.bbox(geojson)).geometry, 
     expirationDays=7,
 }={}) => {
+    console.log(geojson)
     if (!geojson) return
 
     const request = requestGeoJSONDB()
