@@ -724,8 +724,6 @@ const createLeafletLayer = async (type, {
     dbIndexedKey,
     title,
 } = {}) => {
-    console.log(dbIndexedKey)
-
     if (!type) return
 
     const map = group._map
