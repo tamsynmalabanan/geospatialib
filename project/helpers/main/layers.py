@@ -69,14 +69,13 @@ def validate_geojson(url, name, params):
         geojson_obj = None
 
         geojson_obj = geojson.loads(response.text)
+        print(geojson_obj)
         if not geojson_obj.is_valid:
             raise Exception('Invalid geojson.')
         
         srid = SpatialRefSys.objects.filter(
             srid=int(geojson_obj.get('crs',{}).get('properties',{}).get('name','').split('EPSG::')[-1] or 4326)
         ).first()
-
-        print(srid)
 
         params.update({
             'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
