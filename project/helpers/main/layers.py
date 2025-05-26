@@ -28,6 +28,8 @@ def features_to_geometries(features, srid):
         for feature in features
     ]
 
+    print(geometries)
+
     return geometries
 
 def get_geojson_bbox_polygon(geojson, srid):
