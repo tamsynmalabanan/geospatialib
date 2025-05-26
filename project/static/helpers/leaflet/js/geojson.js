@@ -276,6 +276,7 @@ const getLeafletGeoJSONData = async (layer, {
 
     if (controller?.signal.aborted) return
     if (data instanceof Error) {
+        console.log(data)
         layer.fire('dataerror')
         return
     }
