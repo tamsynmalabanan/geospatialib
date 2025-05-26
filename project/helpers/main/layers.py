@@ -65,7 +65,7 @@ def validate_geojson(url, name, params):
         if not geojson_obj.is_valid:
             raise Exception('Invalid geojson.')
         
-        print(geojson_obj.get('crs',{}).get('properties',{}).get('name','').split('EPSG::'))
+        print((geojson_obj.get('crs',{}).get('properties',{}).get('name','').split('EPSG::')+[None])[-1])
 
         params.update({
             'bbox':get_geojson_bbox_polygon(geojson_obj)
