@@ -20,10 +20,26 @@
             </div>
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{params.title}}">
             <div class="input-group-text d-flex gap-2 fs-12">
-                <div class="form-floating">
+                {% comment %} <div class="form-floating">
                     {% random_string as id %}
                     <input id="{{id}}" type="text" name='type' value="{{params.type}}" class='form-control form-control-sm' readonly>
                     <label for="{{id}}">Type</label>
+                </div> {% endcomment %}
+                <div class="form-floating">
+                    {% random_string as id %}
+                    {% variable params.srid as value %}
+                    <input 
+                        id="{{id}}" 
+                        type="number" 
+                        name='srid' 
+                        class='form-control form-control-sm' 
+                        value="{{value}}"
+                        {% if value %}
+                        {% else %}
+                            {% comment %} hx-post {% endcomment %}
+                        {% endif %}
+                    >
+                    <label for="{{id}}">SRID</label>
                 </div>
                 {% if params.type == 'csv' %}
                     <div class="form-floating">
