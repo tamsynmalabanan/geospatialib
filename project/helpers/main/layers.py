@@ -44,14 +44,8 @@ def csv_to_geojson(file, params):
     try:
         df = pd.read_csv(file)
 
-        print([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])])
-        print(([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])]+[None]))
-        print(([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])]+[None])[0])
-
-        xField = params['xField'] = params.get('xField', ([i for i in df.columns if any([j for j in LONGITUDE_ALIASES if j in i.lower()])]+[None])[0])
-        yField = params['yField'] = params.get('yField', ([i for i in df.columns if any([j for j in LATITUDE_ALIASES if j in i.lower()])]+[None])[0])
-        print(xField, yField)
-        
+        xField = params['xField'] = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES+[j+'s' for j in LONGITUDE_ALIASES]]+[None])[0])
+        yField = params['yField'] = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES+[j+'s' for j in LATITUDE_ALIASES]]+[None])[0])
         if not xField or not yField:
             raise Exception('No valid coordinate fields.')
         
