@@ -27,7 +27,8 @@ def features_to_geometries(features, srid):
     for feature in features:
         geometry = GEOSGeometry(json.dumps(feature["geometry"]))
         geometry.srid = srid.srid
-        print(geometry.wkt)
+        if srid.srid != 4326:
+            geometry.transform(srid.srid)
         geometries.append(geometry)
     return geometries
 
