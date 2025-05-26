@@ -180,6 +180,8 @@ const getLeafletGeoJSONLayer = async ({
             return saveToGeoJSONDB(geojson)
         })() : null
 
+        console.log(geojsonLayer._dbIndexedKey)
+
         geojsonLayer.on('popupopen', (e) => {
             geojsonLayer._openpopup = e.popup
         })
@@ -267,15 +269,11 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    console.log(geojson)
-
     let data = geojsonHasFeatures ? geojson : (await getGeoJSON(dbIndexedKey, {
         queryGeom,
         controller,
         abortBtns,
     }))
-
-    console.log(data)
 
     if (!data) return
 
