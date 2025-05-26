@@ -140,12 +140,12 @@ LEAFLET_CONFIG = {
     'PLUGINS': {
         'geocoder': {
             'css': [
-                '/static/plugins/leaflet-control-geocoder/css/Control.Geocoder.css', 
-                # 'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css', 
+                # '/static/plugins/leaflet-control-geocoder/css/Control.Geocoder.css', 
+                'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css', 
             ],
             'js': [
-                '/static/plugins/leaflet-control-geocoder/js/Control.Geocoder.js', 
-                # 'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
+                # '/static/plugins/leaflet-control-geocoder/js/Control.Geocoder.js', 
+                'https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js',
             ],
             'auto_include': True,
         },
