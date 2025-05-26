@@ -5,6 +5,7 @@ from django.db.models import Q
 from helpers.base.files import get_file_names
 from helpers.main.collection import get_collection_layers, get_layers, get_file_names
 from main.tasks import onboard_collection
+from main.models import URL
 
 import requests
 
@@ -13,6 +14,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         value = None
+
+        URL.objects.all().delete()
 
         url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
         # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
