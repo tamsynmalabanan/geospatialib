@@ -588,6 +588,7 @@ const csvToGeoJSON = (csv, xField, yField, {
             !isNaN(lon) ? lon : xDefault, 
             !isNaN(lat) ? lat : yDefault, 
         ], data)
+        console.log(feature)
 
         features.push(feature)
     }    
