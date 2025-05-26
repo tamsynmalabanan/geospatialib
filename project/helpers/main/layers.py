@@ -6,6 +6,7 @@ import pandas as pd, geopandas as gpd
 import io
 from fiona.io import MemoryFile
 
+from main.models import SpatialRefSys
 from helpers.base.utils import get_valid_response, get_response_file
 from helpers.base.files import extract_zip
 
@@ -65,11 +66,13 @@ def validate_geojson(url, name, params):
         if not geojson_obj.is_valid:
             raise Exception('Invalid geojson.')
         
-        srid = int(geojson_obj.get('crs',{}).get('properties',{}).get('name','').split('EPSG::')[-1] or 4326)
+        srid = SpatialRefSys.objects.filter(
+            srid=int(geojson_obj.get('crs',{}).get('properties',{}).get('name','').split('EPSG::')[-1] or 4326)
+        ).first()
 
         params.update({
             'bbox':get_geojson_bbox_polygon(geojson_obj),
-            'srid__pk': srid
+            'srid': srid
         })
 
         return params
