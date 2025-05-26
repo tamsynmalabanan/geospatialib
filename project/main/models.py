@@ -50,6 +50,7 @@ class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=512)
     title = models.CharField('Title', max_length=512, blank=True, null=True)
+    type = models.CharField('Type', max_length=32, blank=True, null=True)
     xField = models.CharField('X Field', max_length=32, blank=True, null=True)
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
