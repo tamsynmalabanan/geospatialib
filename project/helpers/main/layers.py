@@ -32,7 +32,7 @@ def features_to_geometries(features, srid=4326):
         geometries.append(geometry)
     return geometries
 
-def get_geojson_bbox_polygon(geojson, srid):
+def get_geojson_bbox_polygon(geojson, srid=4326):
     geometries = features_to_geometries(geojson.get("features", []), srid)
 
     w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
@@ -88,7 +88,7 @@ def validate_geojson(url, name, params):
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid if srid else 4326),
             'srid': srid
         })
 
@@ -141,7 +141,7 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid if srid else None),
             'srid': srid
         })
 
