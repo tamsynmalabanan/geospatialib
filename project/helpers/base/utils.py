@@ -130,11 +130,7 @@ def is_text_response(url):
         response = get_valid_response(url, header_only=True)
         if not response:
             raise Exception('No valid response.')
-
-        content_type = response.headers.get('Content-Type', '')
-        print(content_type)
-        is_text = any([i for i in ['text', 'json', 'xml'] if i in content_type])
-        return is_text
+        print(response.content.decode('utf-8'))
     except Exception as e:
         print(e)
     return False
