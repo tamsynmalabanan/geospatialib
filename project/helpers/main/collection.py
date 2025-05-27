@@ -18,6 +18,7 @@ def guess_format_from_url(url):
         return
     
     if not is_text_response(url):
+        print('is_text_response')
         return 'file'
 
     return get_first_substring_match(url, {
