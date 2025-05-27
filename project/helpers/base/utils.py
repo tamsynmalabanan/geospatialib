@@ -131,6 +131,7 @@ def is_text_response(url):
         if not response:
             raise Exception('No valid response.')
         try:
+            print(response.text)
             print(response.content.decode('utf-8'))
             return True
         except Exception as e:
