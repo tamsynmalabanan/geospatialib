@@ -130,7 +130,7 @@ def is_text_response(url):
         response = get_valid_response(url, header_only=True)
         if not response:
             raise Exception('No valid response.')
-        print(2, response.text())
+        print(2, response.text)
         print(1, response.content.decode('utf-8'))
     except Exception as e:
         print(e)
