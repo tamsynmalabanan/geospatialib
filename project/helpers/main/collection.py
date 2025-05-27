@@ -11,17 +11,22 @@ from helpers.base.utils import (
     ok_url_response
 )
 from helpers.base.files import get_file_names
+from helpers.base.utils import is_text_response
 
 def guess_format_from_url(url):
     if not url:
         return
+    
+    if not is_text_response(url):
+        return 'file'
+
     return get_first_substring_match(url, {
         'file': [
             'download',
             'zip',
-            '.zip',
         ],
         'csv': [
+            'table',
             
         ],
         'geojson': [

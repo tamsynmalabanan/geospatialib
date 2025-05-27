@@ -129,13 +129,13 @@ def validate_file(url, name, params):
             file = files.get(name)
         
         geojson_obj = None
+        srid = None
 
         if name.endswith('.csv'):
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)
-            srid = params.get('srid', srid)
 
         if not geojson_obj:
             raise Exception('No valid geojson.')
