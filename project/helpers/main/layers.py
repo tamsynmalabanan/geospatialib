@@ -12,6 +12,11 @@ from helpers.base.files import extract_zip
 
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 
+WORLD_GEOM = GEOSGeometry(Polygon([
+    (-180, -90), (180, -90), (180, 90), (-180, 90), (-180, -90)
+]), srid=4326)
+
+
 LONGITUDE_ALIASES = [
     'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
     'lambda', 'meridian', 'geo_x', 'geom_x', 'x_coord', 
@@ -45,7 +50,11 @@ def get_geojson_bbox_polygon(geojson, srid=4326):
         e = max(e, bbox[2])
         n = max(n, bbox[3])
 
-    return Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
+    geojson_bbox = Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
+    if geojson_bbox.within(WORLD_GEOM):
+        return geojson_bbox
+    else:
+        print('get_geojson_bbox_polygon', 'not within world')
 
 def csv_to_geojson(file, params):
     try:
