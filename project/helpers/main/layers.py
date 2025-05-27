@@ -141,7 +141,7 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid if srid else None),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid if srid else 4326),
             'srid': srid
         })
 
