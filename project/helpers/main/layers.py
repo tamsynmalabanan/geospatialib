@@ -10,6 +10,8 @@ from main.models import SpatialRefSys
 from helpers.base.utils import get_valid_response, get_response_file
 from helpers.base.files import extract_zip
 
+DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
+
 LONGITUDE_ALIASES = [
     'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
     'lambda', 'meridian', 'geo_x', 'geom_x', 'x_coord', 
@@ -62,7 +64,7 @@ def csv_to_geojson(file, params):
 
 def get_geojson_metadata(data):
     bounds = None
-    srid = None
+    srid = DEFAULT_SRID
 
     with MemoryFile(data) as memfile:
         with memfile.open() as src:
@@ -88,7 +90,7 @@ def validate_geojson(url, name, params):
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid if srid else 4326),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
             'srid': srid
         })
 
@@ -129,7 +131,7 @@ def validate_file(url, name, params):
             file = files.get(name)
         
         geojson_obj = None
-        srid = None
+        srid = DEFAULT_SRID
 
         if name.endswith('.csv'):
             geojson_obj, params = csv_to_geojson(file, params)
@@ -141,7 +143,7 @@ def validate_file(url, name, params):
             raise Exception('No valid geojson.')
 
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid if srid else 4326),
+            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
             'srid': srid
         })
 
