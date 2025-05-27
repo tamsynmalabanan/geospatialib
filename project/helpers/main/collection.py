@@ -17,6 +17,7 @@ def guess_format_from_url(url):
     if not url:
         return
     
+    print(url)
     if not is_text_response(url):
         return 'file'
 

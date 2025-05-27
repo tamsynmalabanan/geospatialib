@@ -133,7 +133,6 @@ def is_text_response(url):
 
         content_type = response.headers.get('Content-Type', '')
         is_text = any([i for i in ['text', 'json', 'xml'] if i in content_type])
-        print(is_text)
         return is_text
     except Exception as e:
         print(e)
