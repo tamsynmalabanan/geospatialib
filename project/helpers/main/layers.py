@@ -53,8 +53,6 @@ def get_geojson_bbox_polygon(geojson, srid=4326):
     geojson_bbox = Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
     if geojson_bbox.within(WORLD_GEOM):
         return geojson_bbox
-    else:
-        print('get_geojson_bbox_polygon', 'not within world')
 
 def csv_to_geojson(file, params):
     try:
@@ -98,8 +96,12 @@ def validate_geojson(url, name, params):
 
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
 
+        bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        if not bbox:
+            raise Exception('Failed to get bbox.')
+
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
+            'bbox': bbox,
             'srid': srid
         })
 
@@ -118,8 +120,14 @@ def validate_csv(url, name, params):
         if not geojson_obj:
             raise Exception('No valid geojson.')
 
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        if not bbox:
+            raise Exception('Failed to get bbox.')
+
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj)
+            'bbox': bbox,
+            'srid': srid
         })
 
         return params
@@ -151,11 +159,15 @@ def validate_file(url, name, params):
         if not geojson_obj:
             raise Exception('No valid geojson.')
 
+        bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        if not bbox:
+            raise Exception('Failed to get bbox.')
+
         params.update({
-            'bbox':get_geojson_bbox_polygon(geojson_obj, srid.srid),
+            'bbox': bbox,
             'srid': srid
         })
-
+        
         return params
     except Exception as e:
         print('validate_file error', e)
