@@ -114,19 +114,18 @@ const handleAddLayersForm = () => {
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
             if (element) {
-                console.log(Object.values(includedLayers).some(i => Object.keys(i).some(j => {
+                if (Object.values(includedLayers).some(i => Object.keys(i).some(j => {
                     if (j === 'title') return false
                     const value = i[j]
                     return value && value !== ''
-                })))
-
-
-                const vals = JSON.parse(element.getAttribute('hx-vals'))
-                vals.layers = includedLayers
-                element.setAttribute('hx-vals', JSON.stringify(vals))
-                
-                const event = new Event("update-collection", { bubbles: true })
-                element.dispatchEvent(event)
+                }))) {
+                    const vals = JSON.parse(element.getAttribute('hx-vals'))
+                    vals.layers = includedLayers
+                    element.setAttribute('hx-vals', JSON.stringify(vals))
+                    
+                    const event = new Event("update-collection", { bubbles: true })
+                    element.dispatchEvent(event)
+                }
             }
         }
         
