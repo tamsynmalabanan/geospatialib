@@ -15,9 +15,9 @@ def validate_collection(request):
         data = request.POST.dict()
         form = ValidateCollectionForm(data)
         if form.is_valid():
-            layers = get_collection_layers(
-                url = form.cleaned_data.get('url',''),
-                format = form.cleaned_data.get('format',None),
+            layers, collection = get_collection_layers(
+                url = form.cleaned_data.get('url', ''),
+                format = form.cleaned_data.get('format', None),
             )
             if not layers or layers == {}:
                 raw_format = data.get('format')
@@ -28,9 +28,11 @@ def validate_collection(request):
                 layers = sort_layers(layers)
         else:
             layers = {}
+            collection = None
         return render(request, 'helpers/partials/add_layers/url_fields.html', {
             'form': form,
             'layers': layers,
+            'collection': collection,
         })
     except Exception as e:
         return HttpResponse(e)

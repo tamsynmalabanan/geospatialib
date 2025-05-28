@@ -62,7 +62,7 @@ def get_collection_layers(url, format=None, delay=True):
     layers = {}
 
     if not validators.url(url) or not format:
-        return
+        return layers, None
     
     # normalize url based on format here
     url = unquote(url)
@@ -72,7 +72,7 @@ def get_collection_layers(url, format=None, delay=True):
     if cached_collection:
         layers = cached_collection['layers']
         if len(layers.keys()) > 0:
-            return layers
+            return layers, None
 
     collection_instance = Collection.objects.filter(
         url__path=url,
@@ -81,7 +81,7 @@ def get_collection_layers(url, format=None, delay=True):
     if collection_instance:
         layers = collection_instance.get_layer_data()
         if len(layers.keys()) > 0:
-            return layers
+            return layers, collection_instance
 
     layers = get_layers(url, format)
     if len(layers.keys()) > 0:
@@ -95,5 +95,4 @@ def get_collection_layers(url, format=None, delay=True):
                 onboard_collection.delay(cacheKey)
             else:
                 onboard_collection(cacheKey)
-
-    return layers
+    return layers, None
