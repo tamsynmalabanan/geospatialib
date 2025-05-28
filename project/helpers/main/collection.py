@@ -19,7 +19,6 @@ def guess_format_from_url(url):
     
     decoded_response = get_decoded_response(url)
     if not decoded_response:
-        print('file')
         return 'file'
 
     return get_first_substring_match(decoded_response+url, {
