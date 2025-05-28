@@ -167,7 +167,7 @@ const handleAddLayersForm = () => {
     
     form.addEventListener('htmx:beforeRequest', async (e) => {
         console.log(e)
-        
+
         if (e.target === form.elements.url) {
             try {
                 new URL(e.target.value)
@@ -183,6 +183,8 @@ const handleAddLayersForm = () => {
             if (e.target.files.length) return
             resetLayerNames('files')
         }
+
+        if (e.target.matches(`[hx-trigger="update-collection"]`)) return
 
         e.preventDefault()
         toggleSubmitBtn()
