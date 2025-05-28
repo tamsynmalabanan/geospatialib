@@ -15,7 +15,7 @@
             hx-post="{% url 'htmx:update_collection' %}"
             hx-trigger='update-collection'
             hx-swap='none'
-            hx-vals="{'cacheKey': '{{cacheKey}}'}"
+            hx-vals='{"cacheKey": "{{cacheKey}}"}'
         {% endif %}
     >
         <div class="input-group-text border-0 bg-transparent">
