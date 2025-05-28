@@ -114,6 +114,8 @@ const handleAddLayersForm = () => {
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
             if (element) {
+                element.addEventListener('update-collection', (e) => console.log(e))
+
                 const vals = JSON.parse(element.getAttribute('hx-vals'))
                 vals.layers = includedLayers
                 element.setAttribute('hx-vals', JSON.stringify(vals))
@@ -123,7 +125,7 @@ const handleAddLayersForm = () => {
             }
         }
         
-        // resetForm()
+        resetForm()
         modalInstance.hide()
     })
 
