@@ -14,7 +14,7 @@
         {% if not collection and cacheKey %}
             hx-post="{% url 'htmx:update_collection' %}"
             hx-trigger='update-collection'
-            {% comment %} hx-swap='none' {% endcomment %}
+            hx-swap='none'
             hx-vals='{"cacheKey": "{{cacheKey}}"}'
         {% endif %}
     >

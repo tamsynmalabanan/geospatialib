@@ -114,7 +114,7 @@ const handleAddLayersForm = () => {
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
             if (element) {
-                console.log(includedLayers)
+                console.log(Object.values(includedLayers).some(i => Object.values(i).some(j => j && j !== '')))
 
 
                 const vals = JSON.parse(element.getAttribute('hx-vals'))
@@ -169,8 +169,6 @@ const handleAddLayersForm = () => {
     })
     
     form.addEventListener('htmx:beforeRequest', async (e) => {
-        console.log(e)
-
         if (e.target === form.elements.url) {
             try {
                 new URL(e.target.value)
