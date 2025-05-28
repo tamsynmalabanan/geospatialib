@@ -467,7 +467,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         return valueA.rank - valueB.rank
     })
 
-    console.log(styles.map(i => i[1].totalCount))
+    console.log(styles.reduce((acc, num) => acc + num[1].totalCount, 0))
   
     for (const [id, style] of styles) {
         const tr = document.createElement('tr')
