@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 import requests
 
-from helpers.main.collection import get_collection_data, sort_layers, DEFAULT_COLLECTION_DATA
+from helpers.main.collection import get_collection_data, sort_layers
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 
@@ -13,7 +13,7 @@ from main.forms import ValidateCollectionForm
 def validate_collection(request):
     try:
         data = request.POST.dict()
-        context = DEFAULT_COLLECTION_DATA
+        context = {'collection':None, 'layers':{}}
         form = ValidateCollectionForm(data)
         if form.is_valid():
             context = get_collection_data(

@@ -57,24 +57,16 @@ def get_layers(url, format):
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
 
-DEFAULT_COLLECTION_DATA = {
-    'collection':None, 
-    'cacheKey': None, 
-    'layers':{}
-}
-
 def get_collection_data(url, format=None, delay=True):
     format = format or guess_format_from_url(url)
     if not validators.url(url) or not format:
         return
     
-    data = DEFAULT_COLLECTION_DATA
-
     # normalize url based on format here
     url = unquote(url)
     cacheKey = create_cache_key(['onboard_collection', url, format])
-    data['cacheKey'] = cacheKey
 
+    data = {'collection':None, 'layers':{}}
     cached_collection = cache.get(cacheKey)
     if cached_collection:
         layers = cached_collection['layers']
