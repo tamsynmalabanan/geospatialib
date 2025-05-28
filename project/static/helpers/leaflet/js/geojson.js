@@ -469,7 +469,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
     if (!styles.reduce((acc, num) => acc + num[1].totalCount, 0)) {
         const tr = document.createElement('tr')
-        tr.innerHTML = '<i class="bi bi-circle m-1" title="No visible features"></i>'
+        tr.innerText = 'No visible features'
         tbody.appendChild(tr)
         return
     }
