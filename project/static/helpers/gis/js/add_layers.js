@@ -111,6 +111,8 @@ const handleAddLayersForm = () => {
                     ...includedLayers[name]
                 })
             }
+
+            console.log(includedLayers)
         }
         
         resetForm()
