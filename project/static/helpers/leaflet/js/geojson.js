@@ -467,7 +467,12 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         return valueA.rank - valueB.rank
     })
 
-    console.log(styles.reduce((acc, num) => acc + num[1].totalCount, 0))
+    if (!styles.reduce((acc, num) => acc + num[1].totalCount, 0)) {
+        const tr = document.createElement('tr')
+        tr.innerText = 'No visible features'
+        tbody.appendChild(tr)
+        return
+    }
   
     for (const [id, style] of styles) {
         const tr = document.createElement('tr')
@@ -521,6 +526,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     const pointIcons = Array.from(tbody.querySelectorAll('tr')).map(i => {
         return i.querySelector(`#${i.firstChild.id}-point`)
     }).filter(i => i)
+
     const maxWidth = Math.max(...pointIcons.map(i => {
         const clone = i.cloneNode(true)
         clone.className = 'position-absolute'
@@ -529,5 +535,6 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         clone.remove()
         return width
     }))
+    
     pointIcons.forEach(i => i.style.width = `${maxWidth}px`)
 }
