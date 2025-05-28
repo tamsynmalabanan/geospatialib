@@ -46,7 +46,7 @@
                     <div class="form-floating">
                         {% random_string as id %}
                         {% variable params.srid as value %}
-                        <input id="{{id}}" type="number" name='crs' class='form-control form-control-sm' value="{{value}}">
+                        <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm' value="{{value}}">
                         <label for="{{id}}">SRID</label>
                     </div>
                 {% endif %}

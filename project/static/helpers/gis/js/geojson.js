@@ -582,7 +582,7 @@ const validateGeoJSONFeature = (feature, filters) => {
     return true
 }
 
-const csvToGeoJSON = (csv, xField, yField, crs=4326, {
+const csvToGeoJSON = (csv, xField, yField, srid=4326, {
     xDefault=0,
     yDefault=0,
 }={}) => {
@@ -607,8 +607,8 @@ const csvToGeoJSON = (csv, xField, yField, crs=4326, {
     }    
     
     geojson = turf.featureCollection(features)
-    if (!isNaN(parseInt(crs)) && parseInt(crs) !== 4326) {
-        geojson.crs = {properties:{name:`EPSG::${crs}`}}
+    if (!isNaN(parseInt(srid)) && parseInt(srid) !== 4326) {
+        geojson.crs = {properties:{name:`EPSG::${srid}`}}
     }
 
     return geojson
