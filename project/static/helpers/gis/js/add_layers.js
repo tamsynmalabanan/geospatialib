@@ -116,7 +116,11 @@ const handleAddLayersForm = () => {
             if (element) {
                 const vals = JSON.parse(element.getAttribute('hx-vals'))
                 vals.layers = includedLayers
-                console.log(vals)
+                element.setAttribute('hx-vals', JSON.stringify(vals))
+                
+                const event = new Event("update-collection", { bubbles: true })
+                element.dispatchEvent(event)
+
             }
         }
         
