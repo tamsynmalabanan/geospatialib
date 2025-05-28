@@ -114,8 +114,6 @@ const handleAddLayersForm = () => {
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
             if (element) {
-                element.addEventListener('update-collection', (e) => console.log(e))
-
                 const vals = JSON.parse(element.getAttribute('hx-vals'))
                 vals.layers = includedLayers
                 element.setAttribute('hx-vals', JSON.stringify(vals))
@@ -168,6 +166,8 @@ const handleAddLayersForm = () => {
     })
     
     form.addEventListener('htmx:beforeRequest', async (e) => {
+        console.log(e)
+        
         if (e.target === form.elements.url) {
             try {
                 new URL(e.target.value)
@@ -191,13 +191,6 @@ const handleAddLayersForm = () => {
     form.addEventListener('htmx:afterSwap', (e) => {
         toggleSubmitBtn()
     })
-
-    // form.addEventListener('focusin', (e) => {
-    //     const list = e.target.getAttribute('list')
-    //     if (!list) return
-
-    //     const sournce = e.target.closest('.input-group').dataset.layerSource
-    // })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
