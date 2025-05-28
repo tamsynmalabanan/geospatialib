@@ -11,26 +11,28 @@ from helpers.base.utils import (
     ok_url_response
 )
 from helpers.base.files import get_file_names
-from helpers.base.utils import is_text_response
+from helpers.base.utils import get_decoded_response
 
 def guess_format_from_url(url):
     if not url:
         return
     
-    if not is_text_response(url):
+    decoded_response = get_decoded_response(url)
+    if not decoded_response:
         return 'file'
 
-    return get_first_substring_match(url, {
+    return get_first_substring_match(decoded_response+url, {
         'file': [
             'download',
             'zip',
         ],
         'csv': [
             'table',
-            
         ],
         'geojson': [
             'json',
+            'featurecollection',
+            'features',
         ],
     })
 

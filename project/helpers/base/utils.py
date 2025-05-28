@@ -125,14 +125,13 @@ def get_response_file(url):
     
 import requests
 
-def is_text_response(url):
+def get_decoded_response(url):
     try:
         response = get_valid_response(url)
         if not response:
             raise Exception('No valid response.')
         
-        response.content.decode('utf-8')
-        return True
+        return response.content.decode('utf-8')
     except Exception as e:
         print(e)
-    return False
+    return None

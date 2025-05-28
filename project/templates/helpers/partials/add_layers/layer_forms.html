@@ -6,6 +6,7 @@
 {% else %}
     {% variable 'files' as source %}
 {% endif %}
+
 {% if layers and layers.keys|length > 0 %}
     <div class="input-group" data-layer-source="{{source}}">
         <div class="input-group-text border-0 bg-transparent">
@@ -30,10 +31,6 @@
                             name='crs' 
                             class='form-control form-control-sm' 
                             value="{{value}}"
-                            {% if value %}
-                            {% else %}
-                                {% comment %} hx-post {% endcomment %}
-                            {% endif %}
                         >
                         <label for="{{id}}">SRID</label>
                     </div>
@@ -46,10 +43,6 @@
                             name='xField' 
                             class='form-control form-control-sm' 
                             value="{{value}}"
-                            {% if value %}
-                            {% else %}
-                                {% comment %} hx-post {% endcomment %}
-                            {% endif %}
                         >
                         <label for="{{id}}">X Field</label>
                     </div>
@@ -62,10 +55,6 @@
                             name='yField' 
                             class='form-control form-control-sm'
                             value="{{value}}"
-                            {% if value %}
-                            {% else %}
-                                {% comment %} hx-post {% endcomment %}
-                            {% endif %}
                         >
                         <label for="{{id}}">Y Field</label>
                     </div>
