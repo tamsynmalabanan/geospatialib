@@ -10,8 +10,8 @@ from helpers.main.layers import LAYER_VALIDATORS
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,),
-    retry_backoff=1, 
-    max_retries=3,
+    retry_backoff=60, 
+    max_retries=5,
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)

@@ -66,7 +66,7 @@ def get_collection_data(url, format=None, delay=True):
     url = unquote(url)
     cacheKey = create_cache_key(['onboard_collection', url, format])
 
-    data = {'collection':None, 'layers':{}}
+    data = {'layers':{}, 'cacheKey':cacheKey}
     cached_collection = cache.get(cacheKey)
     if cached_collection:
         layers = cached_collection['layers']
@@ -74,6 +74,7 @@ def get_collection_data(url, format=None, delay=True):
             data['layers'] = layers
             return data
 
+    layers = get_layers(url, format)
     collection_instance = Collection.objects.filter(
         url__path=url,
         format=format
@@ -84,7 +85,6 @@ def get_collection_data(url, format=None, delay=True):
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
-    layers = get_layers(url, format)
     if len(layers.keys()) > 0:
         data['layers'] = layers
 

@@ -11,10 +11,11 @@
     <div
         class="input-group"
         data-layer-source="{{source}}"
-        {% if not collection %}
+        {% if not collection and cacheKey %}
             hx-post="{% url 'htmx:update_collection' %}"
             hx-trigger='update-collection'
             hx-swap='none'
+            hx-vals="{'cacheKey': '{{cacheKey}}'}"
         {% endif %}
     >
         <div class="input-group-text border-0 bg-transparent">

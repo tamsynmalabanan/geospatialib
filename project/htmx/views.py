@@ -13,7 +13,7 @@ from main.forms import ValidateCollectionForm
 def validate_collection(request):
     try:
         data = request.POST.dict()
-        context = {'collection':None, 'layers':{}}
+        context = {'layers':{}}
         form = ValidateCollectionForm(data)
         if form.is_valid():
             context = get_collection_data(
