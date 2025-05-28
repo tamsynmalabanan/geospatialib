@@ -1,6 +1,7 @@
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.http import JsonResponse
+from django.contrib import messages
 
 import json
 import requests
@@ -35,7 +36,10 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
-    return HttpResponse(request.POST)
+    messages.info(request, 'Onboarded', extra_tags='main-index-map')
+    return render(request, 'helpers/partials/messages/container.html', {
+        'hx_swap_oob': True,
+    })
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):
