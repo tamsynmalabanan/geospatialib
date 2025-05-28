@@ -80,8 +80,8 @@ def get_collection_data(url, format=None, delay=True):
         format=format
     ).first()
     if collection_instance:
-        layers = collection_instance.get_layer_data()
-        if len(layers.keys()) > 0:
+        if len(layers.keys()) <= collection_instance.layers.count():
+            layers = collection_instance.get_layer_data()
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
