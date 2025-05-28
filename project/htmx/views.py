@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 import requests
 
-from helpers.main.collection import get_collection_layers, sort_layers
+from helpers.main.collection import get_collection_data, sort_layers, DEFAULT_COLLECTION_DATA
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 
@@ -13,29 +13,29 @@ from main.forms import ValidateCollectionForm
 def validate_collection(request):
     try:
         data = request.POST.dict()
+        context = DEFAULT_COLLECTION_DATA
         form = ValidateCollectionForm(data)
         if form.is_valid():
-            layers, collection = get_collection_layers(
+            context = get_collection_data(
                 url = form.cleaned_data.get('url', ''),
                 format = form.cleaned_data.get('format', None),
             )
-            if not layers or layers == {}:
+            layers = context.get('layers', {})
+            if layers == {}:
                 raw_format = data.get('format')
                 form.data.update({'format':raw_format})
                 if raw_format:
                     form.add_error('format', 'No layers retrieved.')
             else:
-                layers = sort_layers(layers)
-        else:
-            layers = {}
-            collection = None
-        return render(request, 'helpers/partials/add_layers/url_fields.html', {
-            'form': form,
-            'layers': layers,
-            'collection': collection,
-        })
+                context['layers'] = sort_layers(layers)
+        context['form'] = form
+        return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
         return HttpResponse(e)
+
+@require_http_methods(['POST'])
+def update_collection(request):
+    return HttpResponse(request.POST)
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):

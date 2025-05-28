@@ -57,22 +57,30 @@ def get_layers(url, format):
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
 
-def get_collection_layers(url, format=None, delay=True):
-    format = format or guess_format_from_url(url)
-    layers = {}
+DEFAULT_COLLECTION_DATA = {
+    'collection':None, 
+    'cacheKey': None, 
+    'layers':{}
+}
 
+def get_collection_data(url, format=None, delay=True):
+    format = format or guess_format_from_url(url)
     if not validators.url(url) or not format:
-        return layers, None
+        return
     
+    data = DEFAULT_COLLECTION_DATA
+
     # normalize url based on format here
     url = unquote(url)
     cacheKey = create_cache_key(['onboard_collection', url, format])
+    data['cacheKey'] = cacheKey
 
     cached_collection = cache.get(cacheKey)
     if cached_collection:
         layers = cached_collection['layers']
         if len(layers.keys()) > 0:
-            return layers, None
+            data['layers'] = layers
+            return data
 
     collection_instance = Collection.objects.filter(
         url__path=url,
@@ -81,18 +89,16 @@ def get_collection_layers(url, format=None, delay=True):
     if collection_instance:
         layers = collection_instance.get_layer_data()
         if len(layers.keys()) > 0:
-            return layers, collection_instance
+            data.update({'layers': layers, 'collection': collection_instance})
+            return data
 
     layers = get_layers(url, format)
     if len(layers.keys()) > 0:
-            cache.set(cacheKey, {
-                'url': url,
-                'format': format,
-                'layers': layers,
-            }, timeout=60*60*24*30)
+        data['layers'] = layers
 
-            if delay:
-                onboard_collection.delay(cacheKey)
-            else:
-                onboard_collection(cacheKey)
-    return layers, None
+        cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24*30)
+        if delay:
+            onboard_collection.delay(cacheKey)
+        else:
+            onboard_collection(cacheKey)
+    return data

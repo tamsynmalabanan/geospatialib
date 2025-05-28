@@ -3,7 +3,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
 from helpers.base.files import get_file_names
-from helpers.main.collection import get_collection_layers, get_layers, get_file_names
+from helpers.main.collection import get_collection_data, get_layers, get_file_names
 from main.tasks import onboard_collection
 from main.models import URL
 
@@ -28,6 +28,6 @@ class Command(BaseCommand):
         # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
         # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
 
-        # value = get_collection_layers(url, delay=False)
+        # value = get_collection_data(url, delay=False)
         
         self.stdout.write(self.style.SUCCESS(value))
