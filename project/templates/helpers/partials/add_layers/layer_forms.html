@@ -8,7 +8,10 @@
 {% endif %}
 
 {% if layers and layers.keys|length > 0 %}
-    <div class="input-group" data-layer-source="{{source}}">
+    <div
+        class="input-group"
+        data-layer-source="{{source}}"
+    >
         <div class="input-group-text border-0 bg-transparent">
             <input class="form-check-input" type="checkbox" value="all"  checked>
         </div>
@@ -24,39 +27,21 @@
                 {% if params.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
-                        {% variable params.srid as value %}
-                        <input 
-                            id="{{id}}"
-                            type="number" 
-                            name='crs' 
-                            class='form-control form-control-sm' 
-                            value="{{value}}"
-                        >
-                        <label for="{{id}}">SRID</label>
-                    </div>
-                    <div class="form-floating">
-                        {% random_string as id %}
                         {% variable params.xField as value %}
-                        <input 
-                            id="{{id}}" 
-                            type="text" 
-                            name='xField' 
-                            class='form-control form-control-sm' 
-                            value="{{value}}"
-                        >
+                        <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm' value="{{value}}">
                         <label for="{{id}}">X Field</label>
                     </div>
                     <div class="form-floating">
                         {% random_string as id %}
                         {% variable params.yField as value %}
-                        <input 
-                            id="{{id}}" 
-                            type="text" 
-                            name='yField' 
-                            class='form-control form-control-sm'
-                            value="{{value}}"
-                        >
+                        <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm' value="{{value}}">
                         <label for="{{id}}">Y Field</label>
+                    </div>
+                    <div class="form-floating">
+                        {% random_string as id %}
+                        {% variable params.srid as value %}
+                        <input id="{{id}}" type="number" name='crs' class='form-control form-control-sm' value="{{value}}">
+                        <label for="{{id}}">SRID</label>
                     </div>
                 {% endif %}
             </div>

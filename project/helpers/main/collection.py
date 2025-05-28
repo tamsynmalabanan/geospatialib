@@ -61,29 +61,30 @@ def get_collection_layers(url, format=None, delay=True):
     format = format or guess_format_from_url(url)
     layers = {}
 
-    if validators.url(url) and format:
-        url = unquote(url)
-        
-        # normalize url based on format here
-        cacheKey = create_cache_key(['onboard_collection', url, format])
+    if not validators.url(url) or not format:
+        return
+    
+    # normalize url based on format here
+    url = unquote(url)
+    cacheKey = create_cache_key(['onboard_collection', url, format])
 
-        cached_collection = cache.get(cacheKey)
-        if cached_collection:
-            layers = cached_collection['layers']
-            if len(layers.keys()) > 0:
-                return layers
-
-        collection_instance = Collection.objects.filter(
-            url__path=url,
-            format=format
-        ).first()
-        if collection_instance:
-            layers = collection_instance.get_layer_data()
-            if len(layers.keys()) > 0:
-                return layers
-
-        layers = get_layers(url, format)
+    cached_collection = cache.get(cacheKey)
+    if cached_collection:
+        layers = cached_collection['layers']
         if len(layers.keys()) > 0:
+            return layers
+
+    collection_instance = Collection.objects.filter(
+        url__path=url,
+        format=format
+    ).first()
+    if collection_instance:
+        layers = collection_instance.get_layer_data()
+        if len(layers.keys()) > 0:
+            return layers
+
+    layers = get_layers(url, format)
+    if len(layers.keys()) > 0:
             cache.set(cacheKey, {
                 'url': url,
                 'format': format,

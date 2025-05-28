@@ -466,6 +466,8 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     const styles = Object.entries(getGeoJSONLayerStyles(layer)).sort(([keyA, valueA], [keyB, valueB]) => {
         return valueA.rank - valueB.rank
     })
+
+    console.log(styles)
   
     for (const [id, style] of styles) {
         const tr = document.createElement('tr')

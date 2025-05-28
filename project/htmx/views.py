@@ -19,7 +19,7 @@ def validate_collection(request):
                 url = form.cleaned_data.get('url',''),
                 format = form.cleaned_data.get('format',None),
             )
-            if layers == {}:
+            if not layers or layers == {}:
                 raw_format = data.get('format')
                 form.data.update({'format':raw_format})
                 if raw_format:
