@@ -114,7 +114,11 @@ const handleAddLayersForm = () => {
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
             if (element) {
-                console.log(Object.values(includedLayers).some(i => Object.values(i).some(j => j && j !== '')))
+                console.log(Object.values(includedLayers).some(i => Object.keys(i).some(j => {
+                    if (j === 'title') return false
+                    const value = i[j]
+                    return value && value !== ''
+                })))
 
 
                 const vals = JSON.parse(element.getAttribute('hx-vals'))
