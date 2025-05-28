@@ -123,7 +123,7 @@ const handleAddLayersForm = () => {
             }
         }
         
-        resetForm()
+        // resetForm()
         modalInstance.hide()
     })
 
