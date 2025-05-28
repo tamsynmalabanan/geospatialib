@@ -112,7 +112,7 @@ const handleAddLayersForm = () => {
                 })
             }
 
-            console.log(includedLayers, getLayerNamesContainer(source).children)
+            console.log(includedLayers, getLayerNamesContainer(source).querySelectorAll('[hx-trigger="update-collection"'))
         }
         
         resetForm()
