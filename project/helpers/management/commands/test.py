@@ -15,7 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         value = None
 
-        # URL.objects.all().delete()
+        URL.objects.all().delete()
 
         # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
         # # # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
