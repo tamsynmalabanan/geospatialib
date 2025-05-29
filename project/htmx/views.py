@@ -38,6 +38,8 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
+    temp = []
+
     map_id = request.POST.get('mapId','')
     updated_layers = json.loads(request.POST.get('layers'))
 
@@ -46,6 +48,8 @@ def update_collection(request):
     if collection_data:
         cached_layers = collection_data.get('layers', {})
         for name, params in updated_layers.items():
+            if name not in cached_layers:
+                temp.append(name)
             params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
             cached_layers[name] = params
         collection_data['layers'] = cached_layers
@@ -60,7 +64,7 @@ def update_collection(request):
     cache.set(cacheKey, collection_data)
     onboard_collection.delay(cacheKey)
 
-    messages.info(request, json.dumps([collection_data['layers']]), extra_tags=map_id)
+    messages.info(request, json.dumps([collection_data['layers']], temp), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
         'fadeout': 1,
