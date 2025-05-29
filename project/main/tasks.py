@@ -14,7 +14,6 @@ from helpers.main.layers import LAYER_VALIDATORS
     max_retries=5,
 )
 def onboard_collection(self, cacheKey):
-    temp = {}
     cached_collection = cache.get(cacheKey)
     if not cached_collection:
         return
@@ -57,7 +56,6 @@ def onboard_collection(self, cacheKey):
                     'name': name,
                     **data
                 })
-                temp[name] = [layer_instance, created]
             else:
                 pass
                 # if layer already exists, check params
@@ -77,4 +75,4 @@ def onboard_collection(self, cacheKey):
             collection_instance.delete()
 
     cache.delete(cacheKey)
-    return collection_instance, temp
+    return collection_instance
