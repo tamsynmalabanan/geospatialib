@@ -149,7 +149,7 @@ def validate_file(url, name, params):
         srid = DEFAULT_SRID
 
         if name.endswith('.csv'):
-            print(name, params)
+            srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
             geojson_obj, params = csv_to_geojson(file, params)
 
         if name.endswith('.geojson'):
