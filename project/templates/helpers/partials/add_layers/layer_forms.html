@@ -30,6 +30,7 @@
             </div>
             <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{params.title}}">
             <div class="input-group-text d-flex gap-2 fs-12">
+                <input type="text" name='type' value="{{params.type}}" hidden>
                 {% if params.type == 'csv' %}
                     <div class="form-floating">
                         {% random_string as id %}
