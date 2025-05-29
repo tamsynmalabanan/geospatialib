@@ -40,7 +40,7 @@ def update_collection(request):
     messages.info(request, 'Onboarded', extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
-        'hx_swap_oob': 'false',
+        # 'hx_swap_oob': 'false',
         'fadeout': 1,
         'dismissible': 1,
     })
