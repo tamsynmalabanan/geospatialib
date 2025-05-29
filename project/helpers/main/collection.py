@@ -79,7 +79,7 @@ def get_collection_data(url, format=None, delay=True):
     ).first()
     if collection_instance:
         layers = collection_instance.get_layer_data()
-        if len(layers.keys()) > 0:
+        if len(layers.keys()) == len(collection_instance.names):
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
