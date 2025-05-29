@@ -38,16 +38,18 @@ def validate_collection(request):
 @require_http_methods(['POST'])
 def update_collection(request):
     map_id = request.POST.get('mapId','')
-    
+    updated_layers = json.loads(request.POST.get('layers'))
     cacheKey = request.POST.get('cacheKey')
     cached_collection = cache.get(cacheKey)
-    if cached_collection:
+    if cached_collection and updated_layers:
         cached_layers = cached_collection.get('layers', {})
-        updated_layers = json.loads(request.POST.get('layers'))
-        messages.info(request, json.dumps([
-            cached_layers,
-            updated_layers,
-        ]), extra_tags=map_id)
+        for name, params in updated_layers.items():
+            if name not in cached_layers:
+                continue
+            params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
+            cached_layers[name] = params
+
+        messages.info(request, json.dumps(cached_layers), extra_tags=map_id)
 
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
