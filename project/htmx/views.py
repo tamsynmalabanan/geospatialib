@@ -60,7 +60,7 @@ def update_collection(request):
         }
 
     cache.set(cacheKey, collection_data)
-    onboard_collection.delay(cacheKey)
+    onboard_collection(cacheKey)
 
     messages.info(request, json.dumps([
         temp,
