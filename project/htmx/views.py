@@ -38,19 +38,10 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
-    map_id = request.POST.get('mapId','')
-
     cacheKey = request.POST.get('cacheKey')
     updated_layers = json.loads(request.POST.get('layers'))
     collection_data = update_collection_data(cacheKey, updated_layers)
-    # return HttpResponse(collection_data)
-
-    messages.info(request, json.dumps([collection_data]), extra_tags=map_id)
-    return render(request, 'helpers/partials/messages/container.html', {
-        'message_tag': map_id,
-        'fadeout': 1,
-        'dismissible': 1,
-    })
+    return HttpResponse('Done.')
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):

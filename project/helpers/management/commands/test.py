@@ -10,8 +10,6 @@ from main.models import URL
 import requests
 
 def test_get_collection_data():
-    URL.objects.all().delete()
-
     # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
     # # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
     # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
@@ -48,5 +46,6 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
+        # URL.objects.all().delete()
         # test_update_collection_data()
         self.stdout.write(self.style.SUCCESS('Done.'))
