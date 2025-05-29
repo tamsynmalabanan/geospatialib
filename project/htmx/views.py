@@ -45,7 +45,7 @@ def update_collection(request):
     collection_data = update_collection_data(cacheKey, updated_layers)
     # return HttpResponse(collection_data)
 
-    messages.info(request, json.dumps(collection_data), extra_tags=map_id)
+    messages.info(request, json.dumps([collection_data]), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
         'fadeout': 1,
