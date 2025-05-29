@@ -92,3 +92,25 @@ def get_collection_data(url, format=None, delay=True):
         else:
             onboard_collection(cacheKey)
     return data
+
+def update_collection_data(cacheKey, updated_layers, delay=True):
+    collection_data = cache.get(cacheKey)
+    if collection_data:
+        cached_layers = collection_data.get('layers', {})
+        for name, params in updated_layers.items():
+            params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
+            cached_layers[name] = params
+        collection_data['layers'] = cached_layers
+    else:
+        fn, url, format = cacheKey.split(';')
+        collection_data = {
+            'url': url,
+            'format': format,
+            'layers': updated_layers,
+        }
+    cache.set(cacheKey, collection_data, timeout=60*60*24*30)
+    if delay:
+        onboard_collection.delay(cacheKey)
+    else:
+        onboard_collection(cacheKey)
+    return collection_data

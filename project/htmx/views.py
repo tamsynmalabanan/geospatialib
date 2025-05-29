@@ -7,7 +7,7 @@ from django.core.cache import cache
 import json
 import requests
 
-from helpers.main.collection import get_collection_data, sort_layers
+from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
@@ -39,34 +39,18 @@ def validate_collection(request):
 @require_http_methods(['POST'])
 def update_collection(request):
     map_id = request.POST.get('mapId','')
-    updated_layers = json.loads(request.POST.get('layers'))
 
     cacheKey = request.POST.get('cacheKey')
-    collection_data = cache.get(cacheKey)
-    if collection_data:
-        cached_layers = collection_data.get('layers', {})
-        for name, params in updated_layers.items():
-            params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
-            cached_layers[name] = params
-        collection_data['layers'] = cached_layers
-    else:
-        fn, url, format = cacheKey.split(';')
-        collection_data = {
-            'url': url,
-            'format': format,
-            'layers': updated_layers,
-        }
+    updated_layers = json.loads(request.POST.get('layers'))
+    collection_data = update_collection_data(cacheKey, updated_layers)
+    # return HttpResponse(collection_data)
 
-    cache.set(cacheKey, collection_data)
-    onboard_collection.delay(cacheKey)
-
-    messages.info(request, json.dumps([collection_data['layers']]), extra_tags=map_id)
+    messages.info(request, json.dumps(collection_data), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
         'fadeout': 1,
         'dismissible': 1,
     })
-    # return HttpResponse(collection_data)
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):
