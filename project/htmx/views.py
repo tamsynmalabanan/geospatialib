@@ -42,11 +42,16 @@ def update_collection(request):
     cacheKey = request.POST.get('cacheKey')
     cached_collection = cache.get(cacheKey)
     if cached_collection:
-        messages.info(request, json.dumps(cached_collection), extra_tags=map_id)
+        cached_layers = cached_collection.get('layers', {})
+        updated_layers = request.POST.get('layers')
+        messages.info(request, json.dumps([
+            cached_layers,
+            updated_layers,
+        ]), extra_tags=map_id)
 
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
-        'fadeout': 1,
+        # 'fadeout': 1,
         'dismissible': 1,
     })
 
