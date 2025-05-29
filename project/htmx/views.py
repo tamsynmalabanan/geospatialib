@@ -38,6 +38,7 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
+
     temp = []
 
     map_id = request.POST.get('mapId','')
@@ -64,7 +65,7 @@ def update_collection(request):
     cache.set(cacheKey, collection_data)
     onboard_collection.delay(cacheKey)
 
-    messages.info(request, json.dumps([collection_data['layers']], temp), extra_tags=map_id)
+    messages.info(request, json.dumps([collection_data['layers'], temp]), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
         'fadeout': 1,
