@@ -43,7 +43,7 @@ def update_collection(request):
     cached_collection = cache.get(cacheKey)
     if cached_collection:
         cached_layers = cached_collection.get('layers', {})
-        updated_layers = request.POST.get('layers')
+        updated_layers = json.loads(request.POST.get('layers'))
         messages.info(request, json.dumps([
             cached_layers,
             updated_layers,
