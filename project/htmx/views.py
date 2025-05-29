@@ -57,14 +57,14 @@ def update_collection(request):
             'format': format,
             'layers': updated_layers,
         }
-        
+
     cache.set(cacheKey, collection_data)
     onboard_collection.delay(cacheKey)
 
     messages.info(request, json.dumps(collection_data['layers']), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
-        # 'fadeout': 1,
+        'fadeout': 1,
         'dismissible': 1,
     })
 
