@@ -2,6 +2,7 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
+from django.core.cache import cache
 
 import json
 import requests
@@ -37,7 +38,12 @@ def validate_collection(request):
 @require_http_methods(['POST'])
 def update_collection(request):
     map_id = request.POST.get('mapId','')
-    messages.info(request, 'Onboarded', extra_tags=map_id)
+    
+    cacheKey = request.POST.get('cacheKey')
+    cached_collection = cache.get(cacheKey)
+    if cached_collection:
+        messages.info(request, json.dumps(cached_collection), extra_tags=map_id)
+
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
         'fadeout': 1,
