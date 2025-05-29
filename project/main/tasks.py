@@ -39,7 +39,7 @@ def onboard_collection(self, cacheKey):
             collection_instance, created = Collection.objects.get_or_create(
                 url=url_instance, 
                 format=format,
-                names=layers.keys()
+                names=list(layers.keys())
             )
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
