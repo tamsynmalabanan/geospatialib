@@ -36,7 +36,7 @@ class URL(models.Model):
 class Collection(models.Model):
     url:URL = models.ForeignKey("main.URL", verbose_name='URL', on_delete=models.CASCADE)
     format = models.CharField('Format', max_length=16, choices=dict_to_choices(choices.COLLECTION_FORMATS))
-    names = models.JSONField('Layer names', blank=True, null=True)
+    names = models.JSONField('Layer names', default=list)
 
     class Meta:
         unique_together = ['url', 'format']
