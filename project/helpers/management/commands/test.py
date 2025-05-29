@@ -48,5 +48,5 @@ class Command(BaseCommand):
     help = 'Test'
 
     def handle(self, *args, **kwargs):
-        test_update_collection_data()
+        # test_update_collection_data()
         self.stdout.write(self.style.SUCCESS('Done.'))
