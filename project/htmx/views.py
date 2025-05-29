@@ -41,7 +41,7 @@ def update_collection(request):
     return render(request, 'helpers/partials/messages/container.html', {
         'hx_swap_oob': 'true',
         'message_tag': map_id,
-        'fadeout': 1,
+        # 'fadeout': 1,
         'dismissible': 1,
     })
 
