@@ -1,7 +1,7 @@
 {% load static %}
 
 <div 
-    class="d-flex flex-column gap-3 {{message_tag}}"
+    class="d-flex flex-column gap-3 {{request.POST.cachKey}}"
     
     {% if message_tag %}
         id="{{message_tag}}-message-container"
