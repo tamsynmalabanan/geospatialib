@@ -15,8 +15,8 @@
             hx-post="{% url 'htmx:update_collection' %}"
             hx-trigger='update-collection'
             hx-vals='{"cacheKey": "{{cacheKey}}"}'
-            hx-swap='none'
-            {% comment %} hx-swap='outerHTML' {% endcomment %}
+            {% comment %} hx-swap='none' {% endcomment %}
+            hx-swap='outerHTML'
         {% endif %}
     >
         <div class="input-group-text border-0 bg-transparent">
