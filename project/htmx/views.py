@@ -43,10 +43,10 @@ def update_collection(request):
 
     cacheKey = request.POST.get('cacheKey')
     collection_data = cache.get(cacheKey)
-    temp = None
+    temp1 = None
     if collection_data:
         cached_layers = collection_data.get('layers', {})
-        temp = cached_layers
+        temp1 = cached_layers
         for name, params in updated_layers.items():
             params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
             cached_layers[name] = params
@@ -60,10 +60,11 @@ def update_collection(request):
         }
 
     cache.set(cacheKey, collection_data)
-    onboard_collection(cacheKey)
+    collection, temp2 = onboard_collection(cacheKey)
 
     messages.info(request, json.dumps([
-        temp,
+        temp1,
+        temp2,
         collection_data['layers'],
     ]), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
