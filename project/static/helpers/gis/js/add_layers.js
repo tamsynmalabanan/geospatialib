@@ -125,7 +125,7 @@ const handleAddLayersForm = () => {
                     
                     const event = new Event("update-collection", { bubbles: true })
                     element.dispatchEvent(event)
-                }
+                } else {console.log('no update')}
             }
         }
         
