@@ -123,10 +123,10 @@ const handleAddLayersForm = () => {
                         const vals = {
                             ...JSON.parse(element.getAttribute('hx-vals')),
                             layers: includedLayers,
-                            mapId: map.getContainer().id
+                            // mapId: map.getContainer().id
                         }
                         element.setAttribute('hx-vals', JSON.stringify(vals))
-                        element.setAttribute('hx-target', `#${vals.mapId}-message-container`)
+                        // element.setAttribute('hx-target', `#${vals.mapId}-message-container`)
                         
                         const event = new Event("update-collection", { bubbles: true })
                         element.dispatchEvent(event)
