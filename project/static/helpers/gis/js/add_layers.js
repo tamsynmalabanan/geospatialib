@@ -119,15 +119,21 @@ const handleAddLayersForm = () => {
                     const value = i[j]
                     return value && value !== ''
                 }))) {
-                    const vals = JSON.parse(element.getAttribute('hx-vals'))
-                    vals.layers = includedLayers
-                    vals.mapId = map.getContainer().id
-                    element.setAttribute('hx-vals', JSON.stringify(vals))
-                    element.setAttribute('hx-target', `#${vals.mapId}-message-container`)
-                    
-                    const event = new Event("update-collection", { bubbles: true })
-                    element.dispatchEvent(event)
-                } else {console.log('no update')}
+                    try {
+                        const vals = {
+                            ...JSON.parse(element.getAttribute('hx-vals')),
+                            layers: includedLayers,
+                            mapId: map.getContainer().id
+                        }
+                        element.setAttribute('hx-vals', JSON.stringify(vals))
+                        element.setAttribute('hx-target', `#${vals.mapId}-message-container`)
+                        
+                        const event = new Event("update-collection", { bubbles: true })
+                        element.dispatchEvent(event)
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
             }
         }
         
