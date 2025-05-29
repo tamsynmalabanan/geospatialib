@@ -36,12 +36,9 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
-    map_id = request.POST.get('mapId')
-    messages.info(request, 'Onboarded', extra_tags=map_id)
-    return render(request, 'helpers/partials/messages/container.html', {
-        'hx_swap_oob': 'true',
-        'message_tag': map_id,
-        # 'fadeout': 1,
+    messages.info(request, 'Onboarded')
+    return render(request, 'helpers/partials/messages/content.html', {
+        'fadeout': 1,
         'dismissible': 1,
     })
 
