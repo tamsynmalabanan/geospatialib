@@ -10,6 +10,7 @@ import requests
 from helpers.main.collection import get_collection_data, sort_layers
 from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
+from main.tasks import onboard_collection
 
 @require_http_methods(['POST'])
 def validate_collection(request):
@@ -39,18 +40,28 @@ def validate_collection(request):
 def update_collection(request):
     map_id = request.POST.get('mapId','')
     updated_layers = json.loads(request.POST.get('layers'))
+
     cacheKey = request.POST.get('cacheKey')
-    cached_collection = cache.get(cacheKey)
-    if cached_collection and updated_layers:
-        cached_layers = cached_collection.get('layers', {})
+    collection_data = cache.get(cacheKey)
+
+    if collection_data:
+        cached_layers = collection_data.get('layers', {})
         for name, params in updated_layers.items():
-            if name not in cached_layers:
-                continue
             params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
             cached_layers[name] = params
-        cached_collection['layers'] = cached_layers
-        messages.info(request, json.dumps(cached_collection['layers']), extra_tags=map_id)
+        collection_data['layers'] = cached_layers
+    else:
+        fn, url, format = cacheKey.split(';')
+        collection_data = {
+            'url': url,
+            'format': format,
+            'layers': updated_layers,
+        }
+        
+    cache.set(cacheKey, collection_data)
+    onboard_collection.delay(cacheKey)
 
+    messages.info(request, json.dumps(collection_data['layers']), extra_tags=map_id)
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
         # 'fadeout': 1,

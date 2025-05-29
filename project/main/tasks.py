@@ -52,6 +52,10 @@ def onboard_collection(self, cacheKey):
                     'name': name,
                     **data
                 })
+            else:
+                pass
+                # if layer already exists, check params
+
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
         

@@ -63,7 +63,7 @@ def get_first_substring_match(value, choices={}, case_sensitive=False):
     return current_key
 
 def create_cache_key(values):
-    return slugify(';'.join([str(i) for i in values]))
+    return ';'.join([str(i) for i in values])
 
 def dict_to_choices(dict, blank_choice=None, sort=False):
     dict_copy = {'':str(blank_choice)} if blank_choice is not None else {}

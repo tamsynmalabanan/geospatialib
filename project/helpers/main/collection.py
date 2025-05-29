@@ -74,15 +74,16 @@ def get_collection_data(url, format=None, delay=True):
             data['layers'] = layers
             return data
 
-    layers = get_layers(url, format)
     collection_instance = Collection.objects.filter(
         url__path=url, format=format
     ).first()
-    if collection_instance and len(layers.keys()) <= collection_instance.layers.count():
+    if collection_instance:
         layers = collection_instance.get_layer_data()
-        data.update({'layers': layers, 'collection': collection_instance})
-        return data
+        if len(layers.keys()) > 0:
+            data.update({'layers': layers, 'collection': collection_instance})
+            return data
 
+    layers = get_layers(url, format)
     if len(layers.keys()) > 0:
         data['layers'] = layers
         cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24*30)
