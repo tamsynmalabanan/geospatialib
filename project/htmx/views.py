@@ -36,9 +36,12 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
-    messages.info(request, 'Onboarded', extra_tags='main-index-map')
+    messages.info(request, 'Onboarded')
     return render(request, 'helpers/partials/messages/container.html', {
-        'hx_swap_oob': True,
+        'hx_swap_oob': 'true',
+        'message_tag': 'main-index-map',
+        'fadeout': 1,
+        'dismissible': 1,
     })
 
 @require_http_methods(['GET'])
