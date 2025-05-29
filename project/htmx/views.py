@@ -48,8 +48,8 @@ def update_collection(request):
                 continue
             params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
             cached_layers[name] = params
-
-        messages.info(request, json.dumps(cached_layers), extra_tags=map_id)
+        cached_collection['layers'] = cached_layers
+        messages.info(request, json.dumps(cached_collection['layers']), extra_tags=map_id)
 
     return render(request, 'helpers/partials/messages/container.html', {
         'message_tag': map_id,
