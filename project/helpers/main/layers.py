@@ -169,8 +169,28 @@ def validate_file(url, name, params):
     except Exception as e:
         print('validate_file error', e)
        
+def validate_xyz(url, name, params):
+    try:
+        pass
+        # response = get_valid_response(url)
+        # if not response:
+        #     raise Exception('No valid response.')
+
+        # geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
+        # bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+
+        # params.update({
+        #     'bbox': bbox,
+        #     'srid': srid
+        # })
+
+        # return params
+    except Exception as e:
+        print(e)
+       
 LAYER_VALIDATORS = {
     'geojson': validate_geojson,
     'csv': validate_csv,
     'file': validate_file,
+    'xyz': validate_xyz,
 }
