@@ -47,7 +47,7 @@ def update_collection(request):
 def get_layer_forms(request):
     temp = []
     try:
-        temp.append(request.GET.get('layerNames','[]'))
+        temp.append('layerNames', request.GET.get('layerNames','[]'))
         layer_names = json.loads(request.GET.get('layerNames','[]'))
         temp.append('layers names',layer_names)
         layers = {}
