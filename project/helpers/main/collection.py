@@ -44,7 +44,7 @@ def get_layers(url, format):
                 'type': format,
             }}
         
-    if format === 'xyz':
+    if format == 'xyz':
         name = url.split('/')[-1]
         return {name: {
             'title': name,
