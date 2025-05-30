@@ -749,6 +749,7 @@ const createLeafletLayer = async (type, {
         })
         tileLayer.title = title
         tileLayer.group = group
+        return tileLayer
     }
 }
 
