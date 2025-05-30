@@ -656,7 +656,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
 const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
     if (!layer) return
-    console.log(layer)
+
     const group = layer._group
     const map = group._map
     if (!map || !group) return
@@ -750,7 +750,6 @@ const createLeafletLayer = async (type, {
         }
 
         if (layer) {
-            console.log(layer)
             layer._group = group
             layer._title = title
             layer._attribution = attribution
