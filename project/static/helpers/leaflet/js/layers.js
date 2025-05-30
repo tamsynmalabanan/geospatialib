@@ -708,19 +708,21 @@ const urlToLeafletLayer = async ({
         dbIndexedKey = Array(format, JSON.stringify({url,name,type,xField,yField,srid})).join(';')
     }
 
-    console.log(type)
-
     const layer = await createLeafletLayer(type, {
+        url,
         group,
         title,
         dbIndexedKey,
     })
+
+    console.log(layer)
 
     if (layer && add) group.addLayer(layer)
     return layer
 }
 
 const createLeafletLayer = async (type, {
+    url,
     data,
     group,
     dbIndexedKey,
@@ -729,15 +731,24 @@ const createLeafletLayer = async (type, {
     if (!type) return
 
     const map = group._map
-    const typeLower = type.toLowerCase()
-    if (Array('geojson', 'csv').includes(typeLower)) {
+    const pane = createCustomPane(map)
+
+    if (Array('geojson', 'csv').includes(type.toLowerCase())) {
         return await getLeafletGeoJSONLayer({
             geojson: data,
             group,
-            pane: createCustomPane(map),
+            pane,
             title,
             dbIndexedKey,
         })
+    }
+
+    if (type === 'xyz') {
+        return L.tileLayer(url, {
+            pane,
+        })
+        .title = title
+        .group = group
     }
 }
 
