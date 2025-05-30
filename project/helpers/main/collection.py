@@ -46,7 +46,7 @@ def get_layers(url, format):
         
     if format == 'xyz':
         name = get_domain_name(url)
-        print(url.split(get_domain(url))[-1])
+        print(url.split(get_domain(url))[-1].split('/'))
         return {name: {
             'title': name,
             'type': format,
