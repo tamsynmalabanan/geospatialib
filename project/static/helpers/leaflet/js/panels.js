@@ -397,8 +397,9 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     map.on('layeradd', (event) => {
         const layer = event.layer
-        
         if (!map._ch.hasLegendLayer(layer)) return
+        
+        const isGeoJSON = layer instanceof L.GeoJSON
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
@@ -542,7 +543,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             })
             menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
             
-            if (layer instanceof L.GeoJSON) {
+            if (isGeoJSON) {
                 layer.on('dataupdating', () => {
                     legendDetails.innerHTML = ''
                     legendDetails.appendChild(customCreateElement({
@@ -564,6 +565,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                     clearLegend(container, {error: true})
                 })
             }
+        }
+
+        if (!isGeoJSON) {
+            clearLegend(container)
         }
 
         if (layers.innerHTML !== '') {
