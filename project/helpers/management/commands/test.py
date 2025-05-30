@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
+from helpers.base.utils import get_valid_response
 from helpers.base.files import get_file_names
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
@@ -65,7 +66,7 @@ class Command(BaseCommand):
         # print(form.cleaned_data)
 
         domain = urlparse(url).netloc
-        print(domain)
+        print(get_valid_response(domain))
         # domain_parts = domain.split('.')
         # print(domain_parts)
 
