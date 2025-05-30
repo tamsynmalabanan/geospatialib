@@ -26,33 +26,31 @@
                 <div class='d-flex align-items-center'>
                     <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
                     <div class="form-floating flex-grow-1 ms-2 w-50">
-                        <input id="{{id}}" type="text" class="form-control" name='title' title="{{name}}" value="{{params.title}}">
                         {% random_string as id %}
+                        <input id="{{id}}" type="text" class="form-control" name='title' title="{{name}}" value="{{params.title}}">
                         <label for="{{id}}">Title</label>
                     </div>
-                    <div class='d-flex'>
-                        <input type="text" name='type' value="{{params.type}}" hidden>
-                        {% if params.type == 'csv' %}
-                            <div class="form-floating ms-2">
-                                {% random_string as id %}
-                                {% variable params.xField as value %}
-                                <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm' value="{{value}}">
-                                <label for="{{id}}">X Field</label>
-                            </div>
-                            <div class="form-floating ms-2">
-                                {% random_string as id %}
-                                {% variable params.yField as value %}
-                                <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm' value="{{value}}">
-                                <label for="{{id}}">Y Field</label>
-                            </div>
-                            <div class="form-floating ms-2">
-                                {% random_string as id %}
-                                {% variable params.srid as value %}
-                                <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm' value="{% if value %}{{value}}{% else %}4326{% endif %}">
-                                <label for="{{id}}">SRID</label>
-                            </div>
-                        {% endif %}
-                    </div>
+                    <input type="text" name='type' value="{{params.type}}" hidden>
+                    {% if params.type == 'csv' %}
+                        <div class="form-floating ms-2">
+                            {% random_string as id %}
+                            {% variable params.xField as value %}
+                            <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm' value="{{value}}">
+                            <label for="{{id}}">X Field</label>
+                        </div>
+                        <div class="form-floating ms-2">
+                            {% random_string as id %}
+                            {% variable params.yField as value %}
+                            <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm' value="{{value}}">
+                            <label for="{{id}}">Y Field</label>
+                        </div>
+                        <div class="form-floating ms-2">
+                            {% random_string as id %}
+                            {% variable params.srid as value %}
+                            <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm' value="{% if value %}{{value}}{% else %}4326{% endif %}">
+                            <label for="{{id}}">SRID</label>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
