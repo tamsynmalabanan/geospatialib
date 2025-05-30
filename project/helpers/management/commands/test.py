@@ -66,8 +66,9 @@ class Command(BaseCommand):
         # print(form.cleaned_data)
 
         domain = urlparse(url).netloc
-        print(get_valid_response(f'https://{domain}'))
-        # domain_parts = domain.split('.')
-        # print(domain_parts)
-
+        try:
+            response = requests.head(f'https://{domain}')
+            print(response)
+        except Exception as e:
+            print(e)
         self.stdout.write(self.style.SUCCESS('Done.'))
