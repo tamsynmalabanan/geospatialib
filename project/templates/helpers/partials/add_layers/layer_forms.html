@@ -23,7 +23,7 @@
         <div class='d-flex flex-column gap-2'>
             {% for name, params in layers.items %}
                 <div class='d-flex gap-2'>
-                    <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
+                    <input class="form-check-input" type="checkbox" value="{{name}}" checked>
                     <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{params.title}}">
                     <div class='d-flex gap-2'>
                         <input type="text" name='type' value="{{params.type}}" hidden>
