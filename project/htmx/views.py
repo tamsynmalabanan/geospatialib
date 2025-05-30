@@ -45,7 +45,7 @@ def update_collection(request):
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):
-    layer_names = request.GET.get('layerNames','').split('|')
+    layer_names = json.loads(request.GET.get('layerNames','[]'))
     layers = {}
     for name in layer_names:
         title, type = name.split('/')[-1].rsplit('.', 1)

@@ -1,14 +1,14 @@
 const handleAddLayersForm = () => {
     const modalElement = document.querySelector(`#addLayersModal`)
     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-    
-    const form = document.querySelector(`#addLayersForm`)
+    const form = modalElement.querySelector(`#addLayersForm`)
     const sourceRadios = Array.from(form.elements.source)
     const fileInput = form.elements.files
     const fileFields = form.querySelector(`#addLayersForm-fileFields`)
     const urlFields = form.querySelector(`#addLayersForm-urlFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
+    
     const getLayerNamesContainer = (source) => form.querySelector(`#addLayersForm-${source}-layerNames`)
 
     const getFileSource = () => sourceRadios.find(i => i.checked).value
@@ -27,6 +27,7 @@ const handleAddLayersForm = () => {
 
     const resetLayerNames = (source) => {
         getLayerNamesContainer(source).innerHTML = ''
+        toggleSubmitBtn()
     }
 
     const resetFormatField = () => {
@@ -53,21 +54,21 @@ const handleAddLayersForm = () => {
 
     const getIncludedLayers = (source) => {
         const container = getLayerNamesContainer(source)
-        const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.value !== 'all')
+        const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).slice(1)
         const includedLayers = {}
         layerCheckboxes.forEach(i => {
             if (!i.checked) return
 
-            const inputGroup = i.closest('.input-group')
-            const title = inputGroup.querySelector('input[name="title"]')?.value.trim()
-            const params = {title: title !== '' ? title : null}
-            Array.from(inputGroup.lastElementChild.querySelectorAll('input')).forEach(i => {
-                const name = i.getAttribute('name')
+            const params = {}
+            Array.from(i.parentElement.querySelectorAll('input')).forEach(j => {
+                if (i === j) return
+
+                const name = j.getAttribute('name')
                 if (!name) return
                 
-                const value = i.value
-                params[i.getAttribute('name')] = value
+                params[name] = j.value
             })
+
             includedLayers[i.value] = params
         })
         return includedLayers
@@ -90,6 +91,7 @@ const handleAddLayersForm = () => {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
+                
                 fileToLeafletLayer({
                     file,
                     group,
@@ -113,24 +115,21 @@ const handleAddLayersForm = () => {
             }
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
-            if (element) {
-                if (Object.values(includedLayers).some(i => Object.keys(i).some(j => {
-                    if (j === 'title' || j === 'type') return false
-                    const value = i[j]
-                    return value !== ''
-                }))) {
-                    try {
-                        const vals = {
-                            ...JSON.parse(element.getAttribute('hx-vals')),
-                            layers: includedLayers,
-                        }
-                        element.setAttribute('hx-vals', JSON.stringify(vals))
-                        
-                        const event = new Event("update-collection", { bubbles: true })
-                        element.dispatchEvent(event)
-                    } catch (error) {
-                        console.log(error)
+            if (element && Object.values(includedLayers).some(i => Object.keys(i).some(j => {
+                if (j === 'title' || j === 'type') return false
+                return i[j] !== ''
+            }))) {
+                try {
+                    const vals = {
+                        ...JSON.parse(element.getAttribute('hx-vals')),
+                        layers: includedLayers,
                     }
+                    element.setAttribute('hx-vals', JSON.stringify(vals))
+                    
+                    const event = new Event("update-collection", { bubbles: true })
+                    element.dispatchEvent(event)
+                } catch (error) {
+                    console.log(error)
                 }
             }
         }
@@ -151,23 +150,19 @@ const handleAddLayersForm = () => {
     })
     
     fileInput.addEventListener('change', async (e) => {
-        if (fileInput.files.length) {
-            const layerNames = (await getValidFilesArray(fileInput.files)).map(i => i.name).join('|')
-            fileInput.setAttribute('hx-vals', `{"layerNames": "${layerNames}"}`)
-        }
+        if (!fileInput.files.length) return resetLayerNames('files')
+
+        const layerNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
+        fileInput.setAttribute('hx-vals', JSON.stringify({layerNames}))
 
         const event = new Event("get-file-forms", { bubbles: true })
         fileInput.dispatchEvent(event)
     })
 
     form.addEventListener('click', (e) => {
-        const source = e.target.closest('.input-group')?.dataset.layerSource
-        if (!e.target.matches(`.form-check-input`) || !source) return
-        
-        const container = getLayerNamesContainer(source)
-        const selectAllCheckbox = container.querySelector('.form-check-input[value="all"]')
-        const layerCheckboxes = Array.from(container.querySelectorAll(`.form-check-input`)).filter(i => i !== selectAllCheckbox)
-        
+        if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
+
+        const [selectAllCheckbox, ...layerCheckboxes] = Array.from(getLayerNamesContainer(getFileSource()).querySelectorAll(`.form-check-input[type="checkbox"]`))
         if (e.target === selectAllCheckbox) {
             layerCheckboxes.forEach(i => i.checked = e.target.checked)
         } else {
@@ -176,12 +171,11 @@ const handleAddLayersForm = () => {
 
         toggleSubmitBtn()
     })
-    
+
     form.addEventListener('htmx:beforeRequest', async (e) => {
         if (e.target === form.elements.url) {
             try {
-                new URL(e.target.value)
-                return
+                return new URL(e.target.value)
             } catch {
                 resetUrlFields()
             }
@@ -189,10 +183,7 @@ const handleAddLayersForm = () => {
 
         if (e.target === form.elements.format) return
 
-        if (e.target === fileInput) {
-            if (e.target.files.length) return
-            resetLayerNames('files')
-        }
+        if (e.target === fileInput && e.target.files.length) return
 
         if (e.target.matches(`[hx-trigger="update-collection"]`)) return
 
