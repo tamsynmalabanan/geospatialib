@@ -16,7 +16,7 @@ class ValidateCollectionForm(forms.Form):
         required=True,
         widget=forms.URLInput(attrs={
             'type':'search',
-            'class':'form-control',
+            'class':'form-control rounded-end',
             'hx-post':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
             'hx-target':'#addLayersForm-urlFields',
@@ -33,7 +33,7 @@ class ValidateCollectionForm(forms.Form):
         },
         widget=forms.Select(attrs={
             'disabled': True,
-            'class':'form-select',
+            'class':'form-select rounded-end',
             'hx-post':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
             'hx-target':'#addLayersForm-urlFields',

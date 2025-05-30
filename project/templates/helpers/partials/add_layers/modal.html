@@ -1,14 +1,14 @@
 {% load utility_tags %}
 {% load static %}
 
-<div id='addLayersModal' class="modal fade flex-grow-1" tabindex="-1">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down modal-lg flex-grow-1">
-        <form id='addLayersForm' class="modal-content flex-grow-1" style='min-height:400px'>
+<div id='addLayersModal' class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down modal-lg">
+        <form id='addLayersForm' class="modal-content" style='min-height:400px'>
             <div class="modal-header">
                 <h5 class="modal-title">Add layers</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body d-flex flex-column gap-3 flex-grow-1">
+            <div class="modal-body d-flex flex-column gap-3">
                 <div class="d-flex flex-nowrap gap-3">
                     <div class="form-check">
                         {% random_string as id %}
@@ -21,7 +21,7 @@
                         <label class="form-check-label" for="{{id}}">Connect to URL</label>
                     </div>
                 </div>
-                <div id='addLayersForm-fileFields' class="d-flex flex-column gap-3 flex-grow-1">
+                <div id='addLayersForm-fileFields' class="d-flex flex-column gap-3">
                     <input 
                         name='files' 
                         class="form-control"
@@ -34,7 +34,7 @@
                         hx-swap="innerHTML"
                         hx-params='not files'
                     >
-                    <div id='addLayersForm-files-layerNames' class='d-flex flex-column gap-2 flex-grow-1'></div>
+                    <div id='addLayersForm-files-layerNames' class='d-flex flex-column gap-2'></div>
                 </div>
                 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
                     {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
