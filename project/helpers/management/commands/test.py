@@ -12,6 +12,8 @@ from main.forms import ValidateCollectionForm
 import validators
 import requests
 import re
+from urllib.parse import urlparse, urlunparse
+
 
 def test_get_collection_data():
     # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
@@ -53,11 +55,17 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_update_collection_data()
         
+        url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+
         # form = ValidateCollectionForm({
-        #     'url': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        #     'url': url
         # })
 
         # print(form.is_valid())
         # print(form.cleaned_data)
+
+        domain = urlparse(url).netloc
+        domain_parts = domain.split('.')
+        print(domain_parts)
 
         self.stdout.write(self.style.SUCCESS('Done.'))

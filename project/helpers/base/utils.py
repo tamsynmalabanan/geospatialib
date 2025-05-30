@@ -8,6 +8,7 @@ import mimetypes
 import io
 import requests
 import re
+from urllib.parse import urlparse, urlunparse
 
 DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
@@ -141,3 +142,13 @@ def replace_url_placeholders(url, values={}):
     for placeholder in placeholders:
         url = url.replace(f'{{{placeholder}}}', values.get(placeholder, '0'))
     return url
+
+def get_domain_name(url):
+    domain = urlparse(url).netloc
+    domain_parts = domain.split('.')
+    if len(domain_parts) == 1:
+        return domain
+    if len(domain_parts) == 2:
+        return domain_parts[0]
+    if len(domain_parts) > 2:
+        return domain_parts[1]

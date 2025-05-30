@@ -43,6 +43,13 @@ def get_layers(url, format):
                 'title': name,
                 'type': format,
             }}
+        
+    if format === 'xyz':
+        name = url.split('/')[-1]
+        return {name: {
+            'title': name,
+            'type': format,
+        }}
     
     if format == 'file':
         filenames = get_file_names(url)
