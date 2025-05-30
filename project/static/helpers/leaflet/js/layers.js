@@ -656,7 +656,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
 const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
     if (!layer) return
-
+    console.log(layer)
     const group = layer._group
     const map = group._map
     if (!map || !group) return
@@ -714,8 +714,6 @@ const urlToLeafletLayer = async ({
         title,
         dbIndexedKey,
     })
-
-    console.log(layer)
 
     if (layer && add) group.addLayer(layer)
     return layer
