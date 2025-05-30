@@ -49,7 +49,7 @@ def get_layer_forms(request):
     try:
         temp.append(request.GET.get('layerNames','[]'))
         layer_names = json.loads(request.GET.get('layerNames','[]'))
-        temp.append(layer_names)
+        temp.append('layers names',layer_names)
         layers = {}
         for name in layer_names:    
             temp.append(name)
