@@ -39,11 +39,7 @@ class ValidateCollectionForm(forms.Form):
             'hx-target':'#addLayersForm-urlFields',
             'hx-swap': 'innerHTML',
         })
-    )
-
-    def clean_format(self):
-        url = self.cleaned_data.get("url")
-        
+    )        
 
     def clean_format(self):
         url = self.cleaned_data.get("url")
