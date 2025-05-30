@@ -50,6 +50,6 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_update_collection_data()
 
-        print(validators.url('https://tile.openstreetmap.orghttps://tile.openstreetmap.org/{z}/{x}/{y}.png'))
+        print(validators.url('https://tile.openstreetmap.org/{z}/{x}/{y}.png'))
 
         self.stdout.write(self.style.SUCCESS('Done.'))

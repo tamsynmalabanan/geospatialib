@@ -11,7 +11,7 @@ from helpers.main.layers import LAYER_VALIDATORS
     bind=True, 
     autoretry_for=(Exception,),
     retry_backoff=60, 
-    max_retries=5,
+    max_retries=3,
 )
 def onboard_collection(self, cacheKey):
     cached_collection = cache.get(cacheKey)
