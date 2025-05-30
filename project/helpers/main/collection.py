@@ -58,8 +58,11 @@ def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
 
 def get_collection_data(url, format=None, delay=True):
+    if not url:
+        return
+    
     format = format or guess_format_from_url(url)
-    if not validators.url(url) or not format:
+    if not format:
         return
     
     # normalize url based on format here
