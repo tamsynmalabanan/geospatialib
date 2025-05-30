@@ -27,9 +27,9 @@ def test_get_collection_data():
     # # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/cinemas.zip'
     # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
     # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-    url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+    # url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
     # url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
-    
+    url = 'http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'
     value = get_collection_data(url, delay=False)
     print(value)
 
