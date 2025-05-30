@@ -171,20 +171,11 @@ def validate_file(url, name, params):
        
 def validate_xyz(url, name, params):
     try:
-        pass
-        # response = get_valid_response(url)
-        # if not response:
-        #     raise Exception('No valid response.')
-
-        # geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
-        # bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-
-        # params.update({
-        #     'bbox': bbox,
-        #     'srid': srid
-        # })
-
-        # return params
+        params.update({
+            'bbox': WORLD_GEOM,
+            'srid': DEFAULT_SRID
+        })
+        return params
     except Exception as e:
         print(e)
        
