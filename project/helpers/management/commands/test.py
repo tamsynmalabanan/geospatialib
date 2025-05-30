@@ -54,6 +54,6 @@ def test_update_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        URL.objects.all().delete()
-        test_get_collection_data()
+        # URL.objects.all().delete()
+        # test_get_collection_data()
         self.stdout.write(self.style.SUCCESS('Done.'))

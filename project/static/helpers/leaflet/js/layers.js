@@ -708,6 +708,8 @@ const urlToLeafletLayer = async ({
         dbIndexedKey = Array(format, JSON.stringify({url,name,type,xField,yField,srid})).join(';')
     }
 
+    console.log(type)
+
     const layer = await createLeafletLayer(type, {
         group,
         title,
