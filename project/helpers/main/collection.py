@@ -13,11 +13,13 @@ from helpers.base.utils import (
 from helpers.base.files import get_file_names
 from helpers.base.utils import get_decoded_response, get_domain_name, get_domain
 
+XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
+
 def guess_format_from_url(url):
     if not url:
         return
     
-    if any([i for i in ['{', '}', '%7B', '%7D'] if i in url]):
+    if any([i for i in XYZ_TILES_CHARS if i in url]):
         return 'xyz'
 
     decoded_response = get_decoded_response(url)
@@ -46,7 +48,7 @@ def get_layers(url, format):
         
     if format == 'xyz':
         name = get_domain_name(url)
-        print(url.split(get_domain(url))[-1].split('/'))
+        print([i for i in url.split(get_domain(url))[-1].split('/') if i != '' and all([j for j in XYZ_TILES_CHARS if j not in i])])
         return {name: {
             'title': name,
             'type': format,
