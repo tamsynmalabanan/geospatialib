@@ -750,6 +750,7 @@ const createLeafletLayer = async (type, {
         }
 
         if (layer) {
+            console.log(layer)
             layer._group = group
             layer._title = title
             layer._attribution = attribution
@@ -763,7 +764,6 @@ const createLeafletLayer = async (type, {
             return layer
         }
     }
-
 }
 
 const fileToLeafletLayer = async ({
