@@ -25,7 +25,7 @@
             {% for name, params in layers.items %}
                 <div class='d-flex align-items-center'>
                     <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
-                    <div class="form-floating flex-grow-1 ms-2">
+                    <div class="form-floating flex-grow-1 ms-2 w-50">
                         <input id="{{id}}" type="text" class="form-control" name='title' title="{{name}}" value="{{params.title}}">
                         {% random_string as id %}
                         <label for="{{id}}">Title</label>
