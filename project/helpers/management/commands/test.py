@@ -53,11 +53,11 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_update_collection_data()
         
-        form = ValidateCollectionForm({
-            'url': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-        })
+        # form = ValidateCollectionForm({
+        #     'url': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        # })
 
-        print(form.is_valid())
-        print(form.cleaned_data)
+        # print(form.is_valid())
+        # print(form.cleaned_data)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
