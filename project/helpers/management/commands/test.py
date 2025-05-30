@@ -66,7 +66,7 @@ class Command(BaseCommand):
         # print(form.cleaned_data)
 
         domain = urlparse(url).netloc
-        print(get_valid_response(domain))
+        print(get_valid_response(f'https://{domain}'))
         # domain_parts = domain.split('.')
         # print(domain_parts)
 
