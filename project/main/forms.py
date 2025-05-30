@@ -43,6 +43,10 @@ class ValidateCollectionForm(forms.Form):
 
     def clean_format(self):
         url = self.cleaned_data.get("url")
+        
+
+    def clean_format(self):
+        url = self.cleaned_data.get("url")
         if url:
             del self.fields['format'].widget.attrs['disabled']
 

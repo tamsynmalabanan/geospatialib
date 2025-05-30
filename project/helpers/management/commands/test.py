@@ -51,13 +51,4 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_update_collection_data()
 
-        url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-        values = {}
-        placeholders = re.findall(r'\{(.*?)\}', url)
-        print(placeholders)
-        for placeholder in placeholders:
-            url = url.replace(f'{{{placeholder}}}', values.get(placeholder, '0'))
-        print(url)
-
-
         self.stdout.write(self.style.SUCCESS('Done.'))
