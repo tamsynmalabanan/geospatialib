@@ -17,7 +17,7 @@ def guess_format_from_url(url):
     if not url:
         return
     
-    if all([i for i in ['{', '}'] if i in url]):
+    if any([i for i in ['{', '}', '%7B', '%7D'] if i in url]):
         return 'xyz'
 
     decoded_response = get_decoded_response(url)
