@@ -92,7 +92,14 @@ def ok_url_response(url):
         return content_type or True
     except Exception as e:
         return False
-    
+
+def get_response_status(url):
+    try:
+        response = requests.head(url)
+        return response.status_code
+    except Exception as e:
+        print(e)
+
 def get_valid_response(url, header_only=False, with_default_headers=False):
     try:
         if header_only and not with_default_headers:
@@ -143,8 +150,11 @@ def replace_url_placeholders(url, values={}):
         url = url.replace(f'{{{placeholder}}}', values.get(placeholder, '0'))
     return url
 
+def get_domain(url):
+    return urlparse(url).netloc
+
 def get_domain_name(url):
-    domain = urlparse(url).netloc
+    domain = get_domain(url)
     domain_parts = domain.split('.')
     if len(domain_parts) == 1:
         return domain

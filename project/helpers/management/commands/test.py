@@ -26,8 +26,9 @@ def test_get_collection_data():
     # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/centroid.csv'
     # # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/cinemas.zip'
     # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-    url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-
+    # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
+    url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+    
     value = get_collection_data(url, delay=False)
     print(value)
 
@@ -51,24 +52,6 @@ def test_update_collection_data():
 
 class Command(BaseCommand):
     help = 'Test'
-
     def handle(self, *args, **kwargs):
-        # URL.objects.all().delete()
-        # test_update_collection_data()
-        
-        url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-
-        # form = ValidateCollectionForm({
-        #     'url': url
-        # })
-
-        # print(form.is_valid())
-        # print(form.cleaned_data)
-
-        domain = urlparse(url).netloc
-        try:
-            response = requests.head(f'https://{domain}')
-            print(response)
-        except Exception as e:
-            print(e)
+        test_get_collection_data()
         self.stdout.write(self.style.SUCCESS('Done.'))
