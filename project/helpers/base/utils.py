@@ -6,6 +6,8 @@ from collections import OrderedDict
 import requests
 import mimetypes
 import io
+import requests
+import re
 
 DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
@@ -123,8 +125,6 @@ def get_response_file(url):
         print(e)
         return None
     
-import requests
-
 def get_decoded_response(url):
     try:
         response = get_valid_response(url)
@@ -135,3 +135,9 @@ def get_decoded_response(url):
     except Exception as e:
         print(e)
     return None
+
+def replace_url_placeholders(url, values={}):
+    placeholders = re.findall(r'\{(.*?)\}', url)
+    for placeholder in placeholders:
+        url = url.replace(f'{{{placeholder}}}', values.get(placeholder, '0'))
+    return url
