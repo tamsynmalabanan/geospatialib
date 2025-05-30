@@ -45,19 +45,22 @@ def update_collection(request):
 
 @require_http_methods(['GET'])
 def get_layer_forms(request):
-    layer_names = json.loads(request.GET.get('layerNames','[]'))
-    layers = {}
-    for name in layer_names:
-        title, type = name.split('/')[-1].rsplit('.', 1)
-        layers[name] = {
-            'title': title, 
-            'type': type, 
-        }
-    layers = sort_layers(layers)
-    return render(request, 'helpers/partials/add_layers/layer_forms.html', {
-        'layers': layers,
-    })
-
+    try:
+        layer_names = json.loads(request.GET.get('layerNames','[]'))
+        layers = {}
+        for name in layer_names:
+            title, type = name.split('/')[-1].rsplit('.', 1)
+            layers[name] = {
+                'title': title, 
+                'type': type, 
+            }
+        layers = sort_layers(layers)
+        return render(request, 'helpers/partials/add_layers/layer_forms.html', {
+            'layers': layers,
+        })
+    except Exception as e:
+        return HttpResponse(e)
+    
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
     url = request.GET.get('url')
