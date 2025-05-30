@@ -745,8 +745,8 @@ const createLeafletLayer = async (type, {
         const tileLayer = L.tileLayer(url, {
             pane,
         })
-        tileLayer.title = title
-        tileLayer.group = group
+        tileLayer._title = title
+        tileLayer._group = group
         return tileLayer
     }
 }
