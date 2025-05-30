@@ -17,7 +17,7 @@ const createMapPanels = (container, {} = {}) => {
             active: true
         },
         'style': {
-            label: `Layer Properties`,
+            label: `Properties`,
         },
         'query': {
             label: `Query`,

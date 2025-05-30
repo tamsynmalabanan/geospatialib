@@ -46,19 +46,19 @@ def onboard_collection(self, cacheKey):
 
         onboarded_layers = []
         for name, params in layers.items():
+            data = LAYER_VALIDATORS[format](url, name, params)
+            if not data:
+                continue
+
             layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
             if not layer_instance:
-                data = LAYER_VALIDATORS[format](url, name, params)
-                if not data:
-                    continue
                 layer_instance, created = Layer.objects.get_or_create(**{
                     'collection': collection_instance,
                     'name': name,
                     **data
                 })
             else:
-                pass
-                # if layer already exists, check params
+                layer_instance.update(**data)
 
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
@@ -71,7 +71,7 @@ def onboard_collection(self, cacheKey):
         if self.request.retries < self.max_retries:
             raise self.retry(exc=e)
 
-        if collection_instance.layers.count() == 0:
+        if collection_instance and collection_instance.layers.count() == 0:
             collection_instance.delete()
 
     cache.delete(cacheKey)
