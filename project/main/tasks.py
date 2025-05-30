@@ -27,10 +27,8 @@ def onboard_collection(self, cacheKey):
     try:
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
-            print(url if format != 'xyz' else f'https://{get_domain(url)}')
             status = get_response_status(url if format != 'xyz' else f'https://{get_domain(url)}')
-            print(status)
-            if status and status != 403:
+            if status and status != 404:
                 url_instance, created = URL.objects.get_or_create(path=url)
             else:
                 raise Exception('URL response not ok.')
