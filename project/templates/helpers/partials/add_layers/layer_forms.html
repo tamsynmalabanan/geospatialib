@@ -8,7 +8,7 @@
 {% endif %}
 
 {% if layers and layers.keys|length > 0 %}
-    <div class='d-flex flex-column gap-2' data-layer-source="{{source}}">
+    <div class='d-flex flex-column gap-2 fs-12' data-layer-source="{{source}}">
         <div
             class='d-flex gap-2'
             {% if not collection and cacheKey %}
@@ -23,7 +23,7 @@
         </div>
         <div class='d-flex flex-column gap-2'>
             {% for name, params in layers.items %}
-                <div class='d-flex gap-2 fs-12'>
+                <div class='d-flex gap-2'>
                     <input class="form-check-input" type="checkbox" value="{{name}}" checked>
                     <div class="form-floating">
                         {% random_string as id %}
