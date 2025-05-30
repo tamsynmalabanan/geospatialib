@@ -25,11 +25,11 @@
             {% for name, params in layers.items %}
                 <div class='d-flex align-items-center'>
                     <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
-                    <input type="text" class="form-control" name='title' placeholder="{{name}}" title="{{name}}" value="{{params.title}}">
-                    {% comment %} <div class="form-floating flex-grow-1 ms-2">
+                    <div class="form-floating flex-grow-1 ms-2">
+                        <input id="{{id}}" type="text" class="form-control" name='title' title="{{name}}" value="{{params.title}}">
                         {% random_string as id %}
                         <label for="{{id}}">Title</label>
-                    </div> {% endcomment %}
+                    </div>
                     <div class='d-flex'>
                         <input type="text" name='type' value="{{params.type}}" hidden>
                         {% if params.type == 'csv' %}
