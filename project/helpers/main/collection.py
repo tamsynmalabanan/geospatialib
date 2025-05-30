@@ -17,15 +17,14 @@ def guess_format_from_url(url):
     if not url:
         return
     
+    if all([i for i in ['{', '}'] if i in url]):
+        return 'xyz'
+
     decoded_response = get_decoded_response(url)
     if not decoded_response:
         return 'file'
 
     return get_first_substring_match(decoded_response+url, {
-        'file': [
-            'download',
-            'zip',
-        ],
         'csv': [
             'table',
         ],
