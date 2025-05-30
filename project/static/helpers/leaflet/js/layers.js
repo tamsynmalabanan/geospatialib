@@ -725,6 +725,8 @@ const createLeafletLayer = async (type, {
     group,
     dbIndexedKey,
     title,
+    attribution,
+    styles,
 } = {}) => {
     if (!type) return
 
@@ -739,16 +741,29 @@ const createLeafletLayer = async (type, {
             title,
             dbIndexedKey,
         })
+    } else {
+        let layer
+        if (type === 'xyz') {
+            layer = L.tileLayer(url, {
+                pane,
+            })
+        }
+
+        if (layer) {
+            layer._group = group
+            layer._title = title
+            layer._attribution = attribution
+            layer._styles = styles ?? {
+                visibility: {
+                    active: false,
+                    min: 10,
+                    max: 5000000,
+                },
+            }
+            return layer
+        }
     }
 
-    if (type === 'xyz') {
-        const tileLayer = L.tileLayer(url, {
-            pane,
-        })
-        tileLayer._title = title
-        tileLayer._group = group
-        return tileLayer
-    }
 }
 
 const fileToLeafletLayer = async ({

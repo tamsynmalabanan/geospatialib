@@ -135,7 +135,6 @@ const getLeafletGeoJSONLayer = async ({
                     }).outerHTML
                     layer.bindPopup(popupContent, {autoPan: false})
                 }
-                
             }
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
