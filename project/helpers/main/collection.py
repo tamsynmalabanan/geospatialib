@@ -11,7 +11,7 @@ from helpers.base.utils import (
     ok_url_response
 )
 from helpers.base.files import get_file_names
-from helpers.base.utils import get_decoded_response
+from helpers.base.utils import get_decoded_response, get_domain_name
 
 def guess_format_from_url(url):
     if not url:
@@ -45,7 +45,7 @@ def get_layers(url, format):
             }}
         
     if format == 'xyz':
-        name = url.split('/')[-1]
+        name = get_domain_name(url)
         return {name: {
             'title': name,
             'type': format,

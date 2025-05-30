@@ -64,8 +64,8 @@ class Command(BaseCommand):
         # print(form.is_valid())
         # print(form.cleaned_data)
 
-        domain = urlparse(url).netloc
-        domain_parts = domain.split('.')
-        print(domain_parts)
+        # domain = urlparse(url).netloc
+        # domain_parts = domain.split('.')
+        # print(domain_parts)
 
         self.stdout.write(self.style.SUCCESS('Done.'))

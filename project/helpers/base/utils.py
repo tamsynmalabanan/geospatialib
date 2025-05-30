@@ -151,4 +151,4 @@ def get_domain_name(url):
     if len(domain_parts) == 2:
         return domain_parts[0]
     if len(domain_parts) > 2:
-        return domain_parts[1]
+        return domain_parts[-2]
