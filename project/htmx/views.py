@@ -47,21 +47,16 @@ def update_collection(request):
 def get_layer_forms(request):
     temp = []
     try:
-        temp.append(json.dumps(request.GET.dict()))
-        temp.append(f'layerNames, {request.GET.get('layerNames','[]')}')
+        temp.append(request.GET.get('layerNames','[]'))
         layer_names = json.loads(request.GET.get('layerNames','[]'))
-        temp.append(layer_names)
         layers = {}
         for name in layer_names:    
-            temp.append(f'name, {name}')
             title, type = name.split('/')[-1].rsplit('.', 1)
-            temp.append(title, type)
             layers[name] = {
                 'title': title, 
                 'type': type, 
             }
         layers = sort_layers(layers)
-        temp.append(layers)
         return render(request, 'helpers/partials/add_layers/layer_forms.html', {
             'layers': layers,
         })
