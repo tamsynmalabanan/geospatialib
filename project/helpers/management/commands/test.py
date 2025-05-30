@@ -7,6 +7,7 @@ from helpers.main.collection import get_collection_data, get_layers, get_file_na
 from main.tasks import onboard_collection
 from main.models import URL
 
+import validators
 import requests
 
 def test_get_collection_data():
@@ -48,4 +49,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
         # test_update_collection_data()
+
+        print(validators.url('https://tile.openstreetmap.orghttps://tile.openstreetmap.org/{z}/{x}/{y}.png'))
+
         self.stdout.write(self.style.SUCCESS('Done.'))
