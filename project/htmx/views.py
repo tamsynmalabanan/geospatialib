@@ -65,10 +65,7 @@ def get_layer_forms(request):
             'layers': layers,
         })
     except Exception as e:
-        return HttpResponse(json.dumps([
-            e,
-            temp,
-        ]))
+        return HttpResponse(temp)
     
 @require_http_methods(['POST', 'GET'])
 def cors_proxy(request):
