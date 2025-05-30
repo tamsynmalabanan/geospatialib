@@ -10,6 +10,7 @@
 {% if layers and layers.keys|length > 0 %}
     <div class='d-flex flex-column gap-2' data-layer-source="{{source}}">
         <div
+            class='d-flex gap-2'
             {% if not collection and cacheKey %}
                 hx-post="{% url 'htmx:update_collection' %}"
                 hx-trigger='update-collection'
