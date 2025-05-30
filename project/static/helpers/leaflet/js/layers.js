@@ -744,11 +744,11 @@ const createLeafletLayer = async (type, {
     }
 
     if (type === 'xyz') {
-        return L.tileLayer(url, {
+        const tileLayer = L.tileLayer(url, {
             pane,
         })
-        .title = title
-        .group = group
+        tileLayer.title = title
+        tileLayer.group = group
     }
 }
 
