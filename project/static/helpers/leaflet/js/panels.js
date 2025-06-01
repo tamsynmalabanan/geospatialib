@@ -964,9 +964,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const getSymbologyForm = (id) => {
         const legendLayer = getLayerLegend()
-        const symbology = layer._styles.symbology
-        const style = (symbology.groups?.[id]) || symbology.default
-        const styleParams = style.styleParams
+
+        const symbology = layer._styles?.symbology
+        const style = (symbology?.groups?.[id]) || symbology?.default
+        const styleParams = style?.styleParams
         const collapseId = generateRandomString()
 
         let updateTimeout
