@@ -6,7 +6,7 @@ import os
 from io import BytesIO
 import json
 
-from helpers.base.utils import get_valid_response, get_response_file
+from helpers.base.utils import get_response_file
 
 def extract_zip(zip_file, base_path=""):
     files = {}

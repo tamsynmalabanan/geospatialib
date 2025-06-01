@@ -7,7 +7,7 @@ import io
 from fiona.io import MemoryFile
 
 from main.models import SpatialRefSys
-from helpers.base.utils import get_valid_response, get_response_file
+from helpers.base.utils import get_response, get_response_file
 from helpers.base.files import extract_zip
 
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
@@ -93,9 +93,9 @@ def get_geojson_metadata(data):
             
 def validate_geojson(url, name, params):
     try:
-        response = get_valid_response(url)
+        response = get_response(url, raise_for_status=True)
         if not response:
-            raise Exception('No valid response.')
+            return
 
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
         bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
@@ -111,9 +111,9 @@ def validate_geojson(url, name, params):
 
 def validate_csv(url, name, params):
     try:
-        response = get_valid_response(url)
+        response = get_response(url, raise_for_status=True)
         if not response:
-            raise Exception('No valid response.')
+            return
 
         data = io.StringIO(response.text)
         geojson_obj, params = csv_to_geojson(data, params)

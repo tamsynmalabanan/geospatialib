@@ -8,7 +8,7 @@ from main.models import Collection
 from helpers.base.utils import (
     get_first_substring_match, 
     create_cache_key, 
-    ok_url_response
+    get_response
 )
 from helpers.base.files import get_file_names
 from helpers.base.utils import get_decoded_response, get_domain_name, get_domain
@@ -38,30 +38,37 @@ def guess_format_from_url(url):
     })
 
 def get_layers(url, format):
-    if format in ['geojson', 'csv']:
-        if ok_url_response(url):
+    try:
+        response = get_response(
+            url=url if format != 'xyz' else f'https://{get_domain(url)}',
+            header_only=True,
+            raise_for_status=True
+        )
+        if not response:
+            return {}
+
+        if format in ['geojson', 'csv']:
             name = url.split('/')[-1]
             return {name: {
                 'title': name,
                 'type': format,
             }}
+            
+        if format == 'xyz':
+            name = (' '.join([get_domain_name(url)]+[i for i in url.split(get_domain(url))[-1].split('/') if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])])).strip()
+            return {name: {
+                'title': name,
+                'type': format,
+            }}
         
-    if format == 'xyz':
-        name = (' '.join([get_domain_name(url)]+[i for i in url.split(get_domain(url))[-1].split('/') if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])])).strip()
-        print(name)
-        return {name: {
-            'title': name,
-            'type': format,
-        }}
-    
-    if format == 'file':
-        filenames = get_file_names(url)
-        return {i:{
-            'title': i.split('/')[-1].split('.')[0],
-            'type': i.split('.')[-1],
-        } for i in filenames}
-    
-    return {}
+        if format == 'file':
+            filenames = get_file_names(url)
+            return {i:{
+                'title': i.split('/')[-1].split('.')[0],
+                'type': i.split('.')[-1],
+            } for i in filenames}
+    except Exception as e:
+        return {}
 
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))

@@ -1,4 +1,5 @@
 from django.utils.text import slugify
+from django.core.cache import cache
 
 import string
 import random
@@ -82,42 +83,38 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
     
     return [(key, value) for key, value in dict_copy.items()]
 
-def ok_url_response(url):
-    try:
-        response = get_valid_response(url, header_only=True)
-        if not response:
-            raise Exception('No valid response.')
+def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
+    cacheKey = create_cache_key(['get_response', url, header_only])
+    
+    cached_response = cache.get(cacheKey) or (cache.get(create_cache_key(['get_response', url, False])) if header_only == True else None)
+    if cached_response:
+        return cached_response
 
-        content_type = response.headers.get('Content-Type', '')
-        return content_type or True
-    except Exception as e:
-        return False
-
-def get_response_status(url):
-    try:
-        response = requests.head(url)
-        return response.status_code
-    except Exception as e:
-        print(e)
-
-def get_valid_response(url, header_only=False, with_default_headers=False):
     try:
         if header_only and not with_default_headers:
             response = requests.head(url)
         else:
-            response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else None)
-        response.raise_for_status()
+            response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else {})
+
+        if response.status_code == 403 and not with_default_headers:
+            response = get_response(url, with_default_headers=True)
+        
+        if raise_for_status:
+            response.raise_for_status()
+
+        if 200 <= response.status_code < 400:
+            cache.set(cacheKey, response, 60*60)
+        
         return response
     except Exception as e:
-        if with_default_headers:
-            return None
-        return get_valid_response(url, header_only=header_only, with_default_headers=True)
+        print(e)
+    return None
     
 def get_response_file(url):
     try:
-        response = get_valid_response(url)
+        response = get_response(url, raise_for_status=True)
         if not response:
-            raise Exception('No valid response.')
+            return
         
         content_type = response.headers.get('Content-Type', '')
         extension = mimetypes.guess_extension(content_type)
@@ -131,14 +128,13 @@ def get_response_file(url):
         }
     except Exception as e:
         print(e)
-        return None
+    return None
     
 def get_decoded_response(url):
     try:
-        response = get_valid_response(url)
+        response = get_response(url, raise_for_status=True)
         if not response:
-            raise Exception('No valid response.')
-        
+            return
         return response.content.decode('utf-8')
     except Exception as e:
         print(e)

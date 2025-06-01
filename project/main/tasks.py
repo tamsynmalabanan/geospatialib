@@ -4,7 +4,7 @@ from celery import shared_task
 import requests
 
 from .models import URL, Collection, Layer
-from helpers.base.utils import ok_url_response, get_response_status, get_domain
+from helpers.base.utils import get_domain, get_response
 from helpers.main.layers import LAYER_VALIDATORS
 
 @shared_task(
@@ -27,11 +27,15 @@ def onboard_collection(self, cacheKey):
     try:
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
-            status = get_response_status(url if format != 'xyz' else f'https://{get_domain(url)}')
-            if status and status != 404:
+            response = get_response(
+                url=url if format != 'xyz' else f'https://{get_domain(url)}',
+                header_only=True,
+                raise_for_status=True,
+            )
+            if response and response.status_code != 404:
                 url_instance, created = URL.objects.get_or_create(path=url)
             else:
-                raise Exception('URL response not ok.')
+                raise Exception('Invalid URL response.')
         if not url_instance:
             raise Exception('No URL instance exists or created.')
 
