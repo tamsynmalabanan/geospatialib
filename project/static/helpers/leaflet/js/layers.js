@@ -760,6 +760,7 @@ const createLeafletLayer = async (type, {
                 transparent: true,
                 pane,
             })
+            print(layer)
         }
 
         if (layer) {
