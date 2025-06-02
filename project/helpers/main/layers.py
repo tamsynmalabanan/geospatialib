@@ -193,7 +193,10 @@ def validate_wms(url, name, params):
     try:
         wms = get_wms(url)
         layer = wms[name]
-        print(layer)
+        bbox = layer.boundingBoxWGS84 or layer.boundingBox
+        print(bbox)
+        if bbox:
+            w,s,e,n,*srid = bbox
     except Exception as e:
         print(e)
        
