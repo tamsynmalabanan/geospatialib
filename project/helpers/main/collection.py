@@ -45,13 +45,16 @@ def guess_format_from_url(url):
 def get_wms_layers(url):
     try:
         cacheKey = create_cache_key(['wms', url])
+        print('get_wms_layers', cacheKey)
         wms = cache.get(cacheKey)
+        print(wms)
         if not wms:
-            print('get_wms_layers')
             wms = WebMapService(url)
+            print(wms)
         else:
             cache.set(cacheKey, wms, 60*60)
         layer_names = list(wms.contents)
+        print(layer_names)
         return {i:wms[i].title for i in layer_names}
     except Exception as e:
         print(e)
