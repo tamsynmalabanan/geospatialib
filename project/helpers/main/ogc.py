@@ -1,5 +1,7 @@
 from django.core.cache import cache
 from owslib.wms import WebMapService
+import pickle
+from lxml import etree
 
 from helpers.base.utils import create_cache_key
 
@@ -10,10 +12,6 @@ def GET_OGC(format):
 
 def get_wms(url):
     try:
-        # cacheKey = create_cache_key(['ogc-wms', url])
-        # wms = cache.get(cacheKey)
-        # if not wms:
-            return WebMapService(url)
-            # cache.set(cacheKey, wms, 60*60)
+        return WebMapService(url)
     except Exception as e:
         print(e)
