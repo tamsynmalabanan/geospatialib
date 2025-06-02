@@ -710,6 +710,8 @@ const urlToLeafletLayer = async ({
 
     const layer = await createLeafletLayer(type, {
         url,
+        format,
+        name,
         group,
         title,
         dbIndexedKey,
@@ -721,6 +723,8 @@ const urlToLeafletLayer = async ({
 
 const createLeafletLayer = async (type, {
     url,
+    format,
+    name,
     data,
     group,
     dbIndexedKey,
@@ -745,6 +749,15 @@ const createLeafletLayer = async (type, {
         let layer
         if (type === 'xyz') {
             layer = L.tileLayer(url, {
+                pane,
+            })
+        }
+
+        if (type === 'wms') {
+            layer = L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
+                layers: name,
+                format: 'image/png',
+                transparent: true,
                 pane,
             })
         }
