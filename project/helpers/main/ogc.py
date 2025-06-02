@@ -12,7 +12,7 @@ def get_wms_layers(url):
         layers = {}
         for i in layer_names:
             layer = wms[i]
-            params = {'title': layer.title} 
+            params = {'title': layer.title, 'type':'wms'} 
 
             bbox = layer.boundingBoxWGS84 or layer.boundingBox
             w,s,e,n,*srid = bbox or (-180, -90, 180, 90, 4326)
