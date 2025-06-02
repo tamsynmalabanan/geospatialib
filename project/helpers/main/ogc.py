@@ -10,10 +10,10 @@ def GET_OGC(format):
 
 def get_wms(url):
     try:
-        cacheKey = create_cache_key(['ogc-wms', url])
-        wms = cache.get(cacheKey)
-        if not wms:
-            wms = WebMapService(url)
-            cache.set(cacheKey, wms, 60*60)
+        # cacheKey = create_cache_key(['ogc-wms', url])
+        # wms = cache.get(cacheKey)
+        # if not wms:
+            return WebMapService(url)
+            # cache.set(cacheKey, wms, 60*60)
     except Exception as e:
         print(e)

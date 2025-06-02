@@ -42,8 +42,6 @@ def guess_format_from_url(url):
         ],
     })
 
-
-
 def get_wms_layers(url):
     try:
         wms = get_wms(url)
