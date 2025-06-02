@@ -35,6 +35,7 @@ def onboard_collection(self, cacheKey):
                     header_only=True,
                     raise_for_status=True,
                 )
+            print(response)
             if not response or response.status_code == 404:
                 raise Exception('Invalid URL response.')
             else:
