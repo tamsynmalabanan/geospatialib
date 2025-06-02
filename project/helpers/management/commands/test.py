@@ -30,6 +30,7 @@ def test_get_collection_data():
     # url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
     # url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
     # url = 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+    url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
     value = get_collection_data(url, delay=False)
     print(value)
 
