@@ -5,9 +5,10 @@ import geojson
 import pandas as pd, geopandas as gpd
 import io
 from fiona.io import MemoryFile
+from urllib.parse import unquote
 
 from main.models import SpatialRefSys
-from helpers.base.utils import get_response, get_response_file, get_domain_url
+from helpers.base.utils import get_response, get_response_file, get_domain_url, remove_query_params
 from helpers.base.files import extract_zip
 
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
@@ -30,7 +31,12 @@ LATITUDE_ALIASES = [
 ]
 
 def format_url(url, format):
-    return url if format != 'xyz' else get_domain_url(url)
+    url = unquote(url)
+    if format == 'xyz':
+        return get_domain_url(url)
+    if format.startswith('ogc-'):
+        return remove_query_params(url)
+    return url
 
 def features_to_geometries(features, srid=4326):
     geometries = []
@@ -182,9 +188,16 @@ def validate_xyz(url, name, params):
     except Exception as e:
         print(e)
        
+def validate_wms(url, name, params):
+    try:
+        pass
+    except Exception as e:
+        print(e)
+       
 LAYER_VALIDATORS = {
     'geojson': validate_geojson,
     'csv': validate_csv,
     'file': validate_file,
     'xyz': validate_xyz,
+    'ogc-wms': validate_wms,
 }

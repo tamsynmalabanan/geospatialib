@@ -1,7 +1,6 @@
 from django.core.cache import cache
 
-import validators
-from urllib.parse import unquote
+from owslib.wms import WebMapService
 
 from main.tasks import onboard_collection
 from main.models import Collection
@@ -24,12 +23,15 @@ def guess_format_from_url(url):
     
     if any([i for i in XYZ_TILES_CHARS if i in url]):
         return 'xyz'
-
+    
     decoded_response = get_decoded_response(url)
     if not decoded_response:
         return 'file'
 
     return get_first_substring_match(decoded_response+url, {
+        'ogc-wms': [
+            'wms',
+        ],
         'csv': [
             'table',
         ],
@@ -39,6 +41,20 @@ def guess_format_from_url(url):
             'features',
         ],
     })
+
+def get_wms_layers(url):
+    try:
+        cacheKey = create_cache_key(['wms', url])
+        wms = cache.get(cacheKey)
+        if not wms:
+            wms = WebMapService(url)
+        else:
+            cache.set(cacheKey, wms, 60*60)
+        layer_names = list(wms.contents)
+        return {i:wms[i].title for i in layer_names}
+    except Exception as e:
+        print(e)
+    return {}
 
 def get_layers(url, format):
     try:
@@ -70,6 +86,13 @@ def get_layers(url, format):
                 'title': i.split('/')[-1].split('.')[0],
                 'type': i.split('.')[-1],
             } for i in filenames}
+        
+        if format.startswith('ogc-'):
+            layers = get_wms_layers(url)
+            return {key:{
+                'title': value,
+                'type': 'wms'
+            } for key, value in layers.items()}
     except Exception as e:
         print(e)
         return {}
@@ -85,8 +108,7 @@ def get_collection_data(url, format=None, delay=True):
     if not format:
         return
     
-    # normalize url based on format here
-    url = unquote(url)
+    url = url if format == 'xyz' else format_url(url, format)
     cacheKey = create_cache_key(['onboard_collection', url, format])
 
     data = {'layers':{}, 'cacheKey':cacheKey}

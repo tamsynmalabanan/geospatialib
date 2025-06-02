@@ -86,7 +86,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
     cacheKey = create_cache_key(['get_response', url, header_only])
     
-    cached_response = cache.get(cacheKey) or (cache.get(create_cache_key(['get_response', url, False])) if header_only == True else None)
+    cached_response = cache.get(cacheKey) or cache.get(create_cache_key(['get_response', url, False]))
     if cached_response:
         return cached_response
 
@@ -145,6 +145,11 @@ def replace_url_placeholders(url, values={}):
     for placeholder in placeholders:
         url = url.replace(f'{{{placeholder}}}', values.get(placeholder, '0'))
     return url
+
+def remove_query_params(url):
+    parsed_url = urlparse(url)
+    cleaned_url = urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, '', '', ''))
+    return cleaned_url
 
 def get_domain(url):
     return urlparse(url).netloc
