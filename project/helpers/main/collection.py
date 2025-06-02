@@ -47,6 +47,7 @@ def get_wms_layers(url):
         cacheKey = create_cache_key(['wms', url])
         wms = cache.get(cacheKey)
         if not wms:
+            print('get_wms_layers')
             wms = WebMapService(url)
         else:
             cache.set(cacheKey, wms, 60*60)
