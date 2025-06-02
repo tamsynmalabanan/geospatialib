@@ -1,9 +1,9 @@
 from django.core.cache import cache
 
-from owslib.wms import WebMapService
 
 from main.tasks import onboard_collection
 from main.models import Collection
+from helpers.main.ogc import get_wms, GET_OGC
 from helpers.base.utils import (
     get_first_substring_match, 
     create_cache_key, 
@@ -42,14 +42,11 @@ def guess_format_from_url(url):
         ],
     })
 
+
+
 def get_wms_layers(url):
     try:
-        cacheKey = create_cache_key(['ogc-wms', url])
-        wms = cache.get(cacheKey)
-        if not wms:
-            wms = WebMapService(url)
-        else:
-            cache.set(cacheKey, wms, 60*60)
+        wms = get_wms(url)
         layer_names = list(wms.contents)
         return {i:wms[i].title for i in layer_names}
     except Exception as e:
