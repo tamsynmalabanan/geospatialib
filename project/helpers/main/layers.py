@@ -192,9 +192,8 @@ def validate_xyz(url, name, params):
 def validate_wms(url, name, params):
     try:
         wms = get_wms(url)
-        print(wms)
-        print(name)
-        print(params)
+        layer = wms[name]
+        print(layer)
     except Exception as e:
         print(e)
        
