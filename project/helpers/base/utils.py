@@ -147,9 +147,12 @@ def replace_url_placeholders(url, values={}):
     return url
 
 def remove_query_params(url):
-    parsed_url = urlparse(url)
-    cleaned_url = urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, '', '', ''))
-    return cleaned_url
+    try:
+        parsed_url = urlparse(url)
+        cleaned_url = urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, '', '', ''))
+        return cleaned_url
+    except Exception as e:
+        print(e)
 
 def get_domain(url):
     return urlparse(url).netloc

@@ -35,7 +35,7 @@ def format_url(url, format):
     if format == 'xyz':
         return get_domain_url(url)
     if format.startswith('ogc-'):
-        return remove_query_params(url)
+        return remove_query_params(url) or url
     return url
 
 def features_to_geometries(features, srid=4326):
@@ -190,7 +190,7 @@ def validate_xyz(url, name, params):
        
 def validate_wms(url, name, params):
     try:
-        pass
+        raise Exception(url)
     except Exception as e:
         print(e)
        
