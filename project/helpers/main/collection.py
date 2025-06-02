@@ -58,6 +58,14 @@ def get_wms_layers(url):
 
 def get_layers(url, format):
     try:
+        if format.startswith('ogc-'):
+            layers = get_wms_layers(url)
+            print(layers)
+            return {key:{
+                'title': value,
+                'type': 'wms'
+            } for key, value in layers.items()}
+
         response = get_response(
             url=format_url(url, format),
             header_only=True,
@@ -87,13 +95,6 @@ def get_layers(url, format):
                 'type': i.split('.')[-1],
             } for i in filenames}
         
-        if format.startswith('ogc-'):
-            layers = get_wms_layers(url)
-            print(layers)
-            return {key:{
-                'title': value,
-                'type': 'wms'
-            } for key, value in layers.items()}
     except Exception as e:
         print(e)
         return {}
