@@ -10,6 +10,7 @@ from urllib.parse import unquote
 from main.models import SpatialRefSys
 from helpers.base.utils import get_response, get_response_file, get_domain_url, remove_query_params
 from helpers.base.files import extract_zip
+from helpers.main.ogc import get_wms
 
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 
@@ -190,7 +191,10 @@ def validate_xyz(url, name, params):
        
 def validate_wms(url, name, params):
     try:
-        raise Exception(url)
+        wms = get_wms(url)
+        print(wms)
+        print(name)
+        print(params)
     except Exception as e:
         print(e)
        

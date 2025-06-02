@@ -55,7 +55,6 @@ def get_layers(url, format):
     try:
         if format.startswith('ogc-'):
             layers = get_wms_layers(url)
-            print(layers)
             return {key:{
                 'title': value,
                 'type': 'wms'
