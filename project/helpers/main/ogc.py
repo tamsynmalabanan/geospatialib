@@ -5,10 +5,29 @@ from lxml import etree
 
 from helpers.base.utils import create_cache_key
 
-def GET_OGC(format):
-    return {
-        'ogc-wms': get_wms,
-    }[format]
+def get_wms_layers(url):
+    try:
+        wms = get_wms(url)
+        layer_names = list(wms.contents)
+        layers = {}
+        for i in layer_names:
+            layer = wms[i]
+            params = {'title': layer.title} 
+
+            bbox = layer.boundingBoxWGS84 or layer.boundingBox
+            w,s,e,n,*srid = bbox or (-180, -90, 180, 90, 4326)
+            srid = srid or 4326
+            # transform bbox if not 4326
+            params.update({
+                'bbox': bbox, 
+                'srid': srid, 
+            })
+
+            layers[i] = params
+        return layers
+    except Exception as e:
+        print('get_wms_layers', e)
+    return {}
 
 def get_wms(url):
     try:

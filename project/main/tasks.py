@@ -6,7 +6,6 @@ import requests
 from .models import URL, Collection, Layer
 from helpers.base.utils import get_domain, get_response, get_domain_url, create_cache_key
 from helpers.main.layers import LAYER_VALIDATORS, format_url
-from helpers.main.ogc import GET_OGC
 
 @shared_task(
     bind=True, 
@@ -30,7 +29,7 @@ def onboard_collection(self, cacheKey):
         if not url_instance:
             is_ogc = format.startswith('ogc-')
             if is_ogc:
-                response = GET_OGC(format)(url)
+                response = True
             else:
                 response = get_response(
                     url=format_url(url, format),

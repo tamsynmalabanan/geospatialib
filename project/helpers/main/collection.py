@@ -3,7 +3,6 @@ from django.core.cache import cache
 
 from main.tasks import onboard_collection
 from main.models import Collection
-from helpers.main.ogc import get_wms, GET_OGC
 from helpers.base.utils import (
     get_first_substring_match, 
     create_cache_key, 
@@ -14,6 +13,7 @@ from helpers.base.utils import (
 )
 from helpers.base.files import get_file_names
 from helpers.main.layers import format_url
+from helpers.main.ogc import get_wms_layers
 
 XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
 
@@ -42,23 +42,10 @@ def guess_format_from_url(url):
         ],
     })
 
-def get_wms_layers(url):
-    try:
-        wms = get_wms(url)
-        layer_names = list(wms.contents)
-        return {i:wms[i].title for i in layer_names}
-    except Exception as e:
-        print('get_wms_layers', e)
-    return {}
-
 def get_layers(url, format):
     try:
         if format.startswith('ogc-'):
-            layers = get_wms_layers(url)
-            return {key:{
-                'title': value,
-                'type': 'wms'
-            } for key, value in layers.items()}
+            return get_wms_layers(url)
 
         response = get_response(
             url=format_url(url, format),
