@@ -754,7 +754,7 @@ const createLeafletLayer = async (type, {
         }
 
         if (type === 'wms') {
-            layer = L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
+            layer = L.tileLayer.wms(url, {
                 layers: name,
                 format: 'image/png',
                 transparent: true,
