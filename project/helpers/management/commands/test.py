@@ -10,6 +10,8 @@ from main.models import URL
 from main.forms import ValidateCollectionForm
 
 
+
+from owslib.wms import WebMapService
 import validators
 import requests
 import re
@@ -56,5 +58,7 @@ class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
-        test_get_collection_data()
+        # test_get_collection_data()
+        wms = WebMapService('https://geoserver.geoportal.gov.ph/geoserver/wms?')
+        print(wms)
         self.stdout.write(self.style.SUCCESS('Done.'))
