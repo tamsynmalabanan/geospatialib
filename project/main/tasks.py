@@ -4,7 +4,7 @@ from celery import shared_task
 import requests
 
 from .models import URL, Collection, Layer
-from helpers.base.utils import get_domain, get_response, get_domain_url
+from helpers.base.utils import get_domain, get_response, get_domain_url, create_cache_key
 from helpers.main.layers import LAYER_VALIDATORS, format_url
 
 @shared_task(
@@ -27,15 +27,18 @@ def onboard_collection(self, cacheKey):
     try:
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
-            response = get_response(
-                url=format_url(url, format),
-                header_only=True,
-                raise_for_status=True,
-            )
-            if response and response.status_code != 404:
-                url_instance, created = URL.objects.get_or_create(path=url)
+            if format.startswith('ogc-'):
+                response = cache.get(create_cache_key([format, url]))
             else:
+                response = get_response(
+                    url=format_url(url, format),
+                    header_only=True,
+                    raise_for_status=True,
+                )
+            if not response or response.status_code == 404:
                 raise Exception('Invalid URL response.')
+            else:
+                url_instance, created = URL.objects.get_or_create(path=url)
         if not url_instance:
             raise Exception('No URL instance exists or created.')
 

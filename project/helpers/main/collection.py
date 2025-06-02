@@ -44,7 +44,7 @@ def guess_format_from_url(url):
 
 def get_wms_layers(url):
     try:
-        cacheKey = create_cache_key(['wms', url])
+        cacheKey = create_cache_key(['ogc-wms', url])
         wms = cache.get(cacheKey)
         if not wms:
             wms = WebMapService(url)
