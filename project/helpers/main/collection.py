@@ -71,6 +71,7 @@ def get_layers(url, format):
                 'type': i.split('.')[-1],
             } for i in filenames}
     except Exception as e:
+        print(e)
         return {}
 
 def sort_layers(layers):
