@@ -32,7 +32,8 @@ def test_get_collection_data():
     # url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
     # url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
     # url = 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
-    url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
+    # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
+    url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS'
     value = get_collection_data(url, delay=False)
     print(value)
 
@@ -58,10 +59,5 @@ class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
-        # test_get_collection_data()
-        url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS'
-        # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
-        print(url)
-        wms = WebMapService(url)
-        print(wms)
+        test_get_collection_data()
         self.stdout.write(self.style.SUCCESS('Done.'))
