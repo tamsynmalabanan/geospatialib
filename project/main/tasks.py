@@ -28,7 +28,8 @@ def onboard_collection(self, cacheKey):
     try:
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
-            if format.startswith('ogc-'):
+            is_ogc = format.startswith('ogc-')
+            if is_ogc:
                 response = GET_OGC(format)(url)
             else:
                 response = get_response(
@@ -36,14 +37,13 @@ def onboard_collection(self, cacheKey):
                     header_only=True,
                     raise_for_status=True,
                 )
-            print(type(response))
-            if not response or (not format.startswith('ogc-') and response.status_code == 404):
+            if not response or (not is_ogc and response.status_code == 404):
                 raise Exception('Invalid URL response.')
             else:
                 url_instance, created = URL.objects.get_or_create(path=url)
         if not url_instance:
             raise Exception('No URL instance exists or created.')
-
+  
         collection_instance = Collection.objects.filter(url=url_instance, format=format).first()
         if not collection_instance:
             collection_instance, created = Collection.objects.get_or_create(
