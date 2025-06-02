@@ -59,6 +59,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
         # test_get_collection_data()
-        wms = WebMapService('https://geoserver.geoportal.gov.ph/geoserver/wms?')
+        url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS'
+        # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
+        print(url)
+        wms = WebMapService(url)
         print(wms)
         self.stdout.write(self.style.SUCCESS('Done.'))
