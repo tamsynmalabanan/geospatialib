@@ -34,7 +34,7 @@ def validate_collection(request):
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
-        return HttpResponse(e)
+        return HttpResponse(f'error {e}')
 
 @require_http_methods(['POST'])
 def update_collection(request):
