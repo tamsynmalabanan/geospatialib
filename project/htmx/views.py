@@ -14,15 +14,18 @@ from main.tasks import onboard_collection
 
 @require_http_methods(['POST'])
 def validate_collection(request):
+    steps = []
     try:
         data = request.POST.dict()
         context = {'layers':{}}
         form = ValidateCollectionForm(data)
         if form.is_valid():
+            steps.append('form is valid')
             context = get_collection_data(
                 url = form.cleaned_data.get('url', ''),
                 format = form.cleaned_data.get('format', None),
             )
+            steps.append(context)
             layers = context.get('layers', {})
             if layers == {}:
                 raw_format = data.get('format')
@@ -31,10 +34,13 @@ def validate_collection(request):
                     form.add_error('format', 'No layers retrieved.')
             else:
                 context['layers'] = sort_layers(layers)
+                steps.append('sorted')
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
-        return HttpResponse(f'error {e}')
+        steps.append(e)
+        return HttpResponse(json.dumps(steps))
+        # return HttpResponse(f'error {e}')
 
 @require_http_methods(['POST'])
 def update_collection(request):
