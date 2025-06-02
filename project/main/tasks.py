@@ -29,7 +29,7 @@ def onboard_collection(self, cacheKey):
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
             if format.startswith('ogc-'):
-                response = GET_OGC(format)
+                response = GET_OGC(format)(url)
             else:
                 response = get_response(
                     url=format_url(url, format),
