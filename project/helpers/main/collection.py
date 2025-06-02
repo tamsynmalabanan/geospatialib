@@ -43,7 +43,7 @@ def guess_format_from_url(url):
 def get_layers(url, format):
     try:
         response = get_response(
-            url=format_url(url),
+            url=format_url(url, format),
             header_only=True,
             raise_for_status=True
         )

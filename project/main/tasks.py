@@ -28,7 +28,7 @@ def onboard_collection(self, cacheKey):
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
             response = get_response(
-                url=format_url(url),
+                url=format_url(url, format),
                 header_only=True,
                 raise_for_status=True,
             )
