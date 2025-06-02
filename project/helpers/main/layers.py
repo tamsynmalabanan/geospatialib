@@ -7,7 +7,7 @@ import io
 from fiona.io import MemoryFile
 
 from main.models import SpatialRefSys
-from helpers.base.utils import get_response, get_response_file
+from helpers.base.utils import get_response, get_response_file, get_domain_url
 from helpers.base.files import extract_zip
 
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
@@ -28,6 +28,9 @@ LATITUDE_ALIASES = [
     'phi', 'parallel', 'geo_y', 'geom_y', 'y_coord',
     'north_south', 'south_north', 'vertical_position', 'north', 'south'
 ]
+
+def format_url(url, format):
+    return url if format != 'xyz' else get_domain_url(url)
 
 def features_to_geometries(features, srid=4326):
     geometries = []

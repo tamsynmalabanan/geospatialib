@@ -4,8 +4,8 @@ from celery import shared_task
 import requests
 
 from .models import URL, Collection, Layer
-from helpers.base.utils import get_domain, get_response
-from helpers.main.layers import LAYER_VALIDATORS
+from helpers.base.utils import get_domain, get_response, get_domain_url
+from helpers.main.layers import LAYER_VALIDATORS, format_url
 
 @shared_task(
     bind=True, 
@@ -28,7 +28,7 @@ def onboard_collection(self, cacheKey):
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
             response = get_response(
-                url=url if format != 'xyz' else f'https://{get_domain(url)}',
+                url=format_url(url),
                 header_only=True,
                 raise_for_status=True,
             )

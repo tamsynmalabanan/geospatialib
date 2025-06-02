@@ -149,6 +149,9 @@ def replace_url_placeholders(url, values={}):
 def get_domain(url):
     return urlparse(url).netloc
 
+def get_domain_url(url):
+    return f'https://{get_domain(url)}'
+
 def get_domain_name(url):
     domain = get_domain(url)
     domain_parts = domain.split('.')

@@ -8,10 +8,13 @@ from main.models import Collection
 from helpers.base.utils import (
     get_first_substring_match, 
     create_cache_key, 
-    get_response
+    get_response,
+    get_decoded_response, 
+    get_domain_name, 
+    get_domain, 
 )
 from helpers.base.files import get_file_names
-from helpers.base.utils import get_decoded_response, get_domain_name, get_domain
+from helpers.main.layers import format_url
 
 XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
 
@@ -40,7 +43,7 @@ def guess_format_from_url(url):
 def get_layers(url, format):
     try:
         response = get_response(
-            url=url if format != 'xyz' else f'https://{get_domain(url)}',
+            url=format_url(url),
             header_only=True,
             raise_for_status=True
         )
