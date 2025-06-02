@@ -190,14 +190,14 @@ def validate_xyz(url, name, params):
        
 def validate_wms(url, name, params):
     try:
-        # bbox = params.get('bbox')
-        # if bbox:
-        #     w,s,e,n,*crs = bbox
-        #     srid = SpatialRefSys.objects.filter(srid=int(crs[0].split(':')[1]) if len(crs) != 0 and ':' in crs[0] else 4326).first()
-        #     params.update({
-        #         'bbox': Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid.srid),
-        #         'srid': srid,
-        #     })
+        bbox = params.get('bbox')
+        if bbox:
+            w,s,e,n,*crs = bbox
+            srid = SpatialRefSys.objects.filter(srid=int(crs[0].split(':')[1]) if len(crs) != 0 and ':' in crs[0] else 4326).first()
+            params.update({
+                'bbox': Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid.srid),
+                'srid': srid,
+            })
         return params
     except Exception as e:
         print(e)

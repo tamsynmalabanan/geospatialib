@@ -16,7 +16,7 @@ def get_wms_layers(url):
 
             bbox = layer.boundingBoxWGS84 or layer.boundingBox
             w,s,e,n,*srid = bbox or (-180, -90, 180, 90, 4326)
-            srid = srid or 4326
+            srid = int(srid[0].split(':')[-1]) if len(srid) > 0 else 4326
             # transform bbox if not 4326
             params.update({
                 'bbox': bbox, 
