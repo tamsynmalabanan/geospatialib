@@ -53,7 +53,7 @@ def get_wms_layers(url):
         layer_names = list(wms.contents)
         return {i:wms[i].title for i in layer_names}
     except Exception as e:
-        print(e)
+        print('get_wms_layers', e)
     return {}
 
 def get_layers(url, format):
