@@ -103,7 +103,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
         if raise_for_status:
             response.raise_for_status()
 
-        if 200 <= response.status_code < 400:
+        if response.status_code != 404:
             cache.set(cacheKey, response, 60*60)
         
         return response
