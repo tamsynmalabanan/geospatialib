@@ -63,7 +63,8 @@ class Command(BaseCommand):
 
         # test_get_collection_data()
 
-        url = 'https://www.cmar.csiro.au/geoserver/wms?'
+        url = 'https://ows.emodnet-bathymetry.eu/wms'
+        # url = 'https://www.cmar.csiro.au/geoserver/wms?'
 
         # wms = WebMapService(url)
         # print(wms)
