@@ -743,8 +743,6 @@ const createLeafletLayer = async (params, {
             })
         }
 
-        layer.on('tileerror', (e) => console.log(e))
-
         if (layer) {
             layer._group = group
             layer._title = params.title

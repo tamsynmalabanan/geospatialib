@@ -12,11 +12,11 @@ from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 
-@require_http_methods(['POST'])
+@require_http_methods(['GET'])
 def validate_collection(request):
     steps = []
     try:
-        data = request.POST.dict()
+        data = request.GET.dict()
         context = {'layers':{}}
         form = ValidateCollectionForm(data)
         if form.is_valid():
