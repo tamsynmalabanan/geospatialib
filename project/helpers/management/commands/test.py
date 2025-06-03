@@ -62,7 +62,8 @@ class Command(BaseCommand):
 
         # test_get_collection_data()
 
-        url = 'https://www.cmar.csiro.au/geoserver/wms?service=WMS&version=1.3.0&request=GetCapabilities'
+        url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
+        # url = 'https://www.cmar.csiro.au/geoserver/wms?'
 
         # print(get_response(url, raise_for_status=False))
         wms = WebMapService(url)
