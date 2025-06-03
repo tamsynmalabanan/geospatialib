@@ -41,8 +41,8 @@ def get_wms_layers(url):
                 'srid': srid, 
                 'keywords': wms_tags + (layer.keywords or []), 
                 'abstract': ('<br><br>'.join([i for i in [wms_abstract, (layer.abstract or '')] if i != ''])).strip(), 
-                'attribution': wms_id.accessconstraints,
-                'fees': wms_id.fees,
+                'attribution': wms_id.accessconstraints or '',
+                'fees': wms_id.fees or '',
             })
             layers[i] = params
     except Exception as e:
