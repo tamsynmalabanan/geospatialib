@@ -86,16 +86,21 @@ def sort_layers(layers):
 def get_collection_data(url, format=None, delay=True):
     if not url:
         return
+    print(url)
     
     format = format or guess_format_from_url(url)
     if not format:
         return
+    print(format)
     
     url = url if format == 'xyz' else format_url(url, format)
+    print(url, format)
     cacheKey = create_cache_key(['onboard_collection', url, format])
+    print(cacheKey)
 
     data = {'layers':{}, 'cacheKey':cacheKey}
     cached_collection = cache.get(cacheKey)
+    print(cached_collection)
     if cached_collection:
         layers = cached_collection['layers']
         if len(layers.keys()) > 0:
@@ -111,7 +116,9 @@ def get_collection_data(url, format=None, delay=True):
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
+    print('getting layers...')
     layers = get_layers(url, format)
+    print(layers)
     if len(layers.keys()) > 0:
         data['layers'] = layers
         cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24*30)
@@ -119,6 +126,7 @@ def get_collection_data(url, format=None, delay=True):
             onboard_collection.delay(cacheKey)
         else:
             onboard_collection(cacheKey)
+    print(data)
     return data
 
 def update_collection_data(cacheKey, updated_layers, delay=True):
