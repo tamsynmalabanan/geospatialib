@@ -88,6 +88,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
     
     cached_response = cache.get(cacheKey) or cache.get(create_cache_key(['get_response', url, False]))
     if cached_response:
+        print('cached response')
         return cached_response
 
     print('get_response')
