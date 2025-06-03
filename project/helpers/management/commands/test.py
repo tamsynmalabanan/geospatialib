@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from helpers.base.utils import get_response, get_response
 from helpers.base.files import get_file_names
+from helpers.main.ogc import get_wms_layers
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
 from main.models import URL
@@ -67,7 +68,7 @@ class Command(BaseCommand):
         # wms = WebMapService(url)
         # print(wms)
 
-        response = get_response(url, raise_for_status=False)
-        print(response.content)
+        response = get_wms_layers(url, raise_for_status=False)
+        print(response)
 
         self.stdout.write(self.style.SUCCESS('Done.'))

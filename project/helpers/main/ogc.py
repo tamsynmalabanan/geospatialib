@@ -1,3 +1,5 @@
+import requests
+import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
 
 def get_wms_layers(url):
@@ -21,5 +23,23 @@ def get_wms_layers(url):
             layers[i] = params
     except Exception as e:
         print('get_wms_layers', e)
+        try:
+            response = requests.get(f"{url}?request=GetCapabilities")
+            response.raise_for_status()
+            root = ET.fromstring(response.content)
+
+            # Parse layers manually
+            for layer in root.findall(".//{http://www.opengis.net/wms}Layer"):
+                name_elem = layer.find("{http://www.opengis.net/wms}Name")
+                title_elem = layer.find("{http://www.opengis.net/wms}Title")
+                
+                if name_elem is not None:
+                    name = name_elem.text
+                    title = title_elem.text if title_elem is not None else ""
+                    layers[name] = {'type': 'wms', 'title': title}
+        
+        except Exception as e:
+            print(f"XML parsing failed: {e}")
+
     
     return layers
