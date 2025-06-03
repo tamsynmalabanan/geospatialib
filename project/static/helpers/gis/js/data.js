@@ -1,5 +1,5 @@
-const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
-    return await fetchTimeout(url, {
+const fetchGeoJSON = async (params, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(params.url, {
         abortBtns,
         controller,
         callback: async (response) => {
@@ -14,8 +14,8 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
-const fetchCSV = async (url, params, {abortBtns, controller} = {}) => {
-    return await fetchTimeout(url, {
+const fetchCSV = async (params, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(params.url, {
         abortBtns,
         controller,
         callback: async (response) => {
@@ -42,15 +42,16 @@ const rawDataToLayerData = (rawData, params) => {
 }
 
 const mapForFetchFileData = new Map()
-const fetchFileData = async (url, name, params, {abortBtns, controller} = {}) => {
+const fetchFileData = async (params, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
-        const file = filesArray.find(file => file.name === name)
+        const file = filesArray.find(file => file.name === params.name)
         if (!file) return
         
         const rawData = await getFileRawData(file)
         return rawDataToLayerData(rawData, params)
     }
 
+    const url = params.url
     const mapKey = `${url};${controller?.id}` 
     if (mapForFetchFileData.has(mapKey)) {
         return handler(await mapForFetchFileData.get(mapKey))
@@ -72,7 +73,7 @@ const fetchFileData = async (url, name, params, {abortBtns, controller} = {}) =>
             }
         },
     }).catch(error => {
-        console.log(error.message, url, name)
+        console.log(error.message, params)
     }).finally(() => {
         setTimeout(() => mapForFetchFileData.delete(mapKey), 1000)
     })
