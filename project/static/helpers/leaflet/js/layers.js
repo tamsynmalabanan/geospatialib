@@ -744,9 +744,10 @@ const createLeafletLayer = async (params, {
             const styles = params.styles
             if (styles && Object.keys(styles).length) {
                 const name = Object.keys(styles)[0]
-                options.styles = name
-                params.title = styles[name].title
-                params.legend = styles[name].legend
+                console.log(name)
+                // options.styles = name
+                // params.title = styles[name].title
+                // params.legend = styles[name].legend
             }
 
             layer = L.tileLayer.wms(params.url, options)
