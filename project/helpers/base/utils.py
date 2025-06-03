@@ -98,6 +98,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
             response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else {})
 
         if response.status_code == 403 and not with_default_headers:
+            print('status code is 403')
             response = get_response(url, with_default_headers=True, raise_for_status=raise_for_status)
         
         if raise_for_status:
