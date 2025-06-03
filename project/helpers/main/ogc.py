@@ -43,6 +43,7 @@ def get_wms_layers(url):
                 'abstract': ('<br><br>'.join([i for i in [wms_abstract, (layer.abstract or '')] if i != ''])).strip(), 
                 'attribution': wms_id.accessconstraints or '',
                 'fees': wms_id.fees or '',
+                'style': layer.styles
             })
             layers[i] = params
     except Exception as e:

@@ -60,7 +60,7 @@ class Layer(models.Model):
     abstract = models.TextField('Abstract', blank=True, null=True)
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
-
+    style = models.CharField('Style', max_length=512, blank=True, null=True)
 
     class Meta:
         unique_together = ['collection', 'name']
