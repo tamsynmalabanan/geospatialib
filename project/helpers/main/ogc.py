@@ -12,7 +12,9 @@ def get_wms_layers(url):
 
         response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
-        content_size = len(response.content)
+        content = response.content
+        print(content)
+        content_size = len(content)
         print(content_size)
 
 
