@@ -110,7 +110,7 @@ def get_collection_data(url, format=None, delay=True):
         layers = collection_instance.get_layer_data()
         if len(layers.keys()) == len(collection_instance.names):
             for name in layers.keys():
-                layers[name]['bbox'] = layers[name]['bbox'].extent
+                layers[name]['bbox'] = list(layers[name]['bbox'].extent)
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
