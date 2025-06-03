@@ -569,7 +569,11 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (!isGeoJSON) {
             clearLegend(container)
-            console.log(container, layer._legend)
+            if (layer._legend) {
+                const img = new Image()
+                img.src = layer._legend
+                container.querySelector(`#${container.id}-details`).appendChild(img)
+            }
         }
 
         if (layers.innerHTML !== '') {
