@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
         # test_get_collection_data()
 
-        url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
+        url = 'https://ows.emodnet-bathymetry.eu/wms'
         # url = 'https://www.cmar.csiro.au/geoserver/wms?'
 
         # print(get_response(url, raise_for_status=False))
