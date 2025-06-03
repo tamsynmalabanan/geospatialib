@@ -8,7 +8,10 @@ def get_wms_layers(url):
     
     try:
         response = get_response(f'{url}?request=GetCapabilities', raise_for_status=False)
-        print(response)
+        response.raise_for_status()
+        content_size = len(response.content)
+        print(content_size)
+
 
 
         # wms = WebMapService(url)
