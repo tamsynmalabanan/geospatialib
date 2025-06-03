@@ -709,7 +709,6 @@ const createLeafletLayer = async (params, {
     dbIndexedKey,
     data,
     group,
-    styles,
 } = {}) => {
     const type = params.type
     if (!type) return
@@ -735,18 +734,29 @@ const createLeafletLayer = async (params, {
         }
 
         if (type === 'wms') {
-            layer = L.tileLayer.wms(params.url, {
+            const options = {
                 layers: params.name,
                 format: 'image/png',
                 transparent: true,
                 pane,
-            })
+            }
+
+            const styles = params.styles
+            if (styles && Object.keys(styles).length) {
+                const name = Object.keys(styles)[0]
+                options.styles = name
+                params.title = styles[name].title
+                params.legend = styles[name].legend
+            }
+
+            layer = L.tileLayer.wms(params.url, options)
         }
 
         if (layer) {
             layer._group = group
             layer._title = params.title
-            layer._styles = styles ?? {
+            layer._legend = params.legend
+            layer._styles = {
                 visibility: {
                     active: false,
                     min: 10,
@@ -765,7 +775,6 @@ const createLeafletLayer = async (params, {
                 layer.getBounds = () => L.latLngBounds([[s, w], [n, e]]);
             }
             
-            console.log(JSON.parse(params.styles))
             return layer
         }
     }
