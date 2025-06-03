@@ -84,6 +84,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
     return [(key, value) for key, value in dict_copy.items()]
 
 def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
+    print('get_response')
     cacheKey = create_cache_key(['get_response', url, header_only])
     
     cached_response = cache.get(cacheKey) or cache.get(create_cache_key(['get_response', url, False]))
