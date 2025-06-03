@@ -65,7 +65,8 @@ class Command(BaseCommand):
 
         # url = 'https://www.mrlc.gov/geoserver/ows?'
         # url = 'https://ows.emodnet-bathymetry.eu/wms'
-        url = 'https://www.cmar.csiro.au/geoserver/wms?'
+        # url = 'https://www.cmar.csiro.au/geoserver/wms?'
+        url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
 
         # wms = WebMapService(url)
         # print(wms)
