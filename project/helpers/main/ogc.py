@@ -4,14 +4,10 @@ def get_wms_layers(url):
     layers = {}
     
     try:
-        print(url)
         wms = WebMapService(url)
-        print(wms)
         layer_names = list(wms.contents)
-        print(layer_names)
         for i in layer_names:
             layer = wms[i]
-            print(layer)
             params = {'type': 'wms', 'title': layer.title} 
 
             bbox = layer.boundingBoxWGS84 or layer.boundingBox
@@ -22,7 +18,6 @@ def get_wms_layers(url):
                 'bbox': bbox, 
                 'srid': srid, 
             })
-            print(params)
             layers[i] = params
     except Exception as e:
         print('get_wms_layers', e)

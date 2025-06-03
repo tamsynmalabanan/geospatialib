@@ -60,6 +60,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         URL.objects.all().delete()
 
-        test_get_collection_data()
-        
+        # test_get_collection_data()
+        wms = WebMapService('https://www.cmar.csiro.au/geoserver/wms?')
+        print(wms)
+
         self.stdout.write(self.style.SUCCESS('Done.'))
