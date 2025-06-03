@@ -20,12 +20,10 @@ def validate_collection(request):
         context = {'layers':{}}
         form = ValidateCollectionForm(data)
         if form.is_valid():
-            steps.append('form is valid')
             context = get_collection_data(
                 url = form.cleaned_data.get('url', ''),
                 format = form.cleaned_data.get('format', None),
             )
-            steps.append('get_collection_data')
             layers = context.get('layers', {})
             if layers == {}:
                 raw_format = data.get('format')
@@ -34,13 +32,11 @@ def validate_collection(request):
                     form.add_error('format', 'No layers retrieved.')
             else:
                 context['layers'] = sort_layers(layers)
-                steps.append('sort_layers')
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
         steps.append(str(e))
         return HttpResponse(';'.join(steps))
-        # return HttpResponse(f'error {e}')
 
 @require_http_methods(['POST'])
 def update_collection(request):
