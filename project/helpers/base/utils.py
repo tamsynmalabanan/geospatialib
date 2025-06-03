@@ -88,6 +88,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
     
     cached_response = cache.get(cacheKey) or cache.get(create_cache_key(['get_response', url, False]))
     if cached_response:
+        print('cached response')
         return cached_response
 
     print('get_response')
@@ -115,9 +116,6 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
 def get_response_file(url):
     try:
         response = get_response(url, raise_for_status=True)
-        if not response:
-            return
-        
         content_type = response.headers.get('Content-Type', '')
         extension = mimetypes.guess_extension(content_type)
         filename = url.split("/")[-1]
@@ -135,8 +133,6 @@ def get_response_file(url):
 def get_decoded_response(url):
     try:
         response = get_response(url, raise_for_status=True)
-        if not response:
-            return
         return response.content.decode('utf-8')
     except Exception as e:
         print(e)

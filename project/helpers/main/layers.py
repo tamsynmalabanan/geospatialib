@@ -103,17 +103,12 @@ def get_geojson_metadata(data):
 def validate_geojson(url, name, params):
     try:
         response = get_response(url, raise_for_status=True)
-        if not response:
-            return
-
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
         bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-
         params.update({
             'bbox': bbox,
             'srid': srid
         })
-
         return params
     except Exception as e:
         print(e)
@@ -121,11 +116,7 @@ def validate_geojson(url, name, params):
 def validate_csv(url, name, params):
     try:
         response = get_response(url, raise_for_status=True)
-        if not response:
-            return
-
-        data = io.StringIO(response.text)
-        geojson_obj, params = csv_to_geojson(data, params)
+        geojson_obj, params = csv_to_geojson(io.StringIO(response.text), params)
         if not geojson_obj:
             raise Exception('No valid geojson.')
 

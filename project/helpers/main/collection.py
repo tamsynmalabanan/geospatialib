@@ -47,14 +47,6 @@ def get_layers(url, format):
         if format.startswith('ogc-'):
             return get_wms_layers(url)
 
-        response = get_response(
-            url=format_url(url, format),
-            header_only=True,
-            raise_for_status=False,
-        )
-        if response.status_code == 404:
-            return {}
-
         if format in ['geojson', 'csv']:
             name = url.split('/')[-1]
             return {name: {
@@ -78,7 +70,7 @@ def get_layers(url, format):
         
     except Exception as e:
         print(e)
-        return {}
+    return {}
 
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
