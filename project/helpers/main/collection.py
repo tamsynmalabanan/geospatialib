@@ -50,8 +50,9 @@ def get_layers(url, format):
         response = get_response(
             url=format_url(url, format),
             header_only=True,
-            raise_for_status=False
+            raise_for_status=False,
         )
+        print(response)
         if not response or response.status_code == 404:
             return {}
 
