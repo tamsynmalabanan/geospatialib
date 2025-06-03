@@ -176,7 +176,7 @@ def validate_xyz(url, name, params):
        
 def validate_wms(url, name, params):
     try:
-        srid = SpatialRefSys.objects.filter(srid=(params.srid or 4326)).first()
+        srid = SpatialRefSys.objects.filter(srid=params.get('srid', 4326)).first()
         params['srid'] = srid
 
         w,s,e,n,*crs = params.get('bbox')
