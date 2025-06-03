@@ -23,7 +23,6 @@
         </div>
         <div class='d-flex flex-column gap-2'>
             {% for name, params in layers.items %}
-                {{params}}
                 <div class='d-flex align-items-center'>
                     <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
                     <div class="form-floating flex-grow-1 ms-2 w-50">
@@ -31,7 +30,18 @@
                         <input id="{{id}}" type="text" class="form-control" name='title' title="{{name}}" value="{{params.title}}">
                         <label for="{{id}}">Title</label>
                     </div>
+
                     <input type="text" name='type' value="{{params.type}}" hidden>
+                    {% if params.bbox %}
+                        <input type="text" name='bbox' value="{{params.bbox}}" hidden>
+                    {% endif %}
+                    {% if params.attribution %}
+                        <input type="text" name='attribution' value="{{params.attribution}}" hidden>
+                    {% endif %}
+                    {% if params.styles %}
+                        <input type="text" name='styles' value="{{params.styles}}" hidden>
+                    {% endif %}
+                    
                     {% if params.type == 'csv' %}
                         <div class="form-floating ms-2">
                             {% random_string as id %}
@@ -52,6 +62,9 @@
                             <label for="{{id}}">SRID</label>
                         </div>
                     {% endif %}
+
+                    
+
                 </div>
             {% endfor %}
         </div>
