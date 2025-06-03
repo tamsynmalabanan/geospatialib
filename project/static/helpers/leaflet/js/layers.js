@@ -754,6 +754,8 @@ const createLeafletLayer = async (params, {
                     max: 5000000,
                 },
             }
+            console.log(JSON.parse(params.bbox))
+            console.log(JSON.parse(params.styles))
             return layer
         }
     }
