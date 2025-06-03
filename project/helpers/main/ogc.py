@@ -39,7 +39,7 @@ def get_wms_layers(url):
                 'bbox': list(bbox), 
                 'srid': srid, 
                 'keywords': wms_tags + (layer.keywords or []), 
-                'abstract': ('<br><br>'.join([wms_abstract, (layer.abstract or '')])).strip(), 
+                'abstract': ('<br><br>'.join([i for i in [wms_abstract, (layer.abstract or '')] if i != ''])).strip(), 
             })
             layers[i] = params
     except Exception as e:
