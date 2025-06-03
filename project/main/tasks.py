@@ -28,14 +28,12 @@ def onboard_collection(self, cacheKey):
         url_instance = URL.objects.filter(path=url).first()
         if not url_instance:
             is_ogc = format.startswith('ogc-')
-            if is_ogc:
-                response = True
-            else:
-                response = get_response(
-                    url=format_url(url, format),
-                    header_only=True,
-                    raise_for_status=True,
-                )
+            response = is_ogc or get_response(
+                url=format_url(url, format),
+                header_only=True,
+                raise_for_status=False,
+            )
+            print(type(response))
             if not response or (not is_ogc and response.status_code == 404):
                 raise Exception('Invalid URL response.')
             else:

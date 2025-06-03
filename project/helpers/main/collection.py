@@ -52,7 +52,6 @@ def get_layers(url, format):
             header_only=True,
             raise_for_status=False,
         )
-        print('get_layers',response, not response, response.status_code == 404)
         if response.status_code == 404:
             return {}
 
@@ -64,9 +63,7 @@ def get_layers(url, format):
             }}
             
         if format == 'xyz':
-            print('here')
             name = (' '.join([get_domain_name(url)]+[i for i in url.split(get_domain(url))[-1].split('/') if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])])).strip()
-            print(name)
             return {name: {
                 'title': name,
                 'type': format,
