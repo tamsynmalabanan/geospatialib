@@ -115,7 +115,8 @@ const handleAddLayersForm = () => {
 
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
             if (element && Object.values(includedLayers).some(i => Object.keys(i).some(j => {
-                if (j === 'title' || j === 'type') return false
+                if (j === 'title') return false
+                if (form.elements[j].hidden) return false
                 return i[j] !== ''
             }))) {
                 try {
