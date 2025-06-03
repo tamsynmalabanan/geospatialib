@@ -582,12 +582,10 @@ const validateGeoJSONFeature = (feature, filters) => {
     return true
 }
 
-const csvToGeoJSON = (csv, xField, yField, srid=4326, {
-    xDefault=0,
-    yDefault=0,
-}={}) => {
-    xField = xField.trim()
-    yField = yField.trim()
+const csvToGeoJSON = (csv, params) => {
+    const xField = params.xField?.trim()
+    const yField = params.yField?.trim()
+    const srid = parseInt(params.srid ?? 4326) 
 
     const parsedCSV = Papa.parse(csv, {header: true})
     const features = []
@@ -597,17 +595,14 @@ const csvToGeoJSON = (csv, xField, yField, srid=4326, {
         
         const lon = parseFloat(data[xField])
         const lat = parseFloat(data[yField])
-        
-        const feature = turf.point([
-            !isNaN(lon) ? lon : xDefault, 
-            !isNaN(lat) ? lat : yDefault, 
-        ], data)
+        if (isNaN(lon) || isNaN(lat)) continue
 
+        const feature = turf.point([lon, lat], data)
         features.push(feature)
     }    
     
     geojson = turf.featureCollection(features)
-    if (!isNaN(parseInt(srid)) && parseInt(srid) !== 4326) {
+    if (srid !== 4326) {
         geojson.crs = {properties:{name:`EPSG::${srid}`}}
     }
 

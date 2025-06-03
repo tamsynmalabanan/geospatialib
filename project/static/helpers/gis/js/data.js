@@ -14,31 +14,27 @@ const fetchGeoJSON = async (url, {abortBtns, controller} = {}) => {
     })
 }
 
-const fetchCSV = async (url, xField, yField, srid, {abortBtns, controller} = {}) => {
+const fetchCSV = async (url, params, {abortBtns, controller} = {}) => {
     return await fetchTimeout(url, {
         abortBtns,
         controller,
         callback: async (response) => {
             const csv = await response.text()
-            return csvToGeoJSON(csv, xField, yField, srid)
+            return csvToGeoJSON(csv, params)
         }
     }).catch(error => {
         console.log(error)
     })
 }
 
-const rawDataToLayerData = (rawData, type, {
-    xField,
-    yField,
-    srid=4326
-} = {}) => {
+const rawDataToLayerData = (rawData, params) => {
     try {
-        if (type === 'geojson') {
+        if (params.type === 'geojson') {
             return JSON.parse(rawData)
         }
     
-        if (type === 'csv') {
-            return csvToGeoJSON(rawData, xField, yField, srid)
+        if (params.type === 'csv') {
+            return csvToGeoJSON(rawData, params)
         }
     } catch (error) {
         console.log(error)
@@ -46,17 +42,13 @@ const rawDataToLayerData = (rawData, type, {
 }
 
 const mapForFetchFileData = new Map()
-const fetchFileData = async (url, name, type, xField, yField, srid, {abortBtns, controller} = {}) => {
+const fetchFileData = async (url, name, params, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
         const file = filesArray.find(file => file.name === name)
         if (!file) return
         
         const rawData = await getFileRawData(file)
-        return rawDataToLayerData(rawData, type, {
-            xField,
-            yField,
-            srid,
-        })
+        return rawDataToLayerData(rawData, params)
     }
 
     const mapKey = `${url};${controller?.id}` 

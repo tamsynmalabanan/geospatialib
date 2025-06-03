@@ -414,7 +414,6 @@ const getFileRawData = async (file) => {
                 console.log(error)
                 reject(error)
             }
-
             reject(new Error('unsupported file'))
         }
 

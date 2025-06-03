@@ -678,60 +678,34 @@ const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
 }
 
 const urlToLeafletLayer = async ({
-    url, 
-    format, 
-    name, 
-    title,
     group,
     add=false,
-    type,
-    xField,
-    yField,
-    srid,
+    params={},
 }) => {
+    const url = params.url
+    const format = params.format
+    const name = params.name
     if (!url || !format || !name || !group) return
 
-    let dbIndexedKey
-    
-    if (format === 'geojson') {
-        type = format
-        dbIndexedKey = Array(format, JSON.stringify({url})).join(';')
-    }
-    
-    if (format === 'csv') {
-        type = format
-        dbIndexedKey = Array(format, JSON.stringify({url,xField,yField,srid})).join(';')
-    }
+    const fileName = name.split('.')
+    params.type = format === 'file' ? fileName[fileName.length-1] : (params.type ?? format)
 
-    if (format === 'file') {
-        type = type ?? name.split('.')[name.split('.').length-1]
-        dbIndexedKey = Array(format, JSON.stringify({url,name,type,xField,yField,srid})).join(';')
-    }
-
-    const layer = await createLeafletLayer(type, {
-        url,
-        format,
-        name,
+    const layer = await createLeafletLayer(params, {
+        dbIndexedKey: Array(format, JSON.stringify(params)).join(';'),
         group,
-        title,
-        dbIndexedKey,
     })
 
     if (layer && add) group.addLayer(layer)
     return layer
 }
 
-const createLeafletLayer = async (type, {
-    url,
-    format,
-    name,
+const createLeafletLayer = async (params, {
+    dbIndexedKey,
     data,
     group,
-    dbIndexedKey,
-    title,
-    attribution,
     styles,
 } = {}) => {
+    const type = params.type
     if (!type) return
 
     const map = group._map
@@ -742,31 +716,31 @@ const createLeafletLayer = async (type, {
             geojson: data,
             group,
             pane,
-            title,
+            title: params.title,
+            attribution: params.attribution,
             dbIndexedKey,
         })
     } else {
         let layer
         if (type === 'xyz') {
-            layer = L.tileLayer(url, {
+            layer = L.tileLayer(params.url, {
                 pane,
             })
         }
 
         if (type === 'wms') {
-            layer = L.tileLayer.wms(url, {
-                layers: name,
+            layer = L.tileLayer.wms(params.url, {
+                layers: params.name,
                 format: 'image/png',
                 transparent: true,
                 pane,
             })
-            console.log(layer)
         }
 
         if (layer) {
             layer._group = group
-            layer._title = title
-            layer._attribution = attribution
+            layer._title = params.title
+            layer._attribution = params.attribution
             layer._styles = styles ?? {
                 visibility: {
                     active: false,
@@ -781,35 +755,29 @@ const createLeafletLayer = async (type, {
 
 const fileToLeafletLayer = async ({
     file,
-    group,
+    group, 
     add=false,
-    suppFiles=[],
-    dbIndexedKey,
-    title,
-    type,
-    xField,
-    yField,
-    srid,
+    filesArray=[],
+    params={}
 } ={}) => {
     if (!file || !group) return
     
-    title = title ?? file.name.split('.').slice(0, -1).join('.')
-    type = type ?? file.name.split('.')[file.name.split('.').length-1]
+    const fileName = file.name.split('.')
+    params.title = params.title ?? (() => {
+        const title = fileName.slice(0, -1).join('.').split('/')
+        return title[title.length-1]
+    })
+    params.type = params.type ?? fileName[fileName.length-1]
     
     const rawData = await getFileRawData(file)
     if (!rawData) return
 
-    const data = rawDataToLayerData(rawData, type, {
-        xField,
-        yField,
-        srid,
-    })
+    const data = rawDataToLayerData(rawData, params)
     if (!data) return
 
-    const layer = await createLeafletLayer(type, {
+    const layer = await createLeafletLayer(params, {
         data,
         group,
-        title: title.split('/')[title.split('/').length-1],
     })
     
     if (layer && add) group.addLayer(layer)
