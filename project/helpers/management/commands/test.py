@@ -34,7 +34,7 @@ def test_get_collection_data():
     # url = 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
     # url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS'
-    url = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{q}.jpeg?g=1'
+    url = 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'
     value = get_collection_data(url, delay=False)
     print(value)
 
