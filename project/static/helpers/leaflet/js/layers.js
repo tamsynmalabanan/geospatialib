@@ -698,6 +698,7 @@ const urlToLeafletLayer = async ({
         try {
             group.addLayer(layer)
         } catch (error) {
+            group.removeLayer(layer)
             alert('Invalid layer.')
         }
     }
