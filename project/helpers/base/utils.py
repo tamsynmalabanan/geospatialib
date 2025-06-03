@@ -98,9 +98,13 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
 
         print(1,response)
         if response.status_code == 403 and not with_default_headers:
+            print('403 response')
             response = get_response(url, with_default_headers=True)
+            print('new response', response)
         
+        print(raise_for_status)
         if raise_for_status:
+            print('HERE')
             response.raise_for_status()
 
         print(2,response)
@@ -109,7 +113,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
         
         return response
     except Exception as e:
-        print(e)
+        print('get_response', e)
     return None
     
 def get_response_file(url):
