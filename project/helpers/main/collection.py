@@ -50,10 +50,9 @@ def get_layers(url, format):
         response = get_response(
             url=format_url(url, format),
             header_only=True,
-            raise_for_status=True
+            raise_for_status=False
         )
-        print('get_layers',response)
-        if not response:
+        if not response or response.status_code == 404:
             return {}
 
         if format in ['geojson', 'csv']:
