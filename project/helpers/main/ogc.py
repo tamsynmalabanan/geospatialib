@@ -20,8 +20,9 @@ def get_wms_layers(url):
             raise Exception('Content size > 99999')
         wms = WebMapService(url)
         
-        wms_tags = wms.identification.keywords or []
-        wms_abstract = wms.identification.abstract or ''
+        wms_id = wms.identification
+        wms_tags = wms_id.keywords or []
+        wms_abstract = wms_id.abstract or ''
         
         layer_names = list(wms.contents)
         for i in layer_names:
@@ -40,6 +41,8 @@ def get_wms_layers(url):
                 'srid': srid, 
                 'keywords': wms_tags + (layer.keywords or []), 
                 'abstract': ('<br><br>'.join([i for i in [wms_abstract, (layer.abstract or '')] if i != ''])).strip(), 
+                'attribution': wms_id.accessconstraints,
+                'fees': wms_id.fees,
             })
             layers[i] = params
     except Exception as e:

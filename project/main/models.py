@@ -58,6 +58,8 @@ class Layer(models.Model):
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
     keywords = models.JSONField('Keywords', default=list)
     abstract = models.TextField('Abstract', blank=True, null=True)
+    attribution = models.TextField('Attribution', blank=True, null=True)
+    fees = models.TextField('Fees', blank=True, null=True)
 
 
     class Meta:
