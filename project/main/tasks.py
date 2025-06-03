@@ -33,7 +33,6 @@ def onboard_collection(self, cacheKey):
                 header_only=True,
                 raise_for_status=False,
             )
-            print(type(response))
             if is_ogc or response.status_code != 404:
                 url_instance, created = URL.objects.get_or_create(path=url)
             else:
