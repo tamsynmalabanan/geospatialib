@@ -21,6 +21,7 @@ def get_wms_layers(url):
         wms = WebMapService(url)
         
         wms_tags = wms.identification.keywords or []
+        wms_abstract = wms.identification.abstract or ''
         
         layer_names = list(wms.contents)
         for i in layer_names:
@@ -35,9 +36,10 @@ def get_wms_layers(url):
                 bbox = geom.transform(4326).extent
 
             params.update({
-                'bbox': bbox, 
+                'bbox': list(bbox), 
                 'srid': srid, 
                 'keywords': wms_tags + (layer.keywords or []), 
+                'abstract': ('<br><br>'.join([wms_abstract, (layer.abstract or '')])).strip(), 
             })
             layers[i] = params
     except Exception as e:
