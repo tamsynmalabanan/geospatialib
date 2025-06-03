@@ -743,6 +743,7 @@ const createLeafletLayer = async (params, {
 
             const styles = params.styles
             if (styles && Object.keys(styles).length) {
+                console.log(styles)
                 const name = Object.keys(styles)[0]
                 console.log(name)
                 // options.styles = name
