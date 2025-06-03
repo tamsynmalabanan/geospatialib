@@ -68,7 +68,7 @@ class Command(BaseCommand):
         # wms = WebMapService(url)
         # print(wms)
 
-        response = get_wms_layers(url, raise_for_status=False)
+        response = get_wms_layers(url)
         print(response)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
