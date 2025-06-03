@@ -4,7 +4,7 @@ def get_wms_layers(url):
     layers = {}
     
     try:
-        wms = WebMapService(url, timeout=60*3)
+        wms = WebMapService(url)
         layer_names = list(wms.contents)
         for i in layer_names:
             layer = wms[i]
