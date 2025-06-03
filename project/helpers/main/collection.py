@@ -53,7 +53,7 @@ def get_layers(url, format):
             raise_for_status=False,
         )
         print('get_layers',response, not response, response.status_code == 404)
-        if not response or response.status_code == 404:
+        if response.status_code == 404:
             return {}
 
         if format in ['geojson', 'csv']:
