@@ -1,3 +1,5 @@
+from django.contrib.gis.geos import GEOSGeometry, Polygon
+
 import requests
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
@@ -22,13 +24,15 @@ def get_wms_layers(url):
             layer = wms[i]
             params = {'type': 'wms', 'title': layer.title} 
 
-            bbox = layer.boundingBoxWGS84 or layer.boundingBox
-            w,s,e,n,*srid = bbox or (-180, -90, 180, 90, 4326)
-            srid = int(srid[0].split(':')[-1]) if len(srid) > 0 else 4326
-            # transform bbox if not 4326
+            bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
+            w,s,e,n,*crs = bbox
+            srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+            if srid != 4326:
+                geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+                bbox = geom.transform(4326).extent
 
             params.update({
-                'bbox': (w,s,e,n), 
+                'bbox': bbox, 
                 'srid': srid, 
             })
             layers[i] = params
