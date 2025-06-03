@@ -1,9 +1,15 @@
 from owslib.wms import WebMapService
+import psutil
 
 def get_wms_layers(url):
     layers = {}
     
     try:
+        mem = psutil.virtual_memory()
+        print(mem)
+        if mem.available < 200_000_000:  # If available RAM is less than ~200MB, skip
+            raise Exception("Skipping WebMapService due to low memory")
+
         wms = WebMapService(url)
         layer_names = list(wms.contents)
         for i in layer_names:
