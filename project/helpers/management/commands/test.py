@@ -34,7 +34,7 @@ def test_get_collection_data():
     # url = 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
     # url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS'
-    url = 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'
+    url = 'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/%7Bz%7D/%7Bx%7D/%7By%7D.jpg'
     value = get_collection_data(url, delay=False)
     print(value)
 
@@ -61,6 +61,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         URL.objects.all().delete()
 
-        # test_get_collection_data()
+        test_get_collection_data()
         
         self.stdout.write(self.style.SUCCESS('Done.'))
