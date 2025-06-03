@@ -746,7 +746,6 @@ const createLeafletLayer = async (params, {
         if (layer) {
             layer._group = group
             layer._title = params.title
-            layer._attribution = params.attribution
             layer._styles = styles ?? {
                 visibility: {
                     active: false,
@@ -754,7 +753,17 @@ const createLeafletLayer = async (params, {
                     max: 5000000,
                 },
             }
-            console.log(JSON.parse(params.bbox))
+            
+            const attribution = params.attribution
+            if (attribution && attribution !== 'None') {
+                layer._attribution = attribution
+            }
+            
+            const bbox = params.bbox
+            if (bbox && !layer.getBounds) {
+                console.log(JSON.parse(params.bbox))
+            }
+            
             console.log(JSON.parse(params.styles))
             return layer
         }
