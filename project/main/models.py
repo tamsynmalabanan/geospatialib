@@ -56,6 +56,8 @@ class Layer(models.Model):
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
+    keywords = models.JSONField('Keywords', default=list)
+
 
     class Meta:
         unique_together = ['collection', 'name']

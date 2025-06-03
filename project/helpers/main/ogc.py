@@ -19,6 +19,9 @@ def get_wms_layers(url):
         if len(content) > 99999:
             raise Exception('Content size > 99999')
         wms = WebMapService(url)
+        
+        wms_tags = wms.identification.keywords or []
+        
         layer_names = list(wms.contents)
         for i in layer_names:
             layer = wms[i]
@@ -34,6 +37,7 @@ def get_wms_layers(url):
             params.update({
                 'bbox': bbox, 
                 'srid': srid, 
+                'keywords': wms_tags + (layer.keywords or []), 
             })
             layers[i] = params
     except Exception as e:
