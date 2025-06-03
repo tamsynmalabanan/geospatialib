@@ -5,6 +5,8 @@ import psutil
 
 from helpers.base.utils import get_response
 
+NAMESPACE = '{http://www.opengis.net/wms}'
+
 def get_wms_layers(url):
     layers = {}
     
@@ -16,10 +18,10 @@ def get_wms_layers(url):
         print(content_size)
 
         root = ET.fromstring(content)
-        for layer in root.findall(".//{http://www.opengis.net/wms}Layer"):
-            name_elem = layer.find("{http://www.opengis.net/wms}Name")
-            title_elem = layer.find("{http://www.opengis.net/wms}Title")
-            print(name_elem, title_elem)
+        for layer in root.findall(f".//{NAMESPACE}Layer"):
+            print(layer)
+            name_elem = layer.find(f"{NAMESPACE}Name")
+            title_elem = layer.find(f"{NAMESPACE}Title")
             if name_elem is not None:
                 name = name_elem.text
                 title = title_elem.text if title_elem is not None else ""

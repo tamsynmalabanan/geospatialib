@@ -73,6 +73,6 @@ class Command(BaseCommand):
         # print(wms)
 
         response = get_wms_layers(url)
-        print(response)
+        # print(response)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
