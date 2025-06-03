@@ -85,33 +85,23 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
     cacheKey = create_cache_key(['get_response', url, header_only])
-    
     cached_response = cache.get(cacheKey) or cache.get(create_cache_key(['get_response', url, False]))
     if cached_response:
-        print('cached response')
         return cached_response
-
-    print('get_response')
     try:
         if header_only and not with_default_headers:
             response = requests.head(url)
         else:
             response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else {})
-
         if response.status_code == 403 and not with_default_headers:
-            print('status code is 403')
             response = get_response(url, with_default_headers=True, raise_for_status=raise_for_status)
-        
         if raise_for_status:
             response.raise_for_status()
-
         if response.status_code != 404:
             cache.set(cacheKey, response, 60*60)
-        
         return response
     except Exception as e:
         print('get_response', e)
-    return None
     
 def get_response_file(url):
     try:

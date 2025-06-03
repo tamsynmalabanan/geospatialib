@@ -117,17 +117,12 @@ def validate_csv(url, name, params):
     try:
         response = get_response(url, raise_for_status=True)
         geojson_obj, params = csv_to_geojson(io.StringIO(response.text), params)
-        if not geojson_obj:
-            raise Exception('No valid geojson.')
-
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
         bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-
         params.update({
             'bbox': bbox,
             'srid': srid
         })
-
         return params
     except Exception as e:
         print(e)

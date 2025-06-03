@@ -53,7 +53,7 @@ def get_layers(url, format):
             raise_for_status=False,
         )
         if response.status_code == 404:
-            return {}
+            response.raise_for_status()
 
         if format in ['geojson', 'csv']:
             name = url.split('/')[-1]
@@ -78,7 +78,7 @@ def get_layers(url, format):
         
     except Exception as e:
         print(e)
-    return {}
+        return {}
 
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
