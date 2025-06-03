@@ -66,13 +66,13 @@ class Command(BaseCommand):
         # url = 'https://www.mrlc.gov/geoserver/ows?' # 52000
         # url = 'https://ows.emodnet-bathymetry.eu/wms' #512
         # url = 'https://www.cmar.csiro.au/geoserver/wms?' #18M
-        # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?' # 7M
-        url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?' # 322
+        url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?' # 7M
+        # url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?' # 322
 
         # wms = WebMapService(url)
         # print(wms)
 
-        # response = get_wms_layers(url)
-        # print(response)
+        response = get_wms_layers(url)
+        print(response)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
