@@ -67,7 +67,7 @@ def get_layers(url, format):
             return {name: {
                 'title': name,
                 'type': format,
-                'bbox': WORLD_GEOM.extent,
+                'bbox': list(WORLD_GEOM.extent),
             }}
         
         if format == 'file':
