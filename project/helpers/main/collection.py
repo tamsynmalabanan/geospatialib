@@ -52,6 +52,7 @@ def get_layers(url, format):
             header_only=True,
             raise_for_status=True
         )
+        print('get_layers',response)
         if not response:
             return {}
 
