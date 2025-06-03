@@ -10,7 +10,7 @@ def get_wms_layers(url):
         mem = psutil.virtual_memory()
         print(mem)
 
-        response = get_response(f'{url}?request=GetCapabilities', raise_for_status=False)
+        response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content_size = len(response.content)
         print(content_size)
