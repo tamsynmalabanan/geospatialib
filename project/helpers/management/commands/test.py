@@ -63,10 +63,11 @@ class Command(BaseCommand):
 
         # test_get_collection_data()
 
-        # url = 'https://www.mrlc.gov/geoserver/ows?'
-        # url = 'https://ows.emodnet-bathymetry.eu/wms'
-        # url = 'https://www.cmar.csiro.au/geoserver/wms?'
-        url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
+        # url = 'https://www.mrlc.gov/geoserver/ows?' # 52000
+        # url = 'https://ows.emodnet-bathymetry.eu/wms' #512
+        # url = 'https://www.cmar.csiro.au/geoserver/wms?' #18M
+        # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?' # 7M
+        url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS' # 7M
 
         # wms = WebMapService(url)
         # print(wms)
