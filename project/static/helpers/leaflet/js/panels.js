@@ -569,6 +569,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (!isGeoJSON) {
             clearLegend(container)
+            console.log(container, layer._legend)
         }
 
         if (layers.innerHTML !== '') {
