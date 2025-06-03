@@ -18,8 +18,8 @@ def get_wms_layers(url):
         if len(content) > 99999:
             root = ET.fromstring(content)
             for layer in root.findall(f".//{NAMESPACE}Layer"):
-                print(layer)
                 name_elem = layer.find(f"{NAMESPACE}Name")
+                print(name_elem.text)
                 if not name_elem:
                     continue
 
