@@ -119,6 +119,7 @@ const handleAddLayersForm = () => {
 
                 let field = form.elements[j]
                 field = field.length ? Array.from(field)[0] : field
+                console.log(field, field.hidden, field.getAttribute('hidden'))
                 if (field.getAttribute('hidden')) return false
 
                 return i[j] !== ''
