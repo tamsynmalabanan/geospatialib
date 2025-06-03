@@ -126,7 +126,11 @@ def update_collection_data(cacheKey, updated_layers, delay=True):
     if collection_data:
         cached_layers = collection_data.get('layers', {})
         for name, params in updated_layers.items():
-            params['title'] = cached_layers.get(name, {}).get('title', params.get('title', ''))
+            for key, value in params.items():
+                if key == 'title' or not value:
+                    params[key] = cached_layers.get(name, {}).get(key, value)
+                else:
+                    params[key] = value                
             cached_layers[name] = params
         collection_data['layers'] = cached_layers
     else:
