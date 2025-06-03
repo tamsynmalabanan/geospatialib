@@ -12,7 +12,7 @@ from helpers.base.utils import (
     get_domain, 
 )
 from helpers.base.files import get_file_names
-from helpers.main.layers import format_url
+from helpers.main.layers import format_url, WORLD_GEOM
 from helpers.main.ogc import get_wms_layers
 
 XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
@@ -67,6 +67,7 @@ def get_layers(url, format):
             return {name: {
                 'title': name,
                 'type': format,
+                'bbox': WORLD_GEOM.extent,
             }}
         
         if format == 'file':
