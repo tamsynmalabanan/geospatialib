@@ -4,6 +4,7 @@ import requests
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
 import psutil
+import json
 
 from helpers.base.utils import get_response
 
@@ -43,7 +44,7 @@ def get_wms_layers(url):
                 'abstract': ('<br><br>'.join([i for i in [wms_abstract, (layer.abstract or '')] if i != ''])).strip(), 
                 'attribution': wms_id.accessconstraints or '',
                 'fees': wms_id.fees or '',
-                'styles': layer.styles
+                'styles': json.dumps(layer.styles)
             })
             layers[i] = params
     except Exception as e:
