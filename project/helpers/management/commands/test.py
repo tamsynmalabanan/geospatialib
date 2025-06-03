@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
-from helpers.base.utils import get_response
+from helpers.base.utils import get_response, get_response
 from helpers.base.files import get_file_names
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
@@ -61,7 +61,11 @@ class Command(BaseCommand):
         URL.objects.all().delete()
 
         # test_get_collection_data()
-        wms = WebMapService('https://www.cmar.csiro.au/geoserver/wms?')
-        print(wms)
+
+        url = 'https://www.cmar.csiro.au/geoserver/wms?'
+        print(get_response(url, raise_for_status=False))
+
+        # wms = WebMapService(url)
+        # print(wms)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
