@@ -43,7 +43,7 @@ def validate_collection(request):
 def update_collection(request):
     cacheKey = request.POST.get('cacheKey')
     updated_layers = json.loads(request.POST.get('layers'))
-    collection_data = update_collection_data(cacheKey, updated_layers)
+    update_collection_data(cacheKey, updated_layers)
     return HttpResponse('Done.')
 
 @require_http_methods(['GET'])
