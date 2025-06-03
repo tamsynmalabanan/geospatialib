@@ -19,7 +19,7 @@ from urllib.parse import urlparse, urlunparse
 
 
 def test_get_collection_data():
-    url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
+    # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
     # # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
     # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/zip.zip'
     # url = 'https://techgeo.org/wp-content/uploads/2024/10/World_Countries_Generalized_9029012925078512962.zip'
@@ -32,8 +32,8 @@ def test_get_collection_data():
     # url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
     # url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
     # url = 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
-    # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?'
     # url = 'https://services.ga.gov.au/gis/services/2023GHG_AcreageReleaseAreas/MapServer/WMSServer?request=GetCapabilities&service=WMS'
+    url = 'https://www.cmar.csiro.au/geoserver/wms?'
     value = get_collection_data(url, delay=False)
     print(value)
 

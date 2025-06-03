@@ -18,6 +18,7 @@ def get_wms_layers(url):
                 'bbox': bbox, 
                 'srid': srid, 
             })
+            print(params)
             layers[i] = params
     except Exception as e:
         print('get_wms_layers', e)
