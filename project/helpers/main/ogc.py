@@ -13,38 +13,38 @@ def get_wms_layers(url):
     try:
         response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
+
         content = response.content
-        content_size = len(content)
-        print(content_size)
+        if len(content) > 99999:
+            root = ET.fromstring(content)
+            for layer in root.findall(f".//{NAMESPACE}Layer"):
+                name_elem = layer.find(f"{NAMESPACE}Name")
+                if not name_elem:
+                    continue
+                
+                params = {'type': 'wms'} 
 
-        root = ET.fromstring(content)
-        for layer in root.findall(f".//{NAMESPACE}Layer"):
-            print(layer)
-            name_elem = layer.find(f"{NAMESPACE}Name")
-            title_elem = layer.find(f"{NAMESPACE}Title")
-            if name_elem is not None:
-                name = name_elem.text
-                title = title_elem.text if title_elem is not None else ""
-                layers[name] = {'type': 'wms', 'title': title}
+                title_elem = layer.find(f"{NAMESPACE}Title")
+                params['title'] = title_elem.text if title_elem is not None else ""
+                
+                layers[name_elem.text] = params
+        else:
+            wms = WebMapService(url)
+            layer_names = list(wms.contents)
+            for i in layer_names:
+                layer = wms[i]
+                params = {'type': 'wms', 'title': layer.title} 
 
+                bbox = layer.boundingBoxWGS84 or layer.boundingBox
+                w,s,e,n,*srid = bbox or (-180, -90, 180, 90, 4326)
+                srid = int(srid[0].split(':')[-1]) if len(srid) > 0 else 4326
+                # transform bbox if not 4326
 
-
-
-        # wms = WebMapService(url)
-        # layer_names = list(wms.contents)
-        # for i in layer_names:
-        #     layer = wms[i]
-        #     params = {'type': 'wms', 'title': layer.title} 
-
-        #     bbox = layer.boundingBoxWGS84 or layer.boundingBox
-        #     w,s,e,n,*srid = bbox or (-180, -90, 180, 90, 4326)
-        #     srid = int(srid[0].split(':')[-1]) if len(srid) > 0 else 4326
-        #     # transform bbox if not 4326
-        #     params.update({
-        #         'bbox': bbox, 
-        #         'srid': srid, 
-        #     })
-        #     layers[i] = params
+                params.update({
+                    'bbox': (w,s,e,n), 
+                    'srid': srid, 
+                })
+                layers[i] = params
     except Exception as e:
         print('get_wms_layers', e)
     
