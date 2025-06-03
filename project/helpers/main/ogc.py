@@ -15,13 +15,14 @@ def get_wms_layers(url):
         response.raise_for_status()
 
         content = response.content
+        print(len(content))
         if len(content) > 99999:
             root = ET.fromstring(content)
             for layer in root.findall(f".//{NAMESPACE}Layer"):
                 name_elem = layer.find(f"{NAMESPACE}Name")
                 if not name_elem:
                     continue
-                
+
                 params = {'type': 'wms'} 
 
                 title_elem = layer.find(f"{NAMESPACE}Title")
