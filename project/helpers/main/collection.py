@@ -95,7 +95,7 @@ def get_collection_data(url, format=None, delay=True):
     url = url if format == 'xyz' else format_url(url, format)
     cacheKey = create_cache_key(['onboard_collection', url, format])
 
-    data = {'layers':{}, 'cacheKey':cacheKey}
+    data = {'layers':{}, 'cacheKey':cacheKey, 'url':url, 'format':format}
     cached_collection = cache.get(cacheKey)
     if cached_collection:
         layers = cached_collection['layers']

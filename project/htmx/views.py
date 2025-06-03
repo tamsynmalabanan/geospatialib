@@ -31,6 +31,7 @@ def validate_collection(request):
                 if raw_format:
                     form.add_error('format', 'No layers retrieved.')
             else:
+                form.data.update({'url':context['url']})
                 context['layers'] = sort_layers(layers)
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
