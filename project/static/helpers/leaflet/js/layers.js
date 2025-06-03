@@ -761,7 +761,8 @@ const createLeafletLayer = async (params, {
             
             const bbox = params.bbox
             if (bbox && !layer.getBounds) {
-                console.log(JSON.parse(params.bbox))
+                const [w,s,e,n,crs] = JSON.parse(params.bbox)
+                layer.getBounds = () => L.latLngBounds([[s, w], [n, e]]);
             }
             
             console.log(JSON.parse(params.styles))
