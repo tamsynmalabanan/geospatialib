@@ -694,7 +694,13 @@ const urlToLeafletLayer = async ({
         group,
     })
 
-    if (layer && add) group.addLayer(layer)
+    if (layer && add) {
+        try {
+            group.addLayer(layer)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return layer
 }
 
