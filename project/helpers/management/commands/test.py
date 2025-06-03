@@ -64,8 +64,10 @@ class Command(BaseCommand):
 
         url = 'https://www.cmar.csiro.au/geoserver/wms?'
 
-        # print(get_response(url, raise_for_status=False))
         wms = WebMapService(url)
         print(wms)
+
+        response = get_response(url, raise_for_status=False)
+        print(response.content)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
