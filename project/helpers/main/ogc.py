@@ -75,8 +75,8 @@ def get_layers_via_et(content, format):
             srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
             if srid != 4326:
                 geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
-                print(geom)
-                # bbox = geom.transform(4326).extent
+                bbox = geom.transform(4326)
+                print(bbox)
 
             layers[name.text] = params
 
