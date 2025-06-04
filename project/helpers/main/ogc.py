@@ -44,7 +44,7 @@ def get_layers_via_et(content, format):
 
     root = ET.fromstring(content)
     for elem in root.iter():
-        print(type(elem.tag))
+        print(elem)
     # service_abstract = service_id.abstract or ''
 
 
