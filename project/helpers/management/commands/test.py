@@ -63,7 +63,7 @@ def test_parse_ogc_xml():
     response.raise_for_status()
     content = response.content
     root = ET.fromstring(content)
-    layers = root.findall(f"{NAMESPACE}Layer")
+    layers = root.findall(f"{NAMESPACE}Layers")
     print(layers)
     
 
