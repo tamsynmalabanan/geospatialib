@@ -81,7 +81,7 @@ def get_layers_via_et(content, format):
                     bbox = i
                     break                    
                 try:
-                    geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+                    geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
                     print(geom)
                     bbox = geom.transform(4326).extent
                     print(bbox)
