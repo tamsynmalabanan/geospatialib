@@ -201,7 +201,7 @@ const handleAddLayersForm = () => {
     form.addEventListener('htmx:responseError', (e) => {
         if (e.detail.pathInfo.requestPath !== '/htmx/collection/validate/') return
         e.target.classList.add('is-invalid')
-        e.target.nextElementSibling.querySelector('ul').appendChild('<li>Unable to inspect URL content.</li>')
+        e.target.nextElementSibling.querySelector('ul').innerHTML = '<li>Unable to inspect URL content.</li>'
     })
 }
 
