@@ -57,13 +57,13 @@ def test_update_collection_data():
     print(collection_data)
 
 def test_parse_ogc_xml():
-    NAMESPACE = '{http://www.opengis.net/wms}'
+    ns = {"wms": "http://www.opengis.net/wms"}
     url = 'https://geoserver.geoportal.gov.ph/geoserver/wms'
     response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
     response.raise_for_status()
     content = response.content
     root = ET.fromstring(content)
-    layers = root.findall(f".//{NAMESPACE}Layer")
+    layers = root.findall(".//wms:Layer", ns)
     print(layers)
     
 
