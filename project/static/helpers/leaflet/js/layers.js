@@ -682,6 +682,8 @@ const urlToLeafletLayer = async ({
     add=false,
     params={},
 }) => {
+    if (!group) return
+
     const format = params.format
     const dbIndexedKey = Array(format, JSON.stringify({params})).join(';')
 
