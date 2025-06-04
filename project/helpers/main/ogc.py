@@ -8,8 +8,6 @@ import json
 
 from helpers.base.utils import get_response
 
-NAMESPACE = '{http://www.opengis.net/wms}'
-
 def get_layers_via_owslib(service, format):
     service_id = service.identification
     service_tags = service_id.keywords or []
