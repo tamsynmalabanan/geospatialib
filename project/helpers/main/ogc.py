@@ -53,7 +53,7 @@ def get_wms_layers_via_et(content):
             if title is not None:
                 params['title'] = title.text
             layers[name.text] = params
-            
+
     return layers
 
 def get_wms_layers(url):
@@ -67,7 +67,7 @@ def get_wms_layers(url):
             wms = WebMapService(url)
             layers = get_layers_via_owslib(wms, 'wms')
         else:
-            layers = get_layers_via_et(content, 'wms')
+            layers = get_wms_layers_via_et(content, 'wms')
     except Exception as e:
         print('get_wms_layers', e)
     
