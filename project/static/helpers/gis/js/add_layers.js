@@ -197,6 +197,10 @@ const handleAddLayersForm = () => {
     form.addEventListener('htmx:afterSwap', (e) => {
         toggleSubmitBtn()
     })
+
+    form.addEventListener('htmx:responseError', (e) => {
+        console.log(e)
+    })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
