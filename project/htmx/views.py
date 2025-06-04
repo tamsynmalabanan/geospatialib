@@ -14,7 +14,6 @@ from main.tasks import onboard_collection
 
 @require_http_methods(['GET'])
 def validate_collection(request):
-    steps = []
     try:
         data = request.GET.dict()
         context = {'layers':{}}
@@ -36,8 +35,7 @@ def validate_collection(request):
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
-        steps.append(str(e))
-        return HttpResponse(';'.join(steps))
+        return HttpResponse(e)
 
 @require_http_methods(['POST'])
 def update_collection(request):

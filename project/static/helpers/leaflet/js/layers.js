@@ -682,26 +682,14 @@ const urlToLeafletLayer = async ({
     add=false,
     params={},
 }) => {
-    const url = params.url
     const format = params.format
-    const name = params.name
-    if (!url || !format || !name || !group) return
+    const dbIndexedKey = Array(format, JSON.stringify({params})).join(';')
 
-    const fileName = name.split('.')
+    const fileName = params.name.split('.')
     params.type = format === 'file' ? fileName[fileName.length-1] : (params.type ?? format)
-    const layer = await createLeafletLayer(params, {
-        dbIndexedKey: Array(format, JSON.stringify({params})).join(';'),
-        group,
-    })
 
-    if (layer && add) {
-        try {
-            group.addLayer(layer)
-        } catch (error) {
-            group.removeLayer(layer)
-            alert('Invalid layer.')
-        }
-    }
+    const layer = await createLeafletLayer(params, {dbIndexedKey, group, add})
+    
     return layer
 }
 
@@ -709,15 +697,15 @@ const createLeafletLayer = async (params, {
     dbIndexedKey,
     data,
     group,
+    add,
 } = {}) => {
-    const type = params.type
-    if (!type) return
-
     const map = group._map
     const pane = createCustomPane(map)
 
+    let layer
+
     if (Array('geojson', 'csv').includes(type.toLowerCase())) {
-        return await getLeafletGeoJSONLayer({
+        layer = await getLeafletGeoJSONLayer({
             geojson: data,
             group,
             pane,
@@ -726,9 +714,8 @@ const createLeafletLayer = async (params, {
             dbIndexedKey,
         })
     } else {
-        let layer
         if (type === 'xyz') {
-            layer = L.tileLayer(params.url, {
+            layer = L.tileLayer(url, {
                 pane,
             })
         }
@@ -742,7 +729,7 @@ const createLeafletLayer = async (params, {
             }
 
             const styles = JSON.parse(params.styles ?? '{}')
-            if (styles && Object.keys(styles).length) {
+            if (Object.keys(styles).length) {
                 const name = Object.keys(styles)[0]
                 options.styles = name
                 params.title = styles[name].title
@@ -753,6 +740,7 @@ const createLeafletLayer = async (params, {
         }
 
         if (layer) {
+            layer._dbIndexedKey = dbIndexedKey
             layer._group = group
             layer._title = params.title
             layer._legend = params.legend
@@ -764,20 +752,31 @@ const createLeafletLayer = async (params, {
                 },
             }
             
-            const attribution = params.attribution
-            if (attribution && attribution !== 'None') {
+            const attribution = (params.attribution ?? '').trim()
+            if (attribution && !Array('None', '').includes(attribution)) {
                 layer._attribution = attribution
             }
             
-            const bbox = params.bbox
-            if (bbox && !layer.getBounds) {
-                const [w,s,e,n,crs] = JSON.parse(params.bbox)
-                layer.getBounds = () => L.latLngBounds([[s, w], [n, e]]);
+            const bbox = params.bbox ?? '[-180, -90, 180, 90]'
+            if (!layer.getBounds) {
+                const [w,s,e,n,crs] = JSON.parse(bbox)
+                layer.getBounds = () => L.latLngBounds([[s, w], [n, e]])
             }
             
             return layer
         }
     }
+
+    if (layer && add) {
+        try {
+            group.addLayer(layer)
+        } catch (error) {
+            group.removeLayer(layer)
+            alert('Invalid layer.')
+        }
+    }
+
+    return layer
 }
 
 const fileToLeafletLayer = async ({
@@ -802,11 +801,7 @@ const fileToLeafletLayer = async ({
     const data = rawDataToLayerData(rawData, params)
     if (!data) return
 
-    const layer = await createLeafletLayer(params, {
-        data,
-        group,
-    })
+    const layer = await createLeafletLayer(params, {data, group, add})
     
-    if (layer && add) group.addLayer(layer)
     return layer
 }
