@@ -703,10 +703,11 @@ const createLeafletLayer = async (params, {
 } = {}) => {
     const map = group._map
     const pane = createCustomPane(map)
+    const type = params.type.toLowerCase()
 
     let layer
 
-    if (Array('geojson', 'csv').includes(type.toLowerCase())) {
+    if (Array('geojson', 'csv').includes(type)) {
         layer = await getLeafletGeoJSONLayer({
             geojson: data,
             group,
@@ -764,8 +765,6 @@ const createLeafletLayer = async (params, {
                 const [w,s,e,n,crs] = JSON.parse(bbox)
                 layer.getBounds = () => L.latLngBounds([[s, w], [n, e]])
             }
-            
-            return layer
         }
     }
 
