@@ -120,7 +120,7 @@ def get_wms_layers(url):
     layers = {}
     
     try:
-        response = get_response(f'{url}?service=WMS&request=GetCapabilities&version=1.1.1', raise_for_status=False)
+        response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
         if len(content) < 100000:
