@@ -65,7 +65,9 @@ def get_layers_via_et(content, format):
                 float(i.attrib['maxy']), 
                 i.attrib['CRS']
             ]) for i in (layer.findall(f'{format}:BoundingBox', ns) or [])]
-            print(bbox)
+            bbox_wgs4326 = [i for i in bbox if 'EPSG:4326' in i]
+            bbox = bbox_wgs4326[0] if len(bbox_wgs4326) > 0 else bbox[-1]
+            print(json.loads(bbox))
 
             layers[name.text] = params
 
