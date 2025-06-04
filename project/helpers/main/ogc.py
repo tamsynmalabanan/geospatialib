@@ -43,7 +43,7 @@ def get_layers_via_et(content, format):
     layers = {}
 
     root = ET.fromstring(content)
-    service_id = root.find(".//wms:Identification", ns)
+    service_id = root.find(f".//{format}:Identification", ns)
     print(service_id)
     # service_abstract = service_id.abstract or ''
 
