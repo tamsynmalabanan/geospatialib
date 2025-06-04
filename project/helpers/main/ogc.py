@@ -58,7 +58,7 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
-            bbox = layer.findall(f'{format}:BoundingBox', ns)
+            bbox = [i.attrib('CRS') for i in (layer.findall(f'{format}:BoundingBox', ns) or [])]
             print(bbox)
 
             layers[name.text] = params
