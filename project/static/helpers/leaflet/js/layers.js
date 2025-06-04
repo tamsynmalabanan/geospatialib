@@ -718,7 +718,7 @@ const createLeafletLayer = async (params, {
         })
     } else {
         if (type === 'xyz') {
-            layer = L.tileLayer(url, {
+            layer = L.tileLayer(params.url, {
                 pane,
             })
         }
