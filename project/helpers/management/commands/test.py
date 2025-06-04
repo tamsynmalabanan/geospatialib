@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from helpers.base.utils import get_response, get_response
 from helpers.base.files import get_file_names
-from helpers.main.ogc import get_wms_layers
+from helpers.main.ogc import get_wms_layers, get_wms_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
 from main.models import URL
@@ -57,20 +57,12 @@ def test_update_collection_data():
     print(collection_data)
 
 def test_parse_ogc_xml():
-    ns = {"wms": "http://www.opengis.net/wms"}
     url = 'https://geoserver.geoportal.gov.ph/geoserver/wms'
     response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
     response.raise_for_status()
     content = response.content
-    root = ET.fromstring(content)
-    layers = {}
-    for layer in root.findall(".//wms:Layer", ns):
-        name = layer.find("wms:Name", ns)
-        title = layer.find("wms:Title", ns)
-        if name is not None and title is not None:
-            layers[name.text] = {"title": title.text}
+    layers = get_wms_layers_via_et(content)    
     print(layers)
-    
 
 class Command(BaseCommand):
     help = 'Test'

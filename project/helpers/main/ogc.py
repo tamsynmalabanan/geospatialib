@@ -40,21 +40,20 @@ def get_layers_via_owslib(service, format):
         layers[i] = params
     return layers
 
-def get_layers_via_et(content, format):
+def get_wms_layers_via_et(content):
     layers = {}
 
-    ns = {format: f"http://www.opengis.net/{format}"}
+    ns = {"wms": "http://www.opengis.net/wms"}
     root = ET.fromstring(content)
-    for layer in root.findall(f".//{format}:Layer", ns):
-        params = {'type': format}
-        name = layer.find(f"{format}:Name", ns)
-        print(name.text)
-        # title = layer.find(f"{format}:Title", ns)
-        # params.update({
-        #     'title': title.text
-        # })
-        # layers[name.text] = params
-
+    for layer in root.findall(".//wms:Layer", ns):
+        name = layer.find("wms:Name", ns)
+        if name is not None:
+            params = {'type':'wms'}
+            title = layer.find("wms:Title", ns)
+            if title is not None:
+                params['title'] = title.text
+            layers[name.text] = params
+            
     return layers
 
 def get_wms_layers(url):
