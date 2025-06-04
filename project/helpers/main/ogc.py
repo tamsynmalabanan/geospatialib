@@ -43,7 +43,10 @@ def get_layers_via_owslib(service, format):
 def get_layers_via_et(content, format):
     layers = {}
 
-    ns = {f"{format}": f"http://www.opengis.net/{format}"}
+    ns = {
+        format: f"http://www.opengis.net/{format}",
+        "xlink": "http://www.w3.org/1999/xlink"
+    }
     root = ET.fromstring(content)
     
     service_id = root.find(f".//{format}:Service", ns)
@@ -83,7 +86,7 @@ def get_layers_via_et(content, format):
 
             styles = {i.find(f'{format}:Name', ns).text:{
                 'title': i.find(f'{format}:Title', ns).text,
-                'legend': i.find(f'.//{format}:OnlineResource', ns).attrib['xlink:href'],
+                'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
             } for i in (layer.findall(f'{format}:Style', ns) or [])}
 
 
