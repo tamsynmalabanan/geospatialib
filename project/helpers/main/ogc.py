@@ -77,14 +77,13 @@ def get_layers_via_et(content, format):
                 if version == '1.3.0' and srid == 4326:
                     s,w,n,e,*crs = i
                 
-                if srid == 4326:
+                if srid in [4326, 84]:
                     bbox = [w,s,e,n]
+                    srid = 4326
                     break                    
                 
                 try:
-                    print(w,s,e,n,srid)
                     geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
-                    print(geom.valid)
                     geom.transform(4326)
                     bbox = geom.extent
                     break
