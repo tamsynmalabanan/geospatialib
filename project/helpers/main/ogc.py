@@ -64,16 +64,18 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
+            bbox = WORLD_GEOM.extent
             bounding_boxes = [
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
                 ]] + [i.attrib['CRS']] 
                 for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
             ]
-            for bbox in bounding_boxes+[list(WORLD_GEOM.extent)+['default:4326']]:
-                w,s,e,n,*crs = bbox
+            for i in bounding_boxes:
+                w,s,e,n,*crs = i
                 srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
                 if srid == 4326:
+                    bbox = i
                     break                    
                 try:
                     geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
