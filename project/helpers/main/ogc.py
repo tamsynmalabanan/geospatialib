@@ -64,7 +64,7 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
-            bbox = None #WORLD_GEOM.extent
+            bbox = [] #WORLD_GEOM.extent
             bounding_boxes = [
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
