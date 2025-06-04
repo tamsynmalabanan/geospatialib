@@ -735,7 +735,7 @@ const createLeafletLayer = async (params, {
             if (Object.keys(styles).length) {
                 const name = Object.keys(styles)[0]
                 options.styles = name
-                params.title = styles[name].title
+                params.title = params.title + ' - ' + styles[name].title
                 params.legend = styles[name].legend
             }
 

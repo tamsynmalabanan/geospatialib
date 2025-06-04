@@ -18,10 +18,11 @@ const handleAddLayersForm = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             const container = getLayerNamesContainer(getFileSource())
-            submitBtn.disabled = (
-                container?.innerHTML.trim() === ''
-                || Array.from(container.querySelectorAll('.form-check-input')).every(i => !i.checked) 
-            )
+            submitBtn.disabled = !container.querySelector('.form-check-input[checked]')
+            // submitBtn.disabled = (
+            //     container?.innerHTML.trim() === ''
+            //     || Array.from(container.querySelectorAll('.form-check-input')).every(i => !i.checked) 
+            // )
         }, 100);
     }
 
