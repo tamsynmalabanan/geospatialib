@@ -11,7 +11,7 @@ from main.models import URL
 from main.forms import ValidateCollectionForm
 
 
-
+import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
 import validators
 import requests
@@ -56,11 +56,21 @@ def test_update_collection_data():
     collection_data = update_collection_data(cacheKey, updated_layers, delay=False)
     print(collection_data)
 
+def test_parse_ogc_xml():
+    url = 'https://geoserver.geoportal.gov.ph/geoserver/wms'
+    response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
+    response.raise_for_status()
+    content = response.content
+    root = ET.fromstring(content)
+    print(root)
+    
+
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         URL.objects.all().delete()
 
         # test_get_collection_data()
+        test_parse_ogc_xml()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
