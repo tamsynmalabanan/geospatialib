@@ -70,6 +70,6 @@ class Command(BaseCommand):
         URL.objects.all().delete()
 
         # test_get_collection_data()
-        test_parse_ogc_xml()
+        # test_parse_ogc_xml()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
