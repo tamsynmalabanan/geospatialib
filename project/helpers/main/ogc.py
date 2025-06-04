@@ -47,6 +47,7 @@ def get_layers_via_et(content, format):
     root = ET.fromstring(content)
     print(root)
     for layer in root.findall(f".//{format}:Layer", ns):
+        print(layer)
         params = {'type': format}
         # name = layer.find(f"{format}:Name", ns)
         # title = layer.find(f"{format}:Title", ns)
