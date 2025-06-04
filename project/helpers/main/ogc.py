@@ -40,22 +40,27 @@ def get_layers_via_owslib(service, format):
     return layers
 
 def get_layers_via_et(content, format):
-    ns = {f"{format}": f"http://www.opengis.net/{format}"}
     layers = {}
 
+    ns = {f"{format}": f"http://www.opengis.net/{format}"}
     root = ET.fromstring(content)
+    
     service_id = root.find(f".//{format}:Service", ns)
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
     service_abstract = service_id.find(f"{format}:Abstract", ns).text
-    print(service_abstract)
 
     for layer in root.findall(f".//{format}:Layer", ns):
         name = layer.find(f"{format}:Name", ns)
         if name is not None:
             params = {'type':f'{format}'}
+            
             title = layer.find(f"{format}:Title", ns)
             if title is not None:
                 params['title'] = title.text
+            
+            bbox = layer.findall(f'{format}:BoundingBox', ns)
+            print(bbox)
+
             layers[name.text] = params
 
     return layers
