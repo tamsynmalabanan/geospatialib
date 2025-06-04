@@ -10,7 +10,7 @@ from helpers.base.utils import get_response
 
 def get_layers_via_owslib(service, format):
     service_id = service.identification
-    service_tags = service_id.keywords or []
+    service_keywords = service_id.keywords or []
     service_abstract = service_id.abstract or ''
     layer_names = list(service.contents)
     
@@ -29,7 +29,7 @@ def get_layers_via_owslib(service, format):
         params.update({
             'bbox': list(bbox), 
             'srid': srid, 
-            'keywords': service_tags + (layer.keywords or []), 
+            'keywords': service_keywords + (layer.keywords or []), 
             'abstract': ('<br><br>'.join([i for i in [service_abstract, (layer.abstract or '')] if i != ''])).strip(), 
             'attribution': service_id.accessconstraints or '',
             'fees': service_id.fees or '',
@@ -44,7 +44,8 @@ def get_layers_via_et(content, format):
 
     root = ET.fromstring(content)
     service_id = root.find(f".//{format}:Service", ns)
-    print(service_id)
+    service_keywords = service_id.find(f"{format}:Keywords", ns)
+    print(service_keywords)
     # service_abstract = service_id.abstract or ''
 
 
