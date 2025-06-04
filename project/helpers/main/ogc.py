@@ -39,10 +39,16 @@ def get_layers_via_owslib(service, format):
     return layers
 
 def get_layers_via_et(content, format):
+    ns = {f"{format}": f"http://www.opengis.net/{format}"}
     layers = {}
 
-    ns = {f"{format}": f"http://www.opengis.net/{format}"}
     root = ET.fromstring(content)
+    service_id = root.find(f"{format}:Identification", ns)
+    print(service_id)
+    # service_tags = service_id.keywords or []
+    # service_abstract = service_id.abstract or ''
+
+
     for layer in root.findall(f".//{format}:Layer", ns):
         name = layer.find(f"{format}:Name", ns)
         if name is not None:
