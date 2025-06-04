@@ -72,33 +72,19 @@ def get_layers_via_et(content, format):
                 for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
             ]
             print(bounding_boxes)
-            for i in bounding_boxes:
-                print(i)
-                w,s,e,n,*crs = i
-                srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-                print(srid)
-                if srid == 4326:
-                    bbox = i
-                    break                    
-                try:
-                    geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
-                    print(geom)
-                    bbox = geom.transform(4326).extent
-                    print(bbox)
-                    break
-                except Exception as error:
-                    try:
-                        print(error)
-                        geom = GEOSGeometry(Polygon([(s,w), (s,e), (n,e), (n,w), (s,w)], srid=srid))
-                        print(geom)
-                        bbox = geom.transform(4326).extent
-                        print(bbox)
-                        break
-                    except Exception as error:
-                        print(error)
-                        continue
-            print('\n')
-            print(bbox)
+            # for i in bounding_boxes:
+            #     w,s,e,n,*crs = i
+            #     srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+            #     if srid == 4326:
+            #         bbox = i
+            #         break                    
+            #     try:
+            #         geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
+            #         bbox = geom.transform(4326).extent
+            #         break
+            #     except Exception as error:
+            #         print(error)
+            # print(bbox)
 
             layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
@@ -110,7 +96,7 @@ def get_layers_via_et(content, format):
 
 
             params.update({
-                'bbox': list(bbox),
+                # 'bbox': list(bbox),
                 'srid': srid,
                 'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
                 'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
