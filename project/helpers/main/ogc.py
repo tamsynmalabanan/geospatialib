@@ -71,9 +71,9 @@ def get_layers_via_et(content, format):
                 bbox = json.loads(bbox)
             else:
                 bbox = [-180, -90, 180, 90, 'EPSG:4326']
-            print(bbox)
-            # w,s,e,n,*crs = bbox
-            # srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+            w,s,e,n,*crs = bbox
+            srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+            print(w,s,e,n,crs,srid)
             # if srid != 4326:
             #     geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
             #     bbox = geom.transform(4326).extent
