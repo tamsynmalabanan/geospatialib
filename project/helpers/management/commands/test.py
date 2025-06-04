@@ -62,7 +62,8 @@ def test_parse_ogc_xml():
     response.raise_for_status()
     content = response.content
     root = ET.fromstring(content)
-    print(root)
+    layers = root.findall(".//Layer")
+    print(layers)
     
 
 class Command(BaseCommand):
