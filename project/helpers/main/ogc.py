@@ -14,11 +14,11 @@ def get_wms_layers(url):
     layers = {}
     
     try:
-        response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
-        response.raise_for_status()
-        content = response.content
-        if len(content) > 99999:
-            raise Exception('Content size > 99999')
+        # response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
+        # response.raise_for_status()
+        # content = response.content
+        # if len(content) > 99999:
+        #     raise Exception('Content size > 99999')
         wms = WebMapService(url)
         
         wms_id = wms.identification

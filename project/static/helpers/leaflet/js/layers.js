@@ -760,7 +760,7 @@ const createLeafletLayer = async (params, {
                 layer._attribution = attribution
             }
             
-            const bbox = params.bbox ?? '[-180, -90, 180, 90]'
+            const bbox = params.bbox ?? "[-180, -90, 180, 90]"
             if (!layer.getBounds) {
                 const [w,s,e,n,crs] = JSON.parse(bbox)
                 layer.getBounds = () => L.latLngBounds([[s, w], [n, e]])
