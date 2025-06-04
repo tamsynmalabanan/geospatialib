@@ -86,16 +86,16 @@ def get_layers_via_et(content, format):
                     bbox = geom.transform(4326).extent
                     print(bbox)
                     break
-                except Exception as e:
+                except Exception as error:
                     try:
-                        print(e)
+                        print(error)
                         geom = Polygon([(s,w), (s,e), (n,e), (n,w), (s,w)], srid=srid)
                         print(geom)
                         bbox = geom.transform(4326).extent
                         print(bbox)
                         break
-                    except Exception as e:
-                        print(e)
+                    except Exception as error:
+                        print(error)
                         continue
             print('\n')
             print(bbox)
