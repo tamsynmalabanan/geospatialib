@@ -64,7 +64,7 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
-            bbox = [] #WORLD_GEOM.extent
+            bbox = [''] #WORLD_GEOM.extent
             bounding_boxes = [
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
@@ -87,6 +87,7 @@ def get_layers_via_et(content, format):
                     print(bbox)
                     break
                 except Exception as e:
+                    print(e)
                     continue
             
             layer_abstract = layer.find(f"{format}:Abstract", ns)
