@@ -51,12 +51,12 @@ def get_layers_via_et(content, format):
     print(root)
     version = root.attrib['version']
     
-    service_id = root.find(f".//{format}:Service", ns)
-    print(service_id)
-    service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
-    service_abstract = service_id.find(f"{format}:Abstract", ns).text
-    service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
-    service_fees = service_id.find(f"{format}:Fees", ns).text
+    # service_id = root.find(f".//{format}:Service", ns)
+    # print(service_id)
+    # service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
+    # service_abstract = service_id.find(f"{format}:Abstract", ns).text
+    # service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
+    # service_fees = service_id.find(f"{format}:Fees", ns).text
 
     for layer in root.findall(f".//{format}:Layer", ns):
         print(layer)
@@ -104,10 +104,10 @@ def get_layers_via_et(content, format):
             params.update({
                 'bbox': list(bbox),
                 'srid': srid,
-                'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
-                'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
-                'attribution': service_attribution,
-                'fees': service_fees,
+                # 'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
+                # 'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
+                # 'attribution': service_attribution,
+                # 'fees': service_fees,
                 'styles': json.dumps(styles)
             })
 
