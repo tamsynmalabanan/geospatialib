@@ -9,13 +9,13 @@ import json
 from helpers.base.utils import get_response
 
 def get_layers_via_owslib(service, format):
+    layers = {}
+    
     service_id = service.identification
     service_keywords = service_id.keywords or []
     service_abstract = service_id.abstract or ''
-    layer_names = list(service.contents)
     
-    layers = {}
-    for i in layer_names:
+    for i in list(service.contents):
         layer = service[i]
         params = {'type': format, 'title': layer.title} 
 
@@ -36,6 +36,7 @@ def get_layers_via_owslib(service, format):
             'styles': json.dumps(layer.styles)
         })
         layers[i] = params
+
     return layers
 
 def get_layers_via_et(content, format):
@@ -45,7 +46,7 @@ def get_layers_via_et(content, format):
     root = ET.fromstring(content)
     service_id = root.find(f".//{format}:Service", ns)
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
-    service_abstract = service_id.find(f"{format}:Abstract", ns)
+    service_abstract = service_id.find(f"{format}:Abstract", ns).text
     print(service_abstract)
 
     for layer in root.findall(f".//{format}:Layer", ns):
