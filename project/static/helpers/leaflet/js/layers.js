@@ -756,7 +756,7 @@ const createLeafletLayer = async (params, {
             }
             
             const attribution = (params.attribution ?? '').trim()
-            if (attribution && !Array('None', '').includes(attribution)) {
+            if (attribution && !Array('none', '').includes(attribution.toLowerCase())) {
                 layer._attribution = attribution
             }
             
