@@ -73,7 +73,6 @@ def get_layers_via_et(content, format):
             ]
             print(bounding_boxes)
             for i in bounding_boxes:
-                print('\n')
                 print(i)
                 w,s,e,n,*crs = i
                 srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
@@ -88,8 +87,18 @@ def get_layers_via_et(content, format):
                     print(bbox)
                     break
                 except Exception as e:
-                    print(e)
-                    continue
+                    try:
+                        print(e)
+                        geom = Polygon([(s,w), (s,e), (n,e), (n,w), (s,w)], srid=srid)
+                        print(geom)
+                        bbox = geom.transform(4326).extent
+                        print(bbox)
+                        break
+                    except Exception as e:
+                        print(e)
+                        continue
+            print('\n')
+            print(bbox)
 
             layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
