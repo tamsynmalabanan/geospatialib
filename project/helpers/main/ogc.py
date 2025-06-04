@@ -45,11 +45,10 @@ def get_layers_via_et(content, format):
 
     ns = {format: f"http://www.opengis.net/{format}"}
     root = ET.fromstring(content)
-    print(root)
     for layer in root.findall(f".//{format}:Layer", ns):
-        print(layer)
         params = {'type': format}
-        # name = layer.find(f"{format}:Name", ns)
+        name = layer.find(f"{format}:Name", ns)
+        print(name)
         # title = layer.find(f"{format}:Title", ns)
         # params.update({
         #     'title': title.text
