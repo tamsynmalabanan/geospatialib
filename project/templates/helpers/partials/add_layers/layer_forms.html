@@ -18,13 +18,13 @@
                 hx-swap='none'
             {% endif %}
         >
-            <input class="form-check-input mt-0" type="checkbox" value="all" checked>
+            <input class="form-check-input mt-0" type="checkbox" value="all">
             <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers" readonly>
         </div>
         <div class='d-flex flex-column gap-2'>
             {% for name, params in layers.items %}
                 <div class='d-flex align-items-center'>
-                    <input class="form-check-input mt-0" type="checkbox" value="{{name}}" checked>
+                    <input class="form-check-input mt-0" type="checkbox" value="{{name}}">
                     <div class="form-floating flex-grow-1 ms-2 w-50">
                         {% random_string as id %}
                         <input id="{{id}}" type="text" class="form-control" name='title' title="{{name}}" value="{{params.title}}">
