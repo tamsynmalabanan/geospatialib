@@ -48,7 +48,7 @@ def get_layers_via_et(content, format):
     for layer in root.findall(f".//{format}:Layer", ns):
         params = {'type': format}
         name = layer.find(f"{format}:Name", ns)
-        print(name)
+        print(name.text)
         # title = layer.find(f"{format}:Title", ns)
         # params.update({
         #     'title': title.text
