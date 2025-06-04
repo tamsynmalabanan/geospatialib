@@ -43,69 +43,66 @@ def get_layers_via_owslib(service, format):
 def get_layers_via_et(content, format):
     layers = {}
 
-    try:
-        ns = {
-            format: f"http://www.opengis.net/{format}",
-            "xlink": "http://www.w3.org/1999/xlink"
-        }
-        root = ET.fromstring(content)
-        
-        service_id = root.find(f".//{format}:Service", ns)
-        service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
-        service_abstract = service_id.find(f"{format}:Abstract", ns).text
-        service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
-        service_fees = service_id.find(f"{format}:Fees", ns).text
+    ns = {
+        format: f"http://www.opengis.net/{format}",
+        "xlink": "http://www.w3.org/1999/xlink"
+    }
+    root = ET.fromstring(content)
+    
+    service_id = root.find(f".//{format}:Service", ns)
+    service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
+    service_abstract = service_id.find(f"{format}:Abstract", ns).text
+    service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
+    service_fees = service_id.find(f"{format}:Fees", ns).text
 
-        for layer in root.findall(f".//{format}:Layer", ns):
-            name = layer.find(f"{format}:Name", ns)
-            if name is not None:
-                params = {'type':f'{format}'}
-                
-                title = layer.find(f"{format}:Title", ns)
-                if title is not None:
-                    params['title'] = title.text
-                
-                bounding_boxes = [
-                    [float(i.attrib[j]) for j in [
-                        'minx', 'miny', 'maxx', 'maxy'
-                    ]] + [i.attrib['CRS']] 
-                    for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
-                ]
-                for bbox in bounding_boxes+[WORLD_GEOM.extent+['default:4326']]:
-                    w,s,e,n,*crs = bbox
-                    srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-                    if srid == 4326:
-                        break                    
-                    try:
-                        geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
-                        bbox = geom.transform(4326).extent
-                        break
-                    except Exception as e:
-                        continue
-                
-                layer_abstract = layer.find(f"{format}:Abstract", ns)
-                layer_abstract = layer_abstract.text if layer_abstract is not None else ''
+    for layer in root.findall(f".//{format}:Layer", ns):
+        name = layer.find(f"{format}:Name", ns)
+        if name is not None:
+            params = {'type':f'{format}'}
+            
+            title = layer.find(f"{format}:Title", ns)
+            if title is not None:
+                params['title'] = title.text
+            
+            bounding_boxes = [
+                [float(i.attrib[j]) for j in [
+                    'minx', 'miny', 'maxx', 'maxy'
+                ]] + [i.attrib['CRS']] 
+                for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
+            ]
+            for bbox in bounding_boxes+[list(WORLD_GEOM.extent)+['default:4326']]:
+                w,s,e,n,*crs = bbox
+                srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+                if srid == 4326:
+                    break                    
+                try:
+                    geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+                    bbox = geom.transform(4326).extent
+                    break
+                except Exception as e:
+                    continue
+            
+            layer_abstract = layer.find(f"{format}:Abstract", ns)
+            layer_abstract = layer_abstract.text if layer_abstract is not None else ''
 
-                styles = {i.find(f'{format}:Name', ns).text:{
-                    'title': i.find(f'{format}:Title', ns).text,
-                    'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
-                } for i in (layer.findall(f'{format}:Style', ns) or [])}
+            styles = {i.find(f'{format}:Name', ns).text:{
+                'title': i.find(f'{format}:Title', ns).text,
+                'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
+            } for i in (layer.findall(f'{format}:Style', ns) or [])}
 
 
-                params.update({
-                    'bbox': list(bbox),
-                    'srid': srid,
-                    'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
-                    'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
-                    'attribution': service_attribution,
-                    'fees': service_fees,
-                    'styles': json.dumps(styles)
-                })
+            params.update({
+                'bbox': list(bbox),
+                'srid': srid,
+                'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
+                'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
+                'attribution': service_attribution,
+                'fees': service_fees,
+                'styles': json.dumps(styles)
+            })
 
-                layers[name.text] = params
-    except Exception as e:
-        print(e)
-        
+            layers[name.text] = params
+
     return layers
 
 def get_wms_layers(url):
