@@ -48,7 +48,7 @@ def get_layers_via_et(content, format):
         "xlink": "http://www.w3.org/1999/xlink"
     }
     root = ET.fromstring(content)
-    print(root.attrib['version'])
+    version = root.attrib['version']
     
     service_id = root.find(f".//{format}:Service", ns)
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
@@ -65,27 +65,29 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
-            # bbox = None #WORLD_GEOM.extent
-            # bounding_boxes = [
-            #     [float(i.attrib[j]) for j in [
-            #         'minx', 'miny', 'maxx', 'maxy'
-            #     ]] + [i.attrib['CRS']] 
-            #     for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
-            # ]
-            # print(bounding_boxes)
-            # for i in bounding_boxes:
-            #     w,s,e,n,*crs = i
-            #     srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-            #     if srid == 4326:
-            #         bbox = i
-            #         break                    
-            #     try:
-            #         geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
-            #         bbox = geom.transform(4326).extent
-            #         break
-            #     except Exception as error:
-            #         print(error)
-            # print(bbox, '\n')
+            bounding_boxes = [
+                [float(i.attrib[j]) for j in [
+                    'minx', 'miny', 'maxx', 'maxy'
+                ]] + [i.attrib['CRS']] 
+                for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
+            ]
+            for i in bounding_boxes+[WORLD_GEOM.extent]:
+                w,s,e,n,*crs = i
+                srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+                if version == '1.3.0' and srid == 4326:
+                    s,w,n,e,*crs = i
+                
+                if srid == 4326:
+                    bbox = [w,s,e,n]
+                    break                    
+                
+                try:
+                    geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
+                    bbox = geom.transform(4326).extent
+                    break
+                except Exception as error:
+                    print(error)
+            print(bbox, '\n')
 
             layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
