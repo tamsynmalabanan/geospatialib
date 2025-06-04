@@ -89,7 +89,7 @@ def get_layers_via_et(content, format):
                     break
                 except Exception as error:
                     print(error)
-            print(bbox, '\n')
+            print(bbox, srid, '\n')
 
             layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
