@@ -62,14 +62,14 @@ def test_parse_ogc_xml():
     response.raise_for_status()
     content = response.content
     layers = get_layers_via_et(content, 'wms')    
-    # print(layers)
+    print(layers)
 
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         URL.objects.all().delete()
 
-        test_get_collection_data()
-        # test_parse_ogc_xml()
+        # test_get_collection_data()
+        test_parse_ogc_xml()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
