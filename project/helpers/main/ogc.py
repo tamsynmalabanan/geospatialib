@@ -100,8 +100,6 @@ def get_layers_via_et(content, format):
                 'styles': json.dumps(styles)
             })
 
-            print(params)
-
             layers[name.text] = params
 
     return layers

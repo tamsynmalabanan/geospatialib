@@ -62,7 +62,7 @@ def test_parse_ogc_xml():
     response.raise_for_status()
     content = response.content
     layers = get_layers_via_et(content, 'wms')    
-    # print(layers)
+    print(layers)
 
 class Command(BaseCommand):
     help = 'Test'
