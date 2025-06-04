@@ -19,7 +19,7 @@ def get_wms_layers(url):
         # content = response.content
         # if len(content) > 99999:
         #     raise Exception('Content size > 99999')
-        wms = WebMapService(url)
+        wms = WebMapService(url, timeout=60)
         
         wms_id = wms.identification
         wms_tags = wms_id.keywords or []
