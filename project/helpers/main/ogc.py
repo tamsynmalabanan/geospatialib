@@ -44,7 +44,7 @@ def get_layers_via_et(content, format):
 
     root = ET.fromstring(content)
     service_id = root.find(f".//{format}:Service", ns)
-    service_keywords = service_id.find(f".//{format}:Keywords", ns)
+    service_keywords = service_id.findall(f"{format}:Keyword", ns)
     print(service_keywords)
     # service_abstract = service_id.abstract or ''
 
