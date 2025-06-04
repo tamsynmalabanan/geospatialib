@@ -45,15 +45,16 @@ def get_layers_via_et(content, format):
 
     ns = {format: f"http://www.opengis.net/{format}"}
     root = ET.fromstring(content)
+    print(root)
     for layer in root.findall(f".//{format}:Layer", ns):
         params = {'type': format}
-        name = layer.find(f"{format}:Name", ns)
-        title = layer.find(f"{format}:Title", ns)
-        params.update({
-            'title': title.text
-        })
-        layers[name.text] = params
-        
+        # name = layer.find(f"{format}:Name", ns)
+        # title = layer.find(f"{format}:Title", ns)
+        # params.update({
+        #     'title': title.text
+        # })
+        # layers[name.text] = params
+
     return layers
 
 def get_wms_layers(url):
