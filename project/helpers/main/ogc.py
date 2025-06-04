@@ -6,6 +6,7 @@ from owslib.wms import WebMapService
 import psutil
 import json
 
+from helpers.main.layers import WORLD_GEOM
 from helpers.base.utils import get_response
 
 def get_layers_via_owslib(service, format):
@@ -59,13 +60,24 @@ def get_layers_via_et(content, format):
                 params['title'] = title.text
             
             # for each bbox if wgs break return bbox else try to transform and return
-            bbox = [
+            bounding_boxes = [
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
                 ]] + [i.attrib['CRS']] 
                 for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
             ]
-            
+            for bbox in bounding_boxes+[WORLD_GEOM.extent]:
+                w,s,e,n,*crs = bbox
+                srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+                if srid == 4326:
+                    break                    
+                try:
+                    geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+                    bbox = geom.transform(4326).extent
+                except Exception as e:
+                    print(e)
+                    continue
+
             print(bbox)
             
             # if len(bbox) > 0:
