@@ -40,7 +40,7 @@ def get_layers_via_owslib(service, format):
         layers[i] = params
     return layers
 
-def get_wms_layers_via_et(content):
+def get_wms_layers_via_et(content, format):
     layers = {}
 
     ns = {"wms": "http://www.opengis.net/wms"}

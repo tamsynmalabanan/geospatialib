@@ -61,7 +61,7 @@ def test_parse_ogc_xml():
     response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
     response.raise_for_status()
     content = response.content
-    layers = get_wms_layers_via_et(content)    
+    layers = get_wms_layers_via_et(content, 'wms')    
     print(layers)
 
 class Command(BaseCommand):
