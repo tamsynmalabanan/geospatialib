@@ -48,15 +48,18 @@ def get_layers_via_et(content, format):
         "xlink": "http://www.w3.org/1999/xlink"
     }
     root = ET.fromstring(content)
+    print(root)
     version = root.attrib['version']
     
     service_id = root.find(f".//{format}:Service", ns)
+    print(service_id)
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
     service_abstract = service_id.find(f"{format}:Abstract", ns).text
     service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
     service_fees = service_id.find(f"{format}:Fees", ns).text
 
     for layer in root.findall(f".//{format}:Layer", ns):
+        print(layer)
         name = layer.find(f"{format}:Name", ns)
         if name is not None:
             params = {'type':f'{format}'}
@@ -97,7 +100,6 @@ def get_layers_via_et(content, format):
                 'title': i.find(f'{format}:Title', ns).text,
                 'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
             } for i in (layer.findall(f'{format}:Style', ns) or [])}
-
 
             params.update({
                 'bbox': list(bbox),
