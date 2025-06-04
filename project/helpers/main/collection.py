@@ -28,17 +28,14 @@ def guess_format_from_url(url):
     if not decoded_response:
         return 'file'
 
-    return get_first_substring_match(decoded_response+url, {
+    return get_first_substring_match(url, {
         'ogc-wms': [
             'wms',
         ],
         'csv': [
-            'table',
         ],
         'geojson': [
             'json',
-            'featurecollection',
-            'features',
         ],
     })
 
