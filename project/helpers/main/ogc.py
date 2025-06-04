@@ -45,9 +45,8 @@ def get_layers_via_et(content, format):
     root = ET.fromstring(content)
     service_id = root.find(f".//{format}:Service", ns)
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
-    print(service_keywords)
-    # service_abstract = service_id.abstract or ''
-
+    service_abstract = service_id.find(f"{format}:Abstract", ns)
+    print(service_abstract)
 
     for layer in root.findall(f".//{format}:Layer", ns):
         name = layer.find(f"{format}:Name", ns)
