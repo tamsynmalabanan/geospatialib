@@ -64,7 +64,7 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
-            bbox = WORLD_GEOM.extent
+            bbox = None #WORLD_GEOM.extent
             bounding_boxes = [
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
@@ -72,19 +72,19 @@ def get_layers_via_et(content, format):
                 for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
             ]
             print(bounding_boxes)
-            # for i in bounding_boxes:
-            #     w,s,e,n,*crs = i
-            #     srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-            #     if srid == 4326:
-            #         bbox = i
-            #         break                    
-            #     try:
-            #         geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
-            #         bbox = geom.transform(4326).extent
-            #         break
-            #     except Exception as error:
-            #         print(error)
-            # print(bbox)
+            for i in bounding_boxes:
+                w,s,e,n,*crs = i
+                srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+                if srid == 4326:
+                    bbox = i
+                    break                    
+                try:
+                    geom = GEOSGeometry(Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid))
+                    bbox = geom.transform(4326).extent
+                    break
+                except Exception as error:
+                    print(error)
+            print(bbox)
 
             layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
@@ -113,7 +113,7 @@ def get_wms_layers(url):
     layers = {}
     
     try:
-        response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
+        response = get_response(f'{url}?service=WMS&request=GetCapabilities&version=1.1.1', raise_for_status=False)
         response.raise_for_status()
         content = response.content
         if len(content) < 100000:
