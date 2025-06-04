@@ -70,7 +70,7 @@ def get_layers_via_et(content, format):
                 ]] + [i.attrib['CRS']] 
                 for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
             ]
-            for bbox in bounding_boxes+[WORLD_GEOM.extent]:
+            for bbox in bounding_boxes+[WORLD_GEOM.extent+['default']]:
                 w,s,e,n,*crs = bbox
                 srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
                 if srid == 4326:
