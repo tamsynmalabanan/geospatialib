@@ -54,7 +54,7 @@ def test_update_collection_data():
         }
     }
     collection_data = update_collection_data(cacheKey, updated_layers, delay=False)
-    print(collection_data)
+    # print(collection_data)
 
 def test_parse_ogc_xml():
     url = 'https://geoserver.geoportal.gov.ph/geoserver/wms'
