@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from helpers.base.utils import get_response, get_response
 from helpers.base.files import get_file_names
-from helpers.main.ogc import get_wms_layers, get_wms_layers_via_et
+from helpers.main.ogc import get_wms_layers, get_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
 from main.models import URL
@@ -61,7 +61,7 @@ def test_parse_ogc_xml():
     response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
     response.raise_for_status()
     content = response.content
-    layers = get_wms_layers_via_et(content, 'wms')    
+    layers = get_layers_via_et(content, 'wms')    
     print(layers)
 
 class Command(BaseCommand):

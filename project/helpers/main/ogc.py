@@ -40,16 +40,16 @@ def get_layers_via_owslib(service, format):
         layers[i] = params
     return layers
 
-def get_wms_layers_via_et(content, format):
+def get_layers_via_et(content, format):
     layers = {}
 
-    ns = {"wms": "http://www.opengis.net/wms"}
+    ns = {f"{format}": f"http://www.opengis.net/{format}"}
     root = ET.fromstring(content)
-    for layer in root.findall(".//wms:Layer", ns):
-        name = layer.find("wms:Name", ns)
+    for layer in root.findall(f".//{format}:Layer", ns):
+        name = layer.find(f"{format}:Name", ns)
         if name is not None:
-            params = {'type':'wms'}
-            title = layer.find("wms:Title", ns)
+            params = {'type':f'{format}'}
+            title = layer.find(f"{format}:Title", ns)
             if title is not None:
                 params['title'] = title.text
             layers[name.text] = params
@@ -67,7 +67,7 @@ def get_wms_layers(url):
             wms = WebMapService(url)
             layers = get_layers_via_owslib(wms, 'wms')
         else:
-            layers = get_wms_layers_via_et(content, 'wms')
+            layers = get_layers_via_et(content, 'wms')
     except Exception as e:
         print('get_wms_layers', e)
     
