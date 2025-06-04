@@ -64,7 +64,11 @@ def test_parse_ogc_xml():
     content = response.content
     root = ET.fromstring(content)
     layers = root.findall(".//wms:Layer", ns)
-    print(layers)
+    for layer in layers:
+        name = layer.find("wms:Name", ns)
+        title = layer.find("wms:Title", ns)
+        if name is not None and title is not None:
+            print({"name": name.text, "title": title.text})
     
 
 class Command(BaseCommand):
