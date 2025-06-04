@@ -202,7 +202,14 @@ const handleAddLayersForm = () => {
     form.addEventListener('htmx:responseError', (e) => {
         if (e.detail.pathInfo.requestPath !== '/htmx/collection/validate/') return
         e.target.classList.add('is-invalid')
-        e.target.nextElementSibling.querySelector('ul').innerText = 'Unable to inspect URL content.'
+        if (e.target.name === 'url') {
+            e.target.nextElementSibling.querySelector('ul').innerText = 'Unable to inspect URL content.'
+            resetFormatField()
+        }
+        if (e.target.name === 'format') {
+            e.target.nextElementSibling.querySelector('ul').innerText = 'Unable to retrieve layers.'
+            resetUrlFields()
+        }
     })
 }
 
