@@ -65,9 +65,18 @@ def get_layers_via_et(content, format):
                 float(i.attrib['maxy']), 
                 i.attrib['CRS']
             ]) for i in (layer.findall(f'{format}:BoundingBox', ns) or [])]
-            bbox_wgs4326 = [i for i in bbox if 'EPSG:4326' in i]
-            bbox = bbox_wgs4326[0] if len(bbox_wgs4326) > 0 else bbox[-1]
-            print(json.loads(bbox))
+            if len(bbox) > 0:
+                bbox_wgs4326 = [i for i in bbox if 'EPSG:4326' in i]
+                bbox = bbox_wgs4326[0] if len(bbox_wgs4326) > 0 else bbox[-1]
+                bbox = json.loads(bbox)
+            else:
+                bbox = [-180, -90, 180, 90, 'EPSG:4326']
+            w,s,e,n,*crs = bbox
+            srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+            if srid != 4326:
+                geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+                bbox = geom.transform(4326).extent
+            print(bbox, srid)
 
             layers[name.text] = params
 
