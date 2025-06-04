@@ -68,7 +68,8 @@ def test_parse_ogc_xml():
         name = layer.find("wms:Name", ns)
         title = layer.find("wms:Title", ns)
         if name is not None and title is not None:
-            print({"name": name.text, "title": title.text})
+            layers[name.text] = {"title": title.text}
+    print(layers)
     
 
 class Command(BaseCommand):
