@@ -40,6 +40,20 @@ def get_layers_via_owslib(service, format):
         layers[i] = params
     return layers
 
+def get_layers_via_et(content, format):
+    ns = {format: f"http://www.opengis.net/{format}"}
+    root = ET.fromstring(content)
+    layers = {}
+    for layer in root.findall(".//wms:Layer", ns):
+        params = {'type': format}
+        name = layer.find("wms:Name", ns)
+        title = layer.find("wms:Title", ns)
+        params.update({
+            'title': title.text
+        })
+        layers[name.text] = params
+    return layers
+
 def get_wms_layers(url):
     layers = {}
     
@@ -50,6 +64,8 @@ def get_wms_layers(url):
         if len(content) < 100000:
             wms = WebMapService(url)
             layers = get_layers_via_owslib(wms, 'wms')
+        else:
+            layers = get_layers_via_et(content, 'wms')
     except Exception as e:
         print('get_wms_layers', e)
     
