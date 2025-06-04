@@ -94,7 +94,7 @@ def get_layers_via_et(content, format):
                 'bbox': list(bbox),
                 'srid': srid,
                 'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
-                'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i != ''])).strip(), 
+                'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
                 'attribution': service_attribution,
                 'fees': service_fees,
                 'styles': json.dumps(styles)
