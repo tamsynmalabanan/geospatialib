@@ -431,3 +431,11 @@ const removeQueryParams = (urlString) => {
     url.search = ''
     return url.toString()
 }
+
+const pushQueryParamsToURLString = (url, params) => {
+    const url_obj = new URL(url)
+    for (const key in params) {
+        url_obj.searchParams.set(key, params[key])
+    }
+    return url_obj.toString()
+}

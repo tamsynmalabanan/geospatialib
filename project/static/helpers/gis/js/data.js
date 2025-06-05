@@ -30,8 +30,10 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
     }
     
     console.log(getParams)
+    
+    const url = pushQueryParamsToURLString(cleanURL, getParams)
+    console.log(url)
 
-    // const url = pushQueryParamsToURLString(cleanURL, getParams)
     // return fetchDataWithTimeout(url, {
     //     abortBtn:options.abortBtn,
     //     controller:options.controller,
