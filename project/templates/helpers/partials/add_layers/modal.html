@@ -4,11 +4,11 @@
 <div id='addLayersModal' class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down modal-lg">
         <form id='addLayersForm' class="modal-content" style='min-height:400px'>
-            <div class="modal-header">
-                <h5 class="modal-title">Add layers</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body d-flex flex-column gap-3">
+            <div class="modal-header d-flex flex-column">
+                <div>
+                    <h5 class="modal-title">Add layers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="d-flex flex-nowrap gap-3">
                     <div class="form-check">
                         {% random_string as id %}
@@ -34,11 +34,14 @@
                         hx-swap="innerHTML"
                         hx-params='not files'
                     >
-                    <div id='addLayersForm-files-layerNames' class='d-flex flex-column gap-2'></div>
+                    <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
+                        {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
+                    </div>
                 </div>
-                <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3">
-                    {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}
-                </div>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3">
+                <div id='addLayersForm-files-layerNames' class='d-flex flex-column gap-2'></div>
+                <div id='addLayersForm-url-layerNames' class='d-flex flex-column gap-2'></div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button name='reset' type="button" class="btn btn-secondary" tabindex='-1'>Reset</button>

@@ -22,6 +22,6 @@
     </div>
 {% endwith %}
 
-<div id='addLayersForm-url-layerNames' class='d-flex flex-column gap-2'>
+<div id='addLayersForm-url-layerNames' hx-swap-oob="true" class='d-flex flex-column gap-2'>
     {% include "helpers/partials/add_layers/layer_forms.html" %}
 </div>
