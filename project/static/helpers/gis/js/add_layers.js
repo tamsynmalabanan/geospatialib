@@ -180,7 +180,7 @@ const handleAddLayersForm = () => {
     })
 
     const spinnerHTML = removeWhitespace(`
-        <div class="fs-6">
+        <div class="fs-6 d-flex justify-content-center">
             <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
             <span role="status">Fetching layers...</span>
         </div>
