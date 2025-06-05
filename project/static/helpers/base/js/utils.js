@@ -425,3 +425,9 @@ const getFileRawData = async (file) => {
         reader.readAsText(file)
     })
 }
+
+const removeQueryParams = (urlString) => {
+    const url = new URL(urlString)
+    url.search = ''
+    return url.toString()
+}

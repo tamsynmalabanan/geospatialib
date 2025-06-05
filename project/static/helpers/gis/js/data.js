@@ -1,34 +1,36 @@
 const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => {
-    console.log(params, turf.bbox(queryGeom))
+    console.log(params)
 
     // const map = event.target
-    // const cleanURL = removeQueryParams(layer.data.layerUrl)
-    // const params = {
-    //     SERVICE: 'WMS',
-    //     VERSION: '1.3.0',
-    //     // VERSION: '1.1.1',
-    //     REQUEST: 'GetFeatureInfo',
-    //     FORMAT: 'application/json',
-    //     INFO_FORMAT: 'application/json',
-    //     TRANSPARENT: true,
-    //     QUERY_LAYERS: layer.data.layerName,
-    //     LAYERS: layer.data.layerName,
-    //     exceptions: 'application/vnd.ogc.se_inimage',
-    //     SRS: "EPSG:4326",
-    //     CRS: 'EPSG:4326',
-    //     BBOX: map.getBounds().toBBoxString(),
-    //     // BBOX: map.getBounds().toBBoxString(),
-    //     // X: Math.floor(event.containerPoint.x),
-    //     // Y: Math.floor(event.containerPoint.y),
-    //     // WIDTH: Math.floor(map.getSize().x),
-    //     // HEIGHT: Math.floor(map.getSize().y),
-    // }
+    const cleanURL = removeQueryParams(params.url)
+    const getParams = {
+        SERVICE: 'WMS',
+        VERSION: '1.3.0',
+        // VERSION: '1.1.1',
+        REQUEST: 'GetFeatureInfo',
+        FORMAT: 'application/json',
+        INFO_FORMAT: 'application/json',
+        TRANSPARENT: true,
+        QUERY_LAYERS: layer.data.layerName,
+        LAYERS: layer.data.layerName,
+        exceptions: 'application/vnd.ogc.se_inimage',
+        SRS: "EPSG:4326",
+        CRS: 'EPSG:4326',
+        BBOX: turf.bbox(queryGeom),
+        // BBOX: map.getBounds().toBBoxString(),
+        // WIDTH: Math.floor(map.getSize().x),
+        // HEIGHT: Math.floor(map.getSize().y),
+        // X: Math.floor(event.containerPoint.x),
+        // Y: Math.floor(event.containerPoint.y),
+    }
 
-    // if (layer.data.layerStyle) {
-    //     params.STYLES = layer.data.layerStyle
-    // }
+    const styles = JSON.parse(params.styles ?? '{}')
+    if (Object.keys(styles).length) {
+        getParams = Object.keys(styles)[0]
+    }
+    console.log(getParams)
 
-    // const url = pushQueryParamsToURLString(cleanURL, params)
+    // const url = pushQueryParamsToURLString(cleanURL, getParams)
     // return fetchDataWithTimeout(url, {
     //     abortBtn:options.abortBtn,
     //     controller:options.controller,
