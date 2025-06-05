@@ -3794,6 +3794,8 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const dataToChecklist = async (fetchers, queryGeom, abortBtns, controller) => {
         for (const fetcher of fetchers) {
+            console.log(fetcher)
+
             const geojson = await getGeoJSON(fetcher.key, {
                 queryGeom,
                 zoom: map.getZoom(),
@@ -3876,8 +3878,6 @@ const handleLeafletQueryPanel = (map, parent) => {
                     return acc
                 }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })
           
-                console.log(fetchers)
-
                 if (!fetchers.length) {
                     errorRemark = 'No layers to query.'
                     return
