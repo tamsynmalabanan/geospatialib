@@ -470,7 +470,7 @@ const createFormCheck = ({
 const createObjectTRs = (object, parent, {
 } = {}) => {
     const handler = (key, value, {prefixes = []} = {}) => {
-        if (typeof value === 'object') {
+        if (value && typeof value === 'object') {
             prefixes.push(key)
             Object.keys(value).forEach(subKey => {
                 const subValue = value[subKey]
