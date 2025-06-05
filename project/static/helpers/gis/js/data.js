@@ -59,13 +59,8 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
                         })
                     }
                     
-                    if (features.length > 0) {
-                        const geojson = turf.featureCollection(features)
-                        console.log(geojson)
-                        return geojson
-                    } else {
-                        throw new Error('No features returned.')
-                    }
+                    const geojson = turf.featureCollection(features)
+                    return geojson
                 })
             }
         }
