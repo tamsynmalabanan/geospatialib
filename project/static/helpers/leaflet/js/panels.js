@@ -3875,7 +3875,9 @@ const handleLeafletQueryPanel = (map, parent) => {
                     })
                     return acc
                 }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })
-                
+          
+                console.log(fetchers)
+
                 if (!fetchers.length) {
                     errorRemark = 'No layers to query.'
                     return
