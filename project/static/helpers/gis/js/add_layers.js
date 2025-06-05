@@ -179,11 +179,18 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     })
 
+    const spinnerHTML = removeWhitespace(`
+        <div class="">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span role="status">Loading...</span>
+        </div>
+    `)
+
     form.addEventListener('htmx:beforeRequest', async (e) => {
-        console.log(e.target.getAttribute('name'))
         if (e.target === form.elements.url) {
             try {
                 resetFormatField()
+                getLayerNamesContainer(getFileSource()).innerHTML = spinnerHTML
                 return new URL(e.target.value)
             } catch {
                 resetUrlFields()
@@ -191,7 +198,9 @@ const handleAddLayersForm = () => {
         }
 
         if (e.target === form.elements.format) {
-            return resetLayerNames('url')
+            resetLayerNames('url')
+            getLayerNamesContainer(getFileSource()).innerHTML = spinnerHTML
+            return
         }
 
         if (e.target === fileInput && e.target.files.length) return
