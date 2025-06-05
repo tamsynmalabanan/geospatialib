@@ -140,8 +140,13 @@ const handleAddLayersForm = () => {
     sourceRadios.forEach(radio => {
         radio.addEventListener('click', () => {
             const source = getFileSource()
+            
             fileFields.classList.toggle('d-none', source === 'url')
+            getLayerNamesContainer('files').toggle('d-none', source === 'url')
+            
             urlFields.classList.toggle('d-none', source === 'files')
+            getLayerNamesContainer('url').toggle('d-none', source === 'files')
+            
             toggleSubmitBtn()
         })
     })
