@@ -1,13 +1,11 @@
 const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = {}) => {
-    console.log(params)
-    
     const map = event.target
     const cleanURL = removeQueryParams(params.url)
 
     const getParams = {
         SERVICE: 'WMS',
-        // VERSION: '1.3.0',
-        VERSION: '1.1.1',
+        VERSION: '1.3.0',
+        // VERSION: '1.1.1',
         REQUEST: 'GetFeatureInfo',
         FORMAT: 'application/json',
         INFO_FORMAT: 'application/json',
@@ -17,7 +15,6 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
         exceptions: 'application/vnd.ogc.se_inimage',
         SRS: "EPSG:4326",
         CRS: 'EPSG:4326',
-        // BBOX: turf.bbox(queryGeom),
         BBOX: map.getBounds().toBBoxString(),
         WIDTH: Math.floor(map.getSize().x),
         HEIGHT: Math.floor(map.getSize().y),
