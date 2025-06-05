@@ -18,7 +18,7 @@
         {% endif %}
     >
         <input class="form-check-input mt-0" type="checkbox" value="all">
-        <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers ({{layers.keys|length}})" readonly>
+        <input type="text" class="form-control border-0 box-shadow-none" value="Select all layers ({{layers.keys|length|format_number}})" readonly>
     </div>
     <div class='d-flex flex-column gap-2'>
         {% for name, params in layers.items %}

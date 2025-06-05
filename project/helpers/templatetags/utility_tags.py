@@ -14,6 +14,10 @@ def equals(value1, value2):
     return None if value1 in [None, ''] else value1 == value2
 
 @register.filter
+def format_number(value):
+    return f"{value:,}"
+
+@register.filter
 def get(dict, key, sub=None):
     return dict.get(key, sub)
 
