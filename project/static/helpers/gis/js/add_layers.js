@@ -180,6 +180,7 @@ const handleAddLayersForm = () => {
     })
 
     form.addEventListener('htmx:beforeRequest', async (e) => {
+        console.log(e.target.getAttribute('name'))
         if (e.target === form.elements.url) {
             try {
                 resetFormatField()
