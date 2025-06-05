@@ -14,9 +14,14 @@ const handleAddLayersForm = () => {
     const getFileSource = () => sourceRadios.find(i => i.checked).value
 
     let toggleSubmitBtnTimeout
-    const toggleSubmitBtn = () => {
+    const toggleSubmitBtn = ({disabled}) => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
+            if (typeof disabled === 'boolean') {
+                submitBtn.disabled = disabled
+                return
+            }
+            
             const container = getLayerNamesContainer(getFileSource())
             const checkedLayer = Array.from(container.querySelectorAll('.form-check-input')).find(i => i.checked)
             submitBtn.disabled = checkedLayer ? false : true
@@ -164,6 +169,8 @@ const handleAddLayersForm = () => {
     form.addEventListener('click', (e) => {
         if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
 
+        if (e.target.checked) toggleSubmitBtn({disabled:false})
+
         const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
             getLayerNamesContainer(getFileSource())
             .querySelectorAll(`.form-check-input[type="checkbox"]`)
@@ -175,7 +182,7 @@ const handleAddLayersForm = () => {
             selectAllCheckbox.checked = layerCheckboxes.every(i => i.checked)
         }
 
-        toggleSubmitBtn()
+        if (!e.target.checked) toggleSubmitBtn()
     })
 
     form.addEventListener('htmx:beforeRequest', async (e) => {
