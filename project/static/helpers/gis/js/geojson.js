@@ -398,11 +398,8 @@ const getGeoJSON = async (dbKey, {
 } = {}) => {
     if (!dbKey) return
 
-    const mapKey = [
-        dbKey, 
-        (queryGeom ? turf.bbox(queryGeom).join(',') : null), 
-        controller?.id
-    ].join(';')
+    const bbox = queryGeom ? turf.bbox(queryGeom).join(',') : null
+    const mapKey = [dbKey, bbox, controller?.id].join(';')
 
     if (mapForGetGeoJSON.has(mapKey)) {
         const data = await mapForGetGeoJSON.get(mapKey)
@@ -413,6 +410,8 @@ const getGeoJSON = async (dbKey, {
     const dataPromise = (async () => {
         try {
             const [handlerName, handlerParams] = dbKey.split(';', 2)
+            console.log(handlerName, handlerParams)
+
             const isClient = handlerName === 'client'
             const isStatic = staticFormats.includes(handlerName)
             

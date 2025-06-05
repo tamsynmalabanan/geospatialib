@@ -3794,8 +3794,6 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const dataToChecklist = async (fetchers, queryGeom, abortBtns, controller) => {
         for (const fetcher of fetchers) {
-            console.log(fetcher)
-
             const geojson = await getGeoJSON(fetcher.key, {
                 queryGeom,
                 zoom: map.getZoom(),
