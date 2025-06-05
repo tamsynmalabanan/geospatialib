@@ -476,9 +476,9 @@ const getGeoJSON = async (dbKey, {
                     
                     if (geojson.features?.length) {
                         if (controller?.signal.aborted) return
-                        await normalizeGeoJSON(geojson, {defaultGeom:queryGeom, controller, abortBtns})
+                        await normalizeGeoJSON(geojson, {defaultGeom:queryGeom.geometry, controller, abortBtns})
                         console.log(geojson)
-                        
+
                         if (controller?.signal.aborted) return
                         if (handlerName !== 'nominatim') {
                             await updateGeoJSONOnDB(
