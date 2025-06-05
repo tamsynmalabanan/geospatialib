@@ -14,7 +14,7 @@ const handleAddLayersForm = () => {
     const getFileSource = () => sourceRadios.find(i => i.checked).value
 
     let toggleSubmitBtnTimeout
-    const toggleSubmitBtn = ({disabled}) => {
+    const toggleSubmitBtn = ({disabled}={}) => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             if (typeof disabled === 'boolean') {
