@@ -26,8 +26,9 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
 
     const styles = JSON.parse(params.styles ?? '{}')
     if (Object.keys(styles).length) {
-        getParams = Object.keys(styles)[0]
+        getParams.STYLES = Object.keys(styles)[0]
     }
+    
     console.log(getParams)
 
     // const url = pushQueryParamsToURLString(cleanURL, getParams)
