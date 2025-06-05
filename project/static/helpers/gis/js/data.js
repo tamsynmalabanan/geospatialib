@@ -51,11 +51,11 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
                             if (!tagName || tagName.toLowerCase() !== 'fields') return
                             
                             const attributes = Object.values(child.attributes)
-                            console.log(attributes)
                             if (attributes.length == 0) return
                             
                             const feature = {type: "Feature", properties:{}}
                             attributes.forEach(attr => feature.properties[attr.name] = attr.value)
+                            console.log(feature)
                             features.push(feature)
                         })
                     }
