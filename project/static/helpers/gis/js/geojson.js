@@ -472,14 +472,12 @@ const getGeoJSON = async (dbKey, {
                         }
                     )
 
-                    console.log(geojson)
-
                     if (!geojson) return new Error('No geojson retrieved.')
                     
                     if (geojson.features?.length) {
                         if (controller?.signal.aborted) return
                         await normalizeGeoJSON(geojson, {queryGeom, controller, abortBtns})
-                        
+                        console.log(geojson)
                         if (controller?.signal.aborted) return
                         if (handlerName !== 'nominatim') {
                             await updateGeoJSONOnDB(
