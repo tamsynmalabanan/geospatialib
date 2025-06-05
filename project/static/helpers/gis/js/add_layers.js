@@ -187,12 +187,10 @@ const handleAddLayersForm = () => {
     `)
 
     form.addEventListener('htmx:beforeRequest', async (e) => {
-        const urlLayerNamesContainer = getLayerNamesContainer('url').innerHTML
-        
         if (e.target === form.elements.url) {
             try {
                 resetFormatField()
-                 urlLayerNamesContainer = spinnerHTML
+                getLayerNamesContainer('url').innerHTML = spinnerHTML
                 return new URL(e.target.value)
             } catch {
                 resetUrlFields()
@@ -201,7 +199,7 @@ const handleAddLayersForm = () => {
 
         if (e.target === form.elements.format) {
             resetLayerNames('url')
-            urlLayerNamesContainer.innerHTML = spinnerHTML
+            getLayerNamesContainer('url').innerHTML = spinnerHTML
             return
         }
 
