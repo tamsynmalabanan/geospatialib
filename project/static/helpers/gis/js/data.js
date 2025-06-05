@@ -55,11 +55,11 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
                             
                             const feature = {type: "Feature", properties:{}}
                             attributes.forEach(attr => feature.properties[attr.name] = attr.value)
-                            console.log(feature)
-                            features.push(feature, url)
+                            features.push(feature)
                         })
                     }
-
+                    
+                    console.log(features, url)
                     if (features.length > 0) {
                         return turf.featureCollection(features)
                     } else {
