@@ -3792,7 +3792,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         {key: 'overpass;{}', title: 'OpenStreetMap via Overpass',},
     ]
 
-    const dataToChecklist = async (fetchers, queryGeom, abortBtns, controller) => {
+    const dataToChecklist = async (fetchers, {queryGeom, abortBtns, controller, event}={}) => {
         for (const fetcher of fetchers) {
             const geojson = await getGeoJSON(fetcher.key, {
                 queryGeom,
@@ -3800,6 +3800,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 abortBtns, 
                 controller,
                 sort:true,
+                event,
             })
 
             if (!geojson?.features) continue
@@ -3882,7 +3883,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 }
                 
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                await dataToChecklist(fetchers, queryGeom, abortBtns, controller)
+                await dataToChecklist(fetchers, {queryGeom, abortBtns, controller, event:e})
             }
         },
         divider1: {

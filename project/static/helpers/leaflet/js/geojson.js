@@ -242,6 +242,7 @@ const getLeafletGeoJSONData = async (layer, {
     group=true,
     sort=true,
     simplify=true,
+    event,
 } = {}) => {
     if (!layer) return
 
@@ -270,6 +271,7 @@ const getLeafletGeoJSONData = async (layer, {
         queryGeom,
         controller,
         abortBtns,
+        event,
     }))
 
     if (!data) return

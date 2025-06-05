@@ -396,6 +396,7 @@ const getGeoJSON = async (dbKey, {
     controller, 
     abortBtns,
     sort=false,
+    event,
 } = {}) => {
     if (!dbKey) return
 
@@ -467,6 +468,7 @@ const getGeoJSON = async (dbKey, {
                             zoom, 
                             controller, 
                             abortBtns,
+                            event,
                         }
                     )
 

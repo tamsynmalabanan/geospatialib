@@ -1,7 +1,7 @@
-const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => {
+const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = {}) => {
     console.log(params)
     
-    // const map = event.target
+    const map = event.target
     const cleanURL = removeQueryParams(params.url)
 
     const getParams = {
@@ -17,12 +17,12 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
         exceptions: 'application/vnd.ogc.se_inimage',
         SRS: "EPSG:4326",
         CRS: 'EPSG:4326',
-        BBOX: turf.bbox(queryGeom),
-        // BBOX: map.getBounds().toBBoxString(),
-        // WIDTH: Math.floor(map.getSize().x),
-        // HEIGHT: Math.floor(map.getSize().y),
-        // X: Math.floor(event.containerPoint.x),
-        // Y: Math.floor(event.containerPoint.y),
+        // BBOX: turf.bbox(queryGeom),
+        BBOX: map.getBounds().toBBoxString(),
+        WIDTH: Math.floor(map.getSize().x),
+        HEIGHT: Math.floor(map.getSize().y),
+        X: Math.floor(event.containerPoint.x),
+        Y: Math.floor(event.containerPoint.y),
     }
 
     const styles = JSON.parse(params.styles ?? '{}')
