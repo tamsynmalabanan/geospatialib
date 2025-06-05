@@ -439,3 +439,20 @@ const pushQueryParamsToURLString = (url, params) => {
     }
     return url_obj.toString()
 }
+
+const parseXML = (xmlString) => {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+    const rootElement = xmlDoc.documentElement;
+    
+    let namespace
+    const namespaces = rootElement.attributes;
+    for (let i = 0; i < namespaces.length; i++) {
+        const name = namespaces.item(i).name
+        if (name.startsWith('xmlns')) {
+            namespace = namespaces.item(i).value
+        }
+    }
+
+    return [namespace, rootElement]
+}

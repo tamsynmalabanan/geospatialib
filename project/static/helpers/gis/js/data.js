@@ -28,7 +28,50 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
     }
     
     const url = pushQueryParamsToURLString(cleanURL, getParams)
-    console.log(url)
+    
+    return await fetchTimeout(url, {
+        abortBtns,
+        controller,
+        callback: async (response) => {
+            const contentType = response.headers.get('Content-Type')
+            if (contentType.includes('json')) {
+                try {
+                    return parseJSONResponse(response)
+                } catch {
+                    throw new Error('Failed to parse JSON.')
+                }
+            } else if (contentType.includes('xml')) {
+                return response.text()
+                .then(xmlString => {
+                    const features = []
+
+                    const [namespace, rootElement] = parseXML(xmlString)
+
+                    if (namespace === 'http://www.esri.com/wms') {
+                        rootElement.childNodes.forEach(child => {
+                            const tagName = child.tagName
+                            if (!tagName || tagName.toLowerCase() !== 'fields') return
+                            
+                            const attributes = Object.values(child.attributes)
+                            if (attributes.length == 0) return
+                            
+                            const feature = {type: "Feature", properties:{}}
+                            attributes.forEach(attr => feature.properties[attr.name] = attr.value)
+                            features.push(feature)
+                        })
+                    }
+
+                    if (features.length > 0) {
+                        return turf.featureCollection(features)
+                    } else {
+                        throw new Error('No features returned.')
+                    }
+                })
+            }
+        }
+    }).catch(error => {
+        console.log(error)
+    })
 
     // return fetchDataWithTimeout(url, {
     //     abortBtn:options.abortBtn,
