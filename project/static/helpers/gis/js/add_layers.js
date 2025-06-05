@@ -13,17 +13,25 @@ const handleAddLayersForm = () => {
 
     const getFileSource = () => sourceRadios.find(i => i.checked).value
 
-    let toggleSubmitBtnTimeout
+    // let toggleSubmitBtnTimeout
+    // const toggleSubmitBtn = () => {
+    //     console.log('timeout')
+    //     clearTimeout(toggleSubmitBtnTimeout)
+    //     toggleSubmitBtnTimeout = setTimeout(() => {
+    //         const container = getLayerNamesContainer(getFileSource())
+    //         console.log('selecting checked layer')
+    //         const checkedLayer = Array.from(container.querySelectorAll('.form-check-input')).find(i => i.checked)
+    //         submitBtn.disabled = checkedLayer ? false : true
+    //         console.log('done')
+    //     }, 100);
+    // }
+    
     const toggleSubmitBtn = () => {
-        console.log('timeout')
-        clearTimeout(toggleSubmitBtnTimeout)
-        toggleSubmitBtnTimeout = setTimeout(() => {
-            const container = getLayerNamesContainer(getFileSource())
-            console.log('selecting checked layer')
-            const checkedLayer = Array.from(container.querySelectorAll('.form-check-input')).find(i => i.checked)
-            submitBtn.disabled = checkedLayer ? false : true
-            console.log('done')
-        }, 100);
+        const container = getLayerNamesContainer(getFileSource())
+        console.log('selecting checked layer')
+        const checkedLayer = Array.from(container.querySelectorAll('.form-check-input')).find(i => i.checked)
+        submitBtn.disabled = checkedLayer ? false : true
+        console.log('done')
     }
 
     const resetLayerNames = (source) => {
