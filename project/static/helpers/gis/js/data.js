@@ -4,8 +4,7 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
 
     const getParams = {
         SERVICE: 'WMS',
-        VERSION: '1.3.0',
-        // VERSION: '1.1.1',
+        VERSION: '1.1.1',
         REQUEST: 'GetFeatureInfo',
         FORMAT: 'application/json',
         INFO_FORMAT: 'application/json',
@@ -72,70 +71,6 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
     }).catch(error => {
         console.log(error)
     })
-
-    // return fetchDataWithTimeout(url, {
-    //     abortBtn:options.abortBtn,
-    //     controller:options.controller,
-    // }).then(response => {
-    //     if (response.ok || response.status === 200) {
-    //         return response
-    //     } else {
-    //         throw new Error('Response not ok')
-    //     }
-    // })
-    // .then(response => {
-    //     const contentType = response.headers.get('Content-Type')
-    //     if (contentType.includes('json')) {
-    //         try {
-    //             return parseChunkedResponseToJSON(response)
-    //         } catch {
-    //             throw new Error('Failed to parse JSON.')
-    //         }
-    //     } else if (contentType.includes('xml')) {
-    //         return response.text()
-    //         .then(xmlString => {
-    //             const features = []
-
-    //             const [namespace, rootElement] = parseXML(xmlString)
-    //             if (namespace) {
-    //                 if (namespace === 'http://www.esri.com/wms') {
-    //                     rootElement.childNodes.forEach(child => {
-    //                         const tagName = child.tagName
-    //                         if (tagName && tagName.toLowerCase() === 'fields') {
-    //                             const attributes = Object.values(child.attributes)
-    //                             if (attributes.length > 0) {
-    //                                 const feature = {type: "Feature", properties:{}}
-    //                                 attributes.forEach(attr => {
-    //                                     feature.properties[attr.name] = attr.value
-    //                                 })
-    //                                 features.push(feature)
-    //                             }
-    //                         }
-    //                     })
-    //                 }
-    //             }
-
-    //             if (features.length > 0) {
-    //                 return turf.featureCollection(features)
-    //             } else {
-    //                 throw new Error('No features returned.')
-    //             }
-    //         })
-    //     }
-    // })
-    // .then(data => {
-    //     if (data && data.features && data.features.length > 0) {
-    //         if (!data.licence) {
-    //             data.licence = `Data © <a href='${cleanURL}' target='_blank'>${getDomain(cleanURL)}</a>`
-    //         }
-    //         return data
-    //     } else {
-    //         throw new Error('No features returned.')
-    //     }
-    // })        
-    // .catch(error => {
-    //     return
-    // })
 }
 
 const fetchGeoJSON = async (params, {abortBtns, controller} = {}) => {
