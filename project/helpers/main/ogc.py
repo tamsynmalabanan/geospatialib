@@ -25,7 +25,8 @@ def get_layers_via_owslib(service, format):
         srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
         if srid != 4326:
             geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
-            bbox = geom.transform(4326).extent
+            geom.transform(4326)
+            bbox = geom.extent
 
         params.update({
             'bbox': list(bbox), 
