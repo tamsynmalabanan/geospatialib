@@ -142,10 +142,10 @@ const handleAddLayersForm = () => {
             const source = getFileSource()
             
             fileFields.classList.toggle('d-none', source === 'url')
-            getLayerNamesContainer('files').toggle('d-none', source === 'url')
+            getLayerNamesContainer('files').classList.toggle('d-none', source === 'url')
             
             urlFields.classList.toggle('d-none', source === 'files')
-            getLayerNamesContainer('url').toggle('d-none', source === 'files')
+            getLayerNamesContainer('url').classList.toggle('d-none', source === 'files')
             
             toggleSubmitBtn()
         })
