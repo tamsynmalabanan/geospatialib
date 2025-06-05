@@ -18,8 +18,7 @@ const handleAddLayersForm = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             const container = getLayerNamesContainer(getFileSource())
-            const checkedLayer = container.querySelector('.form-check-input')
-            console.log(checkedLayer, checkedLayer ? 'enable' : 'disable')
+            const checkedLayer = container.querySelectorAll('.form-check-input').find(i => i.checked)
             submitBtn.disabled = checkedLayer ? false : true
         }, 100);
     }
