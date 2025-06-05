@@ -378,6 +378,7 @@ const fetchGeoJSONHandlers = (name) => {
         geojson: fetchGeoJSON,
         file: fetchFileData,
         csv: fetchCSV,
+        'ogc-wms': fetchWMSData,
     }[name]
 }
 
@@ -410,7 +411,6 @@ const getGeoJSON = async (dbKey, {
     const dataPromise = (async () => {
         try {
             const [handlerName, handlerParams] = dbKey.split(';', 2)
-            console.log(handlerName, handlerParams)
 
             const isClient = handlerName === 'client'
             const isStatic = staticFormats.includes(handlerName)
