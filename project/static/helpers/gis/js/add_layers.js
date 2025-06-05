@@ -15,6 +15,7 @@ const handleAddLayersForm = () => {
 
     let toggleSubmitBtnTimeout
     const toggleSubmitBtn = ({disabled}={}) => {
+        console.log('timeout')
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             console.log('here')
