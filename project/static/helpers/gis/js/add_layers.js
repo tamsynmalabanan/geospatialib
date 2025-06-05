@@ -17,6 +17,7 @@ const handleAddLayersForm = () => {
     const toggleSubmitBtn = ({disabled}={}) => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
+            console.log('here')
             if (typeof disabled === 'boolean') {
                 submitBtn.disabled = disabled
                 return
@@ -169,7 +170,10 @@ const handleAddLayersForm = () => {
     form.addEventListener('click', (e) => {
         if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
 
-        if (e.target.checked) toggleSubmitBtn({disabled:false})
+        if (e.target.checked) {
+            console.log('here first')
+            toggleSubmitBtn({disabled:false})
+        }
 
         const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
             getLayerNamesContainer(getFileSource())
