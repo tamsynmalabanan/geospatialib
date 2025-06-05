@@ -1,25 +1,27 @@
 const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => {
-    console.log(params)
+    console.log(params, queryGeom)
 
     // const map = event.target
     // const cleanURL = removeQueryParams(layer.data.layerUrl)
     // const params = {
     //     SERVICE: 'WMS',
-    //     VERSION: '1.1.1',
+    //     VERSION: '1.3.0',
+    //     // VERSION: '1.1.1',
     //     REQUEST: 'GetFeatureInfo',
-    //     SRS: "EPSG:4326",
     //     FORMAT: 'application/json',
     //     INFO_FORMAT: 'application/json',
     //     TRANSPARENT: true,
     //     QUERY_LAYERS: layer.data.layerName,
     //     LAYERS: layer.data.layerName,
     //     exceptions: 'application/vnd.ogc.se_inimage',
-    //     X: Math.floor(event.containerPoint.x),
-    //     Y: Math.floor(event.containerPoint.y),
+    //     SRS: "EPSG:4326",
     //     CRS: 'EPSG:4326',
-    //     WIDTH: Math.floor(map.getSize().x),
-    //     HEIGHT: Math.floor(map.getSize().y),
     //     BBOX: map.getBounds().toBBoxString(),
+    //     // BBOX: map.getBounds().toBBoxString(),
+    //     // X: Math.floor(event.containerPoint.x),
+    //     // Y: Math.floor(event.containerPoint.y),
+    //     // WIDTH: Math.floor(map.getSize().x),
+    //     // HEIGHT: Math.floor(map.getSize().y),
     // }
 
     // if (layer.data.layerStyle) {
