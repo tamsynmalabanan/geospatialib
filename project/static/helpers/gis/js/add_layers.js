@@ -131,7 +131,6 @@ const handleAddLayersForm = () => {
             }
         }
         
-        // resetForm()
         Array.from(getLayerNamesContainer(source).querySelectorAll('.form-check-input[type="checkbox"]')).forEach(i => i.checked = false)
         toggleSubmitBtn()
         modalInstance.hide()
