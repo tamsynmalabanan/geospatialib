@@ -59,8 +59,7 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
                         })
                     }
                     
-                    const geojson = turf.featureCollection(features)
-                    return geojson
+                    return geojson = turf.featureCollection(features)
                 })
             }
         }
