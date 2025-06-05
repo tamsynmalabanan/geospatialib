@@ -1,5 +1,5 @@
 const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => {
-    console.log(params, queryGeom)
+    console.log(params, turf.bbox(queryGeom))
 
     // const map = event.target
     // const cleanURL = removeQueryParams(layer.data.layerUrl)
