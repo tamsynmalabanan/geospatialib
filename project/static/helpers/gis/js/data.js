@@ -3,7 +3,7 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
     
     // const map = event.target
     const cleanURL = removeQueryParams(params.url)
-    console.log(cleanURL)
+
     const getParams = {
         SERVICE: 'WMS',
         VERSION: '1.3.0',
@@ -12,8 +12,8 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
         FORMAT: 'application/json',
         INFO_FORMAT: 'application/json',
         TRANSPARENT: true,
-        QUERY_LAYERS: layer.data.layerName,
-        LAYERS: layer.data.layerName,
+        QUERY_LAYERS: params.name,
+        LAYERS: params.name,
         exceptions: 'application/vnd.ogc.se_inimage',
         SRS: "EPSG:4326",
         CRS: 'EPSG:4326',
@@ -24,6 +24,7 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
         // X: Math.floor(event.containerPoint.x),
         // Y: Math.floor(event.containerPoint.y),
     }
+
     console.log(getParams)
     
     const styles = JSON.parse(params.styles ?? '{}')
