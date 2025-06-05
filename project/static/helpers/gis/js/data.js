@@ -6,8 +6,8 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
 
     const getParams = {
         SERVICE: 'WMS',
-        VERSION: '1.3.0',
-        // VERSION: '1.1.1',
+        // VERSION: '1.3.0',
+        VERSION: '1.1.1',
         REQUEST: 'GetFeatureInfo',
         FORMAT: 'application/json',
         INFO_FORMAT: 'application/json',
@@ -25,14 +25,10 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
         // Y: Math.floor(event.containerPoint.y),
     }
 
-    console.log(getParams)
-    
     const styles = JSON.parse(params.styles ?? '{}')
     if (Object.keys(styles).length) {
         getParams.STYLES = Object.keys(styles)[0]
     }
-    
-    console.log(getParams)
     
     const url = pushQueryParamsToURLString(cleanURL, getParams)
     console.log(url)
