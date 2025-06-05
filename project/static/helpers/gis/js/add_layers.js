@@ -180,6 +180,10 @@ const handleAddLayersForm = () => {
     })
 
     form.addEventListener('htmx:beforeRequest', async (e) => {
+        if (Array('url, format').includes(e.target.name)) {
+            resetLayerNames('url')
+        }
+
         if (e.target === form.elements.url) {
             try {
                 return new URL(e.target.value)
