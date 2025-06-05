@@ -8,7 +8,7 @@
 {% endif %}
 
 {% if layers and layers.keys|length > 0 %}
-    <div class='d-flex flex-column gap-2 fs-12' data-layer-source="{{source}}">
+    <div class='d-flex flex-column gap-2 fs-12 flex-grow-1' data-layer-source="{{source}}">
         <div
             class='d-flex gap-2 align-items-center'
             {% if not collection and cacheKey %}
