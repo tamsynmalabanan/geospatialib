@@ -18,7 +18,7 @@ const handleAddLayersForm = () => {
         clearTimeout(toggleSubmitBtnTimeout)
         toggleSubmitBtnTimeout = setTimeout(() => {
             const container = getLayerNamesContainer(getFileSource())
-            const checkedLayer = container.querySelectorAll('.form-check-input').find(i => i.checked)
+            const checkedLayer = Array.from(container.querySelectorAll('.form-check-input')).find(i => i.checked)
             submitBtn.disabled = checkedLayer ? false : true
         }, 100);
     }
@@ -164,7 +164,11 @@ const handleAddLayersForm = () => {
     form.addEventListener('click', (e) => {
         if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
 
-        const [selectAllCheckbox, ...layerCheckboxes] = Array.from(getLayerNamesContainer(getFileSource()).querySelectorAll(`.form-check-input[type="checkbox"]`))
+        const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
+            getLayerNamesContainer(getFileSource())
+            .querySelectorAll(`.form-check-input[type="checkbox"]`)
+        )
+
         if (e.target === selectAllCheckbox) {
             layerCheckboxes.forEach(i => i.checked = e.target.checked)
         } else {
