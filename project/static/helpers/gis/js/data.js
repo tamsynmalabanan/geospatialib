@@ -45,10 +45,10 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
                     const features = []
 
                     const [namespace, rootElement] = parseXML(xmlString)
-                    console.log(namespace, rootElement, url)
                     if (namespace === 'http://www.esri.com/wms') {
                         rootElement.childNodes.forEach(child => {
                             const tagName = child.tagName
+                            console.log(child, tagName)
                             if (!tagName || tagName.toLowerCase() !== 'fields') return
                             
                             const attributes = Object.values(child.attributes)
