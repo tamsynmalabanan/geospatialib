@@ -1,8 +1,9 @@
 const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => {
     console.log(params)
-
+    
     // const map = event.target
     const cleanURL = removeQueryParams(params.url)
+    console.log(cleanURL)
     const getParams = {
         SERVICE: 'WMS',
         VERSION: '1.3.0',
@@ -23,7 +24,8 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller} = {}) => 
         // X: Math.floor(event.containerPoint.x),
         // Y: Math.floor(event.containerPoint.y),
     }
-
+    console.log(getParams)
+    
     const styles = JSON.parse(params.styles ?? '{}')
     if (Object.keys(styles).length) {
         getParams.STYLES = Object.keys(styles)[0]
