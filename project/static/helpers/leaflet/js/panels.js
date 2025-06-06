@@ -360,7 +360,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     }))
                 } else {
-                    console.log(newBbox, layer.getBounds(), legend.querySelector(`#${legend.id}-details`))
+                    console.log(newBbox, L.rectangle(layer.getBounds()).toGeoJSON(), legend.querySelector(`#${legend.id}-details`))
                 }
                 
             })
