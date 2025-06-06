@@ -2,12 +2,10 @@ const getLeafletGeoJSONLayer = async ({
     geojson,
     group,
     pane = 'overlayPane',
-    title = '',
-    attribution = '',
     dbIndexedKey,
     properties,
     customStyleParams = {},
-    params={}
+    params
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
@@ -15,9 +13,7 @@ const getLeafletGeoJSONLayer = async ({
         markersInheritOptions: true,
     })
 
-    geojsonLayer._title = title
     geojsonLayer._params = params
-    geojsonLayer._attribution = attribution
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
@@ -101,7 +97,7 @@ const getLeafletGeoJSONLayer = async ({
             if (Object.keys(properties).length) {
                 const tooltip = info.tooltip
                 if (tooltip.active) {
-                    const title = layer._title = tooltip.properties.length ? (() => {
+                    const title = layer._params.title = tooltip.properties.length ? (() => {
                         const values = tooltip.properties.map(i => {
                             let value = properties[i]
                             if (!isNaN(Number(value))) {
@@ -115,7 +111,7 @@ const getLeafletGeoJSONLayer = async ({
                     if (title) layer.bindTooltip(title, {sticky:true})
                 }
 
-                if (!layer._title) layer._title = getFeatureTitle(properties)
+                if (!layer._params.title) layer._params.title = getFeatureTitle(properties)
 
                 const popup = info.popup
                 if (popup.active) {
@@ -130,7 +126,7 @@ const getLeafletGeoJSONLayer = async ({
 
                     const popupContent = createFeaturePropertiesTable(popupProperties, {
                         header: (() => {
-                            const popupHeader = () => [geojsonLayer, layer].map(i => i._title).filter(i => i).join(': ')
+                            const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ')
                             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
                             return popupHeader()
                         })()

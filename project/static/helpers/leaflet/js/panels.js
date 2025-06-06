@@ -360,12 +360,12 @@ const handleLeafletLegendPanel = (map, parent) => {
                             delete layer._openpopup
                         }
                     }))
-                } else if (layer._legend) {
+                } else if (layer._params.legend) {
                     const details = legend.querySelector(`#${legend.id}-details`)
                     if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
                         if (details.innerHTML === '') {
                             const img = new Image()
-                            img.src = layer._legend
+                            img.src = layer._params.legend
                             details.appendChild(img)
                         }
                     } else {
@@ -432,7 +432,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const legendTitle = document.createElement('div')
             legendTitle.id = `${container.id}-title`
             legendTitle.className = 'd-flex flex-nowrap gap-2'
-            legendTitle.appendChild(createSpan(layer._title, {className:'text-break text-wrap'}))
+            legendTitle.appendChild(createSpan(layer._params.title, {className:'text-break text-wrap'}))
             container.appendChild(legendTitle)
             
             const moveToggle = createIcon({
@@ -535,7 +535,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const legendAttribution = document.createElement('div')
             legendAttribution.id = `${container.id}-attribution`
             legendAttribution.className = 'd-flex'
-            legendAttribution.innerHTML = layer._attribution ?? ''
+            legendAttribution.innerHTML = layer._params.attribution ?? ''
             legendCollapse.appendChild(legendAttribution)
 
             Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
@@ -581,12 +581,12 @@ const handleLeafletLegendPanel = (map, parent) => {
             }
         }
 
-        if (!isGeoJSON && layer._legend) {
+        if (!isGeoJSON && layer._params.legend) {
             const details = container.querySelector(`#${container.id}-details`)
             if (turf.booleanIntersects((map._previousBbox ?? turf.bboxPolygon(getLeafletMapBbox(map))), L.rectangle(layer.getBounds()).toGeoJSON())) {
                 if (details.innerHTML === '') {
                     const img = new Image()
-                    img.src = layer._legend
+                    img.src = layer._params.legend
                     details.appendChild(img)
                 }
             } else {
@@ -2220,7 +2220,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const addLayers = await getLeafletGeoJSONLayer({
                         geojson,
-                        title: 'spatial constraint',
+                        params: {title: 'spatial constraint'},
                         pane: createCustomPane(map),
                         group: map._ch.getLayerGroups().client,
                         customStyleParams: {
@@ -2587,7 +2587,7 @@ const handleLeafletStylePanel = (map, parent) => {
             const option = document.createElement('option')
             option.className = 'text-wrap text-break text-truncate'
             option.value = l._leaflet_id
-            option.text = l._title
+            option.text = l._params.title
             if (layer && layer._leaflet_id === l._leaflet_id) {
                 option.setAttribute('selected', true)
             }
@@ -2626,14 +2626,14 @@ const handleLeafletStylePanel = (map, parent) => {
                             containerClass: 'w-25 flex-grow-1',
                             fieldAttrs: {
                                 type: 'text',
-                                value: layer._title,
+                                value: layer._params.title,
                             },
                             fieldClass: 'form-control-sm',
                             labelText: 'Title',
                             events: {
                                 input: (e) => {
                                     const field = e.target
-                                    layer._title = field.value
+                                    layer._params.title = field.value
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
                                     if (element) element.innerText = field.value
@@ -2691,7 +2691,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createFormFloating,
                             containerClass: 'w-100 flex-grow-1',
                             fieldTag: 'textarea',
-                            currentValue: layer._attribution,
+                            currentValue: layer._params.attribution,
                             labelText: 'Attribution (HTML-frieldly)',
                             fieldClass: 'fs-12',
                             fieldStyle: {
@@ -2712,7 +2712,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     })
                                     const value = div.innerHTML
 
-                                    layer._attribution = value
+                                    layer._params.attribution = value
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
@@ -3832,8 +3832,10 @@ const handleLeafletQueryPanel = (map, parent) => {
                 pane: 'queryPane',
                 group: queryGroup,
                 customStyleParams,
-                title: fetcher.title,
-                attribution: createAttributionTable(geojson)?.outerHTML,
+                params: {
+                    title: fetcher.title,
+                    attribution: createAttributionTable(geojson)?.outerHTML,
+                }
             })
 
             const content = createGeoJSONChecklist(layer, {controller})
@@ -3889,8 +3891,8 @@ const handleLeafletQueryPanel = (map, parent) => {
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const fetchers = Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                     group.eachLayer(layer => {
-                        if (acc[layer._dbIndexedKey]?.includes(layer._title)) return
-                        acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._title]
+                        if (acc[layer._dbIndexedKey]?.includes(layer._params.title)) return
+                        acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._params.title]
                     })
                     return acc
                 }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })

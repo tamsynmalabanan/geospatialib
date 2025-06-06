@@ -135,7 +135,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
 
     const pCheckbox = geojsonLayer._checkbox = createFormCheck({
         parent: container,
-        labelInnerText: `${geojsonLayer._title} (${formatNumberWithCommas(featureLayers.length)})`,
+        labelInnerText: `${geojsonLayer._params.title} (${formatNumberWithCommas(featureLayers.length)})`,
         labelClass: 'text-break',
         formCheckClass: `d-flex gap-2 `,
         disabled: disableCheck,
@@ -155,7 +155,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
             
             featureLayer._checkbox = createFormCheck({
                 parent: featuresContainer,
-                labelInnerText: featureLayer._title,
+                labelInnerText: featureLayer._params.title,
                 labelClass: 'text-break',
                 formCheckClass: `d-flex gap-2 `,
             }).querySelector('input')
@@ -235,7 +235,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
 
     const infoContainer = document.createElement('div')
     infoContainer.className = 'd-flex'
-    infoContainer.innerHTML = geojsonLayer._attribution ?? ''
+    infoContainer.innerHTML = geojsonLayer._params.attribution ?? ''
     contentCollapse.appendChild(infoContainer)
 
     return container

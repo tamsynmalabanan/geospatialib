@@ -603,10 +603,9 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
 
-                const attribution = (feature ? geojsonLayer : layer)._attribution
-                const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
                 const dbIndexedKey = (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null
                 const properties = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
+                const params = (feature ? geojsonLayer : layer)._params
 
                 let addLayers
                 if (['feature', 'geojson'].includes(type)) {
@@ -614,10 +613,9 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         geojson: layerGeoJSON,
                         group: targetGroup,
                         pane,
-                        title,
-                        attribution,
                         dbIndexedKey,
                         properties,
+                        params,
                     })
 
                     if (type === 'geojson' && group._name === 'query') layer._dbIndexedKey = addLayers._dbIndexedKey
@@ -629,7 +627,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         download: !layerGeoJSON ? null : {
             innerText: 'Download data',
             btnCallback: () => {
-                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._title)
+                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
@@ -705,15 +703,16 @@ const createLeafletLayer = async (params, {
     const pane = createCustomPane(map)
     const type = params.type.toLowerCase()
 
-    let layer
+    const attribution = (params.attribution ?? '').trim()
+    params.attribution = attribution && !Array('none', '').includes(attribution.toLowerCase()) ? attribution : createAttributionTable(data)?.outerHTML
 
+    let layer
+    
     if (Array('geojson', 'csv', 'wfs').includes(type)) {
         layer = await getLeafletGeoJSONLayer({
             geojson: data,
             group,
             pane,
-            title: params.title,
-            attribution: params.attribution,
             dbIndexedKey,
             params
         })
@@ -747,20 +746,12 @@ const createLeafletLayer = async (params, {
             layer._params = params
             layer._dbIndexedKey = dbIndexedKey
             layer._group = group
-            layer._title = params.title
-            layer._legend = params.legend
             layer._properties = {
-                info: {},
                 visibility: {
                     active: false,
                     min: 10,
                     max: 5000000,
                 },
-            }
-            
-            const attribution = (params.attribution ?? '').trim()
-            if (attribution && !Array('none', '').includes(attribution.toLowerCase())) {
-                layer._attribution = attribution
             }
             
             const bbox = params.bbox ?? "[-180, -90, 180, 90]"
