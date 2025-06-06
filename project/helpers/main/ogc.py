@@ -46,11 +46,11 @@ def get_layers_via_et(content, format):
     layers = {}
 
     root = ET.fromstring(content)
-    print(root.tag.split("}")[0][1:] if "}" in root.tag else None)
     ns = {
         "xlink": "http://www.w3.org/1999/xlink",
         format: root.tag.split("}")[0][1:] if "}" in root.tag else None
     }
+    print(ns)
     version = root.attrib['version']
     
     service_id = root.find(f".//{format}:Service", ns)
