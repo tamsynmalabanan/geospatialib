@@ -406,9 +406,9 @@ const handleLeafletLegendPanel = (map, parent) => {
             }
 
             const cacheKey = `legend-layers-${map.getContainer().id}`
-            const cachedMapLegendLayers = sessionStorage.getItem(cacheKey) ?? {}
+            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
             delete cachedMapLegendLayers[layer._leaflet_id]
-            sessionStorage.setItem(cacheKey, cachedMapLegendLayers)
+            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
         }
     })
 
@@ -425,14 +425,14 @@ const handleLeafletLegendPanel = (map, parent) => {
             pane.style.zIndex = layers.children.length + 200
             
             const cacheKey = `legend-layers-${map.getContainer().id}`
-            const cachedMapLegendLayers = sessionStorage.getItem(cacheKey) ?? {}
+            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
             cachedMapLegendLayers[layer._leaflet_id] = {
                 dbIndexedKey:layer._dbIndexedKey,
                 params:layer._params,
                 properties:layer._properties,
                 zIndex:pane.style.zIndex
             }
-            sessionStorage.setItem(cacheKey, cachedMapLegendLayers)
+            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
             
             container = document.createElement('div')
             container.id = `${layers.id}-${layer._leaflet_id}`
