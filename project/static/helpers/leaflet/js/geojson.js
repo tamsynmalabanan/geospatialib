@@ -469,9 +469,9 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     })
 
     if (!styles.reduce((acc, num) => acc + num[1].totalCount, 0)) {
-        const tr = document.createElement('tr')
-        tr.innerText = 'No visible features'
-        tbody.appendChild(tr)
+        // const tr = document.createElement('tr')
+        // tr.innerText = 'No visible features'
+        // tbody.appendChild(tr)
         return
     }
   
