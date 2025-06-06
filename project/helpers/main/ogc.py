@@ -124,7 +124,7 @@ def get_ogc_layers(url, format):
         response.raise_for_status()
         content = response.content
         print(len(content))
-        if len(content) < 1000000:
+        if len(content) < 100000:
             service = None
             if type == 'wms':
                 service = WebMapService(url)
