@@ -42,7 +42,7 @@ def test_get_collection_data():
     # url = 'https://ows.emodnet-bathymetry.eu/wfs?request=GetCapabilities&service=WFS'
     url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     value = get_collection_data(url, delay=False)
-    # print(value)
+    print('layers count', len((value or {}).get('layers', {}).keys()))
 
 def test_update_collection_data():
     cacheKey = 'onboard_collection;https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special Protection and Conservation Areas GeoJson.zip;file'
