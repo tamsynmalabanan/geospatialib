@@ -98,7 +98,6 @@ const getLeafletGeoJSONLayer = async ({
             if (Object.keys(properties).length) {
                 const tooltip = info.tooltip
                 if (tooltip.active) {
-                    console.log(layer, params, layer._params)
                     const title = layer._params.title = tooltip.properties.length ? (() => {
                         const values = tooltip.properties.map(i => {
                             let value = properties[i]
