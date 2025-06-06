@@ -621,6 +621,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
     const cacheKey = `legend-layers-${map.getContainer().id}`
     const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
+    sessionStorage.removeItem(cacheKey)
     console.log(cachedMapLegendLayers)
 }
 
