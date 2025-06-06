@@ -123,7 +123,6 @@ def get_layers_via_et(content, format):
                 'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
             } for i in (layer.findall(f'{format}:Style', ns) or [])}
 
-            print(bbox, srid)
             params.update({
                 'bbox': list(bbox),
                 'srid': srid,
