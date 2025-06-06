@@ -13,7 +13,7 @@ from helpers.base.utils import (
 )
 from helpers.base.files import get_file_names
 from helpers.main.layers import format_url, WORLD_GEOM
-from helpers.main.ogc import get_wms_layers
+from helpers.main.ogc import get_ogc_layers
 
 XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
 
@@ -31,7 +31,14 @@ def guess_format_from_url(url):
     return get_first_substring_match(url, {
         'ogc-wms': [
             'wms',
-            'mapserver',
+            'mapserv',
+            'geoserver',
+            '1.1.1',
+            '1.3.0'
+        ],
+        'ogc-wfs': [
+            'wfs',
+            'mapserv',
             'geoserver',
         ],
         'csv': [
@@ -44,7 +51,7 @@ def guess_format_from_url(url):
 def get_layers(url, format):
     try:
         if format.startswith('ogc-'):
-            return get_wms_layers(url)
+            return get_ogc_layers(url, format)
 
         response = get_response(
             url=format_url(url, format),

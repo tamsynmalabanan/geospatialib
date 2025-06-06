@@ -173,7 +173,7 @@ def validate_xyz(url, name, params):
     except Exception as e:
         print(e)
        
-def validate_wms(url, name, params):
+def validate_ogc(url, name, params):
     try:
         srid = SpatialRefSys.objects.filter(srid=params.get('srid', 4326)).first()
         params['srid'] = srid
@@ -190,5 +190,6 @@ LAYER_VALIDATORS = {
     'csv': validate_csv,
     'file': validate_file,
     'xyz': validate_xyz,
-    'ogc-wms': validate_wms,
+    'ogc-wms': validate_ogc,
+    'ogc-wms': validate_ogc,
 }

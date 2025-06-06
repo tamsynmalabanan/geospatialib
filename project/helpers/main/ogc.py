@@ -3,6 +3,7 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 import requests
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
+from owslib.wfs import WebFeatureService
 import psutil
 import json
 
@@ -113,19 +114,25 @@ def get_layers_via_et(content, format):
 
     return layers
 
-def get_wms_layers(url):
+def get_ogc_layers(url, format):
     layers = {}
     
     try:
-        response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
+        type = format.split('-')[-1]
+        response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
         if len(content) < 100000:
-            wms = WebMapService(url)
-            layers = get_layers_via_owslib(wms, 'wms')
+            service = None
+            if type == 'wms':
+                service = WebMapService(url)
+            if type == 'wfs':
+                pass
+            if service:
+                layers = get_layers_via_owslib(service, type)
         else:
-            layers = get_layers_via_et(content, 'wms')
+            layers = get_layers_via_et(content, type)
     except Exception as e:
-        print('get_wms_layers', e)
+        print('get_ogc_layers', e)
     
     return layers
