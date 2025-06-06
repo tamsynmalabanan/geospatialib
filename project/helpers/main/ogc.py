@@ -107,7 +107,6 @@ def get_layers_via_et(content, format):
                 upper_corner = layer.find(f".//{ns_key}:UpperCorner", ns)
                 w,s = [float(i) for i in lower_corner.text.split(' ')] if lower_corner is not None else [-180, -90]
                 e,n = [float(i) for i in upper_corner.text.split(' ')] if upper_corner is not None else [180, 90]
-                print(w,s,e,n)
 
                 if srid == 4326:
                     bbox = [w,s,e,n]
@@ -124,6 +123,7 @@ def get_layers_via_et(content, format):
                 'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
             } for i in (layer.findall(f'{format}:Style', ns) or [])}
 
+            print(bbox, srid)
             params.update({
                 'bbox': list(bbox),
                 'srid': srid,
