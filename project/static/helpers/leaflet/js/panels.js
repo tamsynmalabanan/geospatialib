@@ -359,7 +359,10 @@ const handleLeafletLegendPanel = (map, parent) => {
                             delete layer._openpopup
                         }
                     }))
+                } else {
+                    console.log(layer, legend)
                 }
+                
             })
 
             Promise.all(promises).then(() => {
