@@ -415,6 +415,8 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
+            console.log(layer)
+            
             const paneName = layer.options.pane
             const pane = map.getPane(paneName)
             pane.style.zIndex = layers.children.length + 200
