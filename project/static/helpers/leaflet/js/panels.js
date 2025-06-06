@@ -625,13 +625,14 @@ const handleLeafletLegendPanel = async (map, parent) => {
     const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
     for (i in cachedLayers) {
         const {params, dbIndexedKey, properties} = i
-        const layer = await createLeafletLayer(params, {
-            dbIndexedKey,
-            group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
-            add: true,
-            properties
-        })
-        console.log(layer)
+        console.log(i, params, dbIndexedKey, properties)
+        // const layer = await createLeafletLayer(params, {
+        //     dbIndexedKey,
+        //     group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
+        //     add: true,
+        //     properties
+        // })
+        // console.log(layer)
     }
 }
 
