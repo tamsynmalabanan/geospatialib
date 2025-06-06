@@ -46,10 +46,10 @@ def get_layers_via_et(content, format):
     layers = {}
 
     root = ET.fromstring(content)
-    print(root.attrib['xmlns'])
+    print(root.tag.split("}")[0][1:] if "}" in root.tag else None)
     ns = {
-        format: f"http://www.opengis.net/{format}",
-        "xlink": "http://www.w3.org/1999/xlink"
+        "xlink": "http://www.w3.org/1999/xlink",
+        format: root.tag.split("}")[0][1:] if "}" in root.tag else None
     }
     version = root.attrib['version']
     
@@ -123,6 +123,7 @@ def get_ogc_layers(url, format):
         response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
+        print(len(content))
         if len(content) < 1000000:
             service = None
             if type == 'wms':
