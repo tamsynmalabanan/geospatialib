@@ -360,7 +360,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     }))
                 } else {
-                    console.log(layer, legend)
+                    console.log(layer.getBounds(), legend.querySelector(`#${legend.id}-details`))
                 }
                 
             })
