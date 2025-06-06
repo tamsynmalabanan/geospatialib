@@ -618,6 +618,10 @@ const handleLeafletLegendPanel = (map, parent) => {
             }        
         }
     })
+
+    const cacheKey = `legend-layers-${map.getContainer().id}`
+    const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
+    console.log(cachedMapLegendLayers)
 }
 
 const handleLeafletStylePanel = (map, parent) => {
