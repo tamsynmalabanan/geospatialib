@@ -89,6 +89,7 @@ const getLeafletGeoJSONLayer = async ({
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
         const handler = (layer) => {
+            layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
             const info = geojsonLayer._properties.info
