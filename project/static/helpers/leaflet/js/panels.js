@@ -404,6 +404,11 @@ const handleLeafletLegendPanel = (map, parent) => {
             if (layer instanceof L.GeoJSON) {
                 deleteLeafletLayerFillPatterns(layer)
             }
+
+            const cacheKey = `legend-layers-${map.getContainer().id}`
+            const cachedMapLegendLayers = sessionStorage.getItem(cacheKey) ?? {}
+            delete cachedMapLegendLayers[layer._leaflet_id]
+            sessionStorage.setItem(cacheKey, cachedMapLegendLayers)
         }
     })
 
@@ -415,12 +420,20 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
-            console.log(layer)
-            
             const paneName = layer.options.pane
             const pane = map.getPane(paneName)
             pane.style.zIndex = layers.children.length + 200
-
+            
+            const cacheKey = `legend-layers-${map.getContainer().id}`
+            const cachedMapLegendLayers = sessionStorage.getItem(cacheKey) ?? {}
+            cachedMapLegendLayers[layer._leaflet_id] = {
+                dbIndexedKey:layer._dbIndexedKey,
+                params:layer._params,
+                properties:layer._properties,
+                zIndex:pane.style.zIndex
+            }
+            sessionStorage.setItem(cacheKey, cachedMapLegendLayers)
+            
             container = document.createElement('div')
             container.id = `${layers.id}-${layer._leaflet_id}`
             container.setAttribute('data-layer-legend', "true")
