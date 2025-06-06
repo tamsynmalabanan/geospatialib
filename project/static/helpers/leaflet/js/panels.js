@@ -360,18 +360,16 @@ const handleLeafletLegendPanel = (map, parent) => {
                             delete layer._openpopup
                         }
                     }))
-                } else {
-                    if (layer._legend) {
-                        const details = legend.querySelector(`#${legend.id}-details`)
-                        if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
-                            if (details.innerHTML === '') {
-                                const img = new Image()
-                                img.src = layer._legend
-                                details.appendChild(img)
-                            }
-                        } else {
-                            clearLegend(legend)
+                } else if (layer._legend) {
+                    const details = legend.querySelector(`#${legend.id}-details`)
+                    if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
+                        if (details.innerHTML === '') {
+                            const img = new Image()
+                            img.src = layer._legend
+                            details.appendChild(img)
                         }
+                    } else {
+                        clearLegend(legend)
                     }
                 }   
             })
@@ -581,12 +579,16 @@ const handleLeafletLegendPanel = (map, parent) => {
             }
         }
 
-        if (!isGeoJSON) {
-            clearLegend(container)
-            if (layer._legend) {
-                const img = new Image()
-                img.src = layer._legend
-                container.querySelector(`#${container.id}-details`).appendChild(img)
+        if (!isGeoJSON && layer._legend) {
+            const details = container.querySelector(`#${container.id}-details`)
+            if (turf.booleanIntersects(map._previousBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
+                if (details.innerHTML === '') {
+                    const img = new Image()
+                    img.src = layer._legend
+                    details.appendChild(img)
+                }
+            } else {
+                clearLegend(container)
             }
         }
 
