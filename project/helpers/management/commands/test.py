@@ -72,7 +72,7 @@ def test_parse_ogc_xml():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        # URL.objects.all().delete()
+        URL.objects.all().delete()
 
         test_get_collection_data()
         # test_parse_ogc_xml()
