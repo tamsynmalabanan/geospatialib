@@ -128,6 +128,7 @@ def get_ogc_layers(url, format):
                 service = WebMapService(url)
             if type == 'wfs':
                 service = WebFeatureService(url)
+                print(service)
             if service:
                 layers = get_layers_via_owslib(service, type)
         else:
