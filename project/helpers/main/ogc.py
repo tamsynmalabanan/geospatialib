@@ -65,11 +65,11 @@ def get_layers_via_et(content, format):
 
     service_layers = root.findall(f".//{ns_key}:Layer", ns)+root.findall(f".//{format}:FeatureType", ns)
     for layer in service_layers:
-        name = layer.find(f"{ns_key}:Name", ns)
+        name = layer.find(f"{format}:Name", ns)
         if name is not None:
             params = {'type':format}
             
-            title = layer.find(f"{ns_key}:Title", ns)
+            title = layer.find(f"{format}:Title", ns)
             if title is not None:
                 params['title'] = title.text
             
@@ -77,7 +77,7 @@ def get_layers_via_et(content, format):
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
                 ]] + [i.attrib['CRS']] 
-                for i in (layer.findall(f'{ns_key}:BoundingBox', ns) or [])
+                for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
             ]
             for i in bounding_boxes+[WORLD_GEOM.extent]:
                 w,s,e,n,*crs = i
@@ -98,13 +98,13 @@ def get_layers_via_et(content, format):
                 except Exception as error:
                     print(error)
 
-            layer_abstract = layer.find(f"{ns_key}:Abstract", ns)
+            layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
 
-            styles = {i.find(f'{ns_key}:Name', ns).text:{
-                'title': i.find(f'{ns_key}:Title', ns).text,
-                'legend': i.find(f'.//{ns_key}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
-            } for i in (layer.findall(f'{ns_key}:Style', ns) or [])}
+            styles = {i.find(f'{format}:Name', ns).text:{
+                'title': i.find(f'{format}:Title', ns).text,
+                'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
+            } for i in (layer.findall(f'{format}:Style', ns) or [])}
 
             params.update({
                 'bbox': list(bbox),
