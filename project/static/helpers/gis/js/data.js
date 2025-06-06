@@ -83,10 +83,10 @@ const fetchWFSData = async (params, {queryGeom, zoom, abortBtns, controller, eve
         typeNames: params.name,
         outputFormat: 'json',
         srsname,
-        bbox: [s,w,n,e,srsname].join(',')
+        bbox: [s,w,n,e,srsname]
     }
 
-    const url = pushQueryParamsToURLString(cleanURL, params)
+    const url = pushQueryParamsToURLString(cleanURL, getParams)
     console.log(getParams, url)
 }
 
