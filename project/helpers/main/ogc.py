@@ -58,18 +58,17 @@ def get_layers_via_et(content, format):
     service_tag = 'Service' if is_wms else 'ServiceIdentification'
     
     service_id = root.find(f".//{ns_key}:{service_tag}", ns)
-    print(service_id)
-    service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
-    service_abstract = service_id.find(f"{format}:Abstract", ns).text
-    service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
-    service_fees = service_id.find(f"{format}:Fees", ns).text
+    service_keywords = [i.text for i in (service_id.findall(f".//{ns_key}:Keyword", ns) or []) if i is not None]
+    service_abstract = service_id.find(f"{ns_key}:Abstract", ns).text
+    service_attribution = service_id.find(f"{ns_key}:AccessConstraints", ns).text
+    service_fees = service_id.find(f"{ns_key}:Fees", ns).text
 
-    for layer in root.findall(f".//{format}:Layer", ns):
-        name = layer.find(f"{format}:Name", ns)
+    for layer in root.findall(f".//{ns_key}:Layer", ns):
+        name = layer.find(f"{ns_key}:Name", ns)
         if name is not None:
-            params = {'type':f'{format}'}
+            params = {'type':format}
             
-            title = layer.find(f"{format}:Title", ns)
+            title = layer.find(f"{ns_key}:Title", ns)
             if title is not None:
                 params['title'] = title.text
             
@@ -77,7 +76,7 @@ def get_layers_via_et(content, format):
                 [float(i.attrib[j]) for j in [
                     'minx', 'miny', 'maxx', 'maxy'
                 ]] + [i.attrib['CRS']] 
-                for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
+                for i in (layer.findall(f'{ns_key}:BoundingBox', ns) or [])
             ]
             for i in bounding_boxes+[WORLD_GEOM.extent]:
                 w,s,e,n,*crs = i
@@ -98,18 +97,18 @@ def get_layers_via_et(content, format):
                 except Exception as error:
                     print(error)
 
-            layer_abstract = layer.find(f"{format}:Abstract", ns)
+            layer_abstract = layer.find(f"{ns_key}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
 
-            styles = {i.find(f'{format}:Name', ns).text:{
-                'title': i.find(f'{format}:Title', ns).text,
-                'legend': i.find(f'.//{format}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
-            } for i in (layer.findall(f'{format}:Style', ns) or [])}
+            styles = {i.find(f'{ns_key}:Name', ns).text:{
+                'title': i.find(f'{ns_key}:Title', ns).text,
+                'legend': i.find(f'.//{ns_key}:OnlineResource', ns).attrib["{http://www.w3.org/1999/xlink}href"],
+            } for i in (layer.findall(f'{ns_key}:Style', ns) or [])}
 
             params.update({
                 'bbox': list(bbox),
                 'srid': srid,
-                'keywords': service_keywords + [i.text for i in (layer.findall(f".//{format}:Keyword", ns) or [])],
+                'keywords': service_keywords + [i.text for i in (layer.findall(f".//{ns_key}:Keyword", ns) or [])],
                 'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
                 'attribution': service_attribution,
                 'fees': service_fees,
