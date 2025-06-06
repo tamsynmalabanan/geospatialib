@@ -53,7 +53,7 @@ def get_layers_via_et(content, format):
     }
     
     service_id = root.find(f".//{format}:Service", ns)
-    print(root.find('{*}:ServiceIdentification'))
+    print(root.find('{http://www.opengis.net/ows/1.1}:ServiceIdentification'))
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
     service_abstract = service_id.find(f"{format}:Abstract", ns).text
     service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
