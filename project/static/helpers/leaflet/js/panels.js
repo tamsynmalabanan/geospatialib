@@ -363,7 +363,9 @@ const handleLeafletLegendPanel = (map, parent) => {
                 } else {
                     const details = legend.querySelector(`#${legend.id}-details`)
                     if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
-
+                        const img = new Image()
+                        img.src = layer._legend
+                        details.appendChild(img)
                     } else {
                         details.innerHTML = 'Out of bounds'
                     }
