@@ -581,7 +581,7 @@ const handleLeafletLegendPanel = (map, parent) => {
 
         if (!isGeoJSON && layer._legend) {
             const details = container.querySelector(`#${container.id}-details`)
-            if (turf.booleanIntersects(map._previousBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
+            if (turf.booleanIntersects((map._previousBbox ?? turf.bboxPolygon(getLeafletMapBbox(map))), L.rectangle(layer.getBounds()).toGeoJSON())) {
                 if (details.innerHTML === '') {
                     const img = new Image()
                     img.src = layer._legend
