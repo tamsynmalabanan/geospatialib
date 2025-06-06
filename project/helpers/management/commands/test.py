@@ -42,7 +42,7 @@ def test_get_collection_data():
     url = 'https://ows.emodnet-bathymetry.eu/wfs?request=GetCapabilities&service=WFS'
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     value = get_collection_data(url, delay=False)
-    print(value)
+    # print(value)
     print('layers count', len((value or {}).get('layers', {}).keys()))
 
 def test_update_collection_data():

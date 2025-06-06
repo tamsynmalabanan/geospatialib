@@ -100,7 +100,9 @@ def get_layers_via_et(content, format):
                         print(error)
             
             if format == 'wfs':
+                print('here')
                 crs = layer.find(f"{format}:DefaultCRS", ns)
+                print(crs)
                 srid = int(crs.text.split(':')[-1]) if crs else 4326
                 
                 lower_corner = layer.find(f".//{ns_key}:LowerCorner", ns)
