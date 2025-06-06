@@ -60,6 +60,10 @@
                         <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm' value="{% if value %}{{value}}{% else %}4326{% endif %}">
                         <label for="{{id}}">SRID</label>
                     </div>
+                {% else %}
+                    {% if params.srid %}
+                        <input type="number" name='srid' value="{{params.srid}}" hidden>
+                    {% endif %}
                 {% endif %}
             </div>
         {% endfor %}
