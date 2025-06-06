@@ -291,6 +291,7 @@ const handleLeafletLegendPanel = (map, parent) => {
                 peNone: false,
                 title: 'Data source error',
             })
+
         }
     }
 
@@ -360,9 +361,13 @@ const handleLeafletLegendPanel = (map, parent) => {
                         }
                     }))
                 } else {
-                    console.log(newBbox, L.rectangle(layer.getBounds()).toGeoJSON(), legend.querySelector(`#${legend.id}-details`))
-                }
-                
+                    const details = legend.querySelector(`#${legend.id}-details`)
+                    if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
+
+                    } else {
+                        details.innerHTML = 'Out of bounds'
+                    }
+                }   
             })
 
             Promise.all(promises).then(() => {
