@@ -73,30 +73,48 @@ def get_layers_via_et(content, format):
             if title is not None:
                 params['title'] = title.text
             
-            bounding_boxes = [
-                [float(i.attrib[j]) for j in [
-                    'minx', 'miny', 'maxx', 'maxy'
-                ]] + [i.attrib['CRS']] 
-                for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
-            ]
-            for i in bounding_boxes+[WORLD_GEOM.extent]:
-                w,s,e,n,*crs = i
-                srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-                if version == '1.3.0' and srid == 4326:
-                    s,w,n,e,*crs = i
+            if is_wms:
+                bounding_boxes = [
+                    [float(i.attrib[j]) for j in [
+                        'minx', 'miny', 'maxx', 'maxy'
+                    ]] + [i.attrib['CRS']] 
+                    for i in (layer.findall(f'{format}:BoundingBox', ns) or [])
+                ]
+                for i in bounding_boxes+[WORLD_GEOM.extent]:
+                    w,s,e,n,*crs = i
+                    srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+                    if version == '1.3.0' and srid == 4326:
+                        s,w,n,e,*crs = i
+                    
+                    if srid in [4326, 84]:
+                        bbox = [w,s,e,n]
+                        srid = 4326
+                        break                    
+                    
+                    try:
+                        geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+                        geom.transform(4326)
+                        bbox = geom.extent
+                        break
+                    except Exception as error:
+                        print(error)
+            
+            if format == 'wfs':
+                crs = layer.find(f"{format}:DefaultCRS", ns)
+                srid = int(crs.text.split(':')[-1]) if crs else 4326
                 
-                if srid in [4326, 84]:
+                lower_corner = layer.find(f".//{ns_key}:LowerCorner", ns)
+                w,s = [float(i) for i in lower_corner.text.split(' ')] if lower_corner else [-180, -90]
+                
+                upper_corner = layer.find(f".//{ns_key}:UpperCorner", ns)
+                e,n = [float(i) for i in upper_corner.text.split(' ')] if upper_corner else [180, 90]
+
+                if srid == 4326:
                     bbox = [w,s,e,n]
-                    srid = 4326
-                    break                    
-                
-                try:
+                else:
                     geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
                     geom.transform(4326)
                     bbox = geom.extent
-                    break
-                except Exception as error:
-                    print(error)
 
             layer_abstract = layer.find(f"{format}:Abstract", ns)
             layer_abstract = layer_abstract.text if layer_abstract is not None else ''
