@@ -772,6 +772,7 @@ const createLeafletLayer = async (params, {
         try {
             group.addLayer(layer)
         } catch (error) {
+            console.log(error)
             group.removeLayer(layer)
             alert('Invalid layer.')
         }
