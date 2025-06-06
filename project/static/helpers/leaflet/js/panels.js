@@ -155,7 +155,7 @@ const createLeafletMapPanel = (map, parent, name, {
     return template
 }
 
-const handleLeafletLegendPanel = (map, parent) => {
+const handleLeafletLegendPanel = async (map, parent) => {
     const {
         toolbar, 
         layers,
@@ -622,8 +622,17 @@ const handleLeafletLegendPanel = (map, parent) => {
     const cacheKey = `legend-layers-${map.getContainer().id}`
     const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
     sessionStorage.removeItem(cacheKey)
-    const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex)) // Ascending order
-    console.log(cachedLayers)
+    const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
+    for (i in cachedLayers) {
+        const {params, dbIndexedKey, properties} = i
+        const layer = await createLeafletLayer(params, {
+            dbIndexedKey,
+            group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
+            add: true,
+            properties
+        })
+        console.log(layer)
+    }
 }
 
 const handleLeafletStylePanel = (map, parent) => {

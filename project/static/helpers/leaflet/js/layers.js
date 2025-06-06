@@ -698,6 +698,7 @@ const createLeafletLayer = async (params, {
     data,
     group,
     add,
+    properties,
 } = {}) => {
     const map = group._map
     const pane = createCustomPane(map)
@@ -714,7 +715,8 @@ const createLeafletLayer = async (params, {
             group,
             pane,
             dbIndexedKey,
-            params
+            params,
+            properties,
         })
     } else {
         if (type === 'xyz') {
@@ -746,7 +748,7 @@ const createLeafletLayer = async (params, {
             layer._params = params
             layer._dbIndexedKey = dbIndexedKey
             layer._group = group
-            layer._properties = {
+            layer._properties = properties ?? {
                 visibility: {
                     active: false,
                     min: 10,
