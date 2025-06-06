@@ -715,6 +715,7 @@ const createLeafletLayer = async (params, {
             title: params.title,
             attribution: params.attribution,
             dbIndexedKey,
+            params
         })
     } else {
         if (type === 'xyz') {
@@ -743,6 +744,7 @@ const createLeafletLayer = async (params, {
         }
 
         if (layer) {
+            layer._params = params
             layer._dbIndexedKey = dbIndexedKey
             layer._group = group
             layer._title = params.title
