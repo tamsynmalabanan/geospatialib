@@ -49,11 +49,12 @@ def get_layers_via_et(content, format):
     version = root.attrib['version']
     ns = {
         "xlink": "http://www.w3.org/1999/xlink",
+        'ows': 'http://www.opengis.net/ows/1.1',
         format: root.tag.split("}")[0][1:] if "}" in root.tag else None
     }
     
     service_id = root.find(f".//{format}:Service", ns)
-    print(root.find('{http://www.opengis.net/ows/1.1}:ServiceIdentification'))
+    print(root.find('ows:ServiceIdentification', ns))
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
     service_abstract = service_id.find(f"{format}:Abstract", ns).text
     service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
