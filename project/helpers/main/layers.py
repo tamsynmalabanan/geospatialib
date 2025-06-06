@@ -63,7 +63,6 @@ def get_geojson_bbox_polygon(geojson, srid=4326):
     if geojson_bbox.within(WORLD_GEOM):
         return geojson_bbox
     else: 
-        # print(geojson, srid, geometries, [w,s,e,n], geojson_bbox)
         raise Exception('Failed to get bbox.')
 
 def csv_to_geojson(file, params):

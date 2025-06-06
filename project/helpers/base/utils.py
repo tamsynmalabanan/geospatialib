@@ -158,7 +158,6 @@ def is_ip_address(domain):
 def get_domain_url(url):
     domain = get_domain(url)
     if is_ip_address(domain):
-        print(domain)
         return f'http://{domain}'
     return f'https://www.{'.'.join(domain.split('.')[-2:])}'
 
