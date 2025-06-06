@@ -37,7 +37,8 @@ def test_get_collection_data():
     # url = 'https://www.cmar.csiro.au/geoserver/wms?request=GetCapabilities'
     # url = 'https://ows.emodnet-bathymetry.eu/wms?request=GetCapabilities&service=WMS'
     # url = 'https://basemapserver.geoportal.gov.ph/tiles/v2/PGP/{z}/{x}/{y}.png'
-    url = 'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/%7Bz%7D/%7Bx%7D/%7By%7D.jpg'
+    # url = 'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/%7Bz%7D/%7Bx%7D/%7By%7D.jpg'
+    url = 'https://wms.gebco.net/mapserv?request=getcapabilities&service=wms&version=1.3.0'
     value = get_collection_data(url, delay=False)
     print(value)
 
@@ -70,7 +71,7 @@ def test_parse_ogc_xml():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        URL.objects.all().delete()
+        # URL.objects.all().delete()
 
         # test_get_collection_data()
         # test_parse_ogc_xml()
