@@ -63,7 +63,7 @@ def get_layers_via_et(content, format):
     service_attribution = service_id.find(f"{ns_key}:AccessConstraints", ns).text
     service_fees = service_id.find(f"{ns_key}:Fees", ns).text
 
-    print(root.findall(f".//{ns_key}:Layer", ns))
+    print(root.findall(f".//{ns_key}:FeatureType", ns))
     for layer in root.findall(f".//{ns_key}:Layer", ns):
         name = layer.find(f"{ns_key}:Name", ns)
         if name is not None:
