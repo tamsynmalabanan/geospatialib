@@ -39,8 +39,8 @@ def test_get_collection_data():
     # url = 'https://basemapserver.geoportal.gov.ph/tiles/v2/PGP/{z}/{x}/{y}.png'
     # url = 'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/%7Bz%7D/%7Bx%7D/%7By%7D.jpg'
     # url = 'https://wms.gebco.net/mapserv?request=getcapabilities&service=wms&version=1.3.0'
-    # url = 'https://ows.emodnet-bathymetry.eu/wfs?request=GetCapabilities&service=WFS'
-    url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
+    url = 'https://ows.emodnet-bathymetry.eu/wfs?request=GetCapabilities&service=WFS'
+    # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     value = get_collection_data(url, delay=False)
     print('layers count', len((value or {}).get('layers', {}).keys()))
 
