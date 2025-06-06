@@ -122,7 +122,7 @@ def get_ogc_layers(url, format):
         response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
-        if type != 'wms' or len(content) < 100000:
+        if type == 'wfs' or len(content) < 100000:
             service = None
             if type == 'wms':
                 service = WebMapService(url)
