@@ -635,7 +635,7 @@ const handleLeafletStylePanel = (map, parent) => {
         className: 'bi bi-copy',
         events: {
             click: () => {
-                navigator.clipboard.writeText(JSON.stringify(layer._styles))
+                navigator.clipboard.writeText(JSON.stringify(layer._properties))
             }
         }
     }))
@@ -648,14 +648,14 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (!text) return
     
                 try {
-                    const styles = JSON.parse(text)
-                    if (!Object.keys(layer._styles).every(i => {
-                        return Object.keys(styles).includes(i)
+                    const properties = JSON.parse(text)
+                    if (!Object.keys(layer._properties).every(i => {
+                        return Object.keys(properties).includes(i)
                     })) return
     
-                    const oldStyles = structuredClone(layer._styles)
-                    layer._styles = cloneLeafletLayerStyles({_styles:styles})
-                    deleteLeafletLayerFillPatterns({_styles:oldStyles})
+                    const oldStyles = structuredClone(layer._properties)
+                    layer._properties = cloneLeafletLayerStyles({_properties:properties})
+                    deleteLeafletLayerFillPatterns({_properties:oldStyles})
                     updateLeafletGeoJSONLayer(layer, {
                         geojson: layer.toGeoJSON()
                     })
@@ -988,7 +988,7 @@ const handleLeafletStylePanel = (map, parent) => {
     const getSymbologyForm = (id) => {
         const legendLayer = getLayerLegend()
 
-        const symbology = layer._styles?.symbology
+        const symbology = layer._properties?.symbology
         const style = (symbology?.groups?.[id]) || symbology?.default
         const styleParams = style?.styleParams
         const collapseId = generateRandomString()
@@ -1838,7 +1838,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const spinner = body.querySelector(`#${body.id}-symbologySpinner`)
         spinner.classList.remove('d-none')
 
-        const symbology = layer._styles.symbology
+        const symbology = layer._properties.symbology
         if (symbology.groups) {
             Object.values(symbology.groups).forEach(i => {
                 document.querySelector(`svg#svgFillDefs defs#${i.styleParams.fillPatternId}`)?.remove()
@@ -2096,7 +2096,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getGeomFilterForm = (id) => {
-        const filters = layer._styles.filters
+        const filters = layer._properties.filters
         const filter = filters.geom.values[id]
 
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
@@ -2326,7 +2326,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     const getPropertyFilterForm = (id) => {
-        const filters = layer._styles.filters
+        const filters = layer._properties.filters
         const filter = filters.properties.values[id]
         
         const parent = customCreateElement({className:'d-flex gap-2 flex-column'})
@@ -2610,7 +2610,7 @@ const handleLeafletStylePanel = (map, parent) => {
         body.classList.remove('d-none')
 
         const layerLegend = getLayerLegend()
-        const layerStyles = layer._styles
+        const layerStyles = layer._properties
         const symbology = layerStyles.symbology 
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters

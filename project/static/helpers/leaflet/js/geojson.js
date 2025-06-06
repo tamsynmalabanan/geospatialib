@@ -5,7 +5,7 @@ const getLeafletGeoJSONLayer = async ({
     title = '',
     attribution = '',
     dbIndexedKey,
-    styles,
+    properties,
     customStyleParams = {},
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
@@ -19,7 +19,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
-    geojsonLayer._styles = styles || {
+    geojsonLayer._properties = properties || {
         symbology: {
             default: {
                 active: true,
@@ -75,7 +75,7 @@ const getLeafletGeoJSONLayer = async ({
 
     geojsonLayer._ch = {
         getFeatureStyleParams: (feature) => {
-            const symbology = geojsonLayer._styles?.symbology
+            const symbology = geojsonLayer._properties?.symbology
             return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
         },
         isPatternFilledPolygonInCanvas: (feature) => {
@@ -93,7 +93,7 @@ const getLeafletGeoJSONLayer = async ({
         const handler = (layer) => {
             layer.options.pane = geojsonLayer.options.pane
             
-            const info = geojsonLayer._styles.info
+            const info = geojsonLayer._properties.info
             
             const properties = feature.properties
             if (Object.keys(properties).length) {
@@ -285,7 +285,7 @@ const getLeafletGeoJSONData = async (layer, {
     data = turf.clone(data)
 
     if (data.features?.length) {
-        const filters = layer._styles.filters
+        const filters = layer._properties.filters
         const hasActiveFilters = filter && Object.values(filters).some(i => {
             if (!i.active) return false
             return Object.values(i.values).some(j => {
@@ -293,7 +293,7 @@ const getLeafletGeoJSONData = async (layer, {
             })
         })
     
-        const groups = Object.entries((layer._styles.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
+        const groups = Object.entries((layer._properties.symbology.groups ?? {})).sort(([keyA, valueA], [keyB, valueB]) => {
             return valueA.rank - valueB.rank
         })
         const hasActiveGroups = group && groups.some(i => i[1].active)
@@ -376,7 +376,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
 }
 
 const getGeoJSONLayerStyles = (layer) => {
-    const symbology = layer._styles.symbology
+    const symbology = layer._properties.symbology
     
     const styles = {}
     Array(...Object.keys(symbology.groups ?? {}), '').forEach(id => {
@@ -396,7 +396,7 @@ const getGeoJSONLayerStyles = (layer) => {
                 return styleTypeFilter.values[i]
             }))]
         } else {
-            const layerTypeFilter = layer._styles.filters.type
+            const layerTypeFilter = layer._properties.filters.type
             if (layerTypeFilter.active) {
                 typeNames = [...new Set(Object.keys(layerTypeFilter.values).filter(i => {
                     return layerTypeFilter.values[i]
@@ -469,9 +469,6 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     })
 
     if (!styles.reduce((acc, num) => acc + num[1].totalCount, 0)) {
-        // const tr = document.createElement('tr')
-        // tr.innerText = 'No visible features'
-        // tbody.appendChild(tr)
         return
     }
   

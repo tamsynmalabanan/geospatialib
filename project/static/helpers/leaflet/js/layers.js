@@ -399,20 +399,20 @@ const cloneFillPatternDefs = (currentId) => {
 }
 
 const cloneLeafletLayerStyles = (layer) => {
-    const styles = structuredClone(layer._styles)
-    const symbology = styles.symbology
+    const properties = structuredClone(layer._properties)
+    const symbology = properties.symbology
     
     Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
         const newDefs = cloneFillPatternDefs(i.styleParams.fillPatternId)
         i.styleParams.fillPatternId = newDefs?.id ?? null
     })
 
-    return styles
+    return properties
 }
 
 const deleteLeafletLayerFillPatterns = (layer) => {
     const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
-    const symbology = layer._styles.symbology
+    const symbology = layer._properties.symbology
     Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
         const fillPatternId = i.styleParams.fillPatternId
         if (!fillPatternId) return 
@@ -430,7 +430,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
     const feature = layer.feature
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
-    const featureInfo = geojsonLayer?._styles.info
+    const featureInfo = geojsonLayer?._properties.info
 
     const group = layer._group || geojsonLayer?._group
     if (!group) return
@@ -606,7 +606,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const attribution = feature ? geojsonLayer._attribution : layer._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
                 const dbIndexedKey = (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null
-                const styles = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
+                const properties = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
 
                 let addLayers
                 if (['feature', 'geojson'].includes(type)) {
@@ -617,7 +617,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         title,
                         attribution,
                         dbIndexedKey,
-                        styles,
+                        properties,
                     })
 
                     if (type === 'geojson' && group._name === 'query') layer._dbIndexedKey = addLayers._dbIndexedKey
@@ -661,7 +661,7 @@ const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
     const map = group._map
     if (!map || !group) return
 
-    const visibility = layer._styles.visibility
+    const visibility = layer._properties.visibility
     let isVisible = true
     if (visibility.active) {
         const mapScale = getLeafletMeterScale(map)
@@ -747,7 +747,7 @@ const createLeafletLayer = async (params, {
             layer._group = group
             layer._title = params.title
             layer._legend = params.legend
-            layer._styles = {
+            layer._properties = {
                 visibility: {
                     active: false,
                     min: 10,
