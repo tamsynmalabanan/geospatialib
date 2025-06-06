@@ -379,6 +379,7 @@ const fetchGeoJSONHandlers = (name) => {
         file: fetchFileData,
         csv: fetchCSV,
         'ogc-wms': fetchWMSData,
+        'ogc-wfs': fetchWFSData,
     }[name]
 }
 

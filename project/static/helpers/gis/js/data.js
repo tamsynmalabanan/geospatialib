@@ -68,6 +68,28 @@ const fetchWMSData = async (params, {queryGeom, abortBtns, controller, event} = 
     })
 }
 
+const fetchWFSData = async (params, {queryGeom, zoom, abortBtns, controller, event} = {}) => {
+    const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
+        queryGeom, leafletZoomToMeter(zoom)/2/1000
+    ).geometry : queryGeom : turf.bboxPolygon([-180, -90, 180, 90]).geometry
+    const [w,s,e,n] = turf.bbox(queryExtent)
+
+    const cleanURL = removeQueryParams(params.url)
+    const srsname = `urn:ogc:def:crs:EPSG::${params.srid ?? 4326}`
+    const getParams = {
+        service: 'WFS',
+        version: '2.0.0',
+        request: 'GetFeature',
+        typeNames: params.name,
+        outputFormat: 'json',
+        srsname,
+        bbox: [s,w,n,e,srsname]
+    }
+
+    const url = pushQueryParamsToURLString(cleanURL, params)
+    console.log(getParams, url)
+}
+
 const fetchGeoJSON = async (params, {abortBtns, controller} = {}) => {
     return await fetchTimeout(params.url, {
         abortBtns,
