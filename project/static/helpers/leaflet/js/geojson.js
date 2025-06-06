@@ -7,7 +7,7 @@ const getLeafletGeoJSONLayer = async ({
     dbIndexedKey,
     properties,
     customStyleParams = {},
-    params
+    params={}
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
