@@ -145,8 +145,21 @@ def remove_query_params(url):
 def get_domain(url):
     return urlparse(url).netloc
 
+def is_number(s):
+    try:
+        return float(s)
+    except ValueError:
+        return False
+
+def is_ip_address(domain):
+    parts = domain.split('.')
+    return len(parts) == 4 and all([is_number(i) for i in parts]) and all([len(i) == 2 for i in parts[:-1]]) and len(parts[-1]) == 3
+
 def get_domain_url(url):
-    return f'https://www.{'.'.join(get_domain(url).split('.')[-2:])}'
+    domain = get_domain(url)
+    if is_ip_address(domain):
+        return domain
+    return f'https://www.{'.'.join(domain.split('.')[-2:])}'
 
 def get_domain_name(url):
     domain = get_domain(url)
