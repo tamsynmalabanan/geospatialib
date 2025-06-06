@@ -499,6 +499,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 const child = layerLegends[i]
                                 child.style.top = '0px'
                                 
+                                console.log(child)
                                 const paneName = child.dataset.layerPane
                                 const pane = map.getPane(paneName)
                                 pane.style.zIndex = i + 200
@@ -625,14 +626,12 @@ const handleLeafletLegendPanel = async (map, parent) => {
     const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
     for (i of cachedLayers) {
         const {dbIndexedKey, params, properties, zIndex} = i
-        console.log(i, dbIndexedKey, params, properties, zIndex)
-        const layer = await createLeafletLayer(params, {
+        await createLeafletLayer(params, {
             dbIndexedKey,
             group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
             add: true,
             properties
         })
-        console.log(layer)
     }
 }
 
