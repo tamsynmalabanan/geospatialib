@@ -146,7 +146,7 @@ def get_domain(url):
     return urlparse(url).netloc
 
 def get_domain_url(url):
-    return f'https://{'.'.join(get_domain(url).split('.')[-2:])}'
+    return f'https://www.{'.'.join(get_domain(url).split('.')[-2:])}'
 
 def get_domain_name(url):
     domain = get_domain(url)
