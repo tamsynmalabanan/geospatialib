@@ -41,7 +41,6 @@ def test_get_collection_data():
     # url = 'https://wms.gebco.net/mapserv?request=getcapabilities&service=wms&version=1.3.0'
     url = 'https://ows.emodnet-bathymetry.eu/wfs?request=GetCapabilities&service=WFS'
     value = get_collection_data(url, delay=False)
-    print(value)
 
 def test_update_collection_data():
     cacheKey = 'onboard_collection;https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special Protection and Conservation Areas GeoJson.zip;file'
@@ -74,7 +73,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
 
-        # test_get_collection_data()
+        test_get_collection_data()
         # test_parse_ogc_xml()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
