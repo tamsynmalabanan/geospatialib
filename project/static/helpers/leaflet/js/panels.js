@@ -622,7 +622,8 @@ const handleLeafletLegendPanel = (map, parent) => {
     const cacheKey = `legend-layers-${map.getContainer().id}`
     const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
     sessionStorage.removeItem(cacheKey)
-    console.log(cachedMapLegendLayers)
+    const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => int(a.zIndex) - int(b.zIndex)) // Ascending order
+    console.log(cachedLayers)
 }
 
 const handleLeafletStylePanel = (map, parent) => {
