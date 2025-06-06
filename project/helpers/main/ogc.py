@@ -45,11 +45,12 @@ def get_layers_via_owslib(service, format):
 def get_layers_via_et(content, format):
     layers = {}
 
+    root = ET.fromstring(content)
+    print(root.attrib['xmlns'])
     ns = {
         format: f"http://www.opengis.net/{format}",
         "xlink": "http://www.w3.org/1999/xlink"
     }
-    root = ET.fromstring(content)
     version = root.attrib['version']
     
     service_id = root.find(f".//{format}:Service", ns)
@@ -122,8 +123,7 @@ def get_ogc_layers(url, format):
         response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
-        print(content, len(content))
-        if type == 'wfs' or len(content) < 100000:
+        if len(content) < 1000000:
             service = None
             if type == 'wms':
                 service = WebMapService(url)
