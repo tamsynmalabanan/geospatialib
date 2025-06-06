@@ -107,7 +107,7 @@ def get_layers_via_et(content, format):
                 upper_corner = layer.find(f".//{ns_key}:UpperCorner", ns)
                 w,s = [float(i) for i in lower_corner.text.split(' ')] if lower_corner else [-180, -90]
                 e,n = [float(i) for i in upper_corner.text.split(' ')] if upper_corner else [180, 90]
-                print(w,s,n,e)
+                print(lower_corner, lower_corner.text, upper_corner, upper_corner.text)
 
                 if srid == 4326:
                     bbox = [w,s,e,n]
