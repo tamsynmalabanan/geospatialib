@@ -15,11 +15,24 @@ const getLeafletGeoJSONLayer = async ({
     })
 
     geojsonLayer._title = title
-    geojsonLayer._attribution = attribution
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
 
     geojsonLayer._properties = properties || {
+        info: {
+            attribution,
+            tooltip: {
+                active: true,
+                properties: [],
+                delimiter: '; ',
+                prefix: '',
+                suffix: '',
+            },
+            popup: {
+                active: true,
+                properties: [],
+            },
+        },
         symbology: {
             default: {
                 active: true,
@@ -58,19 +71,6 @@ const getLeafletGeoJSONLayer = async ({
                 operator: '&&',
             },
         },
-        info: {
-            tooltip: {
-                active: true,
-                properties: [],
-                delimiter: '; ',
-                prefix: '',
-                suffix: '',
-            },
-            popup: {
-                active: true,
-                properties: [],
-            },
-        }
     }
 
     geojsonLayer._ch = {
