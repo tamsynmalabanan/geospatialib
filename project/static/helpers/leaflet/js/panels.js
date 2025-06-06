@@ -624,8 +624,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
     sessionStorage.removeItem(cacheKey)
     const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
     for (i of cachedLayers) {
-        const {params, dbIndexedKey, properties} = i
-        console.log(i, params, dbIndexedKey, properties)
+        const {dbIndexedKey, params, properties, zIndex} = i
+        console.log(i, dbIndexedKey, params, properties, zIndex)
         const layer = await createLeafletLayer(params, {
             dbIndexedKey,
             group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
@@ -3864,6 +3864,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 params: {
                     title: fetcher.title,
                     attribution: createAttributionTable(geojson)?.outerHTML,
+                    type: 'geojson',
                 }
             })
 
