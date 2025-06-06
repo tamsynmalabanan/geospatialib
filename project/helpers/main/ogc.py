@@ -32,7 +32,7 @@ def get_layers_via_owslib(service, format):
         params.update({
             'bbox': list(bbox), 
             'srid': srid, 
-            'keywords': service_keywords + (layer.keywords or []), 
+            'keywords': list(set(service_keywords + (layer.keywords or []))), 
             'abstract': ('<br><br>'.join([i for i in [service_abstract, (layer.abstract or '')] if i != ''])).strip(), 
             'attribution': service_id.accessconstraints or '',
             'fees': service_id.fees or '',
@@ -109,7 +109,7 @@ def get_layers_via_et(content, format):
             params.update({
                 'bbox': list(bbox),
                 'srid': srid,
-                'keywords': service_keywords + [i.text for i in (layer.findall(f".//{ns_key}:Keyword", ns) or [])],
+                'keywords': list(set(service_keywords + [i.text for i in (layer.findall(f".//{ns_key}:Keyword", ns) or [])])),
                 'abstract': ('<br><br>'.join([i for i in [service_abstract, layer_abstract] if i and i != ''])).strip(), 
                 'attribution': service_attribution,
                 'fees': service_fees,
