@@ -191,5 +191,5 @@ LAYER_VALIDATORS = {
     'file': validate_file,
     'xyz': validate_xyz,
     'ogc-wms': validate_ogc,
-    'ogc-wms': validate_ogc,
+    'ogc-wfs': validate_ogc,
 }
