@@ -52,9 +52,13 @@ def get_layers_via_et(content, format):
         'ows': 'http://www.opengis.net/ows/1.1',
         format: root.tag.split("}")[0][1:] if "}" in root.tag else None
     }
+
+    is_wms = format == 'wms'
+    ns_key = format if is_wms else 'ows'
+    service_tag = 'Service' if is_wms else 'ServiceIdentification'
     
-    service_id = root.find(f".//{format}:Service", ns)
-    print(root.find('ows:ServiceIdentification', ns))
+    service_id = root.find(f".//{ns_key}:{service_tag}", ns)
+    print(service_id)
     service_keywords = [i.text for i in (service_id.findall(f".//{format}:Keyword", ns) or [])]
     service_abstract = service_id.find(f"{format}:Abstract", ns).text
     service_attribution = service_id.find(f"{format}:AccessConstraints", ns).text
