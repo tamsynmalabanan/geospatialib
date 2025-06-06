@@ -535,7 +535,7 @@ const handleLeafletLegendPanel = (map, parent) => {
             const legendAttribution = document.createElement('div')
             legendAttribution.id = `${container.id}-attribution`
             legendAttribution.className = 'd-flex'
-            legendAttribution.innerHTML = layer._properties.info.attribution ?? ''
+            legendAttribution.innerHTML = layer._attribution ?? ''
             legendCollapse.appendChild(legendAttribution)
 
             Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
@@ -2691,7 +2691,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             handler: createFormFloating,
                             containerClass: 'w-100 flex-grow-1',
                             fieldTag: 'textarea',
-                            currentValue: layer._properties.info.attribution,
+                            currentValue: layer._attribution,
                             labelText: 'Attribution (HTML-frieldly)',
                             fieldClass: 'fs-12',
                             fieldStyle: {
@@ -2712,7 +2712,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     })
                                     const value = div.innerHTML
 
-                                    layer._properties.info.attribution = value
+                                    layer._attribution = value
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value

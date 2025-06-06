@@ -235,7 +235,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
 
     const infoContainer = document.createElement('div')
     infoContainer.className = 'd-flex'
-    infoContainer.innerHTML = geojsonLayer._properties.info.attribution ?? ''
+    infoContainer.innerHTML = geojsonLayer._attribution ?? ''
     contentCollapse.appendChild(infoContainer)
 
     return container

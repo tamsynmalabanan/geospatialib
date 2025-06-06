@@ -603,7 +603,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
 
-                const attribution = (feature ? geojsonLayer : layer)._properties.info.attribution
+                const attribution = (feature ? geojsonLayer : layer)._attribution
                 const title = layer._title || (feature ? (feature.geometry.type || 'feature') : 'layer')
                 const dbIndexedKey = (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null
                 const properties = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
@@ -758,7 +758,7 @@ const createLeafletLayer = async (params, {
             
             const attribution = (params.attribution ?? '').trim()
             if (attribution && !Array('none', '').includes(attribution.toLowerCase())) {
-                layer._properties.info.attribution = attribution
+                layer._attribution = attribution
             }
             
             const bbox = params.bbox ?? "[-180, -90, 180, 90]"
