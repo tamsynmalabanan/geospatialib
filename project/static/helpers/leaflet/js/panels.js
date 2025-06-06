@@ -623,16 +623,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
     const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
     sessionStorage.removeItem(cacheKey)
     const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
-    for (i in cachedLayers) {
+    for (i of cachedLayers) {
         const {params, dbIndexedKey, properties} = i
         console.log(i, params, dbIndexedKey, properties)
-        // const layer = await createLeafletLayer(params, {
-        //     dbIndexedKey,
-        //     group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
-        //     add: true,
-        //     properties
-        // })
-        // console.log(layer)
+        const layer = await createLeafletLayer(params, {
+            dbIndexedKey,
+            group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
+            add: true,
+            properties
+        })
+        console.log(layer)
     }
 }
 
