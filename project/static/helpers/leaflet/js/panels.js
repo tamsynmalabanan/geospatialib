@@ -507,7 +507,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 
                                 cachedMapLegendLayers[child.dataset.layerId].zIndex = pane.style.zIndex
                             }
-                            sessionStorage.setItem(cacheKey, cachedMapLegendLayers)
+                            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
                         }
 
                         container.style.top = '0px'
