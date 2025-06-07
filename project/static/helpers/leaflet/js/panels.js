@@ -2732,7 +2732,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 minHeight: '100px', 
                             },
                             events: {
-                                input: (e) => {
+                                change: (e) => {
                                     const field = e.target
 
                                     const div = document.createElement('div')
