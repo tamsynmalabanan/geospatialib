@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
         queryPane.style.zIndex = 599
 
+        const cachedBbox = sessionStorage.getItem(`map-bbox-${map.getContainer().id}`)
+        if (cachedBbox) map.fitBounds(L.geoJSON(cachedBbox).getBounds())
+
         map._initComplete = true
         map.fire('initComplete')
     })

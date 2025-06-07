@@ -377,6 +377,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
             Promise.all(promises).then(() => {
                 map._previousBbox = newBbox
+                sessionStorage.setItem(`map-bbox-${map.getContainer().id}`, newBbox)
             })
         }, 500)
     })
