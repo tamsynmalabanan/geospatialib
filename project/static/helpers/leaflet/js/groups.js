@@ -127,11 +127,26 @@ const handleLeafletLayerGroups = (map) => {
     })
 
     map._ch = {
+        getCachedLegendLayersKey: () => `legend-layers-${map.getContainer().id}`,
+        getCachedLegendLayers: () => JSON.parse(sessionStorage.getItem(map._ch.getCachedLegendLayersKey()) ?? '{}'),
         updateCachedLegendLayers: (handler) => {
-            const cacheKey = `legend-layers-${map.getContainer().id}`
-            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
-            handler(cachedMapLegendLayers)
-            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
+            const cached = map._ch.getCachedLegendLayers()
+            handler(cached)
+            sessionStorage.setItem(map._ch.getCachedLegendLayersKey(), JSON.stringify(cached))
+        },
+        addCachedLegendLayers: async () => {
+            const cached = map._ch.getCachedLegendLayers()
+            sessionStorage.removeItem(map._ch.getCachedLegendLayersKey())
+            const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
+            for (i of cachedLayers) {
+                const {dbIndexedKey, params, properties, zIndex} = i
+                await createLeafletLayer(params, {
+                    dbIndexedKey,
+                    group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
+                    add: true,
+                    properties
+                })
+            }
         },
         getLayerGroups: () => {
             return map._layerGroups

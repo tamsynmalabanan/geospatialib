@@ -619,19 +619,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
     })
 
-    const cacheKey = `legend-layers-${map.getContainer().id}`
-    const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
-    sessionStorage.removeItem(cacheKey)
-    const cachedLayers = Object.values(cachedMapLegendLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
-    for (i of cachedLayers) {
-        const {dbIndexedKey, params, properties, zIndex} = i
-        await createLeafletLayer(params, {
-            dbIndexedKey,
-            group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
-            add: true,
-            properties
-        })
-    }
+    await map._ch.addCachedLegendLayers()
 }
 
 const handleLeafletStylePanel = (map, parent) => {
