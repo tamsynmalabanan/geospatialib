@@ -2672,6 +2672,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     if (element) element.innerText = field.value
 
                                     select.options[select.selectedIndex].text = field.value
+
+                                    const cacheKey = `legend-layers-${map.getContainer().id}`
+                                    const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
+                                    cachedMapLegendLayers[layer._leaflet_id].params = layer._params
+                                    sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
                                 }
                             }
                         },
@@ -2749,8 +2754,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
-                                
-                                    console.log(layer)
                                 }
                             }
                         },
@@ -3071,7 +3074,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             labelText: 'Delimiter',
                             labelClass: 'text-wrap',
                             events: {
-                                input: (e) => {
+                                change: (e) => {
                                     const value = e.target.value
                                     if (value === info.tooltip.delimiter) return
                 
@@ -3094,7 +3097,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             labelText: 'Prefix',
                             labelClass: 'text-wrap',
                             events: {
-                                input: (e) => {
+                                change: (e) => {
                                     const value = e.target.value
                                     if (value === info.tooltip.prefix) return
                 
@@ -3117,7 +3120,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             labelText: 'Suffix',
                             labelClass: 'text-wrap',
                             events: {
-                                input: (e) => {
+                                change: (e) => {
                                     const value = e.target.value
                                     if (value === info.tooltip.suffix) return
                 
