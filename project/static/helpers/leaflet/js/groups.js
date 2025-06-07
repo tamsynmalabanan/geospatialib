@@ -140,6 +140,7 @@ const handleLeafletLayerGroups = (map) => {
                 layerData.dbIndexedKey = layer._dbIndexedKey
                 layerData.params = layer._params
                 layerData.properties = layer._properties
+                console.log(layer.getPane().style.zIndex)
                 layerData.zIndex = layer.getPane().style.zIndex
             }
 
