@@ -97,22 +97,20 @@ const getLeafletGeoJSONLayer = async ({
             const properties = feature.properties
             if (Object.keys(properties).length) {
                 const tooltip = info.tooltip
-                if (tooltip.active) {
-                    const title = layer._params.title = tooltip.properties.length ? (() => {
-                        const values = tooltip.properties.map(i => {
-                            let value = properties[i]
-                            if (!isNaN(Number(value))) {
-                                return formatNumberWithCommas(Number(value))
-                            }
-                            value = value ?? 'null'
-                            return String(value)
-                        })
-                        return values.some(i => i !== 'null') ? [tooltip.prefix, values.join(tooltip.delimiter), tooltip.suffix].join(' ') : null
-                    })() : getFeatureTitle(properties)
-                    if (title) layer.bindTooltip(title, {sticky:true})
-                }
+                
+                layer._params.title = tooltip.properties.length ? (() => {
+                    const values = tooltip.properties.map(i => {
+                        let value = properties[i]
+                        if (!isNaN(Number(value))) {
+                            return formatNumberWithCommas(Number(value))
+                        }
+                        value = value ?? 'null'
+                        return String(value)
+                    })
+                    return values.some(i => i !== 'null') ? [tooltip.prefix, values.join(tooltip.delimiter), tooltip.suffix].join(' ').trim() : null
+                })() : getFeatureTitle(properties)
 
-                if (!layer._params.title) layer._params.title = getFeatureTitle(properties)
+                if (tooltip.active) layer.bindTooltip(layer._params.title, {sticky:true})
 
                 const popup = info.popup
                 if (popup.active) {
@@ -127,7 +125,7 @@ const getLeafletGeoJSONLayer = async ({
 
                     const popupContent = createFeaturePropertiesTable(popupProperties, {
                         header: (() => {
-                            const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ')
+                            const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
                             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
                             return popupHeader()
                         })()

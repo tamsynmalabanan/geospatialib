@@ -603,19 +603,15 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
                 const pane = createCustomPane(map)
 
-                const dbIndexedKey = (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null
-                const properties = isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null
-                const params = (feature ? geojsonLayer : layer)._params
-
                 let addLayers
                 if (['feature', 'geojson'].includes(type)) {
                     addLayers = await getLeafletGeoJSONLayer({
                         geojson: layerGeoJSON,
                         group: targetGroup,
+                        dbIndexedKey: (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null,
+                        properties: isLegendGroup ? cloneLeafletLayerStyles((feature ? geojsonLayer : layer)) : null,
+                        params: (feature ? geojsonLayer : layer)._params,
                         pane,
-                        dbIndexedKey,
-                        properties,
-                        params,
                     })
 
                     if (type === 'geojson' && group._name === 'query') layer._dbIndexedKey = addLayers._dbIndexedKey

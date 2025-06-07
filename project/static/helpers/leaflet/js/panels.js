@@ -406,10 +406,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 deleteLeafletLayerFillPatterns(layer)
             }
 
-            const cacheKey = `legend-layers-${map.getContainer().id}`
-            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
-            delete cachedMapLegendLayers[layer._leaflet_id]
-            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
+            map._ch.updateCachedLegendLayers((i) => delete i[layer._leaflet_id])
         }
     })
 
@@ -425,16 +422,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
             const pane = map.getPane(paneName)
             pane.style.zIndex = layers.children.length + 200
             
-            const cacheKey = `legend-layers-${map.getContainer().id}`
-            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
-            cachedMapLegendLayers[layer._leaflet_id] = {
+            map._ch.updateCachedLegendLayers((i) => i[layer._leaflet_id] = {
                 dbIndexedKey:layer._dbIndexedKey,
                 params:layer._params,
                 properties:layer._properties,
                 zIndex:pane.style.zIndex
-            }
-            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
-            
+            })
+
             container = document.createElement('div')
             container.id = `${layers.id}-${layer._leaflet_id}`
             container.setAttribute('data-layer-legend', "true")
@@ -495,20 +489,19 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 }
                             }
     
-                            const cacheKey = `legend-layers-${map.getContainer().id}`
-                            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
-                            const layerLegends = Array.from(layers.children).reverse()
-                            for (let i=0; i<layerLegends.length; i++) {
-                                const child = layerLegends[i]
-                                child.style.top = '0px'
-                                
-                                const paneName = child.dataset.layerPane
-                                const pane = map.getPane(paneName)
-                                pane.style.zIndex = i + 200
-                                
-                                cachedMapLegendLayers[child.dataset.layerId].zIndex = pane.style.zIndex
-                            }
-                            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
+                            map._ch.updateCachedLegendLayers((i) => {
+                                const layerLegends = Array.from(layers.children).reverse()
+                                for (let i=0; i<layerLegends.length; i++) {
+                                    const child = layerLegends[i]
+                                    child.style.top = '0px'
+                                    
+                                    const paneName = child.dataset.layerPane
+                                    const pane = map.getPane(paneName)
+                                    pane.style.zIndex = i + 200
+                                    
+                                    i[child.dataset.layerId].zIndex = pane.style.zIndex
+                                }
+                            })
                         }
 
                         container.style.top = '0px'
@@ -2751,6 +2744,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
+
+                                    map._ch.updateCachedLegendLayers((i) => i[layer._leaflet_id].params = layer._params)
                                 }
                             }
                         },
