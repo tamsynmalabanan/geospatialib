@@ -363,7 +363,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 } else if (layer._params.legend) {
                     const details = legend.querySelector(`#${legend.id}-details`)
                     if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
-                        if (details.innerHTML === '') {
+                        if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
+                            details.innerHTML = ''
                             const img = new Image()
                             img.src = layer._params.legend
                             details.appendChild(img)
