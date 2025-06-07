@@ -2667,7 +2667,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 change: (e) => {
                                     const field = e.target
                                     layer._params.title = field.value
-                                    console.log(layer)
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
                                     if (element) element.innerText = field.value
@@ -2732,7 +2731,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 minHeight: '100px', 
                             },
                             events: {
-                                input: (e) => {
+                                change: (e) => {
                                     const field = e.target
 
                                     const div = document.createElement('div')
@@ -2750,6 +2749,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
+                                
+                                    console.log(layer)
                                 }
                             }
                         },
