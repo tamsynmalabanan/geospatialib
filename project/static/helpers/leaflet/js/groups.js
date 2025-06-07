@@ -136,10 +136,11 @@ const handleLeafletLayerGroups = (map) => {
             const cached = map._ch.getCachedLegendLayers()
 
             if (layer) {
-                const layerData = cached[layer._leaflet_id] = cached[layer._leaflet_id] ?? {zIndex:layer.getPane().style.zIndex}
+                const layerData = cached[layer._leaflet_id] = cached[layer._leaflet_id] ?? {}
                 layerData.dbIndexedKey = layer._dbIndexedKey
                 layerData.params = layer._params
                 layerData.properties = layer._properties
+                layerData.zIndex = layer.getPane().style.zIndex
             }
 
             if (handler) {
