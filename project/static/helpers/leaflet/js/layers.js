@@ -255,8 +255,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 }
 
 const getLeafletLayerBounds = async (layer) => {
-    if (layer._library?.bbox) {
-        const [w,s,n,e] = JSON.parse(layer._library.bbox)
+    if (layer._params?.bbox) {
+        const [w,s,n,e,crs] = JSON.parse(layer._params?.bbox)
         return L.latLangBounds([s,w],[n,e])
     }
 
