@@ -489,19 +489,21 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 }
                             }
     
-                            map._ch.updateCachedLegendLayers((i) => {
-                                const layerLegends = Array.from(layers.children).reverse()
-                                for (let i=0; i<layerLegends.length; i++) {
-                                    const child = layerLegends[i]
-                                    child.style.top = '0px'
-                                    
-                                    const paneName = child.dataset.layerPane
-                                    const pane = map.getPane(paneName)
-                                    pane.style.zIndex = i + 200
-                                    
-                                    i[child.dataset.layerId].zIndex = pane.style.zIndex
-                                }
-                            })
+                            
+                            const cacheKey = `legend-layers-${map.getContainer().id}`
+                            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
+                            const layerLegends = Array.from(layers.children).reverse()
+                            for (let i=0; i<layerLegends.length; i++) {
+                                const child = layerLegends[i]
+                                child.style.top = '0px'
+                                
+                                const paneName = child.dataset.layerPane
+                                const pane = map.getPane(paneName)
+                                pane.style.zIndex = i + 200
+                                
+                                cachedMapLegendLayers[child.dataset.layerId].zIndex = pane.style.zIndex
+                            }
+                            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
                         }
 
                         container.style.top = '0px'
