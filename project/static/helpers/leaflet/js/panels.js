@@ -2673,10 +2673,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     select.options[select.selectedIndex].text = field.value
 
-                                    const cacheKey = `legend-layers-${map.getContainer().id}`
-                                    const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
-                                    cachedMapLegendLayers[layer._leaflet_id].params = layer._params
-                                    sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
+                                    map._ch.updateCachedLegendLayers((i) => i[layer._leaflet_id].params = layer._params)
                                 }
                             }
                         },
