@@ -130,6 +130,7 @@ const handleLeafletLayerGroups = (map) => {
         getCachedLegendLayersKey: () => `legend-layers-${map.getContainer().id}`,
         getCachedLegendLayers: () => JSON.parse(sessionStorage.getItem(map._ch.getCachedLegendLayersKey()) ?? '{}'),
         updateCachedLegendLayers: ({handler, layer}={}) => {
+            console.log('here')
             if (!handler && !layer) return
 
             const cached = map._ch.getCachedLegendLayers()

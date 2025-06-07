@@ -663,13 +663,13 @@ const handleLeafletStylePanel = (map, parent) => {
                 if (!text) return
     
                 try {
-                    const properties = JSON.parse(text)
-                    if (!Object.keys(layer._styles).every(i => {
-                        return Object.keys(styles).includes(i)
+                    const _properties = JSON.parse(text)
+                    if (!Object.keys(layer._properties).every(i => {
+                        return Object.keys(_properties).includes(i)
                     })) return
     
                     const oldStyles = structuredClone(layer._properties)
-                    layer._properties = cloneLeafletLayerStyles({_properties:properties})
+                    layer._properties = cloneLeafletLayerStyles({_properties})
                     deleteLeafletLayerFillPatterns({_properties:oldStyles})
                     updateLeafletGeoJSONLayer(layer, {
                         geojson: layer.toGeoJSON()
@@ -677,6 +677,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const event = new Event("change", { bubbles: true })
                     select.dispatchEvent(event)
+
+                    map._ch.updateCachedLegendLayers({layer})
                 } catch { return }
             }
         }
@@ -996,6 +998,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     map.setZoom(map.getZoom())
                 })
             }
+            
             return styleParams
         }
     }
@@ -1190,6 +1193,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const legendLabel = legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)
                     if (legendLabel) legendLabel.innerText = value
+
+                    map._ch.updateCachedLegendLayers({layer})
                 }
             }
         })
@@ -1211,6 +1216,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.showLabel = value
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)?.classList.toggle('d-none', !value)
+
+                    map._ch.updateCachedLegendLayers({layer})
                 }
             }
         })
@@ -1227,6 +1234,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     style.showCount = value
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-count`)?.classList.toggle('d-none', !value)
+
+                    map._ch.updateCachedLegendLayers({layer})
                 }
             }
         })
@@ -1872,222 +1881,221 @@ const handleLeafletStylePanel = (map, parent) => {
                 sort:false,
                 simplify:false
             })) || layer.toGeoJSON()
-            if (geojson) {
+            
+            if (controllerId !== controller.id) return
+
+            if (geojson && (symbology.method === 'categorized')) {
+                let groups = []
+                geojson?.features?.forEach(feature => {
+                    const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
+                        if (i === '[geometry_type]') return feature.geometry.type
+                        
+                        let value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
+                        if (symbology.case === false) value = value.toLowerCase()
+                        return value === '' ? '[blank]' : value
+                    })()]))
+    
+                    groups.push(JSON.stringify(values))
+                })
+
                 if (controllerId !== controller.id) return
 
-                if (symbology.method === 'categorized') {
-                    let groups = []
-                    geojson?.features?.forEach(feature => {
-                        const values = Object.fromEntries(symbology.groupBy.map(i => [i, ((e) => {
-                            if (i === '[geometry_type]') return feature.geometry.type
-                            
-                            let value = removeWhitespace(String(feature.properties[i] ?? '[undefined]'))
-                            if (symbology.case === false) value = value.toLowerCase()
-                            return value === '' ? '[blank]' : value
-                        })()]))
+                const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
+                    const countOccurrences = (item, search) => item.split(search).length-1
+                    const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
+                    const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
+                    return aCount !== bCount ? aCount - bCount : (a.localeCompare(b))
+                })
+
+                const count = groupsSetSorted.length
+                if (count && count <= 20) {
+                    symbology.default.rank = count + 1
+                    if (count) {
+                        symbology.groups = {}
+                        
+                        let rank = 0
+                        for (const group of groupsSetSorted) {
+                            if (controllerId !== controller.id) return
+
+                            rank +=1
+                            const filters = JSON.parse(group)
+
+                            const styleParams = await updateSymbology(getLeafletStyleParams({
+                                ...symbology.default.styleParams,
+                                fillColor: removeWhitespace(`hsla(
+                                    ${Math.round(Math.random()*(
+                                        ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
+                                    ))+(360/count*(rank-1))},
+                                    ${Math.round(Math.random()*(100-75))+75}%,
+                                    ${Math.round(Math.random()*(55-45))+45}%,
+                                1)`),
+                                fillOpacity: 0.5,
+                                strokeColor: true,
+                                strokeOpacity: 1,
+                                patternBgColor: null,
+                                fillPatternId: null,
+                            }), {refresh:false})
         
-                        groups.push(JSON.stringify(values))
-                    })
+                            if (controllerId !== controller.id) return
+                            if (!symbology.groups) return
+                            
+                            symbology.groups[generateRandomString()] = {
+                                active: true,
+                                label: Object.values(filters).join(', '),
+                                showCount: true,
+                                showLabel: true,
+                                rank,
+                                styleParams,
+                                filters: {
+                                    type: (() => {
+                                        const value = {active: false, values: {
+                                            Point: true,
+                                            MultiPoint: true,
+                                            LineString: true,
+                                            MultiLineString: true,
+                                            Polygon: true,
+                                            MultiPolygon: true,
+                                        }}
+        
+                                        if (Object.keys(filters).includes('[geometry_type]')) {
+                                            value.active = true
+                                            Object.keys(value.values).forEach(i => {
+                                                value.values[i] = i === filters['[geometry_type]']
+                                            })
+                                        }
+                                        
+                                        return value
+                                    })(),
+                                    properties: (() => {
+                                        const value = {active: false, values: {}, operator: '&&'}
+        
+                                        const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
+                                        if (propertyFilters.length) {
+                                            value.active = true
+                                            propertyFilters.forEach(i => {
+                                                value.values[generateRandomString()] = {
+                                                    active: true,
+                                                    property: i,
+                                                    handler: 'equals',
+                                                    value: true,
+                                                    case: symbology.case,
+                                                    values: [filters[i]]
+                                                }
+                                            })
+                                        }
+                                        
+                                        return value
+                                    })(),
+                                    geom: {active: false, values: {}, operator: '&&'},
+                                },
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (geojson && (symbology.method === 'graduated')) {
+                const property = symbology.groupBy[0]
+                const validFeatures = geojson.features.filter(i => !isNaN(parseFloat(i.properties[property] ?? '')))
+                if (validFeatures.length) {
+                    if (controllerId !== controller.id) return
+                    
+                    const values = validFeatures.map(i => parseFloat(i.properties[property] ?? ''))
+                    const min = Math.min(...values)
+                    const max = Math.max(...values)
+                    const diff = max - min
+                    const groupCount = symbology.groupCount = form.elements.groupCount.value = diff === 0 ? 1 : symbology.groupCount || 5
+                    const interval = diff === 0 ? 0 : diff/(groupCount-1)
+                    const precision = symbology.groupPrecision = form.elements.groupPrecision.value = diff === 0 
+                    ? 1 : symbology.groupPrecision || Number(`1${'0'.repeat(Math.floor((String(interval).length)/2))}`)
+
+                    const groups = []
+                    let currentMin = min
+                    while (currentMin < max || !groups.length) {
+                        if (controllerId !== controller.id) break
+
+                        const currentMax = Math.round((currentMin + interval)/precision) * precision
+
+                        groups.push({
+                            min: currentMin,
+                            max: currentMax > max ? max : currentMax
+                        })
+                        currentMin = currentMax
+                    }
 
                     if (controllerId !== controller.id) return
 
-                    const groupsSetSorted = (groups.length ? [...new Set(groups)] : []).sort((a, b) => {
-                        const countOccurrences = (item, search) => item.split(search).length-1
-                        const aCount = countOccurrences(a, '[undefined]') + countOccurrences(a, '[blank]')
-                        const bCount = countOccurrences(b, '[undefined]') + countOccurrences(b, '[blank]')
-                        return aCount !== bCount ? aCount - bCount : (a.localeCompare(b))
-                    })
-
-                    const count = groupsSetSorted.length
+                    const count = groups.length
                     if (count && count <= 20) {
-                        symbology.default.rank = count + 1
-                        if (count) {
+                        symbology.default.rank = groups.length + 1
+                        if (groups.length) {
+                            const hslaColor = manageHSLAColor(generateRandomColor())
+
                             symbology.groups = {}
                             
                             let rank = 0
-                            for (const group of groupsSetSorted) {
+                            for (const filters of groups) {
                                 if (controllerId !== controller.id) return
-    
+
                                 rank +=1
-                                const filters = JSON.parse(group)
-    
+                                
                                 const styleParams = await updateSymbology(getLeafletStyleParams({
                                     ...symbology.default.styleParams,
-                                    fillColor: removeWhitespace(`hsla(
-                                        ${Math.round(Math.random()*(
-                                            ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
-                                        ))+(360/count*(rank-1))},
-                                        ${Math.round(Math.random()*(100-75))+75}%,
-                                        ${Math.round(Math.random()*(55-45))+45}%,
-                                    1)`),
+                                    fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1 || 1))*(rank-1))}),
                                     fillOpacity: 0.5,
                                     strokeColor: true,
                                     strokeOpacity: 1,
                                     patternBgColor: null,
                                     fillPatternId: null,
+                                    iconStroke: false,
+                                    iconSize: 10 + (((50-10)/(groups.length-1 || 1))*(rank-1)),
+                                    strokeWidth: 1 + (((5-1)/(groups.length-1 || 1))*(rank-1))
                                 }), {refresh:false})
-            
+
                                 if (controllerId !== controller.id) return
                                 if (!symbology.groups) return
-                                
+            
                                 symbology.groups[generateRandomString()] = {
                                     active: true,
-                                    label: Object.values(filters).join(', '),
+                                    label: `${formatNumberWithCommas(filters.min)} - ${formatNumberWithCommas(filters.max)}`,
                                     showCount: true,
                                     showLabel: true,
                                     rank,
                                     styleParams,
                                     filters: {
-                                        type: (() => {
-                                            const value = {active: false, values: {
-                                                Point: true,
-                                                MultiPoint: true,
-                                                LineString: true,
-                                                MultiLineString: true,
-                                                Polygon: true,
-                                                MultiPolygon: true,
-                                            }}
-            
-                                            if (Object.keys(filters).includes('[geometry_type]')) {
-                                                value.active = true
-                                                Object.keys(value.values).forEach(i => {
-                                                    value.values[i] = i === filters['[geometry_type]']
-                                                })
-                                            }
-                                            
-                                            return value
-                                        })(),
+                                        type: {active: false, values: {
+                                            Point: true,
+                                            MultiPoint: true,
+                                            LineString: true,
+                                            MultiLineString: true,
+                                            Polygon: true,
+                                            MultiPolygon: true,
+                                        }},
                                         properties: (() => {
-                                            const value = {active: false, values: {}, operator: '&&'}
+                                            const value = {active: true, values: {}, operator: '&&'}
             
-                                            const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
-                                            if (propertyFilters.length) {
-                                                value.active = true
-                                                propertyFilters.forEach(i => {
-                                                    value.values[generateRandomString()] = {
-                                                        active: true,
-                                                        property: i,
-                                                        handler: 'equals',
-                                                        value: true,
-                                                        case: symbology.case,
-                                                        values: [filters[i]]
-                                                    }
-                                                })
+                                            value.values[generateRandomString()] = {
+                                                active: true,
+                                                property,
+                                                handler: 'greaterThanEqualTo',
+                                                value: true,
+                                                case: true,
+                                                values: [filters.min]
+                                            }
+            
+                                            value.values[generateRandomString()] = {
+                                                active: true,
+                                                property,
+                                                handler: 'lessThanEqualTo',
+                                                value: true,
+                                                case: true,
+                                                values: [filters.max]
                                             }
                                             
                                             return value
                                         })(),
                                         geom: {active: false, values: {}, operator: '&&'},
                                     },
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                if (symbology.method === 'graduated') {
-                    const property = symbology.groupBy[0]
-                    const validFeatures = geojson.features.filter(i => !isNaN(parseFloat(i.properties[property] ?? '')))
-                    if (validFeatures.length) {
-                        if (controllerId !== controller.id) return
-                        
-                        const values = validFeatures.map(i => parseFloat(i.properties[property] ?? ''))
-                        const min = Math.min(...values)
-                        const max = Math.max(...values)
-                        const diff = max - min
-                        const groupCount = symbology.groupCount = form.elements.groupCount.value = diff === 0 ? 1 : symbology.groupCount || 5
-                        const interval = diff === 0 ? 0 : diff/(groupCount-1)
-                        const precision = symbology.groupPrecision = form.elements.groupPrecision.value = diff === 0 
-                        ? 1 : symbology.groupPrecision || Number(`1${'0'.repeat(Math.floor((String(interval).length)/2))}`)
-
-                        const groups = []
-                        let currentMin = min
-                        while (currentMin < max || !groups.length) {
-                            if (controllerId !== controller.id) break
-
-                            const currentMax = Math.round((currentMin + interval)/precision) * precision
-
-                            groups.push({
-                                min: currentMin,
-                                max: currentMax > max ? max : currentMax
-                            })
-                            currentMin = currentMax
-                        }
-
-                        if (controllerId !== controller.id) return
-
-                        const count = groups.length
-                        if (count && count <= 20) {
-                            symbology.default.rank = groups.length + 1
-                            if (groups.length) {
-                                const hslaColor = manageHSLAColor(generateRandomColor())
-    
-                                symbology.groups = {}
-                                
-                                let rank = 0
-                                for (const filters of groups) {
-                                    if (controllerId !== controller.id) return
-    
-                                    rank +=1
-                                    
-                                    const styleParams = await updateSymbology(getLeafletStyleParams({
-                                        ...symbology.default.styleParams,
-                                        fillColor: hslaColor.toString({l:20+(((80-20)/(groups.length-1 || 1))*(rank-1))}),
-                                        fillOpacity: 0.5,
-                                        strokeColor: true,
-                                        strokeOpacity: 1,
-                                        patternBgColor: null,
-                                        fillPatternId: null,
-                                        iconStroke: false,
-                                        iconSize: 10 + (((50-10)/(groups.length-1 || 1))*(rank-1)),
-                                        strokeWidth: 1 + (((5-1)/(groups.length-1 || 1))*(rank-1))
-                                    }), {refresh:false})
-    
-                                    if (controllerId !== controller.id) return
-                                    if (!symbology.groups) return
-                
-                                    symbology.groups[generateRandomString()] = {
-                                        active: true,
-                                        label: `${formatNumberWithCommas(filters.min)} - ${formatNumberWithCommas(filters.max)}`,
-                                        showCount: true,
-                                        showLabel: true,
-                                        rank,
-                                        styleParams,
-                                        filters: {
-                                            type: {active: false, values: {
-                                                Point: true,
-                                                MultiPoint: true,
-                                                LineString: true,
-                                                MultiLineString: true,
-                                                Polygon: true,
-                                                MultiPolygon: true,
-                                            }},
-                                            properties: (() => {
-                                                const value = {active: true, values: {}, operator: '&&'}
-                
-                                                value.values[generateRandomString()] = {
-                                                    active: true,
-                                                    property,
-                                                    handler: 'greaterThanEqualTo',
-                                                    value: true,
-                                                    case: true,
-                                                    values: [filters.min]
-                                                }
-                
-                                                value.values[generateRandomString()] = {
-                                                    active: true,
-                                                    property,
-                                                    handler: 'lessThanEqualTo',
-                                                    value: true,
-                                                    case: true,
-                                                    values: [filters.max]
-                                                }
-                                                
-                                                return value
-                                            })(),
-                                            geom: {active: false, values: {}, operator: '&&'},
-                                        },
-                                    }
                                 }
                             }
                         }

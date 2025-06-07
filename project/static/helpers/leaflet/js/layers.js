@@ -668,6 +668,8 @@ const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
         isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
     }
 
+    map._ch.updateCachedLegendLayers({layer})
+    
     return isVisible
 }
 
