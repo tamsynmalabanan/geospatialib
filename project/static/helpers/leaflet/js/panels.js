@@ -595,8 +595,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 L.rectangle(layer.getBounds()).toGeoJSON()
             )) {
                 if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
-                    details.innerHTML === ''
-                    
+                    details.innerHTML = ''
                     const img = new Image()
                     img.src = layer._params.legend
                     details.appendChild(img)
