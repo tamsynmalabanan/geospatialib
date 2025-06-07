@@ -489,9 +489,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 }
                             }
     
-                            
-                            const cacheKey = `legend-layers-${map.getContainer().id}`
-                            const cachedMapLegendLayers = JSON.parse(sessionStorage.getItem(cacheKey) ?? '{}')
+                            const zIdnexUpdate = {}
                             const layerLegends = Array.from(layers.children).reverse()
                             for (let i=0; i<layerLegends.length; i++) {
                                 const child = layerLegends[i]
@@ -501,9 +499,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 const pane = map.getPane(paneName)
                                 pane.style.zIndex = i + 200
                                 
-                                cachedMapLegendLayers[child.dataset.layerId].zIndex = pane.style.zIndex
+                                zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
                             }
-                            sessionStorage.setItem(cacheKey, JSON.stringify(cachedMapLegendLayers))
+
+                            map._ch.updateCachedLegendLayers((i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j]))
                         }
 
                         container.style.top = '0px'
