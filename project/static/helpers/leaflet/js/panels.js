@@ -397,8 +397,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 layerLegend.remove()
                 if (layers.innerHTML === '') clearLayers(tools)
             }
+            
 
-            const styleLayerId = parseInt(getStyleBody().dataset.layerId || -1)
+            const styleLayerId = parseInt(getStyleBody()?.dataset.layerId ?? -1)
             if (styleLayerId === layer._leaflet_id) clearStyleBody()
 
             if (layer instanceof L.GeoJSON) {
