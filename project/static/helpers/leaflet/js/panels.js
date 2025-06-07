@@ -353,7 +353,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
                             map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) && layer.getLayers().length
                             ? layer.toGeoJSON() : null
                         ),
-                        controller
+                        controller,
+                        updateCache: false,
                     }).then(() => {
                         if (layer && layer._openpopup) {
                             layer._openpopup.openOn(map)
@@ -677,8 +678,6 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const event = new Event("change", { bubbles: true })
                     select.dispatchEvent(event)
-
-                    map._ch.updateCachedLegendLayers({layer})
                 } catch { return }
             }
         }
@@ -727,7 +726,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     }
 
-    const updateSymbology = async (styleParams, {refresh=true}={}) => {
+    const updateSymbology = async (styleParams, {refresh=true, updateCache=true}={}) => {
         const controllerId = controller.id
 
         let defs
@@ -994,6 +993,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 updateLeafletGeoJSONLayer(layer, {
                     geojson: layer.toGeoJSON(),
                     controller,
+                    updateCache,
                 }).then(() => {
                     map.setZoom(map.getZoom())
                 })
@@ -1012,10 +1012,10 @@ const handleLeafletStylePanel = (map, parent) => {
         const collapseId = generateRandomString()
 
         let updateTimeout
-        const update = async ({refresh=true}={}) => {
+        const update = async () => {
             clearTimeout(updateTimeout)
             updateTimeout = setTimeout(() => {
-                updateSymbology(style.active ? styleParams : null, {refresh})
+                updateSymbology(style.active ? styleParams : null)
                 updateTimeout = null
             }, 1000)
         }
@@ -1934,7 +1934,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 strokeOpacity: 1,
                                 patternBgColor: null,
                                 fillPatternId: null,
-                            }), {refresh:false})
+                            }), {refresh:false, updateCache:false})
         
                             if (controllerId !== controller.id) return
                             if (!symbology.groups) return
@@ -2050,7 +2050,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1 || 1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1 || 1))*(rank-1))
-                                }), {refresh:false})
+                                }), {refresh:false, updateCache:false})
 
                                 if (controllerId !== controller.id) return
                                 if (!symbology.groups) return
@@ -3217,7 +3217,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     form.elements.maxScale.disabled = !value
 
                                     visibility.active = value
-                                    leafletLayerIsVisible(layer)
+                                    leafletLayerIsVisible(layer, {updateCache:true})
                                 }
                             }
                         },
@@ -3252,7 +3252,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     visibility.min = parseInt(field.value)
                                     maxScaleField.setAttribute('min', field.value)
     
-                                    leafletLayerIsVisible(layer)
+                                    leafletLayerIsVisible(layer, {updateCache:true})
                                 },
                                 'click': visibilityFieldsClick,
                             }
@@ -3288,7 +3288,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     visibility.max = parseInt(field.value)
                                     minScaleField.setAttribute('max', field.value)
                                     
-                                    leafletLayerIsVisible(layer)
+                                    leafletLayerIsVisible(layer, {updateCache:true})
                                 },
                                 'click': visibilityFieldsClick,
                             }

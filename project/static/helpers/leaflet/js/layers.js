@@ -648,7 +648,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     })
 }
 
-const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
+const leafletLayerIsVisible = (layer, {addLayer=true, updateCache=false}={}) => {
     if (!layer) return
 
     const group = layer._group
@@ -668,7 +668,7 @@ const leafletLayerIsVisible = (layer, {addLayer=true}={}) => {
         isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
     }
 
-    map._ch.updateCachedLegendLayers({layer})
+    if (updateCache) map._ch.updateCachedLegendLayers({layer})
     
     return isVisible
 }

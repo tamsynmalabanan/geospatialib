@@ -184,7 +184,7 @@ const getLeafletGeoJSONLayer = async ({
         })
     
         geojsonLayer.on('add', () => {
-            updateLeafletGeoJSONLayer(geojsonLayer)
+            updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false})
         })
     
         geojsonLayer.on('remove', () => {
@@ -346,7 +346,7 @@ const getLeafletGeoJSONData = async (layer, {
     return data
 }
 
-const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns} = {}) => {
+const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateCache=true} = {}) => {
     if (!layer) return
 
     if (!leafletLayerIsVisible(layer)) return
@@ -369,7 +369,8 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns}
     layer.clearLayers()
     layer.addData(data)
     layer.fire('dataupdate')
-    layer._map._ch.updateCachedLegendLayers({layer})
+    
+    if (updateCache) layer._map?._ch.updateCachedLegendLayers({layer})
 }
 
 const getGeoJSONLayerStyles = (layer) => {
