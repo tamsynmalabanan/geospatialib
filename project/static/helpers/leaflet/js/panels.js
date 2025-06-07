@@ -2667,6 +2667,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 input: (e) => {
                                     const field = e.target
                                     layer._params.title = field.value
+                                    console.log(layer)
                                     
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-title`)?.querySelector('span')
                                     if (element) element.innerText = field.value
