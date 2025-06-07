@@ -432,7 +432,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
             console.log(layer)
-            container.className = `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer._properties.info.showLegend ? '' : 'd-none'}`
+            container.className = `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend === false ? 'd=none' : ''}`
             layers.insertBefore(container, layers.firstChild)
             
             const legendTitle = document.createElement('div')
@@ -545,7 +545,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             
             const legendAttribution = document.createElement('div')
             legendAttribution.id = `${container.id}-attribution`
-            legendAttribution.className = `d-flex ${layer._properties.info.showAttribution ? '' : 'd-none'}`
+            legendAttribution.className = `d-flex ${layer?._properties?.info?.showAttribution === false ? 'd-none' : ''}`
             legendAttribution.innerHTML = layer._params.attribution ?? ''
             legendCollapse.appendChild(legendAttribution)
 
