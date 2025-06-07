@@ -431,7 +431,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             container.setAttribute('data-layer-legend', "true")
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
-            container.className = 'd-flex flex-nowrap flex-column gap-1 mb-2 position-relative'
+            container.className = `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer._properties.info.showLegend ? '' : 'd-none'}`
             layers.insertBefore(container, layers.firstChild)
             
             const legendTitle = document.createElement('div')
@@ -544,7 +544,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             
             const legendAttribution = document.createElement('div')
             legendAttribution.id = `${container.id}-attribution`
-            legendAttribution.className = 'd-flex'
+            legendAttribution.className = `d-flex ${layer._properties.info.showAttribution ? '' : 'd-none'}`
             legendAttribution.innerHTML = layer._params.attribution ?? ''
             legendCollapse.appendChild(legendAttribution)
 
@@ -2679,7 +2679,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const attribution = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
 
                                 container.appendChild(createFormCheck({
-                                    checked: !layerLegend.classList.contains('d-none'),
+                                    checked: layer._properties.info.showLegend,
                                     labelInnerText: 'Show legend',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
@@ -2694,12 +2694,15 @@ const handleLeafletStylePanel = (map, parent) => {
                                                 Array.from(layers.children)
                                                 .every(el => el.classList.contains('d-none'))
                                             )                    
+
+                                            layer._properties.info.showLegend = e.target.checked
+                                            map._ch.updateCachedLegendLayers({layer})
                                         }
                                     }
                                 }))
 
                                 container.appendChild(createFormCheck({
-                                    checked: !attribution.classList.contains('d-none'),
+                                    checked: layer._properties.info.showAttribution,
                                     labelInnerText: 'Show attribution',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
@@ -2707,6 +2710,8 @@ const handleLeafletStylePanel = (map, parent) => {
                                     events: {
                                         click: (e) => {
                                             attribution.classList.toggle('d-none')
+                                            layer._properties.info.showAttribution = e.target.checked
+                                            map._ch.updateCachedLegendLayers({layer})
                                         }
                                     }
                                 }))

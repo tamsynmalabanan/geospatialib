@@ -18,6 +18,8 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
     geojsonLayer._properties = properties || {
         info: {
+            showLegend: true,
+            showAttribution: true,
             tooltip: {
                 active: true,
                 properties: [],

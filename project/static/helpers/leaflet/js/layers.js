@@ -751,6 +751,10 @@ const createLeafletLayer = async (params, {
             layer._dbIndexedKey = dbIndexedKey
             layer._group = group
             layer._properties = properties ?? {
+                info: {
+                    showLegend: true,
+                    showAttribution: true,
+                },
                 visibility: {
                     active: false,
                     min: 10,
