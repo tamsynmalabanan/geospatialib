@@ -398,7 +398,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 if (layers.innerHTML === '') clearLayers(tools)
             }
             
-
             const styleLayerId = parseInt(getStyleBody()?.dataset.layerId ?? -1)
             if (styleLayerId === layer._leaflet_id) clearStyleBody()
 
@@ -406,7 +405,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 deleteLeafletLayerFillPatterns(layer)
             }
 
-            map._ch.updateCachedLegendLayers((i) => delete i[layer._leaflet_id])
+            map._ch.updateCachedLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
         }
     })
 
@@ -422,12 +421,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             const pane = map.getPane(paneName)
             pane.style.zIndex = layers.children.length + 200
             
-            map._ch.updateCachedLegendLayers((i) => i[layer._leaflet_id] = {
-                dbIndexedKey:layer._dbIndexedKey,
-                params:layer._params,
-                properties:layer._properties,
-                zIndex:pane.style.zIndex
-            })
+            map._ch.updateCachedLegendLayers({layer})
 
             container = document.createElement('div')
             container.id = `${layers.id}-${layer._leaflet_id}`
@@ -502,7 +496,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                 zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
                             }
 
-                            map._ch.updateCachedLegendLayers((i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j]))
+                            map._ch.updateCachedLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
                         }
 
                         container.style.top = '0px'
@@ -2655,7 +2649,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     select.options[select.selectedIndex].text = field.value
 
-                                    map._ch.updateCachedLegendLayers((i) => i[layer._leaflet_id].params = layer._params)
+                                    map._ch.updateCachedLegendLayers({layer})
                                 }
                             }
                         },
@@ -2734,7 +2728,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
 
-                                    map._ch.updateCachedLegendLayers((i) => i[layer._leaflet_id].params = layer._params)
+                                    map._ch.updateCachedLegendLayers({layer})
                                 }
                             }
                         },

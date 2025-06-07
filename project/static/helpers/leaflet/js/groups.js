@@ -129,9 +129,22 @@ const handleLeafletLayerGroups = (map) => {
     map._ch = {
         getCachedLegendLayersKey: () => `legend-layers-${map.getContainer().id}`,
         getCachedLegendLayers: () => JSON.parse(sessionStorage.getItem(map._ch.getCachedLegendLayersKey()) ?? '{}'),
-        updateCachedLegendLayers: (handler) => {
+        updateCachedLegendLayers: ({handler, layer}={}) => {
+            if (!handler && !layer) return
+
             const cached = map._ch.getCachedLegendLayers()
-            handler(cached)
+
+            if (layer) {
+                const layerData = cached[layer._leaflet_id] = cached[layer._leaflet_id] ?? {zIndex:layer.getPane().style.zIndex}
+                layerData.dbIndexedKey = layer._dbIndexedKey
+                layerData.params = layer._params
+                layerData.properties = layer._properties
+            }
+
+            if (handler) {
+                handler(cached)
+            }
+
             sessionStorage.setItem(map._ch.getCachedLegendLayersKey(), JSON.stringify(cached))
         },
         addCachedLegendLayers: async () => {

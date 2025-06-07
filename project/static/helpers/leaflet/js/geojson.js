@@ -16,7 +16,6 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._params = params
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-
     geojsonLayer._properties = properties || {
         info: {
             tooltip: {
