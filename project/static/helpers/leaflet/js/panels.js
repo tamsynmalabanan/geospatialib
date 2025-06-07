@@ -2664,7 +2664,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             fieldClass: 'form-control-sm',
                             labelText: 'Title',
                             events: {
-                                input: (e) => {
+                                change: (e) => {
                                     const field = e.target
                                     layer._params.title = field.value
                                     console.log(layer)
