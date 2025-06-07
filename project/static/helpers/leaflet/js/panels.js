@@ -2680,7 +2680,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 const attribution = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
 
                                 container.appendChild(createFormCheck({
-                                    checked: layer._properties.info.showLegend,
+                                    checked: layer?._properties?.info?.showLegend !== false,
                                     labelInnerText: 'Show legend',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
@@ -2703,7 +2703,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }))
 
                                 container.appendChild(createFormCheck({
-                                    checked: layer._properties.info.showAttribution,
+                                    checked: layer?._properties?.info?.showAttribution !== false,
                                     labelInnerText: 'Show attribution',
                                     labelClass: 'text-nowrap',
                                     role: 'checkbox',
