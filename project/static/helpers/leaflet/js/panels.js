@@ -308,11 +308,11 @@ const handleLeafletLegendPanel = async (map, parent) => {
     const disableStyleLayerSelect = (disable=true) => {
         const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
         const styleAccordion = mapContainer.querySelector(styleAccordionSelector)
-        const layerSelect = styleAccordion.querySelector(`select[name="layer"]`)
-        layerSelect.disabled = disable
+        const layerSelect = styleAccordion?.querySelector(`select[name="layer"]`)
+        layerSelect?.disabled = disable
         
         if (disable) {
-            layerSelect.innerHTML = ''
+            layerSelect?.innerHTML = ''
             clearStyleBody()
         }
     }
