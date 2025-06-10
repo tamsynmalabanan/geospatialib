@@ -378,10 +378,12 @@ const findLeafletFeatureLayerParent = (layer) => {
 const handleStyleParams = async (styleParams, {controller}={}) => {
     let defs
     
-    console.log(styleParams)
-
+    
     try {
+        console.log(1)
         if (!styleParams) throw new Error('No style params.')
+        console.log(2)
+        
 
         let {
             strokeWidth,
@@ -412,7 +414,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             lineBreak,
             textShadow,
         } = styleParams
-
+        console.log(3)
+        
         const hslaColor = manageHSLAColor(fillColor)
         textShadow = styleParams.textShadow = Array(
             iconShadow ? removeWhitespace(`
@@ -428,22 +431,24 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                 0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
             `) : ''
         ).filter(i => i !== '').join(',')
-
+        console.log(4)
         const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
         if (fillPatternId) {
             svgFillDefs.querySelector(`#${fillPatternId}`)?.remove()
             delete styleParams.fillPatternId
         }
+        console.log(5)
 
         if (fillPattern === 'solid' && iconType !== 'svg') {
             throw new Error(`Fill pattern: ${fillPattern}; icon type: ${iconType}`)
         }
+        console.log(6)
 
         const id = styleParams.fillPatternId = generateRandomString()
         defs = document.createElementNS(svgNS, 'defs')
         defs.id = id
         svgFillDefs.appendChild(defs)
-
+        console.log(7)
         let icon
         const img = customCreateElement({
             tag:'img',
@@ -453,6 +458,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             },
             style: {opacity:fillOpacity}
         })
+        console.log(8)
 
         if (!iconSpecs) throw new Error('No icon specification.')
 
@@ -463,7 +469,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                 (iconType !== 'html' && italicFont ? iconSize*0.5 : 0),
             )                
         : 0)
-        
+        console.log(9)
         const [width, height, outerHTML] = (() => {
             const style = getLeafletLayerStyle(
                 {geometry:{type:'MultiPoint'}}, {
@@ -476,7 +482,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                     allowCircleMarker: false,
                 }
             )
-
+            console.log(10)
             const tempElement =  customCreateElement({
                 innerHTML: leafletLayerStyleToHTML(style, 'point')
             }).firstChild
@@ -488,11 +494,12 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                 'justify-content-center', 
                 'align-items-center'
             )
+            console.log(11)
 
             document.body.appendChild(tempElement)
             const bounds = tempElement.getBoundingClientRect()
             document.body.removeChild(tempElement)
-            
+            console.log(12)
             return [bounds.width, bounds.height, tempElement.outerHTML]
         })()
 
@@ -501,7 +508,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         const patternGap = iconType === 'img' ? 0 : iconSize
         const patternWidth = svgWidth + patternGap
         const patternHeight = svgHeight + patternGap
-        
+        console.log(13)
         img.setAttribute('width', patternWidth)
         img.setAttribute('height', patternHeight)
 
@@ -520,6 +527,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             icon.setAttribute('width', width)
             icon.setAttribute('height', height)
         }
+        console.log(14)
         
         if (Array('bi', 'text', 'emoji').includes(iconType)) {
             icon = document.createElementNS(svgNS, 'text')
@@ -542,6 +550,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             ))
             defs.appendChild(icon)
         }
+        console.log(15)
 
         const dataUrl = iconType === 'svg' ? await svgToDataURL(outerHTML) : await outerHTMLToDataURL(outerHTML, {
             width:svgWidth,
@@ -549,12 +558,14 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             x:0-(buffer/2),
             y:0-(buffer/2),
         })
+        console.log(16)
 
         if (iconType === 'html' && dataUrl) {
             icon = document.createElementNS(svgNS, 'image')
             icon.setAttribute('href', dataUrl)
             defs.appendChild(icon)
         }
+        console.log(17)
 
         img.setAttribute('src', await createNewImage(
             iconType === 'img' ? iconSpecs :  dataUrl, {
@@ -564,6 +575,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                 height: patternHeight,
             }
         ))
+        console.log(18)
 
         defs.appendChild(img)
 
@@ -590,6 +602,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                 }
                 return iconStroke ? strokeColor : 'none'
             })())
+            console.log(19)
 
             const svg = document.createElementNS(svgNS, 'svg')
             svg.id = `${id}-svg`
@@ -600,7 +613,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             svg.style.transform = `rotate(${iconRotation}deg)`
             svg.style.transformOrigin = `50% 50%`
             defs.appendChild(svg)
-            
+            console.log(20)
             const svgUse = document.createElementNS(svgNS, 'use')
             svgUse.setAttribute('href', `#${id}-icon`)
             svg.appendChild(svgUse)
@@ -614,7 +627,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             newPattern.style.transform = `rotate(${iconRotation}deg)`
             newPattern.style.transformOrigin = `50% 50%`
             defs.appendChild(newPattern)
-            
+            console.log(21)
             const patternRect = document.createElementNS(svgNS, 'rect')
             patternRect.setAttribute('width', patternWidth)
             patternRect.setAttribute('height', patternHeight)
@@ -636,6 +649,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             patternUse.setAttribute('x', buffer/2)
             patternUse.setAttribute('y', buffer/2)
             newPattern.appendChild(patternUse)
+            console.log(22)
         }
     } catch (error) {
         console.log(error)
