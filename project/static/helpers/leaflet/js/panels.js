@@ -755,8 +755,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
         let updateTimeout
         const update = async () => {
+            console.log('pre timeout')
             clearTimeout(updateTimeout)
             updateTimeout = setTimeout(() => {
+                console.log('post timeout')
                 updateSymbology(style.active ? styleParams : null)
                 updateTimeout = null
             }, 1000)
@@ -1100,7 +1102,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         value = e.target.value = 'circle-fill'
                     }
                     
-                    console.log(value)
                     styleParams.iconSpecs = value
                     update()
                 }
