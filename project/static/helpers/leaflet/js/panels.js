@@ -730,26 +730,19 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {refresh=true, updateCache=true}={}) => {
         const controllerId = controller.id
 
-        let defs
+        await handleStyleParams(styleParams, {controller})
         
-        try {
-            await handleStyleParams(styleParams, {controller})
-        } catch (error) {
-            if (styleParams.fillPatternId) delete styleParams.fillPatternId
-            if (defs) defs.remove()
-        } finally {
-            if (refresh && controllerId === controller.id) {
-                updateLeafletGeoJSONLayer(layer, {
-                    geojson: layer.toGeoJSON(),
-                    controller,
-                    updateCache,
-                }).then(() => {
-                    map.setZoom(map.getZoom())
-                })
-            }
-            
-            return styleParams
+        if (refresh && controllerId === controller.id) {
+            updateLeafletGeoJSONLayer(layer, {
+                geojson: layer.toGeoJSON(),
+                controller,
+                updateCache,
+            }).then(() => {
+                map.setZoom(map.getZoom())
+            })
         }
+
+        return styleParams
     }
 
     const getSymbologyForm = (id) => {
