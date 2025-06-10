@@ -134,8 +134,6 @@ const handleLeafletLayerGroups = (map) => {
 
             const cached = map._ch.getCachedLegendLayers()
 
-            console.log(layer)
-            
             if (layer) {
                 const layerData = cached[layer._leaflet_id] = cached[layer._leaflet_id] ?? {}
                 layerData.dbIndexedKey = layer._dbIndexedKey
@@ -157,11 +155,15 @@ const handleLeafletLayerGroups = (map) => {
             for (i of cachedLayers) {
                 const {dbIndexedKey, params, properties, zIndex} = i
 
+                console.log(properties.symbology)
+                
                 Array(properties.symbology.default, ...Object.values(properties.symbology.groups ?? {})).forEach(async i => {
                     const styleParams = i.styleParams
                     if (styleParams.fillPattern !== 'icon') return
                     await handleStyleParams(styleParams)
                 })
+                
+                console.log(properties.symbology)
 
                 const layer = await createLeafletLayer(params, {
                     dbIndexedKey,
