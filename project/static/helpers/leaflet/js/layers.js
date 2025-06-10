@@ -377,7 +377,9 @@ const findLeafletFeatureLayerParent = (layer) => {
 
 const handleStyleParams = async (styleParams, {controller}={}) => {
     let defs
-        
+    
+    console.log(styleParams)
+
     try {
         if (!styleParams) throw new Error('No style params.')
 
