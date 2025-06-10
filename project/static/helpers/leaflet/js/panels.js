@@ -730,9 +730,11 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {refresh=true, updateCache=true}={}) => {
         const controllerId = controller.id
 
+        console.log('handling style params')
         await handleStyleParams(styleParams, {controller})
         
         if (refresh && controllerId === controller.id) {
+            console.log('update layer')
             updateLeafletGeoJSONLayer(layer, {
                 geojson: layer.toGeoJSON(),
                 controller,
@@ -755,10 +757,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
         let updateTimeout
         const update = async () => {
-            console.log('pre timeout')
             clearTimeout(updateTimeout)
             updateTimeout = setTimeout(() => {
-                console.log('post timeout')
                 updateSymbology(style.active ? styleParams : null)
                 updateTimeout = null
             }, 1000)
