@@ -140,6 +140,7 @@ const handleLeafletLayerGroups = (map) => {
                 layerData.params = layer._params
                 layerData.properties = layer._properties
                 layerData.zIndex = map.getPanes()[layer.options.pane].style.zIndex
+                console.log(layerData)
             }
 
             if (handler) {
