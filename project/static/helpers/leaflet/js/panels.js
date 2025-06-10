@@ -431,7 +431,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
             container.setAttribute('data-layer-legend', "true")
             container.setAttribute('data-layer-pane', paneName)
             container.setAttribute('data-layer-id', layer._leaflet_id)
-            console.log(layer)
             container.className = `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend !== false ? '' : 'd-none'}`
             layers.insertBefore(container, layers.firstChild)
             
