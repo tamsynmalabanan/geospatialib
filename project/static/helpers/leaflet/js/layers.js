@@ -621,6 +621,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             newPattern.appendChild(patternRect)
 
             const patternUse = svg.cloneNode(true)
+            patternUse.style.transform = ``
+            patternUse.style.transformOrigin = ``
             patternUse.removeAttribute('id')
             Array.from(patternUse.querySelectorAll('use')).forEach(i => {
                 const opacity = strokeOpacity + (fillOpacity/2)
