@@ -153,8 +153,15 @@ const handleLeafletLayerGroups = (map) => {
             sessionStorage.removeItem(map._ch.getCachedLegendLayersKey())
             const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
             for (i of cachedLayers) {
-                console.log(i)
                 const {dbIndexedKey, params, properties, zIndex} = i
+
+                Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
+                    const styleParams = i.styleParams
+                    if (styleParams.fillPattern !== 'icon') return
+
+                    console.log(styleParams)
+                })
+
                 const layer = await createLeafletLayer(params, {
                     dbIndexedKey,
                     group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
