@@ -636,10 +636,12 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             newPattern.appendChild(patternUse)
         }
     } catch (error) {
+        console.log(error)
         if (styleParams.fillPatternId) delete styleParams.fillPatternId
         if (defs) defs.remove()
     }
 
+    console.log(styleParams)
     return styleParams
 }
 

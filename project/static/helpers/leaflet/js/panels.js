@@ -730,11 +730,9 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {refresh=true, updateCache=true}={}) => {
         const controllerId = controller.id
 
-        console.log('handling style params')
         await handleStyleParams(styleParams, {controller})
         
         if (refresh && controllerId === controller.id) {
-            console.log('update layer')
             updateLeafletGeoJSONLayer(layer, {
                 geojson: layer.toGeoJSON(),
                 controller,
@@ -1097,7 +1095,7 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 change: (e) => {
                     let value = e.target.value.trim()
-                    console.log(value)
+                    
                     if (!value && styleParams.iconType === 'bi') {
                         value = e.target.value = 'circle-fill'
                     }
