@@ -134,6 +134,7 @@ const handleLeafletLayerGroups = (map) => {
 
             const cached = map._ch.getCachedLegendLayers()
 
+            console.log(layer)
             if (layer) {
                 const layerData = cached[layer._leaflet_id] = cached[layer._leaflet_id] ?? {}
                 layerData.dbIndexedKey = layer._dbIndexedKey
