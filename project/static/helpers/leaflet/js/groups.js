@@ -168,6 +168,8 @@ const handleLeafletLayerGroups = (map) => {
                     add: true,
                     properties
                 })
+
+                console.log(layer)
             }
         },
         getLayerGroups: () => {
