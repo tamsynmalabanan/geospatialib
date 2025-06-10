@@ -435,7 +435,9 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             delete styleParams.fillPatternId
         }
 
-        if (fillPattern !== 'solid' || iconType === 'svg') return styleParams
+        if (fillPattern === 'solid' && iconType !== 'svg') {
+            throw new Error(`Fill pattern: ${fillPattern}; icon type: ${iconType}`)
+        }
 
         const id = styleParams.fillPatternId = generateRandomString()
         defs = document.createElementNS(svgNS, 'defs')
