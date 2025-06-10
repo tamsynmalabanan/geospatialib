@@ -730,9 +730,11 @@ const handleLeafletStylePanel = (map, parent) => {
     const updateSymbology = async (styleParams, {refresh=true, updateCache=true}={}) => {
         const controllerId = controller.id
 
+        console.log('handling style params')
         await handleStyleParams(styleParams, {controller})
         
         if (refresh && controllerId === controller.id) {
+            console.log('update layer')
             updateLeafletGeoJSONLayer(layer, {
                 geojson: layer.toGeoJSON(),
                 controller,
