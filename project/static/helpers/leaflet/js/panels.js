@@ -621,6 +621,11 @@ const handleLeafletLegendPanel = async (map, parent) => {
     })
 
     await map._ch.addCachedLegendLayers()
+    layers.classList.toggle(
+        'd-none', 
+        Array.from(layers.children)
+        .every(el => el.classList.contains('d-none'))
+    )   
 }
 
 const handleLeafletStylePanel = (map, parent) => {
