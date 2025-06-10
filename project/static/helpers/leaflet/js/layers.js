@@ -567,14 +567,16 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         }
         console.log(17)
 
-        img.setAttribute('src', await createNewImage(
-            iconType === 'img' ? iconSpecs :  dataUrl, {
+        console.log(iconType, iconSpecs)
+        const imgSrc = await createNewImage(
+            iconType === 'img' ? iconSpecs : dataUrl, {
                 opacity:fillOpacity,
                 angle:iconRotation,
                 width: patternWidth,
                 height: patternHeight,
             }
-        ))
+        )
+        img.setAttribute('src', imgSrc)
         console.log(18)
 
         defs.appendChild(img)
