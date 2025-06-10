@@ -1094,6 +1094,7 @@ const handleLeafletStylePanel = (map, parent) => {
             labelText: 'Icon',
             events: {
                 change: (e) => {
+                    console.log(e)
                     let value = e.target.value.trim()
                     
                     if (!value && styleParams.iconType === 'bi') {
