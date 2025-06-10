@@ -1093,7 +1093,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldClass: 'form-control-sm',
             labelText: 'Icon',
             events: {
-                blur: (e) => {
+                change: (e) => {
                     let value = e.target.value.trim()
                     
                     if (!value && styleParams.iconType === 'bi') {
