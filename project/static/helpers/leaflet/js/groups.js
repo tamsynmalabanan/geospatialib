@@ -158,8 +158,7 @@ const handleLeafletLayerGroups = (map) => {
                 Array(properties.symbology.default, ...Object.values(properties.symbology.groups ?? {})).forEach(i => {
                     const styleParams = i.styleParams
                     if (styleParams.fillPattern !== 'icon') return
-
-                    console.log(styleParams)
+                    handleStyleParams(styleParams)
                 })
 
                 const layer = await createLeafletLayer(params, {
