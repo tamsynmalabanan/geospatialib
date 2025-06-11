@@ -553,7 +553,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             defs.appendChild(icon)
         }
 
-        console.log(iconType, iconSpecs)
+        console.log('handleStyleParams',iconType, iconSpecs)
         const imgSrc = await createNewImage(
             iconType === 'img' ? iconSpecs : dataUrl, {
                 opacity:fillOpacity,
@@ -563,7 +563,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             }
         )
         img.setAttribute('src', imgSrc)
-        console.log(img)
+        console.log('handleStyleParams',img)
 
         defs.appendChild(img)
 
@@ -643,7 +643,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         if (defs) defs.remove()
     }
 
-    console.log(styleParams)
+    console.log('handleStyleParams',styleParams)
     return styleParams
 }
 
