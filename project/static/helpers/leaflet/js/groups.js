@@ -140,7 +140,7 @@ const handleLeafletLayerGroups = (map) => {
                 layerData.params = layer._params
                 layerData.properties = layer._properties
                 layerData.zIndex = map.getPanes()[layer.options.pane].style.zIndex
-                console.log(layerData)
+                console.log('updateCachedLegendLayers', layerData)
             }
 
             if (handler) {
@@ -169,7 +169,7 @@ const handleLeafletLayerGroups = (map) => {
                     properties
                 })
 
-                console.log(layer)
+                console.log('addCachedLegendLayers',layer)
             }
         },
         getLayerGroups: () => {
