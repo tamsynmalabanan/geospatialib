@@ -1,5 +1,14 @@
-await (async () => {
-    const bootstrapIcons = {}
+const bootstrapIcons = {}
+
+const getBootstrapIcons = async () => {
+    if (!Object.keys(bootstrapIcons).length) {
+        await fetchBootstrapIcons()
+    }
+
+    return bootstrapIcons
+}
+
+const fetchBootstrapIcons = async () => {
     fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
     .then(response => {
         if (!response.ok) throw new Error('Response not ok.')
@@ -14,8 +23,7 @@ await (async () => {
     .catch(error => {
         console.log(error)
     })
-
-})()
+}
 
 const titleToTooltip = (element, altTitle) => {
     const title = altTitle || element.getAttribute('title')
@@ -39,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.tooltip.bs-tooltip-auto.fade.show').forEach(i => i.remove())
     })
 
+    getBootstrapIcons()
 })
 
 const setBootstrapIconsAsOptions = (element) => {
