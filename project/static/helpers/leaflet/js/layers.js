@@ -1,3 +1,5 @@
+await getBootstrapIcons()
+
 const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     className: `layer-${getPreferredTheme()}`
@@ -77,7 +79,7 @@ const getLeafletStyleParams = ({
     }    
 }
 
-const getLeafletLayerStyle = async (feature, styleParams={}, {
+const getLeafletLayerStyle = (feature, styleParams={}, {
     renderer,
     allowCircleMarker=true,
 } = {}) => {
@@ -140,7 +142,7 @@ const getLeafletLayerStyle = async (feature, styleParams={}, {
             }).firstChild
             : customCreateElement({
                 innerHTML: (
-                    iconType === 'bi' ? `&#x${(await getBootstrapIcons())[iconSpecs] ?? 'F287'};` : 
+                    iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
                     Array('text', 'emoji').includes(iconType) ? iconSpecs : 
                     iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
                     ''
@@ -520,7 +522,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         
         if (Array('bi', 'text', 'emoji').includes(iconType)) {
             icon = document.createElementNS(svgNS, 'text')
-            icon.innerHTML = iconType === 'bi' ? `&#x${(await getBootstrapIcons())[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+            icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
             icon.setAttribute('class', removeWhitespace(`
                 text-center lh-1
                 ${textWrap ? 'text-wrap' : 'text-nowrap'}
