@@ -229,19 +229,22 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             params.fillColor = fillPattern === 'solid' ? fillColor : (() => {
                 const bgColor = patternBg ? patternBgColor : 'transparent'
                 if (isCanvas) {
-                    const imgId = `${fillPatternId}-img`
-                    const img = document.querySelector(`#${imgId}`)
-                    const validImg = (
-                        img
-                        && img instanceof Element 
-                        && img.tagName.toLowerCase() === 'img'
-                        && img.getAttribute('src')
-                    )
-                    if (validImg) {
-                        params.imgId = imgId
-                        params.stroke = strokeColor && strokeOpacity > 0 ? true : false
-                        params.fill = fillColor && fillOpacity > 0 ? true : false
-                    }
+                    // const imgId = `${fillPatternId}-img`
+                    // const img = document.querySelector(`#${imgId}`)
+                    // const validImg = (
+                    //     img
+                    //     && img instanceof Element 
+                    //     && img.tagName.toLowerCase() === 'img'
+                    //     && img.getAttribute('src')
+                    // )
+                    // if (validImg) {
+                    //     params.imgId = imgId
+                    //     params.stroke = strokeColor && strokeOpacity > 0 ? true : false
+                    //     params.fill = fillColor && fillOpacity > 0 ? true : false
+                    // }
+                    params.imgId = imgId
+                    params.stroke = strokeColor && strokeOpacity > 0 ? true : false
+                    params.fill = fillColor && fillOpacity > 0 ? true : false
                 } else {
                     // const pattern = document.querySelector(`#${fillPatternId}-pattern`)
                     // if (pattern) return `url(#${fillPatternId}-pattern)`
