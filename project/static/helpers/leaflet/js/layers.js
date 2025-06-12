@@ -445,7 +445,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         let icon
         const img = customCreateElement({
-            parent: defs,
             tag:'img',
             id: `${id}-img`,
             attrs: {
@@ -566,7 +565,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         img.setAttribute('src', imgSrc)
         console.log('handleStyleParams',img)
 
-        // defs.appendChild(img)
+        defs.appendChild(img)
 
         if (icon) {
             icon.id = `${id}-icon`
