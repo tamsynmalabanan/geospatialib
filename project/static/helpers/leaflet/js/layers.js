@@ -231,21 +231,20 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 if (isCanvas) {
                     const imgId = `${fillPatternId}-img`
                     const img = document.querySelector(`#${imgId}`)
-                    console.log(img)
-                    if (
+                    const validImg = (
                         img
                         && img instanceof Element 
                         && img.tagName.toLowerCase() === 'img'
                         && img.getAttribute('src')
-                    ) {
+                    )
+                    if (validImg) {
                         params.imgId = imgId
                         params.stroke = strokeColor && strokeOpacity > 0 ? true : false
                         params.fill = fillColor && fillOpacity > 0 ? true : false
                     }
                 } else {
-                    // const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    // if (pattern) return `url(#${fillPatternId}-pattern)`
-                    return `url(#${fillPatternId}-pattern)`
+                    const pattern = document.querySelector(`#${fillPatternId}-pattern`)
+                    if (pattern) return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
             })()
@@ -450,7 +449,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             id: `${id}-img`,
             attrs: {
                 alt: 'icon',
-                src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/lyUBtEAAAAASUVORK5CYII=',
             },
             style: {opacity:fillOpacity}
         })
