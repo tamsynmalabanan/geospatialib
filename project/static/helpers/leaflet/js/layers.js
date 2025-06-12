@@ -231,13 +231,13 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 if (isCanvas) {
                     const imgId = `${fillPatternId}-img`
                     const img = document.querySelector(`#${imgId}`)
-                    const validImg = (
+                    console.log(img)
+                    if (
                         img
                         && img instanceof Element 
                         && img.tagName.toLowerCase() === 'img'
                         && img.getAttribute('src')
-                    )
-                    if (validImg) {
+                    ) {
                         params.imgId = imgId
                         params.stroke = strokeColor && strokeOpacity > 0 ? true : false
                         params.fill = fillColor && fillOpacity > 0 ? true : false
