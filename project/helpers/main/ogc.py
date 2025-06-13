@@ -20,11 +20,6 @@ def get_layers_via_owslib(service, format):
     
     for i in list(service.contents):
         layer = service[i]
-        
-        for attr in ['abstract', 'accessconstraints', 'fees', 'keywords', 'keywords_type', 'profiles', 'service', 'title', 'type', 'version', 'versions']:
-            if hasattr(layer, attr):
-                print(attr, getattr(layer, attr))
-
         params = {'type': format, 'title': layer.title} 
 
         if format == 'wcs':
@@ -166,7 +161,7 @@ def get_ogc_layers(url, format):
         response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
-        if len(content) < 100000:
+        if type != 'wcs' and len(content) < 100000:
             service = None
    
             if type == 'wms':
