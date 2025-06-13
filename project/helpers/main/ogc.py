@@ -68,7 +68,7 @@ def get_layers_via_et(content, format):
         format: root.tag.split("}")[0][1:] if "}" in root.tag else None
     }
 
-    print(format)
+    print(ns)
 
     is_wms = format == 'wms'
     ns_key = format if is_wms else 'ows'
