@@ -239,6 +239,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         if (img instanceof Element && img.tagName === 'IMG' && img.getAttribute('src')) {
                             validImg = img
                         }
+                        console.log(retries)
                     }
 
                     while (!validImg && retries < 3) getValidImg()
