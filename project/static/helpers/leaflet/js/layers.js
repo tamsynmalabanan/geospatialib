@@ -444,7 +444,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         const id = styleParams.fillPatternId = generateRandomString()
         defs = document.createElementNS(svgNS, 'defs')
         defs.id = id
-        svgFillDefs.appendChild(defs)
+        // svgFillDefs.appendChild(defs)
 
         let icon
         const img = customCreateElement({
@@ -640,6 +640,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             patternUse.setAttribute('y', buffer/2)
             newPattern.appendChild(patternUse)
         }
+
+        svgFillDefs.appendChild(defs)
     } catch (error) {
         console.log(error)
         if (styleParams.fillPatternId) delete styleParams.fillPatternId
