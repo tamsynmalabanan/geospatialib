@@ -46,38 +46,11 @@ def test_get_collection_data():
     # print(value)
     print('layers count', len((value or {}).get('layers', {}).keys()))
 
-def test_update_collection_data():
-    cacheKey = 'onboard_collection;https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special Protection and Conservation Areas GeoJson.zip;file'
-    updated_layers = {
-        "Special Protection and Conservation Areas GeoJson.zip/Special Protection and Conservation Areas GeoJson.geojson": {
-            "title": "Special Protection and Conservation Areas GeoJson", 
-            "type": "geojson"
-        }, 
-        "Special Protection and Conservation Areas GeoJson.zip/cinemas.zip/cinemas.csv": {
-            "title": "cinemas", 
-            "type": "csv", 
-            "xField": "Eastings", 
-            "yField": "Northings", 
-            "srid": "27700"
-        }
-    }
-    collection_data = update_collection_data(cacheKey, updated_layers, delay=False)
-    # print(collection_data)
-
-def test_parse_ogc_xml():
-    url = 'https://geoserver.geoportal.gov.ph/geoserver/wms'
-    response = get_response(f'{url}?service=WMS&request=GetCapabilities', raise_for_status=False)
-    response.raise_for_status()
-    content = response.content
-    layers = get_layers_via_et(content, 'wms')    
-    print(layers)
-
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         URL.objects.all().delete()
 
-        # test_get_collection_data()
-        # test_parse_ogc_xml()
+        test_get_collection_data()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
