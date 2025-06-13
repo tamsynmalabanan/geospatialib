@@ -18,6 +18,7 @@ def get_layers_via_owslib(service, format):
     print(dir(service_id))
     service_keywords = service_id.keywords or []
     service_abstract = service_id.abstract or ''
+    print(service_abstract)
     
     for i in list(service.contents):
         layer = service[i]
@@ -53,6 +54,7 @@ def get_layers_via_owslib(service, format):
             'fees': service_id.fees or '',
             'styles': json.dumps(layer.styles)
         })
+        print(params['abstract'])
         layers[i] = params
 
     return layers
