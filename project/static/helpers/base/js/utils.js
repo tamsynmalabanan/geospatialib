@@ -217,8 +217,8 @@ const createNewImage = (src, {
 } = {}) => {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        // img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
-        img.src = src
+        img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
+        // img.src = src
         console.log('createNewImage',img)
 
         img.onload = () => {
