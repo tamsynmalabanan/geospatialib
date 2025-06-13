@@ -53,7 +53,7 @@ def get_layers_via_owslib(service, format):
             'styles': json.dumps(layer.styles)
         })
         layers[i] = params
-        print(params)
+        print(i, params)
 
     return layers
 
