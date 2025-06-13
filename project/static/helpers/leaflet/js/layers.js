@@ -242,7 +242,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         params.stroke = strokeColor && strokeOpacity > 0 ? true : false
                         params.fill = fillColor && fillOpacity > 0 ? true : false
                     } else {
-                        console.log('here')
+                        console.log(img)
                     }
                 } else {
                     // const pattern = document.querySelector(`#${fillPatternId}-pattern`)
