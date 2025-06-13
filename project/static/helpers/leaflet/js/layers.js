@@ -243,7 +243,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     }
 
                     while (!validImg && retries < 10) getValidImg()
-
+                    console.log('here')
                     if (validImg) {
                         params.imgId = imgId
                         params.stroke = strokeColor && strokeOpacity > 0 ? true : false
