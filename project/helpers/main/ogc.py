@@ -21,7 +21,7 @@ def get_layers_via_owslib(service, format):
     
     for i in list(service.contents):
         layer = service[i]
-        print(dir(layer))
+        # print(dir(layer))
         params = {'type': format, 'title': layer.title} 
 
         if format == 'wcs':
