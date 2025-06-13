@@ -240,6 +240,7 @@ const createNewImage = (src, {
         }
 
         img.onerror = (e) => {
+            console.log(e)
             reject()
         }
     })
