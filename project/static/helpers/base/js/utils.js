@@ -216,7 +216,8 @@ const createNewImage = (src, {
     height = null,
 } = {}) => {
     return new Promise((resolve, reject) => {
-        const img = new Image();
+        const img = new Image()
+        img.crossOrigin = "anonymous"
         img.src = src
 
         img.onload = () => {
