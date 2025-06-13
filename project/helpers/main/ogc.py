@@ -68,14 +68,12 @@ def get_layers_via_et(content, format):
         format: root.tag.split("}")[0][1:] if "}" in root.tag else None
     }
 
-    print(ns)
-
     is_wms = format == 'wms'
     ns_key = format if is_wms else 'ows'
     service_tag = 'Service' if is_wms else 'ServiceIdentification'
     
+    print(root.find(f'ows:ServiceIdentification'))
     service_id = root.find(f".//{ns_key}:{service_tag}", ns)
-    print(service_id, dir(service_id))
     service_keywords = [i.text for i in (service_id.findall(f".//{ns_key}:Keyword", ns) or []) if i is not None]
     service_abstract = service_id.find(f"{ns_key}:Abstract", ns).text
     service_attribution = service_id.find(f"{ns_key}:AccessConstraints", ns).text
