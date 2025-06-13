@@ -60,7 +60,6 @@ def get_layers_via_et(content, format):
     layers = {}
 
     root = ET.fromstring(content)
-    print('get_layers_via_et', root)
     
     version = root.attrib['version']
     ns = {
@@ -79,6 +78,7 @@ def get_layers_via_et(content, format):
     service_attribution = service_id.find(f"{ns_key}:AccessConstraints", ns).text
     service_fees = service_id.find(f"{ns_key}:Fees", ns).text
 
+    print(service_id, service_keywords, service_abstract, service_attribution, service_fees)
     service_layers = root.findall(f".//{ns_key}:Layer", ns)+root.findall(f".//{format}:FeatureType", ns)
     for layer in service_layers:
         name = layer.find(f"{format}:Name", ns)
