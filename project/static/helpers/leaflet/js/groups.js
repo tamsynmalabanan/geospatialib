@@ -152,6 +152,7 @@ const handleLeafletLayerGroups = (map) => {
         addCachedLegendLayers: async () => {
             const cached = map._ch.getCachedLegendLayers()
             console.log(cached)
+
             localStorage.removeItem(map._ch.getCachedLegendLayersKey())
             const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
             for (i of cachedLayers) {
@@ -159,7 +160,7 @@ const handleLeafletLayerGroups = (map) => {
 
                 for (i of Array(properties.symbology.default, ...Object.values(properties.symbology.groups ?? {}))) {
                     const styleParams = i.styleParams
-                    if (styleParams.fillPattern !== 'icon') return
+                    if (styleParams.fillPattern !== 'icon') continue
                     await handleStyleParams(styleParams)
                 }
 
