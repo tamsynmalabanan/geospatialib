@@ -24,21 +24,15 @@ def get_layers_via_owslib(service, format):
 
         if format == 'wcs':
             bboxes = layer.boundingboxes + [{'nativeSrs':'4326', 'bbox':[-90,-180,90,180]}]
-            print(bboxes)
-            for i in bboxes:
-                print(i)
-                bbox = i.get('bbox')
-                print(bbox)
+            for b in bboxes:
+                bbox = b.get('bbox')
                 if not bbox:
                     continue
-                srid = int(i.get('nativeSrs', '').split('/')[-1])
-                print(srid)
+                srid = int(b.get('nativeSrs', '').split('/')[-1])
                 s,w,n,e = bbox
-                print(s,w,n,e)
                 if srid == 4326:
                     break
             bbox = [w,s,e,n]
-            print(bbox)
         else:
             bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
             w,s,e,n,*crs = bbox
