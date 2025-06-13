@@ -217,9 +217,7 @@ const createNewImage = (src, {
 } = {}) => {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        // img.src = src.startsWith('http') ? `/htmx/cors_proxy/?url=${encodeURIComponent(src)}` : src
         img.src = src
-        console.log(img)
 
         img.onload = () => {
             const canvas = document.createElement("canvas")
@@ -235,13 +233,12 @@ const createNewImage = (src, {
     
             ctx.drawImage(img, -img.width/2, -img.height/2);
     
-            console.log(canvas)
+            console.log(canvas, ctx)
             const dataUrl = canvas.toDataURL("image/png")
             resolve(dataUrl)
         }
 
         img.onerror = (e) => {
-            console.log(e)
             reject()
         }
     })
