@@ -43,8 +43,8 @@ def test_get_collection_data():
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     url = 'https://ows.emodnet-bathymetry.eu/wcs?request=GetCapabilities&service=WCS'
     value = get_collection_data(url, delay=False)
-    print(value)
-    # print('layers count', len((value or {}).get('layers', {}).keys()))
+    # print(value)
+    print('layers count', len((value or {}).get('layers', {}).keys()))
 
 class Command(BaseCommand):
     help = 'Test'
