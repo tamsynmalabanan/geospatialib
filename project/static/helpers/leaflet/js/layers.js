@@ -230,21 +230,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 const bgColor = patternBg ? patternBgColor : 'transparent'
                 if (isCanvas) {
                     const imgId = `${fillPatternId}-img`
-
-                    let validImg
-                    let retries = -1
-                    const getValidImg = () => {
-                        retries +=1
-                        const img = document.querySelector(`#${imgId}`)
-                        if (img instanceof Element && img.tagName === 'IMG' && img.getAttribute('src')) {
-                            validImg = img
-                        }
-                        console.log(retries)
-                    }
-
-                    while (!validImg && retries < 10) getValidImg()
-                    console.log('here')
-                    if (validImg) {
+                    const img = document.querySelector(`#${imgId}`)
+                    if (img instanceof Element && img.tagName === 'IMG' && img.getAttribute('src')) {
                         params.imgId = imgId
                         params.stroke = strokeColor && strokeOpacity > 0 ? true : false
                         params.fill = fillColor && fillOpacity > 0 ? true : false
