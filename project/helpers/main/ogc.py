@@ -22,7 +22,8 @@ def get_layers_via_owslib(service, format):
         layer = service[i]
         
         for attr in ['abstract', 'accessconstraints', 'fees', 'keywords', 'keywords_type', 'profiles', 'service', 'title', 'type', 'version', 'versions']:
-            print(attr, getattr(layer, attr))
+            if hasattr(layer, attr):
+                print(attr, getattr(layer, attr))
 
         params = {'type': format, 'title': layer.title} 
 
