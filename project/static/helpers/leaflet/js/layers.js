@@ -243,8 +243,9 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         params.fill = fillColor && fillOpacity > 0 ? true : false
                     }
                 } else {
-                    const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    if (pattern) return `url(#${fillPatternId}-pattern)`
+                    // const pattern = document.querySelector(`#${fillPatternId}-pattern`)
+                    // if (pattern) return `url(#${fillPatternId}-pattern)`
+                    return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
             })()
