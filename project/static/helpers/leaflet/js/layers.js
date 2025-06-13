@@ -141,7 +141,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
             : customCreateElement({
                 innerHTML: (
                     iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
-                    Array('text', 'emoji').includes(iconType) ? iconSpecs : 
+                    Array('text', 'emoji', 'property').includes(iconType) ? iconSpecs : 
                     iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
                     ''
                 ),
@@ -456,7 +456,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         if (!iconSpecs) throw new Error('No icon specification.')
 
-        const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html').includes(iconType) ? 
+        const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html', 'property').includes(iconType) ? 
             Math.max(
                 (iconGlow ? iconSize*3 : 0),
                 (iconShadow ? iconSize*0.2 : 0),
@@ -519,7 +519,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             icon.setAttribute('height', height)
         }
         
-        if (Array('bi', 'text', 'emoji').includes(iconType)) {
+        if (Array('bi', 'text', 'emoji', 'property').includes(iconType)) {
             icon = document.createElementNS(svgNS, 'text')
             icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
             icon.setAttribute('class', removeWhitespace(`
