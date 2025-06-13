@@ -29,6 +29,12 @@ def guess_format_from_url(url):
         return 'file'
 
     return get_first_substring_match(url, {
+        'ogc-wcs': [
+            'wcs',
+            'mapserv',
+            'geoserver',
+            '2.0.1',
+        ],
         'ogc-wms': [
             'wms',
             'mapserv',

@@ -4,6 +4,7 @@ import requests
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
+from owslib.wcs import WebCoverageService
 import psutil
 import json
 
@@ -13,6 +14,8 @@ from helpers.base.utils import get_response
 def get_layers_via_owslib(service, format):
     layers = {}
     
+    print('get_layers_via_owslib', service)
+
     service_id = service.identification
     service_keywords = service_id.keywords or []
     service_abstract = service_id.abstract or ''
@@ -43,9 +46,12 @@ def get_layers_via_owslib(service, format):
     return layers
 
 def get_layers_via_et(content, format):
+    
     layers = {}
 
     root = ET.fromstring(content)
+    print('get_layers_via_et', root)
+    
     version = root.attrib['version']
     ns = {
         "xlink": "http://www.w3.org/1999/xlink",
@@ -145,13 +151,16 @@ def get_ogc_layers(url, format):
         response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
-        print(len(content))
         if len(content) < 100000:
             service = None
+   
             if type == 'wms':
                 service = WebMapService(url)
             if type == 'wfs':
                 service = WebFeatureService(url)
+            if type == 'wcs':
+                service = WebCoverageService(url)
+   
             if service:
                 layers = get_layers_via_owslib(service, type)
         else:
