@@ -237,8 +237,6 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         params.fill = fillColor && fillOpacity > 0 ? true : false
                     }
                 } else {
-                    // const pattern = document.querySelector(`#${fillPatternId}-pattern`)
-                    // if (pattern) return `url(#${fillPatternId}-pattern)`
                     return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
@@ -548,7 +546,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             defs.appendChild(icon)
         }
 
-        console.log('handleStyleParams',iconType, iconSpecs)
         const imgSrc = await createNewImage(
             iconType === 'img' ? iconSpecs : dataUrl, {
                 opacity:fillOpacity,
@@ -558,7 +555,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             }
         )
         img.setAttribute('src', imgSrc)
-        console.log('handleStyleParams',img)
 
         defs.appendChild(img)
 
@@ -640,7 +636,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         if (defs) defs.remove()
     }
 
-    console.log('handleStyleParams',styleParams)
     return styleParams
 }
 
