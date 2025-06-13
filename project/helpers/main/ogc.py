@@ -42,8 +42,6 @@ def get_layers_via_owslib(service, format):
             geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
             geom.transform(4326)
             bbox = geom.extent
-        
-        print(bbox, srid)
 
         params.update({
             'bbox': list(bbox), 
@@ -55,6 +53,7 @@ def get_layers_via_owslib(service, format):
             'styles': json.dumps(layer.styles)
         })
         layers[i] = params
+        print(params)
 
     return layers
 
