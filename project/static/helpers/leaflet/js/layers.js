@@ -242,7 +242,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         console.log(retries)
                     }
 
-                    while (!validImg && retries < 3) getValidImg()
+                    while (!validImg && retries < 10) getValidImg()
 
                     if (validImg) {
                         params.imgId = imgId
