@@ -1013,7 +1013,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 'img': 'image url',
                 'svg': 'svg element',
                 'html': 'html element',
-                'property': 'feature property',
+                // 'property': 'feature property',
             },
             currentValue: styleParams.iconType,
             events: {
