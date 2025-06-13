@@ -22,20 +22,21 @@ def get_layers_via_owslib(service, format):
         layer = service[i]
         params = {'type': format, 'title': layer.title} 
 
-        # if format == 'wcs':
-        #     bboxes = layer.boundingboxes + [{'nativeSrs':'4326', 'bbox':[-90,-180,90,180]}]
-        #     for i in bboxes:
-        #         bbox = i.get('bbox')
-        #         if not bbox:
-        #             continue
-        #         srid = int(i.get('nativeSrs', '').split('/')[-1])
-        #         s,w,n,e = bbox
-        #         if srid == 4326:
-        #             break
-        # else:
-        #     bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
-        #     w,s,e,n,*crs = bbox
-        #     srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
+        if format == 'wcs':
+            bboxes = layer.boundingboxes + [{'nativeSrs':'4326', 'bbox':[-90,-180,90,180]}]
+            for i in bboxes:
+                bbox = i.get('bbox')
+                if not bbox:
+                    continue
+                srid = int(i.get('nativeSrs', '').split('/')[-1])
+                s,w,n,e = bbox
+                if srid == 4326:
+                    break
+            bbox = [w,s,e,n]
+        else:
+            bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
+            w,s,e,n,*crs = bbox
+            srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
         
         bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
         w,s,e,n,*crs = bbox
@@ -46,7 +47,7 @@ def get_layers_via_owslib(service, format):
             geom.transform(4326)
             bbox = geom.extent
         
-        print(bbox)
+        print(bbox, srid)
 
         params.update({
             'bbox': list(bbox), 
