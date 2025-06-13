@@ -239,7 +239,7 @@ const createNewImage = (src, {
         }
 
         img.onerror = (e) => {
-            reject(e)
+            reject()
         }
     })
 }
