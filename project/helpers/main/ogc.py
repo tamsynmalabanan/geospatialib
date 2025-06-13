@@ -72,7 +72,6 @@ def get_layers_via_et(content, format):
     ns_key = format if is_wms else 'ows'
     service_tag = 'Service' if is_wms else 'ServiceIdentification'
     
-    print(root.find('{http://www.opengis.net/wcs/2.0}:ServiceIdentification'))
     service_id = root.find(f".//{ns_key}:{service_tag}", ns)
     service_keywords = [i.text for i in (service_id.findall(f".//{ns_key}:Keyword", ns) or []) if i is not None]
     service_abstract = service_id.find(f"{ns_key}:Abstract", ns).text
@@ -161,7 +160,7 @@ def get_ogc_layers(url, format):
         response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
         response.raise_for_status()
         content = response.content
-        if type != 'wcs' and len(content) < 100000:
+        if len(content) < 100000:
             service = None
    
             if type == 'wms':
