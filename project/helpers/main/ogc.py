@@ -44,10 +44,6 @@ def get_layers_via_owslib(service, format):
             w,s,e,n,*crs = bbox
             srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
         
-        bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
-        w,s,e,n,*crs = bbox
-        srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-
         if srid != 4326:
             geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
             geom.transform(4326)
