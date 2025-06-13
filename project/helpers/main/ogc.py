@@ -15,6 +15,7 @@ def get_layers_via_owslib(service, format):
     layers = {}
     
     service_id = service.identification
+    print(dir(service_id))
     service_keywords = service_id.keywords or []
     service_abstract = service_id.abstract or ''
     
@@ -38,7 +39,6 @@ def get_layers_via_owslib(service, format):
             bbox = layer.boundingBoxWGS84 or layer.boundingBox or (-180, -90, 180, 90, 'EPSG:4326')
             w,s,e,n,*crs = bbox
             srid = int(crs[0].split(':')[-1]) if len(crs) > 0 else 4326
-        
         if srid != 4326:
             geom = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
             geom.transform(4326)
@@ -54,7 +54,6 @@ def get_layers_via_owslib(service, format):
             'styles': json.dumps(layer.styles)
         })
         layers[i] = params
-        print(i, params)
 
     return layers
 
