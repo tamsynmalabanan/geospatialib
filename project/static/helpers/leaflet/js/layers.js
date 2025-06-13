@@ -434,7 +434,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         const id = styleParams.fillPatternId = generateRandomString()
         defs = document.createElementNS(svgNS, 'defs')
         defs.id = id
-        // svgFillDefs.appendChild(defs)
 
         let icon
         const img = customCreateElement({
