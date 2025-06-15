@@ -144,6 +144,8 @@ const fetchGeoJSON = async (params, {abortBtns, controller} = {}) => {
 }
 
 const fetchCSV = async (params, {abortBtns, controller} = {}) => {
+    console.log(omnivore.csv(params.url))
+
     return await fetchTimeout(params.url, {
         abortBtns,
         controller,
