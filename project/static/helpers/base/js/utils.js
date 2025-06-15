@@ -424,7 +424,7 @@ const getFileRawData = async (file) => {
 
         reader.onerror = async (e) => {
             console.log(e)
-            reject(error)
+            reject()
         }
 
         reader.readAsText(file)

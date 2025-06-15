@@ -140,7 +140,6 @@ const handleLeafletLayerGroups = (map) => {
                 layerData.params = layer._params
                 layerData.properties = layer._properties
                 layerData.zIndex = map.getPanes()[layer.options.pane].style.zIndex
-                console.log('updateCachedLegendLayers', layerData)
             }
 
             if (handler) {
@@ -151,7 +150,6 @@ const handleLeafletLayerGroups = (map) => {
         },
         addCachedLegendLayers: async () => {
             const cached = map._ch.getCachedLegendLayers()
-            console.log(cached)
 
             localStorage.removeItem(map._ch.getCachedLegendLayersKey())
             const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
@@ -170,8 +168,6 @@ const handleLeafletLayerGroups = (map) => {
                     add: true,
                     properties
                 })
-
-                console.log('addCachedLegendLayers',layer)
             }
         },
         getLayerGroups: () => {

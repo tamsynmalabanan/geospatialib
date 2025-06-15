@@ -99,7 +99,6 @@ const handleAddLayersForm = () => {
             const format = form.elements.format.value
             for (const name in includedLayers) {
                 const params = {...includedLayers[name], url, format, name}
-                console.log(params)
                 urlToLeafletLayer({
                     group,
                     add:true,

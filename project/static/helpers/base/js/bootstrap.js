@@ -45,17 +45,3 @@ const setBootstrapIconsAsOptions = (element) => {
         element.appendChild(option)
     }
 }
-
-const fetchBootstrapIconDimensions = (name) => {
-    fetch(`https://icons.getbootstrap.com/icons/${name}/`)
-    .then(response => {
-        if (!response.ok) throw new Error('Response not ok.')
-        return response.text()
-    })
-    .then(text => {
-        console.log(text)
-    })
-    .catch(error => {
-        console.log(error)
-    })
-}
