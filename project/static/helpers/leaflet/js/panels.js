@@ -1648,7 +1648,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 })
 
                 const count = groupsSetSorted.length
-                if (count && count <= 20) {
+                if (count && count <= 100) {
                     symbology.default.rank = count + 1
                     if (count) {
                         symbology.groups = {}
