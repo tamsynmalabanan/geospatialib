@@ -24,10 +24,15 @@ def guess_format_from_url(url):
     if any([i for i in XYZ_TILES_CHARS if i in url]):
         return 'xyz'
     
-    decoded_response = get_decoded_response(url)
-    if not decoded_response:
-        print('here')
-        return 'file'
+    response = get_response(url, raise_for_status=False)
+    
+    try:
+        response.raise_for_status()
+        decoded_response = get_decoded_response(response)
+        if not decoded_response:
+            return 'file'
+    except:
+        pass
 
     return get_first_substring_match(url, {
         'ogc-wcs': [

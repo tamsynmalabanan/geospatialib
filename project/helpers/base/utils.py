@@ -120,13 +120,11 @@ def get_response_file(url):
         print(e)
     return None
     
-def get_decoded_response(url):
+def get_decoded_response(response):
     try:
-        response = get_response(url, raise_for_status=True)
         return response.content.decode('utf-8')
     except Exception as e:
         print('get_decoded_response',e)
-    return None
 
 def replace_url_placeholders(url, values={}):
     placeholders = re.findall(r'\{(.*?)\}', url)
