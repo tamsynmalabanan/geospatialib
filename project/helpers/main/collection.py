@@ -24,9 +24,8 @@ def guess_format_from_url(url):
     if any([i for i in XYZ_TILES_CHARS if i in url]):
         return 'xyz'
     
-    response = get_response(url, raise_for_status=False)
-    
     try:
+        response = get_response(url, raise_for_status=False)
         response.raise_for_status()
         decoded_response = get_decoded_response(response)
         if not decoded_response:

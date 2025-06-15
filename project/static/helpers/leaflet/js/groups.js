@@ -156,7 +156,8 @@ const handleLeafletLayerGroups = (map) => {
             for (i of cachedLayers) {
                 const {dbIndexedKey, params, properties, zIndex} = i
 
-                for (i of Array(properties.symbology.default, ...Object.values(properties.symbology.groups ?? {}))) {
+                for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
+                    if (!i) continue
                     const styleParams = i.styleParams
                     if (styleParams.fillPattern !== 'icon') continue
                     await handleStyleParams(styleParams)
