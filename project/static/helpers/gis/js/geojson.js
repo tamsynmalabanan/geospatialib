@@ -586,7 +586,7 @@ const validateGeoJSONFeature = (feature, filters) => {
 }
 
 const csvToGeoJSON = (csv, params) => {
-    console.log(csv)
+    console.log(omnivore.csv(csv))
 
     const xField = params.xField?.trim()
     const yField = params.yField?.trim()
