@@ -586,6 +586,8 @@ const validateGeoJSONFeature = (feature, filters) => {
 }
 
 const csvToGeoJSON = (csv, params) => {
+    console.log(csv)
+
     const xField = params.xField?.trim()
     const yField = params.yField?.trim()
     const srid = parseInt(params.srid ?? 4326) 
