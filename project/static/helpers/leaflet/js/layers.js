@@ -750,12 +750,8 @@ const getLeafletLayerContextMenu = async (e, layer, {
         isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
-                checkboxArray?.forEach(c => {
-                    if (c.checked) c.click()
-                })
-
+                checkboxArray?.forEach(c => { if (c.checked) c.click() })
                 layerArray?.forEach(l => removeLayer(l, isLegendGroup))
-                
                 addLayer(layer)
             }
         },
