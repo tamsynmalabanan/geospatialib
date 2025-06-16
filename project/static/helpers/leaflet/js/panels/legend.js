@@ -6,8 +6,6 @@ const createLeafletLegendItem = (layer) => {
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
     
-    map._ch.updateCachedLegendLayers({layer})
-
     const container = customCreateElement({
         tag: 'div',
         id: `${layers.id}-${layer._leaflet_id}`,
@@ -409,7 +407,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isHidden, isInvisible})
             layer.options.renderer?._container?.classList.add('d-none')
-            if (isHidden) map._ch.updateCachedLegendLayers({handler: (i) => i[layer._leaflet_id].isHidden = true})
+            map._ch.updateCachedLegendLayers({layer})
         } else {
             if (layerLegend) {
                 layerLegend.remove()
@@ -429,6 +427,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
         const layer = event.layer
         if (!map._ch.hasLegendLayer(layer)) return
         
+        const isHidden = map._ch.hasHiddenLegendLayer(layer)
+        const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
         const isGeoJSON = layer instanceof L.GeoJSON
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
@@ -456,6 +456,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 })
             }
         }
+
+        map._ch.updateCachedLegendLayers({layer})
         
         if (!isGeoJSON) {
             const details = container.querySelector(`#${container.id}-details`)

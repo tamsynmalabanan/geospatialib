@@ -140,6 +140,7 @@ const handleLeafletLayerGroups = (map) => {
                 layerData.params = layer._params
                 layerData.properties = layer._properties
                 layerData.zIndex = map.getPanes()[layer.options.pane].style.zIndex
+                layerData.isHidden = map._ch.hasHiddenLegendLayer(layer) ? true : false
             }
 
             if (handler) {
@@ -154,7 +155,8 @@ const handleLeafletLayerGroups = (map) => {
             localStorage.removeItem(map._ch.getCachedLegendLayersKey())
             const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
             for (i of cachedLayers) {
-                const {dbIndexedKey, params, properties, zIndex} = i
+                const {dbIndexedKey, params, properties, zIndex, isHidden} = i
+                const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
                 for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
                     if (!i) continue
@@ -165,10 +167,12 @@ const handleLeafletLayerGroups = (map) => {
 
                 const layer = await createLeafletLayer(params, {
                     dbIndexedKey,
-                    group: map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')],
+                    group,
                     add: true,
                     properties
                 })
+
+                if (isHidden) group._ch.addHiddenLayer(layer)
             }
         },
         getLayerGroups: () => {
