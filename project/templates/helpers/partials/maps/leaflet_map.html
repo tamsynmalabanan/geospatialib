@@ -14,7 +14,7 @@
     data-map-geocoder-fields="{{map_geocoder_fields}}"
     data-map-bbox-fields="{{map_bbox_fields}}"
 >
-    <div class='position-absolute top-0 start-0 z-1 d-flex w-100 justify-content-center px-5 mt-10'>
+    <div class='position-absolute top-0 start-0 z-0 d-flex w-100 justify-content-center px-5 mt-10'>
         {% include "helpers/partials/messages/container.html" with message_tag=map_id dismissible=1 fadeout=1 hx_swap_oob="true" %}
     </div>
     {% leaflet_map map_id %}
