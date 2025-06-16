@@ -718,6 +718,8 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const mapContainer = map.getContainer()
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
+    const isHidden = map._ch.hasHiddenLegendLayer(layer)
+
     
     const checkbox = layer._checkbox
     const disabledCheckbox = checkbox?.disabled
@@ -739,7 +741,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
-        zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer ? null : {
+        zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer || isHidden ? null : {
             innerText: `Zoom to visible`,
             btnCallback: async () => {
                 if (layer.getLayers().length) zoomLeafletMapToBounds(map, layer.getBounds())
