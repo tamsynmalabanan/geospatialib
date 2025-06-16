@@ -459,27 +459,26 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
         if ((isHidden || isInvisible)) {
             map.removeLayer(layer)
-            return
-        }
-
-        map._ch.updateCachedLegendLayers({layer})
-
-        if (!isGeoJSON) {
-            const details = container.querySelector(`#${container.id}-details`)
-            if (turf.booleanIntersects(
-                (map._previousBbox ?? turf.bboxPolygon(getLeafletMapBbox(map))), 
-                L.rectangle(layer.getBounds()).toGeoJSON()
-            )) {
-                if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
-                    details.innerHTML = ''
-                    if (layer._params.legend) {
-                        const img = new Image()
-                        img.src = layer._params.legend
-                        details.appendChild(img)
+        } else {
+            map._ch.updateCachedLegendLayers({layer})
+    
+            if (!isGeoJSON) {
+                const details = container.querySelector(`#${container.id}-details`)
+                if (turf.booleanIntersects(
+                    (map._previousBbox ?? turf.bboxPolygon(getLeafletMapBbox(map))), 
+                    L.rectangle(layer.getBounds()).toGeoJSON()
+                )) {
+                    if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
+                        details.innerHTML = ''
+                        if (layer._params.legend) {
+                            const img = new Image()
+                            img.src = layer._params.legend
+                            details.appendChild(img)
+                        }
                     }
+                } else {
+                    clearLegend(container)
                 }
-            } else {
-                clearLegend(container)
             }
         }
 
