@@ -6,10 +6,11 @@ const createLeafletLegendItem = (layer) => {
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
     
+    console.log(layer?._properties?.info?.showLegend)
     const container = customCreateElement({
         tag: 'div',
         id: `${layers.id}-${layer._leaflet_id}`,
-        className: `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend !== false ? '' : 'd-none'}`,
+        className: `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend === false ? 'd-none' : ''}`,
         attrs: {
             'data-layer-legend': "true",
             'data-layer-pane': paneName,
@@ -17,7 +18,6 @@ const createLeafletLegendItem = (layer) => {
         }
     })
     layers.insertBefore(container, layers.firstChild)
-    console.log(layer?._properties?.info?.showLegend)
     
     const legendTitle = customCreateElement({
         tag: 'div',
