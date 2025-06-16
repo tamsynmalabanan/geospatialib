@@ -23,9 +23,7 @@ const handleLeafletLayerGroups = (map) => {
                 }
             },
             getHiddenLayer: (id) => {
-                const layer = group._ch.getHiddenLayers().find(l => l._leaflet_id === parseInt(id))
-                console.log(id, group._ch.getHiddenLayers(), layer)
-                return layer
+                return group._ch.getHiddenLayers().find(l => l._leaflet_id === parseInt(id))
             },
             hasHiddenLayer: (layer) => {
                 return group._ch.getHiddenLayers().includes(layer)
@@ -51,7 +49,7 @@ const handleLeafletLayerGroups = (map) => {
                 return group._invisibileLayers
             },
             getInvisibleLayer: (id) => {
-                return group._ch.getInvisibleLayers().find(l => l._leaflet_id === id)
+                return group._ch.getInvisibleLayers().find(l => l._leaflet_id === parseInt(id))
             },
             setInvisibleLayers: (invisibleLayers=[]) => {
                 group._invisibileLayers = invisibleLayers
