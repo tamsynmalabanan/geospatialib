@@ -37,12 +37,12 @@
                         @touchstart="resizeSidebar('#{{offcanvas_id}}')"
                     ></div>
                     <div class="col vh-100 p-0">
-                        <div class="position-fixed bottom-0 z-0 m-10">
+                        <div class="position-fixed bottom-0 z-1 m-10">
                             {% block sidebar_toggle %}
                                 {% include "helpers/partials/sidebar/toggle.html" with icon='bi-layout-sidebar-inset' title='Toggle sidebar' %}
                             {% endblock sidebar_toggle %}
                         </div>
-                        {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' map_panels="true" map_class="z-n1"  map_controls_included="all" %}
+                        {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' map_panels="true" map_class="z-0"  map_controls_included="all" %}
                     </div>
                 </div>
             </div>
