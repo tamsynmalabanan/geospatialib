@@ -1,3 +1,174 @@
+const createLeafletLegendItem = (layer) => {
+    const map = layer._group._map
+    const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
+
+    const paneName = layer.options.pane
+    const pane = map.getPane(paneName)
+    pane.style.zIndex = layers.children.length + 200
+    
+    map._ch.updateCachedLegendLayers({layer})
+
+    const container = customCreateElement({
+        tag: 'div',
+        id: `${layers.id}-${layer._leaflet_id}`,
+        className: `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend !== false ? '' : 'd-none'}`,
+        attrs: {
+            'data-layer-legend': "true",
+            'data-layer-pane': paneName,
+            'data-layer-id': layer._leaflet_id,
+        }
+    })
+    layers.insertBefore(container, layers.firstChild)
+    
+    const legendTitle = customCreateElement({
+        tag: 'div',
+        id: `${container.id}-title`,
+        className: 'd-flex flex-nowrap gap-2',
+        parent: container,
+        innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap'}).outerHTML
+    })
+    
+    const moveToggle = createIcon({
+        peNone: false,
+        className: 'bi bi-grip-vertical'
+    })
+    legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
+    
+    Array('mousedown', 'touchstart').forEach(t1 => {
+        moveToggle.addEventListener(t1, (e1) => {
+            const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
+            container.classList.add('highlight', 'z-3')
+            document.body.classList.add('user-select-none')
+
+            const mouseMoveHandler = (e2) => {
+                const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
+                container.style.top =`${newY - startY}px`;
+            
+                const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
+                    if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
+                })
+                
+                Array.from(layers.children).forEach(c => c.classList.toggle(
+                    'highlight', Array(referenceLegend, container).includes(c)
+                )) 
+            }   
+            
+            const mouseUpHandler = (e3) => {
+                const offset = parseInt(container.style.top)
+                if (Math.abs(offset) >= 10) {
+                    const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
+                        if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
+                    }) 
+
+                    if (offset < 0) {
+                        if (referenceLegend) {
+                            layers.insertBefore(container, referenceLegend)
+                        } else {
+                            layers.insertBefore(container, layers.firstChild)
+                        }
+                    } else {
+                        if (referenceLegend && referenceLegend.nextSibling) {
+                            layers.insertBefore(container, referenceLegend.nextSibling)
+                        } else {
+                            layers.appendChild(container)
+                        }
+                    }
+
+                    const zIdnexUpdate = {}
+                    const layerLegends = Array.from(layers.children).reverse()
+                    for (let i=0; i<layerLegends.length; i++) {
+                        const child = layerLegends[i]
+                        child.style.top = '0px'
+                        
+                        const paneName = child.dataset.layerPane
+                        const pane = map.getPane(paneName)
+                        pane.style.zIndex = i + 200
+                        
+                        zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
+                    }
+
+                    map._ch.updateCachedLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
+                }
+
+                container.style.top = '0px'
+                container.classList.remove('z-3')
+                Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
+                document.body.classList.remove('user-select-none')
+            }                
+
+            Array('mousemove', 'touchmove').forEach(t2 => {
+                document.addEventListener(t2, mouseMoveHandler)
+            })                
+
+            Array('mouseup', 'touchend').forEach(t3 => {
+                document.addEventListener(t3, (e3) => {
+                    mouseUpHandler(e3)
+                    
+                    Array('mousemove', 'touchmove').forEach(t2 => {
+                        document.removeEventListener(t2, mouseMoveHandler)
+                    })
+                    
+                    Array('mouseup', 'touchend').forEach(t3 => {
+                        document.removeEventListener(t3, mouseUpHandler)
+                    })
+                })
+            })                
+        })
+    })
+
+    const toggleContainer = customCreateElement({
+        tag: 'div',
+        className: 'ms-auto d-flex flex-nowrap gap-2',
+        parent: legendTitle
+    })
+    
+    const legendCollapse = customCreateElement({
+        tag: 'div',
+        id: `${container.id}-collapse`,
+        className: 'collapse show ps-3',
+        parent: container
+    })
+
+    const legendDetails = customCreateElement({
+        tag: 'div',
+        id: `${container.id}-details`,
+        className: 'd-flex',
+        parent: legendCollapse
+    }) 
+    
+    const legendAttribution = customCreateElement({
+        tag: 'div',
+        id: `${container.id}-attribution`,
+        className: `d-flex ${layer?._properties?.info?.showAttribution != false ? '' : 'd-none'}`,
+        innerHTML: layer._params.attribution ?? '',
+        parent: legendCollapse
+    })
+    Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
+
+    const collapseToggle = createIcon({
+        parent: toggleContainer,
+        peNone: false,
+        className: 'dropdown-toggle ms-5',
+        attrs: {
+            'data-bs-toggle': 'collapse',
+            'data-bs-target': `#${legendCollapse.id}`,
+            'aria-controls': legendCollapse.id,
+            'aria-expanded': 'true',
+        }
+    })
+
+    const menuToggle = createIcon({
+        parent: toggleContainer,
+        peNone: false,
+        className: 'bi bi-three-dots',
+        events: {
+            'click': (e) => getLeafletLayerContextMenu(e, layer)
+        }
+    })
+
+    return container
+}
+
 const handleLeafletLegendPanel = async (map, parent) => {
     const {
         toolbar, 
@@ -238,6 +409,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isHidden, isInvisible})
             layer.options.renderer?._container?.classList.add('d-none')
+            if (isHidden) map._ch.updateCachedLegendLayers({handler: (i) => i[layer._leaflet_id].isHidden = isHidden})
         } else {
             if (layerLegend) {
                 layerLegend.remove()
@@ -247,9 +419,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             const styleLayerId = parseInt(getStyleBody()?.dataset.layerId ?? -1)
             if (styleLayerId === layer._leaflet_id) clearStyleBody()
 
-            if (layer instanceof L.GeoJSON) {
-                deleteLeafletLayerFillPatterns(layer)
-            }
+            if (layer instanceof L.GeoJSON) deleteLeafletLayerFillPatterns(layer)
 
             map._ch.updateCachedLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
         }
@@ -263,153 +433,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
-            const paneName = layer.options.pane
-            const pane = map.getPane(paneName)
-            pane.style.zIndex = layers.children.length + 200
-            
-            map._ch.updateCachedLegendLayers({layer})
+            container = createLeafletLegendItem(layer)
+            const legendDetails = container.querySelector(`#${container.id}-details`)
 
-            container = document.createElement('div')
-            container.id = `${layers.id}-${layer._leaflet_id}`
-            container.setAttribute('data-layer-legend', "true")
-            container.setAttribute('data-layer-pane', paneName)
-            container.setAttribute('data-layer-id', layer._leaflet_id)
-            container.className = `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend !== false ? '' : 'd-none'}`
-            layers.insertBefore(container, layers.firstChild)
-            
-            const legendTitle = document.createElement('div')
-            legendTitle.id = `${container.id}-title`
-            legendTitle.className = 'd-flex flex-nowrap gap-2'
-            legendTitle.appendChild(createSpan(layer._params.title, {className:'text-break text-wrap'}))
-            container.appendChild(legendTitle)
-            
-            const moveToggle = createIcon({
-                peNone: false,
-                className: 'bi bi-grip-vertical'
-            })
-            legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
-            Array('mousedown', 'touchstart').forEach(t1 => {
-                moveToggle.addEventListener(t1, (e1) => {
-                    const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
-                    container.classList.add('highlight', 'z-3')
-                    document.body.classList.add('user-select-none')
-
-                    const mouseMoveHandler = (e2) => {
-                        const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
-                        container.style.top =`${newY - startY}px`;
-                    
-                        const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
-                            if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                        })
-                        
-                        Array.from(layers.children).forEach(c => c.classList.toggle(
-                            'highlight', 
-                            Array(referenceLegend, container).includes(c)
-                        )) 
-                    }   
-                    
-                    const mouseUpHandler = (e3) => {
-                        const offset = parseInt(container.style.top)
-                        if (Math.abs(offset) >= 10) {
-                            const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
-                                if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                            }) 
-    
-                            if (offset < 0) {
-                                if (referenceLegend) {
-                                    layers.insertBefore(container, referenceLegend)
-                                } else {
-                                    layers.insertBefore(container, layers.firstChild)
-                                }
-                            } else {
-                                if (referenceLegend && referenceLegend.nextSibling) {
-                                    layers.insertBefore(container, referenceLegend.nextSibling)
-                                } else {
-                                    layers.appendChild(container)
-                                }
-                            }
-    
-                            const zIdnexUpdate = {}
-                            const layerLegends = Array.from(layers.children).reverse()
-                            for (let i=0; i<layerLegends.length; i++) {
-                                const child = layerLegends[i]
-                                child.style.top = '0px'
-                                
-                                const paneName = child.dataset.layerPane
-                                const pane = map.getPane(paneName)
-                                pane.style.zIndex = i + 200
-                                
-                                zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
-                            }
-
-                            map._ch.updateCachedLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
-                        }
-
-                        container.style.top = '0px'
-                        container.classList.remove('z-3')
-                        Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
-                        document.body.classList.remove('user-select-none')
-                    }                
-
-                    Array('mousemove', 'touchmove').forEach(t2 => {
-                        document.addEventListener(t2, mouseMoveHandler)
-                    })                
-
-                    Array('mouseup', 'touchend').forEach(t3 => {
-                        document.addEventListener(t3, (e3) => {
-                            mouseUpHandler(e3)
-                            
-                            Array('mousemove', 'touchmove').forEach(t2 => {
-                                document.removeEventListener(t2, mouseMoveHandler)
-                            })
-                            
-                            Array('mouseup', 'touchend').forEach(t3 => {
-                                document.removeEventListener(t3, mouseUpHandler)
-                            })
-                        })
-                    })                
-                })
-            })
-
-            const toggleContainer = document.createElement('div')
-            toggleContainer.className = 'ms-auto d-flex flex-nowrap gap-2'
-            legendTitle.appendChild(toggleContainer)
-            
-            const legendCollapse = document.createElement('div')
-            legendCollapse.id = `${container.id}-collapse`
-            legendCollapse.className = 'collapse show ps-3'
-            container.appendChild(legendCollapse)
-
-            const legendDetails = document.createElement('div')
-            legendDetails.id = `${container.id}-details`
-            legendDetails.className = 'd-flex'
-            legendCollapse.appendChild(legendDetails)
-            
-            const legendAttribution = document.createElement('div')
-            legendAttribution.id = `${container.id}-attribution`
-            legendAttribution.className = `d-flex ${layer?._properties?.info?.showAttribution != false ? '' : 'd-none'}`
-            legendAttribution.innerHTML = layer._params.attribution ?? ''
-            legendCollapse.appendChild(legendAttribution)
-
-            Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
-    
-            const collapseToggle = createIcon({
-                parent: toggleContainer,
-                peNone: false,
-                className: 'dropdown-toggle ms-5'
-            })
-            collapseToggle.setAttribute('data-bs-toggle', 'collapse')
-            collapseToggle.setAttribute('data-bs-target', `#${legendCollapse.id}`)
-            collapseToggle.setAttribute('aria-controls', legendCollapse.id)
-            collapseToggle.setAttribute('aria-expanded', 'true')
-
-            const menuToggle = createIcon({
-                parent: toggleContainer,
-                peNone: false,
-                className: 'bi bi-three-dots'
-            })
-            menuToggle.addEventListener('click', (e) => getLeafletLayerContextMenu(e, layer))
-            
             if (isGeoJSON) {
                 layer.on('dataupdating', () => {
                     legendDetails.innerHTML = ''
@@ -421,10 +447,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
-                    createGeoJSONLayerLegend(
-                        layer, 
-                        legendDetails
-                    )
+                    createGeoJSONLayerLegend(layer, legendDetails)
                 })
                 
                 layer.on('dataerror', () => {
@@ -433,8 +456,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 })
             }
         }
-
-        if (!isGeoJSON && layer._params.legend) {
+        
+        if (!isGeoJSON) {
             const details = container.querySelector(`#${container.id}-details`)
             if (turf.booleanIntersects(
                 (map._previousBbox ?? turf.bboxPolygon(getLeafletMapBbox(map))), 
@@ -442,9 +465,11 @@ const handleLeafletLegendPanel = async (map, parent) => {
             )) {
                 if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
                     details.innerHTML = ''
-                    const img = new Image()
-                    img.src = layer._params.legend
-                    details.appendChild(img)
+                    if (layer._params.legend) {
+                        const img = new Image()
+                        img.src = layer._params.legend
+                        details.appendChild(img)
+                    }
                 }
             } else {
                 clearLegend(container)
