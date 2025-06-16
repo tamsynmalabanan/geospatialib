@@ -472,6 +472,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
 
         if ((isHidden || isInvisible)) {
+            console.log('here')
             map.removeLayer(layer)
         } else {
             map._ch.updateCachedLegendLayers({layer})
