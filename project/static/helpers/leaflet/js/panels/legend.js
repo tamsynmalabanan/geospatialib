@@ -409,7 +409,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isHidden, isInvisible})
             layer.options.renderer?._container?.classList.add('d-none')
-            if (isHidden) map._ch.updateCachedLegendLayers({handler: (i) => i[layer._leaflet_id].isHidden = isHidden})
+            if (isHidden) map._ch.updateCachedLegendLayers({handler: (i) => i[layer._leaflet_id].isHidden = true})
         } else {
             if (layerLegend) {
                 layerLegend.remove()
