@@ -4,7 +4,7 @@ const createLeafletLegendItem = (layer) => {
 
     const paneName = layer.options.pane
     const pane = map.getPane(paneName)
-    pane.style.zIndex = (layers.children ?? []).length + 200
+    pane.style.zIndex = (layers?.children ?? []).length + 200
     
     map._ch.updateCachedLegendLayers({layer})
 
@@ -433,6 +433,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
+            console.log(layers)
             container = createLeafletLegendItem(layer)
             const legendDetails = container.querySelector(`#${container.id}-details`)
 
