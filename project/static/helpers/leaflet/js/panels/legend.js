@@ -6,7 +6,6 @@ const createLeafletLegendItem = (layer) => {
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
     
-    console.log(layer?._properties?.info?.showLegend)
     const container = customCreateElement({
         tag: 'div',
         id: `${layers.id}-${layer._leaflet_id}`,
@@ -220,7 +219,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 layers.classList.toggle('d-none', !show)
                 elements.forEach(el =>  {
                     el.classList.toggle('d-none', !show)
-                    map._ch.getLegendLayer(el.dataset.layerId)._properties.info.showLegend = show
+                    const layer = map._ch.getLegendLayer(el.dataset.layerId)
+                    layer._properties.info.showLegend = show
+                    map._ch.updateCachedLegendLayers({layer})
                 })
 
                 const checkbox = getStyleBody().querySelector('[name="showLegend"]')
