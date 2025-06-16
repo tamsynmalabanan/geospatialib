@@ -146,6 +146,7 @@ const handleLeafletLayerGroups = (map) => {
                 handler(cached)
             }
 
+            console.log(cached)
             localStorage.setItem(map._ch.getCachedLegendLayersKey(), JSON.stringify(cached))
         },
         addCachedLegendLayers: async () => {
