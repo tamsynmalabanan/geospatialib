@@ -93,7 +93,7 @@ const handleLeafletLayerGroups = (map) => {
                 const layer = group.getLayer(id) 
                 ?? group._ch.getHiddenLayer(id) 
                 ?? group._ch.getInvisibleLayer(id) 
-                console.log(layer)
+                console.log(id, layer)
                 return layer
             },
                     
