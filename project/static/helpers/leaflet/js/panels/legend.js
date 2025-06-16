@@ -1,7 +1,6 @@
 const createLeafletLegendItem = (layer) => {
     const map = layer._group._map
     const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
-    console.log(layers)
 
     const paneName = layer.options.pane
     const pane = map.getPane(paneName)
@@ -489,6 +488,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
     })
 
-    await map._ch.addCachedLegendLayers()
-    layers.classList.toggle('d-none', Array.from(layers.children).every(el => el.classList.contains('d-none')))   
+    map.on('initComplete', async () => {
+        await map._ch.addCachedLegendLayers()
+        layers.classList.toggle('d-none', Array.from(layers.children).every(el => el.classList.contains('d-none')))
+    })
 }
