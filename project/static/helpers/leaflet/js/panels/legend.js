@@ -1,7 +1,7 @@
 const createLeafletLegendItem = (layer) => {
     const map = layer._group._map
     const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
-    console.log(layers)
+
     const paneName = layer.options.pane
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
