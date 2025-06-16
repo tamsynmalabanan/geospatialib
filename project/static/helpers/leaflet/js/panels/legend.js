@@ -423,6 +423,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
         } else {
             if (layerLegend) {
                 layerLegend.remove()
+
+                layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
                 if (layers.innerHTML === '') clearLayers(tools)
             }
             
@@ -494,8 +496,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
             }
         }
 
+        layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
         if (layers.innerHTML !== '') {
-            layers.classList.remove('d-none')
             disableStyleLayerSelect(false)
             for (const tool in tools) {
                 const data = tools[tool]
@@ -508,6 +510,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
     map.on('initComplete', async () => {
         await map._ch.addCachedLegendLayers()
-        layers.classList.toggle('d-none', Array.from(layers.children).every(el => el.classList.contains('d-none')))
+        layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
     })
 }
