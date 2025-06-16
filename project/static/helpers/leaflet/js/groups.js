@@ -33,7 +33,10 @@ const handleLeafletLayerGroups = (map) => {
                 
                 const hiddenLayers = group._ch.getHiddenLayers().filter(l => {
                     const matched = l === layer
-                    if (matched) match = l
+                    if (matched) {
+                        console.log('matched')
+                        match = l
+                    }
                     return !matched
                 })
                 group._ch.setHiddenLayers(hiddenLayers)
