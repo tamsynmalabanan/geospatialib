@@ -168,11 +168,14 @@ const handleLeafletLayerGroups = (map) => {
                 const layer = await createLeafletLayer(params, {
                     dbIndexedKey,
                     group,
-                    add: true,
+                    add: false,
                     properties
                 })
 
-                if (isHidden) group._ch.addHiddenLayer(layer)
+                if (layer) {
+                    if (isHidden) group._ch.addHiddenLayer(layer)
+                    group.addLayer(layer)
+                }
             }
         },
         getLayerGroups: () => {

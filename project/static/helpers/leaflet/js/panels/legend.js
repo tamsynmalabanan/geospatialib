@@ -406,7 +406,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isHidden, isInvisible})
-            layer.options.renderer?._container?.classList.add('d-none')
+            if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
             map._ch.updateCachedLegendLayers({layer})
         } else {
             if (layerLegend) {
@@ -457,8 +457,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
             }
         }
 
+        if ((isHidden || isInvisible)) {
+            map.removeLayer(layer)
+            return
+        }
+
         map._ch.updateCachedLegendLayers({layer})
-        
+
         if (!isGeoJSON) {
             const details = container.querySelector(`#${container.id}-details`)
             if (turf.booleanIntersects(
