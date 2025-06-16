@@ -751,6 +751,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Isolate ${typeLabel}`,
             btnCallback: () => {
                 checkboxArray?.forEach(c => { if (c.checked) c.click() })
+                console.log(isLegendGroup)
                 layerArray?.forEach(l => removeLayer(l, isLegendGroup))
                 addLayer(layer)
             }
