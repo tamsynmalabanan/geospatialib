@@ -4,7 +4,7 @@ const createLeafletLegendItem = (layer) => {
 
     const paneName = layer.options.pane
     const pane = map.getPane(paneName)
-    pane.style.zIndex = layers.children.length + 200
+    pane.style.zIndex = (layers.children ?? []).length + 200
     
     map._ch.updateCachedLegendLayers({layer})
 
