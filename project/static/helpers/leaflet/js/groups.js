@@ -90,10 +90,8 @@ const handleLeafletLayerGroups = (map) => {
                 ]
             },
             findLayer: (id) => {
-                console.log(id, group._hiddenLayers)
-                const layer = group.getLayer(id) 
-                ?? group._ch.getHiddenLayer(id) 
-                ?? group._ch.getInvisibleLayer(id) 
+                const layer = group.getLayer(id) ?? group._ch.getHiddenLayer(id) ?? group._ch.getInvisibleLayer(id) 
+                console.log(id, group._hiddenLayers, layer)
                 return layer
             },
                     
