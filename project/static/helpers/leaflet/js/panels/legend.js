@@ -216,11 +216,11 @@ const handleLeafletLegendPanel = async (map, parent) => {
             btnClickHandler: () => {
                 const elements = Array.from(layers.children)
                 const show = elements.some(el => el.classList.contains('d-none'))
+                layers.classList.toggle('d-none', !show)
                 elements.forEach(el =>  {
                     el.classList.toggle('d-none', !show)
-                    console.log(map._ch.getLegendLayer(el.dataset.layerId))
+                    map._ch.getLegendLayer(el.dataset.layerId)._properties.info.showLegend = show
                 })
-                layers.classList.toggle('d-none', !show)
 
                 const checkbox = getStyleBody().querySelector('[name="showLegend"]')
                 if (checkbox) checkbox.checked = show
