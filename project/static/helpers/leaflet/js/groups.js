@@ -23,7 +23,9 @@ const handleLeafletLayerGroups = (map) => {
                 }
             },
             getHiddenLayer: (id) => {
-                return group._ch.getHiddenLayers().find(l => l._leaflet_id === id)
+                const layer = group._ch.getHiddenLayers().find(l => l._leaflet_id === id)
+                console.log(id, group._ch.getHiddenLayers(), layer)
+                return layer
             },
             hasHiddenLayer: (layer) => {
                 return group._ch.getHiddenLayers().includes(layer)
