@@ -218,7 +218,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 const show = elements.some(el => el.classList.contains('d-none'))
                 elements.forEach(el =>  {
                     el.classList.toggle('d-none', !show)
-                    console.log(el)
+                    console.log(map._ch.getLegendLayer(el.dataset.layerId))
                 })
                 layers.classList.toggle('d-none', !show)
 
