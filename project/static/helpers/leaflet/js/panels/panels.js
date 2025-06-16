@@ -163,7 +163,7 @@ const handleLeafletMapPanels = (map) => {
         
         const [toggle, body] = createMapPanels(map.getContainer())
         panel.appendChild(toggle)
-        document.appendChild(body)
+        document.body.appendChild(body)
         
         handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query .accordion-body`))
         handleLeafletLegendPanel(map, body.querySelector(`#${body.id}-accordion-legend .accordion-body`))
