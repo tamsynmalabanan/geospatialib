@@ -17,6 +17,7 @@ const createLeafletLegendItem = (layer) => {
         }
     })
     layers.insertBefore(container, layers.firstChild)
+    console.log(layer?._properties?.info?.showLegend)
     
     const legendTitle = customCreateElement({
         tag: 'div',
