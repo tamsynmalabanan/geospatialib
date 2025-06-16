@@ -219,6 +219,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 layers.classList.toggle('d-none', !show)
                 elements.forEach(el =>  {
                     el.classList.toggle('d-none', !show)
+
                     const layer = map._ch.getLegendLayer(el.dataset.layerId)
                     layer._properties.info.showLegend = show
                     map._ch.updateCachedLegendLayers({layer})
@@ -233,11 +234,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle attributions',
             disabled: true,
             btnClickHandler: () => {
-                const elements = Array.from(layers.children).map(container => {
-                    return container.querySelector(`#${container.id}-attribution`)
+                const elements = Array.from(layers.children)
+                const show = elements.some(el => el.querySelector(`#${el.id}-attribution`).classList.contains('d-none'))
+                elements.forEach(el =>  {
+                    el.querySelector(`#${el.id}-attribution`).classList.toggle('d-none', !show)
+
+                    const layer = map._ch.getLegendLayer(el.dataset.layerId)
+                    layer._properties.info.showAttribution = show
+                    map._ch.updateCachedLegendLayers({layer})
                 })
-                const show = elements.some(el => el.classList.contains('d-none'))
-                elements.forEach(el =>  el.classList.toggle('d-none', !show))
+
                 const checkbox = getStyleBody().querySelector('[name="showAttr"]')
                 if (checkbox) checkbox.checked = show
             },
