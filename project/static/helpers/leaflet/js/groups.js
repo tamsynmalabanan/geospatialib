@@ -42,7 +42,6 @@ const handleLeafletLayerGroups = (map) => {
                     return !matched
                 })
                 group._ch.setHiddenLayers(hiddenLayers)
-                console.log(hiddenLayers)
 
                 if (addLayer) {
                     group.addLayer(layer)
