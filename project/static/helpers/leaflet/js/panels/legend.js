@@ -22,7 +22,11 @@ const createLeafletLegendItem = (layer) => {
             'data-bs-target': `#${legendCollapseId}`,
             'aria-controls': legendCollapseId,
             'aria-expanded': 'true',
+        },
+        events: {
+            'contextmenu': (e) => getLeafletLayerContextMenu(e, layer)
         }
+
     })
     layers.insertBefore(container, layers.firstChild)
     
@@ -163,14 +167,14 @@ const createLeafletLegendItem = (layer) => {
     //     }
     // })
 
-    const menuToggle = createIcon({
-        parent: toggleContainer,
-        peNone: false,
-        className: 'bi bi-three-dots onblur-fade',
-        events: {
-            'click': (e) => getLeafletLayerContextMenu(e, layer)
-        }
-    })
+    // const menuToggle = createIcon({
+    //     parent: toggleContainer,
+    //     peNone: false,
+    //     className: 'bi bi-three-dots onblur-fade',
+    //     events: {
+    //         'click': (e) => getLeafletLayerContextMenu(e, layer)
+    //     }
+    // })
 
     return container
 }
