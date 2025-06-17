@@ -1868,455 +1868,457 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     className: 'gap-2 flex-wrap'
                 },
-                'Symbology': {
-                    fields: {   
-                        method: {
-                            handler: createFormFloating,
-                            containerClass: 'w-25',
-                            fieldAttrs: {
-                                name:'method',
-                            },
-                            fieldTag:'select',
-                            labelText: 'Method',
-                            options:{
-                                'single':'Single',
-                                'categorized':'Categorized',
-                                'graduated':'Graduated',
-                                // 'rule':'Rule-based',
-                            },
-                            currentValue: symbology.method,
-                            fieldClass:'form-select-sm',
-                            events: {
-                                change: (e) => {
-                                    const field = e.target
-                                    const value = field.value
-                                    symbology.method = value
-                                    
-                                    const tagifyObj = Tagify(form.elements.groupBy)
-                                    const tagifyElement = tagifyObj.DOM.scope
-                                    if (value === 'single') {
-                                        tagifyElement.setAttribute('disabled', true)
-                                    } else {
-                                        const maxTags = value === 'categorized' ? 5 : 1
-                                        tagifyObj.settings.maxTags = maxTags
-
-                                        if (tagifyObj.value.length > maxTags) tagifyObj.removeAllTags()
-
-                                        tagifyElement.removeAttribute('disabled')
-                                    }
-
-                                    body.querySelector(`#${body.id}-graduatedParams`).classList.toggle('d-none', value !== 'graduated')
-                                    body.querySelector(`#${body.id}-categoryParams`).classList.toggle('d-none', value !== 'categorized')
-
-                                    if (value === 'single' || symbology.groupBy?.length) updateSymbologyGroups()
-                                }
-                            }
-                        },
-                        groupBy: {
-                            handler: createTagifyField,
-                            inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
-                            inputTag: 'textarea',
-                            enabled: 0,
-                            disabled: symbology.method === 'single',
-                            dropdownClass:  `my-1 border-0`,
-                            userInput: true,
-                            maxTags: symbology.method === 'categorized' ? 5 : 1,
-                            scopeStyle: {
-                                height: '58px',
-                            },
-                            name:  `groupBy`,
-                            placeholder: 'Select properties',
-                            currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
-                            events: {
-                                focus: async (e) => {
-                                    const geojson = (await getLeafletGeoJSONData(layer, {
-                                        controller,
-                                        filter:false,
-                                        queryGeom:false,
-                                        group:false,
-                                        sort:false,
-                                        simplify:false
-                                    })) || layer.toGeoJSON()
-                                    if (!geojson) return
-                                    
-                                    const tagify = Tagify(form.elements['groupBy'])
-                                    const options = symbology.method === 'categorized' ? ['[geometry_type]'] : []
-                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
-                                    })
-                                    const optionsSet = options.length ? new Set(options) : []
-                                    const sortedOptions = [...optionsSet].filter(i => {
-                                        return !(symbology.groupBy || []).includes(i)
-                                    }).sort()
-                                    tagify.settings.whitelist = sortedOptions
+                ...(layer instanceof L.GeoJSON ? {
+                    'Symbology': {
+                        fields: {   
+                            method: {
+                                handler: createFormFloating,
+                                containerClass: 'w-25',
+                                fieldAttrs: {
+                                    name:'method',
                                 },
-                            },
-                            callbacks: {
-                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
-                                    const tagify = e.detail.tagify
-                                    const values = tagify.value.map(i => i.value)
-                        
-                                    if (values.every(i => symbology.groupBy.includes(i)) && symbology.groupBy.every(i => values.includes(i)) ) return
-                        
-                                    symbology.groupBy = values
-                                    updateSymbologyGroups()
-                                }])))() // , 'add', 'remove', 'edit'
-                            }
-                        },
-                        categoryParams: {
-                            handler: ({parent}={}) => {
-                                const div = customCreateElement({
-                                    parent,
-                                    id: `${body.id}-categoryParams`,
-                                    style: {width:'20%', height:'58px'},
-                                    className: `d-flex flex-column justify-content-center gap-1 w-25 border rounded px-3 py-1 ${symbology.method !== 'categorized' ? 'd-none' : ''}`
-                                })
+                                fieldTag:'select',
+                                labelText: 'Method',
+                                options:{
+                                    'single':'Single',
+                                    'categorized':'Categorized',
+                                    'graduated':'Graduated',
+                                    // 'rule':'Rule-based',
+                                },
+                                currentValue: symbology.method,
+                                fieldClass:'form-select-sm',
+                                events: {
+                                    change: (e) => {
+                                        const field = e.target
+                                        const value = field.value
+                                        symbology.method = value
+                                        
+                                        const tagifyObj = Tagify(form.elements.groupBy)
+                                        const tagifyElement = tagifyObj.DOM.scope
+                                        if (value === 'single') {
+                                            tagifyElement.setAttribute('disabled', true)
+                                        } else {
+                                            const maxTags = value === 'categorized' ? 5 : 1
+                                            tagifyObj.settings.maxTags = maxTags
 
-                                div.appendChild(createFormCheck({
-                                    checked: symbology.case,
-                                    formCheckClass: 'w-100',
-                                    labelInnerText: 'Case-sensitive',
-                                    events: {
-                                        click: (e) => {
-                                            const value = e.target.checked
-                                            if (value === symbology.case) return
-                                            
-                                            symbology.case = value
-                                            updateSymbologyGroups()
+                                            if (tagifyObj.value.length > maxTags) tagifyObj.removeAllTags()
+
+                                            tagifyElement.removeAttribute('disabled')
                                         }
-                                    }
-                                }))
-                            }
-                        },
-                        graduatedParams: {
-                            handler: ({parent}={}) => {
-                                const div = customCreateElement({
-                                    parent,
-                                    id: `${body.id}-graduatedParams`,
-                                    style: {width:'20%', height:'58px'},
-                                    className: `d-flex flex-column justify-content-between gap-1 w-25 ${symbology.method !== 'graduated' ? 'd-none' : ''}`
-                                })
 
-                                div.appendChild(createFormFloating({
-                                    fieldAttrs: {
-                                        name:'groupCount',
-                                        type:'number',
-                                        value: symbology.groupCount ?? '',
-                                        placeholder: 'No. of groups',
+                                        body.querySelector(`#${body.id}-graduatedParams`).classList.toggle('d-none', value !== 'graduated')
+                                        body.querySelector(`#${body.id}-categoryParams`).classList.toggle('d-none', value !== 'categorized')
+
+                                        if (value === 'single' || symbology.groupBy?.length) updateSymbologyGroups()
+                                    }
+                                }
+                            },
+                            groupBy: {
+                                handler: createTagifyField,
+                                inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                                inputTag: 'textarea',
+                                enabled: 0,
+                                disabled: symbology.method === 'single',
+                                dropdownClass:  `my-1 border-0`,
+                                userInput: true,
+                                maxTags: symbology.method === 'categorized' ? 5 : 1,
+                                scopeStyle: {
+                                    height: '58px',
+                                },
+                                name:  `groupBy`,
+                                placeholder: 'Select properties',
+                                currentValue: JSON.stringify((symbology.groupBy || []).map(i => {return {value:i}})),
+                                events: {
+                                    focus: async (e) => {
+                                        const geojson = (await getLeafletGeoJSONData(layer, {
+                                            controller,
+                                            filter:false,
+                                            queryGeom:false,
+                                            group:false,
+                                            sort:false,
+                                            simplify:false
+                                        })) || layer.toGeoJSON()
+                                        if (!geojson) return
+                                        
+                                        const tagify = Tagify(form.elements['groupBy'])
+                                        const options = symbology.method === 'categorized' ? ['[geometry_type]'] : []
+                                        turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                            Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                        })
+                                        const optionsSet = options.length ? new Set(options) : []
+                                        const sortedOptions = [...optionsSet].filter(i => {
+                                            return !(symbology.groupBy || []).includes(i)
+                                        }).sort()
+                                        tagify.settings.whitelist = sortedOptions
                                     },
-                                    fieldClass: `py-1 px-2 fs-10`,
-                                    events: {
-                                        'blur': (e) => {
-                                            const value = parseInt(e.target.value)
-                                            if (value === symbology.groupCount) return
-                                            
-                                            symbology.groupCount = value
-                                            updateSymbologyGroups()
+                                },
+                                callbacks: {
+                                    ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                        const tagify = e.detail.tagify
+                                        const values = tagify.value.map(i => i.value)
+                            
+                                        if (values.every(i => symbology.groupBy.includes(i)) && symbology.groupBy.every(i => values.includes(i)) ) return
+                            
+                                        symbology.groupBy = values
+                                        updateSymbologyGroups()
+                                    }])))() // , 'add', 'remove', 'edit'
+                                }
+                            },
+                            categoryParams: {
+                                handler: ({parent}={}) => {
+                                    const div = customCreateElement({
+                                        parent,
+                                        id: `${body.id}-categoryParams`,
+                                        style: {width:'20%', height:'58px'},
+                                        className: `d-flex flex-column justify-content-center gap-1 w-25 border rounded px-3 py-1 ${symbology.method !== 'categorized' ? 'd-none' : ''}`
+                                    })
+
+                                    div.appendChild(createFormCheck({
+                                        checked: symbology.case,
+                                        formCheckClass: 'w-100',
+                                        labelInnerText: 'Case-sensitive',
+                                        events: {
+                                            click: (e) => {
+                                                const value = e.target.checked
+                                                if (value === symbology.case) return
+                                                
+                                                symbology.case = value
+                                                updateSymbologyGroups()
+                                            }
+                                        }
+                                    }))
+                                }
+                            },
+                            graduatedParams: {
+                                handler: ({parent}={}) => {
+                                    const div = customCreateElement({
+                                        parent,
+                                        id: `${body.id}-graduatedParams`,
+                                        style: {width:'20%', height:'58px'},
+                                        className: `d-flex flex-column justify-content-between gap-1 w-25 ${symbology.method !== 'graduated' ? 'd-none' : ''}`
+                                    })
+
+                                    div.appendChild(createFormFloating({
+                                        fieldAttrs: {
+                                            name:'groupCount',
+                                            type:'number',
+                                            value: symbology.groupCount ?? '',
+                                            placeholder: 'No. of groups',
                                         },
-                                    }
-                                }).firstChild)
-                                
-                                div.appendChild(createFormFloating({
-                                    fieldAttrs: {
-                                        name:'groupPrecision',
-                                        type:'number',
-                                        value: symbology.groupPrecision ?? '',
-                                        placeholder: 'Precision',
-                                    },
-                                    fieldClass: `py-1 px-2 fs-10`,
-                                    events: {
-                                        'blur': (e) => {
-                                            const value = parseInt(e.target.value)
-                                            if (value === symbology.groupPrecision) return
-
-                                            symbology.groupPrecision = value
-                                            updateSymbologyGroups()
-                                        },
-                                    }
-                                }).firstChild)
-                            }
-                        },
-                        spinner: {
-                            handler: ({parent}={}) => {
-                                const div = customCreateElement({
-                                    id: `${body.id}-symbologySpinner`, 
-                                    className:'spinner-border spinner-border-sm d-none mx-2', 
-                                    attrs: {role:'status'}
-                                })
-                                parent.appendChild(div)
-                            },
-                        },
-                        collapse: {
-                            handler: createIcon,
-                            className:'dropdown-toggle ms-auto', 
-                            peNone: false,
-                            attrs: {
-                                'data-bs-toggle': 'collapse',
-                                'aria-expanded': 'true',
-                                'data-bs-target': `#${body.id}-methodDetails-collapse`,
-                                'aria-controls': `${body.id}-methodDetails-collapse`,
-                            },
-                            style: {cursor:'pointer'},
-                            events: {
-                                click: (e) => {
-                                    const collapse = document.querySelector(e.target.getAttribute('data-bs-target'))
-                                    if (collapse.classList.contains('show')) return
-                                    Array.from(collapse.querySelectorAll('.collapse')).forEach(i => {
-                                        bootstrap.Collapse.getOrCreateInstance(i).hide()
-                                    })
-                                }
-                            }
-                        },
-                        methodDetails: {
-                            handler: ({parent}={}) => {
-                                const collapse = customCreateElement({
-                                    id:`${body.id}-methodDetails-collapse`,
-                                    className:'collapse show w-100',
-                                    parent,
-                                })
-
-                                const container = customCreateElement({
-                                    id:`${body.id}-methodDetails`,
-                                    className:'w-100 d-flex flex-column accordion gap-3',
-                                    parent:collapse,
-                                })
-                                
-                                if (symbology.method === 'single') {
-                                    container.appendChild(getSymbologyForm(''))
-                                } else {
-                                    const groupIds = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {
-                                        return valueA.rank - valueB.rank
-                                    }).map(i => i[0])
-
-                                    Array(...groupIds, '').forEach(i => {
-                                        container.appendChild(getSymbologyForm(i))
-                                    })
-                                }
-                            }
-                        }
-                    },
-                    className: 'gap-2 flex-wrap'
-                },
-                'Feature Interactivity': {
-                    fields: {
-                        enableTooltip: {
-                            handler: createFormCheck,
-                            checked: info.tooltip.active,
-                            formCheckClass: 'w-100 flex-grow-1 mt-2',
-                            labelInnerText: 'Tooltip',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === info.tooltip.active) return
-                
-                                    info.tooltip.active = value
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        tooltipProps: {
-                            handler: createTagifyField,
-                            inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
-                            inputTag: 'textarea',
-                            enabled: 0,
-                            dropdownClass: `my-1 border-0`,
-                            userInput: true,
-                            maxTags: 5,
-                            scopeStyle: {
-                                height: '58px',
-                            },
-                            name:  `tooltipProps`,
-                            placeholder: 'Select properties',
-                            currentValue: JSON.stringify((info.tooltip.properties || []).map(i => {return {value:i}})),
-                            events: {
-                                focus: async (e) => {
-                                    const geojson = (await getLeafletGeoJSONData(layer, {
-                                        controller,
-                                        filter:false,
-                                        queryGeom:false,
-                                        group:false,
-                                        sort:false,
-                                        simplify:false
-                                    })) || layer.toGeoJSON()
-                                    if (!geojson) return
+                                        fieldClass: `py-1 px-2 fs-10`,
+                                        events: {
+                                            'blur': (e) => {
+                                                const value = parseInt(e.target.value)
+                                                if (value === symbology.groupCount) return
+                                                
+                                                symbology.groupCount = value
+                                                updateSymbologyGroups()
+                                            },
+                                        }
+                                    }).firstChild)
                                     
-                                    const tagify = Tagify(form.elements['tooltipProps'])
-                                    const options = []
-                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                    div.appendChild(createFormFloating({
+                                        fieldAttrs: {
+                                            name:'groupPrecision',
+                                            type:'number',
+                                            value: symbology.groupPrecision ?? '',
+                                            placeholder: 'Precision',
+                                        },
+                                        fieldClass: `py-1 px-2 fs-10`,
+                                        events: {
+                                            'blur': (e) => {
+                                                const value = parseInt(e.target.value)
+                                                if (value === symbology.groupPrecision) return
+
+                                                symbology.groupPrecision = value
+                                                updateSymbologyGroups()
+                                            },
+                                        }
+                                    }).firstChild)
+                                }
+                            },
+                            spinner: {
+                                handler: ({parent}={}) => {
+                                    const div = customCreateElement({
+                                        id: `${body.id}-symbologySpinner`, 
+                                        className:'spinner-border spinner-border-sm d-none mx-2', 
+                                        attrs: {role:'status'}
                                     })
-                                    const optionsSet = options.length ? new Set(options) : []
-                                    const sortedOptions = [...optionsSet].filter(i => {
-                                        return !(info.tooltip.properties || []).includes(i)
-                                    }).sort()
-                                    tagify.settings.whitelist = sortedOptions
+                                    parent.appendChild(div)
                                 },
                             },
-                            callbacks: {
-                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
-                                    const tagify = e.detail.tagify
-                                    const values = tagify.value.map(i => i.value)
-                        
-                                    if (values.every(i => info.tooltip.properties.includes(i)) && info.tooltip.properties.every(i => values.includes(i)) ) return
-                        
-                                    info.tooltip.properties = values
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }])))()
-                            }
-                        },
-                        tooltipDel: {
-                            handler: createFormFloating,
-                            containerClass: 'w-10 flex-grow-1',
-                            fieldAttrs: {
-                                type: 'text',
-                                value: info.tooltip.delimiter,
-                            },
-                            fieldClass: 'form-control-sm',
-                            labelText: 'Delimiter',
-                            labelClass: 'text-wrap',
-                            events: {
-                                change: (e) => {
-                                    const value = e.target.value
-                                    if (value === info.tooltip.delimiter) return
-                
-                                    info.tooltip.delimiter = value
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        tooltipPrefix: {
-                            handler: createFormFloating,
-                            containerClass: 'w-10 flex-grow-1',
-                            fieldAttrs: {
-                                type: 'text',
-                                value: info.tooltip.prefix,
-                            },
-                            fieldClass: 'form-control-sm',
-                            labelText: 'Prefix',
-                            labelClass: 'text-wrap',
-                            events: {
-                                change: (e) => {
-                                    const value = e.target.value
-                                    if (value === info.tooltip.prefix) return
-                
-                                    info.tooltip.prefix = value
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        tooltipSuffix: {
-                            handler: createFormFloating,
-                            containerClass: 'w-10 flex-grow-1',
-                            fieldAttrs: {
-                                type: 'text',
-                                value: info.tooltip.suffix,
-                            },
-                            fieldClass: 'form-control-sm',
-                            labelText: 'Suffix',
-                            labelClass: 'text-wrap',
-                            events: {
-                                change: (e) => {
-                                    const value = e.target.value
-                                    if (value === info.tooltip.suffix) return
-                
-                                    info.tooltip.suffix = value
-                                    if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-
-
-                        enablePopup: {
-                            handler: createFormCheck,
-                            checked: info.popup.active,
-                            formCheckClass: 'w-100 flex-shirnk-1 mt-2',
-                            labelInnerText: 'Popup',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === info.popup.active) return
-                
-                                    info.popup.active = value
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        popupProps: {
-                            handler: createTagifyField,
-                            inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
-                            inputTag: 'textarea',
-                            enabled: 0,
-                            dropdownClass: `my-1 border-0`,
-                            userInput: true,
-                            scopeStyle: {
-                                height: '58px',
-                            },
-                            name:  `popupProps`,
-                            placeholder: 'Select properties',
-                            currentValue: JSON.stringify((info.popup.properties || []).map(i => {return {value:i}})),
-                            events: {
-                                focus: async (e) => {
-                                    const geojson = (await getLeafletGeoJSONData(layer, {
-                                        controller,
-                                        filter:false,
-                                        queryGeom:false,
-                                        group:false,
-                                        sort:false,
-                                        simplify:false
-                                    })) || layer.toGeoJSON()
-                                    if (!geojson) return
-                                    
-                                    const tagify = Tagify(form.elements['popupProps'])
-                                    const options = []
-                                    turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                        Object.keys(currentProperties).forEach(i => options.push(String(i)))
-                                    })
-                                    const optionsSet = options.length ? new Set(options) : []
-                                    const sortedOptions = [...optionsSet].filter(i => {
-                                        return !(info.popup.properties || []).includes(i)
-                                    }).sort()
-                                    tagify.settings.whitelist = sortedOptions
+                            collapse: {
+                                handler: createIcon,
+                                className:'dropdown-toggle ms-auto', 
+                                peNone: false,
+                                attrs: {
+                                    'data-bs-toggle': 'collapse',
+                                    'aria-expanded': 'true',
+                                    'data-bs-target': `#${body.id}-methodDetails-collapse`,
+                                    'aria-controls': `${body.id}-methodDetails-collapse`,
                                 },
+                                style: {cursor:'pointer'},
+                                events: {
+                                    click: (e) => {
+                                        const collapse = document.querySelector(e.target.getAttribute('data-bs-target'))
+                                        if (collapse.classList.contains('show')) return
+                                        Array.from(collapse.querySelectorAll('.collapse')).forEach(i => {
+                                            bootstrap.Collapse.getOrCreateInstance(i).hide()
+                                        })
+                                    }
+                                }
                             },
-                            callbacks: {
-                                ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
-                                    const tagify = e.detail.tagify
-                                    const values = tagify.value.map(i => i.value)
-                        
-                                    if (values.every(i => info.popup.properties.includes(i)) && info.popup.properties.every(i => values.includes(i)) ) return
-                        
-                                    info.popup.properties = values
-                                    if (info.popup.active) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: layer.toGeoJSON(),
-                                        controller,
+                            methodDetails: {
+                                handler: ({parent}={}) => {
+                                    const collapse = customCreateElement({
+                                        id:`${body.id}-methodDetails-collapse`,
+                                        className:'collapse show w-100',
+                                        parent,
                                     })
-                                }])))()
+
+                                    const container = customCreateElement({
+                                        id:`${body.id}-methodDetails`,
+                                        className:'w-100 d-flex flex-column accordion gap-3',
+                                        parent:collapse,
+                                    })
+                                    
+                                    if (symbology.method === 'single') {
+                                        container.appendChild(getSymbologyForm(''))
+                                    } else {
+                                        const groupIds = Object.entries(symbology.groups || {}).sort(([keyA, valueA], [keyB, valueB]) => {
+                                            return valueA.rank - valueB.rank
+                                        }).map(i => i[0])
+
+                                        Array(...groupIds, '').forEach(i => {
+                                            container.appendChild(getSymbologyForm(i))
+                                        })
+                                    }
+                                }
                             }
                         },
-
+                        className: 'gap-2 flex-wrap'
                     },
-                    className: 'flex-wrap gap-1'
-                },
+                    'Feature Interactivity': {
+                        fields: {
+                            enableTooltip: {
+                                handler: createFormCheck,
+                                checked: info.tooltip.active,
+                                formCheckClass: 'w-100 flex-grow-1 mt-2',
+                                labelInnerText: 'Tooltip',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === info.tooltip.active) return
+                    
+                                        info.tooltip.active = value
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            tooltipProps: {
+                                handler: createTagifyField,
+                                inputClass: `w-50 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                                inputTag: 'textarea',
+                                enabled: 0,
+                                dropdownClass: `my-1 border-0`,
+                                userInput: true,
+                                maxTags: 5,
+                                scopeStyle: {
+                                    height: '58px',
+                                },
+                                name:  `tooltipProps`,
+                                placeholder: 'Select properties',
+                                currentValue: JSON.stringify((info.tooltip.properties || []).map(i => {return {value:i}})),
+                                events: {
+                                    focus: async (e) => {
+                                        const geojson = (await getLeafletGeoJSONData(layer, {
+                                            controller,
+                                            filter:false,
+                                            queryGeom:false,
+                                            group:false,
+                                            sort:false,
+                                            simplify:false
+                                        })) || layer.toGeoJSON()
+                                        if (!geojson) return
+                                        
+                                        const tagify = Tagify(form.elements['tooltipProps'])
+                                        const options = []
+                                        turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                            Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                        })
+                                        const optionsSet = options.length ? new Set(options) : []
+                                        const sortedOptions = [...optionsSet].filter(i => {
+                                            return !(info.tooltip.properties || []).includes(i)
+                                        }).sort()
+                                        tagify.settings.whitelist = sortedOptions
+                                    },
+                                },
+                                callbacks: {
+                                    ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                        const tagify = e.detail.tagify
+                                        const values = tagify.value.map(i => i.value)
+                            
+                                        if (values.every(i => info.tooltip.properties.includes(i)) && info.tooltip.properties.every(i => values.includes(i)) ) return
+                            
+                                        info.tooltip.properties = values
+                                        if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: layer.toGeoJSON(),
+                                            controller,
+                                        })
+                                    }])))()
+                                }
+                            },
+                            tooltipDel: {
+                                handler: createFormFloating,
+                                containerClass: 'w-10 flex-grow-1',
+                                fieldAttrs: {
+                                    type: 'text',
+                                    value: info.tooltip.delimiter,
+                                },
+                                fieldClass: 'form-control-sm',
+                                labelText: 'Delimiter',
+                                labelClass: 'text-wrap',
+                                events: {
+                                    change: (e) => {
+                                        const value = e.target.value
+                                        if (value === info.tooltip.delimiter) return
+                    
+                                        info.tooltip.delimiter = value
+                                        if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: layer.toGeoJSON(),
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            tooltipPrefix: {
+                                handler: createFormFloating,
+                                containerClass: 'w-10 flex-grow-1',
+                                fieldAttrs: {
+                                    type: 'text',
+                                    value: info.tooltip.prefix,
+                                },
+                                fieldClass: 'form-control-sm',
+                                labelText: 'Prefix',
+                                labelClass: 'text-wrap',
+                                events: {
+                                    change: (e) => {
+                                        const value = e.target.value
+                                        if (value === info.tooltip.prefix) return
+                    
+                                        info.tooltip.prefix = value
+                                        if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: layer.toGeoJSON(),
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            tooltipSuffix: {
+                                handler: createFormFloating,
+                                containerClass: 'w-10 flex-grow-1',
+                                fieldAttrs: {
+                                    type: 'text',
+                                    value: info.tooltip.suffix,
+                                },
+                                fieldClass: 'form-control-sm',
+                                labelText: 'Suffix',
+                                labelClass: 'text-wrap',
+                                events: {
+                                    change: (e) => {
+                                        const value = e.target.value
+                                        if (value === info.tooltip.suffix) return
+                    
+                                        info.tooltip.suffix = value
+                                        if (info.tooltip.active) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: layer.toGeoJSON(),
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+
+
+                            enablePopup: {
+                                handler: createFormCheck,
+                                checked: info.popup.active,
+                                formCheckClass: 'w-100 flex-shirnk-1 mt-2',
+                                labelInnerText: 'Popup',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === info.popup.active) return
+                    
+                                        info.popup.active = value
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            popupProps: {
+                                handler: createTagifyField,
+                                inputClass: `w-75 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1 overflow-auto`,
+                                inputTag: 'textarea',
+                                enabled: 0,
+                                dropdownClass: `my-1 border-0`,
+                                userInput: true,
+                                scopeStyle: {
+                                    height: '58px',
+                                },
+                                name:  `popupProps`,
+                                placeholder: 'Select properties',
+                                currentValue: JSON.stringify((info.popup.properties || []).map(i => {return {value:i}})),
+                                events: {
+                                    focus: async (e) => {
+                                        const geojson = (await getLeafletGeoJSONData(layer, {
+                                            controller,
+                                            filter:false,
+                                            queryGeom:false,
+                                            group:false,
+                                            sort:false,
+                                            simplify:false
+                                        })) || layer.toGeoJSON()
+                                        if (!geojson) return
+                                        
+                                        const tagify = Tagify(form.elements['popupProps'])
+                                        const options = []
+                                        turf.propEach(geojson, (currentProperties, featureIndex) => {
+                                            Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                        })
+                                        const optionsSet = options.length ? new Set(options) : []
+                                        const sortedOptions = [...optionsSet].filter(i => {
+                                            return !(info.popup.properties || []).includes(i)
+                                        }).sort()
+                                        tagify.settings.whitelist = sortedOptions
+                                    },
+                                },
+                                callbacks: {
+                                    ...(() => Object.fromEntries(['blur'].map(i => [i, (e) => {
+                                        const tagify = e.detail.tagify
+                                        const values = tagify.value.map(i => i.value)
+                            
+                                        if (values.every(i => info.popup.properties.includes(i)) && info.popup.properties.every(i => values.includes(i)) ) return
+                            
+                                        info.popup.properties = values
+                                        if (info.popup.active) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: layer.toGeoJSON(),
+                                            controller,
+                                        })
+                                    }])))()
+                                }
+                            },
+
+                        },
+                        className: 'flex-wrap gap-1'
+                    },
+                } : {})
             },
             'Rendering': {
                 'Visibility': {
