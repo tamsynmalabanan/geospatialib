@@ -51,3 +51,11 @@
 .user-select-none {
     user-select: none;
 }
+
+.onblur-fade {
+    opacity: 5%;
+}
+
+.onblur-fade:focus {
+    opacity: 100%;
+}

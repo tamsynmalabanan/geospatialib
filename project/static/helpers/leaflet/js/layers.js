@@ -741,27 +741,21 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
-        zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer || isHidden || !layerGeoJSON.features.length ? null : {
-            innerText: `Zoom to visible`,
-            btnCallback: async () => {
-                if (layer.getLayers().length) zoomLeafletMapToBounds(map, layer.getBounds())
-            }
-        },
-        isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
-            innerText: `Isolate ${typeLabel}`,
-            btnCallback: () => {
-                checkboxArray?.forEach(c => { if (c.checked) c.click() })
-                layerArray?.forEach(l => removeLayer(l, isLegendGroup))
-                addLayer(layer)
-            }
-        },
+        // zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer || isHidden || !layer.getLayers().length ? null : {
+        //     innerText: `Zoom to visible`,
+        //     btnCallback: async () => zoomLeafletMapToBounds(map, layer.getBounds())
+        // },
+        // isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
+        //     innerText: `Isolate ${typeLabel}`,
+        //     btnCallback: () => {
+        //         checkboxArray?.forEach(c => { if (c.checked) c.click() })
+        //         layerArray?.forEach(l => removeLayer(l, isLegendGroup))
+        //         addLayer(layer)
+        //     }
+        // },
         visibility: feature || checkbox ? null : {
             innerText: `Toggle visibility`,
-            btnCallback: () => {
-                group._ch.hasHiddenLayer(layer) 
-                ? addLayer(layer)
-                : removeLayer(layer, isLegendGroup) 
-            }
+            btnCallback: () => group._ch.hasHiddenLayer(layer) ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
         propertiesTable: (
             !feature 

@@ -212,7 +212,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
                 const contentToggle = createIcon({
                     parent: toggleContainer,
                     peNone: false,
-                    className: 'dropdown-toggle ms-5'
+                    className: 'dropdown-toggle ms-5 onblur-fade'
                 })
                 contentToggle.setAttribute('data-bs-toggle', 'collapse')
                 contentToggle.setAttribute('data-bs-target', `#${contentCollapse.id}`)
@@ -223,7 +223,7 @@ const createGeoJSONChecklist = (geojsonLayer, {
             const menuToggle = createIcon({
                 parent: toggleContainer,
                 peNone: false,
-                className: 'bi bi-three-dots'
+                className: 'bi bi-three-dots onblur-fade'
             })
             menuToggle.addEventListener('click', (e) => {
                 getLeafletLayerContextMenu(e, layer)

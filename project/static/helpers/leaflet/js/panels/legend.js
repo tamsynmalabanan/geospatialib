@@ -28,7 +28,7 @@ const createLeafletLegendItem = (layer) => {
     
     const moveToggle = createIcon({
         peNone: false,
-        className: 'bi bi-grip-vertical'
+        className: 'bi bi-grip-vertical onblur-fade'
     })
     legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
     
@@ -146,7 +146,7 @@ const createLeafletLegendItem = (layer) => {
     const collapseToggle = createIcon({
         parent: toggleContainer,
         peNone: false,
-        className: 'dropdown-toggle ms-5',
+        className: 'dropdown-toggle ms-5 onblur-fade',
         attrs: {
             'data-bs-toggle': 'collapse',
             'data-bs-target': `#${legendCollapse.id}`,
@@ -158,7 +158,7 @@ const createLeafletLegendItem = (layer) => {
     const menuToggle = createIcon({
         parent: toggleContainer,
         peNone: false,
-        className: 'bi bi-three-dots',
+        className: 'bi bi-three-dots onblur-fade',
         events: {
             'click': (e) => getLeafletLayerContextMenu(e, layer)
         }
