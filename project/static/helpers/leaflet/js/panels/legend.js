@@ -151,17 +151,17 @@ const createLeafletLegendItem = (layer) => {
     })
     Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
 
-    const collapseToggle = createIcon({
-        parent: toggleContainer,
-        peNone: false,
-        className: 'dropdown-toggle ms-5 onblur-fade',
-        attrs: {
-            'data-bs-toggle': 'collapse',
-            'data-bs-target': `#${legendCollapse.id}`,
-            'aria-controls': legendCollapse.id,
-            'aria-expanded': 'true',
-        }
-    })
+    // const collapseToggle = createIcon({
+    //     parent: toggleContainer,
+    //     peNone: false,
+    //     className: 'dropdown-toggle ms-5 onblur-fade',
+    //     attrs: {
+    //         'data-bs-toggle': 'collapse',
+    //         'data-bs-target': `#${legendCollapse.id}`,
+    //         'aria-controls': legendCollapse.id,
+    //         'aria-expanded': 'true',
+    //     }
+    // })
 
     const menuToggle = createIcon({
         parent: toggleContainer,
