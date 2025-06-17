@@ -846,7 +846,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         pane,
                     })
 
-                    if (type === 'geojson' && group._name === 'query') layer._dbIndexedKey = layerClone._dbIndexedKey
+                    if (group._name === 'query' && !layer._dbIndexedKey) layer._dbIndexedKey = layerClone._dbIndexedKey
                 }
 
                 if (layerClone) targetGroup.addLayer(layerClone)
