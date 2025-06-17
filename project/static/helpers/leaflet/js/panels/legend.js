@@ -31,7 +31,7 @@ const createLeafletLegendItem = (layer) => {
         id: `${containerId}-title`,
         className: 'd-flex flex-nowrap gap-2',
         parent: container,
-        innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap'}).outerHTML
+        innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap user-select-none'}).outerHTML
     })
     
     const moveToggle = createIcon({
