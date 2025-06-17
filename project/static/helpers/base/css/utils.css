@@ -56,6 +56,6 @@
     opacity: 5%;
 }
 
-.onblur-fade:focus {
+.onblur-fade:hover {
     opacity: 100%;
 }
