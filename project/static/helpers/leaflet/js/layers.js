@@ -718,7 +718,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const mapContainer = map.getContainer()
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
-    const isHidden = map._ch.hasHiddenLegendLayer(layer)
+    const isHidden = group._ch.hasHiddenLayer(layer)
 
     
     const checkbox = layer._checkbox
@@ -742,8 +742,8 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
         visibility: feature || checkbox ? null : {
-            innerText: `Toggle visibility`,
-            btnCallback: () => group._ch.hasHiddenLayer(layer) ? addLayer(layer) : removeLayer(layer, isLegendGroup)
+            innerText: isHidden ? 'Show layer' : 'Hide layer',
+            btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
         
         divider1: !feature ? null : {
