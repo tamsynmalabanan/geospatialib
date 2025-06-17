@@ -3,7 +3,7 @@ const getLeafletGeoJSONLayer = async ({
     group,
     pane = 'overlayPane',
     dbIndexedKey,
-    properties,
+    properties = {},
     customStyleParams = {},
     params
 } = {}) => {
@@ -16,59 +16,59 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._params = params
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-    geojsonLayer._properties = properties || {
-        info: {
-            showLegend: true,
-            showAttribution: true,
-            tooltip: {
-                active: true,
-                properties: [],
-                delimiter: '; ',
-                prefix: '',
-                suffix: '',
-            },
-            popup: {
-                active: true,
-                properties: [],
-            },
+    
+    properties = geojsonLayer._properties = properties ?? {}
+    properties.info = properties.info ?? {
+        showLegend: true,
+        showAttribution: true,
+        tooltip: {
+            active: true,
+            properties: [],
+            delimiter: '; ',
+            prefix: '',
+            suffix: '',
         },
-        symbology: {
-            default: {
-                active: true,
-                label: '',
-                rank: 1,
-                showCount: true,
-                showLabel: true,
-                styleParams: getLeafletStyleParams(customStyleParams),
-            },
-            case: true,
-            method: 'single',
-            groupBy: [],
-        },                                  
-        visibility: {
-            active: false,
-            min: 10,
-            max: 5000000,
+        popup: {
+            active: true,
+            properties: [],
         },
-        filters: {
-            type: {active: false, values: {
-                Point: true,
-                MultiPoint: true,
-                LineString: true,
-                MultiLineString: true,
-                Polygon: true,
-                MultiPolygon: true,
-            }},
-            geom: {
-                active: false, 
-                values: {},
-                operator: '&&',
-            },
-            properties: {
-                active: false, 
-                values: {},
-                operator: '&&',
-            },
+    }
+    properties.symbology = properties.symbology ?? {
+        default: {
+            active: true,
+            label: '',
+            rank: 1,
+            showCount: true,
+            showLabel: true,
+            styleParams: getLeafletStyleParams(customStyleParams),
+        },
+        case: true,
+        method: 'single',
+        groupBy: [],
+    }
+    properties.visibility = properties.visibility ?? {
+        active: false,
+        min: 10,
+        max: 5000000,
+    }
+    properties.filters = properties.filters ?? {
+        type: {active: false, values: {
+            Point: true,
+            MultiPoint: true,
+            LineString: true,
+            MultiLineString: true,
+            Polygon: true,
+            MultiPolygon: true,
+        }},
+        geom: {
+            active: false, 
+            values: {},
+            operator: '&&',
+        },
+        properties: {
+            active: false, 
+            values: {},
+            operator: '&&',
         },
     }
 
