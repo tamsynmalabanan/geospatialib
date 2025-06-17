@@ -834,7 +834,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     data: layerGeoJSON,
                     group: isLegendGroup ? group : map._ch.getLayerGroups().client,
                     add: true,
-                    properties: isLegendGroup ? cloneLeafletLayerStyles(geojsonLayer) : null
+                    properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
                 })
             }
         },
