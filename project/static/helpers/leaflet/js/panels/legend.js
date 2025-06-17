@@ -347,6 +347,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
         const img = new Image()
         img.src = layer._params.legend
+        img.alt = layer._params.title
         img.className = 'mb-1'
         details.appendChild(img)
     }
