@@ -765,29 +765,8 @@ const getLeafletLayerContextMenu = async (e, layer, {
         divider3: !isLegendGroup || !geojsonLayer || feature ? null : {
             divider: true,
         },
-        copyDataSource: !isLegendGroup || !geojsonLayer || feature ? null : {
-            innerText: `Copy data source`,
-            btnCallback: async () => {
-                navigator.clipboard.writeText(JSON.stringify({dbIndexedKey:layer._dbIndexedKey}))
-            }
-        },
-        pasteDataSource: !isLegendGroup || !geojsonLayer || feature ? null : {
-            innerText: `Paste data source`,
-            btnCallback: async () => {
-                const text = await navigator.clipboard.readText()
-                if (!text) return
-
-                try {
-                    const dbIndexedKey = JSON.parse(text)?.dbIndexedKey
-                    if (!dbIndexedKey) return
-
-                    layer._dbIndexedKey = dbIndexedKey
-                    updateLeafletGeoJSONLayer(layer)
-                } catch { return }
-            }
-        },
         updateData: !isLegendGroup || !geojsonLayer || feature ? null : {
-            innerText: `Paste clipboard data`,
+            innerText: `Update geojson data`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
                 if (!text) return
@@ -831,25 +810,32 @@ const getLeafletLayerContextMenu = async (e, layer, {
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: async () => {
-                const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
-                const pane = createCustomPane(map)
+                // const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
+                // const pane = createCustomPane(map)
+                // let layerClone
 
-                let layerClone
+                // if (geojsonLayer) {
+                //     layerClone = await getLeafletGeoJSONLayer({
+                //         geojson: layerGeoJSON,
+                //         group: targetGroup,
+                //         dbIndexedKey: (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null,
+                //         properties: isLegendGroup ? cloneLeafletLayerStyles(geojsonLayer) : null,
+                //         params: layer._params,
+                //         pane,
+                //     })
 
-                if (geojsonLayer) {
-                    layerClone = await getLeafletGeoJSONLayer({
-                        geojson: layerGeoJSON,
-                        group: targetGroup,
-                        dbIndexedKey: (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null,
-                        properties: isLegendGroup ? cloneLeafletLayerStyles(geojsonLayer) : null,
-                        params: layer._params,
-                        pane,
-                    })
+                //     if (group._name === 'query' && !layer._dbIndexedKey) layer._dbIndexedKey = layerClone._dbIndexedKey
+                // }
 
-                    if (group._name === 'query' && !layer._dbIndexedKey) layer._dbIndexedKey = layerClone._dbIndexedKey
-                }
+                // if (layerClone) targetGroup.addLayer(layerClone)
 
-                if (layerClone) targetGroup.addLayer(layerClone)
+                createLeafletLayer(layer._params, {
+                    dbIndexedKey: layer._dbIndexedKey,
+                    data: layerGeoJSON,
+                    group: isLegendGroup ? group : map._ch.getLayerGroups().client,
+                    add: true,
+                    properties: isLegendGroup ? cloneLeafletLayerStyles(geojsonLayer) : null
+                })
             }
         },
         download: !layerGeoJSON ? null : {
@@ -1008,7 +994,7 @@ const createLeafletLayer = async (params, {
         } catch (error) {
             console.log(error)
             group.removeLayer(layer)
-            alert('Invalid layer.')
+            alert('Failed to create layer.')
         }
     }
 
