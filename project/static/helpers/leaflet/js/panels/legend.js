@@ -6,6 +6,7 @@ const createLeafletLegendItem = (layer) => {
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
     
+    const legendCollapseId = `${container.id}-collapse`
     const container = customCreateElement({
         tag: 'div',
         id: `${layers.id}-${layer._leaflet_id}`,
@@ -16,8 +17,8 @@ const createLeafletLegendItem = (layer) => {
             'data-layer-id': layer._leaflet_id,
 
             'data-bs-toggle': 'collapse',
-            'data-bs-target': `#${legendCollapse.id}`,
-            'aria-controls': legendCollapse.id,
+            'data-bs-target': `#${legendCollapseId}`,
+            'aria-controls': legendCollapseId,
             'aria-expanded': 'true',
         }
     })
@@ -127,7 +128,7 @@ const createLeafletLegendItem = (layer) => {
     
     const legendCollapse = customCreateElement({
         tag: 'div',
-        id: `${container.id}-collapse`,
+        id: legendCollapseId,
         className: 'collapse show ps-3',
         parent: container
     })
@@ -148,17 +149,17 @@ const createLeafletLegendItem = (layer) => {
     })
     Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
 
-    // const collapseToggle = createIcon({
-    //     parent: toggleContainer,
-    //     peNone: false,
-    //     className: 'dropdown-toggle ms-5 onblur-fade',
-    //     attrs: {
-    //         'data-bs-toggle': 'collapse',
-    //         'data-bs-target': `#${legendCollapse.id}`,
-    //         'aria-controls': legendCollapse.id,
-    //         'aria-expanded': 'true',
-    //     }
-    // })
+    const collapseToggle = createIcon({
+        parent: toggleContainer,
+        peNone: false,
+        className: 'dropdown-toggle ms-5 onblur-fade',
+        attrs: {
+            'data-bs-toggle': 'collapse',
+            'data-bs-target': `#${legendCollapse.id}`,
+            'aria-controls': legendCollapse.id,
+            'aria-expanded': 'true',
+        }
+    })
 
     const menuToggle = createIcon({
         parent: toggleContainer,
