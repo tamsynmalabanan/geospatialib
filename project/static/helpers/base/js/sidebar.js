@@ -44,7 +44,7 @@ const resizeSidebar = (sidebarSelector) => {
 
         if (col > 0) {
             if (col < 4) col = 4
-            if (col > 6) col = 6
+            if (col > 7) col = 7
 
             sidebar.classList.forEach(className => {
                 if (className.includes('col-lg-')) {
