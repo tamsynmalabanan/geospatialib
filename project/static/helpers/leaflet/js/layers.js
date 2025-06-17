@@ -741,33 +741,9 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
-        // zoomCurrent: !isLegendGroup || isLegendFeature || !geojsonLayer || isHidden || !layer.getLayers().length ? null : {
-        //     innerText: `Zoom to visible`,
-        //     btnCallback: async () => zoomLeafletMapToBounds(map, layer.getBounds())
-        // },
-        // isolate: isLegendFeature || noArrays || disabledCheckbox || geojsonLayer?._checkbox?.disabled ? null : {
-        //     innerText: `Isolate ${typeLabel}`,
-        //     btnCallback: () => {
-        //         checkboxArray?.forEach(c => { if (c.checked) c.click() })
-        //         layerArray?.forEach(l => removeLayer(l, isLegendGroup))
-        //         addLayer(layer)
-        //     }
-        // },
         visibility: feature || checkbox ? null : {
             innerText: `Toggle visibility`,
             btnCallback: () => group._ch.hasHiddenLayer(layer) ? addLayer(layer) : removeLayer(layer, isLegendGroup)
-        },
-        propertiesTable: (
-            !feature 
-            || !featureInfo.popup.active 
-            || !Object.keys(feature.properties).length
-        ) ? null : {
-            innerText: `Show properties table`,
-            btnCallback: async () => {
-                await zoomToLeafletLayer(layer, map)
-                if (!group.hasLayer(layer)) addLayer(layer)
-                layer.fire('click')
-            }
         },
         
         divider1: !feature ? null : {
@@ -786,16 +762,16 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
         
-        divider3: !isLegendGroup || !geojsonLayer ? null : {
+        divider3: !isLegendGroup || feature ? null : {
             divider: true,
         },
-        copyDataSource: !isLegendGroup || !geojsonLayer ? null : {
+        copyDataSource: !isLegendGroup || feature ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
-                navigator.clipboard.writeText(JSON.stringify({dbIndexedKey:geojsonLayer._dbIndexedKey}))
+                navigator.clipboard.writeText(JSON.stringify({dbIndexedKey:layer._dbIndexedKey}))
             }
         },
-        pasteDataSource: !isLegendGroup || !geojsonLayer ? null : {
+        pasteDataSource: !isLegendGroup || feature ? null : {
             innerText: `Paste data source`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
@@ -805,12 +781,17 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     const dbIndexedKey = JSON.parse(text)?.dbIndexedKey
                     if (!dbIndexedKey) return
 
-                    geojsonLayer._dbIndexedKey = dbIndexedKey
-                    updateLeafletGeoJSONLayer(geojsonLayer)
+                    layer._dbIndexedKey = dbIndexedKey
+
+                    if (layer === geojsonLayer) {
+                        updateLeafletGeoJSONLayer(layer)
+                    } else {
+                        console.log('pasteDataSource: handle non-geojson layers')
+                    }
                 } catch { return }
             }
         },
-        updateData: !isLegendGroup || !geojsonLayer ? null : {
+        updateData: !isLegendGroup || !geojsonLayer || feature ? null : {
             innerText: `Paste clipboard data`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
@@ -826,7 +807,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 } catch { return }
             }
         },
-        clearData: !isLegendGroup || !geojsonLayer ? null : {
+        clearData: !isLegendGroup || !geojsonLayer || feature ? null : {
             innerText: `Clear cached data`,
             btnCallback: async () => {
                 deleteFromGeoJSONDB(geojsonLayer._dbIndexedKey)
