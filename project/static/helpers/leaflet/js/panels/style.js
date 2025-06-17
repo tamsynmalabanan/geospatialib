@@ -2417,382 +2417,384 @@ const handleLeafletStylePanel = (map, parent) => {
                     },
                     className: 'flex-wrap gap-2'
                 },
-                'Filter': {
-                    fields: {
-                        enableType: {
-                            handler: createFormCheck,
-                            checked: filters.type.active,
-                            formCheckClass: 'flex-grow-1',
-                            labelInnerText: 'Filter by type',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === filters.type.active) return
-                
-                                    Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
-                                        form.elements[i].disabled = !value
-                                    })
-
-                                    filters.type.active = value
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
+                ...(layer instanceof L.GeoJSON ? {
+                    'Filter': {
+                        fields: {
+                            enableType: {
+                                handler: createFormCheck,
+                                checked: filters.type.active,
+                                formCheckClass: 'flex-grow-1',
+                                labelInnerText: 'Filter by type',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === filters.type.active) return
+                    
+                                        Object.keys(form.elements).filter(i => i.startsWith('typeFilter-')).forEach(i => {
+                                            form.elements[i].disabled = !value
+                                        })
+    
+                                        filters.type.active = value
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
+                                    }
                                 }
-                            }
-                        },
-                        toggleType: {
-                            handler: createButton,
-                            name: 'typeFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-toggles',
-                            title: 'Toggle all types',
-                            disabled: !filters.type.active,
-                            events: {
-                                click: () => {
-                                    const fields = Object.values(form.elements).filter(f => {
-                                        return (f.getAttribute('name') || '').startsWith('typeFilter-')
-                                        && f.getAttribute('type') === 'checkbox'
-                                    })
-                                    const check = fields.some(f => !f.checked)
-
-                                    fields.forEach(field => {
-                                        field.checked = check
-                                        
-                                        const name = form.querySelector(`label[for="${field.id}"]`).innerText
-                                        filters.type.values[name] = check
-                                    })
-
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })
+                            },
+                            toggleType: {
+                                handler: createButton,
+                                name: 'typeFilter-toggle',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-toggles',
+                                title: 'Toggle all types',
+                                disabled: !filters.type.active,
+                                events: {
+                                    click: () => {
+                                        const fields = Object.values(form.elements).filter(f => {
+                                            return (f.getAttribute('name') || '').startsWith('typeFilter-')
+                                            && f.getAttribute('type') === 'checkbox'
+                                        })
+                                        const check = fields.some(f => !f.checked)
+    
+                                        fields.forEach(field => {
+                                            field.checked = check
+                                            
+                                            const name = form.querySelector(`label[for="${field.id}"]`).innerText
+                                            filters.type.values[name] = check
+                                        })
+    
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
+                                    }
                                 }
-                            }
-                        },
-                        typeFilter: {
-                            handler: createCheckboxOptions,
-                            name: 'typeFilter',
-                            containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2 mb-3',
-                            options: (() => {
-                                const options = {}
-                                for (const type in filters.type.values) {
-                                    options[type] = {
-                                        checked: filters.type.values[type],
-                                        disabled: !filters.type.active,
-                                        events: {
-                                            click: () => {
-                                                Object.values(form.elements).filter(f => {
-                                                    return (f.getAttribute('name') || '').startsWith('typeFilter-')
-                                                    && f.getAttribute('type') === 'checkbox'
-                                                }).forEach(field => {
-                                                    const option = form.querySelector(`label[for="${field.id}"]`).innerText
-                                                    filters.type.values[option] = field.checked
-                                                })
-                                                updateLeafletGeoJSONLayer(layer, {
-                                                    controller,
-                                                })
+                            },
+                            typeFilter: {
+                                handler: createCheckboxOptions,
+                                name: 'typeFilter',
+                                containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2 mb-3',
+                                options: (() => {
+                                    const options = {}
+                                    for (const type in filters.type.values) {
+                                        options[type] = {
+                                            checked: filters.type.values[type],
+                                            disabled: !filters.type.active,
+                                            events: {
+                                                click: () => {
+                                                    Object.values(form.elements).filter(f => {
+                                                        return (f.getAttribute('name') || '').startsWith('typeFilter-')
+                                                        && f.getAttribute('type') === 'checkbox'
+                                                    }).forEach(field => {
+                                                        const option = form.querySelector(`label[for="${field.id}"]`).innerText
+                                                        filters.type.values[option] = field.checked
+                                                    })
+                                                    updateLeafletGeoJSONLayer(layer, {
+                                                        controller,
+                                                    })
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                return options
-                            })()
-                        },
-
-                        enableProps: {
-                            handler: createFormCheck,
-                            checked: filters.properties.active,
-                            formCheckClass: 'flex-grow-1',
-                            labelInnerText: 'Filter by properties',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const propertyFilters = filters.properties
-                                    const value = e.target.checked
-                                    if (value === propertyFilters.active) return
-                
-                                    Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
-                                        form.elements[i].disabled = !value
-                                    })
-
-                                    body.querySelector(`#${filterContainerId}-prop`).querySelectorAll('.tagify').forEach(i => {
-                                        value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
-                                    })
-
-                                    propertyFilters.active = value
-                                    if (Object.values(propertyFilters.values ?? {}).some(i => {
-                                        return i.active && i.property && i.values.length
-                                    })) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        operatorProps: {
-                            handler: createBadgeSelect,
-                            selectClass: `border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
-                            attrs: {name: 'propFilter-operator'},
-                            disabled: !filters.properties.active,
-                            options: {
-                                '': 'Select an operator',
-                                '&&': '&&',
-                                '||': '||',
+                                    return options
+                                })()
                             },
-                            events: {
-                                change:  (e) => {
-                                    const propertyFilters = filters.properties
-
-                                    let value = e.target.value
-                                    if (value === '') value = e.target.value = propertyFilters.operator
-                                    if (value === propertyFilters.operator) return
-
-                                    propertyFilters.operator = value
-                                    if (Object.values(propertyFilters.values ?? {}).some(i => {
-                                        return i.active && i.property && i.values.length
-                                    })) updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })
-                                }
-                            },
-                            currentValue: filters.properties.operator,
-                        },
-                        newProp: {
-                            handler: createButton,
-                            name: 'propFilter-new',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-plus-lg',
-                            title: 'Add a new property filter',
-                            disabled: !filters.properties.active,
-                            events: {
-                                click: () => {
-                                    const id = generateRandomString()
-                                    filters.properties.values[id] = {
-                                        active: true,
-                                        handler: 'equals',
-                                        case: true,
-                                        value: true,
-                                        values: [],
+    
+                            enableProps: {
+                                handler: createFormCheck,
+                                checked: filters.properties.active,
+                                formCheckClass: 'flex-grow-1',
+                                labelInnerText: 'Filter by properties',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const propertyFilters = filters.properties
+                                        const value = e.target.checked
+                                        if (value === propertyFilters.active) return
+                    
+                                        Object.keys(form.elements).filter(i => i.startsWith('propFilter-')).forEach(i => {
+                                            form.elements[i].disabled = !value
+                                        })
+    
+                                        body.querySelector(`#${filterContainerId}-prop`).querySelectorAll('.tagify').forEach(i => {
+                                            value ? i.removeAttribute('disabled') : i.setAttribute('disabled', true)
+                                        })
+    
+                                        propertyFilters.active = value
+                                        if (Object.values(propertyFilters.values ?? {}).some(i => {
+                                            return i.active && i.property && i.values.length
+                                        })) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
                                     }
-                                    body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
-                                }
-                            }
-                        },
-                        toggleProp: {
-                            handler: createButton,
-                            name: 'propFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-toggles',
-                            title: 'Toggle all property filters',
-                            disabled: !filters.properties.active,
-                            events: {
-                                click: () => {
-                                    const fields = Object.values(form.elements).filter(f => {
-                                        return (f.getAttribute('name') || '').startsWith('propFilter-')
-                                        && f.getAttribute('type') === 'checkbox'
-                                    })
-                                    const check = fields.every(f => !f.checked)
-
-                                    fields.forEach(field => {
-                                        field.checked = check
-                                    })
-
-                                    Object.values(filters.properties.values).forEach(f => f.active = check)
-
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        removeProp: {
-                            handler: createButton,
-                            name: 'propFilter-remove',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-trash-fill',
-                            title: 'Remove all property filters',
-                            disabled: !filters.properties.active,
-                            events: {
-                                click: () => {
-                                    const propertyFilters = filters.properties
-
-                                    body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
-                                    propertyFilters.values = {}
-                                    if (Object.values(propertyFilters.values ?? {}).some(i => {
-                                        return i.active && i.property && i.values.length
-                                    })) updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })                
-                                }
-                            }
-                        },
-                        propFilter: {
-                            handler: ({parent}={}) => {
-                                const container = customCreateElement({
-                                    id: `${filterContainerId}-prop`,
-                                    className: 'd-flex flex-column w-100 gap-2',
-                                    parent,
-                                })  
-
-                                for (const id in filters.properties.values) {
-                                    container.appendChild(getPropertyFilterForm(id))
-                                }
-                            }
-                        },
-
-                        enableGeom: {
-                            handler: createFormCheck,
-                            checked: filters.geom.active,
-                            formCheckClass: 'flex-grow-1',
-                            labelInnerText: 'Filter by geometry',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === filters.geom.active) return
-                
-                                    Object.keys(form.elements).filter(i => i.startsWith('geomFilter-')).forEach(i => {
-                                        form.elements[i].disabled = !value
-                                    })
-
-                                    filters.geom.active = value
-                                    if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer, {
-                                        geojson: value ? layer.toGeoJSON() : null,
-                                        controller,
-                                    })
-                                }
-                            }
-                        },
-                        operatorGeom: {
-                            handler: createBadgeSelect,
-                            selectClass: `border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
-                            attrs: {name: 'geomFilter-operator'},
-                            disabled: !filters.geom.active,
-                            options: {
-                                '': 'Select an operator',
-                                '&&': '&&',
-                                '||': '||',
-                            },
-                            currentValue: filters.properties.operator,
-                            events: {
-                                change:  (e) => {
-                                    let value = e.target.value
-                                    if (value === '') value = e.target.value = filters.geom.operator
-                                    if (value === filters.geom.operator) return
-
-                                    filters.geom.operator = value
-                                    if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })
                                 }
                             },
-                        },
-                        newGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-new',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-plus-lg',
-                            title: 'Add a new spatial constraint',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    const id = generateRandomString()
-                                    filters.geom.values[id] = {
-                                        active: true,
-                                        handler: 'booleanIntersects',
-                                        value: true,
-                                        geoms: [],
+                            operatorProps: {
+                                handler: createBadgeSelect,
+                                selectClass: `border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
+                                attrs: {name: 'propFilter-operator'},
+                                disabled: !filters.properties.active,
+                                options: {
+                                    '': 'Select an operator',
+                                    '&&': '&&',
+                                    '||': '||',
+                                },
+                                events: {
+                                    change:  (e) => {
+                                        const propertyFilters = filters.properties
+    
+                                        let value = e.target.value
+                                        if (value === '') value = e.target.value = propertyFilters.operator
+                                        if (value === propertyFilters.operator) return
+    
+                                        propertyFilters.operator = value
+                                        if (Object.values(propertyFilters.values ?? {}).some(i => {
+                                            return i.active && i.property && i.values.length
+                                        })) updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
                                     }
-                                    body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
-                                }
-                            }
-                        },
-                        bboxGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-bbox',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-bounding-box-circles',
-                            title: 'Add map extent as spatial constraint',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    const id = generateRandomString()
-                                    filters.geom.values[id] = {
-                                        active: true,
-                                        handler: 'booleanIntersects',
-                                        value: true,
-                                        geoms: [turf.bboxPolygon(getLeafletMapBbox(map)).geometry]
+                                },
+                                currentValue: filters.properties.operator,
+                            },
+                            newProp: {
+                                handler: createButton,
+                                name: 'propFilter-new',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-plus-lg',
+                                title: 'Add a new property filter',
+                                disabled: !filters.properties.active,
+                                events: {
+                                    click: () => {
+                                        const id = generateRandomString()
+                                        filters.properties.values[id] = {
+                                            active: true,
+                                            handler: 'equals',
+                                            case: true,
+                                            value: true,
+                                            values: [],
+                                        }
+                                        body.querySelector(`#${filterContainerId}-prop`).appendChild(getPropertyFilterForm(id))
                                     }
-                                    body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })                
                                 }
-                            }
-                        },
-                        toggleGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-toggle',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-toggles',
-                            title: 'Toggle all spatial constraints',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    const fields = Object.values(form.elements).filter(f => {
-                                        if (!f.getAttribute) return
-                                        return (f.getAttribute('name') || '').startsWith('geomFilter-')
-                                        && f.getAttribute('type') === 'checkbox'
-                                    })
-                                    const check = fields.every(f => !f.checked)
-
-                                    fields.forEach(field => {
-                                        field.checked = check
-                                    })
-
-                                    Object.values(filters.geom.values).forEach(f => f.active = check)
-
-                                    updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })
+                            },
+                            toggleProp: {
+                                handler: createButton,
+                                name: 'propFilter-toggle',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-toggles',
+                                title: 'Toggle all property filters',
+                                disabled: !filters.properties.active,
+                                events: {
+                                    click: () => {
+                                        const fields = Object.values(form.elements).filter(f => {
+                                            return (f.getAttribute('name') || '').startsWith('propFilter-')
+                                            && f.getAttribute('type') === 'checkbox'
+                                        })
+                                        const check = fields.every(f => !f.checked)
+    
+                                        fields.forEach(field => {
+                                            field.checked = check
+                                        })
+    
+                                        Object.values(filters.properties.values).forEach(f => f.active = check)
+    
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
+                                    }
                                 }
-                            }
-                        },
-                        removeGeom: {
-                            handler: createButton,
-                            name: 'geomFilter-remove',
-                            className: 'fs-12 bg-transparent border-0 p-0 ms-2',
-                            iconSpecs: 'bi bi-trash-fill',
-                            title: 'Remove all spatial constraints',
-                            disabled: !filters.geom.active,
-                            events: {
-                                click: () => {
-                                    body.querySelector(`#${filterContainerId}-geom`).innerHTML = ''
-                                    const update = Object.values(filters.geom.values).some(f => f.active && f.geoms?.length)
-                                    filters.geom.values = {}
-                                    if (update) updateLeafletGeoJSONLayer(layer, {
-                                        controller,
-                                    })                
+                            },
+                            removeProp: {
+                                handler: createButton,
+                                name: 'propFilter-remove',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-trash-fill',
+                                title: 'Remove all property filters',
+                                disabled: !filters.properties.active,
+                                events: {
+                                    click: () => {
+                                        const propertyFilters = filters.properties
+    
+                                        body.querySelector(`#${filterContainerId}-prop`).innerHTML = ''
+                                        propertyFilters.values = {}
+                                        if (Object.values(propertyFilters.values ?? {}).some(i => {
+                                            return i.active && i.property && i.values.length
+                                        })) updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })                
+                                    }
                                 }
-                            }
-                        },
-                        geomFilter: {
-                            handler: ({parent}={}) => {
-                                const container = customCreateElement({
-                                    id: `${filterContainerId}-geom`,
-                                    className: 'd-flex flex-column w-100 gap-2',
-                                    parent,
-                                })  
-
-                                for (const id in filters.geom.values) {
-                                    container.appendChild(getGeomFilterForm(id))
+                            },
+                            propFilter: {
+                                handler: ({parent}={}) => {
+                                    const container = customCreateElement({
+                                        id: `${filterContainerId}-prop`,
+                                        className: 'd-flex flex-column w-100 gap-2',
+                                        parent,
+                                    })  
+    
+                                    for (const id in filters.properties.values) {
+                                        container.appendChild(getPropertyFilterForm(id))
+                                    }
                                 }
-                            }
+                            },
+    
+                            enableGeom: {
+                                handler: createFormCheck,
+                                checked: filters.geom.active,
+                                formCheckClass: 'flex-grow-1',
+                                labelInnerText: 'Filter by geometry',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === filters.geom.active) return
+                    
+                                        Object.keys(form.elements).filter(i => i.startsWith('geomFilter-')).forEach(i => {
+                                            form.elements[i].disabled = !value
+                                        })
+    
+                                        filters.geom.active = value
+                                        if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            operatorGeom: {
+                                handler: createBadgeSelect,
+                                selectClass: `border-0 p-0 pe-1 text-end text-secondary text-bg-${getPreferredTheme()}`,
+                                attrs: {name: 'geomFilter-operator'},
+                                disabled: !filters.geom.active,
+                                options: {
+                                    '': 'Select an operator',
+                                    '&&': '&&',
+                                    '||': '||',
+                                },
+                                currentValue: filters.properties.operator,
+                                events: {
+                                    change:  (e) => {
+                                        let value = e.target.value
+                                        if (value === '') value = e.target.value = filters.geom.operator
+                                        if (value === filters.geom.operator) return
+    
+                                        filters.geom.operator = value
+                                        if (Object.keys(filters.geom.values || {}).length) updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
+                                    }
+                                },
+                            },
+                            newGeom: {
+                                handler: createButton,
+                                name: 'geomFilter-new',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-plus-lg',
+                                title: 'Add a new spatial constraint',
+                                disabled: !filters.geom.active,
+                                events: {
+                                    click: () => {
+                                        const id = generateRandomString()
+                                        filters.geom.values[id] = {
+                                            active: true,
+                                            handler: 'booleanIntersects',
+                                            value: true,
+                                            geoms: [],
+                                        }
+                                        body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
+                                    }
+                                }
+                            },
+                            bboxGeom: {
+                                handler: createButton,
+                                name: 'geomFilter-bbox',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-bounding-box-circles',
+                                title: 'Add map extent as spatial constraint',
+                                disabled: !filters.geom.active,
+                                events: {
+                                    click: () => {
+                                        const id = generateRandomString()
+                                        filters.geom.values[id] = {
+                                            active: true,
+                                            handler: 'booleanIntersects',
+                                            value: true,
+                                            geoms: [turf.bboxPolygon(getLeafletMapBbox(map)).geometry]
+                                        }
+                                        body.querySelector(`#${filterContainerId}-geom`).appendChild(getGeomFilterForm(id))
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })                
+                                    }
+                                }
+                            },
+                            toggleGeom: {
+                                handler: createButton,
+                                name: 'geomFilter-toggle',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-toggles',
+                                title: 'Toggle all spatial constraints',
+                                disabled: !filters.geom.active,
+                                events: {
+                                    click: () => {
+                                        const fields = Object.values(form.elements).filter(f => {
+                                            if (!f.getAttribute) return
+                                            return (f.getAttribute('name') || '').startsWith('geomFilter-')
+                                            && f.getAttribute('type') === 'checkbox'
+                                        })
+                                        const check = fields.every(f => !f.checked)
+    
+                                        fields.forEach(field => {
+                                            field.checked = check
+                                        })
+    
+                                        Object.values(filters.geom.values).forEach(f => f.active = check)
+    
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            removeGeom: {
+                                handler: createButton,
+                                name: 'geomFilter-remove',
+                                className: 'fs-12 bg-transparent border-0 p-0 ms-2',
+                                iconSpecs: 'bi bi-trash-fill',
+                                title: 'Remove all spatial constraints',
+                                disabled: !filters.geom.active,
+                                events: {
+                                    click: () => {
+                                        body.querySelector(`#${filterContainerId}-geom`).innerHTML = ''
+                                        const update = Object.values(filters.geom.values).some(f => f.active && f.geoms?.length)
+                                        filters.geom.values = {}
+                                        if (update) updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })                
+                                    }
+                                }
+                            },
+                            geomFilter: {
+                                handler: ({parent}={}) => {
+                                    const container = customCreateElement({
+                                        id: `${filterContainerId}-geom`,
+                                        className: 'd-flex flex-column w-100 gap-2',
+                                        parent,
+                                    })  
+    
+                                    for (const id in filters.geom.values) {
+                                        container.appendChild(getGeomFilterForm(id))
+                                    }
+                                }
+                            },
                         },
-                    },
-                    className: 'flex-wrap gap-2'
-                }
+                        className: 'flex-wrap gap-2'
+                    }
+                } : {})
             }
         }        
         
