@@ -762,16 +762,16 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
         
-        divider3: !isLegendGroup || feature ? null : {
+        divider3: !isLegendGroup || !geojsonLayer || feature ? null : {
             divider: true,
         },
-        copyDataSource: !isLegendGroup || feature ? null : {
+        copyDataSource: !isLegendGroup || !geojsonLayer || feature ? null : {
             innerText: `Copy data source`,
             btnCallback: async () => {
                 navigator.clipboard.writeText(JSON.stringify({dbIndexedKey:layer._dbIndexedKey}))
             }
         },
-        pasteDataSource: !isLegendGroup || feature ? null : {
+        pasteDataSource: !isLegendGroup || !geojsonLayer || feature ? null : {
             innerText: `Paste data source`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
@@ -782,12 +782,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!dbIndexedKey) return
 
                     layer._dbIndexedKey = dbIndexedKey
-
-                    if (layer === geojsonLayer) {
-                        updateLeafletGeoJSONLayer(layer)
-                    } else {
-                        console.log('pasteDataSource: handle non-geojson layers')
-                    }
+                    updateLeafletGeoJSONLayer(layer)
                 } catch { return }
             }
         },
