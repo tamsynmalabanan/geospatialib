@@ -6,10 +6,12 @@ const createLeafletLegendItem = (layer) => {
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
     
-    const legendCollapseId = `${container.id}-collapse`
+    const containerId = `${layers.id}-${layer._leaflet_id}`
+    const legendCollapseId = `${containerId}-collapse`
+
     const container = customCreateElement({
         tag: 'div',
-        id: `${layers.id}-${layer._leaflet_id}`,
+        id: containerId,
         className: `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend === false ? 'd-none' : ''}`,
         attrs: {
             'data-layer-legend': "true",
@@ -26,7 +28,7 @@ const createLeafletLegendItem = (layer) => {
     
     const legendTitle = customCreateElement({
         tag: 'div',
-        id: `${container.id}-title`,
+        id: `${containerId}-title`,
         className: 'd-flex flex-nowrap gap-2',
         parent: container,
         innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap'}).outerHTML
@@ -135,14 +137,14 @@ const createLeafletLegendItem = (layer) => {
 
     const legendDetails = customCreateElement({
         tag: 'div',
-        id: `${container.id}-details`,
+        id: `${containerId}-details`,
         className: 'd-flex',
         parent: legendCollapse
     }) 
     
     const legendAttribution = customCreateElement({
         tag: 'div',
-        id: `${container.id}-attribution`,
+        id: `${containerId}-attribution`,
         className: `d-flex ${layer?._properties?.info?.showAttribution != false ? '' : 'd-none'}`,
         innerHTML: layer._params.attribution ?? '',
         parent: legendCollapse
