@@ -341,6 +341,15 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
     }
 
+    const createLegendImage = (layer) => {
+        const details = layers.querySelector(`#${layers.id}-${layer._leaflet_id}-details`)
+        details.innerHTML = ''
+
+        const img = new Image()
+        img.src = layer._params.legend
+        details.appendChild(img)
+    }
+
     let timeout
     map.on('movestart zoomstart', () => {
         clearTimeout(timeout)
@@ -389,10 +398,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     const details = legend.querySelector(`#${legend.id}-details`)
                     if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
                         if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
-                            details.innerHTML = ''
-                            const img = new Image()
-                            img.src = layer._params.legend
-                            details.appendChild(img)
+                            createLegendImage(layer)
                         }
                     } else {
                         clearLegend(legend)
@@ -486,9 +492,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
                         details.innerHTML = ''
                         if (layer._params.legend) {
-                            const img = new Image()
-                            img.src = layer._params.legend
-                            details.appendChild(img)
+                            createLegendImage(layer)
                         }
                     }
                 } else {
