@@ -38,14 +38,14 @@ const createLeafletLegendItem = (layer) => {
         innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap user-select-none'}).outerHTML
     })
     
-    const moveToggle = createIcon({
-        peNone: false,
-        className: 'bi bi-grip-vertical onblur-fade'
-    })
-    legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
+    // const moveToggle = createIcon({
+    //     peNone: false,
+    //     className: 'bi bi-grip-vertical onblur-fade'
+    // })
+    // legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
     
     Array('mousedown', 'touchstart').forEach(t1 => {
-        moveToggle.addEventListener(t1, (e1) => {
+        container.addEventListener(t1, (e1) => {
             const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
