@@ -667,7 +667,7 @@ const cloneLeafletLayerStyles = (layer) => {
     
     Array(symbology?.default, ...Object.values(symbology?.groups ?? {})).forEach(i => {
         if (!i) return
-        
+
         const newDefs = cloneFillPatternDefs(i.styleParams.fillPatternId)
         i.styleParams.fillPatternId = newDefs?.id
     })
@@ -812,25 +812,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         legend: {
             innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
             btnCallback: async () => {
-                // const targetGroup = isLegendGroup ? group : map._ch.getLayerGroups().client
-                // const pane = createCustomPane(map)
-                // let layerClone
-
-                // if (geojsonLayer) {
-                //     layerClone = await getLeafletGeoJSONLayer({
-                //         geojson: layerGeoJSON,
-                //         group: targetGroup,
-                //         dbIndexedKey: (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null,
-                //         properties: isLegendGroup ? cloneLeafletLayerStyles(geojsonLayer) : null,
-                //         params: layer._params,
-                //         pane,
-                //     })
-
-                //     if (group._name === 'query' && !layer._dbIndexedKey) layer._dbIndexedKey = layerClone._dbIndexedKey
-                // }
-
-                // if (layerClone) targetGroup.addLayer(layerClone)
-
+                console.log(layer)
                 createLeafletLayer(layer._params, {
                     dbIndexedKey: layer._dbIndexedKey,
                     data: layerGeoJSON,
