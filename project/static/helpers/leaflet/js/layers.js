@@ -842,7 +842,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                         group: targetGroup,
                         dbIndexedKey: (await getFromGeoJSONDB(layer._dbIndexedKey ?? '')) ? layer._dbIndexedKey : null,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(geojsonLayer) : null,
-                        params: geojsonLayer === layer ? geojsonLayer._params : null,
+                        params: layer._params,
                         pane,
                     })
 
