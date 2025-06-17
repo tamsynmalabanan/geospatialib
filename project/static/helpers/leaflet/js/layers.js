@@ -932,7 +932,7 @@ const createLeafletLayer = async (params, {
 } = {}) => {
     const map = group._map
     const pane = createCustomPane(map)
-    const type = params.type.toLowerCase()
+    const type = (params.type ?? 'geojson').toLowerCase()
 
     const attribution = (params.attribution ?? '').trim()
     params.attribution = attribution && !Array('none', '').includes(attribution.toLowerCase()) ? attribution : createAttributionTable(data)?.outerHTML
