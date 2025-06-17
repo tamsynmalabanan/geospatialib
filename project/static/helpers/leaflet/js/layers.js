@@ -662,10 +662,12 @@ const cloneFillPatternDefs = (currentId) => {
 }
 
 const cloneLeafletLayerStyles = (layer) => {
-    const properties = structuredClone(layer._properties)
+    const properties = structuredClone(layer._properties ?? {})
     const symbology = properties.symbology
     
-    Array(symbology.default, ...Object.values(symbology.groups ?? {})).forEach(i => {
+    Array(symbology?.default, ...Object.values(symbology?.groups ?? {})).forEach(i => {
+        if (!i) return
+        
         const newDefs = cloneFillPatternDefs(i.styleParams.fillPatternId)
         i.styleParams.fillPatternId = newDefs?.id
     })
