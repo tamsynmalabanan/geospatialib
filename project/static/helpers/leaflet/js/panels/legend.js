@@ -6,46 +6,34 @@ const createLeafletLegendItem = (layer) => {
     const pane = map.getPane(paneName)
     pane.style.zIndex = (layers?.children ?? []).length + 200
     
-    const containerId = `${layers.id}-${layer._leaflet_id}`
-    const legendCollapseId = `${containerId}-collapse`
-
     const container = customCreateElement({
         tag: 'div',
-        id: containerId,
+        id: `${layers.id}-${layer._leaflet_id}`,
         className: `d-flex flex-nowrap flex-column gap-1 mb-2 position-relative ${layer?._properties?.info?.showLegend === false ? 'd-none' : ''}`,
         attrs: {
             'data-layer-legend': "true",
             'data-layer-pane': paneName,
             'data-layer-id': layer._leaflet_id,
-
-            'data-bs-toggle': 'collapse',
-            'data-bs-target': `#${legendCollapseId}`,
-            'aria-controls': legendCollapseId,
-            'aria-expanded': 'true',
-        },
-        events: {
-            'contextmenu': (e) => getLeafletLayerContextMenu(e, layer)
         }
-
     })
     layers.insertBefore(container, layers.firstChild)
     
     const legendTitle = customCreateElement({
         tag: 'div',
-        id: `${containerId}-title`,
+        id: `${container.id}-title`,
         className: 'd-flex flex-nowrap gap-2',
         parent: container,
-        innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap user-select-none'}).outerHTML
+        innerHTML: createSpan(layer._params.title, {className:'text-break text-wrap'}).outerHTML
     })
     
-    // const moveToggle = createIcon({
-    //     peNone: false,
-    //     className: 'bi bi-grip-vertical onblur-fade'
-    // })
-    // legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
+    const moveToggle = createIcon({
+        peNone: false,
+        className: 'bi bi-grip-vertical onblur-fade'
+    })
+    legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
     
     Array('mousedown', 'touchstart').forEach(t1 => {
-        container.addEventListener(t1, (e1) => {
+        moveToggle.addEventListener(t1, (e1) => {
             const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
@@ -134,47 +122,47 @@ const createLeafletLegendItem = (layer) => {
     
     const legendCollapse = customCreateElement({
         tag: 'div',
-        id: legendCollapseId,
+        id: `${container.id}-collapse`,
         className: 'collapse show ps-3',
         parent: container
     })
 
     const legendDetails = customCreateElement({
         tag: 'div',
-        id: `${containerId}-details`,
+        id: `${container.id}-details`,
         className: 'd-flex',
         parent: legendCollapse
     }) 
     
     const legendAttribution = customCreateElement({
         tag: 'div',
-        id: `${containerId}-attribution`,
+        id: `${container.id}-attribution`,
         className: `d-flex ${layer?._properties?.info?.showAttribution != false ? '' : 'd-none'}`,
         innerHTML: layer._params.attribution ?? '',
         parent: legendCollapse
     })
     Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
 
-    // const collapseToggle = createIcon({
-    //     parent: toggleContainer,
-    //     peNone: false,
-    //     className: 'dropdown-toggle ms-5 onblur-fade',
-    //     attrs: {
-    //         'data-bs-toggle': 'collapse',
-    //         'data-bs-target': `#${legendCollapse.id}`,
-    //         'aria-controls': legendCollapse.id,
-    //         'aria-expanded': 'true',
-    //     }
-    // })
+    const collapseToggle = createIcon({
+        parent: toggleContainer,
+        peNone: false,
+        className: 'dropdown-toggle ms-5 onblur-fade',
+        attrs: {
+            'data-bs-toggle': 'collapse',
+            'data-bs-target': `#${legendCollapse.id}`,
+            'aria-controls': legendCollapse.id,
+            'aria-expanded': 'true',
+        }
+    })
 
-    // const menuToggle = createIcon({
-    //     parent: toggleContainer,
-    //     peNone: false,
-    //     className: 'bi bi-three-dots onblur-fade',
-    //     events: {
-    //         'click': (e) => getLeafletLayerContextMenu(e, layer)
-    //     }
-    // })
+    const menuToggle = createIcon({
+        parent: toggleContainer,
+        peNone: false,
+        className: 'bi bi-three-dots onblur-fade',
+        events: {
+            'click': (e) => getLeafletLayerContextMenu(e, layer)
+        }
+    })
 
     return container
 }
