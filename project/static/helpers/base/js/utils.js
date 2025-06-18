@@ -111,6 +111,7 @@ const pushURLParams = (url, params) => {
 }
 
 const setURLParams = (params) => {
+    console.log(params)
     const getParams = []
     Object.keys(params).forEach(i => {
         getParams.push(`${i}=${params[i]}`)
