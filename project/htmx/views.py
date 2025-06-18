@@ -90,7 +90,7 @@ class SearchList(ListView):
             super().get_queryset()
             .select_related(
                 'collection__url', 
-                'srid__srid', 
+                'srid', 
             )
             # .prefetch_related(
             #     'keywords',
