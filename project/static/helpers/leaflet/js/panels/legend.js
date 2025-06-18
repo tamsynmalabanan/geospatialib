@@ -252,7 +252,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
-            className: 'me-5',
             btnClickHandler: (e) => {
                 const menuContainer = contextMenuHandler(e, {
                     confirm: {
@@ -265,12 +264,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
+        divider2: {
+            tag: 'div',
+            className: 'me-5',
+        },
         addLayers: {
             iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
             toolHandler: false,
-            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
+            className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
                 modalElement.querySelector('form')._leafletMap = map
