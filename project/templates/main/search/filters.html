@@ -36,7 +36,7 @@
                                             name="{{field}}"
                                             value=""
                                             class="{{button_class}} btn-primary"
-                                        >{{label}} ({{icount}})</button>
+                                        >{{label}} ({{icount|format_number}})</button>
                                     {% else %}
                                         {% if icount != count %}
                                             <button
@@ -44,7 +44,7 @@
                                                 name="{{field}}"
                                                 value="{{value}}"
                                                 class="{{button_class}} bg-primary-subtle text-muted"
-                                            >{{label}} ({{icount}})</button>
+                                            >{{label}} ({{icount|format_number}})</button>
                                         {% endif %}
                                     {% endif %}
                                 {% endif %}
