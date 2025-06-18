@@ -25,10 +25,13 @@ const handleSearchForm = () => {
     form.addEventListener('htmx:afterSwap', (e) => {
         Array.from(form.querySelectorAll(`[type='submit'][name='bbox__bboverlaps']`)).forEach(i => {
             const mapId = i.getAttribute('data-map-id')
+            if (!mapId) return
+
             const map = maps.find(map => {
                 console.log(map, mapId)
                 return map.getContainer().id === mapId
             })
+            console.log(map)
             i.value = JSON.stringify(turf.bboxPolygon(getLeafletMapBbox(map)).geometry)
         })
     })
