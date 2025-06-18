@@ -10,10 +10,8 @@ const handleSearchForm = () => {
             Array.from(form.elements).forEach(i => {
                 const name = i.getAttribute('name')
                 if (!name) return
-    
                 params[name] = i.value
             })
-    
             setURLParams(params)
         }
     })
