@@ -1,6 +1,6 @@
 <form id='searchLibraryForm' class='my-3 d-flex flex-column px-3'>
     <div class="d-flex justify-content-between gap-3">
-        <div class='d-flex'>
+        <div class='d-flex flex-grow-1'>
             {% with field=search_form.query %}
                 {% include "helpers/partials/form/field.html" %}
             {% endwith %}
