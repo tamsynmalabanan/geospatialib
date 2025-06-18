@@ -8,12 +8,10 @@
 
 {% block offcanvas_nav %}
     {% include "main/library/form.html" %}
-{% endblock offcanvas_nav %}
-
+    {% endblock offcanvas_nav %}
+    
 {% block offcanvas_body %}
-    <div id='searchLibraryResults' class="border-top p-3 d-flex flex-grow-1">
-        insert featured content here
-    </div>
+    {% include "main/library/results.html" %}
 {% endblock offcanvas_body %}
 
 {% block sidebar_toggle %}

@@ -15,11 +15,6 @@ const handleSearchForm = () => {
             setURLParams(params)
         }
     })
-
-    if (queryField.value) {
-        const submitEvent = new Event('submit')
-        form.dispatchEvent(submitEvent)
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
