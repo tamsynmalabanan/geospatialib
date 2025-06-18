@@ -4,7 +4,8 @@ from django.forms.models import model_to_dict
 from urllib.parse import urlparse
 
 from helpers.base.models import dict_to_choices
-from helpers.main.layers import WORLD_GEOM
+from helpers.main.constants import WORLD_GEOM
+
 from . import choices
 
 class SpatialRefSys(models.Model):

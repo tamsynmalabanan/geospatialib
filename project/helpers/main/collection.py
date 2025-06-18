@@ -14,8 +14,7 @@ from helpers.base.utils import (
 from helpers.base.files import get_file_names
 from helpers.main.layers import format_url, WORLD_GEOM
 from helpers.main.ogc import get_ogc_layers
-
-XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
+from helpers.main.constants import XYZ_TILES_CHARS
 
 def guess_format_from_url(url):
     if not url:

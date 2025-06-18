@@ -10,24 +10,7 @@ from urllib.parse import unquote
 from main.models import SpatialRefSys
 from helpers.base.utils import get_response, get_response_file, get_domain_url, remove_query_params
 from helpers.base.files import extract_zip
-
-DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
-
-WORLD_GEOM = GEOSGeometry(Polygon([
-    (-180, -90), (180, -90), (180, 90), (-180, 90), (-180, -90)
-]), srid=4326)
-
-LONGITUDE_ALIASES = [
-    'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
-    'lambda', 'meridian', 'geo_x', 'geom_x', 'x_coord', 
-    'east_west', 'west_east', 'horizontal_position', 'east', 'west'
-]
-
-LATITUDE_ALIASES = [
-    'y', 'lat', 'latitude', 'northing', 'southing',
-    'phi', 'parallel', 'geo_y', 'geom_y', 'y_coord',
-    'north_south', 'south_north', 'vertical_position', 'north', 'south'
-]
+from helpers.main.constants import DEFAULT_SRID, WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES
 
 
 def format_url(url, format):
