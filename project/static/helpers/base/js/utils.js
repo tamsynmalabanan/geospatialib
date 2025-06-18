@@ -110,17 +110,6 @@ const pushURLParams = (url, params) => {
     return urlObj.toString()
 }
 
-const setURLParams = (params) => {
-    const urlParams = new URLSearchParams(window.location.search)
-
-    Object.keys(params).forEach(key => {
-        urlParams.set(key, params[key])
-    })
-
-    const newURL = window.location.pathname + '?' + urlParams.toString()
-    window.history.pushState({}, '', newURL)
-}
-
 const formatNumberWithCommas = (number) => {
     let [integer, decimal] = number.toString().split(".")
     integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
