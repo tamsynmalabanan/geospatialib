@@ -1,12 +1,12 @@
 <form 
     id='searchForm'
-    class='d-flex flex-column'
+    class='d-flex flex-column gap-3 pb-3'
     hx-get="{% url 'htmx:search' %}" 
     hx-trigger="submit" 
     hx-target="#searchResults"
     hx-swap="innerHTML"
 >
-    <div id='searchFormFields' class="collapse show multi-collapse m-3">
+    <div id='searchFormFields' class="collapse show multi-collapse px-3">
         <div class="d-flex justify-content-between gap-1">
             <div class='d-flex flex-grow-1'>
                 {% with field=form.query %}
