@@ -116,7 +116,8 @@ const setURLParams = (params) => {
     Object.keys(params).forEach(i => {
         getParams.push(`${i}=${params[i]}`)
     })
-    window.location.href = window.location.pathname + `?${getParams.join('&')}`
+    console.log(`?${getParams.join('&')}`)
+    // window.location.href = window.location.pathname + `?${getParams.join('&')}`
 }
 
 const formatNumberWithCommas = (number) => {
