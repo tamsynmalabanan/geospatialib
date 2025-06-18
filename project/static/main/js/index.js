@@ -6,7 +6,8 @@ const handleSearchForm = () => {
 
     form.addEventListener('htmx:beforeRequest', (e) => {
         if (queryField.value) {
-            document.querySelector('#searchLibraryResults')?.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-2"></div>'
+            const resultsContainer = document.querySelector('#searchLibraryResults')
+            .innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-2"></div>'
 
             const params = {}
             Array.from(form.elements).forEach(i => {
