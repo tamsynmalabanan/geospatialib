@@ -13,7 +13,7 @@ const handleSearchForm = () => {
             `)
             document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
 
-            let urlParams = e.detail.pathInfo.finalRequestPath.split('?')
+            const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
             window.history.pushState(
                 {}, '', `${window.location.pathname}?${urlParams[urlParams.length-1]}`
             )
