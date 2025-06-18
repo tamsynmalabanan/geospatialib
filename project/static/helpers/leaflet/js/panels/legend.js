@@ -252,6 +252,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
+            className: 'me-5',
             btnClickHandler: (e) => {
                 const menuContainer = contextMenuHandler(e, {
                     confirm: {
