@@ -68,8 +68,10 @@
                                     {% block offcanvas_nav %}{% endblock offcanvas_nav %}
                                 </div>
                             </div>
-                            <div class="offcanvas-body overflow-auto flex-grow-1 px-3 bg-{{request.COOKIES.theme}}">
-                                {% block offcanvas_body %}{% endblock offcanvas_body %}
+                            <div class="offcanvas-body overflow-auto flex-grow-1">
+                                <div class="px-3 bg-{{request.COOKIES.theme}}">
+                                    {% block offcanvas_body %}{% endblock offcanvas_body %}
+                                </div>
                             </div>
                         </div>
                     {% endblock main_sidebar %}
