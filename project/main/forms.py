@@ -18,8 +18,8 @@ class SearchForm(forms.Form):
         widget=forms.TextInput(attrs={
             'type':'search',
             'class':'form-control border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent',
-            'placeholder': 'Search...'
-            'title': 'Search the library for datasets'
+            'placeholder': 'Search...',
+            'title': 'Search the library for datasets',
         })
     )
 
