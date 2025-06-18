@@ -768,7 +768,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             divider: true,
         },
         updateData: !isLegendGroup || !geojsonLayer || feature ? null : {
-            innerText: `Update geojson data`,
+            innerText: `Update geojson`,
             btnCallback: async () => {
                 const text = await navigator.clipboard.readText()
                 if (!text) return
