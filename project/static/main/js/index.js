@@ -5,12 +5,17 @@ const handleSearchForm = () => {
     form.addEventListener('submit', (e) => {
         e.preventDefault()
 
-        const params = {}
-        Array.from(form.querySelectorAll('form-control')).forEach(i => {
-            params[i.getAttribute('name')] = i.value
-        })
-
-        setURLParams(params)
+        if (queryField.value) {
+            const params = {}
+            Array.from(form.elements).forEach(i => {
+                const name = i.getAttribute('name')
+                if (!name) return
+    
+                params[name] = i.value
+            })
+    
+            setURLParams(params)
+        }
     })
 
     if (queryField.value) {
