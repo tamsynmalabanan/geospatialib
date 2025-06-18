@@ -3,6 +3,7 @@ const handleSearchForm = () => {
 
     form.addEventListener('submit', (e) => e.preventDefault())
 
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
