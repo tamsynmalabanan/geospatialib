@@ -23,7 +23,10 @@ const handleSearchForm = () => {
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
-        console.log(e)
+        Array.from(form.querySelectorAll(`[type='submit'][name='bbox__bboverlaps']`)).forEach(i => {
+            const map = maps.find(map => map.getContainer().id === i.getAttribute('data-map-id'))
+            i.value = JSON.stringify(turf.bboxPolygon(getLeafletMapBbox(map)).geometry)
+        })
     })
 
     if (queryField.value) {
