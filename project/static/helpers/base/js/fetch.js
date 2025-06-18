@@ -38,7 +38,7 @@ const fetchCORSProxy = async (url, fetchParams={}) => {
     }
     
     return fetch(
-        `/htmx/cors_proxy/?url=${encodeURIComponent(url)}`, 
+        `/htmx/cors/proxy/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {

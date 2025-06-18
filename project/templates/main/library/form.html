@@ -1,4 +1,10 @@
-<form id='searchLibraryForm' class='my-3 d-flex flex-column px-3'>
+<form 
+    class='my-3 d-flex flex-column px-3'
+    hx-get="{% url 'htmx:search_library' %}" 
+    hx-trigger="submit" 
+    hx-target="#searchLibraryResults"
+    hx-swap="innerHTML"
+>
     <div class="d-flex justify-content-between gap-3">
         <div class='d-flex flex-grow-1'>
             {% with field=search_form.query %}
@@ -7,7 +13,7 @@
         </div>
         <button 
             class='rounded-circle btn btn-primary' 
-            type="button"
+            type="submit"
             style="height:42px;width:42px"
         ><i class="bi bi-search"></i></button>
     </div>

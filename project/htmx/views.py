@@ -13,6 +13,10 @@ from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 
 @require_http_methods(['GET'])
+def search_library(request):
+    return HttpResponse(request.GET)
+
+@require_http_methods(['GET'])
 def validate_collection(request):
     try:
         data = request.GET.dict()

@@ -3,7 +3,7 @@ const fetchProj4Def = async (crs, {
     controller,
 } = {}) => {
     for (const url of [
-        `/htmx/srs_wkt/${crs}/`,
+        `/htmx/srs/wkt/${crs}/`,
         `https://spatialreference.org/ref/epsg/${crs}/ogcwkt`,
     ]) {
         const def = await fetchTimeout(url, {
