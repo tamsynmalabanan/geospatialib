@@ -33,6 +33,10 @@ def sub_bool(value, sub):
         return f'not {sub}'
     return value
 
+@register.filter
+def stringify(value):
+    return str(value)
+
 @register.simple_tag
 def random_string():
     chars = string.ascii_letters
