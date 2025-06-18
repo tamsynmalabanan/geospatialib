@@ -6,6 +6,8 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
+from django.db.models import Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
+
 
 import json
 import requests
@@ -16,6 +18,7 @@ from main.models import SpatialRefSys, URL, Layer
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 from main import forms
+from helpers.base.utils import create_cache_key
 
 
 class SearchList(ListView):
@@ -23,6 +26,161 @@ class SearchList(ListView):
     model = Layer
     context_object_name = 'layers'
     paginate_by = 24
+
+    @property
+    def page(self):
+        return int(self.request.GET.get('page', 1))
+
+    @property
+    def query(self):
+        query = self.request.GET.get('query', '').strip()
+
+        exclusions = None
+
+        if validators.url(query) == True:
+            query = query.split('?')[0]
+        else:
+            if ' -' in f' {query}':
+                keywords = query.split(' ')
+                exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
+                query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+
+            if query in ['', '*']:
+                query = '*'
+            else:
+                query = query.replace(' ', ' OR ')
+
+        return (query, exclusions)
+
+    @property
+    def filter_fields(self):
+        return [
+            'type',
+        ]
+
+    @property
+    def filter_expressions(self):
+        return [
+            'bbox__bboverlaps'
+        ]
+
+    @property
+    def filters(self):
+        return self.filter_fields + self.filter_expressions
+
+    @property
+    def cache_key(self):
+        return create_cache_key([
+            'SearchList',
+            self.request.GET.get('query', '').strip()
+        ])
+
+    def apply_query_filters(self, queryset):
+        return queryset.filter(**{
+            param : value 
+            for param, value in self.request.GET.items() 
+            if value and param in self.filters
+        })
+
+    def perform_full_text_search(self):
+        query, exclusions = self.query
+
+        queryset = (
+            super().get_queryset()
+            .select_related(
+                'url', 
+                'default_legend', 
+            )
+            # .prefetch_related(
+            #     'tags',
+            # )
+        )
+
+        if exclusions:
+            ex_queries = Q(title__icontains=exclusions[0]) | Q(name__icontains=exclusions[0])
+            if len(exclusions) > 1:
+                for word in exclusions[1:]:
+                    ex_queries |= Q(title__icontains=word) | Q(name__icontains=word)
+            queryset = queryset.exclude(ex_queries)
+
+        if query == '*':
+            return (
+                queryset
+                .annotate(
+                    rank=Value(1,output_field=IntegerField())
+                )
+            )
+        
+        if validators.url(query) == True:
+            search_type = "plain"
+        else:
+            search_type = "websearch"
+
+        search_query = SearchQuery(query, search_type=search_type)
+
+        search_vector = SearchVector('name')
+        search_fields = self.filter_fields + [
+            'url__url',
+            'title',
+            'abstract',
+        ]
+        for field in search_fields:
+            search_vector = search_vector + SearchVector(field)
+
+        queryset = (
+            queryset
+            .annotate(
+                rank=SearchRank(search_vector, search_query),
+            )
+            .filter(rank__gte=0.001)
+        )
+        
+        return queryset
+
+    def get_filters(self):
+        return {
+            field: (
+                self.queryset
+                .values(field)
+                .annotate(count=Count('id', distinct=True))
+                .order_by('-count')
+            ) for field in self.filter_fields
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.page == 1:
+            count = context['page_obj'].paginator.count
+            fillers = util_helpers.find_nearest_divisible(count, [2,3])-count
+
+            context['count'] = count
+            context['fillers'] = range(fillers)
+            context['filters'] = self.get_filters()
+            context['params'] = [i for i in list(self.request.GET.values()) if i and i != '']
+        return context
+
+    def get_queryset(self):
+        if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
+            queryset = cache.get(self.cache_key)
+
+            if not queryset or not queryset.exists():
+                queryset = self.perform_full_text_search()
+
+            if queryset.exists():
+                cache.set(self.cache_key, queryset, timeout=3600)
+                queryset = self.apply_query_filters(queryset)
+                
+            self.queryset = queryset
+
+        queryset = self.queryset
+        if queryset and queryset.exists():
+            queryset = (
+                self.queryset
+                .annotate(rank=Max('rank'))
+                .order_by(*['-rank', 'title','format'])
+            )
+
+        return queryset
 
 
 
