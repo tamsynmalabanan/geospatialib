@@ -2,7 +2,7 @@
     {{request.GET}}
     <div class="d-flex justify-content-between gap-3">
         {% with field=search_form.query %}
-            {% include "helpers/partials/form/field.html" %}
+            {% include "helpers/partials/form/field.html" with value=request.GET.query %}
         {% endwith %}
         <button 
             class='rounded-circle btn btn-primary' 
