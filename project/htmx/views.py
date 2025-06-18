@@ -89,8 +89,7 @@ class SearchList(ListView):
         queryset = (
             super().get_queryset()
             .select_related(
-                'collection__format', 
-                # 'collection__url__path', 
+                'collection__url', 
                 'srid__srid', 
             )
             # .prefetch_related(
