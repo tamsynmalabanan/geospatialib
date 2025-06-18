@@ -11,6 +11,8 @@ const handleSearchForm = () => {
 
             document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
 
+            console.log(e)
+
             const params = {}
             Array.from(form.elements).forEach(i => {
                 const name = i.getAttribute('name')
