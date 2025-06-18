@@ -410,6 +410,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
             Promise.all(promises).then(() => {
                 map._previousBbox = newBbox
+                Array.from(document.querySelectorAll(`[type='submit'][name='bbox__bboverlaps'][data-map-id="${map.getContainer().id}"]`)).forEach(i => {
+                    console.log(i)
+                })
                 localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(newBbox))
             })
         }, 500)
