@@ -1,12 +1,12 @@
 const handleSearchForm = () => {
-    const form = document.querySelector('#searchLibraryForm')
+    const form = document.querySelector('#searchForm')
     const queryField = form.elements.query
 
     form.addEventListener('submit', (e) => e.preventDefault())
 
     form.addEventListener('htmx:beforeRequest', (e) => {
         if (queryField.value) {
-            const resultsContainer = document.querySelector('#searchLibraryResults')
+            const resultsContainer = document.querySelector('#searchResults')
             .innerHTML = '<div class="flex-grow-1 d-flex justify-content-center mt-5"><div class="spinner-border" role="status"></div></div>'
 
             const params = {}

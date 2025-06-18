@@ -1,2 +1,41 @@
-{{layers}}
-{{layers.count}}
+{% load static %}
+{% load utility_tags %}
+
+{% if page_obj.number == 1 %}
+    {% include "main/search/filters.html" %}
+{% endif %}
+
+{% comment %} {% if page_obj.number %}
+    {% if page_obj.number == 1 %}
+        <ul 
+            id='searchResults' 
+            class="dataset-list d-flex flex-wrap p-0 gap-3 px-3"
+        >
+            {% include "library/search/items.html" %}
+            {% for i in fillers %}
+                <li class='list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1' style="min-width:180px;"></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {% include "library/search/items.html" %}
+    {% endif %}
+{% else %}
+    {% if form.is_valid %}
+        <div
+            class='htmx-indicator htmx-indicator-search-results d-flex justify-content-center gap-3 flex-grow-1 align-items-center'
+            hx-get="{% url 'hx_library:search' %}{% querystring request %}"
+            hx-trigger="load"
+            hx-swap='outerHTML'
+            hx-target='this'
+            hx-indicator=".htmx-indicator-search-results"
+        >
+            {% for i in '123' %}
+                <div class="spinner-grow spinner-grow-sm text-primary my-3 " role="status"></div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div id='searchResults' class='px-3'>
+            fetch default filters
+        </div>
+    {% endif %}
+{% endif %} {% endcomment %}

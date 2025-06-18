@@ -1,0 +1,7 @@
+<button 
+    class='border-0 bg-transparent px-0 d-flex align-items-start ms-auto' 
+    tabindex="-1"
+    type='submit' 
+    title='Clear all filters'
+    {% if params|length == 1 %}disabled{% endif %}
+><i class="bi bi-arrow-clockwise"></i></button>

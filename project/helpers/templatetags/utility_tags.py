@@ -21,6 +21,17 @@ def format_number(value):
 def get(dict, key, sub=None):
     return dict.get(key, sub)
 
+@register.filter
+def field_name(exp):
+    return exp.split('__')[-1]
+
+@register.filter
+def sub_bool(value, sub):
+    if isinstance(value, bool):
+        if value:
+            return sub
+        return f'not {sub}'
+    return value
 
 @register.simple_tag
 def random_string():

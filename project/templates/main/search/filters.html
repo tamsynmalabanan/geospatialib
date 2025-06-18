@@ -1,0 +1,68 @@
+{% load utility_tags %}
+
+<div id='searchResultsFiltersContainer' hx-swap-oob='true' class="py-2">
+    {% if page_obj and page_obj.number %}
+        {% if count > 0 %}
+            <div id='searchFormFilters' class='collapse show multi-collapse'>
+                <div class='d-flex gap-3 flex-nowrap mb-3 px-3'>
+                    <a class="text-reset text-decoration-none fs-6" 
+                        tabindex="-1"
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#searchResultsFilters" 
+                        role="button" 
+                        aria-expanded="true"
+                        aria-controls="searchResultsFilters"
+                    ><i class="bi bi-funnel"></i></a>
+                    {% include "main/search/bbox_filters.html" %}
+                    {% include "main/search/clear_filters.html" %}
+                </div>
+                <div class="collapse show" id="searchResultsFilters">
+                    <div class="d-flex gap-2 mb-3 flex-wrap overflow-y-auto overflow-x-hidden px-3 me-3" style='max-height:100px;'>
+                        {% for field, queryset in filters.items %}
+                            {% for i in queryset %}
+                                {% variable i.count as icount %}
+                                {% variable i|get:field as value %}
+                                
+                                {% variable field|field_name as field_name %}
+                                {% variable value|sub_bool:field_name as label %}
+                                
+                                {% variable 'btn btn-sm rounded-pill border-0 fs-12 fw-bold text-wrap text-break' as button_class %}
+
+                                {% if label %}
+                                    {% if request.GET|get:field == value|stringify %}
+                                        <button
+                                            type='submit'
+                                            name="{{field}}"
+                                            value=""
+                                            class="{{button_class}} btn-primary"
+                                        >{{label}} ({{icount}})</button>
+                                    {% else %}
+                                        {% if icount != count %}
+                                            <button
+                                                type='submit'
+                                                name="{{field}}"
+                                                value="{{value}}"
+                                                class="{{button_class}} bg-primary-subtle text-muted"
+                                            >{{label}} ({{icount}})</button>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class='d-flex justify-content-between px-3'>
+                <span class='text-break'>
+                    Results for "{{request.GET.query}}" ({{count}})
+                </span>
+                <button class="border-0 bg-transparent px-0 text-bg-dark ms-2" tabindex="-1" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="searchFormFields searchFormFilters" title='Toggle search form'><i class="bi bi-chevron-expand"></i></button>
+            </div>            
+        {% else %}
+            <div class="d-flex gap-3 flex-nowrap justify-content-between px-3">
+                <span class-'mb-3'>No results found for "{{request.GET.query}}"</span>
+                {% include "main/search/clear_filters.html" %}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
