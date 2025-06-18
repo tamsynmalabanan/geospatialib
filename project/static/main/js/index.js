@@ -27,11 +27,7 @@ const handleSearchForm = () => {
             const mapId = i.getAttribute('data-map-id')
             if (!mapId) return
 
-            const map = maps.find(map => {
-                console.log(map, mapId)
-                return map.getContainer().id === mapId
-            })
-            console.log(map)
+            const map = maps.find(map => map.getContainer().id === mapId)
             i.value = JSON.stringify(turf.bboxPolygon(getLeafletMapBbox(map)).geometry)
         })
     })
