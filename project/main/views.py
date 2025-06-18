@@ -6,5 +6,5 @@ from . import forms
 def index(request):
     # messages.success(request, 'test', 'main-index-map')
     return render(request, 'main/index.html', {
-        'search_form': forms.SearchForm()
+        'search_form': forms.SearchForm(request.GET)
     })
