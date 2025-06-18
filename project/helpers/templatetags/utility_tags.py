@@ -37,6 +37,10 @@ def sub_bool(value, sub):
 def stringify(value):
     return str(value)
 
+@register.filter
+def format_number(number):
+    return f'{number:,}'
+
 @register.simple_tag
 def random_string():
     chars = string.ascii_letters
