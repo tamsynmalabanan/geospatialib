@@ -21,8 +21,6 @@ const handleSearchForm = () => {
     if (queryField.value) {
         const submitEvent = new Event('submit')
         form.dispatchEvent(submitEvent)
-    } else {
-        console.log('get featured content')
     }
 }
 

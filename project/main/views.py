@@ -2,8 +2,13 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, HttpResponse
 
 from . import forms
+from helpers.main.layers import get_layers
 
 def index(request):
-    return render(request, 'main/index.html', { 
-        'form': forms.SearchForm(request.GET.dict()),
-    })
+    data = request.GET.dict()
+    context = {'form': forms.SearchForm(data)}
+
+    if data.get('query', '') == '':
+        context['featured'] = 'featured content'
+
+    return render(request, 'main/index.html', context)
