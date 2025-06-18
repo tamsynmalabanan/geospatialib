@@ -6,20 +6,16 @@ const handleSearchForm = () => {
 
     form.addEventListener('htmx:beforeRequest', (e) => {
         if (queryField.value) {
-            const resultsContainer = document.querySelector('#searchResults')
-            .innerHTML = '<div class="flex-grow-1 d-flex justify-content-center mt-5"><div class="spinner-border" role="status"></div></div>'
-
+            document.querySelector('#searchResults').innerHTML = removeWhitespace(`
+                <div class="flex-grow-1 d-flex justify-content-center mt-5">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            `)
             document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
 
-            console.log(e)
-
-            const params = {}
-            Array.from(form.elements).forEach(i => {
-                const name = i.getAttribute('name')
-                if (!name) return
-                params[name] = i.value
-            })
-            setURLParams(params)
+            let urlParams = e.detail.pathInfo.finalRequestPath.split('?')
+            urlParams = urlParams[urlParams.length-1]
+            window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`)
         } else {
             e.preventDefault()
         }
