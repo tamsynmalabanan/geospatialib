@@ -67,5 +67,6 @@
 .focus-underline-primary:active,
 .focus-underline-primary:focus,
 .focus-underline-primary:hover {
-    border-bottom: var(--bs-border-width) solid #0d6efd !important;
+    border-bottom: 2 solid #0d6efd !important;
+    /* border-bottom: var(--bs-border-width) solid #0d6efd !important; */
 }
