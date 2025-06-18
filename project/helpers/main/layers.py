@@ -17,7 +17,6 @@ WORLD_GEOM = GEOSGeometry(Polygon([
     (-180, -90), (180, -90), (180, 90), (-180, 90), (-180, -90)
 ]), srid=4326)
 
-
 LONGITUDE_ALIASES = [
     'x', 'lon', 'long', 'lng', 'longitude', 'easting', 'westing',
     'lambda', 'meridian', 'geo_x', 'geom_x', 'x_coord', 
