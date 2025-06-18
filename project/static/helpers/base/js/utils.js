@@ -111,12 +111,14 @@ const pushURLParams = (url, params) => {
 }
 
 const setURLParams = (params) => {
-    console.log(params)
-    const getParams = []
-    Object.keys(params).forEach(i => {
-        getParams.push(`${i}=${params[i]}`)
+    const urlParams = new URLSearchParams(window.location.search)
+
+    Object.keys(params).forEach(key => {
+        urlParams.set(key, params[key])
     })
-    window.location.href = window.location.pathname + `?${getParams.join('&')}`
+
+    const newURL = window.location.pathname + '?' + urlParams.toString()
+    window.history.pushState({}, '', newURL)
 }
 
 const formatNumberWithCommas = (number) => {
