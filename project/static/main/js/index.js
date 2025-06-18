@@ -13,6 +13,12 @@ const handleSearchForm = () => {
         })
         setURLParams(params)
     })
+
+    form.addEventListener('htmx:beforeRequest', (e) => {
+        if (queryField.value) return
+
+        e.preventDefault()
+    })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
