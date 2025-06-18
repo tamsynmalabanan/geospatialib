@@ -1,8 +1,10 @@
 <form id='searchLibraryForm' class='my-3 d-flex flex-column px-3'>
     <div class="d-flex justify-content-between gap-3">
-        {% with field=search_form.query %}
-            {% include "helpers/partials/form/field.html" %}
-        {% endwith %}
+        <div>
+            {% with field=search_form.query %}
+                {% include "helpers/partials/form/field.html" %}
+            {% endwith %}
+        </div>
         <button 
             class='rounded-circle btn btn-primary' 
             type="submit"
