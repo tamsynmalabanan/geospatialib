@@ -10,7 +10,7 @@ label {
 }
 
 .focus-underline-primary {
-    border-bottom: transparent !important;
+    border-bottom: var(--bs-border-width) solid transparent !important;
 }
 
 .focus-underline-primary:active,
