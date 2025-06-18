@@ -5,7 +5,7 @@
     {% if page_obj and page_obj.number %}
         {% if count > 0 %}
             <div id='searchFormFilters' class='collapse show multi-collapse'>
-                <div class='d-flex gap-3 flex-nowrap mb-3 px-3'>
+                <div class='d-flex gap-3 flex-nowrap px-3 pb-3'>
                     <a class="text-reset text-decoration-none fs-6" 
                         tabindex="-1"
                         data-bs-toggle="collapse" 
@@ -18,7 +18,7 @@
                     {% include "main/search/clear_filters.html" %}
                 </div>
                 <div class="collapse show" id="searchResultsFilters">
-                    <div class="d-flex gap-2 mb-3 flex-wrap overflow-y-auto overflow-x-hidden px-3 me-3" style='max-height:100px;'>
+                    <div class="d-flex gap-2 flex-wrap overflow-y-auto overflow-x-hidden px-3 pb-3" style='max-height:100px;'>
                         {% for field, queryset in filters.items %}
                             {% for i in queryset %}
                                 {% variable i.count as icount %}
