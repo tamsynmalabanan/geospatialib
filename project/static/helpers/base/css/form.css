@@ -8,3 +8,15 @@ label {
     box-shadow: none;
     outline: none;
 }
+
+
+.field-underline-primary {
+    border-bottom: transparent !important;
+}
+
+.field-underline-primary:active,
+.field-underline-primary:focus,
+.field-underline-primary:hover {
+    border-bottom: 2 solid #0d6efd !important;
+    /* border-bottom: var(--bs-border-width) solid #0d6efd !important; */
+}

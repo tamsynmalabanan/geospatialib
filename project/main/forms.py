@@ -17,7 +17,7 @@ class SearchForm(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={
             'type':'search',
-            'class':'h-100 border-0 rounded-0 focus-underline-primary box-shadow-none ps-0',
+            'class':'form-control border-0 rounded-0 field-underline-primary box-shadow-none bg-transparent',
         })
     )
 
