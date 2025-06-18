@@ -266,7 +266,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         },
         divider2: {
             tag: 'div',
-            className: 'me-5',
+            className: 'me-3',
         },
         addLayers: {
             iconSpecs: 'bi-stack',
