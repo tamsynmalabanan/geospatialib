@@ -14,8 +14,9 @@ const handleSearchForm = () => {
             document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
 
             let urlParams = e.detail.pathInfo.finalRequestPath.split('?')
-            urlParams = urlParams[urlParams.length-1]
-            window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`)
+            window.history.pushState(
+                {}, '', `${window.location.pathname}?${urlParams[urlParams.length-1]}`
+            )
         } else {
             e.preventDefault()
         }
