@@ -20,6 +20,10 @@
         background-color: var(--adjusted-bg-light) !important;
     }
 
+    .offcanvas-body {
+        background-color: var(--default-bg-light) !important;
+    }
+
     ::-webkit-scrollbar-thumb {
         background-color:hsla(210, 11%, 15%, 0.3) !important;
     } 
@@ -46,6 +50,10 @@
 
     .offcanvas, .offcanvas-lg {
         background-color: var(--adjusted-bg-dark) !important;
+    }
+
+    .offcanvas-body {
+        background-color: var(--default-bg-dark) !important;
     }
     
     ::-webkit-scrollbar-thumb {
