@@ -189,8 +189,8 @@ class SearchList(ListView):
 @require_http_methods(['GET'])
 def search_library(request):
     data = request.GET.dict()
-    results = data
-    return render(request, 'main/search/results.html', {'results':results})
+    layers = data
+    return render(request, 'main/search/results.html', {'layers':layers})
 
 @require_http_methods(['GET'])
 def validate_collection(request):
