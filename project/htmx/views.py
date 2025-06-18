@@ -7,6 +7,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.db.models import Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
 
 
 import json
@@ -18,7 +19,7 @@ from main.models import SpatialRefSys, URL, Layer
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 from main import forms
-from helpers.base.utils import create_cache_key
+from helpers.base.utils import create_cache_key, find_nearest_divisible
 
 
 class SearchList(ListView):
@@ -88,19 +89,20 @@ class SearchList(ListView):
         queryset = (
             super().get_queryset()
             .select_related(
-                'url', 
-                'default_legend', 
+                'collection__format', 
+                'collection__url__path', 
+                'srid__srid', 
             )
             # .prefetch_related(
-            #     'tags',
+            #     'keywords',
             # )
         )
 
         if exclusions:
-            ex_queries = Q(title__icontains=exclusions[0]) | Q(name__icontains=exclusions[0])
+            ex_queries = Q(name__icontains=exclusions[0]) | Q(title__icontains=exclusions[0])
             if len(exclusions) > 1:
                 for word in exclusions[1:]:
-                    ex_queries |= Q(title__icontains=word) | Q(name__icontains=word)
+                    ex_queries |= Q(name__icontains=word) | Q(title__icontains=word)
             queryset = queryset.exclude(ex_queries)
 
         if query == '*':
@@ -120,9 +122,12 @@ class SearchList(ListView):
 
         search_vector = SearchVector('name')
         search_fields = self.filter_fields + [
-            'url__url',
+            'collection__url__path',
             'title',
             'abstract',
+            'keywords',
+            'attribution',
+            'styles',
         ]
         for field in search_fields:
             search_vector = search_vector + SearchVector(field)
@@ -151,7 +156,7 @@ class SearchList(ListView):
         context = super().get_context_data(**kwargs)
         if self.page == 1:
             count = context['page_obj'].paginator.count
-            fillers = util_helpers.find_nearest_divisible(count, [2,3])-count
+            fillers = find_nearest_divisible(count, [2,3])-count
 
             context['count'] = count
             context['fillers'] = range(fillers)
@@ -167,7 +172,7 @@ class SearchList(ListView):
                 queryset = self.perform_full_text_search()
 
             if queryset.exists():
-                cache.set(self.cache_key, queryset, timeout=3600)
+                cache.set(self.cache_key, queryset, timeout=60*15)
                 queryset = self.apply_query_filters(queryset)
                 
             self.queryset = queryset
@@ -177,14 +182,10 @@ class SearchList(ListView):
             queryset = (
                 self.queryset
                 .annotate(rank=Max('rank'))
-                .order_by(*['-rank', 'title','format'])
+                .order_by(*['-rank', 'title','type'])
             )
 
         return queryset
-
-
-
-
 
 @require_http_methods(['GET'])
 def search_library(request):

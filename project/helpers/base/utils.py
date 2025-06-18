@@ -168,3 +168,12 @@ def get_domain_name(url):
         return domain_parts[0]
     if len(domain_parts) > 2:
         return domain_parts[-2]
+    
+def find_nearest_divisible(num, divisors):
+    if num != 0:
+        while True: 
+            if all([num % i == 0 for i in divisors]): 
+                break
+            else:
+                num += 1
+    return num
