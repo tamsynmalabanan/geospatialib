@@ -1,9 +1,7 @@
-from main.models import SpatialRefSys
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 
 XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
 
-DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 
 WORLD_GEOM = GEOSGeometry(Polygon([
     (-180, -90), (180, -90), (180, 90), (-180, 90), (-180, -90)

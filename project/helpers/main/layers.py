@@ -10,8 +10,9 @@ from urllib.parse import unquote
 from main.models import SpatialRefSys
 from helpers.base.utils import get_response, get_response_file, get_domain_url, remove_query_params
 from helpers.base.files import extract_zip
-from helpers.main.constants import DEFAULT_SRID, WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES
+from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES
 
+DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 
 def format_url(url, format):
     url = unquote(url)
