@@ -9,6 +9,8 @@ const handleSearchForm = () => {
             const resultsContainer = document.querySelector('#searchResults')
             .innerHTML = '<div class="flex-grow-1 d-flex justify-content-center mt-5"><div class="spinner-border" role="status"></div></div>'
 
+            document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
+
             const params = {}
             Array.from(form.elements).forEach(i => {
                 const name = i.getAttribute('name')
