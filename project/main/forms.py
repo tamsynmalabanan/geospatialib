@@ -12,12 +12,13 @@ from helpers.main.collection import guess_format_from_url
 
 class SearchForm(forms.Form):
     query = forms.CharField(
-        label='Search...', 
+        # label='Search...', 
         max_length=255, 
         required=True,
         widget=forms.TextInput(attrs={
             'type':'search',
             'class':'form-control border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent',
+            'placeholder': 'Search...'
         })
     )
 

@@ -4,7 +4,7 @@
 {% get_field_id field  as field_id %}
 
 {% with WIDGET_ERROR_CLASS='is-invalid' %}
-    {% render_field field id=field_id placeholder=field.label %}
+    {% render_field field id=field_id %}
     <div class="invalid-feedback">
         <ul class="unordered-list p-0 m-0">
             {% for error in field.errors %}
