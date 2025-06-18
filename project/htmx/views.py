@@ -12,9 +12,22 @@ from main.models import SpatialRefSys, URL
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 
+from main import forms
+
 @require_http_methods(['GET'])
 def search_library(request):
-    return HttpResponse(request.GET)
+    context = {}
+
+    data = request.GET.dict()
+
+    search_form = forms.SearchForm(data)
+
+    if data.get('query', '') != '':
+        context['results'] = 'search results'
+    else:
+        context['results'] = 'featured content'
+
+    return render(request, 'main/library/results.html', context)
 
 @require_http_methods(['GET'])
 def validate_collection(request):
