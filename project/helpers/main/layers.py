@@ -29,6 +29,7 @@ LATITUDE_ALIASES = [
     'north_south', 'south_north', 'vertical_position', 'north', 'south'
 ]
 
+
 def format_url(url, format):
     url = unquote(url)
     if format == 'xyz':

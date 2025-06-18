@@ -13,15 +13,12 @@ from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 
 from main import forms
-from helpers.main.library import get_layers
-
 
 @require_http_methods(['GET'])
 def search_library(request):
     data = request.GET.dict()
 
-    results = get_layers(data)
-
+    results = data
     return render(request, 'main/library/results.html', {'results':results})
 
 @require_http_methods(['GET'])

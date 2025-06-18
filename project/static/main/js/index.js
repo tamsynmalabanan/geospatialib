@@ -17,6 +17,11 @@ const handleSearchForm = () => {
             e.preventDefault()
         }
     })
+
+    if (queryField.value) {
+        const submitEvent = new Event('submit')
+        form.dispatchEvent(submitEvent)
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
