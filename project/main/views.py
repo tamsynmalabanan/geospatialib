@@ -10,13 +10,13 @@ def index(request):
 
     data = request.GET.dict()
 
-    search_form = forms.SearchForm(data)
+    form = forms.SearchForm(data)
 
     if data.get('query', '') != '':
         context['results'] = 'search results'
     else:
         context['results'] = 'featured content'
 
-    context['search_form'] = search_form
+    context['form'] = form
 
     return render(request, 'main/index.html', context)

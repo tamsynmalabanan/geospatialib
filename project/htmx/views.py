@@ -20,12 +20,9 @@ def search_library(request):
 
     data = request.GET.dict()
 
-    search_form = forms.SearchForm(data)
+    form = forms.SearchForm(data)
 
-    if data.get('query', '') != '':
-        context['results'] = 'search results'
-    else:
-        context['results'] = 'featured content'
+    context['results'] = 'search results'
 
     return render(request, 'main/library/results.html', context)
 

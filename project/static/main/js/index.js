@@ -2,9 +2,9 @@ const handleSearchForm = () => {
     const form = document.querySelector('#searchLibraryForm')
     const queryField = form.elements.query
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault()
+    form.addEventListener('submit', (e) => e.preventDefault())
 
+    form.addEventListener('htmx:beforeRequest', (e) => {
         if (queryField.value) {
             const params = {}
             Array.from(form.elements).forEach(i => {
@@ -13,11 +13,7 @@ const handleSearchForm = () => {
                 params[name] = i.value
             })
             setURLParams(params)
-        }
-    })
-
-    form.addEventListener('htmx:beforeRequest', (e) => {
-        if (!queryField.value) {
+        } else {
             e.preventDefault()
         }
     })

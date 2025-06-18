@@ -8,7 +8,7 @@
 >
     <div class="d-flex justify-content-between gap-3">
         <div class='d-flex flex-grow-1'>
-            {% with field=search_form.query %}
+            {% with field=form.query %}
                 {% include "helpers/partials/form/field.html" %}
             {% endwith %}
         </div>
