@@ -14,7 +14,7 @@ class SearchForm(forms.Form):
     query = forms.CharField(
         # label='Search...', 
         max_length=255, 
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'type':'search',
             'class':'form-control border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent',
