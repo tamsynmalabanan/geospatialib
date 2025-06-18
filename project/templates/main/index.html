@@ -6,6 +6,10 @@
     Geospatialib
 {% endblock title %}
 
+{% block sidebar %}
+    {% include "helpers/partials/sidebar/offcanvas.html" %}
+{% endblock sidebar %}
+
 {% block sidebar_toggle %}
     {% include "helpers/partials/sidebar/toggle.html" with icon='bi-search' label='Geospatialib' title='Search library' %}
 {% endblock sidebar_toggle %}

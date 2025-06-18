@@ -28,7 +28,9 @@
         {% block body %}
             <div class="container-fluid vh-100">
                 <div class='row vh-100'>
-                    {% include "helpers/partials/sidebar/offcanvas.html" %}
+                    {% block sidebar %}
+                        {% include "helpers/partials/sidebar/offcanvas.html" %}
+                    {% endblock sidebar %}
                     <div 
                         class="col sidebar-gutter d-none {% if show_sidebar %}d-lg-block{% endif %}" 
                         title='Resize sidebar' 
