@@ -6,4 +6,5 @@ label {
 .box-shadow-none:focus,
 .box-shadow-none {
     box-shadow: none;
+    outline: none;
 }
