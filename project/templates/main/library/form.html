@@ -1,5 +1,8 @@
-<div class='mb-3'>
+<form class='my-3' action="GET">
     {% with field=search_form.query %}
         {% include "helpers/partials/form/field.html" %}
     {% endwith %}
-</div>
+    <button type="submit">
+        <i class="bi bi-search"></i>
+    </button>
+</form>
