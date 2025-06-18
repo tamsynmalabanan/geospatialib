@@ -264,16 +264,12 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
-        divider2: {
-            tag: 'div',
-            className: 'me-5',
-        },
         addLayers: {
             iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
             toolHandler: false,
-            className: 'ms-auto d-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
+            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
             btnClickHandler: (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
                 modalElement.querySelector('form')._leafletMap = map
