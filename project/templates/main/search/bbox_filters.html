@@ -2,7 +2,7 @@
 
 {% variable request.GET.bbox__bboverlaps as bbox_filter %}
 
-<button class='border-0 bg-transparent px-0' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Seach within map extent'><i class="bi bi-bounding-box-circles"></i></button>
+<button class='border-0 bg-transparent px-0 ' tabindex="-1" type='submit' name='bbox__bboverlaps' data-map-id="{{map_id}}" title='Seach within map extent'><i class="bi bi-bounding-box-circles"></i></button>
 
 <button class='border-0 bg-transparent px-0 d-flex align-items-start justify-content-center' tabindex="-1" type='submit' name='bbox__bboverlaps' title='Remove search bbox limit' value="" {% if not bbox_filter or bbox_filter == '' %}disabled{% endif %}>
     <i class="bi bi-bounding-box-circles"></i>
