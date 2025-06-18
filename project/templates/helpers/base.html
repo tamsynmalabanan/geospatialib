@@ -8,6 +8,7 @@
 {% variable 'show_#'|add:offcanvas_id as show_sidebar_key %}
 {% variable request.COOKIES|get:show_sidebar_key as show_sidebar %}
 {% variable show_sidebar|equals:'true' True as show_sidebar %}
+{% variable page_name|add:'-map' as map_id %}
 
 {% block page_variables %}{% endblock page_variables %}
 
@@ -84,7 +85,7 @@
                                 {% include "helpers/partials/sidebar/toggle.html" with icon='bi-layout-sidebar-inset' title='Toggle sidebar' %}
                             {% endblock sidebar_toggle %}
                         </div>
-                        {% include "helpers/partials/maps/leaflet_map.html" with map_id=page_name|add:'-map' map_panels="true" map_class="z-0"  map_controls_included="all" %}
+                        {% include "helpers/partials/maps/leaflet_map.html" with map_panels="true" map_class="z-0"  map_controls_included="all" %}
                     </div>
                 </div>
             </div>
