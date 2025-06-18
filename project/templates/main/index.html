@@ -7,11 +7,13 @@
 {% endblock title %}
 
 {% block offcanvas_nav %}
-    {% include "main/library/form.html" %}
+    {% include "main/search/form.html" %}
     {% endblock offcanvas_nav %}
     
 {% block offcanvas_body %}
-    {% include "main/library/results.html" %}
+    <div id='searchLibraryResults' class="border-top p-3 d-flex flex-grow-1">
+        {% include "main/search/featured.html" %}
+    </div>
 {% endblock offcanvas_body %}
 
 {% block sidebar_toggle %}
