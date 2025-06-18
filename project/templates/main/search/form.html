@@ -1,7 +1,7 @@
 <form 
     id='searchLibraryForm'
     class='my-3 d-flex flex-column px-3'
-    hx-get="{% url 'htmx:search_library' %}" 
+    hx-get="{% url 'htmx:search' %}" 
     hx-trigger="submit" 
     hx-target="#searchLibraryResults"
     hx-swap="innerHTML"
