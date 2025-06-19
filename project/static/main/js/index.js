@@ -28,7 +28,7 @@ const handleSearchForm = () => {
 
         document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
         document.querySelector('#searchResults').innerHTML = removeWhitespace(`
-            <div class="d-flex justify-content-center gap-3">
+            <div class="flex-grow-1 mt-5 d-flex justify-content-center gap-3">
                 <div class="spinner-grow spinner-grow-sm text-primary my-3" role="status"></div>
                 <div class="spinner-grow spinner-grow-sm text-primary my-3" role="status"></div>
                 <div class="spinner-grow spinner-grow-sm text-primary my-3" role="status"></div>
