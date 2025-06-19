@@ -10,7 +10,7 @@
         <ul id='searchResults' class="border-top p-3 d-flex flex-grow-1 flex-wrap gap-3 mb-3 w-100">
             {% include "main/search/items.html" %}
             {% for i in fillers %}
-                <li class='list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1' style="min-width:180px;"></li>
+                <li class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1 {% if forloop.last %}mb-3{% endif %}" style="min-width:180px;"></li>
             {% endfor %}
         </ul>
     {% else %}
