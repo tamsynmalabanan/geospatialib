@@ -2,15 +2,13 @@
 {% load utility_tags %}
 
 {% for layer in layers %}
-    {{layer}}
+    {{layer.collection__url}}
     <li 
         class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1"
         style='min-width:180px;'
         {% if forloop.last and page_obj.has_next  %}
             hx-get="{% url 'htmx:search' %}{% querystring request page=page_obj.number|add:1 %}"
             hx-trigger="intersect once"
-            {% comment %} hx-swap='afterend'
-            hx-target='this' {% endcomment %}
             hx-swap='outerHTML'
             hx-target="#searchResultsSpinner-{{page_obj.number}}"
             hx-indicator="#searchResultsSpinner-{{page_obj.number}}"
