@@ -5,11 +5,10 @@ const handleSearchForm = () => {
     form.addEventListener('submit', (e) => e.preventDefault())
 
     form.addEventListener('htmx:configRequest', (e) => {
-        console.log(e)
+        console.log(e.detail.parameters)
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
-        console.log(e)
         if (queryField.value) {
             document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
             document.querySelector('#searchResults').innerHTML = removeWhitespace(`
