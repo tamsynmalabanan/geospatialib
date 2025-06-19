@@ -16,7 +16,7 @@ const addSearchResultToMap = () => {
             url: dataset.layerUrl,
             format: dataset.layerFormat,
         }
-        console.log(data)
+        console.log(dataset, data)
     }
 }
 
