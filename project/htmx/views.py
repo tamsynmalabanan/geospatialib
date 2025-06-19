@@ -142,7 +142,7 @@ class SearchList(ListView):
 
     def get_filters(self):
         return {
-            field: list(
+            field: (
                 self.queryset
                 .values(field)
                 .annotate(count=Count('id', distinct=True))
