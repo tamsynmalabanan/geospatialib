@@ -142,7 +142,7 @@ class SearchList(ListView):
 
     def get_filters(self):
         return {
-            field: (
+            field: list(
                 self.queryset
                 .values(field)
                 .annotate(count=Count('id', distinct=True))
@@ -155,7 +155,7 @@ class SearchList(ListView):
         if self.page == 1:
             count = context['page_obj'].paginator.count
             fillers = find_nearest_divisible(count, [2,3])-count
-            filters = {i: QuerySet()}            
+            # filters = {i: QuerySet}            
 
             context['count'] = count
             context['fillers'] = range(fillers)
