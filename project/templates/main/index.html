@@ -11,9 +11,7 @@
 {% endblock offcanvas_nav %}
     
 {% block offcanvas_body %}
-    <div id='searchResults' class="border-top p-3 d-flex flex-grow-1">
-        {% include "main/search/featured.html" %}
-    </div>
+    {% include "main/search/featured.html" %}
 {% endblock offcanvas_body %}
 
 {% block sidebar_toggle %}

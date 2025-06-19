@@ -4,7 +4,7 @@
     hx-get="{% url 'htmx:search' %}" 
     hx-trigger="submit" 
     hx-target="#searchResults"
-    hx-swap="innerHTML"
+    hx-swap="outerHTML"
 >
     <div id='searchFormFields' class="collapse show multi-collapse px-3">
         <div class="d-flex justify-content-between gap-2">

@@ -5,11 +5,14 @@
     {% include "main/search/filters.html" %}
 {% endif %}
 
-{% comment %} {% if page_obj.number %}
+{{layers}}
+
+{% comment %} 
+{% if page_obj.number %}
     {% if page_obj.number == 1 %}
         <ul 
             id='searchResults' 
-            class="dataset-list d-flex flex-wrap p-0 gap-3 px-3"
+            class="border-top p-3 d-flex flex-grow-1 flex-wrap"
         >
             {% include "library/search/items.html" %}
             {% for i in fillers %}
