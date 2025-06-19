@@ -30,7 +30,7 @@ const handleSearchForm = () => {
     
     form.addEventListener('htmx:beforeRequest', (e) => {
         if (queryField.value) {
-            document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
+            document.querySelector('#searchResultsFiltersContainer').lastElementChild.innerHTML = ''
             document.querySelector('#searchResults').innerHTML = removeWhitespace(`
                 <div class="flex-grow-1 d-flex justify-content-center mt-5">
                     <div class="spinner-border" role="status"></div>
