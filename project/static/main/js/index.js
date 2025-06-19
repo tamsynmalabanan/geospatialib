@@ -7,9 +7,9 @@ const zoomToSearchResultBbox = (bbox) => {
     if (map) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(bbox))).getBounds())
 }
 
-const addSearchResultToMap = (e) => {
+const addSearchResultToMap = () => {
     const map = getSearchMap()
-    if (map) console.log(JSON.parse(e.target.dataset.layerData))
+    if (map) console.log(JSON.parse(event.target.dataset.layerData))
 }
 
 const handleSearchForm = () => {
