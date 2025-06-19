@@ -1,5 +1,5 @@
 const zoomToSearchResultBbox = (bbox) => {
-    console.log(bbox)
+    console.log(JSON.parse(bbox))
 }
 
 const handleSearchForm = () => {
