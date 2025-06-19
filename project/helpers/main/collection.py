@@ -120,6 +120,7 @@ def get_collection_data(url, format=None, delay=True):
         layers = collection_instance.get_layer_data()
         if len(layers.keys()) == collection_instance.count:
             data.update({'layers': layers, 'collection': collection_instance})
+            print(data)
             return data
 
     cached_collection = cache.get(cacheKey)
