@@ -28,16 +28,11 @@ const addSearchResultToMap = async () => {
             srid: data.srid,
         }
 
-        const layer = await createLeafletLayer(params, {
+        createLeafletLayer(params, {
             dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
             group: map._ch.getLayerGroups().library,
             add: true,
         })
-
-        if (layer && layer._group.hasLayer(layer)) {
-            el.classList.remove('text-secondary', 'bi-circle')
-            el.classList.add('text-primary', 'bi-check-circle')
-        }
     }
 }
 
