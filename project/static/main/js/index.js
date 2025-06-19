@@ -1,3 +1,5 @@
+const 
+
 const handleSearchForm = () => {
     const form = document.querySelector('#searchForm')
     const queryField = form.elements.query
