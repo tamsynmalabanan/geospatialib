@@ -20,6 +20,12 @@ const handleSearchForm = () => {
             delete requestParams.clear
         }
 
+        console.log(requestParams)
+        // Object.keys(requestParams).forEach(key => {
+        //     if (requestParams.get(key)) return
+        //     delete 
+        // })
+
         console.log('query',requestParams.get('query'))
         console.log('type',requestParams.get('type'))
         console.log('bbox',requestParams.get('bbox__bboverlaps'))
