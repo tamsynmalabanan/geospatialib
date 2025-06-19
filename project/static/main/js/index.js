@@ -1,6 +1,7 @@
 const getSearchForm = () => document.querySelector('#searchForm')
 
 const zoomToSearchResultBbox = (bbox) => {
+    console.log(JSON.parse(bbox))
     const map = maps.find(map => map.getContainer().id === getSearchForm().getAttribute('data-search-map-id'))
     if (map) map.fitBounds(L.geoJSON(JSON.parse(bbox)).getBounds())
 }
