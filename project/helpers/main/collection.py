@@ -74,7 +74,7 @@ def get_layers(url, format):
         if format in ['geojson', 'csv']:
             name = url.split('/')[-1]
             return {name: {
-                'title': name,
+                'title': f'.{format}'.join(name.split(f'.{format}')[:-1]) if name.endswith(f'.{format}') else name,
                 'type': format,
             }}
             
