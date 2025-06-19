@@ -25,7 +25,7 @@ const handleSearchForm = () => {
     
     form.addEventListener('htmx:beforeRequest', (e) => {
         if (!queryField.value) return e.preventDefault()
-            
+
         document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
         document.querySelector('#searchResults').innerHTML = removeWhitespace(`
             <div class="flex-grow-1 d-flex justify-content-center mt-5">
@@ -40,6 +40,7 @@ const handleSearchForm = () => {
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
+        console.log(e)
         Array.from(form.querySelectorAll(`[name='bbox__bboverlaps']`)).forEach(i => {
             if (i.value) return
 
