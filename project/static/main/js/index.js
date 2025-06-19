@@ -1,9 +1,12 @@
+const getSearchForm = () => document.querySelector('#searchForm')
+
 const zoomToSearchResultBbox = (bbox) => {
-    console.log(JSON.parse(bbox))
+    const map = maps.find(map => map.getContainer().id === getSearchForm().getAttribute('data-search-map-id'))
+    if (map) map.fitBounds(L.geoJSON(JSON.parse(bbox)).getBounds())
 }
 
 const handleSearchForm = () => {
-    const form = document.querySelector('#searchForm')
+    const form = getSearchForm()
     const queryField = form.elements.query
 
     form.addEventListener('submit', (e) => e.preventDefault())
