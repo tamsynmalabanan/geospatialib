@@ -4,8 +4,8 @@
 <div id='searchResultsFiltersContainer' hx-swap-oob='true'>
     {{page_obj}}
     {{page_obj.number}}
+    {{count}}
     {% if page_obj and page_obj.number %}
-        {{count}}
         {% if count != 0 %}
             <div id='searchFormFilters' class='collapse show multi-collapse'>
                 <div class='d-flex gap-3 flex-nowrap px-3 pb-3'>
