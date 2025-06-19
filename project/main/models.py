@@ -47,7 +47,7 @@ class Collection(models.Model):
         return f'{self.url.domain} ({choices.COLLECTION_FORMATS.get(self.format)})'
     
     def get_layer_data(self):
-        return {layer.name: layer.get_layer_data() for layer in self.layers.all()}
+        return {layer.name: layer.data for layer in self.layers.all()}
     
 class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
@@ -70,7 +70,8 @@ class Layer(models.Model):
     def __str__(self):
         return f'{self.name} in {str(self.collection)}'
     
-    def get_layer_data(self):
+    @property
+    def data(self):
         data = model_to_dict(self)
         bbox = data.get('bbox', WORLD_GEOM)
         data['bbox'] = list(bbox.extent)
