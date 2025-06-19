@@ -40,7 +40,7 @@ const handleSearchForm = () => {
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
-        console.log(e)
+        console.log(e.target)
         Array.from(form.querySelectorAll(`[name='bbox__bboverlaps']`)).forEach(i => {
             if (i.value) return
 
