@@ -10,7 +10,8 @@ const zoomToSearchResultBbox = (bbox) => {
 const addSearchResultToMap = async () => {
     const map = getSearchMap()
     if (map) {
-        const dataset = event.target.dataset
+        const el = event.target
+        const dataset = el.dataset
         const data = JSON.parse(dataset.layerData)
         const params = {
             url: dataset.layerUrl,
@@ -34,8 +35,8 @@ const addSearchResultToMap = async () => {
         })
 
         if (layer && layer._group.hasLayer(layer)) {
-            event.target.classList.remove('text-secondary')
-            event.target.classList.add('text-primary')
+            el.classList.remove('text-secondary', 'bi-circle')
+            el.classList.add('text-primary', 'bi-check-circle')
         }
     }
 }
