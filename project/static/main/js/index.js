@@ -15,6 +15,8 @@ const handleSearchForm = () => {
                 if (Object.keys(requestParams).includes(key)) continue
                 requestParams[key] = urlParams[key]
             }
+        } else {
+            delete requestParams.clear
         }
 
         console.log('query',requestParams.get('query'))
