@@ -1,4 +1,6 @@
-const 
+const zoomToSearchResultBbox = (bbox) => {
+    console.log(bbox)
+}
 
 const handleSearchForm = () => {
     const form = document.querySelector('#searchForm')
