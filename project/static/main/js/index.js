@@ -15,7 +15,10 @@ const handleSearchForm = () => {
             }
         }
 
+        console.log(requestParams)
         console.log(requestParams.get('query'))
+        console.log(requestParams.get('type'))
+        console.log(requestParams.get('bbox__bboverlaps'))
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
