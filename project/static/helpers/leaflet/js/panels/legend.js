@@ -362,6 +362,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
             const newBbox = turf.bboxPolygon(getLeafletMapBbox(map))
+            Array.from(document.querySelectorAll(`[data-bbox-field-for="${map.getContainer().id}"]`)).forEach(i => {
+                i.value = JSON.stringify(newBbox.geometry)
+            })
+            localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(newBbox))
             
             const controllerId = controller.id
             const promises = []
@@ -408,13 +412,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 }   
             })
 
-            Promise.all(promises).then(() => {
-                map._previousBbox = newBbox
-                Array.from(document.querySelectorAll(`[type='submit'][name='bbox__bboverlaps'][data-map-id="${map.getContainer().id}"]`)).forEach(i => {
-                    i.value = JSON.stringify(newBbox.geometry)
-                })
-                localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(newBbox))
-            })
+            Promise.all(promises).then(() => map._previousBbox = newBbox)
         }, 500)
     })
 
