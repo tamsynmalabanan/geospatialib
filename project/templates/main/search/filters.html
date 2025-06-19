@@ -61,7 +61,6 @@
     {% else %}
         <div class="d-flex gap-3 flex-nowrap justify-content-between px-3">
             <span class-'mb-3'>No results found for "{{request.GET.query}}"</span>
-            {% include "main/search/clear_filters.html" %}
         </div>
     {% endif %}
 </div>
