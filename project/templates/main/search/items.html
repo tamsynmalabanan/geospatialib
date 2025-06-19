@@ -3,7 +3,7 @@
 
 {% for layer in layers %}
     <li 
-        class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1"
+        class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1 {% if forloop.last and not page_obj.has_next %}mb-3{% endif %}"
         style='min-width:180px;'
         {% if forloop.last and page_obj.has_next  %}
             hx-get="{% url 'htmx:search' %}{% querystring request page=page_obj.number|add:1 %}"
