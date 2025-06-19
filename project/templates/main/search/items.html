@@ -1,0 +1,74 @@
+{% load static %}
+{% load utility_tags %}
+
+{% for layer in layers %}
+    {% variable "searchResultsSpinner"|add:"-"|add:page_obj.number as indicator_id %}
+
+    <li 
+        class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1"
+        style='min-width:180px;'
+        {% if forloop.last and page_obj.has_next  %}
+            hx-get="{% url 'htmx:search' %}{% querystring request page=page_obj.number|add:1 %}"
+            hx-trigger="intersect once"
+            {% comment %} hx-swap='afterend'
+            hx-target='this' {% endcomment %}
+            hx-swap='outerHTML'
+            hx-target="#{{indicator_id}}"
+            hx-indicator="#{{indicator_id}}"
+        {% endif %}
+    >   
+        <div class="card w-100">
+            <div class="card-body w-100 d-flex flex-column">
+                {% variable layer.type as type %}
+                {% variable layer.collection__url__path as url %}
+                <div>
+                    <span class="
+                        badge font-monospace fs-10 align-top user-select-none
+                        {% if type == 'wms' %}
+                            bg-primary
+                        {% elif type == 'wfs' %}
+                            bg-info
+                        {% elif type == 'geojson' %}
+                            bg-success
+                        {% elif type == 'csv' %}
+                        bg-warning
+                        {% elif type == 'xyz' %}
+                            bg-danger
+                        {% else %}
+                            bg-secondary
+                        {% endif %}
+                    " title="{{type}}">{{type}}</span>
+                </div>
+                <h6 class="card-title">{{layer.title}}</h6>
+                {% if type == 'wms' or type == 'wfs' %}
+                    <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{layer.name}}</h6>
+                {% endif %}
+                <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{url|domain}}</a>
+            </div>
+            <div class="card-footer d-flex gap-3">
+                {% variable layer.bbox.extent as bbox %}
+                <button 
+                    title='Add layer to map'
+                    class="bg-transparent border-0 p-0 fs-14 add-layer-button bi bi-circle text-secondary" 
+                    tabindex="-1"
+                ></button>
+                <button 
+                    title='Zoom-in to layer extent'
+                    class='bg-transparent border-0 p-0 bi bi-zoom-in fs-12 text-bg-dark'
+                    tabindex="-1"
+                ></button>
+            </div>
+        </div>
+    </li>
+    {% if forloop.last and page_obj.has_next %}
+        <li id="{{indicator_id}}" class="htmx-indicator col-12">
+            <div class='d-flex justify-content-center gap-3'>
+                {% with spinner_class="spinner-grow spinner-grow-sm text-primary my-3" %}
+                    <div class="{{spinner_class}}" role="status"></div>
+                    <div class="{{spinner_class}}" role="status"></div>
+                    <div class="{{spinner_class}}" role="status"></div>
+                {% endwith %}
+            </div>
+        </li>
+    {% endif %}
+{% endfor %}

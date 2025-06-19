@@ -2,6 +2,8 @@ from django import template
 
 import string
 import random
+from urllib.parse import urlencode, urlparse
+
 
 register = template.Library()
 
@@ -32,6 +34,17 @@ def sub_bool(value, sub):
             return sub
         return f'not {sub}'
     return value
+
+@register.simple_tag 
+def querystring(request, **kwargs): 
+    query = request.GET.copy() 
+    for key, value in kwargs.items(): 
+        query[key] = value 
+    return f"?{urlencode(query)}"
+
+@register.filter
+def domain(url):
+    return urlparse(url).netloc
 
 @register.filter
 def stringify(value):
