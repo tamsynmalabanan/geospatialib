@@ -2,6 +2,9 @@
 {% load utility_tags %}
 
 <div id='searchResultsFiltersContainer' hx-swap-oob='true'>
+    {{page_obj}}
+    {{page_obj.number}}
+    {{count}}
     {% if page_obj and page_obj.number %}
         {% if count > 0 %}
             <div id='searchFormFilters' class='collapse show multi-collapse'>
