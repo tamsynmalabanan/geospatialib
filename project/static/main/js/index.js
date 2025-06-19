@@ -15,7 +15,7 @@ const handleSearchForm = () => {
             }
         }
 
-        console.log(requestParams)
+        console.log(requestParams.get('query'))
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
