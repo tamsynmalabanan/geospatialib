@@ -9,7 +9,6 @@ const handleSearchForm = () => {
 
         if (!Object.keys(requestParams).includes('clear')){
             const urlParams = Object.fromEntries(new URLSearchParams(window.location.search))
-            console.log('urlParams',urlParams)
 
             for (const key in urlParams) {
                 if (Object.keys(requestParams).includes(key)) continue
@@ -22,28 +21,22 @@ const handleSearchForm = () => {
             if (requestParams.get(key)) return
             requestParams.delete(key)
         })
-
-        console.log('query',requestParams.get('query'))
-        console.log('type',requestParams.get('type'))
-        console.log('bbox',requestParams.get('bbox__bboverlaps'))
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
-        if (queryField.value) {
-            document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
-            document.querySelector('#searchResults').innerHTML = removeWhitespace(`
-                <div class="flex-grow-1 d-flex justify-content-center mt-5">
-                    <div class="spinner-border" role="status"></div>
-                </div>
-            `)
+        if (!queryField.value) return e.preventDefault()
+            
+        document.querySelector('#searchResultsFiltersContainer').innerHTML = ''
+        document.querySelector('#searchResults').innerHTML = removeWhitespace(`
+            <div class="flex-grow-1 d-flex justify-content-center mt-5">
+                <div class="spinner-border" role="status"></div>
+            </div>
+        `)
 
-            const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
-            window.history.pushState(
-                {}, '', `${window.location.pathname}?${urlParams[urlParams.length-1]}`
-            )
-        } else {
-            e.preventDefault()
-        }
+        const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
+        window.history.pushState(
+            {}, '', `${window.location.pathname}?${urlParams[urlParams.length-1]}`
+        )
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
