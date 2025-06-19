@@ -9,6 +9,8 @@ const handleSearchForm = () => {
 
         if (Object.keys(requestParams).length > 1){
             const urlParams = Object.fromEntries(new URLSearchParams(window.location.search))
+            console.log(urlParams)
+
             for (const key in urlParams) {
                 if (Object.keys(requestParams).includes(key)) continue
                 requestParams[key] = urlParams[key]
