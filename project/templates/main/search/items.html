@@ -2,8 +2,6 @@
 {% load utility_tags %}
 
 {% for layer in layers %}
-    {% variable "searchResultsSpinner"|add:"-"|add:page_obj.number as indicator_id %}
-
     <li 
         class="list-group-item d-flex border-0 col-xxl-3 col-xl-5 col-12 p-0 gap-3 flex-grow-1"
         style='min-width:180px;'
@@ -13,8 +11,8 @@
             {% comment %} hx-swap='afterend'
             hx-target='this' {% endcomment %}
             hx-swap='outerHTML'
-            hx-target="#{{indicator_id}}"
-            hx-indicator="#{{indicator_id}}"
+            hx-target="#searchResultsSpinner-{{page_obj.number}}"
+            hx-indicator="#searchResultsSpinner-{{page_obj.number}}"
         {% endif %}
     >   
         <div class="card w-100">
@@ -61,7 +59,7 @@
         </div>
     </li>
     {% if forloop.last and page_obj.has_next %}
-        <li id="{{indicator_id}}" class="htmx-indicator col-12">
+        <li id="searchResultsSpinner-{{page_obj.number}}" class="htmx-indicator col-12">
             <div class='d-flex justify-content-center gap-3'>
                 {% with spinner_class="spinner-grow spinner-grow-sm text-primary my-3" %}
                     <div class="{{spinner_class}}" role="status"></div>
