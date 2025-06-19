@@ -46,14 +46,11 @@ const handleSearchForm = () => {
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
-        Array.from(form.querySelectorAll(`[name='bbox__bboverlaps']`)).forEach(i => {
-            if (i.value) return
-
-            const map = maps.find(map => map.getContainer().id === i.getAttribute('data-bbox-field-for'))
-            if (!map) return
-            
+        const map = maps.find(map => map.getContainer().id === form.getAttribute('data-search-map-id'))
+        if (map) Array.from(form.querySelectorAll(`[data-map-bbox-field="true"]`)).forEach(i => {
             i.value = JSON.stringify(turf.bboxPolygon(getLeafletMapBbox(map)).geometry)
         })
+
     })
 
     if (queryField.value) {
