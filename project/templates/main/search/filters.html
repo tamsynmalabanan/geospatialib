@@ -2,56 +2,56 @@
 {% load utility_tags %}
 
 <div id='searchResultsFiltersContainer' hx-swap-oob='true'>
-    {% if count != 0 %}
-        <div id='searchFormFilters' class='collapse show multi-collapse'>
-            <div class='d-flex gap-3 flex-nowrap px-3 pb-3'>
-                <a class="text-reset text-decoration-none fs-6" 
-                    tabindex="-1"
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#searchResultsFilters" 
-                    role="button" 
-                    aria-expanded="true"
-                    aria-controls="searchResultsFilters"
-                ><i class="bi bi-funnel"></i></a>
-                {% include "main/search/bbox_filters.html" %}
-                {% include "main/search/clear_filters.html" %}
-            </div>
-            <div class="collapse show" id="searchResultsFilters">
-                <div class="d-flex gap-2 flex-wrap overflow-y-auto overflow-x-hidden px-3 pb-3" style='max-height:100px;'>
-                    {% for field, queryset in filters.items %}
-                        {% for i in queryset %}
-                            {% variable i.count as icount %}
-                            {% variable i|get:field as value %}
-                            
-                            {% variable field|field_name as field_name %}
-                            {% variable value|sub_bool:field_name as label %}
-                            
-                            {% variable 'btn btn-sm rounded-pill border-0 fs-12 fw-bold text-wrap text-break' as button_class %}
+    <div id='searchFormFilters' class='collapse show multi-collapse'>
+        <div class='d-flex gap-3 flex-nowrap px-3 pb-3'>
+            <a class="text-reset text-decoration-none fs-6" 
+                tabindex="-1"
+                data-bs-toggle="collapse" 
+                data-bs-target="#searchResultsFilters" 
+                role="button" 
+                aria-expanded="true"
+                aria-controls="searchResultsFilters"
+            ><i class="bi bi-funnel"></i></a>
+            {% include "main/search/bbox_filters.html" %}
+            {% include "main/search/clear_filters.html" %}
+        </div>
+        <div class="collapse show" id="searchResultsFilters">
+            <div class="d-flex gap-2 flex-wrap overflow-y-auto overflow-x-hidden px-3 pb-3" style='max-height:100px;'>
+                {% for field, queryset in filters.items %}
+                    {% for i in queryset %}
+                        {% variable i.count as icount %}
+                        {% variable i|get:field as value %}
+                        
+                        {% variable field|field_name as field_name %}
+                        {% variable value|sub_bool:field_name as label %}
+                        
+                        {% variable 'btn btn-sm rounded-pill border-0 fs-12 fw-bold text-wrap text-break' as button_class %}
 
-                            {% if label %}
-                                {% if request.GET|get:field == value|stringify %}
+                        {% if label %}
+                            {% if request.GET|get:field == value|stringify %}
+                                <button
+                                    type='submit'
+                                    name="{{field}}"
+                                    value=""
+                                    class="{{button_class}} btn-primary"
+                                >{{label}} ({{icount|format_number}})</button>
+                            {% else %}
+                                {% if icount != count %}
                                     <button
                                         type='submit'
                                         name="{{field}}"
-                                        value=""
-                                        class="{{button_class}} btn-primary"
+                                        value="{{value}}"
+                                        class="{{button_class}} bg-primary-subtle text-muted"
                                     >{{label}} ({{icount|format_number}})</button>
-                                {% else %}
-                                    {% if icount != count %}
-                                        <button
-                                            type='submit'
-                                            name="{{field}}"
-                                            value="{{value}}"
-                                            class="{{button_class}} bg-primary-subtle text-muted"
-                                        >{{label}} ({{icount|format_number}})</button>
-                                    {% endif %}
                                 {% endif %}
                             {% endif %}
-                        {% endfor %}
+                        {% endif %}
                     {% endfor %}
-                </div>
+                {% endfor %}
             </div>
         </div>
+    </div>
+    {% if count != 0 %}
         <div class='d-flex justify-content-between px-3'>
             <span class='text-break'>
                 Results for "{{request.GET.query}}" ({{count|format_number}})
