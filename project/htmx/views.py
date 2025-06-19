@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
-from django.db.models import Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
+from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
 
 
@@ -142,7 +142,7 @@ class SearchList(ListView):
 
     def get_filters(self):
         return {
-            field: (
+            field: list(
                 self.queryset
                 .values(field)
                 .annotate(count=Count('id', distinct=True))
@@ -155,6 +155,7 @@ class SearchList(ListView):
         if self.page == 1:
             count = context['page_obj'].paginator.count
             fillers = find_nearest_divisible(count, [2,3])-count
+            filters = {i: QuerySet()}            
 
             context['count'] = count
             context['fillers'] = range(fillers)
