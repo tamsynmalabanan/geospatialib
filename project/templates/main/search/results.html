@@ -1,10 +1,6 @@
 {% load static %}
 {% load utility_tags %}
 
-{{page_obj}}
-{{page_obj.number}}
-{{layers}}
-
 {% if page_obj.number == 1 %}
     {% include "main/search/filters.html" %}
 {% endif %}
