@@ -6,7 +6,6 @@ const handleSearchForm = () => {
 
     form.addEventListener('htmx:configRequest', (e) => {
         const requestParams = e.detail.parameters
-        console.log(requestParams.ownKeys())
 
         if (!Object.keys(requestParams).includes('clear')){
             const urlParams = Object.fromEntries(new URLSearchParams(window.location.search))
