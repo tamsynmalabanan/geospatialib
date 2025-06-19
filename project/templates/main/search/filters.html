@@ -56,7 +56,7 @@
             <span class='text-break'>
                 Results for "{{request.GET.query}}" ({{count|format_number}})
             </span>
-            <button class="border-0 bg-transparent px-0 text-bg-dark ms-2" tabindex="-1" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="searchFormFields searchFormFilters" title='Toggle search form'><i class="bi bi-chevron-expand"></i></button>
+            <button class="border-0 bg-transparent px-0 text-bg-{{request.COOKIES.theme}} ms-2" tabindex="-1" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="searchFormFields searchFormFilters" title='Toggle search form'><i class="bi bi-chevron-expand"></i></button>
         </div>            
     {% else %}
         <div class="d-flex gap-3 flex-nowrap justify-content-between px-3">
