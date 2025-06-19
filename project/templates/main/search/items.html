@@ -47,8 +47,10 @@
                     title='Add layer to map'
                     class="bg-transparent border-0 p-0 fs-14 add-layer-button bi bi-circle text-secondary" 
                     tabindex="-1"
+                    data-layer-id="{{data.id}}"
                     data-layer-url="{{url}}"
                     data-layer-format="{{layer.collection.format}}"
+                    data-layer-name="{{data.name}}"
                     data-layer-data="{{data|dump_json}}"
                     onclick="addSearchResultToMap()"
                 ></button>
