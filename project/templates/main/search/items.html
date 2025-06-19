@@ -57,7 +57,7 @@
         </div>
     </li>
     {% if forloop.last and page_obj.has_next %}
-        <li id="searchResultsSpinner-{{page_obj.number}}" class="htmx-indicator col-12">
+        <li id="searchResultsSpinner-{{page_obj.number}}" class="list-group-item htmx-indicator col-12">
             <div class='d-flex justify-content-center gap-3'>
                 {% with spinner_class="spinner-grow spinner-grow-sm text-primary my-3" %}
                     <div class="{{spinner_class}}" role="status"></div>
