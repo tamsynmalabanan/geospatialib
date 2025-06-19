@@ -19,7 +19,7 @@ const addSearchResultToMap = () => {
             title: data.title,
             type: data.type,
             id: data.id,
-            bbox: data.bbox,
+            bbox: JSON.stringify(data.bbox),
             attribution: data.attribution,
             styles: data.styles,
             xField: data.xField,
