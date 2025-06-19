@@ -6,6 +6,7 @@ const handleSearchForm = () => {
 
     form.addEventListener('htmx:configRequest', (e) => {
         const requestParams = e.detail.parameters
+        console.log(requestParams.ownKeys())
 
         if (!Object.keys(requestParams).includes('clear')){
             const urlParams = Object.fromEntries(new URLSearchParams(window.location.search))
@@ -17,10 +18,9 @@ const handleSearchForm = () => {
             }
         }
 
-        console.log(requestParams)
-        console.log(requestParams.get('query'))
-        console.log(requestParams.get('type'))
-        console.log(requestParams.get('bbox__bboverlaps'))
+        console.log('query',requestParams.get('query'))
+        console.log('type',requestParams.get('type'))
+        console.log('bbox',requestParams.get('bbox__bboverlaps'))
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
