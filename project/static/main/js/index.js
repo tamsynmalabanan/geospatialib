@@ -9,7 +9,7 @@ const handleSearchForm = () => {
 
         if (!Object.keys(requestParams).includes('clear')){
             const urlParams = Object.fromEntries(new URLSearchParams(window.location.search))
-            console.log(urlParams)
+            console.log('urlParams',urlParams)
 
             for (const key in urlParams) {
                 if (Object.keys(requestParams).includes(key)) continue
