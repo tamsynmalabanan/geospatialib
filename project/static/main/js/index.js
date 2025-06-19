@@ -13,6 +13,7 @@ const handleSearchForm = () => {
 
             for (const key in urlParams) {
                 if (Object.keys(requestParams).includes(key)) continue
+                if (!urlParams[key]) continue
                 requestParams[key] = urlParams[key]
             }
         } else {
