@@ -42,16 +42,18 @@
                 <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{url|domain}}</a>
             </div>
             <div class="card-footer d-flex gap-3">
-                {% variable layer.bbox.extent as bbox %}
+                {% variable layer.data as data %}
                 <button 
                     title='Add layer to map'
                     class="bg-transparent border-0 p-0 fs-14 add-layer-button bi bi-circle text-secondary" 
                     tabindex="-1"
+                    {% comment %} data-layer-data="{{data|dump_json}}" {% endcomment %}
                 ></button>
                 <button 
-                    title='Zoom-in to layer extent'
+                    title='Zoom to layer'
                     class="bg-transparent border-0 p-0 bi bi-zoom-in fs-12"
                     tabindex="-1"
+                    data-layer-bbox="{{data.bbox}}"
                 ></button>
             </div>
         </div>

@@ -3,7 +3,7 @@ from django import template
 import string
 import random
 from urllib.parse import urlencode, urlparse
-
+import json
 
 register = template.Library()
 
@@ -18,6 +18,10 @@ def equals(value1, value2):
 @register.filter
 def format_number(value):
     return f"{value:,}"
+
+@register.filter
+def dump_json(value):
+    return json.dumps(value)
 
 @register.filter
 def get(dict, key, sub=None):
