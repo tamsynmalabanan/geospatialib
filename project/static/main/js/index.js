@@ -9,7 +9,7 @@ const zoomToSearchResultBbox = (bbox) => {
 
 const addSearchResultToMap = (e) => {
     const map = getSearchMap()
-    if (map) console.log(e.target.dataset.layerData)
+    if (map) console.log(JSON.parse(e.target.dataset.layerData))
 }
 
 const handleSearchForm = () => {
