@@ -5,7 +5,9 @@
     {% include "main/search/filters.html" %}
 {% endif %}
 
-{{layers}}
+<div id='searchResults' class="border-top p-3 d-flex flex-grow-1 flex-wrap">
+    {{layers}}
+</div>
 
 {% comment %} 
 {% if page_obj.number %}
