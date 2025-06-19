@@ -7,7 +7,7 @@ const zoomToSearchResultBbox = (bbox) => {
     if (map) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(bbox))).getBounds())
 }
 
-const addSearchResultToMap = () => {
+const addSearchResultToMap = async () => {
     const map = getSearchMap()
     if (map) {
         const dataset = event.target.dataset
@@ -27,13 +27,16 @@ const addSearchResultToMap = () => {
             srid: data.srid,
         }
 
-        const layer = createLeafletLayer(params, {
+        const layer = await createLeafletLayer(params, {
             dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
             group: map._ch.getLayerGroups().library,
             add: true,
         })
 
-        console.log(layer)
+        if (layer && layer._group.hasLayer(layer)) {
+            event.target.classList.remove('text-secondary')
+            event.target.classList.add('text-primary')
+        }
     }
 }
 
