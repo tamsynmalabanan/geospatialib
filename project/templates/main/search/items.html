@@ -39,7 +39,7 @@
                 {% if type == 'wms' or type == 'wfs' %}
                     <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{layer.name}}</h6>
                 {% endif %}
-                <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{url|domain}}</a>
+                <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{layer.collection.url.domain}}</a>
             </div>
             <div class="card-footer d-flex gap-3">
                 {% variable layer.bbox.extent as bbox %}
