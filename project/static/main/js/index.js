@@ -1,8 +1,15 @@
 const getSearchForm = () => document.querySelector('#searchForm')
 
+const getSearchMap = () => maps.find(map => map.getContainer().id === getSearchForm().getAttribute('data-search-map-id'))
+
 const zoomToSearchResultBbox = (bbox) => {
-    const map = maps.find(map => map.getContainer().id === getSearchForm().getAttribute('data-search-map-id'))
+    const map = getSearchMap()
     if (map) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(bbox))).getBounds())
+}
+
+const addSearchResultToMap = (e) => {
+    const map = getSearchMap()
+    if (map) console.log(e.target.dataset.layerData)
 }
 
 const handleSearchForm = () => {
@@ -49,7 +56,7 @@ const handleSearchForm = () => {
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
-        const map = maps.find(map => map.getContainer().id === form.getAttribute('data-search-map-id'))
+        const map = getSearchMap()
         if (map) Array.from(form.querySelectorAll(`[data-map-bbox-field="true"]`)).forEach(i => {
             i.value = JSON.stringify(turf.bboxPolygon(getLeafletMapBbox(map)).geometry)
         })
