@@ -45,7 +45,7 @@ def test_get_collection_data():
     url = 'https://ows.emodnet-bathymetry.eu/wfs'
     value = get_collection_data(url, delay=False)
     # print(value)
-    print('layers count', len((value or {}).get('layers', {}).keys()))
+    # print('layers count', len((value or {}).get('layers', {}).keys()))
 
 class Command(BaseCommand):
     help = 'Test'
