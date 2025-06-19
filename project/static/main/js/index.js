@@ -26,15 +26,14 @@ const addSearchResultToMap = () => {
             yField: data.yField,
             srid: data.srid,
         }
-        console.log(params)
 
-        // const layer = createLeafletLayer(params, {
-        //     dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
-        //     group: map._ch.getLayerGroups().library,
-        //     add: true,
-        // })
+        const layer = createLeafletLayer(params, {
+            dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
+            group: map._ch.getLayerGroups().library,
+            add: true,
+        })
 
-        // console.log(layer)
+        console.log(layer)
     }
 }
 
