@@ -32,6 +32,7 @@ const handleSearchForm = () => {
         if (queryField.value) {
             const resultsLabel = document.querySelector('#searchResultsFiltersContainer').lastElementChild
             if (resultsLabel) resultsLabel.innerHTML = ''
+            
             document.querySelector('#searchResults').innerHTML = removeWhitespace(`
                 <div class="flex-grow-1 d-flex justify-content-center mt-5">
                     <div class="spinner-border" role="status"></div>
