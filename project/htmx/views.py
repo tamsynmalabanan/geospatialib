@@ -122,10 +122,10 @@ class SearchList(ListView):
         search_fields = self.filter_fields + [
             'collection__url__path',
             'title',
-            'abstract',
-            'keywords',
-            'attribution',
-            'styles',
+            # 'abstract',
+            # 'keywords',
+            # 'attribution',
+            # 'styles',
         ]
         for field in search_fields:
             search_vector = search_vector + SearchVector(field)
