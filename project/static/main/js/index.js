@@ -12,21 +12,21 @@ const addSearchResultToMap = () => {
     if (map) {
         const dataset = event.target.dataset
         const data = JSON.parse(dataset.layerData)
-        console.log(data)
-        // const params = {
-        //     url: dataset.layerUrl,
-        //     format: dataset.layerFormat,
-        //     name: data.name,
-        //     title: data.title,
-        //     type: data.type,
-        //     id: data.id,
-        //     bbox: data.bbox,
-        //     attribution: data.attribution,
-        //     styles: data.styles,
-        //     xField: data.xField,
-        //     yField: data.yField,
-        //     srid: data.srid,
-        // }
+        const params = {
+            url: dataset.layerUrl,
+            format: dataset.layerFormat,
+            name: data.name,
+            title: data.title,
+            type: data.type,
+            id: data.id,
+            bbox: data.bbox,
+            attribution: data.attribution,
+            styles: data.styles,
+            xField: data.xField,
+            yField: data.yField,
+            srid: data.srid,
+        }
+        console.log(params)
 
         // const layer = createLeafletLayer(params, {
         //     dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
