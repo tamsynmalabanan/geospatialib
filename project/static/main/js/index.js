@@ -11,12 +11,29 @@ const addSearchResultToMap = () => {
     const map = getSearchMap()
     if (map) {
         const dataset = event.target.dataset
-        const data = {
-            ...JSON.parse(dataset.layerData),
+        const data = JSON.parse(dataset.layerData)
+        const params = {
             url: dataset.layerUrl,
             format: dataset.layerFormat,
+            name: data.name,
+            title: data.title,
+            type: data.type,
+            id: data.id,
+            bbox: data.bbox,
+            attribution: data.attribution,
+            styles: data.styles,
+            xField: data.xField,
+            yField: data.yField,
+            srid: data.srid,
         }
-        console.log(dataset, data)
+
+        const layer = createLeafletLayer(params, {
+            dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
+            group: map._ch.getLayerGroups().library,
+            add: true,
+        })
+
+        console.log(layer)
     }
 }
 
