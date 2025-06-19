@@ -5,7 +5,17 @@ const handleSearchForm = () => {
     form.addEventListener('submit', (e) => e.preventDefault())
 
     form.addEventListener('htmx:configRequest', (e) => {
-        console.log(e.detail.parameters)
+        const requestParams = e.detail.parameters
+
+        if (Object.keys(requestParams).length > 1){
+            const urlParams = Object.fromEntries(new URLSearchParams(window.location.search))
+            for (const key in urlParams) {
+                if (Object.keys(requestParams).includes(key)) continue
+                requestParams[key] = urlParams[key]
+            }
+        }
+
+        console.log(requestParams)
     })
     
     form.addEventListener('htmx:beforeRequest', (e) => {
@@ -28,8 +38,11 @@ const handleSearchForm = () => {
 
     form.addEventListener('htmx:afterSwap', (e) => {
         Array.from(form.querySelectorAll(`[name='bbox__bboverlaps']`)).forEach(i => {
+            if (i.value) return
+
             const map = maps.find(map => map.getContainer().id === i.getAttribute('data-bbox-field-for'))
             if (!map) return
+            
             i.value = JSON.stringify(turf.bboxPolygon(getLeafletMapBbox(map)).geometry)
         })
     })
