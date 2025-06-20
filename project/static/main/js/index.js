@@ -37,15 +37,18 @@ const toggleSearchResultdBbox = async () => {
     const el = event.target
     const layer = el._layer
     const hide = (group && layer && group.hasLayer(layer)) ?? false
-    console.log(hide)
 
-    el.classList.toggle('bi-eye', hide)
-    el.classList.toggle('bi-eye-slash', !hide)
-
+    
     if (hide) {
+        el.classList.remove('bi-eye-slash')
+        el.classList.add('bi-eye')
         group.removeLayer(layer)
     } else {
+        el.classList.remove('bi-eye')
+        el.classList.add('bi-eye-slash')
+        
         console.log('here')
+        
         // const layer = await getLeafletGeoJSONLayer({
         //     geojson,
         //     pane: 'queryPane',
