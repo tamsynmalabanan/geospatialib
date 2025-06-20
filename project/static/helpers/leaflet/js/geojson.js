@@ -207,23 +207,15 @@ const getFeatureTitle = (properties) => {
         'display_name',
         'name:en',
         'name',
+        'feature_id',
         'type',
     ]) {
-        const matches = Object.keys(properties).filter(i => i === key || i.startsWith(key))
+        const matches = Object.keys(properties).filter(i => i === key || i.includes(key))
         if (!matches.length) {
             continue
         } else {
             title = String(properties[matches[0]])
             break
-        }
-    }
-
-    if (!title) {
-        for (const key in properties) {
-            if (key.includes('name') || key.includes('title')) {
-                title = `${key}: ${properties[key]}`
-                break
-            }
         }
     }
 
