@@ -50,7 +50,7 @@ const toggleSearchResultBbox = async () => {
                 pane: 'searchPane',
                 group,
                 customStyleParams,
-                params: {type: 'geojson'}
+                params: {type: 'geojson', title: 'Search result'}
             })
 
             if (layer) group?.addLayer(layer)
