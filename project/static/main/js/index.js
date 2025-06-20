@@ -5,32 +5,29 @@ const getSearchMap = () => maps.find(map => map.getContainer().id === getSearchF
 const zoomToSearchResultBbox = (event) => getSearchMap()?.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(event.target.dataset.layerBbox))).getBounds())
 
 const addSearchResultToMap = async () => {
-    const map = getSearchMap()
-    if (map) {
-        const el = event.target
-        const dataset = el.dataset
-        const data = JSON.parse(dataset.layerData)
-        const params = {
-            url: dataset.layerUrl,
-            format: dataset.layerFormat,
-            name: data.name,
-            title: data.title,
-            type: data.type,
-            id: data.id,
-            bbox: JSON.stringify(data.bbox),
-            attribution: data.attribution,
-            styles: data.styles,
-            xField: data.xField,
-            yField: data.yField,
-            srid: data.srid,
-        }
-
-        createLeafletLayer(params, {
-            dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
-            group: map._ch.getLayerGroups().library,
-            add: true,
-        })
+    const el = event.target
+    const dataset = el.dataset
+    const data = JSON.parse(dataset.layerData)
+    const params = {
+        url: dataset.layerUrl,
+        format: dataset.layerFormat,
+        name: data.name,
+        title: data.title,
+        type: data.type,
+        id: data.id,
+        bbox: JSON.stringify(data.bbox),
+        attribution: data.attribution,
+        styles: data.styles,
+        xField: data.xField,
+        yField: data.yField,
+        srid: data.srid,
     }
+
+    createLeafletLayer(params, {
+        dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
+        group: getSearchMap()?._ch.getLayerGroups().library,
+        add: true,
+    })
 }
 
 const handleSearchForm = () => {
