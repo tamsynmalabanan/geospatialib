@@ -34,7 +34,7 @@ const toggleSearchResultBbox = async () => {
     const el = event.target
     const map = getSearchMap()
     const group = map?._ch.getLayerGroups().search
-    const layers = group.getLayers()
+    const layers = group?.getLayers()
 
     el.classList.toggle('bi-eye', layers.length)
     el.classList.toggle('bi-eye-slash', !layers.length)
