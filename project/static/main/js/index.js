@@ -38,6 +38,8 @@ const toggleSearchResultBbox = async () => {
 
     el.classList.toggle('bi-eye', layers.length)
     el.classList.toggle('bi-eye-slash', !layers.length)
+
+    if (layers.length)
 }
 
 const handleSearchForm = () => {
