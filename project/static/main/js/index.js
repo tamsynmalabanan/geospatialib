@@ -78,7 +78,6 @@ const toggleSearchResultBbox = async () => {
     const hasLayers = (group?.getLayers().length ?? 0) > 0
     el.classList.toggle('bi-eye', !hasLayers)
     el.classList.toggle('bi-eye-slash', hasLayers)
-    setCookie('show-search-result-bbox', hasLayers)
 }
 
 const handleSearchForm = () => {
@@ -137,7 +136,8 @@ const handleSearchForm = () => {
     const searchResults = document.querySelector('#searchResults')
     searchResults.parentElement.addEventListener('htmx:afterSwap', (e) => {
         if (e.target.id === searchResults.id) return
-        if (!getCookie('show-search-result-bbox')) return
+        if (!form.querySelector(`[onclick="toggleSearchResultBbox()"]`).classList.contains('bi-eye-slash')) return
+        if ()
 
         const el = e.target.querySelector(`[onclick="zoomToSearchResultBbox()"]`)
         if (el) addSearchResultBboxToMap(el)
