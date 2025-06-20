@@ -59,6 +59,7 @@ const toggleSearchResultBbox = async () => {
     
     const el = event.target
     const hasLayers = group?.getLayers().length
+    console.log(hasLayers)
     el.classList.toggle('bi-eye', !hasLayers)
     el.classList.toggle('bi-eye-slash', hasLayers)
 }
