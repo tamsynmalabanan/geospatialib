@@ -1,5 +1,4 @@
 {% load static %}
-{% load compress %}
 {% load leaflet_tags %}
 
 {% comment %} Bootstrap {% endcomment %}
@@ -28,5 +27,3 @@
 <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/maps.css' %}">    
 
 <link rel="stylesheet" type="text/css" href="{% static app_name|add:'/css/'|add:url_name|add:'.css' %}">    
-{% comment %} {% compress css %}
-{% endcompress %} {% endcomment %}

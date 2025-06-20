@@ -68,12 +68,12 @@ INSTALLED_APPS = [
     'helpers',
 ]
 
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # other finders..
-    'compressor.finders.CompressorFinder',
-)
+# STATICFILES_FINDERS = (
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#     # other finders..
+#     'compressor.finders.CompressorFinder',
+# )
 
 # celery task
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
@@ -270,10 +270,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    '/home/gsl_admin/geospatialib/.venv/lib/python3.12/site-packages/leaflet/static/',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-COMPRESS_ENABLED = True
+# COMPRESS_ENABLED = True
 # COMPRESS_OFFLINE = True
 
 # Default primary key field type

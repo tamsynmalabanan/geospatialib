@@ -1,5 +1,4 @@
 {% load static %}
-{% load compress %}
 {% load leaflet_tags %}
 
 {% comment %} Bootstrap {% endcomment %}
@@ -29,6 +28,7 @@
 {% comment %} leaflet {% endcomment %}
 {% leaflet_js plugins="forms, geocoder, locate" %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js" integrity="sha512-55AYz+N6WyuiC8bRpQftNyCcSBCl3AEutoTsb4EeZuFVFP1+G4gll30iczAvvTpdL9nz48F7ZFEUavRUXp3FNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
 
 {% comment %} turf {% endcomment %}
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
@@ -36,9 +36,7 @@
 {% comment %} proj4js {% endcomment %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.15.0/proj4.js" integrity="sha512-zlBm5j/0UjgCzqBVLkATd/2b9Yun4SzATXJ7v1T2KfjmP0iw8FUcG5mPD60SrdxU+tRkACm3IQRq55pEkp9Qow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-{% comment %} {% compress js %}
-{% endcompress %} {% endcomment %}
-<script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
+
 
 {% comment %} project {% endcomment %}
 <script type="text/javascript" src="{% static 'helpers/base/js/bootstrap.js' %}"></script>
