@@ -31,25 +31,22 @@ const addSearchResultToMap = async () => {
 }
 
 const toggleSearchResultBbox = async () => {
-    const el = event.target
     const searchResults = document.querySelector('#searchResults')
-
     const map = getSearchMap()
     const group = map?._ch.getLayerGroups().search
-    const layers = group?.getLayers()
-    const hide = layers.length && searchResults.innerHTML !== ''
-    console.log(layers.length, searchResults.innerHTML !== '', hide)
-
-    el.classList.toggle('bi-eye', hide)
-    el.classList.toggle('bi-eye-slash', !hide)
-
-    if (hide) {
+    
+    if (group?.getLayers().length) {
         group.clearLayers()
     } else {
         Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(i => {
-            group.addLayer(L.geoJSON(turf.bboxPolygon(JSON.parse(i.dataset.layerBbox))))
+            group?.addLayer(L.geoJSON(turf.bboxPolygon(JSON.parse(i.dataset.layerBbox))))
         })
     }
+    
+    const el = event.target
+    const hasLayers = group?.getLayers().length
+    el.classList.toggle('bi-eye', !hasLayers)
+    el.classList.toggle('bi-eye-slash', hasLayers)
 }
 
 const handleSearchForm = () => {
