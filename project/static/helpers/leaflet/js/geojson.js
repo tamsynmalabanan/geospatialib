@@ -221,6 +221,15 @@ const getFeatureTitle = (properties) => {
 
     if (!title) {
         for (const key in properties) {
+            if (key.includes('name') || key.includes('title')) {
+                title = `${key}: ${value}`
+                break
+            }
+        }
+    }
+
+    if (!title) {
+        for (const key in properties) {
             const value = properties[key]
             if (typeof value !== 'object' && value.length < 50) {
                 title = `${key}: ${value}`
