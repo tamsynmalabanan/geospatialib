@@ -812,9 +812,8 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: (
                 isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend'),
             btnCallback: async () => {
-                console.log(group._name, layer._addBtn)
-                if (group._name === 'search' && layer._addBtn) {
-                    layer._addBtn.click()
+                if (group._name === 'search' && geojsonLayer?._addBtn) {
+                    geojsonLayer._addBtn.click()
                 } else {
                     createLeafletLayer(layer._params, {
                         dbIndexedKey: layer._dbIndexedKey,
