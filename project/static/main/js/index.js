@@ -32,14 +32,19 @@ const addSearchResultToMap = async () => {
 
 const toggleSearchResultBbox = async () => {
     const el = event.target
+    const searchResults = document.querySelector('#searchResults')
+
     const map = getSearchMap()
     const group = map?._ch.getLayerGroups().search
     const layers = group?.getLayers()
+    const hide = layers.length && searchResults.innerHTML !== ''
 
-    el.classList.toggle('bi-eye', layers.length)
-    el.classList.toggle('bi-eye-slash', !layers.length)
+    el.classList.toggle('bi-eye', hide)
+    el.classList.toggle('bi-eye-slash', !hide)
 
-    if (layers.length)
+    if (hide) {
+        group.clearLayers()
+    }
 }
 
 const handleSearchForm = () => {
