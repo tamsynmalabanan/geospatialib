@@ -365,7 +365,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             Array.from(document.querySelectorAll(`[data-search-map-id="${map.getContainer().id}"] [data-map-bbox-field="true"]`)).forEach(i => {
                 i.value = JSON.stringify(newBbox.geometry)
             })
-            localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(newBbox))
+            localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(turf.bbox(newBbox)))
             
             const controllerId = controller.id
             const promises = []
