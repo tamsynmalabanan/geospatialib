@@ -36,7 +36,7 @@ const toggleSearchResultdBbox = async () => {
     
     const el = event.target
     const layer = el._layer
-    const hide = group && layer && group.hasLayer(layer)
+    const hide = (group && layer && group.hasLayer(layer)) ?? false
     console.log(hide)
 
     el.classList.toggle('bi-eye', hide)
