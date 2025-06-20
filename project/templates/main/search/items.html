@@ -18,22 +18,25 @@
                 {% variable layer.type as type %}
                 {% variable layer.collection.url.path as url %}
                 <div>
-                    <span class="
-                        badge font-monospace fs-10 align-top user-select-none
-                        {% if type == 'wms' %}
-                            bg-primary
-                        {% elif type == 'wfs' %}
-                            bg-info
-                        {% elif type == 'geojson' %}
-                            bg-success
-                        {% elif type == 'csv' %}
-                        bg-warning
-                        {% elif type == 'xyz' %}
-                            bg-danger
-                        {% else %}
-                            bg-secondary
-                        {% endif %}
-                    " title="{{type}}">{{type}}</span>
+                    <span 
+                        class="badge font-monospace fs-10 align-top user-select-none" 
+                        title="{{type}}" 
+                        style="background-color:hsla(
+                            {% if type == 'wms' %}
+                                0
+                            {% elif type == 'wfs' %}
+                                60
+                            {% elif type == 'geojson' %}
+                                120
+                            {% elif type == 'csv' %}
+                                180
+                            {% elif type == 'xyz' %}
+                                240
+                            {% else %}
+                                300
+                            {% endif %}
+                        , 100%, 50%, 1);"
+                    >{{type}}</span>
                 </div>
                 <h6 class="card-title">{{layer.title}}</h6>
                 {% if type == 'wms' or type == 'wfs' %}
