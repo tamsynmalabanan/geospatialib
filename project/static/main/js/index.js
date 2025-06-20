@@ -33,7 +33,7 @@ const addSearchResultToMap = async () => {
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
-    console.log(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).styles)
+    console.log(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`))
 
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
