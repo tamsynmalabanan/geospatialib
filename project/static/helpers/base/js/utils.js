@@ -145,7 +145,7 @@ const hexToHSLA = (hex) => {
     let g = parseInt(hex.split(',')[1]) / 255;
     let b = parseInt(hex.split(',')[2]) / 255;
   
-    console.log(hex, hex.split(','), r, g, b)
+    console.log(hex, hex.split(',')[0], r, g, b)
 
     // Find max and min values of RGB
     let max = Math.max(r, g, b);
