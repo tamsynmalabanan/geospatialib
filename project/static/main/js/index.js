@@ -125,6 +125,10 @@ const handleSearchForm = () => {
 
     })
 
+    document.querySelector('#searchResults').parentElement.addEventListener('htmx:afterSwap', (e) => {
+        console.log(e)
+    })
+
     if (queryField.value) {
         const submitEvent = new Event('submit')
         form.dispatchEvent(submitEvent)
