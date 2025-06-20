@@ -39,23 +39,18 @@ const addSearchResultBboxToMap = async (el) => {
         dashArray: '1 3'
     }
 
-    try {
-        const layer = await getLeafletGeoJSONLayer({
-            geojson: turf.bboxPolygon(
-                JSON.parse(el.dataset.layerBbox), 
-                {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}
-            ),
-            pane: 'searchPane',
-            group,
-            customStyleParams,
-            params: {type: 'geojson', title: 'Search result'}
-        })
-    
-        if (layer) group?.addLayer(layer)
-    } catch (error) {
-        console.log(error)
-        console.log(el)
-    }
+    const layer = await getLeafletGeoJSONLayer({
+        geojson: turf.bboxPolygon(
+            JSON.parse(el.dataset.layerBbox), 
+            {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}
+        ),
+        pane: 'searchPane',
+        group,
+        customStyleParams,
+        params: {type: 'geojson', title: 'Search result'}
+    })
+
+    if (layer) group?.addLayer(layer)
 }
 
 const toggleSearchResultBbox = async () => {

@@ -384,6 +384,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 }
 
                 if (layer instanceof L.GeoJSON) {
+                    console.log(layer)
                     if (controllerId !== controller.id) return
                     if (legend.querySelector('.bi-bug')) return
 
