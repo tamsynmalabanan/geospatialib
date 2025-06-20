@@ -31,6 +31,8 @@ const addSearchResultToMap = async () => {
 }
 
 const addSearchResultBboxToMap = async (el) => {
+    console.log(el.closest('.card-body'))
+
     const addBtn = el.previousElementSibling
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
@@ -39,7 +41,6 @@ const addSearchResultBboxToMap = async (el) => {
         strokeWidth: 3,
         dashArray: '1 6'
     }
-
 
     const layer = await getLeafletGeoJSONLayer({
         geojson: turf.polygonToLine(turf.bboxPolygon(
