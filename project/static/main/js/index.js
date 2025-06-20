@@ -39,7 +39,7 @@ const toggleSearchResultBbox = async () => {
         group.clearLayers()
     } else {
         const customStyleParams = {
-            fillColor: 'rgb(20, 55, 255)',
+            fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
             strokeWidth: 1,
         }
 
