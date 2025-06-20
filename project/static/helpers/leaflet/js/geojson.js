@@ -207,7 +207,6 @@ const getFeatureTitle = (properties) => {
         'display_name',
         'name:en',
         'name',
-        'feature_id',
         'type',
     ]) {
         const matches = Object.keys(properties).filter(i => i === key || i.startsWith(key))
