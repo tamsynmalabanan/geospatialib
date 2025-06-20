@@ -38,7 +38,7 @@ const addSearchResultBboxToMap = async (el) => {
     
     const customStyleParams = {
         strokeColor,
-        strokeOpacity: 1,
+        strokeOpacity: 0.5,
         strokeWidth: 3,
         dashArray: '1 6'
     }
