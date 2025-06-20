@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_htmx',
     'celery',
     'widget_tweaks',
+    'compressor',
 
     # project apps
     'customuser',
@@ -66,6 +67,13 @@ INSTALLED_APPS = [
     'htmx',
     'helpers',
 ]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
 
 # celery task
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
@@ -255,10 +263,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # MEDIA_URL = 'media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+COMPRESS_ENABLED = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
