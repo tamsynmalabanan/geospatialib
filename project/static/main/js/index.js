@@ -45,6 +45,10 @@ const toggleSearchResultBbox = async () => {
 
     if (hide) {
         group.clearLayers()
+    } else {
+        Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(i => {
+            group.addLayer(L.geoJSON(turf.bboxPolygon(JSON.parse(i.dataset.layerBbox))))
+        })
     }
 }
 
