@@ -34,7 +34,7 @@ const addSearchResultBboxToMap = async (el) => {
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
-        strokeWidth: 1,
+        strokeWidth: 2,
         dashArray: '1 3'
     }
 
