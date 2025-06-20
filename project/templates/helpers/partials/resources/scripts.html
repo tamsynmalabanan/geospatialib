@@ -36,41 +36,41 @@
 {% comment %} proj4js {% endcomment %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.15.0/proj4.js" integrity="sha512-zlBm5j/0UjgCzqBVLkATd/2b9Yun4SzATXJ7v1T2KfjmP0iw8FUcG5mPD60SrdxU+tRkACm3IQRq55pEkp9Qow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-{% compress js %}
-    <script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
+{% comment %} {% compress js %}
+{% endcompress %} {% endcomment %}
+<script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
 
-    {% comment %} project {% endcomment %}
-    <script type="text/javascript" src="{% static 'helpers/base/js/bootstrap.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/utils.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/contextmenu.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/elements.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/cookies.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/theme.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/htmx.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/sidebar.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/base/js/fetch.js' %}"></script>
+{% comment %} project {% endcomment %}
+<script type="text/javascript" src="{% static 'helpers/base/js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/utils.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/contextmenu.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/elements.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/cookies.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/theme.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/htmx.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/sidebar.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/base/js/fetch.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'helpers/gis/js/data.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/geojson.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/indexdb.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/proj4.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/utils.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/panels.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/osm.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/gis/js/add_layers.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/data.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/geojson.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/indexdb.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/proj4.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/utils.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/panels.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/osm.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/gis/js/add_layers.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/utils.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/geojson.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/controls.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/layers.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/groups.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/panels.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/legend.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/style.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/query.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/map.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/osm.js' %}"></script>
-    <script type="text/javascript" src="{% static 'helpers/leaflet/js/init.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/utils.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/geojson.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/controls.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/layers.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/groups.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/panels.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/legend.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/style.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/query.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/map.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/osm.js' %}"></script>
+<script type="text/javascript" src="{% static 'helpers/leaflet/js/init.js' %}"></script>
 
-    <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>
-{% endcompress %}
+<script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>
