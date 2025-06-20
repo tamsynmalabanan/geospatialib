@@ -34,16 +34,15 @@ const addSearchResultBboxToMap = async (el) => {
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
-        fillOpacity: 0,
         strokeWidth: 1,
         dashArray: '1 3'
     }
 
     const layer = await getLeafletGeoJSONLayer({
-        geojson: turf.bboxPolygon(
+        geojson: turf.polygonToLine(turf.bboxPolygon(
             JSON.parse(el.dataset.layerBbox), 
             {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}
-        ),
+        )),
         pane: 'searchPane',
         group,
         customStyleParams,
