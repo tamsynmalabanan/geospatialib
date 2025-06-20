@@ -1,6 +1,6 @@
 const getSearchForm = () => document.querySelector('#searchForm')
 
-const getSearchMap = () => maps.find(map => map.getContainer().id === getSearchForm().getAttribute('data-search-map-id'))
+const getSearchMap = () => maps?.find(map => map.getContainer().id === getSearchForm().getAttribute('data-search-map-id'))
 
 const zoomToSearchResultBbox = () => getSearchMap()?.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(event.target.dataset.layerBbox))).getBounds())
 
