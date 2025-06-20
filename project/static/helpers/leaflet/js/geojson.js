@@ -222,7 +222,7 @@ const getFeatureTitle = (properties) => {
     if (!title) {
         for (const key in properties) {
             if (key.includes('name') || key.includes('title')) {
-                title = `${key}: ${value}`
+                title = `${key}: ${properties[key]}`
                 break
             }
         }
