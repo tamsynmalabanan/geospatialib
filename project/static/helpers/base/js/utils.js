@@ -140,15 +140,13 @@ const hslToHex = ({h, s, l}={}) => {
 }
 
 const hexToHSLA = (hex) => {
-    // Convert hex to RGB
     hex = hex.split('(')[hex.split('(').length-1]
 
-    let r = parseInt(hex.split(',')[0], 16) / 255;
-    let g = parseInt(hex.split(',')[1], 16) / 255;
-    let b = parseInt(hex.split(',')[2], 16) / 255;
+    // Convert hex to RGB
+    let r = parseInt(hex.substring(1, 3), 16) / 255;
+    let g = parseInt(hex.substring(3, 5), 16) / 255;
+    let b = parseInt(hex.substring(5, 7), 16) / 255;
   
-    console.log(hex, r, g, b)
-
     // Find max and min values of RGB
     let max = Math.max(r, g, b);
     let min = Math.min(r, g, b);
