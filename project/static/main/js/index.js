@@ -34,13 +34,14 @@ const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
     const group = getSearchMap()._ch.getLayerGroups().search
-    const strokeColor = hexToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor)
+    const strokeColor = manageHSLAColor(hexToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor))
     
+
     const customStyleParams = {
-        strokeColor,
+        strokeColor: strokeColor.toString(),
         strokeOpacity: 0.5,
         strokeWidth: 3,
-        dashArray: '1 6'
+        dashArray: `1 6`
     }
 
     const layer = await getLeafletGeoJSONLayer({
