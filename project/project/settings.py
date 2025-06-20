@@ -268,7 +268,10 @@ USE_TZ = True
 # MEDIA_URL = 'media/'
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    '/home/gsl_admin/geospatialib/.venv/lib/python3.12/site-packages/leaflet/static/',
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 COMPRESS_ENABLED = True
 # COMPRESS_OFFLINE = True
