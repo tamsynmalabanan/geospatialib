@@ -30,6 +30,25 @@ const addSearchResultToMap = async () => {
     })
 }
 
+const addSearchResultBboxToMap = async (el) => {
+    const customStyleParams = {
+        fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
+        fillOpacity: 0,
+        strokeWidth: 1,
+        dashArray: '1 3'
+    }
+
+    const layer = await getLeafletGeoJSONLayer({
+        geojson: turf.bboxPolygon(JSON.parse(el.dataset.layerBbox), {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}),
+        pane: 'searchPane',
+        group: getSearchMap()._ch.getLayerGroups().search,
+        customStyleParams,
+        params: {type: 'geojson', title: 'Search result'}
+    })
+
+    if (layer) group?.addLayer(layer)
+}
+
 const toggleSearchResultBbox = async () => {
     const searchResults = document.querySelector('#searchResults')
     const map = getSearchMap()
@@ -38,23 +57,8 @@ const toggleSearchResultBbox = async () => {
     if (group?.getLayers().length) {
         group.clearLayers()
     } else {
-        const customStyleParams = {
-            fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
-            fillOpacity: 0,
-            strokeWidth: 1,
-            dashArray: '1 3'
-        }
-
         Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(async i => {
-            const layer = await getLeafletGeoJSONLayer({
-                geojson: turf.bboxPolygon(JSON.parse(i.dataset.layerBbox), {properties:JSON.parse(i.previousElementSibling.dataset.layerData)}),
-                pane: 'searchPane',
-                group,
-                customStyleParams,
-                params: {type: 'geojson', title: 'Search result'}
-            })
-
-            if (layer) group?.addLayer(layer)
+            addSearchResultBboxToMap()
         })
     }
     
