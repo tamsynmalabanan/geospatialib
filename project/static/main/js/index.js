@@ -125,7 +125,9 @@ const handleSearchForm = () => {
 
     })
 
-    document.querySelector('#searchResults').parentElement.addEventListener('htmx:afterSwap', (e) => {
+    const searchResults = document.querySelector('#searchResults')
+    searchResults.parentElement.addEventListener('htmx:afterSwap', (e) => {
+        if (e.target.id === searchResults.id) return
         console.log(e)
     })
 
