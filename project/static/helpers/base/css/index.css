@@ -15,5 +15,5 @@ body {
 
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-thumb {
-    border-radius: 0rem;
+    border-radius: 0.5rem;
 }
