@@ -203,6 +203,7 @@ const getFeatureTitle = (properties) => {
     let title
 
     for (const key of [
+        'title',
         'display_name',
         'name:en',
         'name',
