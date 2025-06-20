@@ -33,9 +33,9 @@ const addSearchResultToMap = async () => {
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
-    
     const group = getSearchMap()._ch.getLayerGroups().search
     const backgroundColor = hexToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor)
+    
     const customStyleParams = {
         fillColor: backgroundColor,
         strokeOpacity: 0.25,
