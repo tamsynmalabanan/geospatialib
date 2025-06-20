@@ -51,12 +51,13 @@
                     data-layer-format="{{layer.collection.format}}"
                     data-layer-data="{{data|dump_json}}"
                     onclick="addSearchResultToMap()"
-                ></button>
-                <button 
+                    ></button>
+                    <button 
                     title='Zoom to layer'
                     class="bg-transparent border-0 p-0 bi bi-zoom-in fs-12"
                     tabindex="-1"
-                    onclick="zoomToSearchResultBbox('{{data.bbox}}')"
+                    data-layer-bbox="{{data.bbox}}"
+                    onclick="zoomToSearchResultBbox()"
                 ></button>
             </div>
         </div>
