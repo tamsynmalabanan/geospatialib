@@ -141,7 +141,7 @@ class SearchList(ListView):
         return queryset
 
     def get_filters(self):
-        return {
+        filters = {
             field: list(
                 self.queryset
                 .values(field)
@@ -150,23 +150,20 @@ class SearchList(ListView):
             ) for field in self.filter_fields
         }
 
+        for field in self.filter_fields:
+            value = self.request.GET.get(field)
+            if not value or len(filters.get(field, [])) != 0:
+                continue
+            filters[field] = [{field: value, 'count': 0}]
+
+        return filters
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.page == 1:
-            count = context['page_obj'].paginator.count
-            fillers = find_nearest_divisible(count, [2,3])-count
-            
-            filters = self.get_filters()       
-            for field in self.filter_fields:
-                value = self.request.GET.get(field)
-                if not value:
-                    continue
-                if len(filters.get(field, [])) == 0:
-                    filters[field] = [{field: value, 'count': 0}]
-
-            context['count'] = count
-            context['fillers'] = range(fillers)
-            context['filters'] = filters
+            context['count'] = count = context['page_obj'].paginator.count
+            context['fillers'] = range(find_nearest_divisible(count, [2,3])-count)
+            context['filters'] = self.get_filters()
             context['params'] = [i for i in list(self.request.GET.values()) if i and i != '']
         return context
 
