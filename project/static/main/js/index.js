@@ -30,6 +30,11 @@ const addSearchResultToMap = async () => {
     })
 }
 
+const toggleSearchResultdBbox = () => {
+    event.target.classList.toggle('bi-eye')
+    event.target.classList.toggle('bi-eye-slash')
+}
+
 const handleSearchForm = () => {
     const form = getSearchForm()
     const queryField = form.elements.query
