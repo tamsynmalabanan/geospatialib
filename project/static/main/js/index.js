@@ -31,6 +31,7 @@ const addSearchResultToMap = async () => {
 }
 
 const addSearchResultBboxToMap = async (el) => {
+    const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
         fillOpacity: 0,
@@ -41,7 +42,7 @@ const addSearchResultBboxToMap = async (el) => {
     const layer = await getLeafletGeoJSONLayer({
         geojson: turf.bboxPolygon(JSON.parse(el.dataset.layerBbox), {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}),
         pane: 'searchPane',
-        group: getSearchMap()._ch.getLayerGroups().search,
+        group,
         customStyleParams,
         params: {type: 'geojson', title: 'Search result'}
     })
