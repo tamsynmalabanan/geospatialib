@@ -809,8 +809,10 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
         legend: {
-            innerText: isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend',
+            innerText: (
+                isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend'),
             btnCallback: async () => {
+                console.log(layer)
                 createLeafletLayer(layer._params, {
                     dbIndexedKey: layer._dbIndexedKey,
                     data: layerGeoJSON,
