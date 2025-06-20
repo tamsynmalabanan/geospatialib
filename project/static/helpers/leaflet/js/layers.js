@@ -720,7 +720,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
     const isHidden = group._ch.hasHiddenLayer(layer)
-
+    const isSearch = group._name === 'search'
     
     const checkbox = layer._checkbox
     const disabledCheckbox = checkbox?.disabled
@@ -747,18 +747,18 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
         
-        divider1: !feature ? null : {
+        divider1: !feature || isSearch ? null : {
             divider: true,
         },
-        copyFeature: !feature ? null : {
+        copyFeature: !feature || isSearch ? null : {
             innerText: 'Copy feature',
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature))
         },
-        copyProperties: !feature ? null : {
+        copyProperties: !feature || isSearch ? null : {
             innerText: 'Copy properties',
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.properties))
         },
-        copyGeometry: !feature ? null : {
+        copyGeometry: !feature || isSearch ? null : {
             innerText: 'Copy geometry',
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
@@ -812,7 +812,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: (
                 isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend'),
             btnCallback: async () => {
-                if (group._name === 'search' && geojsonLayer?._addBtn) {
+                if (isSearch && geojsonLayer?._addBtn) {
                     geojsonLayer._addBtn.click()
                 } else {
                     createLeafletLayer(layer._params, {
@@ -825,7 +825,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 }
             }
         },
-        download: group._name === 'search' || !layerGeoJSON ? null : {
+        download: isSearch || !layerGeoJSON ? null : {
             innerText: 'Download data',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
