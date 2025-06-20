@@ -38,6 +38,7 @@ const toggleSearchResultBbox = async () => {
     const group = map?._ch.getLayerGroups().search
     const layers = group?.getLayers()
     const hide = layers.length && searchResults.innerHTML !== ''
+    console.log(layers.length, searchResults.innerHTML !== '', hide)
 
     el.classList.toggle('bi-eye', hide)
     el.classList.toggle('bi-eye-slash', !hide)
