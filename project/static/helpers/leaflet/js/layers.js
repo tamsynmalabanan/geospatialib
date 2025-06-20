@@ -825,7 +825,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 }
             }
         },
-        download: !layerGeoJSON ? null : {
+        download: group._name === 'search' || !layerGeoJSON ? null : {
             innerText: 'Download data',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
