@@ -34,6 +34,8 @@ const addSearchResultBboxToMap = async (el) => {
     console.log(el.closest('.card-body'))
 
     const addBtn = el.previousElementSibling
+    const properties = JSON.parse(addBtn.dataset.layerData)
+    
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
@@ -45,7 +47,7 @@ const addSearchResultBboxToMap = async (el) => {
     const layer = await getLeafletGeoJSONLayer({
         geojson: turf.polygonToLine(turf.bboxPolygon(
             JSON.parse(el.dataset.layerBbox), 
-            {properties:JSON.parse(addBtn.dataset.layerData)}
+            {properties}
         )),
         pane: 'searchPane',
         group,
