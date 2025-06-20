@@ -109,7 +109,7 @@ const handleSearchForm = () => {
             </div>
         `)
 
-        getSearchMap()._ch.getLayerGroups().search.clearLayers()
+        getSearchMap()?._ch.getLayerGroups().search.clearLayers()
 
         const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
         window.history.pushState(
