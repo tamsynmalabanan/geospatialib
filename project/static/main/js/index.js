@@ -40,7 +40,10 @@ const addSearchResultBboxToMap = async (el) => {
     }
 
     const layer = await getLeafletGeoJSONLayer({
-        geojson: turf.bboxPolygon(JSON.parse(el.dataset.layerBbox), {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}),
+        geojson: turf.bboxPolygon(
+            JSON.parse(el.dataset.layerBbox), 
+            {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}
+        ),
         pane: 'searchPane',
         group,
         customStyleParams,
@@ -65,7 +68,6 @@ const toggleSearchResultBbox = async () => {
     
     const el = event.target
     const hasLayers = group?.getLayers().length
-    console.log(hasLayers)
     el.classList.toggle('bi-eye', !hasLayers)
     el.classList.toggle('bi-eye-slash', hasLayers)
 }
@@ -106,6 +108,8 @@ const handleSearchForm = () => {
                 <div class="spinner-grow spinner-grow-sm text-primary my-3" role="status"></div>
             </div>
         `)
+
+        getSearchMap()._ch.getLayerGroups().search.clearLayers()
 
         const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
         window.history.pushState(
