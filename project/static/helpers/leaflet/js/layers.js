@@ -812,6 +812,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: (
                 isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend'),
             btnCallback: async () => {
+                console.log(group._name, layer._addBtn)
                 if (group._name === 'search' && layer._addBtn) {
                     layer._addBtn.click()
                 } else {
