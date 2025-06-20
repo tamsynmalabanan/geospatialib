@@ -171,7 +171,7 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
 
-    if (group?._name !== 'query') {
+    if (!Array('query', 'search').includes(group?._name)) {
         geojsonLayer._dbIndexedKey = dbIndexedKey ?? (geojson ? await (async () => {
             await normalizeGeoJSON(geojson)
             return saveToGeoJSONDB(geojson)

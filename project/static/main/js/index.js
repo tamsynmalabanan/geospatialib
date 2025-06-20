@@ -38,8 +38,23 @@ const toggleSearchResultBbox = async () => {
     if (group?.getLayers().length) {
         group.clearLayers()
     } else {
-        Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(i => {
-            group?.addLayer(L.geoJSON(turf.bboxPolygon(JSON.parse(i.dataset.layerBbox))))
+        const customStyleParams = {
+            fillColor: 'rgb(20, 55, 255)',
+            strokeWidth: 1,
+        }
+        
+        Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(async i => {
+            const layer = await getLeafletGeoJSONLayer({
+                geojson: turf.bboxPolygon(JSON.parse(i.dataset.layerBbox)),
+                pane: 'searchPane',
+                group,
+                customStyleParams,
+                params: {
+                    title: i.dataset.layerTitle,
+                    type: 'geojson',
+                }
+            })
+            if (layer) group?.addLayer(layer)
         })
     }
     
