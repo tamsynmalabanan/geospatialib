@@ -12,9 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         elementResizeObserver(container, () => map.invalidateSize())
         assignMapObservers(map)
 
-        const queryPane = map.getPane('queryPane') || map.createPane('queryPane')
-        queryPane.style.zIndex = 599
-
         map._initComplete = true
         map.fire('initComplete')
     })

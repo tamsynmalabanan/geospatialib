@@ -30,11 +30,33 @@ const addSearchResultToMap = async () => {
     })
 }
 
-const toggleSearchResultdBbox = () => {
-    event.target.classList.toggle('bi-eye')
-    event.target.classList.toggle('bi-eye-slash')
-
+const toggleSearchResultdBbox = async () => {
+    const map = getSearchMap()
+    const group = map?._ch.getLayerGroups().search
     
+    const el = event.target
+    const layer = el._layer
+    const hide = group && layer && group.hasLayer(layer)
+
+    el.classList.toggle('bi-eye', hide)
+    el.classList.toggle('bi-eye-slash', !hide)
+
+    if (hide) {
+        group.removeLayer(layer)
+    } else {
+        console.log('here')
+        // const layer = await getLeafletGeoJSONLayer({
+        //     geojson,
+        //     pane: 'queryPane',
+        //     group: queryGroup,
+        //     customStyleParams,
+        //     params: {
+        //         title: fetcher.title,
+        //         attribution: createAttributionTable(geojson)?.outerHTML,
+        //         type: 'geojson',
+        //     }
+        // })
+    }
 }
 
 const handleSearchForm = () => {

@@ -1,6 +1,6 @@
 const handleLeafletLayerGroups = (map) => {
     map._layerGroups = {}
-    Array('library', 'client', 'query').forEach(groupName => {
+    Array('library', 'client', 'query', 'search').forEach(groupName => {
         const group = L.layerGroup()
         map._layerGroups[groupName] = group
         
@@ -274,4 +274,10 @@ const handleLeafletLayerGroups = (map) => {
 
     map._legendLayerGroups = Object.values(map._ch.getLayerGroups())
     .filter(g => ['library', 'client'].includes(g._name))
+
+    const queryPane = map.createPane('queryPane')
+    queryPane.style.zIndex = 598
+
+    const searchPane = map.createPane('searchPane')
+    searchPane.style.zIndex = 599
 }
