@@ -31,33 +31,13 @@ const addSearchResultToMap = async () => {
 }
 
 const toggleSearchResultBbox = async () => {
+    const el = event.target
     const map = getSearchMap()
     const group = map?._ch.getLayerGroups().search
-    
-    const el = event.target
-    const layer = el._layer
-    const hide = group && layer && group.hasLayer(layer)
+    const layers = group.getLayers()
 
-    el.classList.toggle('bi-eye', hide)
-    el.classList.toggle('bi-eye-slash', !hide)
-    
-    if (hide) {
-        group.removeLayer(layer)
-    } else {
-        console.log('here')
-        
-        // const layer = await getLeafletGeoJSONLayer({
-        //     geojson,
-        //     pane: 'queryPane',
-        //     group: queryGroup,
-        //     customStyleParams,
-        //     params: {
-        //         title: fetcher.title,
-        //         attribution: createAttributionTable(geojson)?.outerHTML,
-        //         type: 'geojson',
-        //     }
-        // })
-    }
+    el.classList.toggle('bi-eye', layers.length)
+    el.classList.toggle('bi-eye-slash', !layers.length)
 }
 
 const handleSearchForm = () => {
