@@ -732,7 +732,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const layerArray = isLegendGroup ? map._ch.getLegendLayers() : group._ch.getAllLayers()
     const noArrays = !checkboxArray && !layerArray
     
-    const typeLabel = type === 'feature' ? type : 'layer'
+    const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
     const addLayer = (l) => group._ch.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
