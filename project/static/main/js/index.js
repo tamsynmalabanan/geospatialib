@@ -34,8 +34,8 @@ const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
     
-    const backgroundColor = el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor
-    console.log(backgroundColor, hexToHSLA(backgroundColor))
+    const backgroundColor = hexToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor)
+    console.log(backgroundColor)
 
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
