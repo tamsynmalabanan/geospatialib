@@ -812,14 +812,17 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: (
                 isLegendGroup && !feature ? `Duplicate ${typeLabel}` : 'Add to legend'),
             btnCallback: async () => {
-                console.log(layer)
-                createLeafletLayer(layer._params, {
-                    dbIndexedKey: layer._dbIndexedKey,
-                    data: layerGeoJSON,
-                    group: isLegendGroup ? group : map._ch.getLayerGroups().client,
-                    add: true,
-                    properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
-                })
+                if (group._name === 'search' && layer._addBtn) {
+                    layer._addBtn.click()
+                } else {
+                    createLeafletLayer(layer._params, {
+                        dbIndexedKey: layer._dbIndexedKey,
+                        data: layerGeoJSON,
+                        group: isLegendGroup ? group : map._ch.getLayerGroups().client,
+                        add: true,
+                        properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
+                    })
+                }
             }
         },
         download: !layerGeoJSON ? null : {

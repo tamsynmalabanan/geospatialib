@@ -31,6 +31,7 @@ const addSearchResultToMap = async () => {
 }
 
 const addSearchResultBboxToMap = async (el) => {
+    const addBtn = el.previousElementSibling
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
@@ -39,10 +40,11 @@ const addSearchResultBboxToMap = async (el) => {
         dashArray: '1 6'
     }
 
+
     const layer = await getLeafletGeoJSONLayer({
         geojson: turf.polygonToLine(turf.bboxPolygon(
             JSON.parse(el.dataset.layerBbox), 
-            {properties:JSON.parse(el.previousElementSibling.dataset.layerData)}
+            {properties:JSON.parse(addBtn.dataset.layerData)}
         )),
         pane: 'searchPane',
         group,
@@ -50,7 +52,10 @@ const addSearchResultBboxToMap = async (el) => {
         params: {type: 'geojson', title: 'Search result'}
     })
 
-    if (layer) group?.addLayer(layer)
+    if (layer) {
+        layer._addBtn = addBtn
+        group?.addLayer(layer)
+    }
 }
 
 const toggleSearchResultBbox = async () => {
