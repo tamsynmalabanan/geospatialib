@@ -40,6 +40,7 @@ const toggleSearchResultBbox = async () => {
     } else {
         const customStyleParams = {
             fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
+            fillOpacity: 0,
             strokeWidth: 1,
         }
 
