@@ -31,11 +31,10 @@ const addSearchResultToMap = async () => {
 }
 
 const addSearchResultBboxToMap = async (el) => {
-    console.log(el.closest('.card-body'))
-
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
-    
+    console.log(el.closest('.card-body'))
+
     const group = getSearchMap()._ch.getLayerGroups().search
     const customStyleParams = {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
