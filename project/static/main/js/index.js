@@ -36,7 +36,7 @@ const addSearchResultBboxToMap = async (el) => {
         fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
         strokeOpacity: 0.25,
         strokeWidth: 3,
-        dashArray: '1 9'
+        dashArray: '1 6'
     }
 
     const layer = await getLeafletGeoJSONLayer({
