@@ -266,15 +266,15 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # other finders..
-    'compressor.finders.CompressorFinder',
-)
+# STATICFILES_FINDERS = (
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#     # other finders..
+#     'compressor.finders.CompressorFinder',
+# )
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
+# COMPRESS_ENABLED = True
+# COMPRESS_OFFLINE = True
 
 
 # Default primary key field type
