@@ -42,6 +42,7 @@ const toggleSearchResultBbox = async () => {
             fillColor: 'hsla(231, 100.00%, 53.90%, 1)',
             fillOpacity: 0,
             strokeWidth: 1,
+            dashArry: '1 3'
         }
 
         Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(async i => {
