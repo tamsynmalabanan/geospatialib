@@ -42,18 +42,18 @@ const toggleSearchResultBbox = async () => {
             fillColor: 'rgb(20, 55, 255)',
             strokeWidth: 1,
         }
-        
+
         Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`)).forEach(async i => {
             const layer = await getLeafletGeoJSONLayer({
-                geojson: turf.bboxPolygon(JSON.parse(i.dataset.layerBbox)),
+                geojson: turf.bboxPolygon(JSON.parse(i.dataset.layerBbox), {properties:{
+                    title: i.dataset.layerTitle
+                }}),
                 pane: 'searchPane',
                 group,
                 customStyleParams,
-                params: {
-                    title: i.dataset.layerTitle,
-                    type: 'geojson',
-                }
+                params: {type: 'geojson'}
             })
+
             if (layer) group?.addLayer(layer)
         })
     }
