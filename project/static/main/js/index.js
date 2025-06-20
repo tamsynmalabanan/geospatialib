@@ -57,8 +57,8 @@ const toggleSearchResultBbox = async () => {
     if (group?.getLayers().length) {
         group.clearLayers()
     } else {
-        for (el of Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`))) {
-            await addSearchResultBboxToMap(el)
+        for (i of Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`))) {
+            await addSearchResultBboxToMap(i)
         }
     }
     
