@@ -134,7 +134,9 @@ const handleSearchForm = () => {
     searchResults.parentElement.addEventListener('htmx:afterSwap', (e) => {
         if (e.target.id === searchResults.id) return
         if (!form.querySelector(`[onclick="toggleSearchResultBbox()"]`).classList.contains('bi-eye-slash')) return
-        addSearchResultBboxToMap(e.target.querySelector(`[onclick="zoomToSearchResultBbox()"]`))
+        
+        const el = e.target.querySelector(`[onclick="zoomToSearchResultBbox()"]`)
+        if (el) addSearchResultBboxToMap(el)
     })
 
     if (queryField.value) {
