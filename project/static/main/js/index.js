@@ -41,7 +41,7 @@ const addSearchResultBboxToMap = async (el) => {
         strokeColor: strokeColor.toString(),
         strokeOpacity: 0.5,
         strokeWidth: 3,
-        dashArray: `1 6`
+        dashArray: `${strokeColor.h} 1 6`
     }
 
     const layer = await getLeafletGeoJSONLayer({
