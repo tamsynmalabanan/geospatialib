@@ -789,7 +789,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             }
         },
 
-        divider5: {
+        divider5: isSearch ? null : {
             divider: true,
         },
         style: !isLegendGroup || isLegendFeature ? null : {
