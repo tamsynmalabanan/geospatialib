@@ -187,7 +187,7 @@ const handleAddLayersForm = () => {
 
     form.addEventListener('htmx:configRequest', (e) => {
         if (e.target === form.elements.format) {
-            e.detail.parameters['url'] = form.element.url.value
+            e.detail.parameters['url'] = form.elements.url.value
         }
     })
     
