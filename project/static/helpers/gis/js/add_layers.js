@@ -217,10 +217,9 @@ const handleAddLayersForm = () => {
     })
 
     form.addEventListener('htmx:beforeSwap', (e) => {
-        console.log(e)
-        if (e.target === form.elements.url || e.target === form.elements.format) {
-
-            getLayerNamesContainer('url').innerHTML = ''
+        const container = getLayerNamesContainer('url')
+        if (e.target === container) {
+            container.innerHTML = ''
         }
     })
 
