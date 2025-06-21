@@ -273,8 +273,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-# COMPRESS_ENABLED = True
-# COMPRESS_OFFLINE = True
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
 
 
 # Default primary key field type
