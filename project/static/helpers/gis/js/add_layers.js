@@ -197,6 +197,7 @@ const handleAddLayersForm = () => {
         }
 
         if (e.target === form.elements.format) {
+            console.log(form.elements.url.value)
             resetLayerNames('url')
             getLayerNamesContainer('url').innerHTML = spinnerHTML
             return
