@@ -379,8 +379,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !leafletLayerIsVisible(layer)
-                const outsideBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(JSON.parse(layer._params.bbox ?? "[-180, -90, 180, 90]")))
-                if (isHidden || isInvisible || outsideBbox) {
+                // const outsideBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(JSON.parse(layer._params.bbox ?? "[-180, -90, 180, 90]")))
+                if (isHidden || isInvisible) {
                     return clearLegend(legend, {isHidden, isInvisible})
                 }
 
@@ -402,9 +402,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         }
                     }))
                 } else if (layer._params.legend) {
-                    const details = legend.querySelector(`#${legend.id}-details`)
-                    if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
-                        createLegendImage(layer)
+                    if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
+                        const details = legend.querySelector(`#${legend.id}-details`)
+                        if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
+                            createLegendImage(layer)
+                        }
+                    } else {
+                        clearLegend(legend)
                     }
                 }   
             })
