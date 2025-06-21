@@ -5,7 +5,7 @@ const getLeafletGeoJSONLayer = async ({
     dbIndexedKey,
     properties = {},
     customStyleParams = {},
-    params
+    params = {},
 } = {}) => {
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
@@ -13,7 +13,7 @@ const getLeafletGeoJSONLayer = async ({
         markersInheritOptions: true,
     })
 
-    geojsonLayer._params = params
+    geojsonLayer._params = params ?? {}
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
     
@@ -171,20 +171,21 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
 
-    if (!Array('query', 'search').includes(group?._name)) {
+    if (group._map._legendLayerGroups.includes(group)) {
         geojsonLayer._dbIndexedKey = dbIndexedKey ?? (geojson ? await (async () => {
             await normalizeGeoJSON(geojson)
             return saveToGeoJSONDB(geojson)
         })() : null)
 
-        if (!params.bbox && geojson) {
-            console.log(geojsonLayer._dbIndexedKey)
-        }
-
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
         geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false}))
         geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
+        
+        if (!params?.bbox) {
+            bboxGeoJSON = geojson ?? (await getFromGeoJSONDB(dbIndexedKey))?.geojson
+            geojsonLayer._params.bbox = bboxGeoJSON ? JSON.stringify(turf.bbox(bboxGeoJSON)) : "[-180, -90, 180, 90]"
+        }
     } else if (geojson) {
         geojsonLayer.addData(geojson)
     }

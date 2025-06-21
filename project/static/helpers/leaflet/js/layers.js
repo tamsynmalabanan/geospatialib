@@ -903,8 +903,6 @@ const createLeafletLayer = async (params, {
     add,
     properties,
 } = {}) => {
-    console.log(dbIndexedKey, params)
-
     const map = group._map
     const pane = createCustomPane(map)
     const type = (params.type ?? 'geojson').toLowerCase()
@@ -954,6 +952,8 @@ const createLeafletLayer = async (params, {
         }
 
         if (layer) {
+            const bbox = params.bbox = params.bbox ?? "[-180, -90, 180, 90]"
+            
             layer._params = params
             layer._dbIndexedKey = dbIndexedKey
             layer._group = group
@@ -969,7 +969,6 @@ const createLeafletLayer = async (params, {
                 },
             }
             
-            const bbox = params.bbox ?? "[-180, -90, 180, 90]"
             if (!layer.getBounds) {
                 const [w,s,e,n,crs] = JSON.parse(bbox)
                 layer.getBounds = () => L.latLngBounds([[s, w], [n, e]])
