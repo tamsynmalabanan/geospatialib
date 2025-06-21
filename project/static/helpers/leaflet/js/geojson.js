@@ -177,7 +177,7 @@ const getLeafletGeoJSONLayer = async ({
             return saveToGeoJSONDB(geojson)
         })() : null)
 
-        console.log(dbIndexedKey, params, geojson)
+        console.log(dbIndexedKey, geojsonLayer._dbIndexedKey, params, geojson)
 
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
