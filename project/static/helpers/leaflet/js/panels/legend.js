@@ -362,7 +362,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
             const newBbox = turf.bboxPolygon(getLeafletMapBbox(map))
-            Array.from(document.querySelectorAll(`[data-search-map-id="${map.getContainer().id}"] [data-map-bbox-field="true"]`)).forEach(i => {
+            Array.from(document.querySelectorAll(`[data-form-map-id="${map.getContainer().id}"] [data-map-bbox-field="true"]`)).forEach(i => {
                 i.value = JSON.stringify(newBbox.geometry)
             })
             localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(turf.bbox(newBbox)))
