@@ -7,8 +7,6 @@ const getLeafletGeoJSONLayer = async ({
     customStyleParams = {},
     params
 } = {}) => {
-    console.log(dbIndexedKey, params)
-
     const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
         pane,
         renderer: new L.SVG({pane}),
@@ -179,21 +177,12 @@ const getLeafletGeoJSONLayer = async ({
             return saveToGeoJSONDB(geojson)
         })() : null)
 
-        geojsonLayer.on('popupopen', (e) => {
-            geojsonLayer._openpopup = e.popup
-        })
-        
-        geojsonLayer.on('popupclose', (e) => {
-            delete geojsonLayer._openpopup 
-        })
-    
-        geojsonLayer.on('add', () => {
-            updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false})
-        })
-    
-        geojsonLayer.on('remove', () => {
-            geojsonLayer.clearLayers()
-        })
+        console.log(dbIndexedKey, params, geojson)
+
+        geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
+        geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
+        geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false}))
+        geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
     } else if (geojson) {
         geojsonLayer.addData(geojson)
     }
