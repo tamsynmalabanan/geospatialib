@@ -383,6 +383,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     return clearLegend(legend, {isHidden, isInvisible})
                 }
 
+                console.log(layer._params.bbox)
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
                     if (legend.querySelector('.bi-bug') && layer._dbIndexedKey.startsWith('client')) return
