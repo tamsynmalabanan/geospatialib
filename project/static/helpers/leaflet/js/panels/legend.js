@@ -407,10 +407,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     if (details.innerHTML === '' || details.firstChild.tagName === 'I') {
                         createLegendImage(layer)
                     }
-                    // if (turf.booleanIntersects(newBbox, L.rectangle(layer.getBounds()).toGeoJSON())) {
-                    // } else {
-                    //     clearLegend(legend)
-                    // }
                 }   
             })
 
