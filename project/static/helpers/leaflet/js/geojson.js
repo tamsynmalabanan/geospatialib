@@ -183,8 +183,7 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
         
         if (!params?.bbox) {
-            bboxGeoJSON = geojson ?? (await getFromGeoJSONDB(dbIndexedKey))?.geojson
-            geojsonLayer._params.bbox = bboxGeoJSON ? JSON.stringify(turf.bbox(bboxGeoJSON)) : "[-180, -90, 180, 90]"
+            geojsonLayer._params.bbox = geojson ? JSON.stringify(turf.bbox(geojson)) : "[-180, -90, 180, 90]"
         }
     } else if (geojson) {
         geojsonLayer.addData(geojson)
@@ -247,7 +246,7 @@ const getLeafletGeoJSONData = async (layer, {
 
     const geojsonHasFeatures = geojson?.features?.length
     queryGeom = queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
-    
+
 
     if (geojsonHasFeatures && queryGeom) {
         const queryExtent = turf.getType(queryGeom) === 'Point' ? turf.buffer(
