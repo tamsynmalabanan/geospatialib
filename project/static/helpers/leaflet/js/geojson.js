@@ -251,9 +251,7 @@ const getLeafletGeoJSONData = async (layer, {
     const map = layer._map ?? layer._group?._map
     if (!map) return
 
-    queryGeom = queryGeom ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : null
-    
-    turf.bboxPolygon(getLeafletMapBbox(map))
+    queryGeom = queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
 
     const geojsonHasFeatures = geojson?.features?.length
     if (geojsonHasFeatures && queryGeom) {

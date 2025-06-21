@@ -903,6 +903,8 @@ const createLeafletLayer = async (params, {
     add,
     properties,
 } = {}) => {
+    console.log(dbIndexedKey, params)
+
     const map = group._map
     const pane = createCustomPane(map)
     const type = (params.type ?? 'geojson').toLowerCase()
