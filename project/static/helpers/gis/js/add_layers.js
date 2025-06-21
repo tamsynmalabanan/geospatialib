@@ -187,11 +187,7 @@ const handleAddLayersForm = () => {
 
     form.addEventListener('htmx:configRequest', (e) => {
         if (e.target === form.elements.format) {
-            console.log(form.elements.url.value)
-            console.log(form.elements.format.value)
-            resetLayerNames('url')
-            getLayerNamesContainer('url').innerHTML = spinnerHTML
-            return
+            console.log(e)
         }
     })
     
