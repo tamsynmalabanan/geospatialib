@@ -187,8 +187,7 @@ const handleAddLayersForm = () => {
 
     form.addEventListener('htmx:configRequest', (e) => {
         if (e.target === form.elements.format) {
-            console.log(e.detail.parameters.get('url'))
-            console.log(e.detail.parameters.get('format'))
+            e.detail.parameters['url'] = form.element.url.value
         }
     })
     
@@ -204,8 +203,6 @@ const handleAddLayersForm = () => {
         }
         
         if (e.target === form.elements.format) {
-            console.log(form.elements.url.value)
-            console.log(form.elements.format.value)
             resetLayerNames('url')
             getLayerNamesContainer('url').innerHTML = spinnerHTML
             return
@@ -217,6 +214,12 @@ const handleAddLayersForm = () => {
 
         e.preventDefault()
         toggleSubmitBtn()
+    })
+
+    form.addEventListener('htmx:beforeSwap', (e) => {
+        if (e.target === form.elements.url || e.target === form.elements.format) {
+            getLayerNamesContainer('url').innerHTML = ''
+        }
     })
 
     form.addEventListener('htmx:afterSwap', (e) => {
