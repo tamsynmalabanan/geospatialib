@@ -46,10 +46,7 @@ class SearchList(ListView):
                 exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
                 query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
 
-            if query in ['', '*']:
-                query = '*'
-            else:
-                query = query.replace(' ', ' OR ')
+            query = query.replace(' ', ' OR ')
 
         return (query, exclusions)
 
@@ -103,14 +100,6 @@ class SearchList(ListView):
                     ex_queries |= Q(name__icontains=word) | Q(title__icontains=word)
             queryset = queryset.exclude(ex_queries)
 
-        if query == '*':
-            return (
-                queryset
-                .annotate(
-                    rank=Value(1,output_field=IntegerField())
-                )
-            )
-        
         if validators.url(query) == True:
             search_type = "plain"
         else:
