@@ -1,5 +1,5 @@
 {% load static %}
-{% comment %} {% load compress %} {% endcomment %}
+{% load compress %}
 {% load leaflet_tags %}
 
 {% comment %} Bootstrap {% endcomment %}
@@ -12,20 +12,21 @@
 {% comment %} leaflet {% endcomment %}
 {% leaflet_css plugins="forms, geocoder, locate" %}
 
-{% comment %} {% compress css %}{% endcompress %} {% endcomment %}
-{% comment %} project {% endcomment %}
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/index.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/theme.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/tagify.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/form.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/utils.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/animations.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/accordion.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/sidebar.css' %}">    
+{% compress css %}
+    {% comment %} project {% endcomment %}
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/index.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/theme.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/tagify.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/form.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/utils.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/animations.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/accordion.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/sidebar.css' %}">    
 
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/gis/css/layers.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/controls.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/layers.css' %}">    
-<link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/maps.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/gis/css/layers.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/controls.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/layers.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/maps.css' %}">    
+{% endcompress %}
 
-<link rel="stylesheet" type="text/css" href="{% static app_name|add:'/css/'|add:url_name|add:'.css' %}">    
+{% comment %} <link rel="stylesheet" type="text/css" href="{% static app_name|add:'/css/'|add:url_name|add:'.css' %}">     {% endcomment %}

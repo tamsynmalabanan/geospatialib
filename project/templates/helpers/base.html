@@ -23,6 +23,7 @@
         </title>
         
         {% include "helpers/partials/resources/styles.html" %}
+        {% block styles %}{% endblock styles %}
     </head>
     <body class="vh-100 overflow-hidden"> 
         {% comment %} hx-headers="{'X-CSRFToken':'{{csrf_token}}'}" {% endcomment %}

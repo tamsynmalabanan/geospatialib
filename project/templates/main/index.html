@@ -17,3 +17,15 @@
 {% block sidebar_toggle %}
     {% include "helpers/partials/sidebar/toggle.html" with icon='bi-search' label='Geospatialib' title='Search library' %}
 {% endblock sidebar_toggle %}
+
+{% block styles %}
+    {% compress css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'main/css/index.css' %}">
+    {% endcompress %}
+{% endblock styles %}
+
+{% block scripts %}
+    {% compress js %}
+        <script type="text/javascript" src="{% static 'main/js/index.js' %}"></script>
+    {% endcompress %}
+{% endblock scripts %}
