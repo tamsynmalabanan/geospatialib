@@ -195,7 +195,7 @@ def validate_collection(request):
             context = get_collection_data(
                 url = form.cleaned_data.get('url', ''),
                 format = form.cleaned_data.get('format', None),
-            )
+            ) or {}
             layers = context.get('layers', {})
             if layers == {}:
                 raw_format = data.get('format')
