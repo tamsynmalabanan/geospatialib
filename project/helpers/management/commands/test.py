@@ -42,7 +42,7 @@ def test_get_collection_data():
     # url = 'https://wms.gebco.net/mapserv?request=getcapabilities&service=wms&version=1.3.0'
     # url = 'https://ows.emodnet-bathymetry.eu/wfs?request=GetCapabilities&service=WFS'
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
-    url = 'https://dataworks.calderdale.gov.uk/download/2w758/n30/cinemas.csv'
+    url = 'https://services7.arcgis.com/G5Ma95RzqJRPKsWL/arcgis/rest/services/Wind_Lease_Boundaries__BOEM_/FeatureServer'
     value = get_collection_data(url, delay=False)
     print(value)
     print('layers count', len((value or {}).get('layers', {}).keys()))
@@ -52,7 +52,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
 
-        # test_get_collection_data()
+        test_get_collection_data()
 
 
         self.stdout.write(self.style.SUCCESS('Done.'))
