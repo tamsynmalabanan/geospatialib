@@ -8,7 +8,7 @@ const handleExportLayersForm = () => {
 
     modalElement.addEventListener('show.bs.modal', () => {
         modalBody.innerHTML = ''
-        const layers = localStorage.get(`legend-layers-${form._leafletMap.getContainer().id}`)
+        const layers = localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}`)
         console.log('layers', layers)
     })
 
