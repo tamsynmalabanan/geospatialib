@@ -175,7 +175,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider1: {
             tag: 'div',
-            className: 'vr',
+            className: 'vr my-2',
         },
         cancel: {
             iconSpecs: 'bi-arrow-counterclockwise',
@@ -184,7 +184,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider2: {
             tag: 'div',
-            className: 'vr',
+            className: 'vr my-2',
         },
         zoomin: {
             iconSpecs: 'bi bi-zoom-in',
@@ -219,7 +219,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         divider3: {
             tag: 'div',
-            className: 'vr',
+            className: 'vr my-2',
         },
         collapse: {
             iconSpecs: 'bi bi-chevron-up',
