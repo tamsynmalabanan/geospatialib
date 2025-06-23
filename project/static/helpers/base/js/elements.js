@@ -30,6 +30,7 @@ const createButton = ({
     textClass = '',
     events = {},
     attrs = {},
+    style = {},
     name,
 } = {}) => {
     const btn = document.createElement('button')
@@ -47,6 +48,7 @@ const createButton = ({
         className:`${textClass}`
     })
 
+    Object.keys(style).forEach(k => btn.style[k] = style[k])
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)
     return btn

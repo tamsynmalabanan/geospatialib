@@ -281,6 +281,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
         innerText: 'Add layers',
         textClass: 'd-none d-xxl-inline',
         className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-primary',
+        style: {
+            color: 'white !important',
+        },
         events: {
             'click': (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
@@ -298,6 +301,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
         innerText: 'Export layers',
         textClass: 'd-none d-xxl-inline',
         className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-warning',
+        style: {
+            color: 'white !important',
+        },
         events: {
             'click': (e) => {
                 const modalElement = document.querySelector(`#exportLayersModal`)
