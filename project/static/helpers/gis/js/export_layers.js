@@ -6,17 +6,22 @@ const handleExportLayersForm = () => {
     const submitBtn = form.elements.submit
     const modalBody = modalElement.querySelector('.modal-body')
 
-    modalElement.addEventListener('show.bs.modal', () => {
+    modalElement.addEventListener('show.bs.modal', async () => {
         modalBody.innerHTML = ''
         
         const layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
-        Object.values(layers).forEach(i => {
-            
+        for (const layer of layers) {
+            if (layer.dbIndexedKey.startsWith('client')) {
+                layer.data = await getFromGISDB(layer.dbIndexedKey)
+            }
+
+            console.log(layer)
             
             // modalBody.appendChild(customCreateElement({
-            //     innerHTML:i.dbIndexedKey
+            //     innerHTML:layer.dbIndexedKey
             // }))
-        })
+        }
+
     })
 
     // submitBtn.addEventListener('click', (e) => {
