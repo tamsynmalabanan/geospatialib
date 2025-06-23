@@ -48,7 +48,6 @@ const createButton = ({
         className:`${textClass}`
     })
 
-    console.log(style)
     Object.keys(style).forEach(k => btn.style[k] = style[k])
     Object.keys(events).forEach(k => btn.addEventListener(k, events[k]))
     parent?.appendChild(btn)

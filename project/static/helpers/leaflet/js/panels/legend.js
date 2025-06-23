@@ -275,41 +275,43 @@ const handleLeafletLegendPanel = async (map, parent) => {
         className:`d-flex gap-2 flex-nowrap`,
     })
 
-    modalBtns.appendChild(createButton({
-        iconSpecs: 'bi-stack',
-        title: 'Add new layers',
-        innerText: 'Add layers',
-        textClass: 'd-none d-xxl-inline',
-        className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-primary',
-        style: {color: 'white !important'},
-        events: {
-            'click': (e) => {
-                const modalElement = document.querySelector(`#addLayersModal`)
-                modalElement.querySelector('form')._leafletMap = map
-
-                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-                modalInstance.show()
-            }            
-        } 
-    }))
-
-    modalBtns.appendChild(createButton({
-        iconSpecs: 'bi-file-zip-fill',
-        title: 'Export map layers',
-        innerText: 'Export layers',
-        textClass: 'd-none d-xxl-inline',
-        className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-warning',
-        style: {color: 'white'},
-        events: {
-            'click': (e) => {
-                const modalElement = document.querySelector(`#exportLayersModal`)
-                modalElement.querySelector('form')._leafletMap = map
-
-                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-                modalInstance.show()
-            }            
-        } 
-    }))
+    Array(
+        {
+            iconSpecs: 'bi-stack',
+            title: 'Add new layers',
+            innerText: 'Add layers',
+            textClass: 'd-none d-xxl-inline',
+            className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-primary',
+            style: {color: 'white !important'},
+            events: {
+                'click': (e) => {
+                    const modalElement = document.querySelector(`#addLayersModal`)
+                    modalElement.querySelector('form')._leafletMap = map
+        
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
+                    modalInstance.show()
+                }            
+            } 
+        }, {
+            iconSpecs: 'bi-file-zip-fill',
+            title: 'Export map layers',
+            innerText: 'Export layers',
+            textClass: 'd-none d-xxl-inline',
+            className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-warning',
+            style: {color: 'white'},
+            events: {
+                'click': (e) => {
+                    const modalElement = document.querySelector(`#exportLayersModal`)
+                    modalElement.querySelector('form')._leafletMap = map
+        
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
+                    modalInstance.show()
+                }            
+            } 
+        }
+    ).forEach(i => {
+        modalBtns.appendChild(createButton(i))
+    })
 
     const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
         if (!layerLegend) return
