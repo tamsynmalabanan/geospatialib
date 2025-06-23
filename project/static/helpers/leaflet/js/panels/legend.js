@@ -270,13 +270,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
         },
     })
 
-    const modalBtns = customCreateElement({
+    const modalBtnsContainer = customCreateElement({
         parent:toolbar,
         className:`d-flex gap-2 flex-nowrap`,
     })
 
-    Array(
-        {
+    const modalBtns = {
+        addLayersModal: {
             iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
@@ -292,7 +292,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     modalInstance.show()
                 }            
             } 
-        }, {
+        },
+        exportLayersModal: {
             iconSpecs: 'bi-file-zip-fill',
             title: 'Export map layers',
             innerText: 'Export layers',
@@ -309,8 +310,11 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 }            
             } 
         }
-    ).forEach(i => {
-        modalBtns.appendChild(createButton(i))
+    }
+    
+    Object.keys(modalBtns).forEach(i => {
+        const params = modalBtns[i]
+        modalBtnsContainer.appendChild(createButton(params))
     })
 
     const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
