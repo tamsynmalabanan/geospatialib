@@ -4,6 +4,13 @@ const handleExportLayersForm = () => {
     const form = modalElement.querySelector(`#exportLayersForm`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
+    const modalBody = modalElement.querySelector('.modal-body')
+
+    modalElement.addEventListener('show.bs.modal', () => {
+        modalBody.innerHTML = ''
+        const layers = localStorage.get(`legend-layers-${form._leafletMap.getContainer().id}`)
+        console.log('layers', layers)
+    })
 
     // submitBtn.addEventListener('click', (e) => {
 
