@@ -6,6 +6,7 @@ const handleAddLayersForm = () => {
     const fileInput = form.elements.files
     const fileFields = form.querySelector(`#addLayersForm-fileFields`)
     const urlFields = form.querySelector(`#addLayersForm-urlFields`)
+    const gslFields = form.querySelector(`#addLayersForm-gslFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
     
@@ -142,6 +143,9 @@ const handleAddLayersForm = () => {
             
             urlFields.classList.toggle('d-none', source !== 'url')
             getLayerNamesContainer('url').classList.toggle('d-none', source !== 'url')
+            
+            gslFields.classList.toggle('d-none', source !== 'gsl')
+            getLayerNamesContainer('gsl').classList.toggle('d-none', source !== 'gsl')
             
             toggleSubmitBtn()
         })
