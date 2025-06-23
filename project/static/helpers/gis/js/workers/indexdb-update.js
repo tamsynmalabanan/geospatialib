@@ -21,10 +21,14 @@ self.onmessage = (e) => {
         currentGISData,
         currentQueryExtent,
     } = e.data
+
+    console.log(1, newGISData, currentGISData)
     
     const filteredFeatures = currentGISData.features.filter(feature => {
         return !hasSimilarFeature(newGISData.features, feature)
     })
+
+    console.log(2, filteredFeatures)
     
     if (filteredFeatures.length) {
         newGISData.features = newGISData.features.concat(filteredFeatures)
@@ -35,6 +39,9 @@ self.onmessage = (e) => {
         newQueryExtent.type = unionQueryExtent.type
         newQueryExtent.coordinates = unionQueryExtent.coordinates
     }
+    
+    console.log(3, newGISData, newQueryExtent)
+
 
     self.postMessage({
         gisData:newGISData,
