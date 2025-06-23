@@ -266,7 +266,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         },
         divider2: {
             tag: 'div',
-            className: 'ms-xl-auto',
+            className: 'ms-auto',
         },
         addLayers: {
             iconSpecs: 'bi-stack',
@@ -274,7 +274,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             innerText: 'Add layers',
             textClass: 'd-none d-xl-inline',
             toolHandler: false,
-            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-primary',
+            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-primary px-1',
             btnClickHandler: (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
                 modalElement.querySelector('form')._leafletMap = map
