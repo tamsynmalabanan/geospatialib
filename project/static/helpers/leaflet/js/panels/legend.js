@@ -291,7 +291,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
     }
     
     Object.keys(modalBtns).forEach(i => {
-        console.log(i,1)
+        const modalElement = document.querySelector(`#${i}`)
 
         modalBtnsContainer.appendChild(createButton({
             ...modalBtns[i],
@@ -300,7 +300,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
             style: {color: 'white'},
             events: {
                 'click': (e) => {
-                    const modalElement = document.querySelector(`#${i}`)
                     modalElement.querySelector('form')._leafletMap = map
         
                     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
@@ -308,6 +307,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 }            
             }
         }))
+
+        modalElement.querySelector('form').addEventListener('hide.bs.modal', () => {
+            delete form._leafletMap
+        })
     })
 
     const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {

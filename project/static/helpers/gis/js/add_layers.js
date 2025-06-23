@@ -68,10 +68,6 @@ const handleAddLayersForm = () => {
         return includedLayers
     }
     
-    modalElement.addEventListener('hide.bs.modal', () => {
-        delete form._leafletMap
-    })
-
     form.addEventListener('submit', (e) => e.preventDefault())
 
     submitBtn.addEventListener('click', async (e) => {
