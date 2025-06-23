@@ -308,9 +308,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
             }
         }))
 
-        modalElement.querySelector('form').addEventListener('hide.bs.modal', () => {
-            console.log('here')
-            delete form._leafletMap
+        modalElement.addEventListener('hide.bs.modal', () => {
+            console.log('here1')
+            delete modalElement.querySelector('form')._leafletMap
         })
     })
 
