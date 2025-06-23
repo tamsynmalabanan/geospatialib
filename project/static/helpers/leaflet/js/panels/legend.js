@@ -280,41 +280,34 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
-            textClass: 'd-none d-xxl-inline',
-            className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-primary',
-            style: {color: 'white !important'},
-            events: {
-                'click': (e) => {
-                    const modalElement = document.querySelector(`#addLayersModal`)
-                    modalElement.querySelector('form')._leafletMap = map
-        
-                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-                    modalInstance.show()
-                }            
-            } 
+            className: 'btn-primary', 
         },
         exportLayersModal: {
             iconSpecs: 'bi-file-zip-fill',
             title: 'Export map layers',
             innerText: 'Export layers',
+            className: 'btn-warning',
+        }
+    }
+    
+    Object.keys(modalBtns).forEach(i => {
+        console.log(i,1)
+
+        modalBtnsContainer.appendChild(createButton({
+            ...modalBtns[i],
             textClass: 'd-none d-xxl-inline',
-            className: 'd-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm btn-warning',
+            className: `${modalBtns[i].className} d-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm`,
             style: {color: 'white'},
             events: {
                 'click': (e) => {
-                    const modalElement = document.querySelector(`#exportLayersModal`)
+                    const modalElement = document.querySelector(`#${i}`)
                     modalElement.querySelector('form')._leafletMap = map
         
                     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
                     modalInstance.show()
                 }            
-            } 
-        }
-    }
-    
-    Object.keys(modalBtns).forEach(i => {
-        const params = modalBtns[i]
-        modalBtnsContainer.appendChild(createButton(params))
+            }
+        }))
     })
 
     const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
