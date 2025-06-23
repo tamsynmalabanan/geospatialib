@@ -100,21 +100,15 @@ class SearchList(ListView):
                     ex_queries |= Q(name__icontains=word) | Q(title__icontains=word)
             queryset = queryset.exclude(ex_queries)
 
-        if validators.url(query) == True:
-            search_type = "plain"
-        else:
-            search_type = "websearch"
-
-        search_query = SearchQuery(query, search_type=search_type)
-
+        search_query = SearchQuery(query, search_type='plain' if validators.url(query) == True else 'websearch')
         search_vector = SearchVector('name')
         search_fields = self.filter_fields + [
             'collection__url__path',
             'title',
-            # 'abstract',
-            # 'keywords',
-            # 'attribution',
-            # 'styles',
+            'abstract',
+            'keywords',
+            'attribution',
+            'styles',
         ]
         for field in search_fields:
             search_vector = search_vector + SearchVector(field)
@@ -178,12 +172,6 @@ class SearchList(ListView):
             )
 
         return queryset
-
-@require_http_methods(['GET'])
-def search_library(request):
-    data = request.GET.dict()
-    layers = data
-    return render(request, 'main/search/results.html', {'layers':layers})
 
 @require_http_methods(['GET'])
 def validate_collection(request):
