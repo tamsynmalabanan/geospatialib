@@ -13,12 +13,17 @@
                     <div class="form-check">
                         {% random_string as id %}
                         <input id="{{id}}" class="form-check-input" type="radio" value="files" name="source" checked>
-                        <label class="form-check-label" for="{{id}}">Upload files</label>
+                        <label class="form-check-label" for="{{id}}">Local files</label>
                     </div>
                     <div class="form-check m-0">
                         {% random_string as id %}
                         <input id="{{id}}" class="form-check-input" type="radio" value="url" name="source">
-                        <label class="form-check-label" for="{{id}}">Connect to URL</label>
+                        <label class="form-check-label" for="{{id}}">Web URL</label>
+                    </div>
+                    <div class="form-check m-0">
+                        {% random_string as id %}
+                        <input id="{{id}}" class="form-check-input" type="radio" value="gsl" name="source">
+                        <label class="form-check-label" for="{{id}}">Geospatialib map</label>
                     </div>
                 </div>
                 <div id='addLayersForm-fileFields' class="d-flex flex-column gap-3 w-100">
