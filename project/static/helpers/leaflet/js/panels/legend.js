@@ -268,37 +268,46 @@ const handleLeafletLegendPanel = async (map, parent) => {
             tag: 'div',
             className: 'ms-auto',
         },
-        addLayers: {
-            iconSpecs: 'bi-stack',
-            title: 'Add new layers',
-            innerText: 'Add layers',
-            textClass: 'd-none d-xl-inline',
-            toolHandler: false,
-            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-primary px-1',
-            btnClickHandler: (e) => {
+    })
+
+    const modalBtns = customCreateElement({
+        parent:toolbar,
+        className:`d-flex gap-2 flex-nowrap`,
+    })
+
+    modalBtns.appendChild(createButton({
+        iconSpecs: 'bi-stack',
+        title: 'Add new layers',
+        innerText: 'Add layers',
+        textClass: 'd-none d-xl-inline',
+        className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-primary',
+        events: {
+            'click': (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
                 modalElement.querySelector('form')._leafletMap = map
 
                 const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
                 modalInstance.show()
             }            
-        },
-        exportLayers: {
-            iconSpecs: 'bi-file-zip-fill',
-            title: 'Export map layers',
-            innerText: 'Export layers',
-            textClass: 'd-none d-xl-inline',
-            toolHandler: false,
-            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-warning',
-            btnClickHandler: (e) => {
+        } 
+    }))
+
+    modalBtns.appendChild(createButton({
+        iconSpecs: 'bi-file-zip-fill',
+        title: 'Export map layers',
+        innerText: 'Export layers',
+        textClass: 'd-none d-xl-inline',
+        className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-warning',
+        events: {
+            'click': (e) => {
                 const modalElement = document.querySelector(`#exportLayersModal`)
                 modalElement.querySelector('form')._leafletMap = map
 
                 const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
                 modalInstance.show()
-            }
-        },
-    })
+            }            
+        } 
+    }))
 
     const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
         if (!layerLegend) return
