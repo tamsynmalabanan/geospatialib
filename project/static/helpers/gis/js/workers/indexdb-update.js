@@ -15,6 +15,8 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 }
 
 self.onmessage = (e) => {
+    console.log(0, e)
+
     const {
         newGISData, 
         newQueryExtent,
