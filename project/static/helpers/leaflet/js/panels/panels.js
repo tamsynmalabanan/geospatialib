@@ -87,7 +87,7 @@ const createLeafletMapPanel = (map, parent, name, {
             customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
-                className: data.className ?? `btn-sm btn-${getPreferredTheme()} px-1`,
+                className: data.className ?? `btn-sm btn-${getPreferredTheme()} px-0`,
                 events: {
                     click: async (event) => {
                         L.DomEvent.stopPropagation(event);
