@@ -76,7 +76,7 @@ const getFromGISDB = async (id, {save=true}={}) => {
             gisDataRequest.onsuccess = (e) => {
                 console.log('gisDataRequest.onsuccess',e)
                 const result = e.target.result
-                if (!result) reject(null)
+                if (!result) return resolve(null)
                 
                 const {gisData, queryExtent} = result
                 if (save) saveToGISDB(gisData, {id, queryExtent})
