@@ -11,12 +11,12 @@ const requestGISDB = () => {
     return request
 }
 
-const saveToGeoJSONDB = (geojson, {
+const saveToGISDB = (gisData, {
     id = `client;${generateRandomString()}`, 
-    queryExtent = geojson ? turf.bboxPolygon(turf.bbox(geojson)).geometry : null, 
+    queryExtent = gisData?.type === 'FeatureCollection' ? turf.bboxPolygon(turf.bbox(gisData)).geometry : null, 
     expirationDays=7,
 }={}) => {
-    if (!geojson) return
+    if (!gisData) return
 
     const request = requestGISDB()
     request.onsuccess = async (e) => {
@@ -24,31 +24,31 @@ const saveToGeoJSONDB = (geojson, {
         const transaction = db.transaction(['gis'], 'readwrite')
         const objectStore = transaction.objectStore('gis')
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
-        objectStore.put({id, geojson, queryExtent, expirationTime})
+        objectStore.put({id, gisData, queryExtent, expirationTime})
     }
 
     return id
 }
 
-const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
+const updateGISDB = async (id, newGISData, newQueryExtent) => {
     const save = (data) => {
-        const {geojson, queryExtent} = data
-        if (data) saveToGeoJSONDB(geojson, {id, queryExtent})
+        const {gisData, queryExtent} = data
+        if (data) saveToGISDB(gisData, {id, queryExtent})
     }
     
-    const cachedData = await getFromGeoJSONDB(id, {save:false})
+    const cachedData = await getFromGISDB(id, {save:false})
     if (!cachedData) {
         return save({
-            geojson:newGeoJSON, 
+            gisData:newGISData, 
             queryExtent:newQueryExtent,
         })
     } else {
         const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
 
         worker.postMessage({
-            newGeoJSON, 
+            newGISData, 
             newQueryExtent,
-            currentGeoJSON: cachedData.geojson,
+            currentGISData: cachedData.gisData,
             currentQueryExtent: cachedData.queryExtent,
         })
 
@@ -61,10 +61,9 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
             worker.terminate()
         }
     }
-    
 }
 
-const getFromGeoJSONDB = async (id, {save=true}={}) => {
+const getFromGISDB = async (id, {save=true}={}) => {
     return new Promise((resolve, reject) => {
         const request = requestGISDB()
   
@@ -72,18 +71,18 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
             const db = e.target.result
             const transaction = db.transaction(['gis'], 'readonly')
             const objectStore = transaction.objectStore('gis')
-            const geojsonRequest = objectStore.get(id)
+            const gisDataRequest = objectStore.get(id)
     
-            geojsonRequest.onsuccess = (e) => {
+            gisDataRequest.onsuccess = (e) => {
                 const result = e.target.result
-                if (!result) return resolve(null)
+                if (!result) reject(null)
 
-                const {geojson, queryExtent} = result
-                if (save) saveToGeoJSONDB(geojson, {id, queryExtent})
-                resolve({geojson:turf.clone(geojson), queryExtent})
+                const {gisData, queryExtent} = result
+                if (save) saveToGISDB(gisData, {id, queryExtent})
+                resolve({gisData:structuredClone(gisData), queryExtent})
             }
     
-            geojsonRequest.onerror = (e) => {
+            gisDataRequest.onerror = (e) => {
                 reject(e.target.errorCode)
             }
         }
@@ -94,7 +93,7 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
     })
 }
 
-const deleteFromGeoJSONDB = (id) => {
+const deleteFromGISDB = (id) => {
     const request = requestGISDB()
     
     request.onsuccess = (e) => {
@@ -104,16 +103,13 @@ const deleteFromGeoJSONDB = (id) => {
         const deleteRequest = objectStore.delete(id)
     
         deleteRequest.onsuccess = () => {
-            // console.log('GeoJSON deleted successfully!')
         }
     
         deleteRequest.onerror = (e) => {
-            // console.error('GeoJSON deletion error:', e.target.errorCode)
         }
     }
   
     request.onerror = (e) => {
-        // console.error('Database error:', e.target.errorCode)
     }
 }
 

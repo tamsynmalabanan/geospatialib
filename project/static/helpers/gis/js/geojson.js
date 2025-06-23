@@ -426,7 +426,7 @@ const getGeoJSON = async (dbKey, {
             geojson = await (async () => {
                 if (controller?.signal.aborted) return
                 
-                const cachedData = await getFromGeoJSONDB(dbKey)
+                const cachedData = await getFromGISDB(dbKey)
                 if (!cachedData) {
                     if (isClient) {
                         return new Error('Cached data not found.')
@@ -435,7 +435,7 @@ const getGeoJSON = async (dbKey, {
                     }
                 }
         
-                const cachedGeoJSON = cachedData.geojson
+                const cachedGeoJSON = cachedData.gisData
                 const cachedQueryExtent = cachedData.queryExtent
         
                 if (queryExtent && cachedGeoJSON.features.length) {
@@ -481,7 +481,7 @@ const getGeoJSON = async (dbKey, {
 
                         if (controller?.signal.aborted) return
                         if (handlerName !== 'nominatim') {
-                            await updateGeoJSONOnDB(
+                            await updateGISDB(
                                 dbKey, 
                                 turf.clone(geojson),
                                 isStatic ? turf.bboxPolygon(turf.bbox(geojson)).geometry : queryExtent,

@@ -255,7 +255,7 @@ const getLeafletLayerBounds = async (layer) => {
 
     const dbIndexedKey = layer._dbIndexedKey
     if (layer instanceof L.GeoJSON && dbIndexedKey) {
-        const geojson = (await getFromGeoJSONDB(dbIndexedKey))?.geojson
+        const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
         if (geojson) return L.geoJSON(geojson).getBounds()
     }
 
@@ -710,7 +710,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
                 }
             } catch {
-                return (await getFromGeoJSONDB(dbKey))?.geojson
+                return (await getFromGISDB(dbKey))?.gisData
             }
         }
     })()
@@ -777,7 +777,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
                     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
 
                     await normalizeGeoJSON(geojson)
-                    geojsonLayer._dbIndexedKey = saveToGeoJSONDB(turf.clone(geojson))
+                    geojsonLayer._dbIndexedKey = saveToGISDB(turf.clone(geojson))
                     updateLeafletGeoJSONLayer(geojsonLayer, {geojson})
                 } catch { return }
             }
@@ -785,7 +785,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
         clearData: !isLegendGroup || !geojsonLayer || feature ? null : {
             innerText: `Clear cached data`,
             btnCallback: async () => {
-                deleteFromGeoJSONDB(geojsonLayer._dbIndexedKey)
+                deleteFromGISDB(geojsonLayer._dbIndexedKey)
             }
         },
 

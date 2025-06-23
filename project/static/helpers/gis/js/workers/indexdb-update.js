@@ -16,18 +16,18 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 
 self.onmessage = (e) => {
     const {
-        newGeoJSON, 
+        newGISData, 
         newQueryExtent,
-        currentGeoJSON,
+        currentGISData,
         currentQueryExtent,
     } = e.data
     
-    const filteredFeatures = currentGeoJSON.features.filter(feature => {
-        return !hasSimilarFeature(newGeoJSON.features, feature)
+    const filteredFeatures = currentGISData.features.filter(feature => {
+        return !hasSimilarFeature(newGISData.features, feature)
     })
     
     if (filteredFeatures.length) {
-        newGeoJSON.features = newGeoJSON.features.concat(filteredFeatures)
+        newGISData.features = newGISData.features.concat(filteredFeatures)
         const unionQueryExtent = turf.union(turf.featureCollection([
             turf.feature(newQueryExtent),
             turf.feature(currentQueryExtent),
@@ -37,7 +37,7 @@ self.onmessage = (e) => {
     }
 
     self.postMessage({
-        geojson:newGeoJSON,
+        gisData:newGISData,
         queryExtent:newQueryExtent,
     })
 }
