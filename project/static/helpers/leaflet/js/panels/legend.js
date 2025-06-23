@@ -201,7 +201,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         },
         divider1: {
             tag: 'div',
-            className: 'vr m-2',
+            className: 'vr',
         },
         collapse: {
             iconSpecs: 'bi bi-chevron-up',
