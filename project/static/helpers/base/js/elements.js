@@ -29,7 +29,7 @@ const createButton = ({
     innerText,
     textClass = '',
     events = {},
-    btnAttrs = {},
+    attrs = {},
     name,
 } = {}) => {
     const btn = document.createElement('button')
@@ -37,7 +37,7 @@ const createButton = ({
     btn.className = `btn ${className}`
     btn.setAttribute('type', 'button')
     
-    Object.keys(btnAttrs).forEach(k => btn.setAttribute(k, btnAttrs[k]))
+    Object.keys(attrs).forEach(k => btn.setAttribute(k, attrs[k]))
     if (name) btn.setAttribute('name', name)
     if (title) btn.setAttribute('title', title)
     if (disabled) btn.setAttribute('disabled', true)
@@ -363,7 +363,7 @@ const createDropdown = ({
     const toggle = createButton({
         className: `dropdown-toggle ${btnClassName}`,
         iconSpecs: btniconSpecs,
-        btnAttrs: {
+        attrs: {
             title: btnTitle,
         }
     })

@@ -273,7 +273,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Add new layers',
             innerText: 'Add layers',
             toolHandler: false,
-            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-success',
+            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-primary',
             btnClickHandler: (e) => {
                 const modalElement = document.querySelector(`#addLayersModal`)
                 modalElement.querySelector('form')._leafletMap = map
@@ -281,6 +281,20 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
                 modalInstance.show()
             }            
+        },
+        exportLayers: {
+            iconSpecs: 'bi-file-zip-fill',
+            title: 'Export map layers',
+            innerText: 'Export layers',
+            toolHandler: false,
+            className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-warning',
+            btnClickHandler: (e) => {
+                const modalElement = document.querySelector(`#exportLayersModal`)
+                modalElement.querySelector('form')._leafletMap = map
+
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
+                modalInstance.show()
+            }
         },
     })
 
