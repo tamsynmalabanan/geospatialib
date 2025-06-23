@@ -74,6 +74,7 @@ const getFromGISDB = async (id, {save=true}={}) => {
             const gisDataRequest = objectStore.get(id)
     
             gisDataRequest.onsuccess = (e) => {
+                console.log('gisDataRequest.onsuccess',e)
                 const result = e.target.result
                 if (!result) reject(null)
                 
