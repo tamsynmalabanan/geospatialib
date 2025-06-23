@@ -15,23 +15,17 @@ const hasSimilarFeature = (featureList, targetFeature) => {
 }
 
 self.onmessage = (e) => {
-    console.log(0, e)
-
     const {
         newGISData, 
         newQueryExtent,
         currentGISData,
         currentQueryExtent,
     } = e.data
-
-    console.log(1, newGISData, currentGISData)
     
     const filteredFeatures = currentGISData.features.filter(feature => {
         return !hasSimilarFeature(newGISData.features, feature)
     })
 
-    console.log(2, filteredFeatures)
-    
     if (filteredFeatures.length) {
         newGISData.features = newGISData.features.concat(filteredFeatures)
         const unionQueryExtent = turf.union(turf.featureCollection([
@@ -42,9 +36,6 @@ self.onmessage = (e) => {
         newQueryExtent.coordinates = unionQueryExtent.coordinates
     }
     
-    console.log(3, newGISData, newQueryExtent)
-
-
     self.postMessage({
         gisData:newGISData,
         queryExtent:newQueryExtent,
