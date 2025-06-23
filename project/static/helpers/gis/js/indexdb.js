@@ -1,10 +1,10 @@
-const requestGeoJSONDB = () => {
-    const request = indexedDB.open('geojsonDB', 1)
+const requestGISDB = () => {
+    const request = indexedDB.open('GISDB', 1)
 
     request.onupgradeneeded = (e) => {
         const db = e.target.result
-        if (!db.objectStoreNames.contains('geojsons')) {
-            db.createObjectStore('geojsons', { keyPath: 'id' })
+        if (!db.objectStoreNames.contains('gis')) {
+            db.createObjectStore('gis', { keyPath: 'id' })
         }
     }
     
@@ -18,11 +18,11 @@ const saveToGeoJSONDB = (geojson, {
 }={}) => {
     if (!geojson) return
 
-    const request = requestGeoJSONDB()
+    const request = requestGISDB()
     request.onsuccess = async (e) => {
         const db = e.target.result
-        const transaction = db.transaction(['geojsons'], 'readwrite')
-        const objectStore = transaction.objectStore('geojsons')
+        const transaction = db.transaction(['gis'], 'readwrite')
+        const objectStore = transaction.objectStore('gis')
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
         objectStore.put({id, geojson, queryExtent, expirationTime})
     }
@@ -66,12 +66,12 @@ const updateGeoJSONOnDB = async (id, newGeoJSON, newQueryExtent) => {
 
 const getFromGeoJSONDB = async (id, {save=true}={}) => {
     return new Promise((resolve, reject) => {
-        const request = requestGeoJSONDB()
+        const request = requestGISDB()
   
         request.onsuccess = (e) => {
             const db = e.target.result
-            const transaction = db.transaction(['geojsons'], 'readonly')
-            const objectStore = transaction.objectStore('geojsons')
+            const transaction = db.transaction(['gis'], 'readonly')
+            const objectStore = transaction.objectStore('gis')
             const geojsonRequest = objectStore.get(id)
     
             geojsonRequest.onsuccess = (e) => {
@@ -95,12 +95,12 @@ const getFromGeoJSONDB = async (id, {save=true}={}) => {
 }
 
 const deleteFromGeoJSONDB = (id) => {
-    const request = requestGeoJSONDB()
+    const request = requestGISDB()
     
     request.onsuccess = (e) => {
         const db = e.target.result
-        const transaction = db.transaction(['geojsons'], 'readwrite')
-        const objectStore = transaction.objectStore('geojsons')
+        const transaction = db.transaction(['gis'], 'readwrite')
+        const objectStore = transaction.objectStore('gis')
         const deleteRequest = objectStore.delete(id)
     
         deleteRequest.onsuccess = () => {
@@ -118,12 +118,12 @@ const deleteFromGeoJSONDB = (id) => {
 }
 
 setInterval(async () => {
-    const request = requestGeoJSONDB()
+    const request = requestGISDB()
 
     request.onsuccess = (e) => {
         const db = e.target.result
-        const transaction = db.transaction(['geojsons'], 'readwrite')
-        const objectStore = transaction.objectStore('geojsons')
+        const transaction = db.transaction(['gis'], 'readwrite')
+        const objectStore = transaction.objectStore('gis')
         
         objectStore.openCursor().onsuccess = (e) => {
             const cursor = e.target.result
