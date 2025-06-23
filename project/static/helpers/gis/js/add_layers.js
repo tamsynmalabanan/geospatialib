@@ -1,16 +1,18 @@
 const handleAddLayersForm = () => {
     const modalElement = document.querySelector(`#addLayersModal`)
     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-    const form = modalElement.querySelector(`#addLayersForm`)
+    const formId = 'addLayersForm'
+    const form = modalElement.querySelector(`#${formId}`)
     const sourceRadios = Array.from(form.elements.source)
     const fileInput = form.elements.files
-    const fileFields = form.querySelector(`#addLayersForm-fileFields`)
-    const urlFields = form.querySelector(`#addLayersForm-urlFields`)
-    const gslFields = form.querySelector(`#addLayersForm-gslFields`)
+    const mapInput = form.elements.map
+    const fileFields = form.querySelector(`#${formId}-fileFields`)
+    const urlFields = form.querySelector(`#${formId}-urlFields`)
+    const gslFields = form.querySelector(`#${formId}-gslFields`)
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
     
-    const getLayerNamesContainer = (source) => form.querySelector(`#addLayersForm-${source}-layerNames`)
+    const getLayerNamesContainer = (source) => form.querySelector(`#${formId}-${source}-layerNames`)
 
     const getFileSource = () => sourceRadios.find(i => i.checked).value
 
@@ -42,8 +44,12 @@ const handleAddLayersForm = () => {
 
     const resetForm = (e) => {
         fileInput.value = ''
+        mapInput.value = ''
+
         resetLayerNames('files')
+        resetLayerNames('gsl')
         resetUrlFields()        
+        
         toggleSubmitBtn()
     }
 
@@ -217,7 +223,7 @@ const handleAddLayersForm = () => {
     })
 
     form.addEventListener('htmx:beforeSwap', (e) => {
-        if (e.target.id === 'addLayersForm-urlFields') {
+        if (e.target.id === `${formId}-urlFields`) {
             getLayerNamesContainer('url').innerHTML = ''
         }
     })

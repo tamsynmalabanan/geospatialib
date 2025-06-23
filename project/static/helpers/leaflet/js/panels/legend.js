@@ -285,7 +285,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         exportLayersModal: {
             iconSpecs: 'bi-file-zip-fill',
             title: 'Export map layers',
-            innerText: 'Export layers',
+            innerText: 'Export map',
             className: 'btn-warning',
         }
     }
