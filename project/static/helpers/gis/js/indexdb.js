@@ -74,10 +74,10 @@ const getFromGISDB = async (id, {save=true}={}) => {
             const gisDataRequest = objectStore.get(id)
     
             gisDataRequest.onsuccess = (e) => {
+                console.log('gisDataRequest.onsuccess',e)
                 const result = e.target.result
                 if (!result) reject(null)
                 
-                console.log(result)
                 const {gisData, queryExtent} = result
                 if (save) saveToGISDB(gisData, {id, queryExtent})
                 resolve({gisData:structuredClone(gisData), queryExtent})
