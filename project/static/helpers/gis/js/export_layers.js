@@ -8,8 +8,13 @@ const handleExportLayersForm = () => {
 
     modalElement.addEventListener('show.bs.modal', () => {
         modalBody.innerHTML = ''
-        const layers = localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}`)
-        console.log('layers', layers)
+        
+        const layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
+        Object.values(layers).forEach(i => {
+            modalBody.appendChild(customCreateElement({
+                innerHTML:i.dbIndexedKey
+            }))
+        })
     })
 
     // submitBtn.addEventListener('click', (e) => {
