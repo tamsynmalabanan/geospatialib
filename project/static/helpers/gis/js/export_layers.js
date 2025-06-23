@@ -11,9 +11,11 @@ const handleExportLayersForm = () => {
         
         const layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
         Object.values(layers).forEach(i => {
-            modalBody.appendChild(customCreateElement({
-                innerHTML:i.dbIndexedKey
-            }))
+            
+            
+            // modalBody.appendChild(customCreateElement({
+            //     innerHTML:i.dbIndexedKey
+            // }))
         })
     })
 
