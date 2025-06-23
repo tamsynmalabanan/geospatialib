@@ -137,11 +137,11 @@ const handleAddLayersForm = () => {
         radio.addEventListener('click', () => {
             const source = getFileSource()
             
-            fileFields.classList.toggle('d-none', source === 'url')
-            getLayerNamesContainer('files').classList.toggle('d-none', source === 'url')
+            fileFields.classList.toggle('d-none', source !== 'files')
+            getLayerNamesContainer('files').classList.toggle('d-none', source !== 'files')
             
-            urlFields.classList.toggle('d-none', source === 'files')
-            getLayerNamesContainer('url').classList.toggle('d-none', source === 'files')
+            urlFields.classList.toggle('d-none', source !== 'url')
+            getLayerNamesContainer('url').classList.toggle('d-none', source !== 'url')
             
             toggleSubmitBtn()
         })
