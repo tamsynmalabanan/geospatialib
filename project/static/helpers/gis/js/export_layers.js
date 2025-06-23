@@ -29,8 +29,8 @@ const handleExportLayersForm = () => {
     resetBtn.addEventListener('click', (e) => resetLayers())
 
     submitBtn.addEventListener('click', (e) => {
-        const layers = JSON.stringify(layers)
-        const blob = new Blob([layers], {type:'application/json'})
+        const data = JSON.stringify(layers)
+        const blob = new Blob([data], {type:'application/json'})
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
