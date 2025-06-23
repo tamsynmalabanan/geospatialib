@@ -272,7 +272,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi-stack',
             title: 'Add new layers',
             innerText: 'Add layers',
-            textClass: 'd-none d-lg-inline',
+            textClass: 'd-none d-xl-inline',
             toolHandler: false,
             className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-primary',
             btnClickHandler: (e) => {
@@ -287,7 +287,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi-file-zip-fill',
             title: 'Export map layers',
             innerText: 'Export layers',
-            textClass: 'd-none d-lg-inline',
+            textClass: 'd-none d-xl-inline',
             toolHandler: false,
             className: 'd-flex flex-nowrap gap-2 fs-10 badge align-items-center btn btn-sm btn-warning',
             btnClickHandler: (e) => {
