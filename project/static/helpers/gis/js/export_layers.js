@@ -10,7 +10,7 @@ const handleExportLayersForm = () => {
         modalBody.innerHTML = ''
         
         const layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
-        for (const layer of layers) {
+        for (const layer of Object.values(layers)) {
             if (layer.dbIndexedKey.startsWith('client')) {
                 layer.data = await getFromGISDB(layer.dbIndexedKey)
             }
