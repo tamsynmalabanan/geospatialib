@@ -11,7 +11,7 @@ const createLeafletMapPanel = (map, parent, name, {
 
     const toolbar = document.createElement('div')
     toolbar.id = `${baseId}-toolbar`
-    toolbar.className = 'd-flex px-3 py-2 flex-wrap'
+    toolbar.className = 'd-flex px-3 py-2 flex-wrap gap-2'
     parent.appendChild(toolbar)
     template.toolbar = toolbar
     
@@ -87,7 +87,7 @@ const createLeafletMapPanel = (map, parent, name, {
             customCreateElement({tag, ...data}) :
             createButton({...data,
                 id: `${toolbar.id}-${toolId}`,
-                className: data.className ?? `btn-sm btn-${getPreferredTheme()}`,
+                className: data.className ?? `btn-sm btn-${getPreferredTheme()} px-1`,
                 events: {
                     click: async (event) => {
                         L.DomEvent.stopPropagation(event);
