@@ -15,6 +15,11 @@ from pathlib import Path
 from decouple import config
 from datetime import timedelta
 
+if os.name == 'nt':
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib\\\\site-packages\\\\osgeo') + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib\\\\site-packages\\\\osgeo\\\\data\\\\proj') + ';' + os.environ['PATH']
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
@@ -209,7 +214,7 @@ DATABASES = {
         'USER': config('DB_DEFAULT_USER'),
         'PASSWORD': config('DB_DEFAULT_PASSWORD'),
         'HOST': config('DB_DEFAULT_HOST'),
-        'PORT': config('DB_DEFAULT_POST'),
+        'PORT': config('DB_DEFAULT_PORT'),
     }
 }
 
