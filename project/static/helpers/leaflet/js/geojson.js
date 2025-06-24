@@ -229,11 +229,11 @@ const getLeafletGeoJSONData = async (layer, {
     geojson,
     controller, 
     abortBtns,
-    queryGeom=true,
     filter=true,
-    group=true,
-    sort=true,
-    simplify=true,
+    queryGeom=false,
+    group=false,
+    sort=false,
+    simplify=false,
     event,
 } = {}) => {
     if (!layer) return
@@ -246,7 +246,6 @@ const getLeafletGeoJSONData = async (layer, {
 
     const geojsonHasFeatures = geojson?.features?.length
     queryGeom = queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
-
 
     if (geojsonHasFeatures && queryGeom) {
         const queryExtent = turf.getType(queryGeom) === 'Point' ? turf.buffer(
@@ -316,21 +315,22 @@ const getLeafletGeoJSONData = async (layer, {
             })
         }
         
-        // if simplify is implemented, remove map._previousBbox config
+        let tolerance = 0
         if (simplify) {
             if (controller?.signal?.aborted) return
-            // const scale = getLeafletMeterScale(map)
-            // const tolerance = scale > 1000 ? scale/10000000 : 0
-            // console.log(map.getZoom(), scale, tolerance)
-            // if (tolerance > 0) {
-            //     turf.simplify(data, {
-            //         mutate: true,
-            //         tolerance, 
-            //         highQuality: false
-            //     })
-            //     // simplify / cluster if not query // reconfigure legend feature count
-            // }
+            
+            const scale = getLeafletMeterScale(map)
+            tolerance = scale > 1000 ? scale/10000000 : 0
+            if (tolerance > 0) {
+                // simplify / cluster if not query // reconfigure legend feature count
+                turf.simplify(data, {
+                    mutate: true,
+                    tolerance, 
+                    highQuality: false
+                })
+            }
         }
+        layer._tolerance = tolerance
     
         if (sort) {
             if (controller?.signal?.aborted) return
@@ -347,7 +347,15 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     if (!layer._map || layer._map._ch.hasHiddenLegendLayer(layer) || !leafletLayerIsVisible(layer)) return
 
     layer.fire('dataupdating')
-    const data = await getLeafletGeoJSONData(layer, {geojson, controller, abortBtns})
+    const data = await getLeafletGeoJSONData(layer, {
+        geojson, 
+        controller, 
+        abortBtns, 
+        queryGeom: true,
+        group: true,
+        sort: true,
+        simplify: true,
+    })
     if (!data) return
 
     if (controller?.signal?.aborted) return

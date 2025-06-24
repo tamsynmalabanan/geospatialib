@@ -430,10 +430,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 // update to retrieve properties from wfs/wms
                 const geojson = (await getLeafletGeoJSONData(layer, {
                     controller,
-                    queryGeom:false,
-                    group:false,
-                    sort:false,
-                    simplify:false
                 })) || layer.toGeoJSON()
                 if (geojson) {
                     const options = []
@@ -990,10 +986,6 @@ const handleLeafletStylePanel = (map, parent) => {
         if (symbology.method !== 'single' && symbology.groupBy?.length) {
             const geojson = (await getLeafletGeoJSONData(layer, {
                 controller,
-                queryGeom:false,
-                group:false,
-                sort:false,
-                simplify:false
             })) || layer.toGeoJSON()
             
             if (controllerId !== controller.id) return
@@ -1511,10 +1503,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     const geojson = (await getLeafletGeoJSONData(layer, {
                         controller,
                         filter:false,
-                        queryGeom:false,
-                        group:false,
-                        sort:false,
-                        simplify:false
                     })) || layer.toGeoJSON()
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
                         Object.keys(currentProperties).forEach(i => options.push(i))
@@ -1667,10 +1655,6 @@ const handleLeafletStylePanel = (map, parent) => {
                         const geojson = (await getLeafletGeoJSONData(layer, {
                             controller,
                             filter:false,
-                            queryGeom:false,
-                            group:false,
-                            sort:false,
-                            simplify:false
                         })) || layer.toGeoJSON()
                         turf.propEach(geojson, (currentProperties, featureIndex) => {
                             let value = removeWhitespace(String(currentProperties[filter.property] ?? '[undefined]'))
@@ -1933,10 +1917,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const geojson = (await getLeafletGeoJSONData(layer, {
                                             controller,
                                             filter:false,
-                                            queryGeom:false,
-                                            group:false,
-                                            sort:false,
-                                            simplify:false
                                         })) || layer.toGeoJSON()
                                         if (!geojson) return
                                         
@@ -2138,10 +2118,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const geojson = (await getLeafletGeoJSONData(layer, {
                                             controller,
                                             filter:false,
-                                            queryGeom:false,
-                                            group:false,
-                                            sort:false,
-                                            simplify:false
                                         })) || layer.toGeoJSON()
                                         if (!geojson) return
                                         
@@ -2280,10 +2256,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                         const geojson = (await getLeafletGeoJSONData(layer, {
                                             controller,
                                             filter:false,
-                                            queryGeom:false,
-                                            group:false,
-                                            sort:false,
-                                            simplify:false
                                         })) || layer.toGeoJSON()
                                         if (!geojson) return
                                         

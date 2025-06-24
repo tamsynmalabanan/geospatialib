@@ -421,7 +421,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson: (
-                            map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) && layer.getLayers().length
+                            map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) && layer.getLayers().length && !layer._tolerance
                             ? layer.toGeoJSON() : null
                         ),
                         controller,
