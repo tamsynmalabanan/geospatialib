@@ -315,21 +315,21 @@ const getLeafletGeoJSONData = async (layer, {
             })
         }
         
-        // let tolerance = 0
-        // if (simplify) {
-        //     if (controller?.signal?.aborted) return
+        let tolerance = 0
+        if (simplify) {
+            if (controller?.signal?.aborted) return
             
-        //     const scale = getLeafletMeterScale(map)
-        //     tolerance = scale > 1000 && data.features.length > 100 ? scale/10000000 : 0
-        //     if (tolerance > 0) {
-        //         turf.simplify(data, {
-        //             mutate: true,
-        //             tolerance, 
-        //             highQuality: false
-        //         })
-        //     }
-        // }
-        // layer._tolerance = tolerance
+            const scale = getLeafletMeterScale(map)
+            tolerance = scale > 1000 && data.features.length > 100 ? scale/10000000 : 0
+            if (tolerance > 0) {
+                turf.simplify(data, {
+                    mutate: true,
+                    tolerance, 
+                    highQuality: false
+                })
+            }
+        }
+        layer._tolerance = tolerance
     
         if (sort) {
             if (controller?.signal?.aborted) return
