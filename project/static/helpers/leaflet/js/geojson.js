@@ -322,13 +322,13 @@ const getLeafletGeoJSONData = async (layer, {
             const scale = getLeafletMeterScale(map)
             tolerance = scale > 1000 && data.features.length > 100 ? scale/10000000 : 0
             if (tolerance > 0) {
-                console.log('simplifying', tolerance)
+                console.log('simplifying', tolerance, new Date())
                 turf.simplify(data, {
                     mutate: true,
                     tolerance, 
                     highQuality: false
                 })
-                console.log('done simplifying')
+                console.log('done simplifying', new Date())
             }
         }
         layer._tolerance = tolerance
