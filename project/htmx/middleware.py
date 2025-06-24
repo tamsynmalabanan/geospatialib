@@ -16,6 +16,5 @@ class HTMXDomainRestriction:
                 return redirect('main:index')
                 # return HttpResponseForbidden('You do not have permission to access this resource.')
 
-
         response = self.get_response(request)
         return response
