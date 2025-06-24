@@ -78,7 +78,7 @@ REDIS_IP = config('REDIS_IP')
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://172.21.144.197:6379/1' if DEBUG else f'redis://{REDIS_IP}:6379/1',
+        'LOCATION': f'redis://{REDIS_IP}:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'CONNECTION_POOL_KWARGS': {
@@ -90,8 +90,8 @@ CACHES = {
 }
 
 # celery task
-CELERY_BROKER_URL = 'redis://172.21.144.197:6379/0' if DEBUG else f'redis://{REDIS_IP}:6379/0'
-CELERY_RESULT_BACKEND = 'redis://172.21.144.197:6379/0' if DEBUG else f'redis://{REDIS_IP}:6379/0'
+CELERY_BROKER_URL = f'redis://{REDIS_IP}:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_IP}:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_TASK_MAX_MEMORY_PER_CHILD = 500000
