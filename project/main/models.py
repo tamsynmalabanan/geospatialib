@@ -16,7 +16,7 @@ class SpatialRefSys(models.Model):
     proj4text = models.TextField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'spatial_ref_sys'
 
     def __str__(self):
