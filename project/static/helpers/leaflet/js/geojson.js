@@ -322,6 +322,7 @@ const getLeafletGeoJSONData = async (layer, {
             const scale = getLeafletMeterScale(map)
             tolerance = scale > 1000 ? scale/10000000 : 0
             if (tolerance > 0) {
+                console.log(tolerance)
                 // simplify / cluster if not query // reconfigure legend feature count
                 turf.simplify(data, {
                     mutate: true,
