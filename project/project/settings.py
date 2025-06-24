@@ -89,6 +89,13 @@ CACHES = {
     }
 }
 
+CONNECTION_POOL_KWARGS = {
+    'max_connections': 100,
+    'retry_on_timeout': True,
+    'socket_timeout': 5,
+    'socket_connect_timeout': 5,
+}
+
 # celery task
 CELERY_BROKER_URL = f'redis://{REDIS_IP}:6379/0'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_IP}:6379/0'
@@ -123,7 +130,7 @@ CELERY_TASK_ROUTES = {
 # CELERY_TIMEZONE = 'UTC'
 
 # Optional: This is to ensure Django sessions are stored in Redis
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = f'django.contrib.sessions.backends.{'db' if DEBUG else 'cache'}'
 SESSION_CACHE_ALIAS = 'default'
 
 LEAFLET_CONFIG = {
