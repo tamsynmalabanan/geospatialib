@@ -10,6 +10,11 @@ class HTMXDomainRestriction:
     def __call__(self, request):
         path = resolve(request.path)
         if path.app_name == 'htmx':
+            print(
+                request.htmx, 
+                request.META.get('HTTP_HOST'),
+                settings.ALLOWED_HOSTS,
+            )
             not_htmx = not request.htmx
             not_allowed_host = request.META.get('HTTP_HOST') not in settings.ALLOWED_HOSTS
             if not_htmx or not_allowed_host:
