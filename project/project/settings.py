@@ -73,9 +73,25 @@ INSTALLED_APPS = [
     'helpers',
 ]
 
+REDIS_IP = config('REDIS_IP')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_IP}:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 100,
+                'retry_on_timeout': True,
+            }
+        }
+    }
+}
+
 # celery task
-CELERY_BROKER_URL = f'redis://{config('REDIS_IP')}:6379/0'
-CELERY_RESULT_BACKEND = f'redis://{config('REDIS_IP')}:6379/0'
+CELERY_BROKER_URL = f'redis://{REDIS_IP}:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_IP}:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_TASK_MAX_MEMORY_PER_CHILD = 500000
@@ -105,20 +121,6 @@ CELERY_TASK_ROUTES = {
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TIMEZONE = 'UTC'
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://{config('REDIS_IP')}:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'CONNECTION_POOL_KWARGS': {
-                'max_connections': 100,
-                'retry_on_timeout': True,
-            }
-        }
-    }
-}
 
 # Optional: This is to ensure Django sessions are stored in Redis
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
