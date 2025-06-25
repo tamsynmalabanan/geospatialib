@@ -167,6 +167,13 @@ const handleAddLayersForm = () => {
         fileInput.dispatchEvent(event)
     })
 
+    mapInput.addEventListener('change', (e) => {
+        if (!mapInput.files.length) return resetLayerNames('gsl')
+
+        const container = getLayerNamesContainer('gsl')
+        container.innerText = mapInput.files
+    })
+
     form.addEventListener('click', (e) => {
         if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
 
