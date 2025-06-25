@@ -553,5 +553,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
     
         await map._ch.addCachedLegendLayers()
         layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+
+        Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
     })
 }
