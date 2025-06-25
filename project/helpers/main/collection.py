@@ -1,5 +1,7 @@
 from django.core.cache import cache
 
+from urllib.parse import unquote
+import os
 
 from main.tasks import onboard_collection
 from main.models import Collection
@@ -68,8 +70,11 @@ def get_layers(url, format):
             header_only=True,
             raise_for_status=False,
         )
+
         if response.status_code == 404:
             response.raise_for_status()
+
+        url = unquote(url)
 
         if format in ['geojson', 'csv']:
             name = url.split('/')[-1]
@@ -88,8 +93,9 @@ def get_layers(url, format):
         
         if format == 'file':
             filenames = get_file_names(url)
+            
             return {i:{
-                'title': i.split('/')[-1].split('.')[0],
+                'title': os.path.normpath(i).split(os.sep)[-1], # i.split('/')[-1].split('.')[0],
                 'type': i.split('.')[-1],
             } for i in filenames}
         

@@ -15,7 +15,7 @@ from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIAS
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 
 def format_url(url, format):
-    url = unquote(url)
+    # url = unquote(url)
     if format == 'xyz':
         return get_domain_url(url)
     if format.startswith('ogc-'):
