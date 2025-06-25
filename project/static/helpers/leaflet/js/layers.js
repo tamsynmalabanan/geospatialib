@@ -253,8 +253,6 @@ const getLeafletLayerBbox = async (layer) => {
     }
 
     const dbIndexedKey = layer._dbIndexedKey ?? ''
-    console.log('dbIndexedKey', dbIndexedKey)
-    
     if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
         const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
         if (geojson) return turf.bbox(geojson)
@@ -270,8 +268,6 @@ const getLeafletLayerBbox = async (layer) => {
         ]
     }
     
-    console.log('layer not static and no bounds', layer)
-
     return [-180, -90, 180, 90]
 }
 
