@@ -172,9 +172,8 @@ const handleAddLayersForm = () => {
 
         const container = getLayerNamesContainer('gsl')
         const rawData = await getFileRawData(mapInput.files[0])
-        console.log(rawData)
-        console.log(compressJSON.decompress(rawData))
-        container.innerText = compressJSON.decompress(rawData)
+        const layers = compressJSON.decompress(JSON.parse(rawData))
+        container.innerText = JSON.stringify(layers)
 
         toggleSubmitBtn()
     })
