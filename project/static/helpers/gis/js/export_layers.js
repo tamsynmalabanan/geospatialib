@@ -1,5 +1,4 @@
 const handleGSLLayers = (layers, container) => {
-    console.log(layers)
     container.innerHTML = ''
 
     const selectAllDiv = customCreateElement({
@@ -23,7 +22,7 @@ const handleGSLLayers = (layers, container) => {
         className: 'form-control border-0 box-shadow-none',
         attrs: {
             readonly: true,
-            value: `Select all layers (${layers.length})`
+            value: `Select all layers (${Object.keys(layers).length})`
         },
     })
 }
