@@ -2,9 +2,9 @@ const handleGSLLayers = (layers, container) => {
     container.innerHTML = ''
 
     const selectAllDiv = customCreateElement({
+        parent: container,
         className: `d-flex gap-2 align-items-center sticky-top text-bg-${getPreferredTheme()} pt-2`
     })
-    container.appendChild(selectAllDiv)
 
     const selectAllCheckbox = customCreateElement({
         parent: selectAllDiv,
@@ -12,7 +12,8 @@ const handleGSLLayers = (layers, container) => {
         className: 'form-check-input mt-0',
         attrs: {
             type: 'checkbox',
-            value: 'all'
+            value: 'all',
+            checked: true,
         },
     })
 
@@ -24,6 +25,40 @@ const handleGSLLayers = (layers, container) => {
             readonly: true,
             value: `Select all layers (${Object.keys(layers).length})`
         },
+    })
+
+    const layersContainer = customCreateElement({
+        parent: container,
+        className: 'd-flex flex-column gap-2',
+    })
+
+    Object.values(layers).forEach(i => {
+        const layerContainer = customCreateElement({
+            parent: layersContainer,
+            className: 'd-flex align-items-center'
+        })
+
+        const checkbox = customCreateElement({
+            parent: layerContainer,
+            tag: 'input',
+            className: 'form-check-input mt-0',
+            attrs: {
+                type: 'checkbox',
+                value: i.params.name
+            }
+        })
+
+        const titleField = createFormFloating({
+            parent: layerContainer,
+            containerClass: 'flex-grow-1 ms-2 w-50',
+            fieldAttrs: {
+                type: 'text',
+                name: 'title',
+                title: i.params.name,
+                value: i.params.title,
+            },
+            labelText: 'Title',
+        })
     })
 }
 
