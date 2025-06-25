@@ -298,6 +298,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             textClass: 'd-none d-xxl-inline',
             className: `${modalBtns[i].className} d-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm`,
             style: {color: 'white'},
+            attrs: {disabled: true},
             events: {
                 'click': (e) => {
                     modalElement.querySelector('form')._leafletMap = map
