@@ -30,7 +30,6 @@ const handleExportLayersForm = () => {
 
     submitBtn.addEventListener('click', (e) => {
         const data = JSON.stringify(compressJSON.compress(layers))
-        // const data = JSON.stringify(layers)
         const blob = new Blob([data], {type:'application/json'})
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')

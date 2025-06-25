@@ -167,11 +167,12 @@ const handleAddLayersForm = () => {
         fileInput.dispatchEvent(event)
     })
 
-    mapInput.addEventListener('change', (e) => {
+    mapInput.addEventListener('change', async (e) => {
         if (!mapInput.files.length) return resetLayerNames('gsl')
 
         const container = getLayerNamesContainer('gsl')
-        container.innerText = mapInput.files
+        const data = await getFileRawData(mapInput.files[0])
+        container.innerText = data
 
         toggleSubmitBtn()
     })
