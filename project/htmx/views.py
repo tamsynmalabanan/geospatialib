@@ -13,6 +13,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 import json
 import requests
 import validators
+import os
 
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer
@@ -210,7 +211,7 @@ def get_layer_forms(request):
     layer_names = json.loads(request.GET.get('layerNames','[]'))
     layers = {}
     for name in layer_names:    
-        title, type = name.split('/')[-1].rsplit('.', 1)
+        title, type = os.path.normpath(name).split(os.sep)[-1].rsplit('.', 1)
         layers[name] = {
             'title': title, 
             'type': type, 

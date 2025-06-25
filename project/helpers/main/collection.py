@@ -77,14 +77,14 @@ def get_layers(url, format):
         url = unquote(url)
 
         if format in ['geojson', 'csv']:
-            name = url.split('/')[-1]
+            name = os.path.normpath(url).split(os.sep)[-1]
             return {name: {
                 'title': f'.{format}'.join(name.split(f'.{format}')[:-1]) if name.endswith(f'.{format}') else name,
                 'type': format,
             }}
             
         if format == 'xyz':
-            name = (' '.join([get_domain_name(url)]+[i for i in url.split(get_domain(url))[-1].split('/') if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])])).strip()
+            name = (' '.join([get_domain_name(url)]+[i for i in os.path.normpath(url.split(get_domain(url))[-1]).split(os.sep) if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])])).strip()
             return {name: {
                 'title': name,
                 'type': format,
@@ -95,7 +95,7 @@ def get_layers(url, format):
             filenames = get_file_names(url)
             
             return {i:{
-                'title': os.path.normpath(i).split(os.sep)[-1], # i.split('/')[-1].split('.')[0],
+                'title': os.path.normpath(i).split(os.sep)[-1],
                 'type': i.split('.')[-1],
             } for i in filenames}
         
