@@ -249,7 +249,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
 const getLeafletLayerBbox = async (layer) => {
     if (layer._params?.bbox) {
-        return JSON.parse(layer._params?.bbox).split(0,4)
+        return JSON.parse(layer._params?.bbox).splice(0,4)
     }
 
     const dbIndexedKey = layer._dbIndexedKey ?? ''
