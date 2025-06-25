@@ -54,6 +54,8 @@ const handleExportLayersForm = () => {
     resetBtn.addEventListener('click', (e) => resetLayers())
 
     submitBtn.addEventListener('click', (e) => {
+        // update to included only checked layers
+
         const data = JSON.stringify(compressJSON.compress(layers))
         const blob = new Blob([data], {type:'application/json'})
         const url = URL.createObjectURL(blob)
