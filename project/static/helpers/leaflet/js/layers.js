@@ -247,6 +247,35 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     }
 }
 
+const getLeafletLayerBbox = async (layer) => {
+    if (layer._params?.bbox) {
+        return JSON.parse(layer._params?.bbox).split(0,4)
+    }
+
+    console.log('dbIndexedKey', dbIndexedKey)
+    
+    const dbIndexedKey = layer._dbIndexedKey ?? ''
+    if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
+        const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
+        if (geojson) return turf.bbox(geojson)
+    }
+    
+    if (layer.getBounds) {
+        const b = layer.getBounds()
+        return [
+            b.getWest(),
+            b.getSouth(),
+            b.getEast(),
+            b.getNorth(),
+        ]
+    }
+    
+    console.log('layer not static and no bounds', layer)
+
+    return [-180, -90, 180, 90]
+}
+
+
 const getLeafletLayerBounds = async (layer) => {
     if (layer._params?.bbox) {
         const [w,s,n,e,crs] = JSON.parse(layer._params?.bbox)
@@ -254,7 +283,7 @@ const getLeafletLayerBounds = async (layer) => {
     }
 
     const dbIndexedKey = layer._dbIndexedKey
-    if (layer instanceof L.GeoJSON && dbIndexedKey) {
+    if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
         const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
         if (geojson) return L.geoJSON(geojson).getBounds()
     }
@@ -271,7 +300,7 @@ const zoomToLeafletLayer = async (layer, map, {
         return map.setView(layer.getLatLng(), zoom)
     }
     
-    const bounds = await getLeafletLayerBounds(layer)
+    const bounds = L.geoJSON(turf.bboxPolygon((await getLeafletLayerBbox(layer)))).getBounds()
     zoomLeafletMapToBounds(map, bounds)
 }
 
@@ -952,8 +981,6 @@ const createLeafletLayer = async (params, {
         }
 
         if (layer) {
-            const bbox = params.bbox = params.bbox ?? "[-180, -90, 180, 90]"
-            
             layer._params = params
             layer._dbIndexedKey = dbIndexedKey
             layer._group = group
@@ -969,8 +996,8 @@ const createLeafletLayer = async (params, {
                 },
             }
             
-            if (!layer.getBounds) {
-                const [w,s,e,n,crs] = JSON.parse(bbox)
+            if (!layer.getBounds && params.bbox) {
+                const [w,s,e,n,crs] = JSON.parse(params.bbox)
                 layer.getBounds = () => L.latLngBounds([[s, w], [n, e]])
             }
         }

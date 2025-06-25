@@ -252,7 +252,7 @@ const handleLeafletLayerGroups = (map) => {
 
             const bounds = (await Promise.all(
                 layers.map(async layer => {
-                    const b = await getLeafletLayerBounds(layer)
+                    const b = L.geoJSON(turf.bboxPolygon((await getLeafletLayerBbox(layer)))).getBounds()
                     if (!b) return
                     
                     try {

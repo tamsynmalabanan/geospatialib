@@ -409,7 +409,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !leafletLayerIsVisible(layer)
-                const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(JSON.parse(layer._params.bbox ?? "[-180, -90, 180, 90]")))
+                const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon((await(getLeafletLayerBbox(layer)))))
 
                 if (isHidden || isInvisible || !withinBbox) {
                     return clearLegend(legend, {isHidden, isInvisible})

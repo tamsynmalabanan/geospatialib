@@ -182,8 +182,8 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false}))
         geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
         
-        if (!params?.bbox) {
-            geojsonLayer._params.bbox = geojson ? JSON.stringify(turf.bbox(geojson)) : "[-180, -90, 180, 90]"
+        if (!params?.bbox && geojson) {
+            geojsonLayer._params.bbox = JSON.stringify(turf.bbox(geojson))
         }
     } else if (geojson) {
         geojsonLayer.addData(geojson)
