@@ -79,12 +79,16 @@ def get_layers(url, format):
         if format in ['geojson', 'csv']:
             name = os.path.normpath(url).split(os.sep)[-1]
             return {name: {
-                'title': f'.{format}'.join(name.split(f'.{format}')[:-1]) if name.endswith(f'.{format}') else name,
+                'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
                 'type': format,
             }}
             
         if format == 'xyz':
-            name = (' '.join([get_domain_name(url)]+[i for i in os.path.normpath(url.split(get_domain(url))[-1]).split(os.sep) if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])])).strip()
+            name = (' '.join([get_domain_name(url)]+[
+                i for i in os.path.normpath(url.split(get_domain(url))[-1]).split(os.sep) 
+                if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])
+            ])).strip()
+            
             return {name: {
                 'title': name,
                 'type': format,
@@ -92,12 +96,10 @@ def get_layers(url, format):
             }}
         
         if format == 'file':
-            filenames = get_file_names(url)
-            
             return {i:{
-                'title': os.path.normpath(i).split(os.sep)[-1].split('.')[0],
+                'title': '.'.join(os.path.normpath(i).split(os.sep)[-1].split('.')[:-1]),
                 'type': i.split('.')[-1],
-            } for i in filenames}
+            } for i in get_file_names(url)}
         
     except Exception as e:
         print(e)
