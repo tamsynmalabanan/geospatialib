@@ -32,7 +32,7 @@ const handleGSLLayers = (layers, container) => {
         className: 'd-flex flex-column gap-2',
     })
 
-    Object.keys(layers).forEach(i => {
+    Object.keys(layers).reverse().forEach(i => {
         const data = layers[i]
 
         const layerContainer = customCreateElement({
