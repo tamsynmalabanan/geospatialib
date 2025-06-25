@@ -84,7 +84,7 @@ const handleExportLayersForm = () => {
     let layers
 
     const resetLayers = async () => {
-        layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
+        layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}')) ?? {}
         
         for (const layer of Object.values(layers)) {
             if (layer.dbIndexedKey.startsWith('client')) {

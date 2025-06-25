@@ -158,27 +158,32 @@ const handleLeafletLayerGroups = (map) => {
             localStorage.removeItem(map._ch.getCachedLegendLayersKey())
             const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
             for (i of cachedLayers) {
-                const {dbIndexedKey, params, properties, zIndex, isHidden} = i
-                const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
+                await map._ch.addLegendLayer(i)
+            }
+        },
+        addLegendLayer: async (data) => {
+            const {dbIndexedKey, params, properties, zIndex, isHidden} = data
+            const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
-                for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
-                    if (!i) continue
-                    const styleParams = i.styleParams
-                    if (styleParams.fillPattern !== 'icon') continue
-                    await handleStyleParams(styleParams)
-                }
+            for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
+                if (!i) continue
+                
+                const styleParams = i.styleParams
+                if (styleParams?.fillPattern !== 'icon') continue
+                
+                await handleStyleParams(styleParams)
+            }
 
-                const layer = await createLeafletLayer(params, {
-                    dbIndexedKey,
-                    group,
-                    add: false,
-                    properties
-                })
+            const layer = await createLeafletLayer(params, {
+                dbIndexedKey,
+                group,
+                add: false,
+                properties
+            })
 
-                if (layer) {
-                    if (isHidden) group._ch.addHiddenLayer(layer)
-                    group.addLayer(layer)
-                }
+            if (layer) {
+                if (isHidden) group._ch.addHiddenLayer(layer)
+                group.addLayer(layer)
             }
         },
         getLayerGroups: () => {

@@ -94,7 +94,10 @@ const handleAddLayersForm = () => {
                 includedLayers[i] = data
             }
 
-            console.log(includedLayers)
+            const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
+            for (i of sortedLayers) {
+                await map._ch.addLegendLayer(i)
+            }
         }
 
         if (source === 'files') {
