@@ -1,6 +1,31 @@
 const handleGSLLayers = (layers, container) => {
     container.innerHTML = ''
 
+    const selectAllDiv = customCreateElement({
+        className: `d-flex gap-2 align-items-center sticky-top text-bg-${getPreferredTheme()} pt-2`
+    })
+    container.appendChild(selectAllDiv)
+
+    const selectAllCheckbox = customCreateElement({
+        parent: selectAllDiv,
+        tag: 'input',
+        className: 'form-check-input mt-0',
+        attrs: {
+            type: 'checkbox',
+            value: 'all'
+        },
+    })
+
+    const selectAllLabel = customCreateElement({
+        parent: selectAllDiv,
+        tag: 'input',
+        className: 'form-control border-0 box-shadow-none',
+        attrs: {
+            readonly: true,
+            value: `Select all layers (${layers.length})`
+        },
+    })
+
     container.innerHTML = JSON.stringify(layers)
 }
 
