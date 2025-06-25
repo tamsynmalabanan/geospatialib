@@ -85,6 +85,15 @@ const handleAddLayersForm = () => {
         const includedLayers = getIncludedLayers(source)
 
         if (source === 'gsl') {
+            const rawData = await getFileRawData(mapInput.files[0])
+            const layers = compressJSON.decompress(JSON.parse(rawData))
+            
+            for (i in includedLayers) {
+                const data = layers[i]
+                data.params.title = includedLayers[i].title
+                includedLayers[i] = data
+            }
+
             console.log(includedLayers)
         }
 
