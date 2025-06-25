@@ -47,6 +47,13 @@ const handleExportLayersForm = () => {
         }
 
         handleGSLLayers(layers, modalBody)
+
+        toggleSubmitBtn()
+    }
+
+    const toggleSubmitBtn = () => {
+        const checkedLayer = Array.from(modalBody.querySelectorAll('.form-check-input')).find(i => i.checked)
+        submitBtn.disabled = checkedLayer ? false : true
     }
 
     modalElement.addEventListener('show.bs.modal', async () => resetLayers())
@@ -66,6 +73,22 @@ const handleExportLayersForm = () => {
         a.click()
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
+    })
+
+    form.addEventListener('click', (e) => {
+        if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
+
+        const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
+            modalBody.querySelectorAll(`.form-check-input[type="checkbox"]`)
+        )
+
+        if (e.target === selectAllCheckbox) {
+            layerCheckboxes.forEach(i => i.checked = e.target.checked)
+        } else {
+            selectAllCheckbox.checked = layerCheckboxes.every(i => i.checked)
+        }
+        
+        toggleSubmitBtn()
     })
 }
 
