@@ -140,6 +140,7 @@ const hslToHex = ({h, s, l}={}) => {
 }
 
 const hexToHSLA = (hex) => {
+    console.log(hex)
     hex = hex.split('(')[hex.split('(').length-1]
 
     // Convert hex to RGB

@@ -703,7 +703,6 @@ const handleLeafletStylePanel = (map, parent) => {
             events: {
                 blur: (e) => {
                     const value = hexToHSLA(e.target.value)
-                    console.log(e.target.value, value)
                     if (value === styleParams.fillColor) return
 
                     styleParams.fillColor = value
