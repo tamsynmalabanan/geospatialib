@@ -1,5 +1,7 @@
 const handleGSLLayers = (layers, container) => {
     container.innerHTML = ''
+    
+    if (!Object.keys(layers).length) return
 
     const selectAllDiv = customCreateElement({
         parent: container,
