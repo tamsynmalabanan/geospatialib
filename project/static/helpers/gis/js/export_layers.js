@@ -25,8 +25,6 @@ const handleGSLLayers = (layers, container) => {
             value: `Select all layers (${layers.length})`
         },
     })
-
-    container.innerHTML = JSON.stringify(layers)
 }
 
 const handleExportLayersForm = () => {
