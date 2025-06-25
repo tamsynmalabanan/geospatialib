@@ -1,3 +1,9 @@
+const handleGSLLayers = (layers, container) => {
+    container.innerHTML = ''
+
+    container.innerHTML = JSON.stringify(layers)
+}
+
 const handleExportLayersForm = () => {
     const modalElement = document.querySelector(`#exportLayersModal`)
     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
@@ -9,19 +15,14 @@ const handleExportLayersForm = () => {
     let layers
 
     const resetLayers = async () => {
-        modalBody.innerHTML = ''
-        
         layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
-
         for (const layer of Object.values(layers)) {
             if (layer.dbIndexedKey.startsWith('client')) {
                 layer.data = await getFromGISDB(layer.dbIndexedKey)
             }
-            
-            modalBody.appendChild(customCreateElement({
-                innerHTML:JSON.stringify(Object.keys(layer))
-            }))
         }
+
+        handleGSLLayers(layers, modalBody)
     }
 
     modalElement.addEventListener('show.bs.modal', async () => resetLayers())
