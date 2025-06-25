@@ -638,7 +638,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         svgFillDefs.appendChild(defs)
     } catch (error) {
-        if (styleParams.fillPatternId) delete styleParams.fillPatternId
+        if (styleParams?.fillPatternId) delete styleParams.fillPatternId
         if (defs) defs.remove()
     }
 
