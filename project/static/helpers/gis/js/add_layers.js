@@ -172,6 +172,8 @@ const handleAddLayersForm = () => {
 
         const container = getLayerNamesContainer('gsl')
         container.innerText = mapInput.files
+
+        toggleSubmitBtn()
     })
 
     form.addEventListener('click', (e) => {
