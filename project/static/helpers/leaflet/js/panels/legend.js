@@ -551,9 +551,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
         const cachedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
         if (cachedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(cachedBbox))).getBounds())
     
-        await map._ch.addCachedLegendLayers()
-        layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
-
-        Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
+        map._ch.addCachedLegendLayers().then(() => {
+            layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+            Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
+        })
     })
 }
