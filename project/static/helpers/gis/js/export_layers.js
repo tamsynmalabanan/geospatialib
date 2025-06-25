@@ -32,7 +32,9 @@ const handleGSLLayers = (layers, container) => {
         className: 'd-flex flex-column gap-2',
     })
 
-    Object.values(layers).forEach(i => {
+    Object.keys(layers).forEach(i => {
+        const data = layers[i]
+
         const layerContainer = customCreateElement({
             parent: layersContainer,
             className: 'd-flex align-items-center'
@@ -44,7 +46,7 @@ const handleGSLLayers = (layers, container) => {
             className: 'form-check-input mt-0',
             attrs: {
                 type: 'checkbox',
-                value: i.params.name,
+                value: i,
                 checked: true,
             }
         })
@@ -55,10 +57,18 @@ const handleGSLLayers = (layers, container) => {
             fieldAttrs: {
                 type: 'text',
                 name: 'title',
-                title: i.params.name,
-                value: i.params.title,
+                title: data.params.name,
+                value: data.params.title,
             },
             labelText: 'Title',
+            events: {
+                change: (e) => {
+                    const value = e.target.value.trim()
+                    if (value) {
+                        layers[i].params.title = value
+                    }
+                }
+            }
         })
     })
 }
@@ -97,9 +107,18 @@ const handleExportLayersForm = () => {
     resetBtn.addEventListener('click', (e) => resetLayers())
 
     submitBtn.addEventListener('click', (e) => {
-        // update to included only checked layers
+        let filteredLayers = structuredClone(layers)
 
-        const data = JSON.stringify(compressJSON.compress(layers))
+        const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
+            modalBody.querySelectorAll(`.form-check-input[type="checkbox"]`)
+        )
+        if (!selectAllCheckbox.checked) {
+            layerCheckboxes.forEach(i => {
+                if (!i.checked) delete filteredLayers[i.value]
+            })
+        }
+
+        const data = JSON.stringify(compressJSON.compress(filteredLayers))
         const blob = new Blob([data], {type:'application/json'})
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
