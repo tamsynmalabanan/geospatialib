@@ -34,6 +34,8 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool) 
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
     config('HOST_IP'),
     config('HOST_DOMAIN'),
     f'www.{config('HOST_DOMAIN')}',
