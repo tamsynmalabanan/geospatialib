@@ -1,4 +1,5 @@
 const handleGSLLayers = (layers, container) => {
+    console.log(layers)
     container.innerHTML = ''
 
     const selectAllDiv = customCreateElement({
@@ -39,6 +40,7 @@ const handleExportLayersForm = () => {
 
     const resetLayers = async () => {
         layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
+        
         for (const layer of Object.values(layers)) {
             if (layer.dbIndexedKey.startsWith('client')) {
                 layer.data = await getFromGISDB(layer.dbIndexedKey)
