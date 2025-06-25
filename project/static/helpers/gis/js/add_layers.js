@@ -84,6 +84,10 @@ const handleAddLayersForm = () => {
         const source = getFileSource()
         const includedLayers = getIncludedLayers(source)
 
+        if (source === 'gsl') {
+            console.log(includedLayers)
+        }
+
         if (source === 'files') {
             const filesArray = await getValidFilesArray(fileInput.files)
             for (const file of filesArray) {
@@ -97,7 +101,9 @@ const handleAddLayersForm = () => {
                     params,
                 })
             }
-        } else {
+        }
+        
+        if (source === 'url') {
             const url = form.elements.url.value
             const format = form.elements.format.value
             for (const name in includedLayers) {
@@ -174,7 +180,6 @@ const handleAddLayersForm = () => {
         const rawData = await getFileRawData(mapInput.files[0])
         const layers = compressJSON.decompress(JSON.parse(rawData))
         handleGSLLayers(layers, container)
-
 
         toggleSubmitBtn()
     })
