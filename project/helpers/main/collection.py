@@ -95,7 +95,7 @@ def get_layers(url, format):
             filenames = get_file_names(url)
             
             return {i:{
-                'title': os.path.normpath(i).split(os.sep)[-1],
+                'title': os.path.normpath(i).split(os.sep)[-1].split('.')[0],
                 'type': i.split('.')[-1],
             } for i in filenames}
         
