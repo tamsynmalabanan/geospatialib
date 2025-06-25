@@ -252,9 +252,9 @@ const getLeafletLayerBbox = async (layer) => {
         return JSON.parse(layer._params?.bbox).split(0,4)
     }
 
+    const dbIndexedKey = layer._dbIndexedKey ?? ''
     console.log('dbIndexedKey', dbIndexedKey)
     
-    const dbIndexedKey = layer._dbIndexedKey ?? ''
     if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
         const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
         if (geojson) return turf.bbox(geojson)
