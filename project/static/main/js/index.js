@@ -34,7 +34,7 @@ const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
     const group = getSearchMap()._ch.getLayerGroups().search
-    const strokeColor = manageHSLAColor(hexToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor))
+    const strokeColor = manageHSLAColor(rgbToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor))
     
     const customStyleParams = {
         strokeColor: strokeColor.toString(),

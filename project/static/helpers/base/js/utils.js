@@ -139,50 +139,60 @@ const hslToHex = ({h, s, l}={}) => {
     return `#${f(0)}${f(8)}${f(4)}`
 }
 
-const hexToHSLA = (hex) => {
-    console.log(hex)
-    hex = hex.split('(')[hex.split('(').length-1]
+const hexToRGB = (hex) => {
+    hex = hex.replace(/^#/, '');
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('')
+    }
+    const bigint = parseInt(hex, 16)
+    const r = (bigint >> 16) & 255
+    const g = (bigint >> 8) & 255
+    const b = bigint & 255
 
-    // Convert hex to RGB
-    let r = parseInt(hex.split(',')[0]) / 255;
-    let g = parseInt(hex.split(',')[1]) / 255;
-    let b = parseInt(hex.split(',')[2]) / 255;
+    return `rgb(${r}, ${g}, ${b})`
+}
+
+const rgbToHSLA = (rgb) => {
+    rgb = rgb.split('(')[rgb.split('(').length-1].split(',')
+    
+    let r = parseInt(rgb[0]) / 255
+    let g = parseInt(rgb[1]) / 255
+    let b = parseInt(rgb[2]) / 255
   
-    // Find max and min values of RGB
-    let max = Math.max(r, g, b);
-    let min = Math.min(r, g, b);
-    let delta = max - min;
+    let max = Math.max(r, g, b)
+    let min = Math.min(r, g, b)
+    let delta = max - min
   
-    // Calculate Lightness
     let l = (max + min) / 2;
   
-    // Calculate Saturation
-    let s = 0;
+    let s = 0
     if (delta !== 0) {
       s = l < 0.5 ? delta / (max + min) : delta / (2 - max - min);
     }
   
-    // Calculate Hue
-    let h = 0;
+    let h = 0
     if (delta !== 0) {
       if (max === r) {
-        h = (g - b) / delta;
+        h = (g - b) / delta
       } else if (max === g) {
-        h = 2 + (b - r) / delta;
+        h = 2 + (b - r) / delta
       } else if (max === b) {
-        h = 4 + (r - g) / delta;
+        h = 4 + (r - g) / delta
       }
     }
-    h = Math.round(h * 60);
+    h = Math.round(h * 60)
     if (h < 0) {
-      h += 360;
+      h += 360
     }
   
-    // Convert to percentages
-    s = +(s * 100).toFixed(1);
-    l = +(l * 100).toFixed(1);
+    s = +(s * 100).toFixed(1)
+    l = +(l * 100).toFixed(1)
   
-    return `hsla(${h}, ${s}%, ${l}%, 1)`;
+    return `hsla(${h}, ${s}%, ${l}%, 1)`
+}
+
+const hexToHSLA = (hex) => {
+    return rgbToHSLA(hexToRGB(hex))
 }
 
 const outerHTMLToDataURL = async (outerHTML, {
