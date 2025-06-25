@@ -950,7 +950,7 @@ const createLeafletLayer = async (params, {
                 options.styles = name
                 params.legend = styles[name].legend
 
-                const styleTitle = (styles[name]?.title ?? '').trim()
+                // const styleTitle = (styles[name]?.title ?? '').trim()
                 // if (!params.title.toLowerCase().includes(styleTitle.toLowerCase())) {
                 //     params.title = Array.from(new Set([params.title, styleTitle])).join(' - ').trim()
                 // }
