@@ -400,7 +400,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             const controllerId = controller.id
             const promises = []
 
-            Array.from(layers.children).reverse().forEach(legend => {
+            Array.from(layers.children).reverse().forEach(async legend => {
                 if (controllerId !== controller.id) return
                 
                 const leafletId = parseInt(legend.dataset.layerId)
@@ -410,7 +410,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 const isHidden = map._ch.hasHiddenLegendLayer(layer)
                 const isInvisible = !leafletLayerIsVisible(layer)
                 
-                const bbox = await(getLeafletLayerBbox(layer))
+                const bbox = await getLeafletLayerBbox(layer)
                 const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(bbox))
 
                 if (isHidden || isInvisible || !withinBbox) {
