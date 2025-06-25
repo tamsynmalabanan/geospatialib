@@ -275,24 +275,6 @@ const getLeafletLayerBbox = async (layer) => {
     return [-180, -90, 180, 90]
 }
 
-
-const getLeafletLayerBounds = async (layer) => {
-    if (layer._params?.bbox) {
-        const [w,s,n,e,crs] = JSON.parse(layer._params?.bbox)
-        return L.geoJSON(turf.bboxPolygon([w,s,n,e])).getBounds()
-    }
-
-    const dbIndexedKey = layer._dbIndexedKey
-    if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
-        const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
-        if (geojson) return L.geoJSON(geojson).getBounds()
-    }
-
-    if (layer.getBounds) {
-        return layer.getBounds()
-    }
-}
-
 const zoomToLeafletLayer = async (layer, map, {
     zoom = 18,
 } = {}) => {
@@ -300,7 +282,8 @@ const zoomToLeafletLayer = async (layer, map, {
         return map.setView(layer.getLatLng(), zoom)
     }
     
-    const bounds = L.geoJSON(turf.bboxPolygon((await getLeafletLayerBbox(layer)))).getBounds()
+    const bbox = await getLeafletLayerBbox(layer)
+    const bounds = L.geoJSON(turf.bboxPolygon(bbox)).getBounds()
     zoomLeafletMapToBounds(map, bounds)
 }
 
