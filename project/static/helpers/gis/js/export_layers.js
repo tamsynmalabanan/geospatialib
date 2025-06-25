@@ -44,7 +44,8 @@ const handleGSLLayers = (layers, container) => {
             className: 'form-check-input mt-0',
             attrs: {
                 type: 'checkbox',
-                value: i.params.name
+                value: i.params.name,
+                checked: true,
             }
         })
 
