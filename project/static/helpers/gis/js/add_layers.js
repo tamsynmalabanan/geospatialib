@@ -85,18 +85,22 @@ const handleAddLayersForm = () => {
         const includedLayers = getIncludedLayers(source)
 
         if (source === 'gsl') {
-            const rawData = await getFileRawData(mapInput.files[0])
-            const layers = compressJSON.decompress(JSON.parse(rawData))
-            
-            for (i in includedLayers) {
-                const layer = layers[i]
-                layer.params.title = includedLayers[i].title
-                includedLayers[i] = layer
-            }
-
-            const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
-            for (i of sortedLayers) {
-                await map._ch.addLegendLayer(i)
+            try {
+                const rawData = await getFileRawData(mapInput.files[0])
+                const layers = compressJSON.decompress(JSON.parse(rawData))
+                
+                for (i in includedLayers) {
+                    const layer = layers[i]
+                    layer.params.title = includedLayers[i].title
+                    includedLayers[i] = layer
+                }
+    
+                const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
+                for (i of sortedLayers) {
+                    await map._ch.addLegendLayer(i)
+                }
+            } catch (error) {
+                console.log(error)
             }
         }
 
@@ -191,9 +195,14 @@ const handleAddLayersForm = () => {
         const container = getLayerNamesContainer('gsl')
         container.innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
 
-        const rawData = await getFileRawData(mapInput.files[0])
-        const layers = compressJSON.decompress(JSON.parse(rawData))
-        handleGSLLayers(layers, container)
+        try {
+            const rawData = await getFileRawData(mapInput.files[0])
+            const layers = compressJSON.decompress(JSON.parse(rawData))
+            handleGSLLayers(layers, container)
+        } catch (error) {
+            console.log(error)
+            container.innerHTML = ''
+        }
 
         toggleSubmitBtn()
     })
