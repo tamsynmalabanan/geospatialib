@@ -273,6 +273,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ] if not DEBUG else []
 STATIC_ROOT = BASE_DIR / config('STATIC_ROOT')
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
