@@ -165,24 +165,24 @@ const handleLeafletDrawBtns = (map, {
         },
         'edited': (e) => console.log('edited', e),
         'deleted': (e) => console.log('deleted', e),
-        'drawstart': (e) => {
-            disableMapInteractivity(map)
-        },
-        'drawstop': (e) => {
-            enableMapInteractivity(map)
-        },
-        'editstart': (e) => {
-            disableMapInteractivity(map)
-        },
-        'editstop': (e) => {
-            enableMapInteractivity(map)
-        },
-        'deletestart': (e) => {
-            disableMapInteractivity(map)
-        },
-        'deletestop': (e) => {
-            enableMapInteractivity(map)
-        },
+        // 'drawstart': (e) => {
+        //     disableMapInteractivity(map)
+        // },
+        // 'drawstop': (e) => {
+        //     enableMapInteractivity(map)
+        // },
+        // 'editstart': (e) => {
+        //     disableMapInteractivity(map)
+        // },
+        // 'editstop': (e) => {
+        //     enableMapInteractivity(map)
+        // },
+        // 'deletestart': (e) => {
+        //     disableMapInteractivity(map)
+        // },
+        // 'deletestop': (e) => {
+        //     enableMapInteractivity(map)
+        // },
     }
 
     const drawControl = new L.Control.Draw({
