@@ -120,20 +120,8 @@ const handleExportLayersForm = () => {
             })
         }
 
-        // const data = JSON.stringify(compressJSON.compress(filteredLayers))
-        // const blob = new Blob([data], {type:'application/json'})
-        // const url = URL.createObjectURL(blob)
-        // const a = document.createElement('a')
-        // a.href = url
-        // a.download = `map.gsl`
-        // // document.body.appendChild(a)
-        // a.click()
-        // // document.body.removeChild(a)
-        // URL.revokeObjectURL(url)
-        
-        const data = msgpack.encode(filteredLayers)
-        console.log('export encoded', data)
-        const blob = new Blob([data], {type:'application/octet-stream'})
+        const data = JSON.stringify(compressJSON.compress(filteredLayers))
+        const blob = new Blob([data], {type:'application/json'})
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
@@ -142,6 +130,18 @@ const handleExportLayersForm = () => {
         a.click()
         // document.body.removeChild(a)
         URL.revokeObjectURL(url)
+        
+        // const data = msgpack.encode(filteredLayers)
+        // console.log('export encoded', data)
+        // const blob = new Blob([data], {type:'application/octet-stream'})
+        // const url = URL.createObjectURL(blob)
+        // const a = document.createElement('a')
+        // a.href = url
+        // a.download = `map.gsl`
+        // // document.body.appendChild(a)
+        // a.click()
+        // // document.body.removeChild(a)
+        // URL.revokeObjectURL(url)
     })
 
     form.addEventListener('click', (e) => {
