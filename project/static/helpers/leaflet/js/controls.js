@@ -150,9 +150,8 @@ const handleLeafletDrawBtns = (map, {
 
     const drawEvents = {
         'created': async (e) => {
-            const geojson = turf.featureCollection(e.layer.toGeoJSON())
+            const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             if (targetLayer._dbIndexedKey) {
-                console.log(geojson)
                 await normalizeGeoJSON(geojson)
                 await updateGISDB(
                     targetLayer._dbIndexedKey, 
