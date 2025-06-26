@@ -149,7 +149,9 @@ const handleLeafletDrawBtns = (map, {
     if (!include) return
 
     const drawEvents = {
-        'created': (e) => console.log('created', e),
+        'created': (e) => {
+            console.log(e.layer.toGeoJSON())
+        },
         'edited': (e) => console.log('edited', e),
         'deleted': (e) => console.log('deleted', e),
         'drawstart': (e) => {
