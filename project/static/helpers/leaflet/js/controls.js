@@ -159,20 +159,20 @@ const handleLeafletDrawBtns = (map, {
         }
     })
 
-    const drawEvents = {
-        'created': (e) => console.log(e),
-        'edited': null,
-        'deleted': null,
-        'drawstart': null,
-        'drawstop': null,
-        'editstart': null,
-        'editstop': null,
-        'deletestart': null,
-        'deletestop': null,
-    }
+    // const drawEvents = {
+    //     'created': (e) => console.log(e),
+    //     'edited': null,
+    //     'deleted': null,
+    //     'drawstart': null,
+    //     'drawstop': null,
+    //     'editstart': null,
+    //     'editstop': null,
+    //     'deletestart': null,
+    //     'deletestop': null,
+    // }
     
-    drawControl.onAdd = (map) => Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i] ?? ((e) => console.log(e))))
-    drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
+    // drawControl.onAdd = (map) => Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i] ?? ((e) => console.log(e))))
+    // drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     drawControl.addTo(map)
     console.log(map)
 
