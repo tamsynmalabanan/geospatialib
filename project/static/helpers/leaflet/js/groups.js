@@ -161,8 +161,8 @@ const handleLeafletLayerGroups = (map) => {
                 await map._ch.addLegendLayer(i)
             }
         },
-        addLegendLayer: async (data) => {
-            const {dbIndexedKey, params, properties, zIndex, isHidden} = data
+        addLegendLayer: async (layers) => {
+            const {dbIndexedKey, params, properties, zIndex, isHidden, data} = layers
             const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
             for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
@@ -175,6 +175,7 @@ const handleLeafletLayerGroups = (map) => {
             }
 
             const layer = await createLeafletLayer(params, {
+                data,
                 dbIndexedKey,
                 group,
                 add: false,

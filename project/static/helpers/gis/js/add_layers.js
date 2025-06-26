@@ -89,9 +89,9 @@ const handleAddLayersForm = () => {
             const layers = compressJSON.decompress(JSON.parse(rawData))
             
             for (i in includedLayers) {
-                const data = layers[i]
-                data.params.title = includedLayers[i].title
-                includedLayers[i] = data
+                const layer = layers[i]
+                layer.params.title = includedLayers[i].title
+                includedLayers[i] = layer
             }
 
             const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
