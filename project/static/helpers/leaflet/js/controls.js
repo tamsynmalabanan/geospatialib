@@ -151,12 +151,11 @@ const handleLeafletDrawBtns = (map, {
     const drawEvents = {
         'created': (e) => {
             const geojson = e.layer.toGeoJSON()
-            targetLayer.addData(geojson)
-            // if (targetLayer._dbIndexedKey) {
-
-            // } else {
-            //     targetLayer.addData(geojson)
-            // }
+            if (targetLayer._dbIndexedKey) {
+                console.log(geojson)
+            } else {
+                targetLayer.addData(geojson)
+            }
         },
         'edited': (e) => console.log('edited', e),
         'deleted': (e) => console.log('deleted', e),

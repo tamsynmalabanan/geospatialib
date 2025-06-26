@@ -33,7 +33,9 @@ const normalizeGeoJSONFeature = async (feature, {
     }
     
     if (feature.id) feature.properties.feature_id = feature.id
-    feature.properties = normalizeFeatureProperties(feature.properties)    
+    feature.properties = normalizeFeatureProperties(feature.properties)
+
+    feature.properties.__gsl_id__ = generateRandomString()
 }
 
 const normalizeFeatureProperties = (properties) => {
