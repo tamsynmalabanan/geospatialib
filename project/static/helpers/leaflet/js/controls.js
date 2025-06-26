@@ -150,7 +150,13 @@ const handleLeafletDrawBtns = (map, {
 
     const drawEvents = {
         'created': (e) => {
-            console.log(e.layer.toGeoJSON())
+            const geojson = e.layer.toGeoJSON()
+            targetLayer.addData(geojson)
+            // if (targetLayer._dbIndexedKey) {
+
+            // } else {
+            //     targetLayer.addData(geojson)
+            // }
         },
         'edited': (e) => console.log('edited', e),
         'deleted': (e) => console.log('deleted', e),
@@ -180,8 +186,9 @@ const handleLeafletDrawBtns = (map, {
             polyline: true,
             polygon: true,
             rectangle: true,
-            circle: true,
             marker: true,
+
+            circle: false,
             circlemarker: false,
         },
         edit: {

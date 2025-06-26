@@ -761,7 +761,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 })) 
             }
         },
-        // update to check if layer editor is already enabled
         layerEditor: !isLegendGroup || !geojsonLayer || !clientLayer || feature ? null : {
             innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
             btnCallback: () => {
@@ -771,7 +770,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 })
             }
         },
-
 
         divider1: !feature || isSearch ? null : {
             divider: true,
