@@ -158,9 +158,10 @@ const handleLeafletDrawBtns = (map, {
                     turf.clone(geojson),
                     turf.bboxPolygon(turf.bbox(geojson)).geometry,
                 )
+                await updateLeafletGeoJSONLayer(targetLayer)
+            } else {
+                targetLayer.addData(geojson)
             }
-            
-            targetLayer.addData(geojson)
         },
         'edited': (e) => console.log('edited', e),
         'deleted': (e) => console.log('deleted', e),
