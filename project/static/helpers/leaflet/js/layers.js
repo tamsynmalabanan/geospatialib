@@ -702,7 +702,6 @@ const getLeafletLayerContextMenu = async (e, layer, {
 
     const feature = layer.feature
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
-    const featureInfo = geojsonLayer?._properties.info
 
     const group = layer._group || geojsonLayer?._group
     if (!group) return
@@ -729,18 +728,9 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const isLegendFeature = isLegendGroup && feature
     const isHidden = group._ch.hasHiddenLayer(layer)
     const isSearch = group._name === 'search'
-    
     const checkbox = layer._checkbox
-    const disabledCheckbox = checkbox?.disabled
-    const checkboxContainer = checkbox ? geojsonLayer._checkbox.parentElement.parentElement.parentElement : null
-    
-    const checkboxArray = checkboxContainer ? Array.from(
-        checkboxContainer?.querySelectorAll('input.form-check-input')
-    ) : null
-    const layerArray = isLegendGroup ? map._ch.getLegendLayers() : group._ch.getAllLayers()
-    const noArrays = !checkboxArray && !layerArray
-    
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
+    const clientLayer = ((geojsonLayer ?? layer)._dbIndexedKey ?? '').startsWith('client')
     
     const addLayer = (l) => group._ch.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
@@ -770,6 +760,14 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 })) 
             }
         },
+        // update to check if layer editor is already enabled
+        layerEditor: !isLegendGroup || !geojsonLayer || !clientLayer || feature ? null : {
+            innerText: 'Enable layer editor',
+            btnCallback: () => {
+                handleLeafletDrawBtns(map, {targetLayer: geojsonLayer})
+            }
+        },
+
 
         divider1: !feature || isSearch ? null : {
             divider: true,

@@ -1,4 +1,4 @@
-const handleLeafletZoombar = (map, include=true) => {
+const handleLeafletZoombar = (map, {include=true}={}) => {
     if (!include) return map.removeControl(map.zoomControl)
 
     const container = map.zoomControl.getContainer()
@@ -24,14 +24,14 @@ const handleLeafletZoombar = (map, include=true) => {
     }
 }
 
-const handleLeafletScaleBar = (map, include=true) => {
+const handleLeafletScaleBar = (map, {include=true}={}) => {
     if (!include) return
 
     const scaleBar = L.control.scale({ position: 'bottomright' }).addTo(map)
     map._scaleBar = scaleBar
 }
 
-const handleLeafletSearchBar = (map, include=true) => {
+const handleLeafletSearchBar = (map, {include=true}={}) => {
     if (!include || !L.Control.geocoder) return
 
     const geocoder = L.Control.geocoder({
@@ -90,7 +90,7 @@ const handleLeafletSearchBar = (map, include=true) => {
     })
 }
 
-const handleLeafletRestViewBtn = (map, include=true) => {
+const handleLeafletRestViewBtn = (map, {include=true}={}) => {
     const resetViewControl = map.resetviewControl
     if (!include) return map.removeControl(resetViewControl)
     
@@ -111,10 +111,9 @@ const handleLeafletRestViewBtn = (map, include=true) => {
             control.click()
         }
     })
-
 }
 
-const handleLeafletLocateBtn = (map, include=true) => {
+const handleLeafletLocateBtn = (map, {include=true}={}) => {
     if (!include) return
 
     const locateControl = L.control.locate({
@@ -138,6 +137,48 @@ const handleLeafletLocateBtn = (map, include=true) => {
     })
 }
 
+const handleLeafletDrawBtns = (map, {
+    include=true,
+    targetLayer = L.geoJSON(),
+} = {}) => {
+    if (!include) {
+        return
+    }
+
+    const drawControl = new L.Control.Draw({
+        position: 'topleft',
+        draw: {
+            polyline: true,
+            polygon: true,
+            rectangle: true,
+            circle: true,
+            marker: true,
+        },
+        edit: {
+            featureGroup: targetLayer,
+        }
+    })
+
+    const drawEvents = {
+        'created': (e) => console.log(e),
+        'edited': null,
+        'deleted': null,
+        'drawstart': null,
+        'drawstop': null,
+        'editstart': null,
+        'editstop': null,
+        'deletestart': null,
+        'deletestop': null,
+    }
+    
+    drawControl.onAdd = (map) => Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i] ?? ((e) => console.log(e))))
+    drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
+    drawControl.addTo(map)
+    console.log(map)
+
+    return targetLayer
+}
+
 const leafletControls = {
     zoom: handleLeafletZoombar,
     scale: handleLeafletScaleBar,
@@ -145,7 +186,6 @@ const leafletControls = {
     reset: handleLeafletRestViewBtn,
     locate: handleLeafletLocateBtn,
 }
-
 
 const handleLeafletMapControls = (map) => {
     const container = map.getContainer()
@@ -156,7 +196,7 @@ const handleLeafletMapControls = (map) => {
     Object.keys(leafletControls).forEach(controlName => {
         const excluded = excludedControls && (excludedControls.includes(controlName) || excludedControls === 'all')
         const included = !includedControls || includedControls.includes(controlName) || includedControls === 'all'
-        leafletControls[controlName](map, included && !excluded)
+        leafletControls[controlName](map, {include:(included && !excluded)})
     })
 
     applyThemeToLeafletControls(container)
