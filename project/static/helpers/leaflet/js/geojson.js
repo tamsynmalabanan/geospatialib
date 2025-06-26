@@ -171,7 +171,10 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
 
-    if (geojson) await normalizeGeoJSON(geojson)
+    if (geojson) {
+        if (geojson.type === 'Feature') geojson = turf.featureCollection([geojson])
+        await normalizeGeoJSON(geojson)
+    }
 
     if (group._map._legendLayerGroups.includes(group)) {
         geojsonLayer._dbIndexedKey = geojson ? saveToGISDB(
