@@ -420,7 +420,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
-                    if (legend.querySelector('.bi-bug') && layer._dbIndexedKey.startsWith('client')) return
+                    // if (legend.querySelector('.bi-bug') && layer._dbIndexedKey.startsWith('client')) return
 
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson: (
