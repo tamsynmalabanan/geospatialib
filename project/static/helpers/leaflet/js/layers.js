@@ -771,27 +771,27 @@ const getLeafletLayerContextMenu = async (e, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
         
-        divider3: !isLegendGroup || !geojsonLayer || feature ? null : {
+        divider3: !layer._dbIndexedKey ? null : {
             divider: true,
         },
-        updateData: !isLegendGroup || !geojsonLayer || feature ? null : {
-            innerText: `Update geojson`,
+        updateData: !layer._dbIndexedKey?.startsWith('client') ? null : {
+            innerText: `Update stored data`,
             btnCallback: async () => {
-                const text = await navigator.clipboard.readText()
-                if (!text) return
+                // const text = await navigator.clipboard.readText()
+                // if (!text) return
 
-                try {
-                    const geojson = JSON.parse(text)
-                    if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
+                // try {
+                //     const geojson = JSON.parse(text)
+                //     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
 
-                    await normalizeGeoJSON(geojson)
-                    geojsonLayer._dbIndexedKey = saveToGISDB(turf.clone(geojson))
-                    updateLeafletGeoJSONLayer(geojsonLayer, {geojson})
-                } catch { return }
+                //     await normalizeGeoJSON(geojson)
+                //     geojsonLayer._dbIndexedKey = saveToGISDB(turf.clone(geojson))
+                //     updateLeafletGeoJSONLayer(geojsonLayer, {geojson})
+                // } catch { return }
             }
         },
-        clearData: !isLegendGroup || !geojsonLayer || feature ? null : {
-            innerText: `Clear cached data`,
+        clearData: !layer._dbIndexedKey ? null : {
+            innerText: `Clear stored data`,
             btnCallback: async () => {
                 deleteFromGISDB(geojsonLayer._dbIndexedKey)
             }
