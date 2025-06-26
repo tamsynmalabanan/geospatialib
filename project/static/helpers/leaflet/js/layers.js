@@ -754,53 +754,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
             innerText: isHidden ? 'Show layer' : 'Hide layer',
             btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
-        
-        divider1: !feature || isSearch ? null : {
-            divider: true,
-        },
-        copyFeature: !feature || isSearch ? null : {
-            innerText: 'Copy feature',
-            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature))
-        },
-        copyProperties: !feature || isSearch ? null : {
-            innerText: 'Copy properties',
-            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.properties))
-        },
-        copyGeometry: !feature || isSearch ? null : {
-            innerText: 'Copy geometry',
-            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
-        },
-        
-        divider3: !layer._dbIndexedKey ? null : {
-            divider: true,
-        },
-        updateData: !layer._dbIndexedKey?.startsWith('client') ? null : {
-            innerText: `Update stored data`,
-            btnCallback: async () => {
-                // const text = await navigator.clipboard.readText()
-                // if (!text) return
-
-                // try {
-                //     const geojson = JSON.parse(text)
-                //     if (!geojson || geojson.type !== 'FeatureCollection' || !geojson.features?.length) return
-
-                //     await normalizeGeoJSON(geojson)
-                //     geojsonLayer._dbIndexedKey = saveToGISDB(turf.clone(geojson))
-                //     updateLeafletGeoJSONLayer(geojsonLayer, {geojson})
-                // } catch { return }
-            }
-        },
-        clearData: !layer._dbIndexedKey ? null : {
-            innerText: `Clear stored data`,
-            btnCallback: async () => {
-                deleteFromGISDB(geojsonLayer._dbIndexedKey)
-            }
-        },
-
-        divider5: isSearch ? null : {
-            divider: true,
-        },
-        style: !isLegendGroup || isLegendFeature ? null : {
+        style: !isLegendGroup || feature ? null : {
             innerText: `Layer properties`,
             btnCallback: async () => {
                 const styleAccordionSelector = `#${mapContainer.id}-panels-accordion-style`
@@ -833,10 +787,36 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 }
             }
         },
+
+        divider1: !feature || isSearch ? null : {
+            divider: true,
+        },
+        copyFeature: !feature || isSearch ? null : {
+            innerText: 'Copy feature',
+            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature))
+        },
+        copyProperties: !feature || isSearch ? null : {
+            innerText: 'Copy properties',
+            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.properties))
+        },
+        copyGeometry: !feature || isSearch ? null : {
+            innerText: 'Copy geometry',
+            btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
+        },
+        
+        divider5: isSearch ? null : {
+            divider: true,
+        },
         download: isSearch || !layerGeoJSON ? null : {
             innerText: 'Download data',
             btnCallback: () => {
                 if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
+            }
+        },
+        clearData: !layer._dbIndexedKey ? null : {
+            innerText: `Clear stored data`,
+            btnCallback: async () => {
+                deleteFromGISDB(geojsonLayer._dbIndexedKey)
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {
