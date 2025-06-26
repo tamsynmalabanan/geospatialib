@@ -33,7 +33,7 @@ const normalizeGeoJSONFeature = async (feature, {
     }
     
     feature.properties.__gsl_id__ = generateRandomString()
-    
+
     if (feature.id) feature.properties.feature_id = feature.id
     feature.properties = normalizeFeatureProperties(feature.properties)
 
@@ -353,7 +353,8 @@ const createFeaturePropertiesTable = (properties, {
     
     Object.keys(properties).forEach(property => {
         if (property.startsWith('__') && property.endsWith('__')) return
-        
+        console.log(property)
+
         const data = properties[property] ?? null
 
         const tr = document.createElement('tr')
