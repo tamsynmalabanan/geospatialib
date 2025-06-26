@@ -190,10 +190,7 @@ const handleAddLayersForm = () => {
 
         const container = getLayerNamesContainer('gsl')
         const rawData = await getFileRawData(mapInput.files[0])
-        console.log('import encoded')
-        // const layers = compressJSON.decompress(JSON.parse(rawData))
-        const layers = msgpack.decode(rawData)
-        console.log('import decoded')
+        const layers = compressJSON.decompress(JSON.parse(rawData))
         handleGSLLayers(layers, container)
 
         toggleSubmitBtn()
