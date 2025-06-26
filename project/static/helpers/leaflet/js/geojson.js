@@ -124,6 +124,7 @@ const getLeafletGeoJSONLayer = async ({
                         popupProperties = properties
                     }
 
+                    // update this to update the entire popupcontent
                     const popupContent = createFeaturePropertiesTable(popupProperties, {
                         header: (() => {
                             const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()

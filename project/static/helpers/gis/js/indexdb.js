@@ -31,36 +31,40 @@ const saveToGISDB = (gisData, {
 }
 
 const updateGISDB = async (id, newGISData, newQueryExtent) => {
-    const save = (data) => {
-        const {gisData, queryExtent} = data
-        if (data) saveToGISDB(gisData, {id, queryExtent})
-    }
-    
-    const cachedData = await getFromGISDB(id, {save:false})
-    if (!cachedData) {
-        return save({
-            gisData:newGISData, 
-            queryExtent:newQueryExtent,
-        })
-    } else {
-        const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
-
-        worker.postMessage({
-            newGISData, 
-            newQueryExtent,
-            currentGISData: cachedData.gisData,
-            currentQueryExtent: cachedData.queryExtent,
-        })
-
-        worker.onmessage = (e) => {
-            save(e.data)
-            worker.terminate()
+    return new Promise(async (resolve, reject) => {
+        const save = (data) => {
+            const {gisData, queryExtent} = data
+            if (data) saveToGISDB(gisData, {id, queryExtent})
+            resolve()
         }
         
-        worker.onerror = (error) => {
-            worker.terminate()
+        const cachedData = await getFromGISDB(id, {save:false})
+        if (!cachedData) {
+            save({
+                gisData:newGISData, 
+                queryExtent:newQueryExtent,
+            })
+        } else {
+            const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')
+    
+            worker.postMessage({
+                newGISData, 
+                newQueryExtent,
+                currentGISData: cachedData.gisData,
+                currentQueryExtent: cachedData.queryExtent,
+            })
+    
+            worker.onmessage = (e) => {
+                save(e.data)
+                worker.terminate()
+            }
+            
+            worker.onerror = (error) => {
+                worker.terminate()
+                reject()
+            }
         }
-    }
+    })
 }
 
 const getFromGISDB = async (id, {save=true}={}) => {

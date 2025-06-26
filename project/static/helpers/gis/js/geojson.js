@@ -353,7 +353,6 @@ const createFeaturePropertiesTable = (properties, {
     
     Object.keys(properties).forEach(property => {
         if (property.startsWith('__') && property.endsWith('__')) return
-        console.log(property)
 
         const data = properties[property] ?? null
 
