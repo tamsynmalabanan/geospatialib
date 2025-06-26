@@ -415,6 +415,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(bbox))
 
                 if (isHidden || isInvisible || !withinBbox) {
+                    if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
                     return clearLegend(legend, {isHidden, isInvisible})
                 }
 
