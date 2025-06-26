@@ -482,7 +482,7 @@ const getGeoJSON = async (dbKey, {
                         await normalizeGeoJSON(geojson, {defaultGeom:queryGeom.geometry, controller, abortBtns})
 
                         if (controller?.signal.aborted) return
-                        if (handlerName !== 'nominatim') {
+                        if (!Array('nominatim', 'ogc-wms').includes(handlerName)) {
                             await updateGISDB(
                                 dbKey, 
                                 turf.clone(geojson),
