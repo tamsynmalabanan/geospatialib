@@ -171,10 +171,7 @@ const handleLeafletDrawBtns = (map, {
         'deletestop': null,
     }
     
-    drawControl.onAdd = (map) => Object.keys(drawEvents).forEach(i => {
-        console.log(map)
-        map.on(`draw:${i}`, drawEvents[i] ?? ((e) => console.log(e)))
-    })
+    map.on(`draw:${i}`, drawEvents[i] ?? ((e) => console.log(e)))
     
     drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     
