@@ -141,8 +141,30 @@ const handleLeafletDrawBtns = (map, {
     include=true,
     targetLayer = L.geoJSON(),
 } = {}) => {
-    if (!include) {
-        return
+    if (!include) return
+
+    const drawEvents = {
+        'created': (e) => console.log(e),
+        'edited': (e) => console.log(e),
+        'deleted': (e) => console.log(e),
+        'drawstart': (e) => {
+            disableMapInteractivity(map)
+        },
+        'drawstop': (e) => {
+            enableMapInteractivity(map)
+        },
+        'editstart': (e) => {
+            disableMapInteractivity(map)
+        },
+        'editstop': (e) => {
+            enableMapInteractivity(map)
+        },
+        'deletestart': (e) => {
+            disableMapInteractivity(map)
+        },
+        'deletestop': (e) => {
+            enableMapInteractivity(map)
+        },
     }
 
     const drawControl = new L.Control.Draw({
@@ -153,31 +175,20 @@ const handleLeafletDrawBtns = (map, {
             rectangle: true,
             circle: true,
             marker: true,
+            circlemarker: false,
         },
         edit: {
             featureGroup: targetLayer,
         }
     })
-
-    const drawEvents = {
-        'created': (e) => console.log(e),
-        'edited': null,
-        'deleted': null,
-        'drawstart': null,
-        'drawstop': null,
-        'editstart': null,
-        'editstop': null,
-        'deletestart': null,
-        'deletestop': null,
+    
+    Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i]))
+    drawControl.onRemove = (map) => {
+        Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     }
     
-    Object.keys(drawEvents).forEach(i => {
-        map.on(`draw:${i}`, drawEvents[i] ?? ((e) => console.log(e)))
-    })
-    
-    drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     drawControl.addTo(map)
-    console.log(map)
+    map._drawControl = drawControl
 
     return targetLayer
 }
