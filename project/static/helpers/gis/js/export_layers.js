@@ -86,6 +86,8 @@ const handleExportLayersForm = () => {
     let layers
 
     const resetLayers = async () => {
+        modalBody.innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
+
         layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}')) ?? {}
         
         for (const layer of Object.values(layers)) {

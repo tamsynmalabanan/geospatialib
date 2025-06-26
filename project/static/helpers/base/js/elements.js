@@ -768,3 +768,12 @@ const createBadgeSelect = ({
 
     return select
 }
+
+const getSpinnerHTML = ({text='Loading...'} = {}) => {
+    return removeWhitespace(`
+        <div class="d-flex justify-content-center m-3 gap-2">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span role="status">${text}</span>
+        </div>
+    `)
+}

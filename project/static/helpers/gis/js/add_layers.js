@@ -187,8 +187,10 @@ const handleAddLayersForm = () => {
 
     mapInput.addEventListener('change', async (e) => {
         if (!mapInput.files.length) return resetLayerNames('gsl')
-
+        
         const container = getLayerNamesContainer('gsl')
+        container.innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
+
         const rawData = await getFileRawData(mapInput.files[0])
         const layers = compressJSON.decompress(JSON.parse(rawData))
         handleGSLLayers(layers, container)
@@ -213,13 +215,6 @@ const handleAddLayersForm = () => {
         toggleSubmitBtn()
     })
 
-    const spinnerHTML = removeWhitespace(`
-        <div class="d-flex justify-content-center m-3 gap-2">
-            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-            <span role="status">Fetching layers...</span>
-        </div>
-    `)
-
     form.addEventListener('htmx:configRequest', (e) => {
         if (e.target === form.elements.format) {
             e.detail.parameters['url'] = form.elements.url.value
@@ -230,7 +225,7 @@ const handleAddLayersForm = () => {
         if (e.target === form.elements.url) {
             try {
                 resetFormatField()
-                getLayerNamesContainer('url').innerHTML = spinnerHTML
+                getLayerNamesContainer('url').innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
                 return new URL(e.target.value)
             } catch {
                 resetUrlFields()
@@ -239,7 +234,7 @@ const handleAddLayersForm = () => {
         
         if (e.target === form.elements.format) {
             resetLayerNames('url')
-            getLayerNamesContainer('url').innerHTML = spinnerHTML
+            getLayerNamesContainer('url').innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
             return
         }
 
