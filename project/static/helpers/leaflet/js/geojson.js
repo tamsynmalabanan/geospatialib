@@ -185,7 +185,7 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false}))
         geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
         
-        if (!params?.bbox && geojson) {
+        if (!params?.bbox && geojson?.features.length) {
             geojsonLayer._params.bbox = JSON.stringify(turf.bbox(geojson))
         }
     } else if (geojson) {

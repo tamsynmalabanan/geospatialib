@@ -10,6 +10,7 @@ const handleAddLayersForm = () => {
     const urlFields = form.querySelector(`#${formId}-urlFields`)
     const gslFields = form.querySelector(`#${formId}-gslFields`)
     const resetBtn = form.elements.reset
+    const vectorBtn = form.elements.vector
     const submitBtn = form.elements.submit
     
     const getLayerNamesContainer = (source) => form.querySelector(`#${formId}-${source}-layerNames`)
@@ -156,6 +157,19 @@ const handleAddLayersForm = () => {
             }
         }
         
+        resetForm()
+        modalInstance.hide()
+    })
+
+    vectorBtn.addEventListener('click', async (e) => {
+        const map = form._leafletMap
+
+        const layer = await getLeafletGeoJSONLayer({
+            geojson: turf.featureCollection([]),
+            group: map._ch.getLayerGroups().client,
+            pane: createCustomPane(map),
+        })
+
         resetForm()
         modalInstance.hide()
     })
