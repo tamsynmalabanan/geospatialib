@@ -413,6 +413,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 
                 const bbox = await getLeafletLayerBbox(layer)
                 const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(bbox))
+                console.log(withinBbox)
 
                 if (isHidden || isInvisible || !withinBbox) {
                     if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
@@ -421,7 +422,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
-
+                    console.log(layer)
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson: (
                             map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) && layer.getLayers().length && !layer._tolerance
