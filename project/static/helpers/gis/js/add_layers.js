@@ -161,21 +161,21 @@ const handleAddLayersForm = () => {
         modalInstance.hide()
     })
 
-    vectorBtn.addEventListener('click', async (e) => {
-        const map = form._leafletMap
-        const group = map._ch.getLayerGroups().client
+    // vectorBtn.addEventListener('click', async (e) => {
+    //     const map = form._leafletMap
+    //     const group = map._ch.getLayerGroups().client
 
-        const layer = await getLeafletGeoJSONLayer({
-            geojson: turf.featureCollection([]),
-            pane: createCustomPane(map),
-            group,
-        })
+    //     const layer = await getLeafletGeoJSONLayer({
+    //         geojson: turf.featureCollection([]),
+    //         pane: createCustomPane(map),
+    //         group,
+    //     })
 
-        if (layer) group.addLayer(layer)
+    //     if (layer) group.addLayer(layer)
 
-        resetForm()
-        modalInstance.hide()
-    })
+    //     resetForm()
+    //     modalInstance.hide()
+    // })
 
     resetBtn.addEventListener('click', resetForm)
 
