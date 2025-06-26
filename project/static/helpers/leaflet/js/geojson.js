@@ -171,15 +171,11 @@ const getLeafletGeoJSONLayer = async ({
         return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
     }
 
-    if (geojson) {
-        console.log(geojson)
-        await normalizeGeoJSON(geojson)
-    }
+    if (geojson) await normalizeGeoJSON(geojson)
 
     if (group._map._legendLayerGroups.includes(group)) {
         geojsonLayer._dbIndexedKey = geojson ? saveToGISDB(
-            geojson, 
-            {...(dbIndexedKey ? {id:dbIndexedKey} : {})}
+            geojson, {...(dbIndexedKey ? {id:dbIndexedKey} : {})}
         ) : dbIndexedKey
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)

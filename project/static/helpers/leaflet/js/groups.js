@@ -161,8 +161,8 @@ const handleLeafletLayerGroups = (map) => {
                 await map._ch.addLegendLayer(i)
             }
         },
-        addLegendLayer: async (layers) => {
-            const {dbIndexedKey, params, properties, zIndex, isHidden, data} = layers
+        addLegendLayer: async (layerData) => {
+            const {dbIndexedKey, params, properties, zIndex, isHidden, data} = layerData
             const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
             for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
@@ -174,8 +174,12 @@ const handleLeafletLayerGroups = (map) => {
                 await handleStyleParams(styleParams)
             }
 
+            if (data) saveToGISDB(data.gisData, {
+                id: dbIndexedKey, 
+                queryExtent: data.queryExtent,
+            })
+
             const layer = await createLeafletLayer(params, {
-                data,
                 dbIndexedKey,
                 group,
                 add: false,
