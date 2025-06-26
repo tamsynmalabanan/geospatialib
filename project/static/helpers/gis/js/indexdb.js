@@ -27,7 +27,6 @@ const saveToGISDB = (gisData, {
         objectStore.put({id, gisData, queryExtent, expirationTime})
     }
 
-    console.log(id)
     return id
 }
 
