@@ -731,6 +731,7 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const checkbox = layer._checkbox
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     const clientLayer = ((geojsonLayer ?? layer)._dbIndexedKey ?? '').startsWith('client')
+    const isMapDrawControlLayer = layer === map._drawControl?.options?.edit?.featureGroup
     
     const addLayer = (l) => group._ch.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
@@ -762,9 +763,12 @@ const getLeafletLayerContextMenu = async (e, layer, {
         },
         // update to check if layer editor is already enabled
         layerEditor: !isLegendGroup || !geojsonLayer || !clientLayer || feature ? null : {
-            innerText: 'Enable layer editor',
+            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
             btnCallback: () => {
-                handleLeafletDrawBtns(map, {targetLayer: geojsonLayer})
+                handleLeafletDrawBtns(map, {
+                    include: !isMapDrawControlLayer,
+                    targetLayer: geojsonLayer
+                })
             }
         },
 

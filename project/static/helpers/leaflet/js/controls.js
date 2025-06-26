@@ -139,14 +139,19 @@ const handleLeafletLocateBtn = (map, {include=true}={}) => {
 
 const handleLeafletDrawBtns = (map, {
     include=true,
-    targetLayer = L.geoJSON(),
+    targetLayer=L.geoJSON(),
 } = {}) => {
+    if (map._drawControl) {
+        map.removeControl(map._drawControl)
+        delete map._drawControl
+    }
+
     if (!include) return
 
     const drawEvents = {
-        'created': (e) => console.log(e),
-        'edited': (e) => console.log(e),
-        'deleted': (e) => console.log(e),
+        'created': (e) => console.log('created', e),
+        'edited': (e) => console.log('edited', e),
+        'deleted': (e) => console.log('deleted', e),
         'drawstart': (e) => {
             disableMapInteractivity(map)
         },
