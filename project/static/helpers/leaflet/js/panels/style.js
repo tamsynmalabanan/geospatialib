@@ -422,9 +422,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
             const iconType = styleParams.iconType
 
-            if (iconType === 'bi') {
-                setBootstrapIconsAsOptions(iconDatalist)
-            } 
+            if (iconType === 'bi') setBootstrapIconsAsOptions(iconDatalist)
 
             if (iconType === 'property') {
                 // update to retrieve properties from wfs/wms

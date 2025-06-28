@@ -352,8 +352,6 @@ const createFeaturePropertiesTable = (properties, {
     table.appendChild(tbody)
     
     Object.keys(properties).forEach(property => {
-        if (property.startsWith('__') && property.endsWith('__')) return
-
         const data = properties[property] ?? null
 
         const tr = document.createElement('tr')
