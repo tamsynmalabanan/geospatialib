@@ -206,7 +206,9 @@ const cleanFeatureProperties = (properties) => {
 
     Object.keys(properties).forEach(i => {
         if (i.startsWith('__') && i.endsWith('__')) return
-        cleanProperties[String(i)] = properties[i]
+     
+        const value = removeWhitespace(String(properties[i] ?? '[undefined]'))
+        cleanProperties[String(i)] = value === '' ? '[blank]' : value
     })                    
 
     return cleanProperties
