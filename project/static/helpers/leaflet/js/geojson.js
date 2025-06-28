@@ -93,44 +93,46 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            const info = geojsonLayer._properties.info
             const properties = feature.properties
-            const tooltip = info.tooltip
-            const popup = info.popup
-
-            layer._params.title = tooltip.properties.length ? (() => {
-                const values = tooltip.properties.map(i => {
-                    let value = properties[i]
-                    if (!isNaN(Number(value))) {
-                        return formatNumberWithCommas(Number(value))
+            if (Object.keys(properties).length) {
+                const info = geojsonLayer._properties.info
+                const tooltip = info.tooltip
+                const popup = info.popup
+    
+                layer._params.title = tooltip.properties.length ? (() => {
+                    const values = tooltip.properties.map(i => {
+                        let value = properties[i]
+                        if (!isNaN(Number(value))) {
+                            return formatNumberWithCommas(Number(value))
+                        }
+                        value = value ?? 'null'
+                        return String(value)
+                    })
+                    return values.some(i => i !== 'null') ? [tooltip.prefix ?? '', values.join(tooltip.delimiter), tooltip.suffix ?? ''].join(' ').trim() : null
+                })() : getFeatureTitle(properties)
+    
+                if (tooltip.active) layer.bindTooltip(layer._params.title, {sticky:true})
+    
+                if (popup.active) {
+                    let popupProperties = {}
+    
+                    if (popup.properties.length) {
+                        for (const i of popup.properties) {
+                            popupProperties[i] = properties[i]
+                        }
+                    } else {
+                        popupProperties = cleanFeatureProperties(properties)
                     }
-                    value = value ?? 'null'
-                    return String(value)
-                })
-                return values.some(i => i !== 'null') ? [tooltip.prefix ?? '', values.join(tooltip.delimiter), tooltip.suffix ?? ''].join(' ').trim() : null
-            })() : getFeatureTitle(properties)
-
-            if (tooltip.active) layer.bindTooltip(layer._params.title, {sticky:true})
-
-            if (popup.active) {
-                let popupProperties = {}
-
-                if (popup.properties.length) {
-                    for (const i of popup.properties) {
-                        popupProperties[i] = properties[i]
-                    }
-                } else {
-                    popupProperties = cleanFeatureProperties(properties)
+    
+                    const popupContent = createFeaturePropertiesTable(popupProperties, {
+                        header: (() => {
+                            const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
+                            layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                            return popupHeader()
+                        })()
+                    }).outerHTML
+                    layer.bindPopup(popupContent, {autoPan: false})
                 }
-
-                const popupContent = createFeaturePropertiesTable(popupProperties, {
-                    header: (() => {
-                        const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
-                        layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                        return popupHeader()
-                    })()
-                }).outerHTML
-                layer.bindPopup(popupContent, {autoPan: false})
             }
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
