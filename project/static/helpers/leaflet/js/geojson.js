@@ -93,7 +93,7 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            const properties = feature.properties
+            const properties = cleanFeatureProperties(feature.properties)
             if (Object.keys(properties).length) {
                 const info = geojsonLayer._properties.info
                 const tooltip = info.tooltip
@@ -111,17 +111,16 @@ const getLeafletGeoJSONLayer = async ({
                     return values.some(i => i !== 'null') ? [tooltip.prefix ?? '', values.join(tooltip.delimiter), tooltip.suffix ?? ''].join(' ').trim() : null
                 })() : getFeatureTitle(properties)
     
-                if (tooltip.active) layer.bindTooltip(layer._params.title, {sticky:true})
+                if (tooltip.active && layer._params.title) layer.bindTooltip(layer._params.title, {sticky:true})
     
                 if (popup.active) {
                     let popupProperties = {}
-    
                     if (popup.properties.length) {
                         for (const i of popup.properties) {
                             popupProperties[i] = properties[i]
                         }
                     } else {
-                        popupProperties = cleanFeatureProperties(properties)
+                        popupProperties = properties
                     }
     
                     const popupContent = createFeaturePropertiesTable(popupProperties, {
