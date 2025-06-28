@@ -392,11 +392,14 @@ const handleLeafletLegendPanel = async (map, parent) => {
     map.on('moveend zoomend', (e) => {
         clearTimeout(timeout)
         timeout = setTimeout(async () => {
+            const mapBboxId = `map-bbox-${map.getContainer().id}`
+            const previousBbox = map._previousBbox ?? turf.bboxPolygon(JSON.parse(localStorage.getItem(mapBboxId) ?? '[-180,-90,180,90]'))
+            
             const newBbox = turf.bboxPolygon(getLeafletMapBbox(map))
             Array.from(document.querySelectorAll(`[data-form-map-id="${map.getContainer().id}"] [data-map-bbox-field="true"]`)).forEach(i => {
                 i.value = JSON.stringify(newBbox.geometry)
             })
-            localStorage.setItem(`map-bbox-${map.getContainer().id}`, JSON.stringify(turf.bbox(newBbox)))
+            localStorage.setItem(mapBboxId, JSON.stringify(turf.bbox(newBbox)))
             
             const controllerId = controller.id
             const promises = []
@@ -413,7 +416,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 
                 const bbox = await getLeafletLayerBbox(layer)
                 const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(bbox))
-                console.log(bbox,withinBbox)
 
                 if (isHidden || isInvisible || !withinBbox) {
                     if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
@@ -422,11 +424,12 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
+
+                    const geojson = turf.booleanWithin(newBbox, previousBbox) && layer.getLayers().length? layer.toGeoJSON() : null
+                    console.log(newBbox, previousBbox, geojson)
+
                     promises.push(updateLeafletGeoJSONLayer(layer, {
-                        geojson: (
-                            map._previousBbox && turf.booleanWithin(newBbox, map._previousBbox) && layer.getLayers().length && !layer._tolerance
-                            ? layer.toGeoJSON() : null
-                        ),
+                        geojson,
                         controller,
                         updateCache: false,
                     }).then(() => {
