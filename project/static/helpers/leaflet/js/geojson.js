@@ -227,8 +227,6 @@ const getFeatureTitle = (properties) => {
 
     if (!title) {
         for (const key in properties) {
-            if (key.startsWith('__') && key.endsWith('__')) continue
-            
             const value = properties[key]
             if (typeof value === 'object' || value.length > 50) continue
             
