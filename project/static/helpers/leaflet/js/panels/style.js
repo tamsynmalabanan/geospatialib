@@ -432,9 +432,9 @@ const handleLeafletStylePanel = (map, parent) => {
                     controller,
                 })) || layer.toGeoJSON()
                 if (geojson) {
-                    const options = []
+                    let options = []
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        Object.keys(currentProperties).forEach(i => options.push(i))
+                        options = [...options, ...Object.keys(cleanFeatureProperties(currentProperties))]
                     })
 
                     const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
@@ -1499,13 +1499,14 @@ const handleLeafletStylePanel = (map, parent) => {
                     field.innerHTML = ''
 
                     // update to fetch properties from wfs (wms?)
-                    const options = []
                     const geojson = (await getLeafletGeoJSONData(layer, {
                         controller,
                         filter:false,
                     })) || layer.toGeoJSON()
+                    
+                    let options = []
                     turf.propEach(geojson, (currentProperties, featureIndex) => {
-                        Object.keys(currentProperties).forEach(i => options.push(i))
+                        options = [...options, ...Object.keys(cleanFeatureProperties(currentProperties))]
                     })
 
                     const optionsSet = options.length ? new Set(options) : []
@@ -1921,10 +1922,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                         if (!geojson) return
                                         
                                         const tagify = Tagify(form.elements['groupBy'])
-                                        const options = symbology.method === 'categorized' ? ['[geometry_type]'] : []
+                                        
+                                        let options = symbology.method === 'categorized' ? ['[geometry_type]'] : []
                                         turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                            Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                            options = [...options, ...Object.keys(cleanFeatureProperties(currentProperties))]
                                         })
+                                        
                                         const optionsSet = options.length ? new Set(options) : []
                                         const sortedOptions = [...optionsSet].filter(i => {
                                             return !(symbology.groupBy || []).includes(i)
@@ -2122,10 +2125,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                         if (!geojson) return
                                         
                                         const tagify = Tagify(form.elements['tooltipProps'])
-                                        const options = []
+                                        
+                                        let options = []
                                         turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                            Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                            options = [...options, ...Object.keys(cleanFeatureProperties(currentProperties))]
                                         })
+                                        
                                         const optionsSet = options.length ? new Set(options) : []
                                         const sortedOptions = [...optionsSet].filter(i => {
                                             return !(info.tooltip.properties || []).includes(i)
@@ -2260,10 +2265,12 @@ const handleLeafletStylePanel = (map, parent) => {
                                         if (!geojson) return
                                         
                                         const tagify = Tagify(form.elements['popupProps'])
-                                        const options = []
+                                        
+                                        let options = []
                                         turf.propEach(geojson, (currentProperties, featureIndex) => {
-                                            Object.keys(currentProperties).forEach(i => options.push(String(i)))
+                                            options = [...options, ...Object.keys(cleanFeatureProperties(currentProperties))]
                                         })
+                                        
                                         const optionsSet = options.length ? new Set(options) : []
                                         const sortedOptions = [...optionsSet].filter(i => {
                                             return !(info.popup.properties || []).includes(i)
