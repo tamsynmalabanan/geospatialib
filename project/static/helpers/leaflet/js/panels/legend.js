@@ -114,6 +114,13 @@ const createLeafletLegendItem = (layer) => {
         })
     })
 
+    if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
+        legendTitle.appendChild(customCreateElement({
+            tag: 'i', 
+            className:'bi bi-pencil-square'
+        }))
+    }
+
     const toggleContainer = customCreateElement({
         tag: 'div',
         className: 'ms-auto ps-5 d-flex flex-nowrap gap-2',

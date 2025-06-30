@@ -168,7 +168,7 @@ const handleLeafletLayerGroups = (map) => {
             }
         },
         addLegendLayer: async (layerData) => {
-            let {dbIndexedKey, params, properties, zIndex, isHidden, data, editable} = layerData
+            let {dbIndexedKey, params, properties, isHidden, data, editable} = layerData
             const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
             for (const i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
@@ -191,7 +191,9 @@ const handleLeafletLayerGroups = (map) => {
             if (layer) {
                 if (isHidden) group._ch.addHiddenLayer(layer)
                 group.addLayer(layer)
-                if (editable) await toggleLeafletLayerEditor(layer)
+                if (editable && (dbIndexedKey !== map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)) {
+                    await toggleLeafletLayerEditor(layer)
+                }
             }
         },
         getLayerGroups: () => {
