@@ -95,7 +95,8 @@ const handleExportLayersForm = () => {
             
             if (layer.editable) {
                 layer.editable = false
-                layer.dbIndexedKey = layer.dbIndexedKey.replace('-editable', '')
+                const [id, version] = layer.dbIndexedKey.split('--version')
+                if (version) layer.dbIndexedKey = `${id}--version${Number(version)-1}`
             }
             
             layer.data = await getFromGISDB(layer.dbIndexedKey)

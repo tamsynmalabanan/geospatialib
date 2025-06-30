@@ -37,7 +37,7 @@ const saveToGISDB = async (gisData, {
     if (!id) {
         const currentIds = await getAllGISDBKeys()
         while (!id || currentIds.includes(id)) {
-            id = `client;${generateRandomString()}`
+            id = `client;${generateRandomString()}--version0`
         }
     }
 

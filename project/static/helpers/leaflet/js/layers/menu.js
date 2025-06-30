@@ -35,9 +35,10 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const checkbox = layer._checkbox
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
-    const clientLayer = ((geojsonLayer ?? layer)._dbIndexedKey ?? '').startsWith('client')
+    const dbIndexedKey = (geojsonLayer ?? layer)._dbIndexedKey
+    const clientLayer = (dbIndexedKey ?? '').startsWith('client')
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
-    const isMapDrawControlLayer = (geojsonLayer ?? layer) === map._drawControl?.options?.edit?.featureGroup
+    const isMapDrawControlLayer = dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
     
     const addLayer = (l) => group._ch.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)

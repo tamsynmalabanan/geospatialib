@@ -137,20 +137,24 @@ const handleLeafletLayerGroups = (map) => {
 
             const storedData = map._ch.getStoredLegendLayers()
 
-            if (layer) {
+            const updateStoredLayerData = (layer) => {
                 storedData[layer._leaflet_id] = {...(storedData[layer._leaflet_id] ?? {}), ...{
                     dbIndexedKey: layer._dbIndexedKey,
                     params: layer._params,
                     properties: layer._properties,
                     zIndex: map.getPanes()[layer.options.pane].style.zIndex,
                     isHidden: map._ch.hasHiddenLegendLayer(layer) ? true : false,
-                    editable: layer === map._drawControl?.options?.edit?.featureGroup,
+                    editable: layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey,
                 }}
             }
 
-            if (handler) {
-                handler(storedData)
-            }
+            if (layer) updateStoredLayerData(layer)
+
+            if (handler) handler(storedData)
+
+            if (!layer && !handler) map._ch.getAllLegendLayers().forEach(layer => {
+                updateStoredLayerData(layer)
+            })
 
             localStorage.setItem(map._ch.storedLegendLayersKey, JSON.stringify(storedData))
         },
@@ -253,11 +257,15 @@ const handleLeafletLayerGroups = (map) => {
                 group._ch.removeAllHiddenLayers()
             }
         },
-        zoomToLegendLayers: async () => {
+        getAllLegendLayers: () => {
             let layers = []
             map._legendLayerGroups.forEach(group => {
                 layers = layers.concat(group._ch.getAllLayers()) 
             })
+            return layers
+        },
+        zoomToLegendLayers: async () => {
+            const layers = map._ch.getAllLegendLayers()
 
             const bounds = (await Promise.all(
                 layers.map(async layer => {

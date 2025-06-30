@@ -855,12 +855,16 @@ const toggleLeafletLayerEditor = async (layer) => {
     if (!map) return
     
     const editableLayer = map._drawControl?.options?.edit?.featureGroup
-    const enableEditor = editableLayer !== layer
-    const legendLayers = document.querySelector(`#${map.getContainer().id}-panels-legend-layers`)
+    const enableEditor = editableLayer._dbIndexedKey !== layer._dbIndexedKey
+    const layerLegends = document.querySelector(`#${map.getContainer().id}-panels-legend-layers`)
+    const clientLayers = layer._group.getLayers()
 
     if (editableLayer) {
-        const legend = legendLayers.querySelector(`#${legendLayers.id}-${editableLayer._leaflet_id}`)
-        legend.querySelector(`.bi.bi-pencil-square`).remove()
+        clientLayers.forEach(i => {
+            if (i._dbIndexedKey !== editableLayer._dbIndexedKey) return
+            const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
+            legend.querySelector(`.bi.bi-pencil-square`).remove()
+        })
     }
     
     handleLeafletDrawBtns(map, {
@@ -870,15 +874,17 @@ const toggleLeafletLayerEditor = async (layer) => {
 
     map._ch.updateStoredLegendLayers({layer:editableLayer})
 
-    if (!enableEditor) return
+    if (enableEditor) {
+        clientLayers.forEach(i => {
+            if (i._dbIndexedKey !== layer._dbIndexedKey) return
+            const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
+            const title = legend.querySelector(`#${legend.id}-title`)
+            title.insertBefore(customCreateElement({
+                tag: 'i', 
+                className:'bi bi-pencil-square'
+            }), title.lastChild)
+        })
+    }
 
-    // enable layer editor
-    const legend = legendLayers.querySelector(`#${legendLayers.id}-${layer._leaflet_id}`)
-    const title = legend.querySelector(`#${legend.id}-title`)
-    title.insertBefore(customCreateElement({
-        tag: 'i', 
-        className:'bi bi-pencil-square'
-    }), title.lastChild)
-
-    map._ch.updateStoredLegendLayers({layer})
+    map._ch.updateStoredLegendLayers()
 }
