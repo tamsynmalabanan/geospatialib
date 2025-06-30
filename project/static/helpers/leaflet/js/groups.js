@@ -190,7 +190,7 @@ const handleLeafletLayerGroups = (map) => {
                 if (isHidden) group._ch.addHiddenLayer(layer)
                 group.addLayer(layer)
                 if (editable && (dbIndexedKey !== map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)) {
-                    await toggleLeafletLayerEditor(layer)
+                    await toggleLeafletLayerEditor(layer, {keepVersion:true})
                 }
             }
         },

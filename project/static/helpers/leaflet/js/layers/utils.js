@@ -850,7 +850,9 @@ const fileToLeafletLayer = async ({
     return layer
 }
 
-const toggleLeafletLayerEditor = async (layer) => {
+const toggleLeafletLayerEditor = async (layer, {
+    keepVersion=false
+} = {}) => {
     const map = layer?._group?._map
     if (!map) return
     
@@ -885,7 +887,7 @@ const toggleLeafletLayerEditor = async (layer) => {
     if (enableEditor) {
         const {gisData, queryExtent} = await getFromGISDB(layer._dbIndexedKey)
         const [id, version] = layer._dbIndexedKey.split('--version')
-        const newDBIndexedKey = await saveToGISDB(gisData, {
+        const newDBIndexedKey = keepVersion ? layer._dbIndexedKey : await saveToGISDB(gisData, {
             id: `${id}--version${Number(version ?? 1)+1}`,
             queryExtent,
         })
