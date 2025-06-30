@@ -25,7 +25,7 @@ const saveToGISDB = (gisData, {
         const objectStore = transaction.objectStore('gis')
 
         if (!id) {
-            const currentKeys = new Promise(async (resolve, reject) => {
+            const currentKeys = await new Promise(async (resolve, reject) => {
                 const keysRequest = objectStore.getAllKeys()
                 keysRequest.onsuccess = () => {
                     resolve(keysRequest.result)
