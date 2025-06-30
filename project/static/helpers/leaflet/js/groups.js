@@ -110,7 +110,7 @@ const handleLeafletLayerGroups = (map) => {
 
                 if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
                     if (!map._ch.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
-                        delete map._drawControl
+                        handleLeafletDrawBtns(map, {include:false})
                     }
                 }
             },
@@ -253,7 +253,7 @@ const handleLeafletLayerGroups = (map) => {
                 await group._ch.clearAllLayers()
             })
 
-            delete map._drawControl
+            handleLeafletDrawBtns(map, {include:false})
         },
         hideLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
