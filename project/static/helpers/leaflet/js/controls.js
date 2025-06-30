@@ -185,7 +185,7 @@ const handleLeafletDrawBtns = (map, {
         // },
     }
 
-    const drawControl = new L.Control.Draw({
+    const drawControl = map._drawControl = new L.Control.Draw({
         position: 'topleft',
         draw: {
             polyline: true,
@@ -202,14 +202,10 @@ const handleLeafletDrawBtns = (map, {
     })
     
     Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i]))
-    drawControl.onRemove = (map) => {
-        Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
-    }
+    drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     
     drawControl.addTo(map)
-    map._drawControl = drawControl
-
-    return targetLayer
+    return drawControl
 }
 
 const leafletControls = {
