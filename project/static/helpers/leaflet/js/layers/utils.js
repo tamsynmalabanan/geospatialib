@@ -849,3 +849,26 @@ const fileToLeafletLayer = async ({
     
     return layer
 }
+
+const toggleLeafletLayerEditor = async (layer) => {
+    const map = layer._group?._map
+    if (!map) return
+    
+    const editableLayer = map._drawControl?.options?.edit?.featureGroup
+    if (editableLayer) {
+        const legend = getLeafletLayerLegend(editableLayer)
+        legend.querySelector(`#${legend.id}-title div`).firstChild.remove()
+    }
+
+    if (editableLayer === layer) return
+
+    // enable layer editor
+    const legend = getLeafletLayerLegend(layer)
+    const icons = legend.querySelector(`#${legend.id}-title div`)
+    icons.insertBefore(customCreateElement({tag: 'i', className:'bi bi-pencil'}), icons.firstChild)
+    
+    // handleLeafletDrawBtns(map, {
+    //     include: !isMapDrawControlLayer,
+    //     targetLayer: layer
+    // })
+}

@@ -67,16 +67,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 })) 
             }
         },
-        enableEditor: !editableLayer && !isMapDrawControlLayer ? null : {
-            innerText: `Edit layer`,
-            btnCallback: () => {
-                console.log(event)
-
-                // handleLeafletDrawBtns(map, {
-                //     include: !isMapDrawControlLayer,
-                //     targetLayer: geojsonLayer
-                // })
-            }
+        toggleEditor: !editableLayer ? null : {
+            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
+            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
         },
 
         divider1: !feature || isSearch ? null : {
