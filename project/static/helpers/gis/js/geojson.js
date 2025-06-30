@@ -430,7 +430,7 @@ const getGeoJSON = async (dbKey, {
                 const cachedData = await getFromGISDB(dbKey)
                 if (!cachedData) {
                     if (isClient) {
-                        return new Error('Cached data not found.')
+                        return new Error('Stored data not found.')
                     } else {
                         return
                     }

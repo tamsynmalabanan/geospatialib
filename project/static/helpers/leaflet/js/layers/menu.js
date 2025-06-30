@@ -1,4 +1,4 @@
-const getLeafletLayerContextMenu = async (e, layer, {
+const getLeafletLayerContextMenu = async (event, layer, {
 
 } = {}) => {
     if (!layer) return 
@@ -34,13 +34,15 @@ const getLeafletLayerContextMenu = async (e, layer, {
     const isSearch = group._name === 'search'
     const checkbox = layer._checkbox
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
+    
     const clientLayer = ((geojsonLayer ?? layer)._dbIndexedKey ?? '').startsWith('client')
-    const isMapDrawControlLayer = layer === map._drawControl?.options?.edit?.featureGroup
+    const editableLayer = isLegendGroup && geojsonLayer && clientLayer
+    const isMapDrawControlLayer = (geojsonLayer ?? layer) === map._drawControl?.options?.edit?.featureGroup
     
     const addLayer = (l) => group._ch.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
     
-    return contextMenuHandler(e, {
+    return contextMenuHandler(event, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
@@ -65,13 +67,15 @@ const getLeafletLayerContextMenu = async (e, layer, {
                 })) 
             }
         },
-        layerEditor: !isLegendGroup || !geojsonLayer || !clientLayer || feature ? null : {
-            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
+        enableEditor: !editableLayer && !isMapDrawControlLayer ? null : {
+            innerText: `Edit layer`,
             btnCallback: () => {
-                handleLeafletDrawBtns(map, {
-                    include: !isMapDrawControlLayer,
-                    targetLayer: geojsonLayer
-                })
+                console.log(event)
+
+                // handleLeafletDrawBtns(map, {
+                //     include: !isMapDrawControlLayer,
+                //     targetLayer: geojsonLayer
+                // })
             }
         },
 

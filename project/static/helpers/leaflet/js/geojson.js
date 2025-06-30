@@ -384,7 +384,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     layer.addData(data)
     layer.fire('dataupdate')
     
-    if (updateCache) layer._map?._ch.updateCachedLegendLayers({layer})
+    if (updateCache) layer._map?._ch.updateStoredLegendLayers({layer})
 }
 
 const getGeoJSONLayerStyles = (layer) => {

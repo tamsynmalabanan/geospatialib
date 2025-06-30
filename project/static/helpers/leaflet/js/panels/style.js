@@ -310,7 +310,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const legendLabel = legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)
                     if (legendLabel) legendLabel.innerText = value
 
-                    map._ch.updateCachedLegendLayers({layer})
+                    map._ch.updateStoredLegendLayers({layer})
                 }
             }
         })
@@ -333,7 +333,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     style.showLabel = value
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)?.classList.toggle('d-none', !value)
 
-                    map._ch.updateCachedLegendLayers({layer})
+                    map._ch.updateStoredLegendLayers({layer})
                 }
             }
         })
@@ -351,7 +351,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     style.showCount = value
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-count`)?.classList.toggle('d-none', !value)
 
-                    map._ch.updateCachedLegendLayers({layer})
+                    map._ch.updateStoredLegendLayers({layer})
                 }
             }
         })
@@ -1760,7 +1760,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     select.options[select.selectedIndex].text = field.value
 
-                                    map._ch.updateCachedLegendLayers({layer})
+                                    map._ch.updateStoredLegendLayers({layer})
                                 }
                             }
                         },
@@ -1793,7 +1793,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             )                    
 
                                             layer._properties.info.showLegend = e.target.checked
-                                            map._ch.updateCachedLegendLayers({layer})
+                                            map._ch.updateStoredLegendLayers({layer})
                                         }
                                     }
                                 }))
@@ -1808,7 +1808,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         click: (e) => {
                                             attribution.classList.toggle('d-none')
                                             layer._properties.info.showAttribution = e.target.checked
-                                            map._ch.updateCachedLegendLayers({layer})
+                                            map._ch.updateStoredLegendLayers({layer})
                                         }
                                     }
                                 }))
@@ -1844,7 +1844,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
 
-                                    map._ch.updateCachedLegendLayers({layer})
+                                    map._ch.updateStoredLegendLayers({layer})
                                 }
                             }
                         },

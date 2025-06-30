@@ -85,7 +85,7 @@ const createLeafletLegendItem = (layer) => {
                         zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
                     }
 
-                    map._ch.updateCachedLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
+                    map._ch.updateStoredLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
                 }
 
                 container.style.top = '0px'
@@ -222,7 +222,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     const layer = map._ch.getLegendLayer(el.dataset.layerId)
                     layer._properties.info.showLegend = show
-                    map._ch.updateCachedLegendLayers({layer})
+                    map._ch.updateStoredLegendLayers({layer})
                 })
 
                 const checkbox = getStyleBody().querySelector('[name="showLegend"]')
@@ -241,7 +241,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     const layer = map._ch.getLegendLayer(el.dataset.layerId)
                     layer._properties.info.showAttribution = show
-                    map._ch.updateCachedLegendLayers({layer})
+                    map._ch.updateStoredLegendLayers({layer})
                 })
 
                 const checkbox = getStyleBody().querySelector('[name="showAttr"]')
@@ -461,7 +461,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isHidden, isInvisible})
             if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
-            map._ch.updateCachedLegendLayers({layer})
+            map._ch.updateStoredLegendLayers({layer})
         } else {
             if (layerLegend) {
                 layerLegend.remove()
@@ -475,7 +475,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
             if (layer instanceof L.GeoJSON) deleteLeafletLayerFillPatterns(layer)
 
-            map._ch.updateCachedLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
+            map._ch.updateStoredLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
         }
     })
 
@@ -517,7 +517,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             // console.log('isHidden, isInvisible', isHidden, isInvisible)
             map.removeLayer(layer)
         } else {
-            map._ch.updateCachedLegendLayers({layer})
+            map._ch.updateStoredLegendLayers({layer})
     
             if (!isGeoJSON) {
                 const details = container.querySelector(`#${container.id}-details`)
@@ -553,7 +553,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         const cachedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
         if (cachedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(cachedBbox))).getBounds())
     
-        map._ch.addCachedLegendLayers().then(() => {
+        map._ch.addStoredLegendLayers().then(() => {
             layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
             Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
         })

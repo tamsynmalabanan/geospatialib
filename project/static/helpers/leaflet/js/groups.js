@@ -130,48 +130,46 @@ const handleLeafletLayerGroups = (map) => {
     })
 
     map._ch = {
-        getCachedLegendLayersKey: () => `legend-layers-${map.getContainer().id}`,
-        getCachedLegendLayers: () => JSON.parse(localStorage.getItem(map._ch.getCachedLegendLayersKey()) ?? '{}'),
-        updateCachedLegendLayers: ({handler, layer}={}) => {
+        storedLegendLayersKey: `legend-layers-${map.getContainer().id}`,
+        getStoredLegendLayers: () => JSON.parse(localStorage.getItem(map._ch.storedLegendLayersKey) ?? '{}'),
+        updateStoredLegendLayers: ({handler, layer}={}) => {
             if (!handler && !layer) return
 
-            const cached = map._ch.getCachedLegendLayers()
+            const storedData = map._ch.getStoredLegendLayers()
 
             if (layer) {
-                const layerData = cached[layer._leaflet_id] = cached[layer._leaflet_id] ?? {}
-                layerData.dbIndexedKey = layer._dbIndexedKey
-                layerData.params = layer._params
-                layerData.properties = layer._properties
-                layerData.zIndex = map.getPanes()[layer.options.pane].style.zIndex
-                layerData.isHidden = map._ch.hasHiddenLegendLayer(layer) ? true : false
+                storedData[layer._leaflet_id] = {...(storedData[layer._leaflet_id] ?? {}), ...{
+                    dbIndexedKey: layer._dbIndexedKey,
+                    params: layer._params,
+                    properties: layer._properties,
+                    zIndex: map.getPanes()[layer.options.pane].style.zIndex,
+                    isHidden: map._ch.hasHiddenLegendLayer(layer) ? true : false,
+                    editable: layer === map._drawControl?.options?.edit?.featureGroup,
+                }}
             }
 
             if (handler) {
-                handler(cached)
+                handler(storedData)
             }
 
-            localStorage.setItem(map._ch.getCachedLegendLayersKey(), JSON.stringify(cached))
+            localStorage.setItem(map._ch.storedLegendLayersKey, JSON.stringify(storedData))
         },
-        addCachedLegendLayers: async () => {
-            const cached = map._ch.getCachedLegendLayers()
+        addStoredLegendLayers: async () => {
+            const storedData = map._ch.getStoredLegendLayers()
 
-            localStorage.removeItem(map._ch.getCachedLegendLayersKey())
-            const cachedLayers = Object.values(cached).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
+            localStorage.removeItem(map._ch.storedLegendLayersKey)
+            const cachedLayers = Object.values(storedData).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
             for (i of cachedLayers) {
                 await map._ch.addLegendLayer(i)
             }
         },
         addLegendLayer: async (layerData) => {
-            const {dbIndexedKey, params, properties, zIndex, isHidden, data} = layerData
+            const {dbIndexedKey, params, properties, zIndex, isHidden, data, editable} = layerData
             const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
-            for (i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
-                if (!i) continue
-                
-                const styleParams = i.styleParams
-                if (styleParams?.fillPattern !== 'icon') continue
-                
-                await handleStyleParams(styleParams)
+            for (const i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
+                if (i?.styleParams?.fillPattern !== 'icon') continue
+                await handleStyleParams(i.styleParams)
             }
 
             if (data) saveToGISDB(data.gisData, {
@@ -189,6 +187,10 @@ const handleLeafletLayerGroups = (map) => {
             if (layer) {
                 if (isHidden) group._ch.addHiddenLayer(layer)
                 group.addLayer(layer)
+            }
+
+            if (editable) {
+                
             }
         },
         getLayerGroups: () => {
