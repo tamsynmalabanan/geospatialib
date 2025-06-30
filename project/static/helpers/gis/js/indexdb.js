@@ -30,6 +30,9 @@ const saveToGISDB = (gisData, {
                 keysRequest.onsuccess = () => {
                     resolve(keysRequest.result)
                 }
+                keysRequest.onerror = () => {
+                    reject()
+                }
             })
             console.log(currentKeys)
             id = `client;${generateRandomString()}`
