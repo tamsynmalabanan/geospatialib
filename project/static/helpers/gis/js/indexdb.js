@@ -11,56 +11,64 @@ const requestGISDB = () => {
     return request
 }
 
-const saveToGISDB = (gisData, {
+const getAllGISDBKeys = async () => {
+    return new Promise(async (resolve, reject) => {
+        const request = requestGISDB()
+        request.onsuccess = (e) => {
+            const db = e.target.result
+            const transaction = db.transaction(['gis'], 'readonly')
+            const objectStore = transaction.objectStore('gis')
+            
+            const keysRequest = objectStore.getAllKeys()
+            keysRequest.onsuccess = () => resolve(keysRequest.result)
+            keysRequest.onerror = () => resolve([])
+        }
+        request.onerror = (e) => resolve([])
+    })
+}
+
+const saveToGISDB = async (gisData, {
     id, 
     queryExtent, 
     expirationDays=7,
 }={}) => {
     if (!gisData) return
 
+    if (!id) {
+        const currentIds = await getAllGISDBKeys()
+        while (!id || currentIds.includes(id)) {
+            id = `client;${generateRandomString()}`
+        }
+    }
+
+    if (!queryExtent && gisData.type === 'FeatureCollection') {
+        queryExtent = turf.bboxPolygon(turf.bbox(gisData)).geometry
+    }
+
+    const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
+
     const request = requestGISDB()
     request.onsuccess = async (e) => {
         const db = e.target.result
         const transaction = db.transaction(['gis'], 'readwrite')
         const objectStore = transaction.objectStore('gis')
-
-        if (!id) {
-            const currentKeys = await new Promise(async (resolve, reject) => {
-                const keysRequest = objectStore.getAllKeys()
-                keysRequest.onsuccess = () => {
-                    resolve(keysRequest.result)
-                }
-                keysRequest.onerror = () => {
-                    reject()
-                }
-            })
-            console.log(currentKeys)
-            id = `client;${generateRandomString()}`
-        }
-
-        if (!queryExtent && gisData.type === 'FeatureCollection') {
-            queryExtent = turf.bboxPolygon(turf.bbox(gisData)).geometry
-        }
-
-        const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
         objectStore.put({id, gisData, queryExtent, expirationTime})
     }
 
-    console.log(id)
     return id
 }
 
 const updateGISDB = async (id, newGISData, newQueryExtent) => {
     return new Promise(async (resolve, reject) => {
-        const save = (data) => {
+        const save = async (data) => {
             const {gisData, queryExtent} = data
-            if (data) saveToGISDB(gisData, {id, queryExtent})
+            if (data) await saveToGISDB(gisData, {id, queryExtent})
             resolve()
         }
         
         const cachedData = await getFromGISDB(id, {save:false})
         if (!cachedData) {
-            save({
+            await save({
                 gisData:newGISData, 
                 queryExtent:newQueryExtent,
             })
@@ -74,8 +82,8 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
                 currentQueryExtent: cachedData.queryExtent,
             })
     
-            worker.onmessage = (e) => {
-                save(e.data)
+            worker.onmessage = async (e) => {
+                await save(e.data)
                 worker.terminate()
             }
             
@@ -97,12 +105,12 @@ const getFromGISDB = async (id, {save=true}={}) => {
             const objectStore = transaction.objectStore('gis')
             const gisDataRequest = objectStore.get(id)
     
-            gisDataRequest.onsuccess = (e) => {
+            gisDataRequest.onsuccess = async (e) => {
                 const result = e.target.result
                 if (!result) return resolve(null)
                 
                 const {gisData, queryExtent} = result
-                if (save) saveToGISDB(gisData, {id, queryExtent})
+                if (save) await saveToGISDB(gisData, {id, queryExtent})
                 resolve({gisData:structuredClone(gisData), queryExtent})
             }
     

@@ -176,7 +176,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     if (group._map._legendLayerGroups.includes(group)) {
-        geojsonLayer._dbIndexedKey = geojson ? saveToGISDB(
+        geojsonLayer._dbIndexedKey = geojson ? await saveToGISDB(
             geojson, {...(dbIndexedKey ? {id:dbIndexedKey} : {})}
         ) : dbIndexedKey
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
