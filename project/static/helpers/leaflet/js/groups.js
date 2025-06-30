@@ -112,9 +112,13 @@ const handleLeafletLayerGroups = (map) => {
                     if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
                         toggleLeafletLayerEditor(layer)
                     }
-
+                    
                     if (groupName === 'client') {
-                        deleteFromGISDB(layer._dbIndexedKey)
+                        const [id, version] = layer._dbIndexedKey.split('--version')
+                        const keys = await getAllGISDBKeys()
+                        keys.forEach(k => {
+                            if (k.startsWith(id)) deleteFromGISDB(k)
+                        })
                     }
                 }
             },
