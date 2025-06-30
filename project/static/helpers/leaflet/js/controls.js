@@ -148,7 +148,23 @@ const handleLeafletDrawBtns = (map, {
 
     if (!include) return
 
-    const drawEvents = {
+    const drawControl = map._drawControl = new L.Control.Draw({
+        position: 'topleft',
+        draw: {
+            polyline: true,
+            polygon: true,
+            rectangle: true,
+            marker: true,
+
+            circle: false,
+            circlemarker: false,
+        },
+        edit: {
+            featureGroup: targetLayer,
+        }
+    })
+    
+        const drawEvents = {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             if (targetLayer._dbIndexedKey) {
@@ -166,9 +182,17 @@ const handleLeafletDrawBtns = (map, {
             } else {
                 targetLayer.addData(geojson)
             }
+            
+            drawControl._updated = true
         },
-        'edited': (e) => console.log('edited', e),
-        'deleted': (e) => console.log('deleted', e),
+        'edited': (e) => {
+            console.log('edited', e)
+            drawControl._updated = true
+        },
+        'deleted': (e) => {
+            console.log('deleted', e)
+            drawControl._updated = true
+        },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
         // },
@@ -189,25 +213,10 @@ const handleLeafletDrawBtns = (map, {
         // },
     }
 
-    const drawControl = map._drawControl = new L.Control.Draw({
-        position: 'topleft',
-        draw: {
-            polyline: true,
-            polygon: true,
-            rectangle: true,
-            marker: true,
-
-            circle: false,
-            circlemarker: false,
-        },
-        edit: {
-            featureGroup: targetLayer,
-        }
-    })
-    
     Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i]))
     drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     
+    drawControl._updated = false
     drawControl.addTo(map)
     return drawControl
 }

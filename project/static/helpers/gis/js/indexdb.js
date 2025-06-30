@@ -37,7 +37,7 @@ const saveToGISDB = async (gisData, {
     if (!id) {
         const currentIds = await getAllGISDBKeys()
         while (!id || currentIds.includes(id)) {
-            id = `client;${generateRandomString()}--version0`
+            id = `client;${generateRandomString()}--version1`
         }
     }
 
@@ -69,8 +69,8 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
         const cachedData = await getFromGISDB(id, {save:false})
         if (!cachedData) {
             await save({
-                gisData:newGISData, 
-                queryExtent:newQueryExtent,
+                gisData: newGISData, 
+                queryExtent: newQueryExtent,
             })
         } else {
             const worker = new Worker('/static/helpers/gis/js/workers/indexdb-update.js')

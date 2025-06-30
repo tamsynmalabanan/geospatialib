@@ -860,8 +860,18 @@ const toggleLeafletLayerEditor = async (layer) => {
     const clientLayers = layer._group.getLayers()
 
     if (editableLayer) {
+        const [id, version] = editableLayer._dbIndexedKey.split('--version')
+        let newDBIndexedKey = editableLayer._dbIndexedKey
+        if (!map._drawControl._updated) {
+            newDBIndexedKey = `${id}--version${Number(version ?? 2)-1}`
+            deleteFromGISDB(editableLayer._dbIndexedKey)
+        }
+
         clientLayers.forEach(i => {
-            if (i._dbIndexedKey !== editableLayer._dbIndexedKey) return
+            if (!i._dbIndexedKey.startsWith(id)) return
+
+            i._dbIndexedKey = newDBIndexedKey
+
             const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
             legend.querySelector(`.bi.bi-pencil-square`).remove()
         })
@@ -875,8 +885,18 @@ const toggleLeafletLayerEditor = async (layer) => {
     map._ch.updateStoredLegendLayers({layer:editableLayer})
 
     if (enableEditor) {
+        const {gisData, queryExtent} = await getFromGISDB(layer._dbIndexedKey)
+        const [id, version] = layer._dbIndexedKey.split('--version')
+        const newDBIndexedKey = await saveToGISDB(gisData, {
+            id: `${id}--version${Number(version ?? 1)+1}`,
+            queryExtent,
+        })
+
         clientLayers.forEach(i => {
-            if (i._dbIndexedKey !== layer._dbIndexedKey) return
+            if (!i._dbIndexedKey.startsWith(id)) return
+
+            i._dbIndexedKey = newDBIndexedKey
+
             const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
             const title = legend.querySelector(`#${legend.id}-title`)
             title.insertBefore(customCreateElement({
