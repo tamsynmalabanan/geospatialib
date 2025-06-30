@@ -867,6 +867,8 @@ const toggleLeafletLayerEditor = async (layer, {
         if (!map._drawControl._updated) {
             newDBIndexedKey = `${id}--version${Number(version ?? 2)-1}`
             deleteFromGISDB(editableLayer._dbIndexedKey)
+        } else {
+            // prompt to save changes
         }
 
         clientLayers.forEach(i => {
