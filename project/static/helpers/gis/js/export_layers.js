@@ -91,9 +91,14 @@ const handleExportLayersForm = () => {
         layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}')) ?? {}
         
         for (const layer of Object.values(layers)) {
-            if (layer.dbIndexedKey.startsWith('client')) {
-                layer.data = await getFromGISDB(layer.dbIndexedKey)
+            if (!layer.dbIndexedKey.startsWith('client')) continue
+            
+            if (layer.editable) {
+                layer.editable = false
+                layer.dbIndexedKey = layer.dbIndexedKey.replace('-editable', '')
             }
+            
+            layer.data = await getFromGISDB(layer.dbIndexedKey)
         }
 
         handleGSLLayers(layers, modalBody)

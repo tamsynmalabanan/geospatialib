@@ -851,19 +851,23 @@ const fileToLeafletLayer = async ({
 }
 
 const toggleLeafletLayerEditor = async (layer) => {
-    const map = layer._group?._map
+    const map = layer?._group?._map
     if (!map) return
     
     const editableLayer = map._drawControl?.options?.edit?.featureGroup
+    const enableEditor = editableLayer !== layer
+
     if (editableLayer) {
         getLeafletLayerLegend(editableLayer).querySelector(`.bi.bi-pencil-square`).remove()
+        
     }
-
-    const enableEditor = editableLayer !== layer
+    
     handleLeafletDrawBtns(map, {
         include: enableEditor,
         targetLayer: layer
     })
+
+    map._ch.updateStoredLegendLayers({layer:editableLayer})
 
     if (!enableEditor) return
 
@@ -874,5 +878,6 @@ const toggleLeafletLayerEditor = async (layer) => {
         tag: 'i', 
         className:'bi bi-pencil-square'
     }), title.lastChild)
-    
+
+    map._ch.updateStoredLegendLayers({layer})
 }

@@ -187,10 +187,7 @@ const handleLeafletLayerGroups = (map) => {
             if (layer) {
                 if (isHidden) group._ch.addHiddenLayer(layer)
                 group.addLayer(layer)
-            }
-
-            if (editable) {
-                
+                if (editable) await toggleLeafletLayerEditor(layer)
             }
         },
         getLayerGroups: () => {
