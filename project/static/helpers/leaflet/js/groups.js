@@ -108,9 +108,13 @@ const handleLeafletLayerGroups = (map) => {
                     deletePane(map, paneName)
                 }
 
-                if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
-                    if (!map._ch.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
+                if (!map._ch.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
+                    if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
                         toggleLeafletLayerEditor(layer)
+                    }
+
+                    if (groupName === 'client') {
+                        deleteFromGISDB(layer._dbIndexedKey)
                     }
                 }
             },

@@ -863,13 +863,13 @@ const toggleLeafletLayerEditor = async (layer, {
 
     if (editableLayer) {
         const [id, version] = editableLayer._dbIndexedKey.split('--version')
+        
+        // prompt to save changes
         let newDBIndexedKey = editableLayer._dbIndexedKey
-        if (!map._drawControl._updated) {
-            newDBIndexedKey = `${id}--version${Number(version ?? 2)-1}`
-            deleteFromGISDB(editableLayer._dbIndexedKey)
-        } else {
-            // prompt to save changes
-        }
+        // if (!) {
+        //     newDBIndexedKey = `${id}--version${Number(version ?? 2)-1}`
+        //     deleteFromGISDB(editableLayer._dbIndexedKey)
+        // }
 
         clientLayers.forEach(i => {
             if (!i._dbIndexedKey.startsWith(id)) return

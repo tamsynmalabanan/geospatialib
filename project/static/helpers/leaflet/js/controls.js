@@ -182,16 +182,12 @@ const handleLeafletDrawBtns = (map, {
             } else {
                 targetLayer.addData(geojson)
             }
-            
-            drawControl._updated = true
         },
         'edited': (e) => {
             console.log('edited', e)
-            drawControl._updated = true
         },
         'deleted': (e) => {
             console.log('deleted', e)
-            drawControl._updated = true
         },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
@@ -216,7 +212,6 @@ const handleLeafletDrawBtns = (map, {
     Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i]))
     drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     
-    drawControl._updated = false
     drawControl.addTo(map)
     return drawControl
 }
