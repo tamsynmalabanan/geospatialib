@@ -116,7 +116,7 @@ const createLeafletLegendItem = (layer) => {
 
     const toggleContainer = customCreateElement({
         tag: 'div',
-        className: 'ms-auto d-flex flex-nowrap gap-2',
+        className: 'ms-auto ps-5 d-flex flex-nowrap gap-2',
         parent: legendTitle
     })
     
@@ -146,7 +146,7 @@ const createLeafletLegendItem = (layer) => {
     const collapseToggle = createIcon({
         parent: toggleContainer,
         peNone: false,
-        className: 'dropdown-toggle ms-5 onblur-fade',
+        className: 'dropdown-toggle onblur-fade',
         attrs: {
             'data-bs-toggle': 'collapse',
             'data-bs-target': `#${legendCollapse.id}`,
