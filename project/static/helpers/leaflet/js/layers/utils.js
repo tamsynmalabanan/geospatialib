@@ -856,19 +856,18 @@ const toggleLeafletLayerEditor = async (layer) => {
     
     const editableLayer = map._drawControl?.options?.edit?.featureGroup
     if (editableLayer) {
-        const legend = getLeafletLayerLegend(editableLayer)
-        legend.querySelector(`#${legend.id}-title div`).firstChild.remove()
+        getLeafletLayerLegend(editableLayer).querySelector(`.bi.bi-pencil`).remove()
     }
 
     if (editableLayer === layer) return
 
     // enable layer editor
     const legend = getLeafletLayerLegend(layer)
-    const icons = legend.querySelector(`#${legend.id}-title div`)
-    legend.insertBefore(customCreateElement({
+    const title = legend.querySelector(`#${legend.id}-title`)
+    title.insertBefore(customCreateElement({
         tag: 'i', 
         className:'bi bi-pencil'
-    }), icons)
+    }), title.lastChild)
     
     // handleLeafletDrawBtns(map, {
     //     include: !isMapDrawControlLayer,
