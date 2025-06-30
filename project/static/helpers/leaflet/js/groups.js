@@ -133,8 +133,6 @@ const handleLeafletLayerGroups = (map) => {
         storedLegendLayersKey: `legend-layers-${map.getContainer().id}`,
         getStoredLegendLayers: () => JSON.parse(localStorage.getItem(map._ch.storedLegendLayersKey) ?? '{}'),
         updateStoredLegendLayers: ({handler, layer}={}) => {
-            if (!handler && !layer) return
-
             const storedData = map._ch.getStoredLegendLayers()
 
             const updateStoredLayerData = (layer) => {
@@ -152,7 +150,6 @@ const handleLeafletLayerGroups = (map) => {
 
             if (handler) handler(storedData)
 
-            console.log(layer, handler)
             if (!layer && !handler) map._ch.getAllLegendLayers().forEach(layer => {
                 updateStoredLayerData(layer)
             })
