@@ -107,6 +107,12 @@ const handleLeafletLayerGroups = (map) => {
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
                 }
+
+                if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
+                    if (!map._ch.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
+                        delete map._drawControl
+                    }
+                }
             },
             clearAllLayers: async () => {
                 group._ch.getAllLayers().forEach(async l => {
@@ -246,6 +252,8 @@ const handleLeafletLayerGroups = (map) => {
             map._legendLayerGroups.forEach(async group => {
                 await group._ch.clearAllLayers()
             })
+
+            delete map._drawControl
         },
         hideLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
