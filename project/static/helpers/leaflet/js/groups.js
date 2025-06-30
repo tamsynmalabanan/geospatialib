@@ -152,6 +152,7 @@ const handleLeafletLayerGroups = (map) => {
 
             if (handler) handler(storedData)
 
+            console.log(layer, handler)
             if (!layer && !handler) map._ch.getAllLegendLayers().forEach(layer => {
                 updateStoredLayerData(layer)
             })
