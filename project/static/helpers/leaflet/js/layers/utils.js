@@ -865,7 +865,10 @@ const toggleLeafletLayerEditor = async (layer) => {
     // enable layer editor
     const legend = getLeafletLayerLegend(layer)
     const icons = legend.querySelector(`#${legend.id}-title div`)
-    icons.insertBefore(customCreateElement({tag: 'i', className:'bi bi-pencil'}), icons.firstChild)
+    legend.insertBefore(customCreateElement({
+        tag: 'i', 
+        className:'bi bi-pencil'
+    }), icons)
     
     // handleLeafletDrawBtns(map, {
     //     include: !isMapDrawControlLayer,
