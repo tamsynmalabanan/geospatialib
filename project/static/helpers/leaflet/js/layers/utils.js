@@ -856,10 +856,11 @@ const toggleLeafletLayerEditor = async (layer) => {
     
     const editableLayer = map._drawControl?.options?.edit?.featureGroup
     const enableEditor = editableLayer !== layer
+    const legendLayers = document.querySelector(`#${map.getContainer().id}-panels-legend-layers`)
 
     if (editableLayer) {
-        getLeafletLayerLegend(editableLayer).querySelector(`.bi.bi-pencil-square`).remove()
-        
+        const legend = legendLayers.querySelector(`#${legendLayers.id}-${editableLayer._leaflet_id}`)
+        legend.querySelector(`.bi.bi-pencil-square`).remove()
     }
     
     handleLeafletDrawBtns(map, {
@@ -872,7 +873,7 @@ const toggleLeafletLayerEditor = async (layer) => {
     if (!enableEditor) return
 
     // enable layer editor
-    const legend = getLeafletLayerLegend(layer)
+    const legend = legendLayers.querySelector(`#${legendLayers.id}-${layer._leaflet_id}`)
     const title = legend.querySelector(`#${legend.id}-title`)
     title.insertBefore(customCreateElement({
         tag: 'i', 

@@ -167,11 +167,6 @@ const createLeafletLegendItem = (layer) => {
     return container
 }
 
-const getLeafletLayerLegend = (layer) => {
-    const mapContainer = layer._group?._map?.getContainer()
-    return mapContainer?.querySelector(`#${mapContainer?.id}-panels-legend-layers-${layer._leaflet_id}`)
-}
-
 const handleLeafletLegendPanel = async (map, parent) => {
     const {
         toolbar, 

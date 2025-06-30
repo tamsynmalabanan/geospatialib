@@ -12,8 +12,8 @@ const requestGISDB = () => {
 }
 
 const saveToGISDB = (gisData, {
-    id = `client;${generateRandomString()}`, 
-    queryExtent = gisData?.type === 'FeatureCollection' ? turf.bboxPolygon(turf.bbox(gisData)).geometry : null, 
+    id, 
+    queryExtent, 
     expirationDays=7,
 }={}) => {
     if (!gisData) return
@@ -23,6 +23,22 @@ const saveToGISDB = (gisData, {
         const db = e.target.result
         const transaction = db.transaction(['gis'], 'readwrite')
         const objectStore = transaction.objectStore('gis')
+
+        if (!id) {
+            const currentKeys = new Promise(async (resolve, reject) => {
+                const keysRequest = objectStore.getAllKeys()
+                keysRequest.onsuccess = () => {
+                    resolve(keysRequest.result)
+                }
+            })
+            console.log(currentKeys)
+            id = `client;${generateRandomString()}`
+        }
+
+        if (!queryExtent && gisData.type === 'FeatureCollection') {
+            queryExtent = turf.bboxPolygon(turf.bbox(gisData)).geometry
+        }
+
         const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
         objectStore.put({id, gisData, queryExtent, expirationTime})
     }
