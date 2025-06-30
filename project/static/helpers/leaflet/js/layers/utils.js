@@ -855,7 +855,7 @@ const toggleLeafletLayerEditor = async (layer) => {
     if (!map) return
     
     const editableLayer = map._drawControl?.options?.edit?.featureGroup
-    const enableEditor = editableLayer._dbIndexedKey !== layer._dbIndexedKey
+    const enableEditor = editableLayer?._dbIndexedKey !== layer._dbIndexedKey
     const layerLegends = document.querySelector(`#${map.getContainer().id}-panels-legend-layers`)
     const clientLayers = layer._group.getLayers()
 
@@ -881,8 +881,6 @@ const toggleLeafletLayerEditor = async (layer) => {
         include: enableEditor,
         targetLayer: layer
     })
-
-    map._ch.updateStoredLegendLayers({layer:editableLayer})
 
     if (enableEditor) {
         const {gisData, queryExtent} = await getFromGISDB(layer._dbIndexedKey)
