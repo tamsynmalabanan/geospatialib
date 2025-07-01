@@ -90,16 +90,26 @@ const handleExportLayersForm = () => {
 
         layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}')) ?? {}
         
+        const newDBIndexedKeys = {}
+
         for (const layer of Object.values(layers)) {
-            if (!layer.dbIndexedKey.startsWith('client')) continue
-            
+            let currentKey = layer.dbIndexedKey
+            if (!currentKey.startsWith('client')) continue
+
             if (layer.editable) {
                 layer.editable = false
-                const [id, version] = layer.dbIndexedKey.split('--version')
-                if (version && version > 1) layer.dbIndexedKey = `${id}--version${Number(version)-1}`
+                
+                const [id, version] = currentKey.split('--version')
+                currentKey = `${id}--version${Number(version ?? 2)-1}`
             }
             
-            layer.data = await getFromGISDB(layer.dbIndexedKey)
+            layer.data = await getFromGISDB(currentKey)
+
+            if (!Object.keys(newDBIndexedKeys).includes(currentKey)) {
+                newDBIndexedKeys[currentKey] = getNewGISDBKey()
+            }
+
+            layer.dbIndexedKey = newDBIndexedKeys[currentKey]
         }
 
         handleGSLLayers(layers, modalBody)

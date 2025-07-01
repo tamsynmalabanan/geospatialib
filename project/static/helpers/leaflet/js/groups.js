@@ -182,7 +182,7 @@ const handleLeafletLayerGroups = async (map) => {
 
             if (data) {
                 const {gisData, queryExtent} = data
-                dbIndexedKey = await saveToGISDB(gisData, {queryExtent})
+                await saveToGISDB(gisData, {id: dbIndexedKey, queryExtent})
             }
 
             const layer = await createLeafletLayer(params, {

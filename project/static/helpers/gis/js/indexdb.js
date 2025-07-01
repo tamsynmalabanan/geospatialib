@@ -27,6 +27,8 @@ const getAllGISDBKeys = async () => {
     })
 }
 
+const getNewGISDBKey = () => `client;${generateRandomString(64)}--version1`
+
 const saveToGISDB = async (gisData, {
     id, 
     queryExtent, 
@@ -37,7 +39,7 @@ const saveToGISDB = async (gisData, {
     if (!id) {
         const currentIds = await getAllGISDBKeys()
         while (!id || currentIds.includes(id)) {
-            id = `client;${generateRandomString()}--version1`
+            id = getNewGISDBKey()
         }
     }
 
