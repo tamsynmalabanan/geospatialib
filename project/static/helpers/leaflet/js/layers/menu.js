@@ -71,10 +71,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 })) 
             }
         },
-        toggleEditor: !editableLayer ? null : {
-            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
-            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
-        },
         saveChanges: !editableLayer || !isMapDrawControlLayer || !drawControlChanges.length ? null : {
             innerText: `Save layer changes`,
             btnCallback: async () => {
@@ -90,8 +86,13 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     i._dbIndexedKey = newDBIndexedKey
                 })
 
+                map._handlers.updateStoredLegendLayers()
                 localStorage.removeItem(drawControlChangesKey)
             }
+        },
+        toggleEditor: !editableLayer ? null : {
+            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
+            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
         },
 
         divider1: !feature || isSearch ? null : {

@@ -95,7 +95,7 @@ const handleExportLayersForm = () => {
         for (const layer of Object.values(layers)) {
             let currentKey = layer.dbIndexedKey
             if (!currentKey.startsWith('client')) continue
-
+            
             if (layer.editable) {
                 layer.editable = false
                 
