@@ -310,7 +310,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     const legendLabel = legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)
                     if (legendLabel) legendLabel.innerText = value
 
-                    map._ch.updateStoredLegendLayers({layer})
+                    map._handlers.updateStoredLegendLayers({layer})
                 }
             }
         })
@@ -333,7 +333,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     style.showLabel = value
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-title`)?.classList.toggle('d-none', !value)
 
-                    map._ch.updateStoredLegendLayers({layer})
+                    map._handlers.updateStoredLegendLayers({layer})
                 }
             }
         })
@@ -351,7 +351,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     style.showCount = value
                     legendLayer.querySelector(`#${legendLayer.id}-details-table-${id}-count`)?.classList.toggle('d-none', !value)
 
-                    map._ch.updateStoredLegendLayers({layer})
+                    map._handlers.updateStoredLegendLayers({layer})
                 }
             }
         })
@@ -1349,7 +1349,7 @@ const handleLeafletStylePanel = (map, parent) => {
                         geojson,
                         params: {title: 'spatial constraint'},
                         pane: createCustomPane(map),
-                        group: map._ch.getLayerGroups().client,
+                        group: map._handlers.getLayerGroups().client,
                         customStyleParams: {
                             fillOpacity: 0,
                             strokeWidth: 3,
@@ -1702,7 +1702,7 @@ const handleLeafletStylePanel = (map, parent) => {
         
         Array.from(legends).map(l => {
             const leafletId = parseInt(l.dataset.layerId)
-            return map._ch.getLegendLayer(leafletId)
+            return map._handlers.getLegendLayer(leafletId)
         }).forEach(l => {
             const option = document.createElement('option')
             option.className = 'text-wrap text-break text-truncate'
@@ -1719,7 +1719,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const addLayersId = parseInt(select.value)
 
         body.innerHTML = ''
-        layer = map._ch.getLegendLayer(addLayersId)
+        layer = map._handlers.getLegendLayer(addLayersId)
         if (!layer) {
             body.removeAttribute('data-layer-id')
             body.classList.add('d-none')
@@ -1760,7 +1760,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                                     select.options[select.selectedIndex].text = field.value
 
-                                    map._ch.updateStoredLegendLayers({layer})
+                                    map._handlers.updateStoredLegendLayers({layer})
                                 }
                             }
                         },
@@ -1793,7 +1793,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             )                    
 
                                             layer._properties.info.showLegend = e.target.checked
-                                            map._ch.updateStoredLegendLayers({layer})
+                                            map._handlers.updateStoredLegendLayers({layer})
                                         }
                                     }
                                 }))
@@ -1808,7 +1808,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         click: (e) => {
                                             attribution.classList.toggle('d-none')
                                             layer._properties.info.showAttribution = e.target.checked
-                                            map._ch.updateStoredLegendLayers({layer})
+                                            map._handlers.updateStoredLegendLayers({layer})
                                         }
                                     }
                                 }))
@@ -1844,7 +1844,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     const element = layerLegend.querySelector(`#${layerLegend.id}-attribution`)
                                     element.innerHTML = value
 
-                                    map._ch.updateStoredLegendLayers({layer})
+                                    map._handlers.updateStoredLegendLayers({layer})
                                 }
                             }
                         },

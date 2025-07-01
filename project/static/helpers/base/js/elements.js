@@ -505,16 +505,25 @@ const createObjectTRs = (object, parent, {
 const createModal = ({
     titleText,
     parent,
-    bodyContent,
+    contentBody,
     footerBtnText = 'Save',
+    show = false,
+    static = false,
+    closeBtn = true,
+    centered = true,
+    footerBtns = {}
 }={}) => {
     const modal = document.createElement('div')
-    modal.className = 'modal'
+    modal.className = `modal fade`
     modal.setAttribute('tabindex', '-1')
+    if (static) {
+        modal.setAttribute('data-bs-backdrop', 'static')
+        modal.setAttribute('data-bs-keyboard', 'false')
+    }
     parent?.appendChild(modal)
 
     const dialog = document.createElement('div')
-    dialog.className = 'modal-dialog'
+    dialog.className = `modal-dialog modal-dialog-scrollable ${centered ? 'modal-dialog-centered' : ''}`
     modal.appendChild(dialog)
 
     const content = document.createElement('div')
@@ -530,25 +539,44 @@ const createModal = ({
     if (titleText) title.innerText = titleText
     header.appendChild(title)
 
-    const close = document.createElement('button')
-    close.className = 'btn-close'
-    close.setAttribute('type', 'button')
-    close.setAttribute('data-bs-dismiss', 'modal')
-    close.setAttribute('aria-label', 'Close')
-    header.appendChild(close)
+    if (closeBtn) {
+        const close = document.createElement('button')
+        close.className = 'btn-close'
+        close.setAttribute('type', 'button')
+        close.setAttribute('data-bs-dismiss', 'modal')
+        close.setAttribute('aria-label', 'Close')
+        header.appendChild(close)
+    }
 
-    const body = document.createElement('div')
-    if (bodyContent) body.innerHTML = bodyContent
-    content.appendChild('body')
+    if (contentBody instanceof Element) {
+        content.appendChild(contentBody)
+    } else {
+        const body = document.createElement('div')
+        content.appendChild(body)
+        if (typeof contentBody === 'string') {
+            body.outerHTML = contentBody
+        }
+    }
 
     const footer = document.createElement('div')
-    footer.className = 'modal-footer'
+    footer.className = `modal-footer d-flex justify-content-start`
     content.appendChild(footer)
 
-    const btn = document.createElement('div')
-    btn.className = `btn btn-${getPreferredTheme()}`
-    btn.innerText = footerBtnText
-    footer.appendChild(btn)
+    if (Object.keys(footerBtns).length) {
+        Object.values(footerBtns).forEach(btn => {
+            footer.appendChild(btn)
+        })
+    } else {
+        const btn = document.createElement('div')
+        btn.className = `btn btn-${getPreferredTheme()}`
+        btn.innerText = footerBtnText
+        footer.appendChild(btn)
+    }
+
+    if (show) {
+        const bsModal = new bootstrap.Modal(modal)
+        bsModal.show()
+    }
 
      return modal
 }

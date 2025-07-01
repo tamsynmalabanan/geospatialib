@@ -85,7 +85,7 @@ const createLeafletLegendItem = (layer) => {
                         zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
                     }
 
-                    map._ch.updateStoredLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
+                    map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
                 }
 
                 container.style.top = '0px'
@@ -182,7 +182,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         toolsHandler,
     } = createLeafletMapPanel(map, parent, 'legend', {
         clearLayersHandler: async () => {
-            await map._ch.clearLegendLayers()
+            await map._handlers.clearLegendLayers()
             disableStyleLayerSelect()
         }
     })
@@ -194,16 +194,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi bi-zoom-in',
             title: 'Zoom to layers',
             disabled: true,
-            btnClickHandler: async () => await map._ch.zoomToLegendLayers(),
+            btnClickHandler: async () => await map._handlers.zoomToLegendLayers(),
         },
         visibility: {
             iconSpecs: 'bi bi-eye',
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                map._ch.hasHiddenLegendLayers() ? 
-                map._ch.showLegendLayers() : 
-                map._ch.hideLegendLayers()
+                map._handlers.hasHiddenLegendLayers() ? 
+                map._handlers.showLegendLayers() : 
+                map._handlers.hideLegendLayers()
             },
         },
         divider1: {
@@ -227,9 +227,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 elements.forEach(el =>  {
                     el.classList.toggle('d-none', !show)
 
-                    const layer = map._ch.getLegendLayer(el.dataset.layerId)
+                    const layer = map._handlers.getLegendLayer(el.dataset.layerId)
                     layer._properties.info.showLegend = show
-                    map._ch.updateStoredLegendLayers({layer})
+                    map._handlers.updateStoredLegendLayers({layer})
                 })
 
                 const checkbox = getStyleBody().querySelector('[name="showLegend"]')
@@ -246,9 +246,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 elements.forEach(el =>  {
                     el.querySelector(`#${el.id}-attribution`).classList.toggle('d-none', !show)
 
-                    const layer = map._ch.getLegendLayer(el.dataset.layerId)
+                    const layer = map._handlers.getLegendLayer(el.dataset.layerId)
                     layer._properties.info.showAttribution = show
-                    map._ch.updateStoredLegendLayers({layer})
+                    map._handlers.updateStoredLegendLayers({layer})
                 })
 
                 const checkbox = getStyleBody().querySelector('[name="showAttr"]')
@@ -415,10 +415,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 if (controllerId !== controller.id) return
                 
                 const leafletId = parseInt(legend.dataset.layerId)
-                const layer = map._ch.getLegendLayer(leafletId)
+                const layer = map._handlers.getLegendLayer(leafletId)
                 if (!layer) return
 
-                const isHidden = map._ch.hasHiddenLegendLayer(layer)
+                const isHidden = map._handlers.hasHiddenLegendLayer(layer)
                 const isInvisible = !leafletLayerIsVisible(layer)
                 
                 const bbox = await getLeafletLayerBbox(layer)
@@ -462,13 +462,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
         const layerLegend = layers.querySelector(`[data-layer-id="${layer._leaflet_id}"]`)
         
-        const isHidden = map._ch.hasHiddenLegendLayer(layer)
-        const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
+        const isHidden = map._handlers.hasHiddenLegendLayer(layer)
+        const isInvisible = map._handlers.hasInvisibleLegendLayer(layer)
         
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isHidden, isInvisible})
             if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
-            map._ch.updateStoredLegendLayers({layer})
+            map._handlers.updateStoredLegendLayers({layer})
         } else {
             if (layerLegend) {
                 layerLegend.remove()
@@ -482,16 +482,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
             if (layer instanceof L.GeoJSON) deleteLeafletLayerFillPatterns(layer)
 
-            map._ch.updateStoredLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
+            map._handlers.updateStoredLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
         }
     })
 
     map.on('layeradd', (event) => {
         const layer = event.layer
-        if (!map._ch.hasLegendLayer(layer)) return
+        if (!map._handlers.hasLegendLayer(layer)) return
         
-        const isHidden = map._ch.hasHiddenLegendLayer(layer)
-        const isInvisible = map._ch.hasInvisibleLegendLayer(layer)
+        const isHidden = map._handlers.hasHiddenLegendLayer(layer)
+        const isInvisible = map._handlers.hasInvisibleLegendLayer(layer)
         const isGeoJSON = layer instanceof L.GeoJSON
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
@@ -524,7 +524,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             // console.log('isHidden, isInvisible', isHidden, isInvisible)
             map.removeLayer(layer)
         } else {
-            map._ch.updateStoredLegendLayers({layer})
+            map._handlers.updateStoredLegendLayers({layer})
     
             if (!isGeoJSON) {
                 const details = container.querySelector(`#${container.id}-details`)
@@ -560,7 +560,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         const cachedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
         if (cachedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(cachedBbox))).getBounds())
     
-        map._ch.addStoredLegendLayers().then(() => {
+        map._handlers.addStoredLegendLayers().then(() => {
             layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
             Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
         })

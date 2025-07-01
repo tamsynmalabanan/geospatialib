@@ -1,18 +1,35 @@
-window.addEventListener("map:init", (event) => {
-    const map = event.detail.map
+const handleLeafletMapContainer = async (map) => {
     const container = map.getContainer()
     const dataset = container.parentElement.dataset
 
-    container.className = `bg-${getPreferredTheme()} ${container.className} ${dataset.mapClass || ''}`
-    addLeafletBasemapLayer(map)
-    handleLeafletLayerGroups(map)   
-    if (dataset.mapPanels === 'true') handleLeafletMapPanels(map)
-    handleLeafletMapControls(map)
+    container.className = `bg-${getPreferredTheme()} ${container.className} ${dataset.mapClass ?? ''}`
+
     elementResizeObserver(container, () => map.invalidateSize())
-    assignMapObservers(map)
+}
+
+const handleLeafletMapBasemap = async (map) => {
+    L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        className: `layer-${getPreferredTheme()}`
+    }).addTo(map)
+}
+
+const handleLeafletMapEvents = async (map) => {
+    map.on('popupopen', (e) => {
+        e.popup._container.querySelector('.leaflet-popup-content-wrapper').style.maxHeight = `${map.getSize().y * 0.5}px`
+    })
+}
+
+window.addEventListener("map:init", async (e) => {
+    const map = e.detail.map
+
+    handleLeafletMapContainer(map)
+    handleLeafletMapBasemap(map)
+    handleLeafletLayerGroups(map)
+    handleLeafletMapPanels(map)
+    handleLeafletMapControls(map)
+    handleLeafletMapEvents(map)
 
     map._initComplete = true
     map.fire('initComplete')
 })
-// document.addEventListener('DOMContentLoaded', () => {
-// })

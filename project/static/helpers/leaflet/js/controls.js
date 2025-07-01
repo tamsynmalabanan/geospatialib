@@ -141,9 +141,12 @@ const handleLeafletDrawBtns = (map, {
     include=true,
     targetLayer=L.geoJSON(),
 } = {}) => {
+    const drawControlChangesKey = `${map.getContainer().id}-draw-control-changes`
+    
     if (map._drawControl) {
         map.removeControl(map._drawControl)
         delete map._drawControl
+        localStorage.removeItem(drawControlChangesKey)
     }
 
     if (!include) return
@@ -164,7 +167,16 @@ const handleLeafletDrawBtns = (map, {
         }
     })
     
-        const drawEvents = {
+    
+    const updateDrawControlChanges = (data) => {
+        if (!data) return
+
+        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+        current.push(data)
+        localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+    }
+
+    const drawEvents = {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             if (targetLayer._dbIndexedKey) {
@@ -182,12 +194,28 @@ const handleLeafletDrawBtns = (map, {
             } else {
                 targetLayer.addData(geojson)
             }
+
+            updateDrawControlChanges({
+                type: 'created',
+                old: null, 
+                new: geojson, 
+            })
         },
         'edited': (e) => {
             console.log('edited', e)
+            updateDrawControlChanges({
+                type: 'edited',
+                // old: null, 
+                // new: geojson, 
+            })
         },
         'deleted': (e) => {
             console.log('deleted', e)
+            updateDrawControlChanges({
+                type: 'deleted',
+                // old: null, 
+                // new: geojson, 
+            })
         },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
@@ -224,7 +252,7 @@ const leafletControls = {
     locate: handleLeafletLocateBtn,
 }
 
-const handleLeafletMapControls = (map) => {
+const handleLeafletMapControls = async (map) => {
     const container = map.getContainer()
     const dataset = container.parentElement.dataset
     const includedControls = dataset.mapControlsIncluded

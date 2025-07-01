@@ -1,47 +1,39 @@
-const handleLeafletLayerGroups = (map) => {
+const handleLeafletLayerGroups = async (map) => {
     map._layerGroups = {}
-    Array('library', 'client', 'query', 'search').forEach(groupName => {
+    Array(
+        'library',
+        'client',
+        'query',
+        'search'
+    ).forEach(groupName => {
         const group = L.layerGroup()
         map._layerGroups[groupName] = group
         
         group._name = groupName
         group._hiddenLayers = []
         group._invisibileLayers = []
-        group._ch = {
-            getHiddenLayers: () => {
-                return group._hiddenLayers
+      
+        group._handlers = {
+            getHiddenLayers: () => group._hiddenLayers,
+            setHiddenLayers: (hiddenLayers=[]) => group._hiddenLayers = hiddenLayers,
+            addToHiddenLayers: (layer) => {
+                if (!group._hiddenLayers.includes(layer)) group._hiddenLayers.push(layer)
+                group.hasLayer(layer) ? group.removeLayer(layer) : map.fire('layerremove', {layer})
             },
-            setHiddenLayers: (hiddenLayers=[]) => {
-                group._hiddenLayers = hiddenLayers
-            },
-            addHiddenLayer: (layer) => {
-                if (!group._hiddenLayers.includes(layer)) {
-                    group._hiddenLayers.push(layer)
-                } 
-
-                if (group.hasLayer(layer)) {
-                    group.removeLayer(layer)
-                } else {
-                    map.fire('layerremove', {layer})
-                }
-            },
-            getHiddenLayer: (id) => {
-                return group._ch.getHiddenLayers().find(l => l._leaflet_id === parseInt(id))
-            },
-            hasHiddenLayer: (layer) => {
-                return group._ch.getHiddenLayers().includes(layer)
-            },
+            getHiddenLayer: (id) => group._handlers.getHiddenLayers().find(l => l._leaflet_id === parseInt(id)),
+            hasHiddenLayer: (layer) => group._handlers.getHiddenLayers().includes(layer),
             removeHiddenLayer: async (layer, {addLayer=true}={}) => {
                 let match
                 
-                const hiddenLayers = group._ch.getHiddenLayers().filter(l => {
+                const hiddenLayers = group._handlers.getHiddenLayers().filter(l => {
                     const matched = l === layer
                     if (matched) {
                         match = l
                     }
                     return !matched
                 })
-                group._ch.setHiddenLayers(hiddenLayers)
+                
+                group._handlers.setHiddenLayers(hiddenLayers)
 
                 if (addLayer) {
                     group.addLayer(layer)
@@ -54,13 +46,13 @@ const handleLeafletLayerGroups = (map) => {
                 return group._invisibileLayers
             },
             getInvisibleLayer: (id) => {
-                return group._ch.getInvisibleLayers().find(l => l._leaflet_id === parseInt(id))
+                return group._handlers.getInvisibleLayers().find(l => l._leaflet_id === parseInt(id))
             },
             setInvisibleLayers: (invisibleLayers=[]) => {
                 group._invisibileLayers = invisibleLayers
             },
             hasInvisibleLayer: (layer) => {
-                return group._ch.getInvisibleLayers().includes(layer)
+                return group._handlers.getInvisibleLayers().includes(layer)
             },
             addInvisibleLayer: (layer) => {
                 group._invisibileLayers.push(layer)
@@ -73,14 +65,14 @@ const handleLeafletLayerGroups = (map) => {
             removeInvisibleLayer: async (layer, {addLayer=true}={}) => {
                 let match
                 
-                const invisibleLayers = group._ch.getInvisibleLayers().filter(l => {
+                const invisibleLayers = group._handlers.getInvisibleLayers().filter(l => {
                     const matched = l === layer
                     if (matched) match = l
                     return !matched
                 })
-                group._ch.setInvisibleLayers(invisibleLayers)
+                group._handlers.setInvisibleLayers(invisibleLayers)
 
-                if (addLayer && !group._ch.hasHiddenLayer(layer)) {
+                if (addLayer && !group._handlers.hasHiddenLayer(layer)) {
                     group.addLayer(layer)
                 } else if (match) {
                     map.fire('layerremove', {layer})
@@ -90,25 +82,25 @@ const handleLeafletLayerGroups = (map) => {
             getAllLayers: () => {
                 return [
                     ...group.getLayers(),
-                    ...group._ch.getHiddenLayers(),
-                    ...group._ch.getInvisibleLayers()
+                    ...group._handlers.getHiddenLayers(),
+                    ...group._handlers.getInvisibleLayers()
                 ]
             },
             findLayer: (id) => {
-                return group.getLayer(id) ?? group._ch.getHiddenLayer(id) ?? group._ch.getInvisibleLayer(id) 
+                return group.getLayer(id) ?? group._handlers.getHiddenLayer(id) ?? group._handlers.getInvisibleLayer(id) 
             },
                     
             clearLayer: async (layer) => {
                 if (group.hasLayer(layer)) group.removeLayer(layer)
-                await group._ch.removeHiddenLayer(layer, {addLayer:false})
-                await group._ch.removeInvisibleLayer(layer, {addLayer:false})
+                await group._handlers.removeHiddenLayer(layer, {addLayer:false})
+                await group._handlers.removeInvisibleLayer(layer, {addLayer:false})
                 
                 const paneName = layer.options.pane
                 if (paneName.startsWith('custom')) {
                     deletePane(map, paneName)
                 }
 
-                if (!map._ch.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
+                if (!map._handlers.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
                     if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
                         toggleLeafletLayerEditor(layer)
                     }
@@ -123,31 +115,31 @@ const handleLeafletLayerGroups = (map) => {
                 }
             },
             clearAllLayers: async () => {
-                group._ch.getAllLayers().forEach(async l => {
-                    await group._ch.clearLayer(l)
+                group._handlers.getAllLayers().forEach(async l => {
+                    await group._handlers.clearLayer(l)
                 })
             },
             hideAllLayers: () => {
                 Array(
                     ...group.getLayers(),
-                    ...group._ch.getInvisibleLayers(),
+                    ...group._handlers.getInvisibleLayers(),
                 ).forEach(l => {
-                    group._ch.addHiddenLayer(l)
+                    group._handlers.addToHiddenLayers(l)
                 })
             },
             removeAllHiddenLayers: () => {
-                group._ch.getHiddenLayers().forEach(l => group._ch.removeHiddenLayer(l))
+                group._handlers.getHiddenLayers().forEach(l => group._handlers.removeHiddenLayer(l))
             },
         }
 
         map.addLayer(group)
     })
 
-    map._ch = {
+    map._handlers = {
         storedLegendLayersKey: `legend-layers-${map.getContainer().id}`,
-        getStoredLegendLayers: () => JSON.parse(localStorage.getItem(map._ch.storedLegendLayersKey) ?? '{}'),
+        getStoredLegendLayers: () => JSON.parse(localStorage.getItem(map._handlers.storedLegendLayersKey) ?? '{}'),
         updateStoredLegendLayers: ({handler, layer}={}) => {
-            const storedData = map._ch.getStoredLegendLayers()
+            const storedData = map._handlers.getStoredLegendLayers()
 
             const updateStoredLayerData = (layer) => {
                 storedData[layer._leaflet_id] = {...(storedData[layer._leaflet_id] ?? {}), ...{
@@ -155,7 +147,7 @@ const handleLeafletLayerGroups = (map) => {
                     params: layer._params,
                     properties: layer._properties,
                     zIndex: map.getPanes()[layer.options.pane].style.zIndex,
-                    isHidden: map._ch.hasHiddenLegendLayer(layer) ? true : false,
+                    isHidden: map._handlers.hasHiddenLegendLayer(layer) ? true : false,
                     editable: layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey,
                 }}
             }
@@ -164,24 +156,24 @@ const handleLeafletLayerGroups = (map) => {
 
             if (handler) handler(storedData)
 
-            if (!layer && !handler) map._ch.getAllLegendLayers().forEach(layer => {
+            if (!layer && !handler) map._handlers.getAllLegendLayers().forEach(layer => {
                 updateStoredLayerData(layer)
             })
 
-            localStorage.setItem(map._ch.storedLegendLayersKey, JSON.stringify(storedData))
+            localStorage.setItem(map._handlers.storedLegendLayersKey, JSON.stringify(storedData))
         },
         addStoredLegendLayers: async () => {
-            const storedData = map._ch.getStoredLegendLayers()
+            const storedData = map._handlers.getStoredLegendLayers()
 
-            localStorage.removeItem(map._ch.storedLegendLayersKey)
+            localStorage.removeItem(map._handlers.storedLegendLayersKey)
             const cachedLayers = Object.values(storedData).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
             for (i of cachedLayers) {
-                await map._ch.addLegendLayer(i)
+                await map._handlers.addLegendLayer(i)
             }
         },
         addLegendLayer: async (layerData) => {
             let {dbIndexedKey, params, properties, isHidden, data, editable} = layerData
-            const group = map._ch.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
+            const group = map._handlers.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
 
             for (const i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
                 if (i?.styleParams?.fillPattern !== 'icon') continue
@@ -201,10 +193,10 @@ const handleLeafletLayerGroups = (map) => {
             })
 
             if (layer) {
-                if (isHidden) group._ch.addHiddenLayer(layer)
+                if (isHidden) group._handlers.addToHiddenLayers(layer)
                 group.addLayer(layer)
                 if (editable && (dbIndexedKey !== map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)) {
-                    await toggleLeafletLayerEditor(layer, {keepVersion:true})
+                    await toggleLeafletLayerEditor(layer, {dbIndexedKey})
                 }
             }
         },
@@ -212,37 +204,37 @@ const handleLeafletLayerGroups = (map) => {
             return map._layerGroups
         },
         getLayerGroup: (layer) => {
-            for (const group of Object.values(map._ch.getLayerGroups())) {
-                if (group.hasLayer(layer) || group._ch.hasHiddenLayer(layer)) {
+            for (const group of Object.values(map._handlers.getLayerGroups())) {
+                if (group.hasLayer(layer) || group._handlers.hasHiddenLayer(layer)) {
                     return group
                 }
             }
         },
         hasLegendLayer: (layer) => {
             for (const group of map._legendLayerGroups) {
-                if (group._ch.getAllLayers().includes(layer)) {
+                if (group._handlers.getAllLayers().includes(layer)) {
                     return group
                 }
             }
         },
         hasHiddenLegendLayer: (layer) => {
             for (const group of map._legendLayerGroups) {
-                if (group._ch.hasHiddenLayer(layer)) return group
+                if (group._handlers.hasHiddenLayer(layer)) return group
             }
         },
         hasInvisibleLegendLayer: (layer) => {
             for (const group of map._legendLayerGroups) {
-                if (group._ch.hasInvisibleLayer(layer)) return group
+                if (group._handlers.hasInvisibleLayer(layer)) return group
             }
         },
         hasHiddenLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
-                if (group._ch.getHiddenLayers().length) return true
+                if (group._handlers.getHiddenLayers().length) return true
             }
         },
         getLegendLayer: (id) => {
             for (const group of map._legendLayerGroups) {
-                const layer = group._ch.findLayer(id)
+                const layer = group._handlers.findLayer(id)
                 if (layer) return layer
             }
         },
@@ -251,35 +243,35 @@ const handleLeafletLayerGroups = (map) => {
             for (const group of map._legendLayerGroups) {
                 layers = [
                     ...layers,
-                    ... group._ch.getAllLayers(),
+                    ... group._handlers.getAllLayers(),
                 ]
             }
             return layers
         },
         clearLegendLayers: async () => {
             map._legendLayerGroups.forEach(async group => {
-                await group._ch.clearAllLayers()
+                await group._handlers.clearAllLayers()
             })
         },
         hideLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
-                group._ch.hideAllLayers()
+                group._handlers.hideAllLayers()
             }
         },
         showLegendLayers: () => {
             for (const group of map._legendLayerGroups) {
-                group._ch.removeAllHiddenLayers()
+                group._handlers.removeAllHiddenLayers()
             }
         },
         getAllLegendLayers: () => {
             let layers = []
             map._legendLayerGroups.forEach(group => {
-                layers = layers.concat(group._ch.getAllLayers()) 
+                layers = layers.concat(group._handlers.getAllLayers()) 
             })
             return layers
         },
         zoomToLegendLayers: async () => {
-            const layers = map._ch.getAllLegendLayers()
+            const layers = map._handlers.getAllLegendLayers()
 
             const bounds = (await Promise.all(
                 layers.map(async layer => {
@@ -304,7 +296,7 @@ const handleLeafletLayerGroups = (map) => {
         },
     }
 
-    map._legendLayerGroups = Object.values(map._ch.getLayerGroups())
+    map._legendLayerGroups = Object.values(map._handlers.getLayerGroups())
     .filter(g => ['library', 'client'].includes(g._name))
 
     const queryPane = map.createPane('queryPane')

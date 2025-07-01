@@ -155,13 +155,16 @@ const createLeafletMapPanel = (map, parent, name, {
     return template
 }
 
-const handleLeafletMapPanels = (map) => {
+const handleLeafletMapPanels = async (map) => {
+    const mapContainer = map.getContainer()
+    if (mapContainer.parentElement.dataset.mapPanels !== 'true') return
+    
     const control = L.control({position:'topright'})
     control.onAdd = (map) => {
         const panel = L.DomUtil.create('div', 'map-panel')
         panel.classList.add('d-flex', 'flex-column')
         
-        const [toggle, body] = createMapPanels(map.getContainer())
+        const [toggle, body] = createMapPanels(mapContainer)
         panel.appendChild(toggle)
         panel.appendChild(body)
         

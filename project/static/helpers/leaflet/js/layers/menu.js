@@ -30,7 +30,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const mapContainer = map.getContainer()
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
-    const isHidden = group._ch.hasHiddenLayer(layer)
+    const isHidden = group._handlers.hasHiddenLayer(layer)
     const isSearch = group._name === 'search'
     const checkbox = layer._checkbox
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
@@ -40,8 +40,11 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
     const isMapDrawControlLayer = dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
     
-    const addLayer = (l) => group._ch.removeHiddenLayer(l)
-    const removeLayer = (l, hidden=false) => hidden ? group._ch.addHiddenLayer(l) : group.removeLayer(l)
+    const drawControlChangesKey = `${mapContainer.id}-draw-control-changes`
+    const drawControlChanges = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+    
+    const addLayer = (l) => group._handlers.removeHiddenLayer(l)
+    const removeLayer = (l, hidden=false) => hidden ? group._handlers.addToHiddenLayers(l) : group.removeLayer(l)
     
     return contextMenuHandler(event, {
         zoomin: {
@@ -71,6 +74,24 @@ const getLeafletLayerContextMenu = async (event, layer, {
         toggleEditor: !editableLayer ? null : {
             innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
             btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
+        },
+        saveChanges: !editableLayer || !isMapDrawControlLayer || !drawControlChanges.length ? null : {
+            innerText: `Save layer changes`,
+            btnCallback: async () => {
+                const [id, version] = dbIndexedKey.split('--version')
+                const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                const newDBIndexedKey = await saveToGISDB(gisData, {
+                    id: `${id}--version${Number(version ?? 1)+1}`,
+                    queryExtent,
+                })
+
+                group._handlers.getAllLayers().forEach(i => {
+                    if (!i._dbIndexedKey.startsWith(id)) return
+                    i._dbIndexedKey = newDBIndexedKey
+                })
+
+                localStorage.removeItem(drawControlChangesKey)
+            }
         },
 
         divider1: !feature || isSearch ? null : {
@@ -102,7 +123,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     createLeafletLayer(layer._params, {
                         dbIndexedKey: layer._dbIndexedKey,
                         data: layerGeoJSON,
-                        group: isLegendGroup ? group : map._ch.getLayerGroups().client,
+                        group: isLegendGroup ? group : map._handlers.getLayerGroups().client,
                         add: true,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
                     })
@@ -130,7 +151,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 
                 const btn = document.createElement('button')
                 btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
-                btn.addEventListener('click', () => group._ch.clearLayer(layer))
+                btn.addEventListener('click', () => group._handlers.clearLayer(layer))
                 parentElement.appendChild(btn)
                 
                 const label = createSpan(

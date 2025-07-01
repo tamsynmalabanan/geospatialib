@@ -80,7 +80,7 @@ const handleAddLayersForm = () => {
 
     submitBtn.addEventListener('click', async (e) => {
         const map = form._leafletMap
-        const group = map._ch.getLayerGroups().client
+        const group = map._handlers.getLayerGroups().client
         
         const source = getFileSource()
         const includedLayers = getIncludedLayers(source)
@@ -98,7 +98,7 @@ const handleAddLayersForm = () => {
     
                 const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
                 for (i of sortedLayers) {
-                    await map._ch.addLegendLayer(i)
+                    await map._handlers.addLegendLayer(i)
                 }
             } catch (error) {
                 console.log(error)
@@ -163,12 +163,13 @@ const handleAddLayersForm = () => {
 
     vectorBtn.addEventListener('click', async (e) => {
         const map = form._leafletMap
-        const group = map._ch.getLayerGroups().client
+        const group = map._handlers.getLayerGroups().client
 
         const layer = await getLeafletGeoJSONLayer({
             geojson: turf.featureCollection([]),
             pane: createCustomPane(map),
             group,
+            params: {title: 'new layer'}
         })
 
         if (layer) group.addLayer(layer)

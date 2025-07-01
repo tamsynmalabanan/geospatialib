@@ -25,7 +25,7 @@ const addSearchResultToMap = async () => {
 
     createLeafletLayer(params, {
         dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
-        group: getSearchMap()?._ch.getLayerGroups().library,
+        group: getSearchMap()?._handlers.getLayerGroups().library,
         add: true,
     })
 }
@@ -33,7 +33,7 @@ const addSearchResultToMap = async () => {
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)
-    const group = getSearchMap()._ch.getLayerGroups().search
+    const group = getSearchMap()._handlers.getLayerGroups().search
     const strokeColor = manageHSLAColor(rgbToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor))
     
     const customStyleParams = {
@@ -64,7 +64,7 @@ const addSearchResultBboxToMap = async (el) => {
 const toggleSearchResultBbox = async () => {
     const searchResults = document.querySelector('#searchResults')
     const map = getSearchMap()
-    const group = map?._ch.getLayerGroups().search
+    const group = map?._handlers.getLayerGroups().search
     
     if (group?.getLayers().length) {
         group.clearLayers()
@@ -117,7 +117,7 @@ const handleSearchForm = () => {
             </div>
         `)
 
-        getSearchMap()?._ch.getLayerGroups().search.clearLayers()
+        getSearchMap()?._handlers.getLayerGroups().search.clearLayers()
 
         const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
         window.history.pushState(

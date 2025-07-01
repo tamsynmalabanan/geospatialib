@@ -1,8 +1,3 @@
-const addLeafletBasemapLayer = (map) => L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    className: `layer-${getPreferredTheme()}`
-}).addTo(map)
-
 const getLeafletStyleParams = ({
     iconType='bi',
     iconSpecs='circle-fill',
@@ -711,10 +706,10 @@ const leafletLayerIsVisible = (layer, {addLayer=true, updateCache=false}={}) => 
     }
 
     if (addLayer) {
-        isVisible ? group._ch.removeInvisibleLayer(layer) : group._ch.addInvisibleLayer(layer)
+        isVisible ? group._handlers.removeInvisibleLayer(layer) : group._handlers.addInvisibleLayer(layer)
     }
 
-    if (updateCache) map._ch.updateStoredLegendLayers({layer})
+    if (updateCache) map._handlers.updateStoredLegendLayers({layer})
     
     return isVisible
 }
@@ -848,66 +843,4 @@ const fileToLeafletLayer = async ({
     const layer = await createLeafletLayer(params, {data, group, add})
     
     return layer
-}
-
-const toggleLeafletLayerEditor = async (layer, {
-    keepVersion=false
-} = {}) => {
-    const map = layer?._group?._map
-    if (!map) return
-    
-    const editableLayer = map._drawControl?.options?.edit?.featureGroup
-    const enableEditor = editableLayer?._dbIndexedKey !== layer._dbIndexedKey
-    const layerLegends = document.querySelector(`#${map.getContainer().id}-panels-legend-layers`)
-    const clientLayers = layer._group.getLayers()
-
-    if (editableLayer) {
-        const [id, version] = editableLayer._dbIndexedKey.split('--version')
-        
-        // prompt to save changes
-        let newDBIndexedKey = editableLayer._dbIndexedKey
-        // if (!) {
-        //     newDBIndexedKey = `${id}--version${Number(version ?? 2)-1}`
-        //     deleteFromGISDB(editableLayer._dbIndexedKey)
-        // }
-
-        clientLayers.forEach(i => {
-            if (!i._dbIndexedKey.startsWith(id)) return
-
-            i._dbIndexedKey = newDBIndexedKey
-
-            const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
-            legend.querySelector(`.bi.bi-pencil-square`).remove()
-        })
-    }
-    
-    handleLeafletDrawBtns(map, {
-        include: enableEditor,
-        targetLayer: layer
-    })
-
-    if (enableEditor) {
-        const {gisData, queryExtent} = await getFromGISDB(layer._dbIndexedKey)
-        const [id, version] = layer._dbIndexedKey.split('--version')
-        console.log(map._initComplete)
-        const newDBIndexedKey = keepVersion ? layer._dbIndexedKey : await saveToGISDB(gisData, {
-            id: `${id}--version${Number(version ?? 1)+1}`,
-            queryExtent,
-        })
-
-        clientLayers.forEach(i => {
-            if (!i._dbIndexedKey.startsWith(id)) return
-
-            i._dbIndexedKey = newDBIndexedKey
-
-            const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
-            const title = legend.querySelector(`#${legend.id}-title`)
-            title.insertBefore(customCreateElement({
-                tag: 'i', 
-                className:'bi bi-pencil-square'
-            }), title.lastChild)
-        })
-    }
-
-    map._ch.updateStoredLegendLayers()
 }

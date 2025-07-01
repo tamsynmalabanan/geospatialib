@@ -1,7 +1,7 @@
 const handleLeafletQueryPanel = (map, parent) => {
     let controller = resetController()
 
-    const queryGroup = map._ch.getLayerGroups().query
+    const queryGroup = map._handlers.getLayerGroups().query
     const {
         toolbar, 
         layers,
