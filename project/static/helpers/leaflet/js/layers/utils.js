@@ -889,6 +889,7 @@ const toggleLeafletLayerEditor = async (layer, {
     if (enableEditor) {
         const {gisData, queryExtent} = await getFromGISDB(layer._dbIndexedKey)
         const [id, version] = layer._dbIndexedKey.split('--version')
+        console.log(map._initComplete)
         const newDBIndexedKey = keepVersion ? layer._dbIndexedKey : await saveToGISDB(gisData, {
             id: `${id}--version${Number(version ?? 1)+1}`,
             queryExtent,
