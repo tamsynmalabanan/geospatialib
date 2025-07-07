@@ -135,6 +135,10 @@ const handleLeafletLocateBtn = (map, {include=true}={}) => {
             locateControl._link.click()
         }
     })
+
+    map.on('locationfound', (e) => {
+        console.log('Locate triggered:', locateControl._circle);
+    });
 }
 
 const handleLeafletDrawBtns = (map, {
