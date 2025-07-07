@@ -72,24 +72,13 @@ const toggleLeafletLayerEditor = async (layer, {
                 })
             })
 
-            // const newDBIndexedKey = await alertPromise
-            // if (newDBIndexedKey) {
-            //     endEditingSession(newDBIndexedKey)
-            // } else {
-            //     return
-            // }
-            
-            alertPromise.then(newDBIndexedKey => {
-                if (newDBIndexedKey) {
-                    return endEditingSession(newDBIndexedKey)
-                } else {
-                    return
-                }
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => {
-                document.querySelector('.draw-editor-modal').remove()
-            })
+            const newDBIndexedKey = await alertPromise
+            document.querySelector('.draw-editor-modal').remove()
+            if (newDBIndexedKey) {
+                endEditingSession(newDBIndexedKey)
+            } else {
+                return
+            }
         }
     }
     
