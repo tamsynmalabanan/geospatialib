@@ -127,6 +127,7 @@ const handleLeafletLocateBtn = (map, {include=true}={}) => {
             title: "Zoom to my location (alt+d)"
         },
         showPopup: false,
+        drawCircle: false,
     }).addTo(map);
 
     document.addEventListener('keydown', (e) => {
@@ -135,10 +136,6 @@ const handleLeafletLocateBtn = (map, {include=true}={}) => {
             locateControl._link.click()
         }
     })
-
-    map.on('locationfound', (e) => {
-        console.log('Locate triggered:', locateControl._circle);
-    });
 }
 
 const handleLeafletDrawBtns = (map, {
