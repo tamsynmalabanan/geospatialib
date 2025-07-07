@@ -55,7 +55,7 @@ const toggleLeafletLayerEditor = async (layer, {
                             innerText: 'Continue editing',
                             attrs: {'data-bs-dismiss': 'modal'},
                             events: {click: (e) => {
-                                console.log(alert)
+                                alert.remove()
                                 resolve()
                             }},
                         }),
@@ -63,22 +63,25 @@ const toggleLeafletLayerEditor = async (layer, {
                             className: `btn-danger ms-auto`,
                             innerText: 'Discard',
                             attrs: {'data-bs-dismiss': 'modal'},
-                            events: {click: (e) => resolve(previousKey)},
+                            events: {click: (e) => {
+                                alert.remove()
+                                resolve(previousKey)
+                            }},
                         }),
                         save: createButton({
                             className: `btn-success`,
                             innerText: 'Save',
                             attrs: {'data-bs-dismiss': 'modal'},
-                            events: {click: (e) => resolve(editableLayer._dbIndexedKey)},
+                            events: {click: (e) => {
+                                alert.remove()
+                                resolve(editableLayer._dbIndexedKey)
+                            }},
                         }),
                     }
                 })
             })
 
             const newDBIndexedKey = await alertPromise
-            
-            document.querySelector('.draw-editor-modal').remove()
-            
             if (newDBIndexedKey) {
                 endEditingSession(newDBIndexedKey)
             } else {
