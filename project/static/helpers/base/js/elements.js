@@ -511,10 +511,11 @@ const createModal = ({
     static = false,
     closeBtn = true,
     centered = true,
-    footerBtns = {}
+    footerBtns = {},
+    className = '', 
 }={}) => {
     const modal = document.createElement('div')
-    modal.className = `modal fade`
+    modal.className = `modal fade ${className}`
     modal.setAttribute('tabindex', '-1')
     if (static) {
         modal.setAttribute('data-bs-backdrop', 'static')

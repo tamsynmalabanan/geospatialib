@@ -36,11 +36,11 @@ const toggleLeafletLayerEditor = async (layer, {
         if (!drawControlChanges.length) {
             endEditingSession(previousKey)
         } else if (layer._group._handlers.getAllLayers().includes(editableLayer)) {
-            let alert
             const alertPromise = new Promise((resolve, reject) => {
-                alert = createModal({
+                const alert = createModal({
                     titleText: 'Save layer changes?',
                     parent: document.body,
+                    className: 'draw-editor-modal',
                     show: true,
                     static: true,
                     closeBtn: false,
@@ -72,13 +72,24 @@ const toggleLeafletLayerEditor = async (layer, {
                 })
             })
 
-            const newDBIndexedKey = await alertPromise
-            if (newDBIndexedKey) {
-                endEditingSession(newDBIndexedKey)
-            } else {
-                return
-            }
-            alert.remove()
+            // const newDBIndexedKey = await alertPromise
+            // if (newDBIndexedKey) {
+            //     endEditingSession(newDBIndexedKey)
+            // } else {
+            //     return
+            // }
+            
+            alertPromise.then(newDBIndexedKey => {
+                if (newDBIndexedKey) {
+                    return endEditingSession(newDBIndexedKey)
+                } else {
+                    return
+                }
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => {
+                document.querySelector('.draw-editor-modal').remove()
+            })
         }
     }
     
