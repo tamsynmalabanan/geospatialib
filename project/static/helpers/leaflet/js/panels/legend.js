@@ -561,12 +561,50 @@ const handleLeafletLegendPanel = async (map, parent) => {
         const hasStoredLayers = Object.keys(map._handlers.getStoredLegendLayers()).length
 
         if (storedBbox || hasStoredLayers) {
-            if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
-        
-            map._handlers.addStoredLegendLayers().then(() => {
-                layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
-                Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
+            const alertPromise = new Promise((resolve, reject) => {
+                const alert = createModal({
+                    titleText: 'Restore map state?',
+                    parent: document.body,
+                    show: true,
+                    static: true,
+                    closeBtn: false,
+                    centered: true,
+                    contentBody: customCreateElement({
+                        className: 'p-3',
+                        innerHTML: `Do you want to restore the previous map extent and layers?`
+                    }),
+                    footerBtns: {
+                        no: createButton({
+                            className: `btn-danger ms-auto`,
+                            innerText: 'No',
+                            attrs: {'data-bs-dismiss': 'modal'},
+                            events: {click: (e) => {
+                                alert.remove()
+                                resolve(false)
+                            }},
+                        }),
+                        yes: createButton({
+                            className: `btn-success`,
+                            innerText: 'Yes',
+                            attrs: {'data-bs-dismiss': 'modal'},
+                            events: {click: (e) => {
+                                alert.remove()
+                                resolve(true)
+                            }},
+                        }),
+                    }
+                })
             })
+
+            const restoreMap = await alertPromise
+            if (restoreMap) {
+                if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
+            
+                map._handlers.addStoredLegendLayers().then(() => {
+                    layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+                    Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
+                })
+            }
         }        
     })
 }

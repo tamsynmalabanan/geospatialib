@@ -40,7 +40,6 @@ const toggleLeafletLayerEditor = async (layer, {
                 const alert = createModal({
                     titleText: 'Save layer changes?',
                     parent: document.body,
-                    className: 'draw-editor-modal',
                     show: true,
                     static: true,
                     closeBtn: false,
