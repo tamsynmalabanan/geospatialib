@@ -607,8 +607,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 localStorage.removeItem(`map-bbox-${map.getContainer().id}`)
                 localStorage.removeItem(map._handlers.storedLegendLayersKey)
             }
-            
-            Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
         }        
+            
+        Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
     })
 }
