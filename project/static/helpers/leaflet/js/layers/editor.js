@@ -36,8 +36,9 @@ const toggleLeafletLayerEditor = async (layer, {
         if (!drawControlChanges.length) {
             endEditingSession(previousKey)
         } else if (layer._group._handlers.getAllLayers().includes(editableLayer)) {
+            let alert
             const alertPromise = new Promise((resolve, reject) => {
-                const alert = createModal({
+                alert = createModal({
                     titleText: 'Save layer changes?',
                     parent: document.body,
                     show: true,
@@ -77,6 +78,7 @@ const toggleLeafletLayerEditor = async (layer, {
             } else {
                 return
             }
+            alert.remove()
         }
     }
     

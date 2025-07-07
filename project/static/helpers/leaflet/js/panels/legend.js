@@ -557,12 +557,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
     })
 
     map.on('initComplete', async () => {
-        const cachedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
-        if (cachedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(cachedBbox))).getBounds())
-    
-        map._handlers.addStoredLegendLayers().then(() => {
-            layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
-            Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
-        })
+        const storedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
+        const hasStoredLayers = Object.keys(map._handlers.getStoredLegendLayers()).length
+
+        if (storedBbox || hasStoredLayers) {
+            if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
+        
+            map._handlers.addStoredLegendLayers().then(() => {
+                layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+                Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
+            })
+        }        
     })
 }
