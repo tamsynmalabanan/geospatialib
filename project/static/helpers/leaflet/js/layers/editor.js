@@ -14,7 +14,7 @@ const toggleLeafletLayerEditor = async (layer, {
     if (editableLayer) {
         const [id, version] = editableLayer._dbIndexedKey.split('--version')
         
-        const drawControlChanges = JSON.parse(localStorage.getItem(`${mapContainer.id}-draw-control-changes`) ?? '[]')
+        const drawControlChanges = JSON.parse(localStorage.getItem(`draw-control-changes-${mapContainer.id}`) ?? '[]')
         
         const endEditingSession = (dbIndexedKey) => {
             const isNewKey = dbIndexedKey !== editableLayer._dbIndexedKey

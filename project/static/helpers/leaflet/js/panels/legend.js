@@ -605,6 +605,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 })
             } else {
                 localStorage.removeItem(`map-bbox-${map.getContainer().id}`)
+                localStorage.removeItem(`draw-control-changes-${map.getContainer().id}`)
                 localStorage.removeItem(map._handlers.storedLegendLayersKey)
             }
         }        

@@ -40,7 +40,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
     const isMapDrawControlLayer = dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
     
-    const drawControlChangesKey = `${mapContainer.id}-draw-control-changes`
+    const drawControlChangesKey = `draw-control-changes-${mapContainer.id}`
     const drawControlChanges = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
     
     const addLayer = (l) => group._handlers.removeHiddenLayer(l)

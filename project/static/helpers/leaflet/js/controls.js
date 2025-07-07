@@ -142,7 +142,7 @@ const handleLeafletDrawBtns = (map, {
     include=true,
     targetLayer=L.geoJSON(),
 } = {}) => {
-    const drawControlChangesKey = `${map.getContainer().id}-draw-control-changes`
+    const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
     
     if (map._drawControl) {
         map.removeControl(map._drawControl)
