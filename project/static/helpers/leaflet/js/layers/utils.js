@@ -137,7 +137,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 innerHTML: (
                     iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
                     Array('text', 'emoji', 'property').includes(iconType) ? iconSpecs : 
-                    iconType === 'property' ? feature.properties[iconSpecs] ?? '' : 
+                    iconType === 'property' ? feature.properties?.[iconSpecs] ?? '' : 
                     ''
                 ),
                 style: {

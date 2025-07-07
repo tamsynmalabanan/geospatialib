@@ -151,13 +151,15 @@ const handleLeafletDrawBtns = (map, {
 
     if (!include) return
 
+    const styleParams = getLeafletStyleParams({fillColor: 'hsla(60, 100%, 50%, 1)', strokeWidth: 2})
+
     const drawControl = map._drawControl = new L.Control.Draw({
         position: 'topleft',
         draw: {
-            polyline: true,
-            polygon: true,
-            rectangle: true,
-            marker: true,
+            polyline: {shapeOptions: getLeafletLayerStyle({geometry: {type: 'polyline'}}, styleParams)},
+            polygon: {shapeOptions: getLeafletLayerStyle({geometry: {type: 'polygon'}}, styleParams)},
+            rectangle: {shapeOptions: getLeafletLayerStyle({geometry: {type: 'polygon'}}, styleParams)},
+            marker: {icon: getLeafletLayerStyle({geometry: {type: 'point'}}, styleParams,{allowCircleMarker:false})},
 
             circle: false,
             circlemarker: false,
