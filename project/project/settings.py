@@ -166,15 +166,15 @@ LEAFLET_CONFIG = {
             ],
             'auto_include': True,
         },
-        'locate': {
-            'css': [
-                'https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.83.1/L.Control.Locate.css', 
-            ],
-            'js': [
-                'https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.83.1/L.Control.Locate.min.js',
-            ],
-            'auto_include': True,
-        },
+        # 'locate': {
+        #     'css': [
+        #         'https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.83.1/L.Control.Locate.css', 
+        #     ],
+        #     'js': [
+        #         'https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.83.1/L.Control.Locate.min.js',
+        #     ],
+        #     'auto_include': True,
+        # },
     },
 }
 

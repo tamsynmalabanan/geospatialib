@@ -10,7 +10,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.33.2/tagify.css" integrity="sha512-aGUjmkw9c7PfAFTwp5TUNdYaPeENG2dmSQcttEohCiV35w6jnLw8F4b71+OELp81/HE+FdDkoYfNG2FVoY/y2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 {% comment %} leaflet {% endcomment %}
-{% leaflet_css plugins="forms, geocoder, locate" %}
+{% leaflet_css plugins="forms, geocoder" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
 
 {% comment %} leaflet draw {% endcomment %}
 {% comment %} <link rel="stylesheet" href="https://raw.githubusercontent.com/michaelguild13/Leaflet.draw/refs/heads/master/dist/leaflet.draw.css"/> {% endcomment %}
