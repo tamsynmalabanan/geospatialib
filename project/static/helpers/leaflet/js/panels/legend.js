@@ -602,12 +602,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
             
                 map._handlers.addStoredLegendLayers().then(() => {
                     layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
-                    Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
                 })
             } else {
                 localStorage.removeItem(`map-bbox-${map.getContainer().id}`)
                 localStorage.removeItem(map._handlers.storedLegendLayersKey)
             }
+            
+            Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
         }        
     })
 }
