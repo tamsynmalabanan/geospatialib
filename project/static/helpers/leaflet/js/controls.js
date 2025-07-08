@@ -184,7 +184,7 @@ const handleLeafletDrawBtns = (map, {
     }
 
     const drawEvents = {
-        'created': async (e) => {
+        'created': (async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             
             if (!targetLayer._dbIndexedKey) return targetLayer.addData(geojson)
@@ -197,12 +197,11 @@ const handleLeafletDrawBtns = (map, {
                 turf.bboxPolygon(turf.bbox(geojson)).geometry,
             )
 
-            const data = {type: 'created', features: [{
+            updateDrawControlChanges({type: 'created', features: [{
                 old: null, 
                 new: geojson.features[0]
-            }]}
-            updateDrawControlChanges(data)
-        },
+            }]})
+        }),
         'deleted': async (e) => {
             if (!targetLayer._dbIndexedKey) return
             
