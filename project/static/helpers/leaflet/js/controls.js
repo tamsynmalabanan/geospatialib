@@ -180,6 +180,7 @@ const handleLeafletDrawBtns = (map, {
 
     const drawEvents = {
         'created': async (e) => {
+            console.log(e)
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             
             if (!targetLayer._dbIndexedKey) {
