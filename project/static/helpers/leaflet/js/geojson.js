@@ -257,10 +257,9 @@ const getLeafletGeoJSONData = async (layer, {
     const map = layer._map ?? layer._group?._map
     if (!map) return
 
-    const geojsonHasFeatures = geojson?.features?.length
     queryGeom = queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
 
-    if (geojsonHasFeatures && queryGeom) {
+    if (geojson?.features?.length && queryGeom) {
         const queryExtent = turf.getType(queryGeom) === 'Point' ? turf.buffer(
             queryGeom, leafletZoomToMeter(zoom)/2/1000
         ).geometry : queryGeom
@@ -270,7 +269,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    let data = geojsonHasFeatures ? geojson : (await getGeoJSON(dbIndexedKey, {
+    let data = geojson?.features?.length ? geojson : (await getGeoJSON(dbIndexedKey, {
         queryGeom,
         controller,
         abortBtns,
@@ -354,20 +353,20 @@ const getLeafletGeoJSONData = async (layer, {
 }
 
 const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateCache=true} = {}) => {
-    if (!layer) return
+    if (!layer || !layer._map || layer._map._handlers.hasHiddenLegendLayer(layer) || !leafletLayerIsVisible(layer)) return
 
-    if (!layer._map || layer._map._handlers.hasHiddenLegendLayer(layer) || !leafletLayerIsVisible(layer)) return
+    const isEditable = layer._dbIndexedKey === layer._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
 
     layer.fire('dataupdating')
-    const data = await getLeafletGeoJSONData(layer, {
+    const data = !isEditable || geojson ? await getLeafletGeoJSONData(layer, {
         geojson, 
         controller, 
         abortBtns, 
-        queryGeom: true,
+        queryGeom: !isEditable,
         group: true,
         sort: true,
         simplify: true,
-    })
+    }) : layer.toGeoJSON()
     if (!data) return
 
     if (controller?.signal?.aborted) return
@@ -380,8 +379,10 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     }
     layer.options.renderer._container?.classList.remove('d-none')
     
-    layer.clearLayers()
-    layer.addData(data)
+    if (!isEditable || geojson) {
+        layer.clearLayers()
+        layer.addData(data)
+    }
     layer.fire('dataupdate')
     
     if (updateCache) layer._map?._handlers.updateStoredLegendLayers({layer})

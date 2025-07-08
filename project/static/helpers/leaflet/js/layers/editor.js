@@ -3,7 +3,7 @@ const toggleLeafletLayerEditor = async (layer, {
 } = {}) => {
     const map = layer?._group?._map
     if (!map) return
-    
+     
     const editableLayer = map._drawControl?.options?.edit?.featureGroup
     const enableEditor = editableLayer?._dbIndexedKey !== layer._dbIndexedKey
 
@@ -12,25 +12,22 @@ const toggleLeafletLayerEditor = async (layer, {
     const clientLayers = layer._group._handlers.getAllLayers()
 
     if (editableLayer) {
-        const [id, version] = editableLayer._dbIndexedKey.split('--version')
-        
-        const drawControlChanges = JSON.parse(localStorage.getItem(`draw-control-changes-${mapContainer.id}`) ?? '[]')
-        
         const endEditingSession = (dbIndexedKey) => {
-            const isNewKey = dbIndexedKey !== editableLayer._dbIndexedKey
-            if (isNewKey) deleteFromGISDB(editableLayer._dbIndexedKey)
+            if (dbIndexedKey !== editableLayer._dbIndexedKey) {
+                deleteFromGISDB(editableLayer._dbIndexedKey)
+            }
     
             clientLayers.forEach(i => {
                 if (!i._dbIndexedKey.startsWith(id)) return
-    
                 i._dbIndexedKey = dbIndexedKey
-                if (isNewKey && drawControlChanges.length) updateLeafletGeoJSONLayer(i, {updateCache: false})
     
                 const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
                 legend.querySelector(`.bi.bi-pencil-square`).remove()
             })
         }
 
+        const [id, version] = editableLayer._dbIndexedKey.split('--version')
+        const drawControlChanges = JSON.parse(localStorage.getItem(`draw-control-changes-${mapContainer.id}`) ?? '[]')
         const previousKey = `${id}--version${Number(version ?? 2)-1}`
 
         if (!drawControlChanges.length) {
@@ -88,7 +85,7 @@ const toggleLeafletLayerEditor = async (layer, {
             }
         }
     }
-    
+
     if (enableEditor) {
         const [id, version] = layer._dbIndexedKey.split('--version')
         const {gisData, queryExtent} = (await getFromGISDB(layer._dbIndexedKey)) ?? {
@@ -102,7 +99,6 @@ const toggleLeafletLayerEditor = async (layer, {
 
         clientLayers.forEach(i => {
             if (!i._dbIndexedKey.startsWith(id)) return
-
             i._dbIndexedKey = newDBIndexedKey
 
             const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
@@ -118,6 +114,18 @@ const toggleLeafletLayerEditor = async (layer, {
         include: enableEditor,
         targetLayer: layer
     })
+
+    const geojson = enableEditor ? (await getFromGISDB(layer._dbIndexedKey))?.gisData : null
+
+    for (const i of clientLayers) {
+        if (editableLayer?._dbIndexedKey === i._dbIndexedKey) {
+            updateLeafletGeoJSONLayer(i, {updateCache: false})
+        }
+        
+        if (enableEditor && layer._dbIndexedKey === i._dbIndexedKey) {
+            updateLeafletGeoJSONLayer(i, {geojson, updateCache: false})
+        }
+    }
 
     map._handlers.updateStoredLegendLayers()
 }
