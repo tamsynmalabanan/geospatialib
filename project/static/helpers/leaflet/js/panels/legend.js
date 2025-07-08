@@ -604,9 +604,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
                 })
             } else {
-                localStorage.removeItem(`map-bbox-${map.getContainer().id}`)
-                localStorage.removeItem(`draw-control-changes-${map.getContainer().id}`)
-                localStorage.removeItem(map._handlers.storedLegendLayersKey)
+                Object.keys(localStorage).forEach(i => {
+                    if (!i.includes(map.getContainer().id)) return
+                    localStorage.removeItem(i)
+                })
             }
         }        
             
