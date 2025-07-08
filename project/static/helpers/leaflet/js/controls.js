@@ -170,21 +170,24 @@ const handleLeafletDrawBtns = (map, {
         }
     })
 
-    const updateDrawControlChanges = (data) => {
+    const updateDrawControlChanges = (data, {geojson} = {}) => {
         if (!data) return
 
         const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
         current.push(data)
         localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+    
+        targetLayer._group.getLayers().forEach(i => {
+            if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
+            updateLeafletGeoJSONLayer(i, {geojson, updateCache: false})
+        })
     }
 
     const drawEvents = {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             
-            if (!targetLayer._dbIndexedKey) {
-                return targetLayer.addData(geojson)
-            }
+            if (!targetLayer._dbIndexedKey) return targetLayer.addData(geojson)
             
             await normalizeGeoJSON(geojson)
 
@@ -193,11 +196,6 @@ const handleLeafletDrawBtns = (map, {
                 turf.clone(geojson),
                 turf.bboxPolygon(turf.bbox(geojson)).geometry,
             )
-
-            targetLayer._group.getLayers().forEach(i => {
-                if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
-                updateLeafletGeoJSONLayer(i, {updateCache: false})
-            })
 
             updateDrawControlChanges({
                 type: 'created',
@@ -226,16 +224,11 @@ const handleLeafletDrawBtns = (map, {
                 queryExtent: turf.bboxPolygon(turf.bbox(gisData))
             })
 
-            targetLayer._group.getLayers().forEach(i => {
-                if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
-                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
-            })
-            
             updateDrawControlChanges({
                 type: 'deleted',
                 features: geojson.features.map(i => {
                     return {old: i, new: null}
-                })
+                }, {geojson: gisData})
             })
         },
         'edited': async (e) => {
@@ -260,15 +253,10 @@ const handleLeafletDrawBtns = (map, {
                 queryExtent: turf.bboxPolygon(turf.bbox(gisData))
             })
     
-            targetLayer._group.getLayers().forEach(i => {
-                if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
-                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
-            })
-
             updateDrawControlChanges({
                 type: 'edited',
                 features,
-            })
+            }, {geojson: gisData})
         },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
