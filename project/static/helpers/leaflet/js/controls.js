@@ -197,10 +197,13 @@ const handleLeafletDrawBtns = (map, {
                 turf.bboxPolygon(turf.bbox(geojson)).geometry,
             )
 
-            updateDrawControlChanges({type: 'created', features: [{
-                old: null, 
-                new: geojson.features[0]
-            }]})
+            updateDrawControlChanges({
+                type: 'created', 
+                features: [{
+                    old: null, 
+                    new: geojson.features[0]
+                }]
+            })
         }),
         'deleted': async (e) => {
             if (!targetLayer._dbIndexedKey) return
