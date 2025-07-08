@@ -201,24 +201,73 @@ const handleLeafletDrawBtns = (map, {
 
             updateDrawControlChanges({
                 type: 'created',
-                old: null, 
-                new: geojson, 
+                features: [{
+                    old: null, 
+                    new: geojson.features[0]
+                }]
             })
         },
-        'edited': (e) => {
-            console.log('edited', e)
-            updateDrawControlChanges({
-                type: 'edited',
-                // old: null, 
-                // new: geojson, 
+        'deleted': async (e) => {
+            if (!targetLayer._dbIndexedKey) return
+            
+            const geojson = e.layers.toGeoJSON()
+
+            const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
+            gisData.features = gisData.features.filter(feature1 => {
+                return !(geojson.features.find(feature2 => {
+                    const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
+                    const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
+                    return propertiesEqual && geometriesEqual
+                }))           
             })
-        },
-        'deleted': (e) => {
-            console.log('deleted', e)
+            
+            saveToGISDB(gisData, {
+                id: targetLayer._dbIndexedKey,
+                queryExtent: turf.bboxPolygon(turf.bbox(gisData))
+            })
+
+            targetLayer._group.getLayers().forEach(i => {
+                if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
+                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+            })
+            
             updateDrawControlChanges({
                 type: 'deleted',
-                // old: null, 
-                // new: geojson, 
+                features: geojson.features.map(i => {
+                    return {old: i, new: null}
+                })
+            })
+        },
+        'edited': async (e) => {
+            if (!targetLayer._dbIndexedKey) return
+            
+            const features = e.layers.getLayers().map(i => {
+                return {old: i.feature, new: i.toGeoJSON()}
+            })
+
+            const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
+            gisData.features = [...gisData.features.filter(feature1 => {
+                return !(features.find(i => {
+                    const feature2 = i.old
+                    const propertiesEqual = JSON.stringify(feature1.properties) === JSON.stringify(feature2.properties)
+                    const geometriesEqual = turf.booleanEqual(feature1.geometry, feature2.geometry)
+                    return propertiesEqual && geometriesEqual
+                }))           
+            }), ...features.map(i => i.new)]
+            
+            saveToGISDB(gisData, {
+                id: targetLayer._dbIndexedKey,
+                queryExtent: turf.bboxPolygon(turf.bbox(gisData))
+            })
+    
+            targetLayer._group.getLayers().forEach(i => {
+                if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
+                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+            })
+
+            updateDrawControlChanges({
+                type: 'edited',
+                features,
             })
         },
         // 'drawstart': (e) => {
