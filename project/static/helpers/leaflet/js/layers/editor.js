@@ -91,7 +91,10 @@ const toggleLeafletLayerEditor = async (layer, {
     
     if (enableEditor) {
         const [id, version] = layer._dbIndexedKey.split('--version')
-        const {gisData, queryExtent} = await getFromGISDB(layer._dbIndexedKey)
+        const {gisData, queryExtent} = (await getFromGISDB(layer._dbIndexedKey)) ?? {
+            gisData: turf.featureCollection([]),
+            queryExtent: turf.feature([]).geometry,
+        }
         const newDBIndexedKey = dbIndexedKey ?? await saveToGISDB(gisData, {
             id: `${id}--version${Number(version ?? 1)+1}`,
             queryExtent,

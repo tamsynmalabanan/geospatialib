@@ -169,8 +169,7 @@ const handleLeafletDrawBtns = (map, {
             featureGroup: targetLayer,
         }
     })
-    
-    
+
     const updateDrawControlChanges = (data) => {
         if (!data) return
 
@@ -182,21 +181,23 @@ const handleLeafletDrawBtns = (map, {
     const drawEvents = {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
-            if (targetLayer._dbIndexedKey) {
-                await normalizeGeoJSON(geojson)
-                await updateGISDB(
-                    targetLayer._dbIndexedKey, 
-                    turf.clone(geojson),
-                    turf.bboxPolygon(turf.bbox(geojson)).geometry,
-                )
-
-                targetLayer._group.getLayers().forEach(i => {
-                    if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
-                    updateLeafletGeoJSONLayer(i, {updateCache: false})
-                })
-            } else {
-                targetLayer.addData(geojson)
+            
+            if (!targetLayer._dbIndexedKey) {
+                return targetLayer.addData(geojson)
             }
+            
+            await normalizeGeoJSON(geojson)
+
+            await updateGISDB(
+                targetLayer._dbIndexedKey, 
+                turf.clone(geojson),
+                turf.bboxPolygon(turf.bbox(geojson)).geometry,
+            )
+
+            targetLayer._group.getLayers().forEach(i => {
+                if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
+                updateLeafletGeoJSONLayer(i, {updateCache: false})
+            })
 
             updateDrawControlChanges({
                 type: 'created',
