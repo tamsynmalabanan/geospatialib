@@ -182,12 +182,10 @@ const handleLeafletDrawBtns = (map, {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             
-            if (!targetLayer._dbIndexedKey) {
-                return targetLayer.addData(geojson)
-            }
+            if (!targetLayer._dbIndexedKey) return targetLayer.addData(geojson)
             
             await normalizeGeoJSON(geojson)
-
+            
             await updateGISDB(
                 targetLayer._dbIndexedKey, 
                 turf.clone(geojson),
@@ -201,10 +199,10 @@ const handleLeafletDrawBtns = (map, {
 
             updateDrawControlChanges({
                 type: 'created',
-                // features: [{
-                //     old: null, 
-                //     new: geojson.features[0]
-                // }]
+                features: [{
+                    old: null, 
+                    new: geojson.features[0]
+                }]
             })
         },
         'deleted': async (e) => {
@@ -221,9 +219,9 @@ const handleLeafletDrawBtns = (map, {
                 }))           
             })
             
-            saveToGISDB(gisData, {
+            saveToGISDB(turf.clone(gisData), {
                 id: targetLayer._dbIndexedKey,
-                queryExtent: turf.bboxPolygon(turf.bbox(gisData))
+                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
             })
 
             targetLayer._group.getLayers().forEach(i => {
@@ -255,9 +253,9 @@ const handleLeafletDrawBtns = (map, {
                 }))           
             }), ...features.map(i => i.new)]
             
-            saveToGISDB(gisData, {
+            saveToGISDB(turf.clone(gisData), {
                 id: targetLayer._dbIndexedKey,
-                queryExtent: turf.bboxPolygon(turf.bbox(gisData))
+                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
             })
     
             targetLayer._group.getLayers().forEach(i => {
@@ -270,28 +268,31 @@ const handleLeafletDrawBtns = (map, {
                 features,
             })
         },
+        'editstart': (e) => {
+            drawControl._preventUpdate = true
+        },
+        'editstop': (e) => {
+            drawControl._preventUpdate = false
+        },
+        'deletestart': (e) => {
+            drawControl._preventUpdate = true
+        },
+        'deletestop': (e) => {
+            drawControl._preventUpdate = false
+        },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
         // },
         // 'drawstop': (e) => {
         //     enableMapInteractivity(map)
         // },
-        // 'editstart': (e) => {
-        //     disableMapInteractivity(map)
-        // },
-        // 'editstop': (e) => {
-        //     enableMapInteractivity(map)
-        // },
-        // 'deletestart': (e) => {
-        //     disableMapInteractivity(map)
-        // },
-        // 'deletestop': (e) => {
-        //     enableMapInteractivity(map)
-        // },
     }
 
     Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i]))
-    drawControl.onRemove = (map) => Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
+    drawControl.onRemove = (map) => {
+        drawControl._toolbars.edit.disable()
+        Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
+    }
     
     drawControl.addTo(map)
     return drawControl

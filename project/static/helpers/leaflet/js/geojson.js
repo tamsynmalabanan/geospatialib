@@ -356,9 +356,10 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     if (!layer || !layer._map || layer._map._handlers.hasHiddenLegendLayer(layer) || !leafletLayerIsVisible(layer)) return
 
     const isEditable = layer._dbIndexedKey === layer._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
+    const preventUpdate = isEditable && layer._map._drawControl?._preventUpdate
 
     layer.fire('dataupdating')
-    const data = !isEditable || geojson ? await getLeafletGeoJSONData(layer, {
+    const data = !preventUpdate ? await getLeafletGeoJSONData(layer, {
         geojson, 
         controller, 
         abortBtns, 
@@ -379,7 +380,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     }
     layer.options.renderer._container?.classList.remove('d-none')
     
-    if (!isEditable || geojson) {
+    if (!preventUpdate) {
         layer.clearLayers()
         layer.addData(data)
     }

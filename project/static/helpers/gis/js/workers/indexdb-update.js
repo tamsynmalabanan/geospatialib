@@ -22,18 +22,22 @@ self.onmessage = (e) => {
         currentQueryExtent,
     } = e.data
     
-    const filteredFeatures = currentGISData.features.filter(feature => {
-        return !hasSimilarFeature(newGISData.features, feature)
-    })
+    try {
+        const filteredFeatures = currentGISData.features.filter(feature => {
+            return !hasSimilarFeature(newGISData.features, feature)
+        })
 
-    if (filteredFeatures.length) {
-        newGISData.features = newGISData.features.concat(filteredFeatures)
-        const unionQueryExtent = turf.union(turf.featureCollection([
-            turf.feature(newQueryExtent),
-            turf.feature(currentQueryExtent),
-        ])).geometry
-        newQueryExtent.type = unionQueryExtent.type
-        newQueryExtent.coordinates = unionQueryExtent.coordinates
+        if (filteredFeatures.length) {
+            newGISData.features = newGISData.features.concat(filteredFeatures)
+            const unionQueryExtent = turf.union(turf.featureCollection([
+                turf.feature(newQueryExtent),
+                turf.feature(currentQueryExtent),
+            ])).geometry
+            newQueryExtent.type = unionQueryExtent.type
+            newQueryExtent.coordinates = unionQueryExtent.coordinates
+        }
+    } catch (error) {
+        console.log(error, e.data)
     }
     
     self.postMessage({
