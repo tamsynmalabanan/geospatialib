@@ -170,6 +170,8 @@ const handleLeafletDrawBtns = (map, {
         }
     })
 
+    console.log(drawControl)
+
     const updateDrawControlChanges = (data) => {
         if (!data) return
 
