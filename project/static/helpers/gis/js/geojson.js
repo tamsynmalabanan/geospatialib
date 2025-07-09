@@ -32,6 +32,8 @@ const normalizeGeoJSONFeature = async (feature, {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
     }
     
+    feature.properties.__gsl_id__ = generateRandomString()
+
     if (feature.id) feature.properties.feature_id = feature.id
     feature.properties = normalizeFeatureProperties(feature.properties)
 

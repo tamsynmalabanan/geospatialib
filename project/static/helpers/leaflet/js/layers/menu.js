@@ -40,9 +40,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
     const isMapDrawControlLayer = dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
     
-    const drawControlChangesKey = `draw-control-changes-${mapContainer.id}`
-    const drawControlChanges = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
-    
     const addLayer = (l) => group._handlers.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._handlers.addToHiddenLayers(l) : group.removeLayer(l)
     
@@ -69,25 +66,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     bubbles: true,
                     cancelable: true,
                 })) 
-            }
-        },
-        saveChanges: !editableLayer || !isMapDrawControlLayer || !drawControlChanges.length ? null : {
-            innerText: `Save layer changes`,
-            btnCallback: async () => {
-                const [id, version] = dbIndexedKey.split('--version')
-                const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
-                const newDBIndexedKey = await saveToGISDB(gisData, {
-                    id: `${id}--version${Number(version ?? 1)+1}`,
-                    queryExtent,
-                })
-
-                group._handlers.getAllLayers().forEach(i => {
-                    if (!i._dbIndexedKey.startsWith(id)) return
-                    i._dbIndexedKey = newDBIndexedKey
-                })
-
-                map._handlers.updateStoredLegendLayers()
-                localStorage.removeItem(drawControlChangesKey)
             }
         },
         toggleEditor: !editableLayer ? null : {

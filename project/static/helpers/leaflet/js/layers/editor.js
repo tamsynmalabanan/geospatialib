@@ -27,7 +27,7 @@ const toggleLeafletLayerEditor = async (layer, {
                 i._dbIndexedKey = dbIndexedKey
     
                 const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
-                legend.querySelector(`.bi.bi-pencil-square`).remove()
+                legend.querySelector(`.bi.bi-pencil-square`)?.remove()
             })
         }
 
@@ -53,7 +53,7 @@ const toggleLeafletLayerEditor = async (layer, {
                             innerText: 'Continue editing',
                             attrs: {'data-bs-dismiss': 'modal'},
                             events: {click: (e) => {
-                                alert.remove()
+                                alert?.remove()
                                 resolve()
                             }},
                         }),
@@ -62,7 +62,7 @@ const toggleLeafletLayerEditor = async (layer, {
                             innerText: 'Discard',
                             attrs: {'data-bs-dismiss': 'modal'},
                             events: {click: (e) => {
-                                alert.remove()
+                                alert?.remove()
                                 resolve(previousKey)
                             }},
                         }),
@@ -71,7 +71,7 @@ const toggleLeafletLayerEditor = async (layer, {
                             innerText: 'Save',
                             attrs: {'data-bs-dismiss': 'modal'},
                             events: {click: (e) => {
-                                alert.remove()
+                                alert?.remove()
                                 resolve(editableLayer._dbIndexedKey)
                             }},
                         }),
