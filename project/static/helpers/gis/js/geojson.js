@@ -18,6 +18,8 @@ const normalizeGeoJSON = async (geojson, {
             crs,
         })
     }
+
+    return geojson
 }
 
 const normalizeGeoJSONFeature = async (feature, {

@@ -39,7 +39,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const clientLayer = (dbIndexedKey ?? '').startsWith('client')
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
     const isMapDrawControlLayer = dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
-    
+    const drawControlChangesKey = `draw-control-changes-${mapContainer.id}`
+
     const addLayer = (l) => group._handlers.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._handlers.addToHiddenLayers(l) : group.removeLayer(l)
     
@@ -73,6 +74,145 @@ const getLeafletLayerContextMenu = async (event, layer, {
             btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
         },
 
+        divider5: !feature || !isMapDrawControlLayer ? null : {
+            divider: true,
+        },
+        pasteFeature: !feature || !isMapDrawControlLayer ? null : {
+            innerText: 'Paste feature',
+            btnCallback: async () => {
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+    
+                try {
+                    let newFeature = JSON.parse(text)
+                    if (newFeature.type !== 'Feature') return
+
+                    newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+
+                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+
+                    const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                    gisData.features = [
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        newFeature
+                    ]
+
+                    saveToGISDB(turf.clone(gisData), {
+                        id: dbIndexedKey,
+                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                    })
+
+                    group.getLayers().forEach(i => {
+                        if (i._dbIndexedKey !== dbIndexedKey) return
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                    })
+
+                    map._drawControl._addChange({
+                        type: 'edited',
+                        features: [{
+                            old: feature,
+                            new: newFeature
+                        }]
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        },
+        pasteProperties: !feature || !isMapDrawControlLayer ? null : {
+            innerText: 'Paste properties',
+            btnCallback: async () => {
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+    
+                try {
+                    let newProperties = JSON.parse(text)
+                    if (newProperties.type === 'Feature') {
+                        newProperties = newProperties.properties
+                    }
+                    if (!newProperties) return
+
+                    let newFeature = structuredClone(feature)
+                    newFeature.properties = newProperties
+                    newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+
+                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+
+                    const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                    gisData.features = [
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        newFeature
+                    ]
+
+                    saveToGISDB(turf.clone(gisData), {
+                        id: dbIndexedKey,
+                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                    })
+
+                    group.getLayers().forEach(i => {
+                        if (i._dbIndexedKey !== dbIndexedKey) return
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                    })
+
+                    map._drawControl._addChange({
+                        type: 'edited',
+                        features: [{
+                            old: feature,
+                            new: newFeature
+                        }]
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        },
+        pasteGeometry: !feature || !isMapDrawControlLayer ? null : {
+            innerText: 'Paste geometry',
+            btnCallback: async () => {
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+    
+                try {
+                    let newGeom = JSON.parse(text)
+                    if (newGeom.type === 'Feature') newGeom = newGeom.geometry
+                    if (!newGeom || !newGeom.coordinates || !newGeom.type) return
+
+
+                    let newFeature = structuredClone(feature)
+                    newFeature.geometry = newGeom
+                    newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+
+                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+
+                    const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                    gisData.features = [
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        newFeature
+                    ]
+
+                    saveToGISDB(turf.clone(gisData), {
+                        id: dbIndexedKey,
+                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                    })
+
+                    group.getLayers().forEach(i => {
+                        if (i._dbIndexedKey !== dbIndexedKey) return
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                    })
+
+                    map._drawControl._addChange({
+                        type: 'edited',
+                        features: [{
+                            old: feature,
+                            new: newFeature
+                        }]
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        },
+
         divider1: !feature || isSearch ? null : {
             divider: true,
         },
@@ -89,7 +229,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
         
-        divider5: isSearch ? null : {
+        divider6: isSearch ? null : {
             divider: true,
         },
         legend: {

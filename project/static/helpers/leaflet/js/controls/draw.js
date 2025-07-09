@@ -30,6 +30,14 @@ const handleLeafletDrawBtns = (map, {
         }
     })
 
+    drawControl._addChange = (data) => {
+        if (!data) return
+
+        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+        current.push(data)
+        localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+    }
+
     const container = drawControl.addTo(map)._container
     toggleMapInteractivity(map, {controls: [container]})
     
@@ -136,7 +144,7 @@ const handleLeafletDrawBtns = (map, {
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                     })
     
-                    updateDrawControlChanges({
+                    drawControl._addChange({
                         type: 'restore',
                         features: [{
                             old: oldFeatures, 
@@ -210,14 +218,6 @@ const handleLeafletDrawBtns = (map, {
         if (btn.className.includes('edit-remove')) btn.classList.add('bi-trash')
     })
 
-    const updateDrawControlChanges = (data) => {
-        if (!data) return
-
-        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
-        current.push(data)
-        localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
-    }
-
     const drawEvents = {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
@@ -239,7 +239,7 @@ const handleLeafletDrawBtns = (map, {
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
             })
 
-            updateDrawControlChanges({
+            drawControl._addChange({
                 type: 'created',
                 features: [{
                     old: null, 
@@ -266,7 +266,7 @@ const handleLeafletDrawBtns = (map, {
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
             })
             
-            updateDrawControlChanges({
+            drawControl._addChange({
                 type: 'deleted',
                 features: geojson.features.map(i => {
                     return {old: i, new: null}
@@ -297,7 +297,7 @@ const handleLeafletDrawBtns = (map, {
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
             })
 
-            updateDrawControlChanges({
+            drawControl._addChange({
                 type: 'edited',
                 features,
             })
