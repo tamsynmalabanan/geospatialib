@@ -55,7 +55,7 @@ const handleLeafletDrawBtns = (map, {
         tag: 'a',
         parent: bar,
         attrs: {href:'#', title: 'Undo last change'},
-        className: 'leaflet-draw-misc-restore bi-arrow-return-left',
+        className: 'leaflet-draw-misc-restore bi bi-arrow-return-left',
         events: {
             click: async (e) => {
                 e.preventDefault()
@@ -113,7 +113,7 @@ const handleLeafletDrawBtns = (map, {
             href:'#', 
             'data-dbindexedkey-version': targetLayer._dbIndexedKey.split('--version')[1]
         },
-        className: 'leaflet-draw-misc-restore bi-skip-backward',
+        className: 'leaflet-draw-misc-restore bi bi-skip-backward',
         events: {
             mouseover: async (e) => {
                 const [id, version] = targetLayer._dbIndexedKey.split('--version')
@@ -161,7 +161,7 @@ const handleLeafletDrawBtns = (map, {
         tag: 'a',
         parent: bar,
         attrs: {href:'#', title: 'Save changes'},
-        className: 'leaflet-draw-misc-restore bi-floppy',
+        className: 'leaflet-draw-misc-restore bi bi-floppy',
         events: {
             click: async (e) => {
                 e.preventDefault()
@@ -192,7 +192,7 @@ const handleLeafletDrawBtns = (map, {
         tag: 'a',
         parent: bar,
         attrs: {href:'#', title: 'Disable layer editor'},
-        className: 'leaflet-draw-misc-restore bi-x-lg',
+        className: 'leaflet-draw-misc-restore bi bi-x-lg',
         events: {
             click: async (e) => {
                 e.preventDefault()
@@ -208,17 +208,23 @@ const handleLeafletDrawBtns = (map, {
     })
     
     Array.from(container.querySelectorAll('a')).forEach(btn => {
-        btn.classList.add(`text-bg-${getPreferredTheme()}`, 'border-0', 'd-flex', 'justify-content-center', 'align-items-center', 'bi')
+        btn.classList.add(`text-bg-${getPreferredTheme()}`, 'border-0', 'd-flex', 'justify-content-center', 'align-items-center')
         btn.style.backgroundImage = 'none'
         btn.style.height = '32px'
         btn.style.width = '32px'
 
-        if (btn.className.includes('polyline')) btn.classList.add('bi-slash-lg')
-        if (btn.className.includes('polygon')) btn.classList.add('bi-pentagon')
-        if (btn.className.includes('rectangle')) btn.classList.add('bi-square')
-        if (btn.className.includes('marker')) btn.classList.add('bi-geo-alt')
-        if (btn.className.includes('edit-edit')) btn.classList.add('bi-pencil-square')
-        if (btn.className.includes('edit-remove')) btn.classList.add('bi-trash')
+        const icon = customCreateElement({
+            parent: btn,
+            tag: 'i',
+            className: 'pe-none bi'
+        })
+
+        if (btn.className.includes('polyline')) icon.classList.add('bi-slash-lg')
+        if (btn.className.includes('polygon')) icon.classList.add('bi-pentagon')
+        if (btn.className.includes('rectangle')) icon.classList.add('bi-square')
+        if (btn.className.includes('marker')) icon.classList.add('bi-geo-alt')
+        if (btn.className.includes('edit-edit')) icon.classList.add('bi-pencil-square')
+        if (btn.className.includes('edit-remove')) icon.classList.add('bi-trash')
     })
 
     const autoSaveDeletion = (e) => {
@@ -311,17 +317,17 @@ const handleLeafletDrawBtns = (map, {
             })
         },
         'editstart': (e) => {
-            drawControl._preventUpdate = true
+            drawControl._editMode = true
         },
         'editstop': (e) => {
-            drawControl._preventUpdate = false
+            drawControl._editMode = false
         },
         'deletestart': (e) => {
-            drawControl._preventUpdate = true
+            drawControl._editMode = true
             map.on('click', autoSaveDeletion)
         },
         'deletestop': (e) => {
-            drawControl._preventUpdate = false
+            drawControl._editMode = false
             map.off('click', autoSaveDeletion)
         },
         // 'drawstart': (e) => {

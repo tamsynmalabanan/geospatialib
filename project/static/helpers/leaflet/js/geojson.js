@@ -93,8 +93,10 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
+            const isMapDrawControlLayer = geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
             const properties = cleanFeatureProperties(feature.properties)
-            if (Object.keys(properties).length) {
+
+            if (Object.keys(properties).length || isMapDrawControlLayer) {
                 const info = geojsonLayer._properties.info
                 const tooltip = info.tooltip
                 const popup = info.popup
@@ -115,7 +117,7 @@ const getLeafletGeoJSONLayer = async ({
     
                 if (popup.active) {
                     let popupProperties = {}
-                    if (popup.properties.length) {
+                    if (popup.properties.length && !isMapDrawControlLayer) {
                         for (const i of popup.properties) {
                             popupProperties[i] = properties[i]
                         }
@@ -123,14 +125,21 @@ const getLeafletGeoJSONLayer = async ({
                         popupProperties = properties
                     }
     
-                    const popupContent = createFeaturePropertiesTable(popupProperties, {
+                    // layer.bindPopup(createFeaturePropertiesTable(popupProperties, {
+                    //     header: (() => {
+                    //         const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
+                    //         layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
+                    //         return popupHeader()
+                    //     })()
+                    // }).outerHTML, {autoPan: false})
+                    
+                    layer.bindPopup(createFeaturePropertiesTable(popupProperties, {
                         header: (() => {
                             const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
                             layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
                             return popupHeader()
                         })()
-                    }).outerHTML
-                    layer.bindPopup(popupContent, {autoPan: false})
+                    }).outerHTML, {autoPan: false})
                 }
             }
 
@@ -356,7 +365,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     if (!layer || !layer._map || layer._map._handlers.hasHiddenLegendLayer(layer) || !leafletLayerIsVisible(layer)) return
 
     const isEditable = layer._dbIndexedKey === layer._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
-    const preventUpdate = isEditable && layer._map._drawControl?._preventUpdate
+    const preventUpdate = isEditable && layer._map._drawControl?._editMode
 
     layer.fire('dataupdating')
     const data = !preventUpdate ? await getLeafletGeoJSONData(layer, {
