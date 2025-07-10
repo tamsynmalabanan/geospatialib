@@ -317,10 +317,10 @@ const getLeafletGeoJSONLayer = async ({
                                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                                     })
 
-                                    for (const i of group.getLayers()) {
+                                    group.getLayers().forEach(i => {
                                         if (i._dbIndexedKey !== dbIndexedKey) return
-                                        await updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
-                                    }
+                                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                                    })
 
                                     group._map._drawControl._addChange({
                                         type: 'edited',
