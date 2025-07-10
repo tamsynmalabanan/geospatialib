@@ -295,9 +295,12 @@ const getLeafletGeoJSONLayer = async ({
                                             const propertyName = row.firstChild.firstChild.value
                                             const propertyValue = row.firstChild.nextElementSibling.firstChild.value
                                             newProperties[propertyName] = propertyValue
+                                        } else {
+                                            row.remove()
                                         }
                                     })
 
+                                    saveBtn.classList.add('disabled')
                                     layer.closePopup()
 
                                     let newFeature = structuredClone(feature)
