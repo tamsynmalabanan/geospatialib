@@ -292,15 +292,21 @@ const getLeafletGeoJSONLayer = async ({
                                     const newProperties = {}
                                     Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                                         if (row.lastChild.firstChild.checked) {
-                                            const propertyName = row.firstChild.firstChild.value
-                                            const propertyValue = row.firstChild.nextElementSibling.firstChild.value
+                                            const nameField = row.firstChild.firstChild
+                                            const propertyName = nameField.value
+                                            nameField.setAttribute('placeholder', propertyName)
+
+                                            const valueField = row.firstChild.nextElementSibling.firstChild
+                                            const propertyValue = valueField.value
+                                            valueField.setAttribute('placeholder', propertyValue)
+
                                             newProperties[propertyName] = propertyValue
                                         } else {
                                             row.remove()
                                         }
                                     })
 
-                                    saveBtn.classList.add('disabled')
+                                    toggleSaveBtn()
                                     layer.closePopup()
 
                                     let newFeature = structuredClone(feature)
