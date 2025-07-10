@@ -93,7 +93,7 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            const isMapDrawControlLayer = geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
+            const isMapDrawControlLayer = group._name === 'client' && geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
             const properties = cleanFeatureProperties(feature.properties)
 
             if (Object.keys(properties).length || isMapDrawControlLayer) {
