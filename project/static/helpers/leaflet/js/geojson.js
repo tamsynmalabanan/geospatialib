@@ -327,7 +327,7 @@ const getLeafletGeoJSONLayer = async ({
                                     })
 
                                     group.getLayers().forEach(i => {
-                                        if (i._dbIndexedKey !== dbIndexedKey) return
+                                        if (i._dbIndexedKey !== geojsonLayer._dbIndexedKey) return
                                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                                     })
 
