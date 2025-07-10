@@ -59,6 +59,42 @@ const handleLeafletDrawBtns = (map, {
         events: {
             click: async (e) => {
                 e.preventDefault()
+
+                const text = await navigator.clipboard.readText()
+                if (!text) return
+    
+                try {
+                    let newFeatures = JSON.parse(text)
+                    if (newFeatures.type === 'FeatureCollection') newFeatures = newFeatures.features
+                    if (newFeatures.type === 'Feature') newFeatures = [newFeatures]
+                    if (Object.keys(newFeatures).length === 2 && newFeatures.type && newFeatures.coordinates) newFeatures = [turf.feature(newFeatures)]
+                    if (!Array.isArray(newFeatures)) return
+
+                    newFeatures = (await normalizeGeoJSON(turf.featureCollection(newFeatures))).features
+
+                    const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
+                    gisData.features = [
+                        ...gisData.features,
+                        ...newFeatures
+                    ]
+
+                    await saveToGISDB(turf.clone(gisData), {
+                        id: targetLayer._dbIndexedKey,
+                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                    })
+
+                    targetLayer._group.getLayers().forEach(i => {
+                        if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                    })
+
+                    map._drawControl._addChange({
+                        type: 'created',
+                        features: newFeatures
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
             }
         }
     })
