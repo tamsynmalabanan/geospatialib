@@ -207,7 +207,7 @@ const getLeafletGeoJSONLayer = async ({
 
                         const tfootdiv = customCreateElement({
                             parent: tfootth,
-                            className: 'd-flex justify-content-between'
+                            className: 'd-flex justify-content-between gap-5'
                         })
 
                         const addBtn = customCreateElement({
