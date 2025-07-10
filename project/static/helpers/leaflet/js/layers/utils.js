@@ -243,14 +243,14 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 }
 
 const getLeafletLayerBbox = async (layer) => {
-    if (layer._params?.bbox) {
-        return JSON.parse(layer._params?.bbox).splice(0,4)
-    }
-
     const dbIndexedKey = layer._dbIndexedKey ?? ''
     if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
         const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
         if (geojson) return turf.bbox(geojson)
+    }
+
+    if (layer._params?.bbox) {
+        return JSON.parse(layer._params?.bbox).splice(0,4)
     }
     
     if (layer.getBounds) {
