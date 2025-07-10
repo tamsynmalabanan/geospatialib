@@ -150,6 +150,15 @@ const getLeafletGeoJSONLayer = async ({
                                             e.target.value = propertyName
                                         }
 
+                                        const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
+                                        if (duplicate.length > 1) {
+                                            e.target.classList.add('bg-danger')
+                                            e.target.setAttribute('title', 'Duplicate property name')
+                                        } else {
+                                            e.target.classList.remove('bg-danger')
+                                            e.target.removeAttribute('title')
+                                        }
+
                                         toggleSaveBtn()
                                     }
                                 }
@@ -234,7 +243,18 @@ const getLeafletGeoJSONLayer = async ({
                                         attrs: {type: 'text', value: '', placeholder: ''},
                                         style: {width:'100px'},
                                         events: {
-                                            change: (e) => toggleSaveBtn()
+                                            change: (e) => {
+                                                const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
+                                                if (duplicate.length > 1) {
+                                                    e.target.classList.add('bg-danger')
+                                                    e.target.setAttribute('title', 'Duplicate property name')
+                                                } else {
+                                                    e.target.classList.remove('bg-danger')
+                                                    e.target.removeAttribute('title')
+                                                }
+
+                                                toggleSaveBtn()
+                                            }
                                         }
                                     })
 
@@ -273,11 +293,20 @@ const getLeafletGeoJSONLayer = async ({
                         })
 
                         const toggleSaveBtn = () => {
-                            const enable = Array.from(content.querySelectorAll('tbody tr')).find(row => {
-                                const nameChanged = row.firstChild.firstChild.value !== row.firstChild.firstChild.getAttribute('placeholder')
-                                const valueChanged = row.firstChild.nextElementSibling.firstChild.value !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
+                            const rows = Array.from(content.querySelectorAll('tbody tr'))
+                            
+                            const hasChangedField = rows.find(row => {
+                                const nameChanged = row.firstChild.firstChild.value.trim() !== row.firstChild.firstChild.getAttribute('placeholder')
+                                const valueChanged = row.firstChild.nextElementSibling.firstChild.value.trim() !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
                                 return nameChanged || valueChanged || !row.lastChild.firstChild.checked
-                            }) && Array.from(content.querySelectorAll('tbody tr')).every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value !== '')
+                            })
+                            
+                            const allValidNames = rows.every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value.trim() !== '')
+                            
+                            const names = rows.filter(row => row.lastChild.firstChild.checked).map(row => row.firstChild.firstChild.value.trim())
+                            const allUniqueNames = new Set(names).size === names.length
+
+                            enable = hasChangedField && allValidNames && allUniqueNames
 
                             saveBtn.classList.toggle('disabled', !enable)
                         }
@@ -292,21 +321,12 @@ const getLeafletGeoJSONLayer = async ({
                                     const newProperties = {}
                                     Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                                         if (row.lastChild.firstChild.checked) {
-                                            const nameField = row.firstChild.firstChild
-                                            const propertyName = nameField.value
-                                            nameField.setAttribute('placeholder', propertyName)
-
-                                            const valueField = row.firstChild.nextElementSibling.firstChild
-                                            const propertyValue = valueField.value
-                                            valueField.setAttribute('placeholder', propertyValue)
-
+                                            const propertyName = row.firstChild.firstChild.value.trim()
+                                            const propertyValue = row.firstChild.nextElementSibling.firstChild.value.trim()
                                             newProperties[propertyName] = propertyValue
-                                        } else {
-                                            row.remove()
                                         }
                                     })
 
-                                    toggleSaveBtn()
                                     layer.closePopup()
 
                                     let newFeature = structuredClone(feature)
