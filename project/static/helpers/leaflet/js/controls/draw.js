@@ -90,7 +90,8 @@ const handleLeafletDrawBtns = (map, {
                     }
 
                     if (lastChange.type === 'restore') {
-                        gisData.features = lastChange.features[0].old
+                        const [id, version] = targetLayer._dbIndexedKey.split('--version')
+                        gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
                     }
                     
                     await saveToGISDB(turf.clone(gisData), {
@@ -114,7 +115,7 @@ const handleLeafletDrawBtns = (map, {
         parent: bar,
         attrs: {
             href:'#', 
-            'data-dbindexedkey-version': targetLayer._dbIndexedKey.split('--version')[1]
+            'data-dbindexedkey-version': Number(targetLayer._dbIndexedKey.split('--version')[1])-1
         },
         className: 'leaflet-draw-misc-restore bi bi-skip-backward',
         events: {
@@ -126,35 +127,48 @@ const handleLeafletDrawBtns = (map, {
 
             },
             click: async (e) => {
-                e.preventDefault()
-                
-                const oldFeatures = (await getFromGISDB(targetLayer._dbIndexedKey)).gisData.features
-
-                const [id, version] = targetLayer._dbIndexedKey.split('--version')
-                const currentVersion = Number(e.target.getAttribute('data-dbindexedkey-version'))
-                const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
-                
-                if (previousVersion) {
+                const handler = async () => {
+                    const [id, version] = targetLayer._dbIndexedKey.split('--version')
+                    const currentVersion = Number(e.target.getAttribute('data-dbindexedkey-version'))
+                    const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
+                    
+                    if (!previousVersion) return
+                    
                     e.target.setAttribute('data-dbindexedkey-version', previousVersion)
                     const {gisData, queryExtent} = await getFromGISDB(`${id}--version${previousVersion}`)
-    
+
                     await saveToGISDB(turf.clone(gisData), {
                         id: targetLayer._dbIndexedKey,
                         queryExtent,
                     })
-    
+
                     targetLayer._group.getLayers().forEach(i => {
                         if (i._dbIndexedKey !== targetLayer._dbIndexedKey) return
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                     })
-    
+
                     drawControl._addChange({
                         type: 'restore',
                         features: [{
-                            old: oldFeatures, 
-                            new: gisData.features
+                            old: currentVersion, 
+                            new: previousVersion
                         }]
                     })
+                }
+
+                e.preventDefault()
+                
+                const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+                if (changes.length) {
+                    const alert = contextMenuHandler(e, {
+                        confirm: {
+                            innerText: `There are unsaved changes. Confirm to restore previous version?`,
+                            btnCallback: handler
+                        },            
+                    })
+                    alert.classList.add('bg-danger')
+                } else {
+                    handler()
                 }
             }
         }
@@ -188,7 +202,7 @@ const handleLeafletDrawBtns = (map, {
 
                 localStorage.removeItem(drawControlChangesKey)
 
-                restoreBtn.setAttribute('data-dbindexedkey-version', targetLayer._dbIndexedKey.split('--version')[1])
+                restoreBtn.setAttribute('data-dbindexedkey-version', targetLayer._dbIndexedKey.split('--version')[1]-1)
             }
         }
     })
