@@ -51,6 +51,18 @@ const handleLeafletDrawBtns = (map, {
         className: 'leaflet-draw-toolbar leaflet-bar'
     })
 
+    const pasteBtn = customCreateElement({
+        tag: 'a',
+        parent: bar,
+        attrs: {href:'#', title: 'Paste features'},
+        className: 'leaflet-draw-misc-restore bi bi-clipboard-plus',
+        events: {
+            click: async (e) => {
+                e.preventDefault()
+            }
+        }
+    })
+
     const undoBtn = customCreateElement({
         tag: 'a',
         parent: bar,
@@ -71,7 +83,8 @@ const handleLeafletDrawBtns = (map, {
                     const gisData = (await getFromGISDB(targetLayer._dbIndexedKey)).gisData
                     
                     if (lastChange.type === 'created') {
-                        gisData.features = gisData.features.filter(i => i.properties.__gsl_id__ !== lastChange.features[0].new.properties.__gsl_id__)
+                        const gslIds = lastChange.features.map(i => i.properties.__gsl_id__)
+                        gisData.features = gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__))
                     }
                     
                     if (lastChange.type === 'deleted') {
@@ -274,10 +287,7 @@ const handleLeafletDrawBtns = (map, {
 
             drawControl._addChange({
                 type: 'created',
-                features: [{
-                    old: null, 
-                    new: geojson.features[0]
-                }]
+                features: geojson.features
             })
         },
         'deleted': async (e) => {
@@ -343,11 +353,11 @@ const handleLeafletDrawBtns = (map, {
         },
         'deletestart': (e) => {
             drawControl._editMode = true
-            map.on('click', autoSaveDeletion)
+            map.getContainer().addEventListener('click', autoSaveDeletion)
         },
         'deletestop': (e) => {
             drawControl._editMode = false
-            map.off('click', autoSaveDeletion)
+            map.getContainer().removeEventListener('click', autoSaveDeletion)
         },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
