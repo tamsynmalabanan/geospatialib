@@ -120,6 +120,7 @@ const handleLeafletDrawBtns = (map, {
                 const currentVersion = Number(e.target.getAttribute('data-dbindexedkey-version'))
                 const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
                 e.target.setAttribute('title', previousVersion ? `Restore to version ${previousVersion}` : `No older version to restore`)
+
             },
             click: async (e) => {
                 e.preventDefault()
@@ -181,6 +182,8 @@ const handleLeafletDrawBtns = (map, {
 
                 const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
                 localStorage.removeItem(drawControlChangesKey)
+
+                restoreBtn.setAttribute('data-dbindexedkey-version', targetLayer._dbIndexedKey.split('--version')[1])
             }
         }
     })
@@ -217,6 +220,11 @@ const handleLeafletDrawBtns = (map, {
         if (btn.className.includes('edit-edit')) btn.classList.add('bi-pencil-square')
         if (btn.className.includes('edit-remove')) btn.classList.add('bi-trash')
     })
+
+    const autoSaveDeletion = (e) => {
+        const saveBtn = container.querySelector(`.leaflet-draw-actions.leaflet-draw-actions-bottom li a[title="Save changes"]`)
+        saveBtn?.click()
+    }
 
     const drawEvents = {
         'created': async (e) => {
@@ -310,9 +318,11 @@ const handleLeafletDrawBtns = (map, {
         },
         'deletestart': (e) => {
             drawControl._preventUpdate = true
+            map.on('click', autoSaveDeletion)
         },
         'deletestop': (e) => {
             drawControl._preventUpdate = false
+            map.off('click', autoSaveDeletion)
         },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
@@ -329,6 +339,8 @@ const handleLeafletDrawBtns = (map, {
         } catch (error) {
             console.log(error)
         }
+
+        map.off('click', autoSaveDeletion)
         Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     }
     
