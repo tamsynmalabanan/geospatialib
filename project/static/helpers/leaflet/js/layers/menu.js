@@ -96,7 +96,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(turf.clone(gisData), {
                         id: dbIndexedKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })
@@ -143,7 +143,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(turf.clone(gisData), {
                         id: dbIndexedKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })
@@ -189,7 +189,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(turf.clone(gisData), {
                         id: dbIndexedKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })

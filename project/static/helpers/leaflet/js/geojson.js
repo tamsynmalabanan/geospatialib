@@ -125,21 +125,219 @@ const getLeafletGeoJSONLayer = async ({
                         popupProperties = properties
                     }
     
-                    // layer.bindPopup(createFeaturePropertiesTable(popupProperties, {
-                    //     header: (() => {
-                    //         const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
-                    //         layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                    //         return popupHeader()
-                    //     })()
-                    // }).outerHTML, {autoPan: false})
+                    const getPopupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
                     
-                    layer.bindPopup(createFeaturePropertiesTable(popupProperties, {
-                        header: (() => {
-                            const popupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
-                            layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = popupHeader())
-                            return popupHeader()
-                        })()
-                    }).outerHTML, {autoPan: false})
+                    const content = createFeaturePropertiesTable(popupProperties, {header: getPopupHeader()})
+                    
+                    if (isMapDrawControlLayer) {
+                        content.classList.remove('table-striped')
+
+                        Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
+                            const propertyName = row.firstChild.innerText
+                            const propertyValue = row.firstChild.nextElementSibling.innerText
+                            
+                            Array.from(row.children).forEach(i => i.innerHTML = '')
+
+                            const nameField = customCreateElement({
+                                parent: row.firstChild,
+                                tag: 'input',
+                                className: 'border-0 p-0 m-0',
+                                attrs: {type: 'text', value: propertyName, placeholder: propertyName},
+                                style: {width:'100px'},
+                                events: {
+                                    change: (e) => {
+                                        if (e.target.value === '') {
+                                            e.target.value = propertyName
+                                        }
+
+                                        toggleSaveBtn()
+                                    }
+                                }
+                            })
+                            
+                            const valueField = customCreateElement({
+                                parent: row.firstChild.nextElementSibling,
+                                tag: 'input',
+                                className: 'border-0 p-0 m-0',
+                                attrs: {type: 'text', value: propertyValue, placeholder: propertyValue},
+                                style: {width:'100px'},
+                                events: {
+                                    change: (e) => {
+                                        if (e.target.value === '') {
+                                            e.target.value = propertyValue
+                                        }
+
+                                        toggleSaveBtn()
+                                    }
+                                }
+                            })
+
+                            const td = customCreateElement({
+                                parent: row,
+                                tag: 'td',
+                            })
+
+                            const checkbox = customCreateElement({
+                                parent: td,
+                                tag: 'input',
+                                attrs: {type: 'checkbox'},
+                                events: {
+                                    click: (e) => toggleSaveBtn()
+                                }
+                            })
+                            .checked = true
+                        })
+
+                        const tfoot = customCreateElement({
+                            parent: content,
+                            tag: 'tfoot',
+                        })
+
+                        const tfoottr = customCreateElement({
+                            parent: tfoot,
+                            tag: 'tr',
+                        })
+
+                        const tfootth = customCreateElement({
+                            parent: tfoottr,
+                            tag: 'th',
+                            attrs: {scope:'col', colspan:'3'},
+                            style: {borderBottomWidth: '0px'}
+                        })
+
+                        const tfootdiv = customCreateElement({
+                            parent: tfootth,
+                            className: 'd-flex justify-content-between'
+                        })
+
+                        const addBtn = customCreateElement({
+                            parent: tfootdiv,
+                            tag: 'button',
+                            className: 'btn btn-primary btn-sm badge',
+                            innerHTML: 'Add',
+                            events: {
+                                click: (e) => {
+                                    const tr = customCreateElement({
+                                        parent: content.querySelector('tbody'),
+                                        tag: 'tr'
+                                    })
+
+                                    const nameTd = customCreateElement({
+                                        parent: tr,
+                                        tag: 'td'
+                                    })
+
+                                    const nameField = customCreateElement({
+                                        parent: nameTd,
+                                        tag: 'input',
+                                        className: 'border-0 p-0 m-0',
+                                        attrs: {type: 'text', value: '', placeholder: ''},
+                                        style: {width:'100px'},
+                                        events: {
+                                            change: (e) => toggleSaveBtn()
+                                        }
+                                    })
+
+                                    const valueTd = customCreateElement({
+                                        parent: tr,
+                                        tag: 'td'
+                                    })
+                                    
+                                    const valueField = customCreateElement({
+                                        parent: valueTd,
+                                        tag: 'input',
+                                        className: 'border-0 p-0 m-0',
+                                        attrs: {type: 'text', value: '', placeholder: ''},
+                                        style: {width:'100px'},
+                                        events: {
+                                            change: (e) => toggleSaveBtn()
+                                        }
+                                    })
+
+                                    const td = customCreateElement({
+                                        parent: tr,
+                                        tag: 'td',
+                                    })
+
+                                    const checkbox = customCreateElement({
+                                        parent: td,
+                                        tag: 'input',
+                                        attrs: {type: 'checkbox'},
+                                        events: {
+                                            click: (e) => toggleSaveBtn()
+                                        }
+                                    })
+                                    .checked = true
+                                }
+                            }
+                        })
+
+                        const toggleSaveBtn = () => {
+                            const enable = Array.from(content.querySelectorAll('tbody tr')).find(row => {
+                                const nameChanged = row.firstChild.firstChild.value !== row.firstChild.firstChild.getAttribute('placeholder')
+                                const valueChanged = row.firstChild.nextElementSibling.firstChild.value !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
+                                return nameChanged || valueChanged || !row.lastChild.firstChild.checked
+                            }) && Array.from(content.querySelectorAll('tbody tr')).every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value !== '')
+
+                            saveBtn.classList.toggle('disabled', !enable)
+                        }
+
+                        const saveBtn = customCreateElement({
+                            parent: tfootdiv,
+                            tag: 'button',
+                            className: 'btn btn-success btn-sm badge disabled',
+                            innerHTML: 'Save',
+                            events: {
+                                click: async (e) => {
+                                    const newProperties = {}
+                                    Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
+                                        if (row.lastChild.firstChild.checked) {
+                                            const propertyName = row.firstChild.firstChild.value
+                                            const propertyValue = row.firstChild.nextElementSibling.firstChild.value
+                                            newProperties[propertyName] = propertyValue
+                                        }
+                                    })
+
+                                    layer.closePopup()
+
+                                    let newFeature = structuredClone(feature)
+                                    newFeature.properties = newProperties
+                                    newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+
+                                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+
+                                    const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._dbIndexedKey)
+                                    gisData.features = [
+                                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                                        newFeature
+                                    ]
+
+                                    await saveToGISDB(turf.clone(gisData), {
+                                        id: geojsonLayer._dbIndexedKey,
+                                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                                    })
+
+                                    group.getLayers().forEach(i => {
+                                        if (i._dbIndexedKey !== dbIndexedKey) return
+                                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                                    })
+
+                                    group._map._drawControl._addChange({
+                                        type: 'edited',
+                                        features: [{
+                                            old: feature,
+                                            new: newFeature
+                                        }]
+                                    })
+                                }
+                            }
+                        })
+                    }
+                    
+                    layer.bindPopup(content, {autoPan: false})
+                    layer.on('popupopen', () => {
+                        layer._popup._contentNode.querySelector('th').innerText = getPopupHeader()
+                    })
                 }
             }
 

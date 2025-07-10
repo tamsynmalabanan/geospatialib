@@ -359,16 +359,16 @@ const createFeaturePropertiesTable = (properties, {
         const tr = document.createElement('tr')
         tbody.appendChild(tr)
         
-        const th = document.createElement('th')
-        th.className = 'fw-medium pe-3'
-        th.innerText = property
-        th.setAttribute('scope', 'row')
-        tr.appendChild(th)
+        const key = document.createElement('td')
+        key.className = 'fw-medium pe-3'
+        key.innerText = property
+        key.setAttribute('scope', 'row')
+        tr.appendChild(key)
         
-        const td = document.createElement('td')
-        td.className = 'text-wrap'
-        td.innerHTML = data
-        tr.appendChild(td)
+        const value = document.createElement('td')
+        value.className = 'text-wrap'
+        value.innerHTML = data
+        tr.appendChild(value)
     })
 
     return table

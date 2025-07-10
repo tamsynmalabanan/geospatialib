@@ -54,13 +54,16 @@ const handleLeafletDrawBtns = (map, {
     const undoBtn = customCreateElement({
         tag: 'a',
         parent: bar,
-        attrs: {href:'#', title: 'Undo last change'},
+        attrs: {href:'#'},
         className: 'leaflet-draw-misc-restore bi bi-arrow-return-left',
         events: {
+            mouseover: async (e) => {
+                const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+                e.target.setAttribute('title', changes.length ? `Undo last change` : `No changes to undo`)
+            },
             click: async (e) => {
                 e.preventDefault()
 
-                const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
                 const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
                 const lastChange = changes.pop()
 
@@ -90,7 +93,7 @@ const handleLeafletDrawBtns = (map, {
                         gisData.features = lastChange.features[0].old
                     }
                     
-                    saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(turf.clone(gisData), {
                         id: targetLayer._dbIndexedKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })
@@ -135,7 +138,7 @@ const handleLeafletDrawBtns = (map, {
                     e.target.setAttribute('data-dbindexedkey-version', previousVersion)
                     const {gisData, queryExtent} = await getFromGISDB(`${id}--version${previousVersion}`)
     
-                    saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(turf.clone(gisData), {
                         id: targetLayer._dbIndexedKey,
                         queryExtent,
                     })
@@ -166,6 +169,9 @@ const handleLeafletDrawBtns = (map, {
             click: async (e) => {
                 e.preventDefault()
 
+                const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+                if (!changes.length) return
+
                 const [id, version] = targetLayer._dbIndexedKey.split('--version')
                 const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
                 const newDBIndexedKey = await saveToGISDB(gisData, {
@@ -180,7 +186,6 @@ const handleLeafletDrawBtns = (map, {
 
                 map._handlers.updateStoredLegendLayers()
 
-                const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
                 localStorage.removeItem(drawControlChangesKey)
 
                 restoreBtn.setAttribute('data-dbindexedkey-version', targetLayer._dbIndexedKey.split('--version')[1])
@@ -243,7 +248,7 @@ const handleLeafletDrawBtns = (map, {
             const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
             gisData.features.push(geojson.features[0])
             
-            saveToGISDB(turf.clone(gisData), {
+            await saveToGISDB(turf.clone(gisData), {
                 id: targetLayer._dbIndexedKey,
                 queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
             })
@@ -270,7 +275,7 @@ const handleLeafletDrawBtns = (map, {
             const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
             gisData.features = gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__))
             
-            saveToGISDB(turf.clone(gisData), {
+            await saveToGISDB(turf.clone(gisData), {
                 id: targetLayer._dbIndexedKey,
                 queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
             })
@@ -301,7 +306,7 @@ const handleLeafletDrawBtns = (map, {
                 ...features.map(i => i.new)
             ]
             
-            saveToGISDB(turf.clone(gisData), {
+            await saveToGISDB(turf.clone(gisData), {
                 id: targetLayer._dbIndexedKey,
                 queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
             })
