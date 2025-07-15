@@ -141,20 +141,7 @@ const handleLeafletLocateBtn = (map, {include=true}={}) => {
 const handleLeafletMeasureTool = (map, {include=true} ={}) => {
     if (!include) return
 
-    const measureControl = new L.Control.Measure({
-        position: 'topleft',
-        primaryLengthUnit: 'meter',
-        secondaryLengthUnit: 'kilometers',
-        primaryAreaUnit: 'sqmeters',
-        secondaryAreaUnit: 'hectares',
-    })
 
-    // const events = {
-    //     measurestart: () => {},
-    //     measurefinish: () => {},
-    // }
-    
-    measureControl.addTo(map)
 }
 
 const leafletControls = {

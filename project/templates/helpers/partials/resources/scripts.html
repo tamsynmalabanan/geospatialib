@@ -28,7 +28,6 @@
 {% comment %} leaflet {% endcomment %}
 {% leaflet_js plugins="forms, geocoder" %}
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.84.2/dist/L.Control.Locate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet-measure@3.1.0/dist/leaflet-measure.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-measure-path@1.5.0/leaflet-measure-path.min.js"></script>
 {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js" integrity="sha512-55AYz+N6WyuiC8bRpQftNyCcSBCl3AEutoTsb4EeZuFVFP1+G4gll30iczAvvTpdL9nz48F7ZFEUavRUXp3FNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
 
@@ -47,6 +46,7 @@
 {% compress js %}
     {% comment %} leaflet {% endcomment %}
     <script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/leaflet-line-measurement/Leaflet.LinearMeasurement.js' %}"></script>
 
     {% comment %} project {% endcomment %}
     <script type="text/javascript" src="{% static 'helpers/base/js/bootstrap.js' %}"></script>
