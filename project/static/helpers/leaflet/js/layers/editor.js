@@ -123,4 +123,6 @@ const toggleLeafletLayerEditor = async (layer, {
         if (![editableLayer, layer].map(i => i?._dbIndexedKey).includes(i._dbIndexedKey)) return
         updateLeafletGeoJSONLayer(i, {updateCache: false})
     })
+
+    map._drawControl?._checkForMultiFeatures(await getFromGISDB(layer._dbIndexedKey).gisData)
 }

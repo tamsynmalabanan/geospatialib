@@ -9,15 +9,6 @@ const handleLeafletDrawBtns = (map, {
         saveBtn?.click()
     }
 
-    const checkForMultiFeatures = (gisData) => {
-        const editBtn = container.querySelector('.leaflet-draw-edit-edit')
-        if (gisData.features.find(i => i.geometry.type.startsWith('Multi'))) {
-            editBtn.classList.add('pe-none', 'text-secondary')
-        } else {
-            editBtn.classList.remove('pe-none', 'text-secondary')
-        }
-    }
-    
     if (map._drawControl) {
         map.removeControl(map._drawControl)
         delete map._drawControl
@@ -59,9 +50,18 @@ const handleLeafletDrawBtns = (map, {
         localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
     }
 
+    drawControl._checkForMultiFeatures = (data) => {
+        const editBtn = container.querySelector('.leaflet-draw-edit-edit')
+        if (data.features.find(i => i.geometry.type.startsWith('Multi'))) {
+            editBtn.classList.add('pe-none', 'text-secondary')
+        } else {
+            editBtn.classList.remove('pe-none', 'text-secondary')
+        }
+    }
+
     const container = drawControl.addTo(map)._container
     toggleMapInteractivity(map, {controls: [container]})
-    checkForMultiFeatures(targetLayer.toGeoJSON())
+
     
     const section = customCreateElement({
         parent: container,
@@ -343,7 +343,7 @@ const handleLeafletDrawBtns = (map, {
                 features: geojson.features
             })
 
-            checkForMultiFeatures(gisData)
+            drawControl._checkForMultiFeatures(gisData)
         },
         'deleted': async (e) => {
             if (!targetLayer._dbIndexedKey) return
@@ -371,7 +371,7 @@ const handleLeafletDrawBtns = (map, {
                 })
             })
 
-            checkForMultiFeatures(gisData)
+            drawControl._checkForMultiFeatures(gisData)
         },
         'edited': async (e) => {
             if (!targetLayer._dbIndexedKey) return
@@ -402,7 +402,7 @@ const handleLeafletDrawBtns = (map, {
                 features,
             })
 
-            checkForMultiFeatures(gisData)
+            drawControl._checkForMultiFeatures(gisData)
         },
         'editstart': (e) => {
             drawControl._editMode = true
