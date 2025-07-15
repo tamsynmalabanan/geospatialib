@@ -144,9 +144,13 @@ const handleLeafletMeasureTool = (map, {include=true} ={}) => {
     const measureControl = new L.Control.LinearMeasurement({
         position: 'topleft',
         unitSystem: 'metric',
-        color: '#FF0080',
+        color: '#0d6efd',
         type: 'line'
     }).addTo(map)
+
+    const icon = measureControl._container.querySelector('.icon-ruler')
+    icon.style.backgroundImage = 'none'
+    icon.classList.add('bi','bi-rulers')
 }
 
 const leafletControls = {

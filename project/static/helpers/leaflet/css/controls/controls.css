@@ -89,3 +89,8 @@
 .leaflet-bottom.leaflet-right {
     z-index: 999;
 }
+
+.icon-active {
+    background-image: none !important;
+    background-color: var(--bs-primary) !important;
+}
