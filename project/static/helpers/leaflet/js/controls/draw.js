@@ -1,4 +1,4 @@
-const handleLeafletDrawBtns = (map, {
+const handleLeafletDrawBtns = async (map, {
     include=true,
     targetLayer=L.geoJSON(),
 } = {}) => {
