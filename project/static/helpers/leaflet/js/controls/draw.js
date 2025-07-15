@@ -13,10 +13,10 @@ const handleLeafletDrawBtns = (map, {
         const editBtn = container.querySelector('.leaflet-draw-edit-edit')
         if (gisData.features.find(i => i.geometry.type.startsWith('Multi'))) {
             editBtn.classList.add('pe-none', 'text-secondary')
-            editBtn.setAttribute('title', 'Layer has complex geometries')
+            titleToTooltip(editBtn, 'Layer has multi-part geometries')
         } else {
             editBtn.classList.remove('pe-none', 'text-secondary')
-            editBtn.setAttribute('title', 'Edit layers')
+            titleToTooltip(editBtn, 'Edit layer')
         }
     }
     
