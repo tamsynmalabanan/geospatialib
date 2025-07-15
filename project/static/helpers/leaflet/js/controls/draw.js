@@ -4,6 +4,22 @@ const handleLeafletDrawBtns = (map, {
 } = {}) => {
     const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
     
+    const autoSaveDeletion = (e) => {
+        const saveBtn = container.querySelector(`.leaflet-draw-actions.leaflet-draw-actions-bottom li a[title="Save changes"]`)
+        saveBtn?.click()
+    }
+
+    const checkForMultiFeatures = (gisData) => {
+        const editBtn = container.querySelector('.leaflet-draw-edit-edit')
+        if (gisData.features.find(i => i.geometry.type.startsWith('Multi'))) {
+            editBtn.classList.add('pe-none', 'text-secondary')
+            editBtn.setAttribute('title', 'Layer has complex geometries that need to be flattened before editing')
+        } else {
+            editBtn.classList.remove('pe-none', 'text-secondary')
+            editBtn.setAttribute('title', 'Edit layers')
+        }
+    }
+    
     if (map._drawControl) {
         map.removeControl(map._drawControl)
         delete map._drawControl
@@ -18,7 +34,14 @@ const handleLeafletDrawBtns = (map, {
         position: 'topleft',
         draw: {
             polyline: {shapeOptions: getLeafletLayerStyle({geometry: {type: 'polyline'}}, styleParams)},
-            polygon: {shapeOptions: getLeafletLayerStyle({geometry: {type: 'polygon'}}, styleParams)},
+            polygon: {
+                allowIntersection: false,
+                drawError: {
+                    color: '#b700ffff',
+                    message: '<strong>Oh snap!<strong> you can\'t draw that!'
+                },
+                shapeOptions: getLeafletLayerStyle({geometry: {type: 'polygon'}}, styleParams)
+            },
             rectangle: {shapeOptions: getLeafletLayerStyle({geometry: {type: 'polygon'}}, styleParams)},
             marker: {icon: getLeafletLayerStyle({geometry: {type: 'point'}}, styleParams, {allowCircleMarker:false})},
 
@@ -40,6 +63,7 @@ const handleLeafletDrawBtns = (map, {
 
     const container = drawControl.addTo(map)._container
     toggleMapInteractivity(map, {controls: [container]})
+    checkForMultiFeatures(targetLayer.toGeoJSON())
     
     const section = customCreateElement({
         parent: container,
@@ -295,11 +319,6 @@ const handleLeafletDrawBtns = (map, {
         if (btn.className.includes('edit-remove')) icon.classList.add('bi-trash')
     })
 
-    const autoSaveDeletion = (e) => {
-        const saveBtn = container.querySelector(`.leaflet-draw-actions.leaflet-draw-actions-bottom li a[title="Save changes"]`)
-        saveBtn?.click()
-    }
-
     const drawEvents = {
         'created': async (e) => {
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
@@ -325,6 +344,8 @@ const handleLeafletDrawBtns = (map, {
                 type: 'created',
                 features: geojson.features
             })
+
+            checkForMultiFeatures(gisData)
         },
         'deleted': async (e) => {
             if (!targetLayer._dbIndexedKey) return
@@ -351,6 +372,8 @@ const handleLeafletDrawBtns = (map, {
                     return {old: i, new: null}
                 })
             })
+
+            checkForMultiFeatures(gisData)
         },
         'edited': async (e) => {
             if (!targetLayer._dbIndexedKey) return
@@ -380,6 +403,8 @@ const handleLeafletDrawBtns = (map, {
                 type: 'edited',
                 features,
             })
+
+            checkForMultiFeatures(gisData)
         },
         'editstart': (e) => {
             drawControl._editMode = true
