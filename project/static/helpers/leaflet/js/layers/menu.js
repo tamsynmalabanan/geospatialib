@@ -62,8 +62,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     delete layer._measuredFeature
                     layer.hideMeasurements()
                 } else {
-                    map._measuredFeatures = map._measuredFeatures ?? []
-                    map._measuredFeatures.push(feature.properties.__gsl_id__)
+                    map._measuredFeatures = [...(map._measuredFeatures ?? []), feature.properties.__gsl_id__]
                     layer._measuredFeature = true
                     layer.showMeasurements() 
                 }
