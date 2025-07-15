@@ -3,7 +3,7 @@
 {% variable request.resolver_match.app_name as app_name %}
 {% variable request.resolver_match.url_name as url_name %}
 {% variable app_name|add:'-'|add:url_name as page_name %}
-{% variable request.COOKIES|get:'theme' 'light' as theme %}
+{% variable request.COOKIES|get:'theme' 'dark' as theme %}
 {% variable page_name|add:'-offcanvas' as offcanvas_id %}
 {% variable 'show_#'|add:offcanvas_id as show_sidebar_key %}
 {% variable request.COOKIES|get:show_sidebar_key as show_sidebar %}
@@ -68,7 +68,7 @@
                             <div class="offcanvas-nav">
                                 {% block offcanvas_nav %}{% endblock offcanvas_nav %}
                             </div>
-                            <div class="offcanvas-body overflow-auto flex-grow-1 bg-{{request.COOKIES.theme}} p-0">
+                            <div class="offcanvas-body overflow-auto flex-grow-1 bg-{{theme}} p-0">
                                 {% block offcanvas_body %}{% endblock offcanvas_body %}
                             </div>
                         </div>

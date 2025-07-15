@@ -1,4 +1,4 @@
-const getPreferredTheme = () => getCookie('theme') || 'light'
+const getPreferredTheme = () => getCookie('theme') ?? 'dark'
 
 const themedElements = (theme, parent=document) => {
     let setThemeTimeout
@@ -38,5 +38,5 @@ const setTheme = (theme) => {
 
 const toggleTheme = () => {
     const currentTheme = document.documentElement.getAttribute('data-bs-theme')
-    setTheme(currentTheme === 'light' ? 'dark' : 'light')
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark')
 }
