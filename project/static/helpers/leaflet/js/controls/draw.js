@@ -1,4 +1,4 @@
-const handleLeafletDrawBtns = async (map, {
+const handleLeafletDrawBtns = (map, {
     include=true,
     targetLayer=L.geoJSON(),
 } = {}) => {
@@ -61,9 +61,7 @@ const handleLeafletDrawBtns = async (map, {
 
     const container = drawControl.addTo(map)._container
     toggleMapInteractivity(map, {controls: [container]})
-    
-    const geojson = await getFromGISDB(targetLayer._dbIndexedKey).gisData
-    checkForMultiFeatures(geojson)
+    checkForMultiFeatures(targetLayer.toGeoJSON())
     
     const section = customCreateElement({
         parent: container,
