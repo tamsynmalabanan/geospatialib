@@ -132,6 +132,36 @@ const getLeafletGeoJSONLayer = async ({
                     if (isMapDrawControlLayer) {
                         content.classList.remove('table-striped')
 
+                        const toggleSaveBtn = () => {
+                            const rows = Array.from(content.querySelectorAll('tbody tr'))
+                            
+                            const hasChangedField = rows.find(row => {
+                                const nameChanged = row.firstChild.firstChild.value.trim() !== row.firstChild.firstChild.getAttribute('placeholder')
+                                const valueChanged = row.firstChild.nextElementSibling.firstChild.value.trim() !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
+                                return nameChanged || valueChanged || !row.lastChild.firstChild.checked
+                            })
+                            
+                            const allValidNames = rows.every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value.trim() !== '')
+                            
+                            const names = rows.filter(row => row.lastChild.firstChild.checked).map(row => row.firstChild.firstChild.value.trim())
+                            const allUniqueNames = new Set(names).size === names.length
+
+                            enable = hasChangedField && allValidNames && allUniqueNames
+
+                            saveBtn.classList.toggle('disabled', !enable)
+                        }
+
+                        const checkPropertyNameDuplicate = (e) => {
+                            const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
+                            if (duplicate.length > 1) {
+                                e.target.classList.add('bg-danger')
+                                e.target.setAttribute('title', 'Duplicate property name')
+                            } else {
+                                e.target.classList.remove('bg-danger')
+                                e.target.removeAttribute('title')
+                            }
+                        }
+
                         Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                             const propertyName = row.firstChild.innerText
                             const propertyValue = row.firstChild.nextElementSibling.innerText
@@ -150,14 +180,7 @@ const getLeafletGeoJSONLayer = async ({
                                             e.target.value = propertyName
                                         }
 
-                                        const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
-                                        if (duplicate.length > 1) {
-                                            e.target.classList.add('bg-danger')
-                                            e.target.setAttribute('title', 'Duplicate property name')
-                                        } else {
-                                            e.target.classList.remove('bg-danger')
-                                            e.target.removeAttribute('title')
-                                        }
+                                        checkPropertyNameDuplicate(e)
 
                                         toggleSaveBtn()
                                     }
@@ -171,13 +194,7 @@ const getLeafletGeoJSONLayer = async ({
                                 attrs: {type: 'text', value: propertyValue, placeholder: propertyValue},
                                 style: {width:'100px'},
                                 events: {
-                                    change: (e) => {
-                                        if (e.target.value === '') {
-                                            e.target.value = propertyValue
-                                        }
-
-                                        toggleSaveBtn()
-                                    }
+                                    change: (e) => toggleSaveBtn()
                                 }
                             })
 
@@ -244,15 +261,7 @@ const getLeafletGeoJSONLayer = async ({
                                         style: {width:'100px'},
                                         events: {
                                             change: (e) => {
-                                                const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
-                                                if (duplicate.length > 1) {
-                                                    e.target.classList.add('bg-danger')
-                                                    e.target.setAttribute('title', 'Duplicate property name')
-                                                } else {
-                                                    e.target.classList.remove('bg-danger')
-                                                    e.target.removeAttribute('title')
-                                                }
-
+                                                checkPropertyNameDuplicate(e)
                                                 toggleSaveBtn()
                                             }
                                         }
@@ -291,25 +300,6 @@ const getLeafletGeoJSONLayer = async ({
                                 }
                             }
                         })
-
-                        const toggleSaveBtn = () => {
-                            const rows = Array.from(content.querySelectorAll('tbody tr'))
-                            
-                            const hasChangedField = rows.find(row => {
-                                const nameChanged = row.firstChild.firstChild.value.trim() !== row.firstChild.firstChild.getAttribute('placeholder')
-                                const valueChanged = row.firstChild.nextElementSibling.firstChild.value.trim() !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
-                                return nameChanged || valueChanged || !row.lastChild.firstChild.checked
-                            })
-                            
-                            const allValidNames = rows.every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value.trim() !== '')
-                            
-                            const names = rows.filter(row => row.lastChild.firstChild.checked).map(row => row.firstChild.firstChild.value.trim())
-                            const allUniqueNames = new Set(names).size === names.length
-
-                            enable = hasChangedField && allValidNames && allUniqueNames
-
-                            saveBtn.classList.toggle('disabled', !enable)
-                        }
 
                         const saveBtn = customCreateElement({
                             parent: tfootdiv,
