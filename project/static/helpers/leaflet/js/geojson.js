@@ -363,6 +363,11 @@ const getLeafletGeoJSONLayer = async ({
             }
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
+
+            if ((group._map._measuredFeatures ?? []).includes(feature.properties.__gsl_id__)) {
+                layer._measuredFeature = true
+                layer.options.showMeasurements = true
+            }
         }
     
         const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)

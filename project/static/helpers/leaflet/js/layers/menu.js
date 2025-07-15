@@ -40,6 +40,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
     const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
 
+    const isMeasured = (map._measuredFeatures ?? []).includes(feature.properties.__gsl_id__) && layer._measuredFeature
+
     const addLayer = (l) => group._handlers.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._handlers.addToHiddenLayers(l) : group.removeLayer(l)
     
@@ -51,6 +53,21 @@ const getLeafletLayerContextMenu = async (event, layer, {
         visibility: feature || checkbox ? null : {
             innerText: isHidden ? 'Show layer' : 'Hide layer',
             btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
+        },
+        measure: !feature ? null : {
+            innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
+            btnCallback: async () => {
+                if (isMeasured) {
+                    map._measuredFeatures = (map._measuredFeatures ?? []).filter(i => i !== feature.properties.__gsl_id__)
+                    delete layer._measuredFeature
+                    layer.hideMeasurements()
+                } else {
+                    map._measuredFeatures = map._measuredFeatures ?? []
+                    map._measuredFeatures.push(feature.properties.__gsl_id__)
+                    layer._measuredFeature = true
+                    layer.showMeasurements() 
+                }
+            }
         },
         style: !isLegendGroup || feature ? null : {
             innerText: `Layer properties`,
