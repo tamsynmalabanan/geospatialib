@@ -110,10 +110,12 @@ const handleLeafletDrawBtns = (map, {
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                     })
 
-                    map._drawControl._addChange({
+                    drawControl._addChange({
                         type: 'created',
                         features: newFeatures
                     })
+
+                    drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
