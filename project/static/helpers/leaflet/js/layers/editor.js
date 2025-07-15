@@ -124,5 +124,5 @@ const toggleLeafletLayerEditor = async (layer, {
         updateLeafletGeoJSONLayer(i, {updateCache: false})
     })
 
-    map._drawControl?._checkForMultiFeatures(await getFromGISDB(layer._dbIndexedKey).gisData)
+    map._drawControl?._toggleEditBtn(await getFromGISDB(layer._dbIndexedKey).gisData)
 }

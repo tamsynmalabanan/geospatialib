@@ -50,7 +50,7 @@ const handleLeafletDrawBtns = (map, {
         localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
     }
 
-    drawControl._checkForMultiFeatures = (data) => {
+    drawControl._toggleEditBtn = (data) => {
         const editBtn = container.querySelector('.leaflet-draw-edit-edit')
         if (data.features.find(i => i.geometry.type.startsWith('Multi'))) {
             editBtn.classList.add('pe-none', 'text-secondary')
@@ -343,7 +343,7 @@ const handleLeafletDrawBtns = (map, {
                 features: geojson.features
             })
 
-            drawControl._checkForMultiFeatures(gisData)
+            drawControl._toggleEditBtn(gisData)
         },
         'deleted': async (e) => {
             if (!targetLayer._dbIndexedKey) return
@@ -371,7 +371,7 @@ const handleLeafletDrawBtns = (map, {
                 })
             })
 
-            drawControl._checkForMultiFeatures(gisData)
+            drawControl._toggleEditBtn(gisData)
         },
         'edited': async (e) => {
             if (!targetLayer._dbIndexedKey) return
@@ -402,7 +402,7 @@ const handleLeafletDrawBtns = (map, {
                 features,
             })
 
-            drawControl._checkForMultiFeatures(gisData)
+            drawControl._toggleEditBtn(gisData)
         },
         'editstart': (e) => {
             drawControl._editMode = true
