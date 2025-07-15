@@ -141,7 +141,12 @@ const handleLeafletLocateBtn = (map, {include=true}={}) => {
 const handleLeafletMeasureTool = (map, {include=true} ={}) => {
     if (!include) return
 
-
+    const measureControl = new L.Control.LinearMeasurement({
+        position: 'topleft',
+        unitSystem: 'metric',
+        color: '#FF0080',
+        type: 'line'
+    }).addTo(map)
 }
 
 const leafletControls = {
