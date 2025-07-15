@@ -113,6 +113,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
                             new: newFeature
                         }]
                     })
+
+                    map._drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
@@ -160,6 +162,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
                             new: newFeature
                         }]
                     })
+
+                    map._drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
@@ -206,6 +210,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
                             new: newFeature
                         }]
                     })
+
+                    map._drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }

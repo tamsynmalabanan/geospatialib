@@ -42,14 +42,6 @@ const handleLeafletDrawBtns = (map, {
         }
     })
 
-    drawControl._addChange = (data) => {
-        if (!data) return
-
-        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
-        current.push(data)
-        localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
-    }
-
     drawControl._toggleEditBtn = (data) => {
         const editBtn = container.querySelector('.leaflet-draw-edit-edit')
         if (data.features.find(i => i.geometry.type.startsWith('Multi'))) {
@@ -57,6 +49,14 @@ const handleLeafletDrawBtns = (map, {
         } else {
             editBtn.classList.remove('pe-none', 'text-secondary')
         }
+    }
+
+    drawControl._addChange = (data) => {
+        if (!data) return
+
+        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+        current.push(data)
+        localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
     }
 
     const container = drawControl.addTo(map)._container
@@ -227,6 +227,8 @@ const handleLeafletDrawBtns = (map, {
                             new: previousVersion
                         }]
                     })
+
+                    drawControl._toggleEditBtn(gisData)
                 }
 
                 e.preventDefault()

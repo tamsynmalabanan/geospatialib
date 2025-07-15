@@ -348,6 +348,8 @@ const getLeafletGeoJSONLayer = async ({
                                             new: newFeature
                                         }]
                                     })
+
+                                    group._map._drawControl._toggleEditBtn(gisData)
                                 }
                             }
                         })
