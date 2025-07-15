@@ -112,7 +112,7 @@ const toggleLeafletLayerEditor = async (layer, {
         })    
     }    
     
-    await handleLeafletDrawBtns(map, {
+    handleLeafletDrawBtns(map, {
         include: enableEditor,
         targetLayer: layer
     })
