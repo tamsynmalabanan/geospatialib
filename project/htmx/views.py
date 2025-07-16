@@ -62,12 +62,11 @@ class SearchList(ListView):
         return (query, exclusions)
 
     @cached_property
-    def query_params(self):
-        return [i for i in list(self.request.GET.values()) if i and i != '']
-
-    @cached_property
     def cache_key(self):
-        return ';'.join([str(i) for i in ['SearchList',]+self.query_params])
+        return ';'.join([str(i) for i in [
+            'SearchList',
+            self.request.GET.get('query', '').strip()
+        ]])
 
     def perform_full_text_search(self):
         query, exclusions = self.query_values
@@ -120,8 +119,8 @@ class SearchList(ListView):
                 queryset = self.perform_full_text_search()
 
             if queryset.exists():
-                queryset = self.apply_query_filters(queryset)
                 cache.set(self.cache_key, queryset, timeout=60*15)
+                queryset = self.apply_query_filters(queryset)
                 
             self.queryset = queryset
 
@@ -159,7 +158,7 @@ class SearchList(ListView):
             context['count'] = count = context['page_obj'].paginator.count
             context['fillers'] = range(find_nearest_divisible(count, [2,3])-count)
             context['filters'] = self.get_filters()
-            context['params'] = self.query_params
+            context['params'] = [i for i in list(self.request.GET.values()) if i and i != '']
         return context
 
 @require_http_methods(['GET'])
