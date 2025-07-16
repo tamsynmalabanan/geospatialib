@@ -1,18 +1,22 @@
-const bootstrapIcons = {}
-fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
-.then(response => {
-    if (!response.ok) throw new Error('Response not ok.')
-    return response.text()
-})
-.then(text => {
-    text.replace(' ', '').split('.bi-').slice(1).forEach(i => {
-        const [name, unicode] = i.replace('"}', '').split('::before{content:"\\')
-        bootstrapIcons[name] = unicode
+const bootstrapIcons = JSON.parse(localStorage.getItem('bootstrap-icons') ?? '{}')
+if (!Object.keys(bootstrapIcons).length) {
+    fetch('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css')
+    .then(response => {
+        if (!response.ok) throw new Error('Response not ok.')
+        return response.text()
     })
-})
-.catch(error => {
-    console.log(error)
-})
+    .then(text => {
+        text.replace(' ', '').split('.bi-').slice(1).forEach(i => {
+            const [name, unicode] = i.replace('"}', '').split('::before{content:"\\')
+            bootstrapIcons[name] = unicode
+        })
+
+        localStorage.setItem('bootstrap-icons', JSON.stringify(bootstrapIcons))
+    })
+    .catch(error => {
+        console.log(error)
+    })
+}
 
 const titleToTooltip = (element, altTitle) => {
     const title = altTitle || element.getAttribute('title')
