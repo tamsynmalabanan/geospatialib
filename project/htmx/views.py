@@ -53,14 +53,11 @@ class SearchList(ListView):
         query = self.request.GET.get('query', '').strip()
         exclusions = []
 
-        if validators.url(query) == True:
-            query = urlparse(query).path
-        else:
-            if ' -' in f' {query}':
-                keywords = query.split(' ')
-                exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
-                query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
-            query = query.replace(' ', ' OR ')
+        if ' -' in f' {query}':
+            keywords = query.split(' ')
+            exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
+            query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+        query = query.replace(' ', ' OR ')
 
         return (query, exclusions)
 
@@ -79,16 +76,18 @@ class SearchList(ListView):
             .select_related(
                 'collection__url',
             )
-        ).exclude(reduce(
-            or_, 
-            (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), 
-            Q()
-        ))
+        )
 
-        search_query = SearchQuery(query, search_type='plain' if validators.url(query) == True else 'websearch')
+        if exclusions:
+            queryset = queryset.exclude(reduce(
+                or_, 
+                (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), 
+                Q()
+            ))
+
+        search_query = SearchQuery(query, search_type='websearch')
 
         search_vector = reduce(add, (SearchVector(field) for field in self.filter_fields + [
-            'collection__url__path',
             'name',
             'title',
             'abstract',
@@ -104,6 +103,13 @@ class SearchList(ListView):
         )
         
         return queryset
+
+    def apply_query_filters(self, queryset):
+        return queryset.filter(**{
+            param : value 
+            for param, value in self.request.GET.items() 
+            if value and param in self.query_filters
+        })
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
@@ -127,13 +133,6 @@ class SearchList(ListView):
             )
 
         return queryset
-
-    def apply_query_filters(self, queryset):
-        return queryset.filter(**{
-            param : value 
-            for param, value in self.request.GET.items() 
-            if value and param in self.query_filters
-        })
 
     def get_filters(self):
         filters = {
