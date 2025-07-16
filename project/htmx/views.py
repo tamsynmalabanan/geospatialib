@@ -119,8 +119,8 @@ class SearchList(ListView):
                 queryset = self.perform_full_text_search()
 
             if queryset.exists():
-                cache.set(self.cache_key, queryset, timeout=60*15)
                 queryset = self.apply_query_filters(queryset)
+                cache.set(self.cache_key, queryset, timeout=60*15)
                 
             self.queryset = queryset
 
