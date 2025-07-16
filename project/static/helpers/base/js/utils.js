@@ -436,7 +436,6 @@ const getFileRawData = async (file) => {
         }
 
         reader.onerror = async (e) => {
-            console.log(e)
             reject()
         }
 
