@@ -15,7 +15,7 @@ import requests
 import validators
 import os
 from functools import reduce
-from operator import or_
+from operator import or_, add
 
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer
@@ -35,7 +35,7 @@ class SearchList(ListView):
     def query(self):
         query = self.request.GET.get('query', '').strip()
 
-        exclusions = None
+        exclusions = []
 
         if validators.url(query) == True:
             query = query.split('?')[0]
@@ -82,41 +82,25 @@ class SearchList(ListView):
     def perform_full_text_search(self):
         query, exclusions = self.query
 
-        queryset = (
-            super().get_queryset()
-            .select_related(
-                'collection__url', 
-            )
-        )
+        queryset = (super().get_queryset().select_related('collection__url'))
 
-        if exclusions:
-            # ex_queries = Q(name__icontains=exclusions[0]) | Q(title__icontains=exclusions[0])
-            # if len(exclusions) > 1:
-            #     for word in exclusions[1:]:
-            #         ex_queries |= Q(name__icontains=word) | Q(title__icontains=word)
-
-            ex_queries = reduce(or_, (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), Q())
-
-            queryset = queryset.exclude(ex_queries)
+        queryset = queryset.exclude(reduce(or_, (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), Q()))
 
         search_query = SearchQuery(query, search_type='plain' if validators.url(query) == True else 'websearch')
-        search_vector = SearchVector('name')
-        search_fields = self.filter_fields + [
+
+        search_vector = reduce(add, (SearchVector(field) for field in self.filter_fields + [
             'collection__url__path',
+            'name',
             'title',
             'abstract',
             'keywords',
             'attribution',
             'styles',
-        ]
-        for field in search_fields:
-            search_vector = search_vector + SearchVector(field)
+        ]))
 
         queryset = (
             queryset
-            .annotate(
-                rank=SearchRank(search_vector, search_query),
-            )
+            .annotate(rank=SearchRank(search_vector, search_query))
             .filter(rank__gte=0.001)
         )
         
