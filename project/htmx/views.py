@@ -91,10 +91,10 @@ class SearchList(ListView):
             'collection__url__path',
             'name',
             'title',
-            # 'abstract',
-            # 'keywords',
-            # 'attribution',
-            # 'styles',
+            'abstract',
+            'keywords',
+            'attribution',
+            'styles',
         ]))
 
         queryset = (
