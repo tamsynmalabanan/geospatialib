@@ -149,7 +149,7 @@ const handleLeafletMeasureTool = (map, {include=true} ={}) => {
     }).addTo(map)
 
     const icon = measureControl._container.querySelector('.icon-ruler')
-    icon.style.backgroundImage = 'none'
+    icon.style.backgroundImage = 'none !important'
     icon.classList.add('bi','bi-rulers')
 }
 
