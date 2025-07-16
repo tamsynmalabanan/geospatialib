@@ -14,6 +14,8 @@ import json
 import requests
 import validators
 import os
+from functools import reduce
+from operator import or_
 
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer
@@ -28,10 +30,6 @@ class SearchList(ListView):
     model = Layer
     context_object_name = 'layers'
     paginate_by = 24
-
-    @property
-    def page(self):
-        return int(self.request.GET.get('page', 1))
 
     @property
     def query(self):
@@ -89,16 +87,16 @@ class SearchList(ListView):
             .select_related(
                 'collection__url', 
             )
-            # .prefetch_related(
-            #     'keywords',
-            # )
         )
 
         if exclusions:
-            ex_queries = Q(name__icontains=exclusions[0]) | Q(title__icontains=exclusions[0])
-            if len(exclusions) > 1:
-                for word in exclusions[1:]:
-                    ex_queries |= Q(name__icontains=word) | Q(title__icontains=word)
+            # ex_queries = Q(name__icontains=exclusions[0]) | Q(title__icontains=exclusions[0])
+            # if len(exclusions) > 1:
+            #     for word in exclusions[1:]:
+            #         ex_queries |= Q(name__icontains=word) | Q(title__icontains=word)
+
+            ex_queries = reduce(or_, (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), Q())
+
             queryset = queryset.exclude(ex_queries)
 
         search_query = SearchQuery(query, search_type='plain' if validators.url(query) == True else 'websearch')
@@ -144,7 +142,7 @@ class SearchList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.page == 1:
+        if context['page_obj'].number == 1:
             context['count'] = count = context['page_obj'].paginator.count
             context['fillers'] = range(find_nearest_divisible(count, [2,3])-count)
             context['filters'] = self.get_filters()
