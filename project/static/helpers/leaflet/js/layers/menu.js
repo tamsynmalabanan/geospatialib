@@ -40,7 +40,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && clientLayer
     const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
 
-    const isMeasured = (map._measuredFeatures ?? []).includes(feature.properties.__gsl_id__) && layer._measuredFeature
+    const isMeasured = (map._measuredFeatures ?? []).includes(feature?.properties.__gsl_id__) && layer._measuredFeature
 
     const addLayer = (l) => group._handlers.removeHiddenLayer(l)
     const removeLayer = (l, hidden=false) => hidden ? group._handlers.addToHiddenLayers(l) : group.removeLayer(l)
