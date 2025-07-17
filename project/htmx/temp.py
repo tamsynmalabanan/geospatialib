@@ -1,30 +1,13 @@
-from django.views.decorators.http import require_http_methods
-from django.shortcuts import render, HttpResponse, get_object_or_404
-from django.http import JsonResponse
-from django.contrib import messages
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.cache import cache
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
-from django.views.generic import ListView
-from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+from django.db.models import Count, Q, Max
 from django.utils.functional import cached_property
+from django.views.generic import ListView
 
-import json
-import requests
-import validators
-import os
 from functools import reduce
 from operator import or_, add
-from urllib.parse import urlparse
 
-from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
-from main.models import SpatialRefSys, URL, Layer
-from main.forms import ValidateCollectionForm
-from main.tasks import onboard_collection
-from main import forms
-from helpers.base.utils import create_cache_key, find_nearest_divisible
-
+from main.models import Layer
 
 class LayerList(ListView):
     template_name = 'main/search/results.html'
@@ -38,39 +21,31 @@ class LayerList(ListView):
             'type',
         ]
 
-    @cached_property
-    def filter_expressions(self):
-        return [
-            'bbox__bboverlaps'
-        ]
-
-    @cached_property
-    def query_filters(self):
-        return self.filter_fields + self.filter_expressions
-
-    @cached_property
-    def query_values(self):
+    @property
+    def query_params(self):
         query = self.request.GET.get('query', '').strip()
         exclusions = []
 
         if ' -' in f' {query}':
             keywords = query.split(' ')
-            exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
+            exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
             query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+
         query = query.replace(' ', ' OR ')
 
         return (query, exclusions)
 
     @cached_property
-    def query_params(self):
-        return [i for i in list(self.request.GET.values()) if i and i != '']
+    def query_values(self):
+        return [str(i).strip() for i in list(self.request.GET.values()) if i and i != '']
 
     @cached_property
     def cache_key(self):
-        return ';'.join([str(i) for i in ['LayerList',]+self.query_params])
+        return ';'.join([str(i) for i in ['LayerList',]+self.query_values])
 
-    def perform_full_text_search(self):
-        query, exclusions = self.query_values
+    @property
+    def filtered_queryset(self):
+        query, exclusions = self.query_params
 
         queryset = (
             super().get_queryset()
@@ -86,6 +61,15 @@ class LayerList(ListView):
                 Q()
             ))
 
+        if len(self.query_values) > 1:
+            queryset = queryset.filter(**{
+                param : value 
+                for param, value in self.request.GET.items()
+                if value and param in self.filter_fields + [
+                    'bbox__bboverlaps'
+                ]
+            })
+
         search_query = SearchQuery(query, search_type='websearch')
 
         search_vector = reduce(add, (SearchVector(field) for field in self.filter_fields + [
@@ -98,44 +82,19 @@ class LayerList(ListView):
         ]))
 
         queryset = (
-            queryset
-            .annotate(rank=SearchRank(search_vector, search_query))
-            .filter(rank__gte=0.001)
+            queryset.annotate(
+                search=search_vector,
+                rank=SearchRank(search_vector, search_query)
+            ).filter(
+                search=search_query,
+                rank__gte=0.001
+            )
         )
         
         return queryset
 
-    def apply_query_filters(self, queryset):
-        return queryset.filter(**{
-            param : value 
-            for param, value in self.request.GET.items() 
-            if value and param in self.query_filters
-        })
-
-    def get_queryset(self):
-        if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            queryset = cache.get(self.cache_key)
-
-            if not queryset or not queryset.exists():
-                queryset = self.perform_full_text_search()
-
-            if queryset.exists():
-                queryset = self.apply_query_filters(queryset)
-                cache.set(self.cache_key, queryset, timeout=60*15)
-                
-            self.queryset = queryset
-
-        queryset = self.queryset
-        if queryset and queryset.exists():
-            queryset = (
-                self.queryset
-                .annotate(rank=Max('rank'))
-                .order_by(*['-rank', 'title','type'])
-            )
-
-        return queryset
-
-    def get_filters(self):
+    @property
+    def query_filters(self):
         filters = {
             field: list(
                 self.queryset
@@ -147,16 +106,37 @@ class LayerList(ListView):
 
         for field in self.filter_fields:
             value = self.request.GET.get(field)
-            if not value or len(filters.get(field, [])) != 0:
-                continue
-            filters[field] = [{field: value, 'count': 0}]
+            if value and len(filters.get(field, [])) == 0:
+                filters[field] = [{field: value, 'count': 0}]
 
         return filters
+
+    def get_queryset(self):
+        if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
+            queryset = cache.get(self.cache_key)
+
+            if not queryset or not queryset.exists():
+                queryset = self.filtered_queryset
+
+            if queryset.exists():
+                cache.set(self.cache_key, queryset, timeout=60*15)
+                
+            self.queryset = queryset
+
+        queryset = self.queryset
+
+        if queryset and queryset.exists():
+            queryset = (
+                self.queryset
+                .annotate(rank=Max('rank'))
+                .order_by(*['-rank', 'title','type'])
+            )
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
-            context['count'] = context['page_obj'].paginator.count
-            context['filters'] = self.get_filters()
-            context['params'] = self.query_params
+            context['filters'] = self.query_filters
+            context['values'] = self.query_values
         return context
