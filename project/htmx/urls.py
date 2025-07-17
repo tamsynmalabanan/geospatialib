@@ -6,7 +6,7 @@ app_name = 'htmx'
 
 urlpatterns = [
     path('cors/proxy/', views.cors_proxy, name='cors_proxy'),
-    path('library/search/', views.SearchList.as_view(), name='search_library'),
+    path('library/search/', views.LayerList.as_view(), name='search_library'),
     path('collection/validate/', views.validate_collection, name='validate_collection'),
     path('collection/update/', views.update_collection, name='update_collection'),
     path('forms/layers/', views.get_layer_forms, name='get_layer_forms'),

@@ -26,7 +26,7 @@ from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
 
 
-class SearchList(ListView):
+class LayerList(ListView):
     template_name = 'main/search/results.html'
     model = Layer
     context_object_name = 'layers'
@@ -67,7 +67,7 @@ class SearchList(ListView):
 
     @cached_property
     def cache_key(self):
-        return ';'.join([str(i) for i in ['SearchList',]+self.query_params])
+        return ';'.join([str(i) for i in ['LayerList',]+self.query_params])
 
     def perform_full_text_search(self):
         query, exclusions = self.query_values

@@ -26,7 +26,7 @@ from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
 
 
-class SearchList(ListView):
+class LayerList(ListView):
     template_name = 'main/search/results.html'
     model = Layer
     context_object_name = 'layers'
@@ -38,38 +38,30 @@ class SearchList(ListView):
             'type',
         ]
 
-    @cached_property
-    def filter_expressions(self):
-        return [
-            'bbox__bboverlaps'
-        ]
-
-    @cached_property
-    def query_filters(self):
-        return self.filter_fields + self.filter_expressions
-
-    @cached_property
+    @property
     def query_params(self):
         query = self.request.GET.get('query', '').strip()
         exclusions = []
 
         if ' -' in f' {query}':
             keywords = query.split(' ')
-            exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 1]
+            exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
             query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+
         query = query.replace(' ', ' OR ')
 
         return (query, exclusions)
 
     @cached_property
     def query_values(self):
-        return [i for i in list(self.request.GET.values()) if i and i != '']
+        return [str(i).strip() for i in list(self.request.GET.values()) if i and i != '']
 
     @cached_property
     def cache_key(self):
-        return ';'.join([str(i) for i in ['SearchList',]+self.query_values])
+        return ';'.join([str(i) for i in ['LayerList',]+self.query_values])
 
-    def perform_full_text_search(self):
+    @property
+    def filtered_queryset(self):
         query, exclusions = self.query_params
 
         queryset = (
@@ -85,6 +77,15 @@ class SearchList(ListView):
                 (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), 
                 Q()
             ))
+
+        if len(self.query_values) > 1:
+            queryset = queryset.filter(**{
+                param : value 
+                for param, value in self.request.GET.items()
+                if value and param in self.filter_fields + [
+                    'bbox__bboverlaps'
+                ]
+            })
 
         search_query = SearchQuery(query, search_type='websearch')
 
@@ -105,37 +106,8 @@ class SearchList(ListView):
         
         return queryset
 
-    def apply_query_filters(self, queryset):
-        return queryset.filter(**{
-            param : value 
-            for param, value in self.request.GET.items() 
-            if value and param in self.query_filters
-        })
-
-    def get_queryset(self):
-        if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            queryset = cache.get(self.cache_key)
-
-            if not queryset or not queryset.exists():
-                queryset = self.perform_full_text_search()
-
-            if queryset.exists():
-                queryset = self.apply_query_filters(queryset)
-                cache.set(self.cache_key, queryset, timeout=60*15)
-                
-            self.queryset = queryset
-
-        queryset = self.queryset
-        if queryset and queryset.exists():
-            queryset = (
-                self.queryset
-                .annotate(rank=Max('rank'))
-                .order_by(*['-rank', 'title','type'])
-            )
-
-        return queryset
-
-    def get_filters(self):
+    @property
+    def query_filters(self):
         filters = {
             field: list(
                 self.queryset
@@ -147,18 +119,38 @@ class SearchList(ListView):
 
         for field in self.filter_fields:
             value = self.request.GET.get(field)
-            if not value or len(filters.get(field, [])) != 0:
-                continue
-            filters[field] = [{field: value, 'count': 0}]
+            if value and len(filters.get(field, [])) == 0:
+                filters[field] = [{field: value, 'count': 0}]
 
         return filters
+
+    def get_queryset(self):
+        if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
+            queryset = cache.get(self.cache_key)
+
+            if not queryset or not queryset.exists():
+                queryset = self.filtered_queryset
+
+            if queryset.exists():
+                cache.set(self.cache_key, queryset, timeout=60*15)
+                
+            self.queryset = queryset
+
+        queryset = self.queryset
+
+        if queryset and queryset.exists():
+            queryset = (
+                self.queryset
+                .annotate(rank=Max('rank'))
+                .order_by(*['-rank', 'title','type'])
+            )
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
-            context['count'] = count = context['page_obj'].paginator.count
-            context['fillers'] = range(find_nearest_divisible(count, [2,3])-count)
-            context['filters'] = self.get_filters()
+            context['filters'] = self.query_filters
             context['values'] = self.query_values
         return context
 

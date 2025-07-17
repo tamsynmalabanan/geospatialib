@@ -5,6 +5,8 @@ import random
 from urllib.parse import urlencode, urlparse
 import json
 
+from base.utils import find_nearest_divisible
+
 register = template.Library()
 
 @register.simple_tag
@@ -74,3 +76,7 @@ def get_field_id(field):
 @register.filter
 def endswith(value, suffix):
     return str(value).endswith(suffix)
+
+@register.filter
+def fillers_range(count):
+    return range(find_nearest_divisible(count, [2,3])-count)
