@@ -90,7 +90,8 @@
     z-index: 999;
 }
 
-.icon-active {
+.icon-ruler {
     background-image: none !important;
     background-color: var(--bs-primary) !important;
+    border-radius: var(--bs-border-radius) !important;
 }
