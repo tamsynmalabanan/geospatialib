@@ -65,11 +65,11 @@ class Layer(models.Model):
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
     styles = models.JSONField('Styles', default=dict)
-    # search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True)
 
     class Meta:
         unique_together = ['collection', 'name']
-        # indexes = [GinIndex(fields=["search_vector"])]
+        indexes = [GinIndex(fields=["search_vector"])]
 
     def __str__(self):
         return f'{self.name} in {str(self.collection)}'
