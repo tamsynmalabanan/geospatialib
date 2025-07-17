@@ -54,7 +54,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             innerText: isHidden ? 'Show layer' : 'Hide layer',
             btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
-        measure: !feature || feature.geometry.type.startsWith('Multi') || isSearch ? null : {
+        measure: !feature || feature.geometry.type.startsWith('Multi') || feature.geometry.type === 'Point' || isSearch ? null : {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
             btnCallback: async () => {
                 if (isMeasured) {
