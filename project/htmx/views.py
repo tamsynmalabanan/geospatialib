@@ -87,29 +87,23 @@ class LayerList(ListView):
                 ]
             })
 
-        search_query = SearchQuery(query, search_type='websearch')
 
-        search_vector = reduce(add, (SearchVector(field) for field in self.filter_fields + [
-            'name',
-            'title',
-            'abstract',
-            'keywords',
-            'attribution',
-            'styles',
-        ]))
+        # https://testdriven.io/blog/django-search/
+        
+        search_query = SearchQuery(query, search_type='websearch')
 
         queryset = (
             queryset
             .annotate(
-                search=search_vector,
-                rank=SearchRank(search_vector, search_query)
+                rank=SearchRank(F('search_vector'), search_query)
             )
             .filter(
-                search=search_query,
+                search_vector=search_query,
                 rank__gte=0.001
             )
+            .order_by('-rank')
         )
-        
+
         return queryset
 
     @property
