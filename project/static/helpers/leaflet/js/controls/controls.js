@@ -150,6 +150,7 @@ const handleLeafletMeasureTool = (map, {include=true} ={}) => {
 
     const icon = measureControl._container.querySelector('.icon-ruler')
     icon.style.backgroundImage = 'none !important'
+    icon.style.borderRadius = 'var(--bs-border-radius) !important'
     icon.classList.add('bi','bi-rulers')
 }
 
