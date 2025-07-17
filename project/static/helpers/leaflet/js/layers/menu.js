@@ -54,7 +54,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             innerText: isHidden ? 'Show layer' : 'Hide layer',
             btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
-        measure: !feature || feature.geometry.type.startsWith('Multi') ? null : {
+        measure: !feature || feature.geometry.type.startsWith('Multi') || isSearch ? null : {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
             btnCallback: async () => {
                 if (isMeasured) {
@@ -249,6 +249,48 @@ const getLeafletLayerContextMenu = async (event, layer, {
             innerText: 'Copy geometry',
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
+
+        divider7: isSearch ? null : {
+            divider: true,
+        },
+        download: isSearch || !layerGeoJSON ? null : {
+            innerText: 'Download data',
+            btnCallback: () => {
+                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
+            }
+        },
+        csv: isSearch || !layerGeoJSON ? null : {
+            innerText: 'Export to CSV',
+            btnCallback: () => {
+                const properties = layerGeoJSON.features.map(feature => {
+                    const [__x__, __y__] = turf.centroid(feature).geometry.coordinates
+                    return {...feature.properties, __x__, __y__}
+                })
+
+                const headers = [...Array.from(
+                    new Set(properties.flatMap(prop => Object.keys(prop)))
+                )]
+
+                const rows = properties.map(prop =>
+                    headers.map(header => {
+                        const value = prop[header] !== undefined ? prop[header] : ''
+                        return `"${String(value).replace(/"/g, '""')}"`
+                    }).join(',')
+                )
+
+                const csv = [headers.join(','), ...rows].join('\n')
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+                const url = URL.createObjectURL(blob)
+
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `${layer._params.title}.csv`
+                a.click()
+
+                URL.revokeObjectURL(url)
+            }
+        },
+
         
         divider6: isSearch ? null : {
             divider: true,
@@ -268,12 +310,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
                     })
                 }
-            }
-        },
-        download: isSearch || !layerGeoJSON ? null : {
-            innerText: 'Download data',
-            btnCallback: () => {
-                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
             }
         },
         clearData: !layer._dbIndexedKey ? null : {
