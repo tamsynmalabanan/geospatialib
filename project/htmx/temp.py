@@ -49,7 +49,7 @@ class SearchList(ListView):
         return self.filter_fields + self.filter_expressions
 
     @cached_property
-    def query_params(self):
+    def query_values(self):
         query = self.request.GET.get('query', '').strip()
         exclusions = []
 
@@ -62,15 +62,15 @@ class SearchList(ListView):
         return (query, exclusions)
 
     @cached_property
-    def query_values(self):
+    def query_params(self):
         return [i for i in list(self.request.GET.values()) if i and i != '']
 
     @cached_property
     def cache_key(self):
-        return ';'.join([str(i) for i in ['SearchList',]+self.query_values])
+        return ';'.join([str(i) for i in ['SearchList',]+self.query_params])
 
     def perform_full_text_search(self):
-        query, exclusions = self.query_params
+        query, exclusions = self.query_values
 
         queryset = (
             super().get_queryset()
@@ -156,84 +156,7 @@ class SearchList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
-            context['count'] = count = context['page_obj'].paginator.count
-            context['fillers'] = range(find_nearest_divisible(count, [2,3])-count)
+            context['count'] = context['page_obj'].paginator.count
             context['filters'] = self.get_filters()
-            context['values'] = self.query_values
+            context['params'] = self.query_params
         return context
-
-@require_http_methods(['GET'])
-def validate_collection(request):
-    try:
-        data = request.GET.dict()
-        context = {'layers':{}}
-        form = ValidateCollectionForm(data)
-        if form.is_valid():
-            context = get_collection_data(
-                url = form.cleaned_data.get('url', ''),
-                format = form.cleaned_data.get('format', None),
-            ) or {}
-            layers = context.get('layers', {})
-            if layers == {}:
-                raw_format = data.get('format')
-                form.data.update({'format':raw_format})
-                if raw_format:
-                    form.add_error('format', 'No layers retrieved.')
-            else:
-                form.data.update({'url':context['url']})
-                context['layers'] = sort_layers(layers)
-        context['form'] = form
-        return render(request, 'helpers/partials/add_layers/url_fields.html', context)
-    except Exception as e:
-        return HttpResponse(e)
-
-@require_http_methods(['POST'])
-def update_collection(request):
-    cacheKey = request.POST.get('cacheKey')
-    updated_layers = json.loads(request.POST.get('layers'))
-    update_collection_data(cacheKey, updated_layers)
-    return HttpResponse('Done.')
-
-@require_http_methods(['GET'])
-def get_layer_forms(request):
-    layer_names = json.loads(request.GET.get('layerNames','[]'))
-    layers = {}
-    for name in layer_names:    
-        title, type = os.path.normpath(name).split(os.sep)[-1].rsplit('.', 1)
-        layers[name] = {
-            'title': title, 
-            'type': type, 
-        }
-    layers = sort_layers(layers)
-    return render(request, 'helpers/partials/add_layers/layer_forms.html', {
-        'layers': layers,
-    })
-    
-@require_http_methods(['POST', 'GET'])
-def cors_proxy(request):
-    url = request.GET.get('url')
-    if not url:
-        return JsonResponse({'error': 'URL parameter is required'}, status=400)
-    
-    try:
-        data = {}
-        if request.method == 'POST':
-            data = json.loads(request.body.decode('utf-8'))
-        method = str(data.get('method', 'get')).lower()
-        headers = data.get('headers', {})
-        
-        if method == 'get':
-           response = requests.get(url, headers=headers)
-        elif method == 'post':
-            response = requests.post(url, json=data, headers=headers)
-        else:
-            return JsonResponse({'error': f'Unsupported method: {method}'}, status=400)
-    except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
-        return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
-
-    content_type = response.headers.get('Content-Type')
-    return HttpResponse(response.content, content_type=content_type, status=response.status_code)
-
-def srs_wkt(request, srid):
-    srs = get_object_or_404(SpatialRefSys, srid=srid)
-    return HttpResponse(srs.srtext, content_type='text/plain')
