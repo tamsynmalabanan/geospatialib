@@ -5,7 +5,7 @@ import random
 from urllib.parse import urlencode, urlparse
 import json
 
-from base.utils import find_nearest_divisible
+from helpers.base.utils import find_nearest_divisible
 
 register = template.Library()
 
