@@ -92,6 +92,9 @@
 
 .icon-ruler {
     background-image: none !important;
-    background-color: var(--bs-primary) !important;
     border-radius: var(--bs-border-radius) !important;
+}
+
+.icon-ruler.icon-active {
+    background-color: var(--bs-primary) !important;
 }
