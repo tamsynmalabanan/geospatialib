@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.forms.models import model_to_dict
+from django.contrib.postgres.search import SearchVectorField
 
 from urllib.parse import urlparse
 
@@ -63,6 +64,7 @@ class Layer(models.Model):
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
     styles = models.JSONField('Styles', default=dict)
+    search_vector = SearchVectorField(null=True)
 
     class Meta:
         unique_together = ['collection', 'name']
