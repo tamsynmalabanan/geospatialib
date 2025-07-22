@@ -86,8 +86,8 @@ class Layer(models.Model):
                 'name',
                 'title',
                 'abstract',
-                RawSQL("keywords::text", []),
                 'attribution',
+                RawSQL("keywords::text", []),
                 RawSQL("styles::text", [])
             )
         ),
