@@ -142,12 +142,12 @@ def get_collection_data(url, format=None, delay=True):
 
     layers = get_layers(url, format)
     if len(layers.keys()) > 0:
-        print(layers)
         data['layers'] = layers
         cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24*30)
         if delay:
             onboard_collection.delay(cacheKey)
         else:
+            print('here')
             onboard_collection(cacheKey)
     return data
 
