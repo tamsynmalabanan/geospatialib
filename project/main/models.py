@@ -65,7 +65,7 @@ class Layer(models.Model):
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
-    keywords = models.JSONField('Keywords', default=list)
+    keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
     abstract = models.TextField('Abstract', blank=True, null=True)
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
