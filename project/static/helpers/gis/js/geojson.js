@@ -53,7 +53,7 @@ const normalizeFeatureProperties = (properties) => {
             const value = properties[property]
 
             if (Array.isArray(value) && value.every(i => typeof i !== 'object')) {
-                normalProperties[property] = value.split(',')
+                normalProperties[property] = value.join(',')
             } else if (value && typeof value === 'object') {
                 handler(value)
             } else {
