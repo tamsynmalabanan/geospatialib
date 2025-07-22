@@ -467,6 +467,43 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const patternCheckboxes = customCreateElement({
+            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
+            parent:iconFields
+        })
+
+        const iconFill = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Icon fill',
+            checked: styleParams.iconFill,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconFill) return
+
+                    styleParams.iconFill = value
+                    update()
+                }
+            }
+        })
+
+        const iconStroke = createFormCheck({
+            parent:patternCheckboxes,
+            labelInnerText: 'Icon stroke',
+            checked: styleParams.iconStroke,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconStroke) return
+
+                    styleParams.iconStroke = value
+                    update()
+                }
+            }
+        })
+
         const iconFields2 = customCreateElement({
             className:'d-flex gap-2',
             parent: fieldsContainer,
@@ -525,38 +562,26 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
-        const patternCheckboxes = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1', 
-            parent:iconFields2
-        })
-
-        const iconFill = createFormCheck({
-            parent:patternCheckboxes,
-            labelInnerText: 'Icon fill',
-            checked: styleParams.iconFill,
-            labelClass: 'text-nowrap',
+        const iconOffset = createInputGroup({
+            parent:iconFields2,
+            inputGroupClass: 'w-25 flex-grow-1',
+            fieldAttrs: {
+                name: `${id}-iconOffset`,
+                type: 'text',
+                value: styleParams.iconOffset ?? '0,0',
+                placeholder: 'Icon offset (x,y)',
+            },
+            suffixHTML: 'px',
+            fieldClass: 'form-control-sm',
             events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.iconFill) return
+                blur: (e) => {
+                    const value = e.target.value ?? '0,0'
+                    if (value === styleParams.iconOffset) return
 
-                    styleParams.iconFill = value
-                    update()
-                }
-            }
-        })
+                    let [x,y] = value.split(',').map(i => parseInt(i))
+                    if (!x || !y || [x,y].some(i => isNaN(i))) return
 
-        const iconStroke = createFormCheck({
-            parent:patternCheckboxes,
-            labelInnerText: 'Icon stroke',
-            checked: styleParams.iconStroke,
-            labelClass: 'text-nowrap',
-            events: {
-                click: (e) => {
-                    const value = e.target.checked
-                    if (value === styleParams.iconStroke) return
-
-                    styleParams.iconStroke = value
+                    styleParams.iconOffset = e.target.value = value
                     update()
                 }
             }

@@ -3,6 +3,8 @@ const getLeafletStyleParams = ({
     iconSpecs='circle-fill',
     iconSize=10,
     iconRotation=0,
+    iconOffset='0,0',
+    
 
     iconFill=true,
     iconStroke=true,
@@ -62,6 +64,7 @@ const getLeafletStyleParams = ({
         boldFont,
         fillPattern,
         iconRotation,
+        iconOffset,
         fillPatternId,
         iconFill,
         iconStroke,
@@ -100,6 +103,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         boldFont,
         fillPattern,
         iconRotation,
+        iconOffset,
         fillPatternId,
         iconFill,
         iconStroke,
@@ -186,7 +190,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     element.style.opacity = fillOpacity
                 }
                 
-                element.style.transform = `rotate(${iconRotation}deg)`
+                const [offsetX, offsetY] = iconOffset.split(',').map(i => parseInt(i))
+                element.style.transform = `rotate(${iconRotation}deg) translate(${offsetX}px, ${offsetY}px)`
                 element.style.transformOrigin = `50% 50%`
                 element.style.WebkitTextStroke = iconStroke ? `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}` : ''
                 element.style.textShadow = textShadow
@@ -399,6 +404,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             boldFont,
             fillPattern,
             iconRotation,
+            iconOffset,
             fillPatternId,
             iconFill,
             iconStroke,
@@ -465,6 +471,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                     fillPatternId:null, 
                     textWrap:false,
                     iconRotation: 0,
+                    iconOffset: '0,0',
                     fillOpacity: 1,
                 }, {
                     allowCircleMarker: false,
