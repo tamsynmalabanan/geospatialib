@@ -76,7 +76,7 @@ class Layer(models.Model):
     
     @property
     def data(self):
-        data = model_to_dict(self)
+        data = model_to_dict(self, exclude=['search_vector'])
         
         bbox = data.get('bbox')
         if bbox and not bbox.empty:

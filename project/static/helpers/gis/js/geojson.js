@@ -48,6 +48,8 @@ const normalizeGeoJSONFeature = async (feature, {
 const normalizeFeatureProperties = (properties) => {
     const normalProperties = {}
         
+    console.log(properties)
+
     const handler = (properties) => {
         Object.keys(properties).forEach(property => {
             const value = properties[property]

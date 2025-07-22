@@ -387,7 +387,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 'img': 'image url',
                 'svg': 'svg element',
                 'html': 'html element',
-                // 'property': 'feature property',
+                'property': 'feature property',
             },
             currentValue: styleParams.iconType,
             events: {
@@ -396,18 +396,11 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.iconType) return
 
                     const iconSpecs = parent.querySelector(`[name="${id}-iconSpecs"]`)
-                    if (value === 'bi') {
-                        iconSpecs.value = 'circle-fill'
-                        styleParams.iconSpecs = 'circle-fill'
-                    } else {
-                        iconSpecs.value = ''
-                        styleParams.iconSpecs = ''
-                    }
+                    styleParams.iconSpecs = iconSpecs.value = value === 'bi' ? 'circle-fill' : ''
 
                     styleParams.iconType = value
                     updateIconDatalistOptions()
                     update()
-                    
                 }
             }
         })
