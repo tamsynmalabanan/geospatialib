@@ -20,7 +20,7 @@ class LayerAdmin(admin.ModelAdmin):
         'id',
         'search_vector'
     )
-    search_fields = ['name', 'title', 'keywords', 'abstract', 'attribution', 'fees', 'styles']
+    search_fields = ['name', 'title', 'abstract', 'attribution', 'fees']
     list_filter = ['type']
     list_per_page = 15
 
