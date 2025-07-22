@@ -6,6 +6,13 @@ admin.site.register(models.SpatialRefSys)
 admin.site.register(models.URL)
 admin.site.register(models.Collection)
 
+class CollectionAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        'id',
+        'last_update'
+    )
+    list_per_page = 15
+
 class LayerAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
