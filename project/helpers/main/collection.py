@@ -123,7 +123,7 @@ def get_collection_data(url, format=None, delay=True):
 
     data = {'layers':{}, 'cacheKey':cacheKey, 'url':url, 'format':format}
 
-    collection_instance = Collection.objects.filter(
+    collection = Collection.objects.filter(
         url__path=url,
         format=format,
         last_update__gte=timezone.now()-timedelta(days=30)
@@ -131,9 +131,9 @@ def get_collection_data(url, format=None, delay=True):
 
     cached_layers = cache.get(cacheKey, {}).get('layers', {})
 
-    if collection_instance and collection_instance.layers.count() >= len(cached_layers.keys()):
-        layers = collection_instance.get_layer_data()
-        data.update({'layers': layers, 'collection': collection_instance})
+    if collection and collection.has_layers and collection.layers.count() >= len(cached_layers.keys()):
+        layers = collection.get_layer_data()
+        data.update({'layers': layers, 'collection': collection})
         return data
 
     if len(cached_layers.keys()) > 0:
