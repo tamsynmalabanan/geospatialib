@@ -9,8 +9,9 @@ admin.site.register(models.Collection)
 class LayerAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
+        'search_vector'
     )
-    search_fields = ['name']
+    search_fields = ['name', 'title']
     list_filter = ['collection']
     list_per_page = 15
 
