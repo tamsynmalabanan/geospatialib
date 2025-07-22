@@ -9,7 +9,7 @@ from django.db.models.functions import Coalesce
 from django.db.models import GeneratedField
 from django.db.models.expressions import RawSQL
 from django.db.models import Func, Value, TextField, F
-from django.db.models import Concat, Value
+from django.db.models.functions import Concat
 from django.db.models.functions import Cast
 from django.contrib.postgres.search import SearchVectorField
 
