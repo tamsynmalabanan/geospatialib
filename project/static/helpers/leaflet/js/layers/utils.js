@@ -450,7 +450,6 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             delete styleParams.fillPatternId
         }
 
-        console.log(fillPattern, iconType)
         if (fillPattern !== 'icon' && iconType !== 'svg') {
             throw new Error(`Fill pattern: ${fillPattern}; icon type: ${iconType}`)
         }
