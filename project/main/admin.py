@@ -9,7 +9,6 @@ class CollectionAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
         'last_update',
-        'layers'
     )
     list_per_page = 15
     list_filter = ['format']
