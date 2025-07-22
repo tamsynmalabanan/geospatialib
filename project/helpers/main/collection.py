@@ -129,12 +129,12 @@ def get_collection_data(url, format=None, delay=True):
         last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
 
-    print('collection instance', collection_instance)
 
     cached_layers = cache.get(cacheKey, {}).get('layers')
 
     if collection_instance:
         layers = collection_instance.get_layers()
+        print('layers', set(layers.keys()))
         if not cached_layers or set(layers.keys()) == set(cached_layers.keys()):
             data.update({'layers': layers, 'collection': collection_instance})
             return data
