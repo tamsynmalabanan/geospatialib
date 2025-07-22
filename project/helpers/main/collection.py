@@ -125,7 +125,7 @@ def get_collection_data(url, format=None, delay=True):
         url__path=url, format=format
     ).first()
     if collection_instance:
-        layers = collection_instance.get_layer_data()
+        layers = collection_instance.get_layers()
         if len(layers.keys()) > 0:
             data.update({'layers': layers, 'collection': collection_instance})
             return data
