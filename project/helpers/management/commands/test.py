@@ -51,6 +51,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
 
-        # test_get_collection_data()
+        test_get_collection_data()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
