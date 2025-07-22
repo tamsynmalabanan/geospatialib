@@ -81,22 +81,22 @@ class Layer(models.Model):
     styles = models.JSONField('Styles', default=dict, blank=True, null=True)
     # search_vector = SearchVectorField(null=True)
 
-    # search_vector = GeneratedField(
-    #     expression=ToTSVector(
-    #         F('name') + Value(' ') +
-    #         F('title') + Value(' ') +
-    #         F('abstract') + Value(' ') +
-    #         F('attribution') + Value(' ') +
-    #         RawSQL("keywords::text", []) + Value(' ') +
-    #         RawSQL("styles::text", [])
-    #     ),
-    #     output_field=SearchVectorField(),
-    #     db_persist=True
-    # )
+    search_vector = GeneratedField(
+        expression=ToTSVector(
+            F('name') + Value(' ') +
+            F('title') + Value(' ') +
+            F('abstract') + Value(' ') +
+            F('attribution') + Value(' ') +
+            RawSQL("keywords::text", []) + Value(' ') +
+            RawSQL("styles::text", [])
+        ),
+        output_field=SearchVectorField(),
+        db_persist=True
+    )
 
     class Meta:
         unique_together = ['collection', 'name']
-        # indexes = [GinIndex(fields=["search_vector"])]
+        indexes = [GinIndex(fields=["search_vector"])]
 
     def __str__(self):
         return f'{self.name} in {str(self.collection)}'
