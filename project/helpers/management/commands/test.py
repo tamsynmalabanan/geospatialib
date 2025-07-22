@@ -7,7 +7,7 @@ from helpers.base.files import get_file_names
 from helpers.main.ogc import get_ogc_layers, get_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
-from main.models import URL
+from main.models import URL, Layer
 from main.forms import ValidateCollectionForm
 
 
@@ -52,6 +52,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
 
-        # test_get_collection_data()
+        for i in Layer.objects.all():
+            if not i.search_vector:
+                i.save()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
