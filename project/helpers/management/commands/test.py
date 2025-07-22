@@ -43,7 +43,7 @@ def test_get_collection_data():
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     url = 'https://services.ga.gov.au/gis/eggs/aus_chronostrat_v1/wms?request=GetCapabilities&service=WMS'
     value = get_collection_data(url, delay=False)
-    print(value)
+    # print(value)
     print('layers count', len((value or {}).get('layers', {}).keys()))
 
 class Command(BaseCommand):
