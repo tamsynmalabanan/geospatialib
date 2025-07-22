@@ -159,10 +159,13 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const fetchers = Object.entries(map._legendLayerGroups.reduce((acc, group) => {
                     group.eachLayer(layer => {
                         if (acc[layer._dbIndexedKey]?.includes(layer._params.title)) return
+                        if (!map.hasLayer(layer)) return
+
                         acc[layer._dbIndexedKey] = [...(acc[layer._dbIndexedKey] ?? []), layer._params.title]
                     })
                     return acc
                 }, {})).map(i => { return {key:i[0], title:i[1].join(' / ')} })
+
           
                 if (!fetchers.length) {
                     errorRemark = 'No layers to query.'

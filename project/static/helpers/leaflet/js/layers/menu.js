@@ -250,7 +250,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
 
-        divider7: isSearch ? null : {
+        divider7: isSearch || !layerGeoJSON ? null : {
             divider: true,
         },
         download: isSearch || !layerGeoJSON ? null : {
