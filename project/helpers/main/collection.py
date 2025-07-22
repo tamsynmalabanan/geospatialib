@@ -2,6 +2,8 @@ from django.core.cache import cache
 
 from urllib.parse import unquote
 import os
+from datetime import timedelta
+from django.utils import timezone
 
 from main.tasks import onboard_collection
 from main.models import Collection
@@ -121,24 +123,26 @@ def get_collection_data(url, format=None, delay=True):
 
     data = {'layers':{}, 'cacheKey':cacheKey, 'url':url, 'format':format}
 
-    collection_instance = Collection.objects.filter(
-        url__path=url, format=format
+    collection = Collection.objects.filter(
+        url__path=url,
+        format=format,
+        last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
-    if collection_instance:
-        layers = collection_instance.get_layer_data()
-        if len(layers.keys()) == collection_instance.count:
-            data.update({'layers': layers, 'collection': collection_instance})
-            return data
 
-    cached_collection = cache.get(cacheKey)
-    if cached_collection:
-        layers = cached_collection['layers']
-        if len(layers.keys()) > 0:
-            data['layers'] = layers
-            return data
+    cached_layers = cache.get(cacheKey, {}).get('layers', {})
+
+    if collection and collection.has_layers and collection.layers.count() >= len(cached_layers.keys()):
+        layers = collection.get_layer_data()
+        data.update({'layers': layers, 'collection': collection})
+        return data
+
+    if len(cached_layers.keys()) > 0:
+        data['layers'] = cached_layers
+        return data
 
     layers = get_layers(url, format)
     if len(layers.keys()) > 0:
+        print(layers)
         data['layers'] = layers
         cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24*30)
         if delay:

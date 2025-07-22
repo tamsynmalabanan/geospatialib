@@ -45,7 +45,6 @@ def onboard_collection(self, cacheKey):
             collection_instance, created = Collection.objects.get_or_create(
                 url=url_instance, 
                 format=format,
-                count=len(layers.keys())
             )
         if not collection_instance:
             raise Exception('No Collection instance exists or created.')
@@ -58,6 +57,7 @@ def onboard_collection(self, cacheKey):
 
             layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
             if not layer_instance:
+                print(data)
                 layer_instance, created = Layer.objects.get_or_create(**{
                     'collection': collection_instance,
                     'name': name,
