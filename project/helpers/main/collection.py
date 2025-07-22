@@ -2,8 +2,6 @@ from django.core.cache import cache
 
 from urllib.parse import unquote
 import os
-from datetime import timedelta
-from django.utils import timezone
 
 from main.tasks import onboard_collection
 from main.models import Collection
@@ -124,41 +122,29 @@ def get_collection_data(url, format=None, delay=True):
     data = {'layers':{}, 'cacheKey':cacheKey, 'url':url, 'format':format}
 
     collection_instance = Collection.objects.filter(
-        url__path=url, 
-        format=format,
-        last_update__gte=timezone.now()-timedelta(days=30)
+        url__path=url, format=format
     ).first()
-
-    cached_layers = cache.get(cacheKey, {}).get('layers', {})
-    cached_layers_count = len(cached_layers.keys())
-
     if collection_instance:
-        layers = collection_instance.get_layers()
-        layers_count = len(layers.keys())
-        
-        if layers_count > 0 and (not cached_layers or layers_count == cached_layers_count):
+        layers = collection_instance.get_layer_data()
+        if len(layers.keys()) > 0:
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
-    if cached_layers_count > 0:
-        data['layers'] = cached_layers
-        return data
+    cached_collection = cache.get(cacheKey)
+    if cached_collection:
+        layers = cached_collection['layers']
+        if len(layers.keys()) > 0:
+            data['layers'] = layers
+            return data
 
     layers = get_layers(url, format)
     if len(layers.keys()) > 0:
         data['layers'] = layers
-
-        cache.set(cacheKey, {
-            'url': url, 
-            'format': format, 
-            'layers': layers
-        }, timeout=60*60*24)
-        
+        cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24*30)
         if delay:
             onboard_collection.delay(cacheKey)
         else:
             onboard_collection(cacheKey)
-    
     return data
 
 def update_collection_data(cacheKey, updated_layers, delay=True):
