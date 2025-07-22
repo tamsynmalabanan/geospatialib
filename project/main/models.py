@@ -9,6 +9,9 @@ from django.db.models.functions import Coalesce
 from django.db.models import GeneratedField
 from django.db.models.expressions import RawSQL
 from django.db.models import Func, Value, TextField, F
+from django.db.models import Concat, Value
+from django.db.models.functions import Cast
+from django.contrib.postgres.search import SearchVectorField
 
 from urllib.parse import urlparse
 
@@ -83,12 +86,19 @@ class Layer(models.Model):
 
     search_vector = GeneratedField(
         expression=ToTSVector(
-            F('name') + Value(' ') +
-            F('title') + Value(' ') +
-            F('abstract') + Value(' ') +
-            F('attribution') + Value(' ') +
-            RawSQL("keywords::text", []) + Value(' ') +
-            RawSQL("styles::text", [])
+            Concat(
+                'name',
+                Value(' '),
+                'title',
+                Value(' '),
+                'abstract',
+                Value(' '),
+                'attribution',
+                Value(' '),
+                RawSQL("keywords::text", []),
+                Value(' '),
+                RawSQL("styles::text", [])
+            )
         ),
         output_field=SearchVectorField(),
         db_persist=True
