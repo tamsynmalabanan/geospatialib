@@ -131,6 +131,8 @@ def get_collection_data(url, format=None, delay=True):
 
     cached_layers = cache.get(cacheKey, {}).get('layers', {})
 
+    print(collection_instance, cached_layers)
+
     if collection_instance:
         layers = collection_instance.get_layer_data()
         if len(layers.keys()) >= len(cached_layers.keys()):
