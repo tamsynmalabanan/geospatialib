@@ -82,7 +82,7 @@ const getLeafletGeoJSONLayer = async ({
             return (
                 geojsonLayer.options.renderer instanceof L.Canvas
                 && turf.getType(feature).endsWith('Polygon')
-                && styleParams.fillPattern !== 'solid' 
+                && styleParams.fillPattern === 'icon' 
                 && document.querySelector(`#${styleParams.fillPatternId}-img`)?.getAttribute('src')
             )
         }

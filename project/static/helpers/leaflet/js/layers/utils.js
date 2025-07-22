@@ -236,7 +236,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
         if (type === 'polygon') {
             params.fillOpacity = fillOpacity
-            params.fillColor = fillPattern === 'solid' ? fillColor : (() => {
+            params.fillColor = fillPattern === 'icon' ? (() => {
                 const bgColor = patternBg ? patternBgColor : 'transparent'
                 if (isCanvas) {
                     const imgId = `${fillPatternId}-img`
@@ -250,7 +250,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
-            })()
+            })() : fillPattern === 'solid' ? fillColor : 'none'
         }
 
         return params
@@ -450,7 +450,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             delete styleParams.fillPatternId
         }
 
-        if (fillPattern === 'solid' && iconType !== 'svg') {
+        if (fillPattern !== 'icon' && iconType !== 'svg') {
             throw new Error(`Fill pattern: ${fillPattern}; icon type: ${iconType}`)
         }
 
