@@ -703,9 +703,75 @@ const handleLeafletStylePanel = (map, parent) => {
             }
         })
 
+        const textAlignment = createBadgeSelect({
+            parent:textCheckboxes,
+            selectClass: `border-0 text-start mb-1`,
+            rounded: false,
+            options: {
+                'center': 'Text center',
+                'start': 'Text left',
+                'end': 'Text right',
+            },
+            currentValue: styleParams.textAlignment ?? 'center',
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.textAlignment) return
+
+                    styleParams.textAlignment = value
+                    update()
+                }
+            }
+        })
+
+        const justifytAlignment = createBadgeSelect({
+            parent:textCheckboxes,
+            selectClass: `border-0 text-start mb-1`,
+            rounded: false,
+            options: {
+                'center': 'Justify center',
+                'start': 'Justify left',
+                'end': 'Justify right',
+            },
+            currentValue: styleParams.justifytAlignment ?? 'center',
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.justifytAlignment) return
+
+                    styleParams.justifytAlignment = value
+                    update()
+                }
+            }
+        })
+
         const fillFields = customCreateElement({
             className:'d-flex gap-2 flex-wrap',
             parent: fieldsContainer,
+        })
+
+        const fillPattern = createFormFloating({
+            parent: fillFields,
+            containerClass: 'w-10 flex-grow-1',
+            fieldTag: 'select',
+            fieldAttrs: {name: `${id}-fillPattern`},
+            fieldClass: 'form-select-sm',
+            labelText: 'Fill pattern',
+            options: {
+                'solid': 'solid',
+                'icon': 'icon',
+                'none': 'none',
+            },
+            currentValue: styleParams.fillPattern,
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.fillPattern) return
+
+                    styleParams.fillPattern = value
+                    update()
+                }
+            }
         })
 
         const fillColor = createFormFloating({
@@ -749,29 +815,6 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (value === styleParams.fillOpacity) return
                     
                     styleParams.fillOpacity = value
-                    update()
-                }
-            }
-        })
-
-        const fillPattern = createFormFloating({
-            parent: fillFields,
-            containerClass: 'w-10 flex-grow-1',
-            fieldTag: 'select',
-            fieldAttrs: {name: `${id}-fillPattern`},
-            fieldClass: 'form-select-sm',
-            labelText: 'Fill pattern',
-            options: {
-                'solid': 'solid',
-                'icon': 'icon',
-            },
-            currentValue: styleParams.fillPattern,
-            events: {
-                change: (e) => {
-                    const value = e.target.value
-                    if (value === styleParams.fillPattern) return
-
-                    styleParams.fillPattern = value
                     update()
                 }
             }

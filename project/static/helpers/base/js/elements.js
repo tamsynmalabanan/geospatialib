@@ -772,6 +772,7 @@ const createTagifyField = ({
 }
 
 const createBadgeSelect = ({
+    id = generateRandomString(),
     selectClass = '',
     attrs = {},
     disabled = false,
@@ -779,9 +780,11 @@ const createBadgeSelect = ({
     options = {},
     currentValue,
     events = {},
+    rounded = true
 } = {}) => {
     const select = document.createElement('select')
-    select.className = `badge rounded-pill ${selectClass}`
+    select.id = id
+    select.className = `badge ${rounded ? 'rounded-pill' : ''} ${selectClass}`
     Object.keys(attrs).forEach(k => select.setAttribute(k, attrs[k]))
     Object.keys(events).forEach(k => select.addEventListener(k, events[k]))
     select.disabled = disabled

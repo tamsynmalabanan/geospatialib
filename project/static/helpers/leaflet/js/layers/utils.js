@@ -16,6 +16,8 @@ const getLeafletStyleParams = ({
     textWrap=false,
     boldFont=false,
     italicFont=false,
+    textAlignment='center',
+    justifytAlignment='center',
     fontSerif=false,
     
     fillColor=generateRandomColor(),
@@ -69,6 +71,8 @@ const getLeafletStyleParams = ({
         iconFill,
         iconStroke,
         italicFont,
+        textAlignment,
+        justifytAlignment,
         fontSerif,
         lineBreak,
         textShadow,
@@ -109,6 +113,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         iconFill,
         iconStroke,
         italicFont,
+        textAlignment,
+        justifytAlignment,
         fontSerif,
         lineBreak,
         textShadow,
@@ -127,13 +133,15 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     //     && !iconGlow
     //     && !boldFont
     //     && !italicFont
+    //     && !textAlignment
+    //     && !justifytAlignment
     // )
 
     if (isPoint && !isCircleMarker) {
         let element
 
         const svg = document.querySelector(`svg#${fillPatternId}-svg`)
-        if (forLegend || !svg || iconType === 'html' || (textWrap && Array('text', 'property').includes(iconType))) {
+        if (forLegend || !svg || Array('html', 'property').includes(iconType) || (textWrap && Array('text').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType)
             ? customCreateElement({innerHTML:iconSpecs}).firstChild 
             : iconType === 'img' ? customCreateElement({
@@ -157,7 +165,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     ...(textWrap ? {maxWidth:`${iconSize}px`} : {})
                 },
                 className:removeWhitespace(`
-                    h-100 w-100 d-flex justify-content-center align-items-center text-center lh-1
+                    h-100 w-100 d-flex justify-content-${justifytAlignment} text-${textAlignment} align-items-center lh-1
                     ${textWrap ? 'text-wrap' : 'text-nowrap'}
                     ${boldFont ? 'fw-bold' : 'fw-normal'}
                     ${italicFont ? 'fst-italic' : 'fst-normal'}
