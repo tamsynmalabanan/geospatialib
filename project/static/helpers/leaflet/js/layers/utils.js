@@ -116,16 +116,17 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
     const isPoint = type === 'point'
     const isCanvas = renderer instanceof L.Canvas
-    const isCircleMarker = (
-        allowCircleMarker
-        && isPoint 
-        && iconType === 'bi' 
-        && iconSpecs === 'circle-fill'
-        && !iconShadow
-        && !iconGlow
-        && !boldFont
-        && !italicFont
-    )
+    const isCircleMarker = false
+    // const isCircleMarker = (
+    //     allowCircleMarker
+    //     && isPoint 
+    //     && iconType === 'bi' 
+    //     && iconSpecs === 'circle-fill'
+    //     && !iconShadow
+    //     && !iconGlow
+    //     && !boldFont
+    //     && !italicFont
+    // )
 
     if (isPoint && !isCircleMarker) {
         let element
@@ -568,6 +569,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         defs.appendChild(img)
 
         if (icon) {
+            const [offsetX, offsetY] = iconOffset.split(',').map(i => parseInt(i))
+
             icon.id = `${id}-icon`
             icon.style.textShadow = textShadow
             
@@ -597,7 +600,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             svg.setAttribute('width', svgWidth)
             svg.setAttribute('height', svgHeight)
             svg.setAttribute('viewbox', `0 0 ${svgWidth} ${svgHeight}`)
-            svg.style.transform = `rotate(${iconRotation}deg)`
+            svg.style.transform = `rotate(${iconRotation}deg) translate(${offsetX}px, ${offsetY}px)`
             svg.style.transformOrigin = `50% 50%`
             defs.appendChild(svg)
 

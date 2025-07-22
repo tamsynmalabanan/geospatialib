@@ -568,20 +568,22 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {
                 name: `${id}-iconOffset`,
                 type: 'text',
-                value: styleParams.iconOffset ?? '0,0',
+                value: styleParams.iconOffset,
                 placeholder: 'Icon offset (x,y)',
             },
             suffixHTML: 'px',
             fieldClass: 'form-control-sm',
             events: {
                 blur: (e) => {
-                    const value = e.target.value ?? '0,0'
+                    let value = e.target.value
                     if (value === styleParams.iconOffset) return
 
                     let [x,y] = value.split(',').map(i => parseInt(i))
-                    if (!x || !y || [x,y].some(i => isNaN(i))) return
+                    if (isNaN(x) || isNaN(y)) {
+                        value = e.target.value = '0,0'
+                    }
 
-                    styleParams.iconOffset = e.target.value = value
+                    styleParams.iconOffset = value
                     update()
                 }
             }
