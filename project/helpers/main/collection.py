@@ -126,14 +126,10 @@ def get_collection_data(url, format=None, delay=True):
     collection_instance = Collection.objects.filter(
         url__path=url, 
         format=format,
-        # last_update__gte=timezone.now()-timedelta(days=30)
+        last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
 
     cached_layers = cache.get(cacheKey, {}).get('layers')
-
-    print('collection_instance', collection_instance)
-
-    print('cached_layers', set(cached_layers.keys()))
 
     if collection_instance:
         layers = collection_instance.get_layers()
