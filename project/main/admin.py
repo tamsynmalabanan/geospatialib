@@ -18,7 +18,7 @@ admin.site.register(models.Collection, CollectionAdmin)
 class LayerAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
-        'search_vector'
+        # 'search_vector'
     )
     search_fields = ['name', 'title', 'abstract', 'attribution', 'fees']
     list_filter = ['type']
