@@ -48,7 +48,7 @@ class Collection(models.Model):
     def __str__(self):
         return f'{self.url.domain} ({choices.COLLECTION_FORMATS.get(self.format)})'
     
-    def get_layers(self):
+    def get_layer_data(self):
         return {layer.name: layer.data for layer in self.layers.all()}
     
 class Layer(models.Model):
