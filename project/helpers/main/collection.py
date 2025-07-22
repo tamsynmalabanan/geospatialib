@@ -133,7 +133,7 @@ def get_collection_data(url, format=None, delay=True):
 
     print('collection_instance', collection_instance)
 
-    print('cached_layers', cached_layers)
+    print('cached_layers', set(cached_layers.keys()))
 
     if collection_instance:
         layers = collection_instance.get_layers()
