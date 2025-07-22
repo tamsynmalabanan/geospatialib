@@ -22,7 +22,7 @@ def onboard_collection(self, cacheKey):
     format = cached_collection.get('format')
     layers = cached_collection.get('layers')
 
-    collection_instance = None
+    collection = None
 
     try:
         url_instance = URL.objects.filter(path=url).first()
@@ -40,13 +40,13 @@ def onboard_collection(self, cacheKey):
         if not url_instance:
             raise Exception('No URL instance exists or created.')
   
-        collection_instance = Collection.objects.filter(url=url_instance, format=format).first()
-        if not collection_instance:
-            collection_instance, created = Collection.objects.get_or_create(
+        collection = Collection.objects.filter(url=url_instance, format=format).first()
+        if not collection:
+            collection, created = Collection.objects.get_or_create(
                 url=url_instance, 
                 format=format,
             )
-        if not collection_instance:
+        if not collection:
             raise Exception('No Collection instance exists or created.')
 
         onboarded_layers = []
@@ -55,11 +55,11 @@ def onboard_collection(self, cacheKey):
             if not data:
                 continue
 
-            layer_instance = Layer.objects.filter(collection=collection_instance, name=name).first()
+            layer_instance = Layer.objects.filter(collection=collection, name=name).first()
             if not layer_instance:
                 print(data)
                 layer_instance, created = Layer.objects.get_or_create(**{
-                    'collection': collection_instance,
+                    'collection': collection,
                     'name': name,
                     **data
                 })
@@ -77,8 +77,8 @@ def onboard_collection(self, cacheKey):
         if self.request.retries < self.max_retries:
             raise self.retry(exc=e)
 
-        if collection_instance and collection_instance.layers.count() == 0:
-            collection_instance.delete()
+        if collection and collection.layers.count() == 0:
+            collection.delete()
 
     cache.delete(cacheKey)
-    return collection_instance
+    return collection
