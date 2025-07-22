@@ -69,7 +69,7 @@ class Layer(models.Model):
     abstract = models.TextField('Abstract', blank=True, null=True)
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
-    styles = models.JSONField('Styles', default=dict)
+    styles = models.JSONField('Styles', default=dict, blank=True, null=True)
     search_vector = SearchVectorField(null=True)
 
     class Meta:
