@@ -97,13 +97,14 @@ class Layer(models.Model):
                 Value(' '),
                 RawSQL("keywords::text", []),
                 Value(' '),
-                RawSQL("styles::text", [])
+                RawSQL("styles::text", []),
+                output_field=TextField()
             )
         ),
         output_field=SearchVectorField(),
         db_persist=True
     )
-
+    
     class Meta:
         unique_together = ['collection', 'name']
         indexes = [GinIndex(fields=["search_vector"])]
