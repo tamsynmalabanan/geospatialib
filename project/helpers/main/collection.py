@@ -129,17 +129,17 @@ def get_collection_data(url, format=None, delay=True):
         last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
 
-
-    cached_layers = cache.get(cacheKey, {}).get('layers')
+    cached_layers = cache.get(cacheKey, {}).get('layers', {})
+    cached_layers_count = len(cached_layers.keys())
 
     if collection_instance:
         layers = collection_instance.get_layers()
-        print(cached_layers)
-        if not cached_layers or set(layers.keys()) == set(cached_layers.keys()):
+        layers_count = len(layers.keys())
+        if layers_count > 0 and (not cached_layers or layers_count == cached_layers_count):
             data.update({'layers': layers, 'collection': collection_instance})
             return data
 
-    if cached_layers and len(cached_layers.keys()) > 0:
+    if cached_layers_count > 0:
         data['layers'] = cached_layers
         return data
 
