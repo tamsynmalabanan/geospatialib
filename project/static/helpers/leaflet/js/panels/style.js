@@ -568,7 +568,7 @@ const handleLeafletStylePanel = (map, parent) => {
             fieldAttrs: {
                 name: `${id}-iconOffset`,
                 type: 'text',
-                value: styleParams.iconOffset,
+                value: styleParams.iconOffset ?? '0,0',
                 placeholder: 'Icon offset (x,y)',
             },
             suffixHTML: 'px',
