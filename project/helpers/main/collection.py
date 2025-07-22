@@ -147,7 +147,6 @@ def get_collection_data(url, format=None, delay=True):
         if delay:
             onboard_collection.delay(cacheKey)
         else:
-            print('here')
             onboard_collection(cacheKey)
     return data
 
