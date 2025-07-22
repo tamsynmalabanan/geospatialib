@@ -72,16 +72,19 @@ class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
     name = models.CharField('Name', max_length=512)
     title = models.CharField('Title', max_length=512, blank=True, null=True)
+    abstract = models.TextField('Abstract', blank=True, null=True)
+    attribution = models.TextField('Attribution', blank=True, null=True)
+    fees = models.TextField('Fees', blank=True, null=True)
+    
+    keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
+    styles = models.JSONField('Styles', default=dict, blank=True, null=True)
+    
     type = models.CharField('Type', max_length=32, blank=True, null=True)
     xField = models.CharField('X Field', max_length=32, blank=True, null=True)
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
-    keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
-    abstract = models.TextField('Abstract', blank=True, null=True)
-    attribution = models.TextField('Attribution', blank=True, null=True)
-    fees = models.TextField('Fees', blank=True, null=True)
-    styles = models.JSONField('Styles', default=dict, blank=True, null=True)
+    
     search_vector = GeneratedField(
         expression=ToTSVector(
             Concat(
