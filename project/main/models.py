@@ -90,6 +90,6 @@ class Layer(models.Model):
         
         return data
     
-    def save(self, *args, **kwargs):
-        self.search_vector = SearchVector('name', 'title', 'abstract', 'keywords', 'attribution', 'styles')
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.search_vector = SearchVector('name', 'title', 'abstract', 'keywords', 'attribution', 'styles')
+    #     super().save(*args, **kwargs)
