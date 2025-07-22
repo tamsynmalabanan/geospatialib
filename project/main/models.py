@@ -40,7 +40,7 @@ class URL(models.Model):
 class Collection(models.Model):
     url:URL = models.ForeignKey("main.URL", verbose_name='URL', on_delete=models.CASCADE)
     format = models.CharField('Format', max_length=16, choices=dict_to_choices(choices.COLLECTION_FORMATS))
-    last_update = models.DateTimeField('Last update', auto_now=True)
+    count = models.PositiveIntegerField('Count', default=0)
 
     class Meta:
         unique_together = ['url', 'format']
@@ -48,10 +48,6 @@ class Collection(models.Model):
     def __str__(self):
         return f'{self.url.domain} ({choices.COLLECTION_FORMATS.get(self.format)})'
     
-    @property
-    def has_layers(self):
-        return self.layers.count() > 0
-
     def get_layer_data(self):
         return {layer.name: layer.data for layer in self.layers.all()}
     
