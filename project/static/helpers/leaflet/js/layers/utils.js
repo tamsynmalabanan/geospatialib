@@ -450,6 +450,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             delete styleParams.fillPatternId
         }
 
+        console.log(fillPattern, iconType)
         if (fillPattern !== 'icon' && iconType !== 'svg') {
             throw new Error(`Fill pattern: ${fillPattern}; icon type: ${iconType}`)
         }
@@ -582,7 +583,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         defs.appendChild(img)
 
         if (icon) {
-            const [offsetX, offsetY] = iconOffset.split(',').map(i => parseInt(i))
+            const [offsetX, offsetY] = (iconOffset ?? '0,0').split(',').map(i => parseInt(i))
 
             icon.id = `${id}-icon`
             icon.style.textShadow = textShadow
