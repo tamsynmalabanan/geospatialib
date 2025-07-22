@@ -11,6 +11,7 @@ class CollectionAdmin(admin.ModelAdmin):
         'last_update'
     )
     list_per_page = 15
+    list_filter = ['format']
 
 admin.site.register(models.Collection, CollectionAdmin)
 
@@ -19,8 +20,8 @@ class LayerAdmin(admin.ModelAdmin):
         'id',
         'search_vector'
     )
-    search_fields = ['name', 'title']
-    list_filter = ['collection']
+    search_fields = ['name', 'title', 'keywords', 'abstract', 'attribution', 'fees', 'styles']
+    list_filter = ['type']
     list_per_page = 15
 
 admin.site.register(models.Layer, LayerAdmin)
