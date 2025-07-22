@@ -82,8 +82,6 @@ class Layer(models.Model):
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
     styles = models.JSONField('Styles', default=dict, blank=True, null=True)
-    # search_vector = SearchVectorField(null=True)
-
     search_vector = GeneratedField(
         expression=ToTSVector(
             Concat(
@@ -122,7 +120,3 @@ class Layer(models.Model):
         data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
         
         return data
-    
-    # def save(self, *args, **kwargs):
-    #     self.search_vector = SearchVector('name', 'title', 'abstract', 'keywords', 'attribution', 'styles')
-    #     super().save(*args, **kwargs)
