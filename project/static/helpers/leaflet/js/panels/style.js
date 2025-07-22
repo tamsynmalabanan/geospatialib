@@ -578,8 +578,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     let value = e.target.value
                     if (value === styleParams.iconOffset) return
 
-                    let [x,y] = value.split(',').map(i => parseInt(i))
-                    if (isNaN(x) || isNaN(y)) {
+                    const values = value.split(',')
+                    if (values.length !== 2 || values.some(i => isNaN(i))) {
                         value = e.target.value = '0,0'
                     }
 
