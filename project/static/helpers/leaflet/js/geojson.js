@@ -663,7 +663,7 @@ const getGeoJSONLayerStyles = (layer) => {
                             [styleParams.iconSpecs]:styleParams.iconSpecs
                         } : {},
                         geometry: {type:typeName}
-                    }, styleParams),
+                    }, {...styleParams, iconOffset:'0,0'}, {forLegend: true}),
                     typeName
                 )
             }
@@ -761,10 +761,11 @@ const createGeoJSONLayerLegend = (layer, parent) => {
             const isPoint = type === 'point'
             typeIcon.style[isPoint ? 'minHeight' : 'height'] = '14px'
             if (!isPoint) typeIcon.style['width'] = '20px'
+            
 
             typeIcon.innerHTML = style.types[type].html
             titleToTooltip(typeIcon, `${formatNumberWithCommas(typeCount)} ${type}${typeCount > 1 ? 's' : ''}`)
-            icon.appendChild(typeIcon) 
+            icon.appendChild(typeIcon)
         }
     }
 
@@ -775,6 +776,7 @@ const createGeoJSONLayerLegend = (layer, parent) => {
     const maxWidth = Math.max(...pointIcons.map(i => {
         const clone = i.cloneNode(true)
         clone.className = 'position-absolute'
+        clone.firstChild.style.maxWidth = ''
         document.body.appendChild(clone)
         const width = clone.offsetWidth
         clone.remove()

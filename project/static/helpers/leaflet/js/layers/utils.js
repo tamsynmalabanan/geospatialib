@@ -78,6 +78,7 @@ const getLeafletStyleParams = ({
 const getLeafletLayerStyle = (feature, styleParams={}, {
     renderer,
     allowCircleMarker=true,
+    forLegend=false,
 } = {}) => {
     const type = feature?.geometry?.type?.toLowerCase().split('multi').filter(i => i !== '')[0]
     if (!type) return
@@ -132,7 +133,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         let element
 
         const svg = document.querySelector(`svg#${fillPatternId}-svg`)
-        if (!svg || iconType === 'html' || (textWrap && Array('text', 'property').includes(iconType))) {
+        if (forLegend || !svg || iconType === 'html' || (textWrap && Array('text', 'property').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType)
             ? customCreateElement({innerHTML:iconSpecs}).firstChild 
             : iconType === 'img' ? customCreateElement({
@@ -285,10 +286,14 @@ const zoomToLeafletLayer = async (layer, map, {
 }
 
 const leafletLayerStyleToHTML = (style, type) => {
-    return style.options?.html.replace('position-absolute','') ?? (() => {
+    if (style.options) {
+        const element = customCreateElement({innerHTML:style.options.html}).firstChild
+        element.classList.remove('position-absolute')
+
+        return element.outerHTML
+    } else {
         const isPoint = type === 'point'
         const isLineString = type === 'linestring'
-        const isPolkygon = type === 'polygon'
         
         const iconSize = (style.radius*2) + (style.opacity ? style.weight*2 : 0)
         const width = isPoint ? iconSize : 20
@@ -338,7 +343,7 @@ const leafletLayerStyleToHTML = (style, type) => {
         svg.appendChild(symbol)
 
         return svg.outerHTML
-    })()
+    }
 }
 
 const validateLeafletLayerCoords = (coords, precision=6) => {
