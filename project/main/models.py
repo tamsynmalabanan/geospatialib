@@ -76,12 +76,11 @@ class Layer(models.Model):
     
     @property
     def data(self):
-        data = model_to_dict(self, exclude=['search_vector', 'collection'])
-        
-        bbox = data.get('bbox')
-        if bbox and not bbox.empty:
-            data['bbox'] = list(bbox.extent)
-        else:
-            data['bbox'] = list(WORLD_GEOM.extent)
+        data = {key: value for key, value in model_to_dict(
+            self, exclude=['search_vector', 'collection', 'id', 'bbox']
+        ).items() if value is not None} 
+
+        bbox = self.bbox
+        data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
         
         return data

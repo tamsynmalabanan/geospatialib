@@ -48,14 +48,12 @@ const normalizeGeoJSONFeature = async (feature, {
 const normalizeFeatureProperties = (properties) => {
     const normalProperties = {}
 
-    console.log(properties)
-
     const handler = (properties) => {
         Object.keys(properties).forEach(property => {
             const value = properties[property]
 
             if (Array.isArray(value) && value.every(i => typeof i !== 'object')) {
-                normalProperties[property] = value.join(',')
+                normalProperties[property] = value.join(', ')
             } else if (value && typeof value === 'object') {
                 handler(value)
             } else {
