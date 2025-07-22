@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.forms.models import model_to_dict
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector
 
 from urllib.parse import urlparse
 
@@ -88,3 +89,7 @@ class Layer(models.Model):
         data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
         
         return data
+    
+    def save(self, *args, **kwargs):
+        self.search_vector = SearchVector('name', 'title', 'abstract', 'keywords', 'attribution', 'styles')
+        super().save(*args, **kwargs)
