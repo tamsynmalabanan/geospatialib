@@ -119,8 +119,8 @@ def validate_file(url, name, params):
         filename = file_details.get('filename','')
         
         if "zip" in file_details.get('content_type', ''):
-            print('HERE', file, filename)
             files = extract_zip(file, filename)
+            print('HERE', files)
             file = files.get(name)
         
         geojson_obj = None
