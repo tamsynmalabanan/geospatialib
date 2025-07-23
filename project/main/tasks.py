@@ -52,6 +52,9 @@ def onboard_collection(self, cacheKey):
         onboarded_layers = []
         for name, params in layers.items():
             data = LAYER_VALIDATORS[format](url, name, params)
+
+            print(data)
+
             if not data:
                 continue
 

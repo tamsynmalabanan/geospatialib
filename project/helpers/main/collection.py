@@ -31,7 +31,6 @@ def guess_format_from_url(url):
         response = get_response(url, raise_for_status=False)
         response.raise_for_status()
 
-        print('response', response)
         decoded_response = get_decoded_response(response)
         if not decoded_response:
             return 'file'
