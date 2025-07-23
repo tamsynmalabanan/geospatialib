@@ -141,16 +141,16 @@ def get_collection_data(url, format=None, delay=True):
 
     if cached_layers_count > 0:
         data['layers'] = cached_layers
-        return data
-
-    layers = get_layers(url, format)
-    if len(layers.keys()) > 0:
-        data['layers'] = layers
+    else:
+        layers = get_layers(url, format)
+        if len(layers.keys()) > 0:
+            data['layers'] = layers
         cache.set(cacheKey, data, timeout=60*60*24)
-        if delay:
-            onboard_collection.delay(cacheKey)
-        else:
-            onboard_collection(cacheKey)
+    
+    if delay:
+        onboard_collection.delay(cacheKey)
+    else:
+        onboard_collection(cacheKey)
 
     return data
 
