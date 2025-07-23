@@ -14,6 +14,7 @@ from helpers.base.utils import (
     get_decoded_response, 
     get_domain_name, 
     get_domain, 
+    split_by_special_characters,
 )
 from helpers.base.files import get_file_names
 from helpers.main.layers import format_url, WORLD_GEOM
@@ -65,6 +66,9 @@ def guess_format_from_url(url):
 
 def get_layers(url, format):
     try:
+        keywords = split_by_special_characters(url, excluded_chars=['-', '.'])
+        print(keywords)
+
         if format.startswith('ogc-'):
             return get_ogc_layers(url, format)
 

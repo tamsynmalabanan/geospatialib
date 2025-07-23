@@ -44,7 +44,6 @@ def test_get_collection_data():
     # url = 'https://services.ga.gov.au/gis/eggs/aus_chronostrat_v1/wms?request=GetCapabilities&service=WMS'
     url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
     data = get_collection_data(url, delay=False)
-    print(data.get('cacheKey'))
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
 class Command(BaseCommand):
@@ -53,6 +52,5 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
 
         test_get_collection_data()
-        # update_collection_data()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
