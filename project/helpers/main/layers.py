@@ -5,7 +5,6 @@ import geojson
 import pandas as pd, geopandas as gpd
 import io
 from fiona.io import MemoryFile
-from urllib.parse import unquote
 
 from main.models import SpatialRefSys
 from helpers.base.utils import get_response, get_response_file, get_domain_url, remove_query_params
@@ -121,7 +120,6 @@ def validate_file(url, name, params):
         if "zip" in file_details.get('content_type', ''):
             files = extract_zip(file, filename)
             file = files.get(name)
-            print('HERE', files, name, file)
         
         geojson_obj = None
         srid = DEFAULT_SRID

@@ -5,6 +5,8 @@ import zipfile
 import os
 from io import BytesIO
 import json
+from urllib.parse import unquote
+
 
 from helpers.base.utils import get_response_file
 
@@ -22,7 +24,7 @@ def extract_zip(zip_file, base_path=""):
                 if filename.endswith('.zip'):
                     files.update(extract_zip(file, full_path))
                 else:
-                    files[full_path] = file
+                    files[unquote(full_path)] = file
     
     return files
 
