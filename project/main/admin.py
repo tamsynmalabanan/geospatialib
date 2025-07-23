@@ -19,15 +19,15 @@ class LayerAdmin(admin.ModelAdmin):
     list_filter = ['type']
     list_display  = ['name', 'title', 'type']
     search_fields = ['name', 'title', 'abstract', 'attribution', 'fees']
-    readonly_fields = ('id', 'search_vector', 'last_update', 'url', 'format')
+    # readonly_fields = ('id', 'search_vector', 'last_update', 'url', 'format')
 
-    def url(self, obj):
-        return obj.collection.url.path
-    url.short_description = "URL"
+    # def url(self, obj):
+    #     return obj.collection.url.path
+    # url.short_description = "URL"
 
-    def format(self, obj):
-        return obj.collection.format
-    format.short_description = "Format"
+    # def format(self, obj):
+    #     return obj.collection.format
+    # format.short_description = "Format"
 
 admin.site.register(models.SpatialRefSys)
 admin.site.register(models.URL)
