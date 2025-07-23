@@ -64,6 +64,7 @@ def onboard_collection(self, cacheKey):
                     **data
                 })
             else:
+                print('HERE', layer_instance)
                 layer_instance.update(**data)
 
             if layer_instance:
