@@ -150,10 +150,12 @@ def get_collection_data(url, format=None, delay=True):
             onboard_collection.delay(cacheKey)
         else:
             onboard_collection(cacheKey)
+
     return data
 
 def update_collection_data(cacheKey, updated_layers, delay=True):
     collection_data = cache.get(cacheKey)
+
     if collection_data:
         cached_layers = collection_data.get('layers', {})
         for name, params in updated_layers.items():
@@ -171,9 +173,12 @@ def update_collection_data(cacheKey, updated_layers, delay=True):
             'format': format,
             'layers': updated_layers,
         }
-    cache.set(cacheKey, collection_data, timeout=60*60*24*30)
+    
+    cache.set(cacheKey, collection_data, timeout=60*60*24)
+    
     if delay:
         onboard_collection.delay(cacheKey)
     else:
         onboard_collection(cacheKey)
+    
     return collection_data

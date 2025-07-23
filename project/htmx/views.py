@@ -58,7 +58,7 @@ class LayerList(ListView):
 
     @cached_property
     def cache_key(self):
-        return ';'.join([str(i) for i in ['LayerList',]+self.query_values])
+        return create_cache_key(['LayerList']+self.query_values)
 
     @property
     def filtered_queryset(self):

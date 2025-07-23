@@ -85,24 +85,32 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
 
 def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
     cacheKey = create_cache_key(['get_response', url, header_only])
-    cached_response = cache.get(cacheKey) or cache.get(create_cache_key(['get_response', url, False]))
-    if cached_response:
-        return cached_response
-    try:
-        if header_only and not with_default_headers:
-            response = requests.head(url)
-        else:
-            response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else {})
-        if response.status_code == 403 and not with_default_headers:
-            response = get_response(url, with_default_headers=True, raise_for_status=raise_for_status)
-        if raise_for_status:
-            response.raise_for_status()
-        if response.status_code != 404:
-            cache.set(cacheKey, response, 60*60)
-        return response
-    except Exception as e:
-        print('get_response', e)
+    response = cache.get(cacheKey)
+
+    if not response and header_only:
+        cacheKey = create_cache_key(['get_response', url, False])
+        response = cache.get(cacheKey)
+
+    if not response:
+        try:
+            if header_only and not with_default_headers:
+                response = requests.head(url)
+            else:
+                response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else {})
+            
+            if response.status_code == 403 and not with_default_headers:
+                response = get_response(url, with_default_headers=True, raise_for_status=raise_for_status)
+            
+            if raise_for_status:
+                response.raise_for_status()
+        except Exception as e:
+            print('get_response', e)
+
+    if response.status_code != 404:
+        cache.set(cacheKey, response, 60*15)
     
+    return response
+
 def get_response_file(url):
     try:
         response = get_response(url, raise_for_status=True)
