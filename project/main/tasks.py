@@ -64,8 +64,9 @@ def onboard_collection(self, cacheKey):
                     **data
                 })
             else:
-                print('HERE', layer_instance)
-                layer_instance.update(**data)
+                for field, value in data.items():
+                    setattr(layer_instance, field, value)
+                layer_instance.save()
 
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
