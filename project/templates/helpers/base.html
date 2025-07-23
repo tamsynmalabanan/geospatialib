@@ -48,12 +48,14 @@
                                             class="{% if theme == 'light' %}bi-moon{% else %}bi-moon-fill{% endif %} {{default_class}}"
                                             onclick='toggleTheme()'
                                             title='Toggle dark mode'
+                                            tabindex="-1"
                                         ></button>
                                         <button 
                                             type="button" 
                                             class="{% if show_sidebar %}bi-layout-sidebar-inset{% else %}bi-window-sidebar{% endif %} d-none d-lg-inline {{default_class}}"
                                             onclick='toggleSidebar("#{{offcanvas_id}}")'
                                             title='Toggle sidebar'
+                                            tabindex="-1"
                                         ></button>
                                         <button 
                                             type="button" 
@@ -61,6 +63,7 @@
                                             data-bs-dismiss="offcanvas" 
                                             data-bs-target="#{{offcanvas_id}}" 
                                             aria-label="Close"
+                                            tabindex="-1"
                                         ></button>
                                     {% endwith %}
                                 </div>
