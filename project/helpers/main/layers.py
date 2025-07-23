@@ -110,10 +110,9 @@ def validate_csv(url, name, params):
         print(e)
 
 def validate_file(url, name, params):
-    print(url, name, params)
-
     try:
         file_details = get_response_file(url)
+        print(file_details)
         if not file_details:
             raise Exception('Failed to download file.')
         
