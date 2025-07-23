@@ -133,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     
             const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
-            console.log(getLayerNamesContainer(source), element)
             if (element && Object.values(includedLayers).some(i => Object.keys(i).some(j => {
                 if (j === 'title') return false
     
