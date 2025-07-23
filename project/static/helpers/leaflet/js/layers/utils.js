@@ -191,7 +191,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                                 element.setAttribute('stroke-dasharray', dashArray)
                                 element.setAttribute('stroke-dashoffset', dashOffset)
                             }
-                            return iconStroke ? strokeColor : 'transparent'
+                            return iconStroke ? strokeColor : 'none'
                         })())    
                     }
                 }
@@ -250,7 +250,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
-            })() : fillPattern === 'solid' ? fillColor : 'none'
+            })() : fillPattern === 'solid' ? fillColor : 'transparent'
         }
 
         return params
