@@ -57,7 +57,6 @@ def onboard_collection(self, cacheKey):
 
             layer_instance = Layer.objects.filter(collection=collection, name=name).first()
             if not layer_instance:
-                print(data)
                 layer_instance, created = Layer.objects.get_or_create(**{
                     'collection': collection,
                     'name': name,

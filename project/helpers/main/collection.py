@@ -126,24 +126,26 @@ def get_collection_data(url, format=None, delay=True):
     collection = Collection.objects.filter(
         url__path=url,
         format=format,
+        layers__isnull=False,
         last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
 
     cached_layers = cache.get(cacheKey, {}).get('layers', {})
+    cached_layers_count = len(cached_layers.keys())
 
-    if collection and collection.has_layers and collection.layers.count() >= len(cached_layers.keys()):
-        layers = collection.get_layer_data()
+    if collection and collection.layers.count() >= cached_layers_count:
+        layers = collection.get_layers()
         data.update({'layers': layers, 'collection': collection})
         return data
 
-    if len(cached_layers.keys()) > 0:
+    if cached_layers_count > 0:
         data['layers'] = cached_layers
         return data
 
     layers = get_layers(url, format)
     if len(layers.keys()) > 0:
         data['layers'] = layers
-        cache.set(cacheKey, {'url': url, 'format': format, 'layers': layers}, timeout=60*60*24)
+        cache.set(cacheKey, data, timeout=60*60*24)
         if delay:
             onboard_collection.delay(cacheKey)
         else:
