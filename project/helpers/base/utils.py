@@ -84,12 +84,12 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
     return [(key, value) for key, value in dict_copy.items()]
 
 def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
-    cacheKey = create_cache_key(['get_response', url, header_only])
-    response = cache.get(cacheKey)
+    cache_key = create_cache_key(['get_response', url, header_only])
+    response = cache.get(cache_key)
 
     if not response and header_only:
-        cacheKey = create_cache_key(['get_response', url, False])
-        response = cache.get(cacheKey)
+        cache_key = create_cache_key(['get_response', url, False])
+        response = cache.get(cache_key)
 
     if not response:
         try:
@@ -105,7 +105,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
                 response.raise_for_status()
             
             if response.status_code != 404:
-                cache.set(cacheKey, response, 60*60)
+                cache.set(cache_key, response, 60*60)
         except Exception as e:
             print('get_response', e)
     

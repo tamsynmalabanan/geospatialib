@@ -174,7 +174,6 @@ def validate_collection(request):
             else:
                 form.data.update({'url':context['url']})
                 context['layers'] = sort_layers(layers)
-            return HttpResponse(context.values())
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
@@ -182,9 +181,9 @@ def validate_collection(request):
 
 @require_http_methods(['POST'])
 def update_collection(request):
-    cacheKey = request.POST.get('cacheKey')
+    cache_key = request.POST.get('cache_key')
     updated_layers = json.loads(request.POST.get('layers'))
-    update_collection_data(cacheKey, updated_layers)
+    update_collection_data(cache_key, updated_layers)
     return HttpResponse('Done.')
 
 @require_http_methods(['GET'])

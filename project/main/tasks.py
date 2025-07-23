@@ -13,8 +13,8 @@ from helpers.main.layers import LAYER_VALIDATORS, format_url
     retry_backoff=60, 
     max_retries=3,
 )
-def onboard_collection(self, cacheKey):
-    cached_collection = cache.get(cacheKey)
+def onboard_collection(self, cache_key):
+    cached_collection = cache.get(cache_key)
     if not cached_collection:
         return
 
@@ -82,5 +82,5 @@ def onboard_collection(self, cacheKey):
         if collection and collection.layers.count() == 0:
             collection.delete()
 
-    cache.delete(cacheKey)
+    cache.delete(cache_key)
     return collection

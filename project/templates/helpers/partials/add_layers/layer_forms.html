@@ -11,10 +11,10 @@
 {% if layers and layers.keys|length > 0 %}
     <div
         class="d-flex gap-2 align-items-center sticky-top text-bg-{{theme}} pt-2"
-        {% if not collection and cacheKey %}
+        {% if not collection and cache_key %}
             hx-post="{% url 'htmx:update_collection' %}"
             hx-trigger='update-collection'
-            hx-vals='{"cacheKey": "{{cacheKey}}"}'
+            hx-vals='{"cache_key": "{{cache_key}}"}'
             hx-swap='none'
         {% endif %}
     >
