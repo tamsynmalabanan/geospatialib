@@ -174,7 +174,7 @@ def validate_collection(request):
             else:
                 form.data.update({'url':context['url']})
                 context['layers'] = sort_layers(layers)
-            return HttpResponse(context)
+            return HttpResponse(context.values())
         context['form'] = form
         return render(request, 'helpers/partials/add_layers/url_fields.html', context)
     except Exception as e:
