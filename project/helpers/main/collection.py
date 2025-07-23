@@ -66,7 +66,7 @@ def guess_format_from_url(url):
 
 def get_layers(url, format):
     try:
-        keywords = split_by_special_characters(url, excluded_chars=['-'])
+        keywords = split_by_special_characters(url)
         print(keywords)
 
         if format.startswith('ogc-'):
