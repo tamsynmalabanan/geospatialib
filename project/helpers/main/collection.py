@@ -120,9 +120,9 @@ def get_collection_data(url, format=None, delay=True):
         return
     
     url = url if format == 'xyz' else format_url(url, format)
-    cacheKey = create_cache_key(['onboard_collection', url, format])
+    cache_key = create_cache_key(['onboard_collection', url, format])
 
-    data = {'layers':{}, 'cacheKey':cacheKey, 'url':url, 'format':format}
+    data = {'layers':{}, 'cache_key':cache_key, 'url':url, 'format':format}
 
     collection = Collection.objects.filter(
         url__path=url,
@@ -131,7 +131,7 @@ def get_collection_data(url, format=None, delay=True):
         last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
 
-    cached_layers = cache.get(cacheKey, {}).get('layers', {})
+    cached_layers = cache.get(cache_key, {}).get('layers', {})
     cached_layers_count = len(cached_layers.keys())
 
     if collection and collection.layers.count() >= cached_layers_count:
@@ -145,17 +145,17 @@ def get_collection_data(url, format=None, delay=True):
         layers = get_layers(url, format)
         if len(layers.keys()) > 0:
             data['layers'] = layers
-        cache.set(cacheKey, data, timeout=60*60*24)
+        cache.set(cache_key, data, timeout=60*60*24)
     
     if delay:
-        onboard_collection.delay(cacheKey)
+        onboard_collection.delay(cache_key)
     else:
-        onboard_collection(cacheKey)
+        onboard_collection(cache_key)
 
     return data
 
-def update_collection_data(cacheKey, updated_layers, delay=True):
-    collection_data = cache.get(cacheKey)
+def update_collection_data(cache_key, updated_layers, delay=True):
+    collection_data = cache.get(cache_key)
 
     if collection_data:
         cached_layers = collection_data.get('layers', {})
@@ -168,18 +168,18 @@ def update_collection_data(cacheKey, updated_layers, delay=True):
             cached_layers[name] = params
         collection_data['layers'] = cached_layers
     else:
-        fn, url, format = cacheKey.split(';')
+        fn, url, format = cache_key.split(';')
         collection_data = {
             'url': url,
             'format': format,
             'layers': updated_layers,
         }
     
-    cache.set(cacheKey, collection_data, timeout=60*60*24)
+    cache.set(cache_key, collection_data, timeout=60*60*24)
     
     if delay:
-        onboard_collection.delay(cacheKey)
+        onboard_collection.delay(cache_key)
     else:
-        onboard_collection(cacheKey)
+        onboard_collection(cache_key)
     
     return collection_data

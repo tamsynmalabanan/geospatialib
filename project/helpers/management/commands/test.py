@@ -43,15 +43,16 @@ def test_get_collection_data():
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     # url = 'https://services.ga.gov.au/gis/eggs/aus_chronostrat_v1/wms?request=GetCapabilities&service=WMS'
     url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-    value = get_collection_data(url, delay=False)
-    # print(value)
-    print('layers count', len((value or {}).get('layers', {}).keys()))
+    data = get_collection_data(url, delay=False)
+    print(data.get('cacheKey'))
+    print('layers count', len((data or {}).get('layers', {}).keys()))
 
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
 
-        # test_get_collection_data()
+        test_get_collection_data()
+        # update_collection_data()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
