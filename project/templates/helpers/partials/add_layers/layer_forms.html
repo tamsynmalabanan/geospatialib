@@ -9,9 +9,6 @@
 {% endif %}
 
 {% if layers and layers.keys|length > 0 %}
-    {{collection}}
-    {{cacheKey}}
-    test
     <div
         class="d-flex gap-2 align-items-center sticky-top text-bg-{{theme}} pt-2"
         {% if not collection and cacheKey %}
