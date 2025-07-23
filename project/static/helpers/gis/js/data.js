@@ -173,7 +173,6 @@ const rawDataToLayerData = (rawData, params) => {
 const mapForFetchFileData = new Map()
 const fetchFileData = async (params, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
-        console.log(filesArray, params)
         const file = filesArray.find(file => file.name === params.name)
         if (!file) return
         
