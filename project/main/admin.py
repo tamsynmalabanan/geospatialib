@@ -17,17 +17,17 @@ class CollectionAdmin(admin.ModelAdmin):
 class LayerAdmin(admin.ModelAdmin):
     list_per_page = 20
     list_filter = ['type']
-    list_display  = ['collection', 'name', 'title', 'type']
-    search_fields = ['name', 'title', 'abstract', 'attribution', 'fees', 'collection']
-    readonly_fields = ('id', 'search_vector', 'last_update', 'url', 'format')
+    # list_display  = ['collection', 'name', 'title', 'type']
+    # search_fields = ['name', 'title', 'abstract', 'attribution', 'fees', 'collection']
+    # readonly_fields = ('id', 'search_vector', 'last_update', 'url', 'format')
 
-    def url(self, obj):
-        return obj.collection.url.path
-    url.short_description = "URL"
+    # def url(self, obj):
+    #     return obj.collection.url.path
+    # url.short_description = "URL"
 
-    def format(self, obj):
-        return obj.collection.format
-    format.short_description = "Format"
+    # def format(self, obj):
+    #     return obj.collection.format
+    # format.short_description = "Format"
 
 admin.site.register(models.SpatialRefSys)
 admin.site.register(models.URL)
