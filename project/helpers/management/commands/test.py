@@ -58,10 +58,10 @@ class Command(BaseCommand):
 
         # test_get_collection_data()
 
-        url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-        collection = Collection.objects.filter(url__path=url).first()
-        if collection:
-            collection.delete()
+        # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
+        # collection = Collection.objects.filter(url__path=url).first()
+        # if collection:
+        #     collection.delete()
 
 
         self.stdout.write(self.style.SUCCESS('Done.'))
