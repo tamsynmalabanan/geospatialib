@@ -118,8 +118,6 @@ def get_layers(url, format):
         params['keywords'] = params.get('keywords', []) + keywords
         layers[name] = params
 
-    print(layers)
-
     return layers
 
 def sort_layers(layers):
