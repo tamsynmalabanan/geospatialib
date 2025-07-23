@@ -103,14 +103,14 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
             
             if raise_for_status:
                 response.raise_for_status()
+            
+            if response.status_code != 404:
+                cache.set(cacheKey, response, 60*60)
         except Exception as e:
             print('get_response', e)
-
-    if response.status_code != 404:
-        cache.set(cacheKey, response, 60*15)
     
     return response
-
+    
 def get_response_file(url):
     try:
         response = get_response(url, raise_for_status=True)

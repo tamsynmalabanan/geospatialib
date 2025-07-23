@@ -751,7 +751,7 @@ const urlToLeafletLayer = async ({
     params.type = format === 'file' ? fileName[fileName.length-1] : (params.type ?? format)
 
     const layer = await createLeafletLayer(params, {dbIndexedKey, group, add})
-    
+
     return layer
 }
 
