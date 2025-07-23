@@ -171,13 +171,20 @@ def update_collection_data(cache_key, updated_layers, delay=True):
 
     if collection_data:
         cached_layers = collection_data.get('layers', {})
-        for name, params in updated_layers.items():
-            for key, value in params.items():
-                if key == 'title' or not value:
-                    params[key] = cached_layers.get(name, {}).get(key, value)
-                else:
-                    params[key] = value                
-            cached_layers[name] = params
+
+        for name, new_params in updated_layers.items():
+            cached_params = cached_layers.get(name, {})
+            
+            for key, value in new_params.items():
+                if key == 'title' or value is None:
+                    new_params[key] = cached_params.get(key, value)
+
+            for key, value in cached_params.items():
+                if new_params.get(key) is None:
+                    new_params[key] = value
+
+            cached_layers[name] = new_params
+        
         collection_data['layers'] = cached_layers
     else:
         fn, url, format = cache_key.split(';')
