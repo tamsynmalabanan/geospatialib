@@ -201,9 +201,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                map._handlers.hasHiddenLegendLayers() ? 
-                map._handlers.showLegendLayers() : 
-                map._handlers.hideLegendLayers()
+                map._handlers.hasVisibleLegendLayers() ? 
+                map._handlers.hideLegendLayers() :
+                map._handlers.showLegendLayers() 
             },
         },
         divider1: {
