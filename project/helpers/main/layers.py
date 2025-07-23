@@ -120,8 +120,8 @@ def validate_file(url, name, params):
         
         if "zip" in file_details.get('content_type', ''):
             files = extract_zip(file, filename)
-            print('HERE', files)
             file = files.get(name)
+            print('HERE', files, name, file)
         
         geojson_obj = None
         srid = DEFAULT_SRID
