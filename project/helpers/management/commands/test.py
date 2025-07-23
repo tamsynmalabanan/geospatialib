@@ -7,7 +7,7 @@ from helpers.base.files import get_file_names
 from helpers.main.ogc import get_ogc_layers, get_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
-from main.models import URL
+from main.models import URL, Collection
 from main.forms import ValidateCollectionForm
 
 
@@ -43,6 +43,11 @@ def test_get_collection_data():
     # url = 'https://geoserver.geoportal.gov.ph/geoserver/wms?request=GetCapabilities&service=WMS'
     # url = 'https://services.ga.gov.au/gis/eggs/aus_chronostrat_v1/wms?request=GetCapabilities&service=WMS'
     url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
+
+    collection = Collection.objects.filter(url__path=url).first()
+    if collection.exists():
+        collection.delete()
+
     data = get_collection_data(url, delay=False)
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
