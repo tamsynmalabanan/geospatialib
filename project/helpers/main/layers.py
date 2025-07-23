@@ -112,7 +112,6 @@ def validate_csv(url, name, params):
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
-        print(file_details)
         if not file_details:
             raise Exception('Failed to download file.')
         
@@ -122,6 +121,7 @@ def validate_file(url, name, params):
         if "zip" in file_details.get('content_type', ''):
             files = extract_zip(file, filename)
             file = files.get(name)
+            print('HERE', files, file)
         
         geojson_obj = None
         srid = DEFAULT_SRID
