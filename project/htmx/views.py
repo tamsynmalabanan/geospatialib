@@ -132,7 +132,7 @@ class LayerList(ListView):
                 queryset = self.filtered_queryset
 
             if queryset.exists():
-                cache.set(self.cache_key, queryset, timeout=60*3)
+                cache.set(self.cache_key, queryset, timeout=60*15)
                 
             self.queryset = queryset
 
