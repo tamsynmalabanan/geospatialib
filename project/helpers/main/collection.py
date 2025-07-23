@@ -65,15 +65,11 @@ def guess_format_from_url(url):
     })
 
 def get_layers(url, format):
-    try:
-        keywords = [
-            i for i in split_by_special_characters(url) 
-            if i not in ['http', 'https', 'www', 'com']
-        ]
-        print(keywords)
+    layers = {}
 
+    try:
         if format.startswith('ogc-'):
-            return get_ogc_layers(url, format)
+            layers = get_ogc_layers(url, format)
 
         response = get_response(
             url=format_url(url, format),
@@ -88,7 +84,7 @@ def get_layers(url, format):
 
         if format in ['geojson', 'csv']:
             name = os.path.normpath(url).split(os.sep)[-1]
-            return {name: {
+            layers = {name: {
                 'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
                 'type': format,
             }}
@@ -99,21 +95,32 @@ def get_layers(url, format):
                 if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])
             ])).strip()
             
-            return {name: {
+            layers = {name: {
                 'title': name,
                 'type': format,
                 'bbox': list(WORLD_GEOM.extent),
             }}
         
         if format == 'file':
-            return {i:{
+            layers = {i:{
                 'title': '.'.join(os.path.normpath(i).split(os.sep)[-1].split('.')[:-1]),
                 'type': i.split('.')[-1],
             } for i in get_file_names(url)}
-        
     except Exception as e:
         print(e)
-        return {}
+
+    keywords = [
+        i for i in split_by_special_characters(unquote(url)) 
+        if i not in ['http', 'https', 'www', 'com']
+    ]
+
+    for name, params in layers.items():
+        params['keywords'] = params.get('keywords', []) + keywords
+        layers[name] = params
+
+    print(layers)
+
+    return layers
 
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
