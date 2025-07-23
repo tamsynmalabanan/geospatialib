@@ -81,6 +81,7 @@ class Layer(models.Model):
     keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
     styles = models.JSONField('Styles', default=dict, blank=True, null=True)
     
+    last_update = models.DateTimeField('Last update', auto_now=True)
     search_vector = GeneratedField(expression=ToTSVector(Concat(
         'name', Value(' '),
         'title', Value(' '),
