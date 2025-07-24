@@ -14,11 +14,14 @@ const getLeafletLayerContextMenu = async (event, layer, {
         if (!Array('feature', 'geojson').includes(type)) return
         
         try {
-            return feature ? turf.featureCollection([feature]) : layer.toGeoJSON ? layer.toGeoJSON() : null
+            if (feature) return turf.featureCollection([feature])
+            if (layer.getLayers().length) return layer.toGeoJSON()
         } catch {
             try {
-                if (type === 'geojson') {
+                if (type === 'geojson' && layer.getLayers().length) {
                     return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
+                } else {
+                    throw new Error('No features.')
                 }
             } catch {
                 return (await getFromGISDB(dbKey))?.gisData
@@ -295,8 +298,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     geojsonLayer._addBtn.click()
                 } else {
                     createLeafletLayer(layer._params, {
-                        dbIndexedKey: layer._dbIndexedKey,
-                        data: turf.clone(layerGeoJSON),
+                        ...(layer._dbIndexedKey ? {dbIndexedKey: layer._dbIndexedKey} : {data: layerGeoJSON}),
                         group: isLegendGroup ? group : map._handlers.getLayerGroups().local,
                         add: true,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
