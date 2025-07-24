@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     submitBtn.addEventListener('click', async (e) => {
         const map = form._leafletMap
-        const group = map._handlers.getLayerGroups().client
+        const group = map._handlers.getLayerGroups().local
         
         const source = getFileSource()
         const includedLayers = getIncludedLayers(source)
@@ -96,8 +96,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     includedLayers[i] = layer
                 }
     
+                const newDBIndexedKeys = {}
                 const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
-                for (i of sortedLayers) {
+                
+                for (const i of sortedLayers) {
+                    const currentKey = i.dbIndexedKey
+                    if (currentKey.startsWith('local')) {
+                        if (!Object.keys(newDBIndexedKeys).includes(currentKey)) {
+                            newDBIndexedKeys[currentKey] = createLocalLayerDBKey({
+                                name: i.params.name
+                            })
+                        }
+                        i.dbIndexedKey = newDBIndexedKeys[currentKey]
+                    }
+
                     await map._handlers.addLegendLayer(i)
                 }
             } catch (error) {
@@ -163,13 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     vectorBtn.addEventListener('click', async (e) => {
         const map = form._leafletMap
-        const group = map._handlers.getLayerGroups().client
+        const group = map._handlers.getLayerGroups().local
     
         const layer = await getLeafletGeoJSONLayer({
             geojson: turf.featureCollection([]),
             pane: createCustomPane(map),
             group,
-            params: {title: 'new layer'}
+            params: {name: 'new layer'}
         })
     
         if (layer) group.addLayer(layer)

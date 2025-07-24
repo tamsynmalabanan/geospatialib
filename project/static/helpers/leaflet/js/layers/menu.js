@@ -36,11 +36,12 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
     const dbIndexedKey = (geojsonLayer ?? layer)._dbIndexedKey
-    const clientLayer = (dbIndexedKey ?? '').startsWith('client')
-    const editableLayer = isLegendGroup && geojsonLayer && clientLayer
+    const localLayer = (dbIndexedKey ?? '').startsWith('local')
+    const editableLayer = isLegendGroup && geojsonLayer && localLayer
     const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
 
-    const isMeasured = (map._measuredFeatures ?? []).includes(feature?.properties.__gsl_id__) && layer._measuredFeature
+    const measureId = `${geojsonLayer._leaflet_id}-${feature?.properties.__gsl_id__}`
+    const isMeasured = (map._measuredFeatures ?? []).includes(measureId) && layer._measuredFeature
 
     return contextMenuHandler(event, {
         zoomin: {
@@ -51,11 +52,11 @@ const getLeafletLayerContextMenu = async (event, layer, {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
             btnCallback: async () => {
                 if (isMeasured) {
-                    map._measuredFeatures = (map._measuredFeatures ?? []).filter(i => i !== feature.properties.__gsl_id__)
+                    map._measuredFeatures = (map._measuredFeatures ?? []).filter(i => i !== measureId)
                     delete layer._measuredFeature
                     layer.hideMeasurements()
                 } else {
-                    map._measuredFeatures = [...(map._measuredFeatures ?? []), feature.properties.__gsl_id__]
+                    map._measuredFeatures = [...(map._measuredFeatures ?? []), measureId]
                     layer._measuredFeature = true
                     layer.showMeasurements() 
                 }
@@ -97,11 +98,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
-
                     const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
                         newFeature
                     ]
 
@@ -146,11 +145,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     newFeature.properties = newProperties
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
-
                     const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
                         newFeature
                     ]
 
@@ -194,11 +191,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     newFeature.geometry = newGeom
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
-
                     const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
                         newFeature
                     ]
 
@@ -297,8 +292,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 } else {
                     createLeafletLayer(layer._params, {
                         dbIndexedKey: layer._dbIndexedKey,
-                        data: layerGeoJSON,
-                        group: isLegendGroup ? group : map._handlers.getLayerGroups().client,
+                        data: turf.clone(layerGeoJSON),
+                        group: isLegendGroup ? group : map._handlers.getLayerGroups().local,
                         add: true,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
                     })

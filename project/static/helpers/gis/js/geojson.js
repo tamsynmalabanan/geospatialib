@@ -34,7 +34,7 @@ const normalizeGeoJSONFeature = async (feature, {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
     }
     
-    feature.properties.__gsl_id__ = generateRandomString()
+    if (!feature.properties.__gsl_id__) feature.properties.__gsl_id__ = generateRandomString()
 
     if (feature.id && !feature.properties.feature_id) {
         feature.properties.feature_id = feature.id
@@ -395,7 +395,7 @@ const fetchGeoJSONHandlers = (name) => {
 }
 
 const staticFormats = [
-    'client',
+    'local',
     'file',
     'geojson',
     'csv',
@@ -425,7 +425,7 @@ const getGeoJSON = async (dbKey, {
         try {
             const [handlerName, handlerParams] = dbKey.split(';', 2)
 
-            const isClient = handlerName === 'client'
+            const isLocal = handlerName === 'local'
             const isStatic = staticFormats.includes(handlerName)
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
@@ -439,7 +439,7 @@ const getGeoJSON = async (dbKey, {
                 
                 const cachedData = await getFromGISDB(dbKey)
                 if (!cachedData) {
-                    if (isClient) {
+                    if (isLocal) {
                         return new Error('Stored data not found.')
                     } else {
                         return
@@ -471,7 +471,7 @@ const getGeoJSON = async (dbKey, {
                 return cachedGeoJSON
             })()
             
-            if (!isClient && ((isStatic && !geojson) || (!isStatic && !geojson?.features?.length))) {
+            if (!isLocal && ((isStatic && !geojson) || (!isStatic && !geojson?.features?.length))) {
                 geojson = await (async () => {
                     if (controller?.signal.aborted) return
 

@@ -9,7 +9,7 @@ const toggleLeafletLayerEditor = async (layer, {
 
     const mapContainer = map.getContainer()
     const layerLegends = document.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-    const clientLayers = layer._group._handlers.getAllLayers()
+    const localLayers = layer._group._handlers.getAllLayers()
 
     
     if (editableLayer) {
@@ -22,7 +22,7 @@ const toggleLeafletLayerEditor = async (layer, {
                 deleteFromGISDB(editableLayer._dbIndexedKey)
             }
     
-            clientLayers.forEach(i => {
+            localLayers.forEach(i => {
                 if (!i._dbIndexedKey.startsWith(id)) return
                 i._dbIndexedKey = dbIndexedKey
     
@@ -99,7 +99,7 @@ const toggleLeafletLayerEditor = async (layer, {
             queryExtent,
         })    
         
-        clientLayers.forEach(i => {
+        localLayers.forEach(i => {
             if (!i._dbIndexedKey.startsWith(id)) return
             i._dbIndexedKey = newDBIndexedKey
             
@@ -119,7 +119,7 @@ const toggleLeafletLayerEditor = async (layer, {
 
     map._handlers.updateStoredLegendLayers()
 
-    clientLayers.forEach(i => {
+    localLayers.forEach(i => {
         if (![editableLayer, layer].map(i => i?._dbIndexedKey).includes(i._dbIndexedKey)) return
         updateLeafletGeoJSONLayer(i, {updateCache: false})
     })

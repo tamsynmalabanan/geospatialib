@@ -27,10 +27,15 @@ const getAllGISDBKeys = async () => {
     })
 }
 
-const getNewGISDBKey = () => `client;${generateRandomString(64)}--version1`
+const createLocalLayerDBKey = ({
+    id = generateRandomString(64),
+    name = 'new layer',
+    version = 1
+}={}) => `local;${JSON.stringify({id, name})}--version${version}`
 
 const saveToGISDB = async (gisData, {
-    id, 
+    id,
+    name,
     queryExtent, 
     expirationDays=7,
 }={}) => {
@@ -39,7 +44,7 @@ const saveToGISDB = async (gisData, {
     if (!id) {
         const currentIds = await getAllGISDBKeys()
         while (!id || currentIds.includes(id)) {
-            id = getNewGISDBKey()
+            id = createLocalLayerDBKey({name})
         }
     }
 

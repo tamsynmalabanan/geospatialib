@@ -13,9 +13,12 @@ const getLeafletGeoJSONLayer = async ({
         markersInheritOptions: true,
     })
 
-    geojsonLayer._params = params ?? {}
     geojsonLayer._group = group
     geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
+    
+    params.name = params.name ?? params.title
+    params.title = params.title ?? params.name
+    geojsonLayer._params = params
     
     properties = geojsonLayer._properties = properties ?? {}
     properties.info = properties.info ?? {
@@ -93,7 +96,7 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            const isMapDrawControlLayer = group._name === 'client' && geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
+            const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
             const properties = cleanFeatureProperties(feature.properties)
 
             if (Object.keys(properties).length || isMapDrawControlLayer) {
@@ -323,11 +326,9 @@ const getLeafletGeoJSONLayer = async ({
                                     newFeature.properties = newProperties
                                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
-
                                     const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._dbIndexedKey)
                                     gisData.features = [
-                                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
                                         newFeature
                                     ]
 
@@ -364,7 +365,7 @@ const getLeafletGeoJSONLayer = async ({
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
 
-            if ((group._map._measuredFeatures ?? []).includes(feature.properties.__gsl_id__)) {
+            if ((group._map._measuredFeatures ?? []).includes(`${geojsonLayer._leaflet_id}-${feature?.properties.__gsl_id__}`)) {
                 layer._measuredFeature = true
                 layer.options.showMeasurements = true
             }
@@ -410,7 +411,7 @@ const getLeafletGeoJSONLayer = async ({
 
     if (group._map._legendLayerGroups.includes(group)) {
         geojsonLayer._dbIndexedKey = geojson ? await saveToGISDB(
-            geojson, {...(dbIndexedKey ? {id:dbIndexedKey} : {})}
+            geojson, {...(dbIndexedKey ? {id:dbIndexedKey} : {name:geojsonLayer._params.name})}
         ) : dbIndexedKey
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)

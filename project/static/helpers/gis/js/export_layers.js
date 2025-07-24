@@ -75,7 +75,7 @@ const handleGSLLayers = (layers, container) => {
     })
 }
 
-const handleExportLayersForm = () => {
+document.addEventListener('DOMContentLoaded', () => {
     const modalElement = document.querySelector(`#exportLayersModal`)
     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
     const form = modalElement.querySelector(`#exportLayersForm`)
@@ -84,17 +84,15 @@ const handleExportLayersForm = () => {
     const modalBody = modalElement.querySelector('.modal-body')
     
     let layers
-
+    
     const resetLayers = async () => {
         modalBody.innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
-
-        layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}')) ?? {}
+    
+        layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
         
-        const newDBIndexedKeys = {}
-
         for (const layer of Object.values(layers)) {
             let currentKey = layer.dbIndexedKey
-            if (!currentKey.startsWith('client')) continue
+            if (!currentKey.startsWith('local')) continue
             
             if (layer.editable) {
                 layer.editable = false
@@ -103,32 +101,27 @@ const handleExportLayersForm = () => {
                 currentKey = `${id}--version${Number(version ?? 2)-1}`
             }
             
+            layer.dbIndexedKey = currentKey
             layer.data = await getFromGISDB(currentKey)
-
-            if (!Object.keys(newDBIndexedKeys).includes(currentKey)) {
-                newDBIndexedKeys[currentKey] = getNewGISDBKey()
-            }
-
-            layer.dbIndexedKey = newDBIndexedKeys[currentKey]
         }
-
+    
         handleGSLLayers(layers, modalBody)
-
+    
         toggleSubmitBtn()
     }
-
+    
     const toggleSubmitBtn = () => {
         const checkedLayer = Array.from(modalBody.querySelectorAll('.form-check-input')).find(i => i.checked)
         submitBtn.disabled = checkedLayer ? false : true
     }
-
+    
     modalElement.addEventListener('show.bs.modal', async () => resetLayers())
-
+    
     resetBtn.addEventListener('click', (e) => resetLayers())
-
+    
     submitBtn.addEventListener('click', (e) => {
         let filteredLayers = structuredClone(layers)
-
+    
         const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
             modalBody.querySelectorAll(`.form-check-input[type="checkbox"]`)
         )
@@ -137,7 +130,7 @@ const handleExportLayersForm = () => {
                 if (!i.checked) delete filteredLayers[i.value]
             })
         }
-
+    
         const data = JSON.stringify(compressJSON.compress(filteredLayers))
         const blob = new Blob([data], {type:'application/json'})
         const url = URL.createObjectURL(blob)
@@ -147,14 +140,14 @@ const handleExportLayersForm = () => {
         a.click()
         URL.revokeObjectURL(url)
     })
-
+    
     form.addEventListener('click', (e) => {
         if (!e.target.matches(`.form-check-input[type="checkbox"]`)) return
-
+    
         const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
             modalBody.querySelectorAll(`.form-check-input[type="checkbox"]`)
         )
-
+    
         if (e.target === selectAllCheckbox) {
             layerCheckboxes.forEach(i => i.checked = e.target.checked)
         } else {
@@ -163,8 +156,4 @@ const handleExportLayersForm = () => {
         
         toggleSubmitBtn()
     })
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    handleExportLayersForm()
 })

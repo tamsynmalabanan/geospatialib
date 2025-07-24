@@ -2,7 +2,7 @@ const handleLeafletLayerGroups = async (map) => {
     map._layerGroups = {}
     Array(
         'library',
-        'client',
+        'local',
         'query',
         'search'
     ).forEach(groupName => {
@@ -98,18 +98,16 @@ const handleLeafletLayerGroups = async (map) => {
                     deletePane(map, paneName)
                 }
 
-                if (!map._handlers.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
+                if (groupName === 'local' && !map._handlers.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
                     if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
                         toggleLeafletLayerEditor(layer)
                     }
                     
-                    if (groupName === 'client') {
-                        const [id, version] = layer._dbIndexedKey.split('--version')
-                        const keys = await getAllGISDBKeys()
-                        keys.forEach(k => {
-                            if (k.startsWith(id)) deleteFromGISDB(k)
-                        })
-                    }
+                    // const [id, version] = layer._dbIndexedKey.split('--version')
+                    // const keys = await getAllGISDBKeys()
+                    // keys.forEach(k => {
+                    //     if (k.startsWith(id)) deleteFromGISDB(k)
+                    // })
                 }
             },
             clearAllLayers: async () => {
@@ -171,7 +169,7 @@ const handleLeafletLayerGroups = async (map) => {
         },
         addLegendLayer: async (layerData) => {
             let {dbIndexedKey, params, properties, isHidden, data, editable} = layerData
-            const group = map._handlers.getLayerGroups()[(dbIndexedKey.startsWith('client') ? 'client' : 'library')]
+            const group = map._handlers.getLayerGroups()[(dbIndexedKey.startsWith('local') ? 'local' : 'library')]
 
             for (const i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
                 if (i?.styleParams?.fillPattern !== 'icon') continue
@@ -179,8 +177,8 @@ const handleLeafletLayerGroups = async (map) => {
             }
 
             if (data) {
-                const storedData = await getFromGISDB(dbIndexedKey)
-                if (!storedData) {
+                const id = JSON.parse(dbIndexedKey.split('--version')[0].split(';')[1]).id
+                if (!(await getAllGISDBKeys()).find(i => i.includes(id))) {
                     const {gisData, queryExtent} = data
                     await saveToGISDB(gisData, {id:dbIndexedKey, queryExtent})
                 }
@@ -293,7 +291,7 @@ const handleLeafletLayerGroups = async (map) => {
     }
 
     map._legendLayerGroups = Object.values(map._handlers.getLayerGroups())
-    .filter(g => ['library', 'client'].includes(g._name))
+    .filter(g => ['library', 'local'].includes(g._name))
 
     const queryPane = map.createPane('queryPane')
     queryPane.style.zIndex = 598

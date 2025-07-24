@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dismissBtn = menu.querySelector('.custom-context-menu-dismiss')
             const escape = e.type === 'resize'
             // const escape = e.type !== 'click' || !document.elementsFromPoint(
-            //     e.clientX, e.clientY
+            //     e.localX, e.clientY
             // ).find(i => i === menu)
             if (!dismissBtn || escape) menu.remove()
         }
