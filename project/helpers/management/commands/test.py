@@ -58,7 +58,10 @@ class Command(BaseCommand):
         # test_get_collection_data()
 
         for collection in Collection.objects.all():
-            print(collection.url.path)
-            print(collection.format)
+            data = get_collection_data(
+                url=collection.url.path,
+                format=collection.format,
+                delay=False,
+            )
 
         self.stdout.write(self.style.SUCCESS('Done.'))

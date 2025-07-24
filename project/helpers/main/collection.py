@@ -140,7 +140,8 @@ def get_collection_data(url, format=None, delay=True):
         url__path=url,
         format=format,
         layers__isnull=False,
-        last_update__gte=timezone.now()-timedelta(days=30)
+        last_update__gte=timezone.now()
+        # last_update__gte=timezone.now()-timedelta(days=30)
     ).first()
 
     cached_layers = cache.get(cache_key, {}).get('layers', {})
