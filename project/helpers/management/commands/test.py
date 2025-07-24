@@ -58,10 +58,13 @@ class Command(BaseCommand):
         # test_get_collection_data()
 
         for collection in Collection.objects.all():
-            data = get_collection_data(
-                url=collection.url.path,
-                format=collection.format,
-                delay=False,
-            )
+            try:
+                data = get_collection_data(
+                    url=collection.url.path,
+                    format=collection.format,
+                    delay=False,
+                )
+            except Exception as e:
+                print(collection, e)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
