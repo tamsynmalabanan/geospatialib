@@ -1,5 +1,6 @@
 const createLeafletLegendItem = (layer) => {
-    const map = layer._group._map
+    const group = layer._group
+    const map = group._map
     const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
 
     const paneName = layer.options.pane
@@ -23,17 +24,26 @@ const createLeafletLegendItem = (layer) => {
         id: `${container.id}-title`,
         className: 'd-flex flex-nowrap gap-2',
         parent: container,
-        innerHTML: createSpan(layer._params.title ?? 'new layer', {className:'text-break text-wrap'}).outerHTML
+        innerHTML: createSpan(layer._params.title ?? 'new layer', {className:'text-break text-wrap user-select-none'}).outerHTML
     })
     
-    const moveToggle = createIcon({
-        peNone: false,
-        className: 'bi bi-grip-vertical onblur-fade'
+    const layerToggle = createFormCheck({
+        checked: group.hasLayer(layer),
+        events: {
+            click: (e) => {
+                e.target.checked ?
+                group._handlers.unhideLayer(layer) :
+                group._handlers.hideLayer(layer)
+            }
+        }
     })
-    legendTitle.insertBefore(moveToggle, legendTitle.firstChild)
+    legendTitle.insertBefore(layerToggle, legendTitle.firstChild)
+    layer.on('add remove', (e) => {
+        layerToggle.querySelector('input').checked = !group._handlers.hasHiddenLayer(layer)
+    })
     
     Array('mousedown', 'touchstart').forEach(t1 => {
-        moveToggle.addEventListener(t1, (e1) => {
+        legendTitle.querySelector('span').addEventListener(t1, (e1) => {
             const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
@@ -130,7 +140,7 @@ const createLeafletLegendItem = (layer) => {
     const legendCollapse = customCreateElement({
         tag: 'div',
         id: `${container.id}-collapse`,
-        className: 'collapse show ps-3',
+        className: 'collapse show ps-4',
         parent: container
     })
 
@@ -201,7 +211,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                map._handlers.hasVisibleLegendLayers() ? 
+                !map._handlers.hasHiddenLegendLayers() ? 
                 map._handlers.hideLegendLayers() :
                 map._handlers.showLegendLayers() 
             },
@@ -321,24 +331,15 @@ const handleLeafletLegendPanel = async (map, parent) => {
         })
     })
 
-    const clearLegend = (layerLegend, {isHidden=false, isInvisible=false, error=false} = {}) => {
+    const clearLegend = (layerLegend, {isInvisible=false, error=false} = {}) => {
         if (!layerLegend) return
 
         const legendDetails = layerLegend.querySelector(`#${layerLegend.id}-details`)
         legendDetails.innerHTML = ''
-
-        if (isHidden) {
-            createIcon({
-                className: 'bi bi-eye-slash m-1',
-                parent: legendDetails,
-                peNone: false,
-                title: 'Hidden',
-            })
-        }
         
         if (isInvisible) {
             createIcon({
-                className: 'bi-exclamation-circle m-1',
+                className: 'bi-eye-slash me-1',
                 parent: legendDetails,
                 peNone: false,
                 title: 'Beyond visible range',
@@ -347,7 +348,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         if (error) {
             createIcon({
-                className: 'bi-bug m-1',
+                className: 'bi-bug me-1',
                 parent: legendDetails,
                 peNone: false,
                 title: 'Data source error',
@@ -426,7 +427,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 if (isHidden || isInvisible || !withinBbox) {
                     if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
-                    return clearLegend(legend, {isHidden, isInvisible})
+                    return clearLegend(legend, {isInvisible})
                 }
 
                 if (layer instanceof L.GeoJSON) {
@@ -466,7 +467,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         const isInvisible = map._handlers.hasInvisibleLegendLayer(layer)
         
         if ((isHidden || isInvisible)) {
-            clearLegend(layerLegend, {isHidden, isInvisible})
+            clearLegend(layerLegend, {isInvisible})
             if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
             map._handlers.updateStoredLegendLayers({layer})
         } else {

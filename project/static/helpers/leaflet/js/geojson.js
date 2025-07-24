@@ -740,13 +740,13 @@ const createGeoJSONLayerLegend = (layer, parent) => {
         labelContent.appendChild(createSpan(
             style.label ? `${style.label} ` : '', {
                 id:`${tr.id}-title`,
-                className: `${!style.showLabel ? 'd-none' : ''}`
+                className: `user-select-none ${!style.showLabel ? 'd-none' : ''}`
             })
         )
         labelContent.appendChild(createSpan(
             `(${totalCount})`, {
                 id:`${tr.id}-count`,
-                className: `${!style.showCount ? 'd-none' : ''}`
+                className: `user-select-none ${!style.showCount ? 'd-none' : ''}`
             }
         ))
         label.appendChild(labelContent)

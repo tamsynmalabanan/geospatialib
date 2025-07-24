@@ -42,17 +42,10 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
     const isMeasured = (map._measuredFeatures ?? []).includes(feature?.properties.__gsl_id__) && layer._measuredFeature
 
-    const addLayer = (l) => group._handlers.removeHiddenLayer(l)
-    const removeLayer = (l, hidden=false) => hidden ? group._handlers.addToHiddenLayers(l) : group.removeLayer(l)
-    
     return contextMenuHandler(event, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
-        },
-        visibility: feature || checkbox ? null : {
-            innerText: isHidden ? 'Show layer' : 'Hide layer',
-            btnCallback: () => isHidden ? addLayer(layer) : removeLayer(layer, isLegendGroup)
         },
         measure: !feature || feature.geometry.type.startsWith('Multi') || feature.geometry.type === 'Point' || isSearch ? null : {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,

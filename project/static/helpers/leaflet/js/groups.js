@@ -16,20 +16,18 @@ const handleLeafletLayerGroups = async (map) => {
         group._handlers = {
             getHiddenLayers: () => group._hiddenLayers,
             setHiddenLayers: (hiddenLayers=[]) => group._hiddenLayers = hiddenLayers,
-            addToHiddenLayers: (layer) => {
+            hideLayer: (layer) => {
                 if (!group._hiddenLayers.includes(layer)) group._hiddenLayers.push(layer)
                 group.hasLayer(layer) ? group.removeLayer(layer) : map.fire('layerremove', {layer})
             },
             getHiddenLayer: (id) => group._handlers.getHiddenLayers().find(l => l._leaflet_id === parseInt(id)),
             hasHiddenLayer: (layer) => group._handlers.getHiddenLayers().includes(layer),
-            removeHiddenLayer: async (layer, {addLayer=true}={}) => {
+            unhideLayer: async (layer, {addLayer=true}={}) => {
                 let match
                 
                 const hiddenLayers = group._handlers.getHiddenLayers().filter(l => {
                     const matched = l === layer
-                    if (matched) {
-                        match = l
-                    }
+                    if (matched) { match = l }
                     return !matched
                 })
                 
@@ -92,7 +90,7 @@ const handleLeafletLayerGroups = async (map) => {
                     
             clearLayer: async (layer) => {
                 if (group.hasLayer(layer)) group.removeLayer(layer)
-                await group._handlers.removeHiddenLayer(layer, {addLayer:false})
+                await group._handlers.unhideLayer(layer, {addLayer:false})
                 await group._handlers.removeInvisibleLayer(layer, {addLayer:false})
                 
                 const paneName = layer.options.pane
@@ -124,11 +122,11 @@ const handleLeafletLayerGroups = async (map) => {
                     ...group.getLayers(),
                     ...group._handlers.getInvisibleLayers(),
                 ).forEach(l => {
-                    group._handlers.addToHiddenLayers(l)
+                    group._handlers.hideLayer(l)
                 })
             },
             removeAllHiddenLayers: () => {
-                group._handlers.getHiddenLayers().forEach(l => group._handlers.removeHiddenLayer(l))
+                group._handlers.getHiddenLayers().forEach(l => group._handlers.unhideLayer(l))
             },
         }
 
@@ -196,7 +194,7 @@ const handleLeafletLayerGroups = async (map) => {
             })
 
             if (layer) {
-                if (isHidden) group._handlers.addToHiddenLayers(layer)
+                if (isHidden) group._handlers.hideLayer(layer)
                 group.addLayer(layer)
                 if (editable && (dbIndexedKey !== map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)) {
                     await toggleLeafletLayerEditor(layer, {dbIndexedKey})
