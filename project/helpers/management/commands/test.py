@@ -58,13 +58,16 @@ class Command(BaseCommand):
         # test_get_collection_data()
 
         for collection in Collection.objects.all():
-            try:
-                data = get_collection_data(
-                    url=collection.url.path,
-                    format=collection.format,
-                    delay=False,
-                )
-            except Exception as e:
-                print(collection, e)
+            layers = collection.get_layers()
+            if (any([i.get('keywords') in [None, [], ''] for i in layers.values()])):
+                print(collection)
+                try:
+                    data = get_collection_data(
+                        url=collection.url.path,
+                        format=collection.format,
+                        delay=False,
+                    )
+                except Exception as e:
+                    print(collection, e)
 
         self.stdout.write(self.style.SUCCESS('Done.'))

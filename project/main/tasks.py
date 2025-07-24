@@ -69,7 +69,6 @@ def onboard_collection(self, cache_key):
 
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)
-                print(collection, name, '\n', layer_instance.keywords not in [None, [], ''])
         
         if set(layers.keys()) != set(onboarded_layers):
             raise Exception('Not all layers have been onboarded.')
