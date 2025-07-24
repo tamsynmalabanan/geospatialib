@@ -58,7 +58,7 @@ class Command(BaseCommand):
         # test_get_collection_data()
 
         for layer in Layer.objects.all():
-            print(layer.keywords)
+            print(type(layer.keywords))
             # layers = collection.get_layers()
             # if (any([i.get('keywords') in [None, [], ''] for i in layers.values()])):
             #     print(collection)
