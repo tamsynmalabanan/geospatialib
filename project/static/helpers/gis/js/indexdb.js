@@ -70,7 +70,7 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
         const save = async (data) => {
             const {gisData, queryExtent} = data
             if (data) await saveToGISDB(gisData, {id, queryExtent})
-            resolve()
+            resolve(id)
         }
         
         const cachedData = await getFromGISDB(id, {save:false})
