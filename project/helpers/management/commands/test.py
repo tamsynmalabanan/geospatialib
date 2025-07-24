@@ -7,7 +7,7 @@ from helpers.base.files import get_file_names
 from helpers.main.ogc import get_ogc_layers, get_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
-from main.models import URL, Collection
+from main.models import URL, Collection, Layer
 from main.forms import ValidateCollectionForm
 
 
@@ -57,17 +57,18 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_get_collection_data()
 
-        for collection in Collection.objects.all():
-            layers = collection.get_layers()
-            if (any([i.get('keywords') in [None, [], ''] for i in layers.values()])):
-                print(collection)
-                try:
-                    data = get_collection_data(
-                        url=collection.url.path,
-                        format=collection.format,
-                        delay=False,
-                    )
-                except Exception as e:
-                    print(collection, e)
+        for layer in Layer.objects.all():
+            print(layer.keywords)
+            # layers = collection.get_layers()
+            # if (any([i.get('keywords') in [None, [], ''] for i in layers.values()])):
+            #     print(collection)
+            #     try:
+            #         data = get_collection_data(
+            #             url=collection.url.path,
+            #             format=collection.format,
+            #             delay=False,
+            #         )
+            #     except Exception as e:
+            #         print(collection, e)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
