@@ -52,7 +52,7 @@ const addSearchResultBboxToMap = async (el) => {
         pane: 'searchPane',
         group,
         customStyleParams,
-        params: {type: 'geojson', title: 'Search result'}
+        params: {type: 'geojson', name: 'search result'}
     })
 
     if (layer) {

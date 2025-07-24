@@ -1410,7 +1410,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     const addLayers = await getLeafletGeoJSONLayer({
                         geojson,
-                        params: {title: 'spatial constraint'},
+                        params: {name: 'geometry filter'},
                         pane: createCustomPane(map),
                         group: map._handlers.getLayerGroups().local,
                         customStyleParams: {

@@ -773,10 +773,10 @@ const createLeafletLayer = async (params, {
     
     if (Array('geojson', 'csv', 'wfs').includes(type)) {
         layer = await getLeafletGeoJSONLayer({
+            dbIndexedKey,
             geojson: data,
             group,
             pane,
-            dbIndexedKey,
             params,
             properties,
         })
