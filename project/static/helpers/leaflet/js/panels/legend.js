@@ -211,7 +211,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                layers.querySelectorAll('.form-check-input').some(i => i.checked) ?
+                Array.from(layers.querySelectorAll('.form-check-input'))
+                .some(i => i.checked) ?
                 map._handlers.hideLegendLayers() :
                 map._handlers.showLegendLayers() 
             },
