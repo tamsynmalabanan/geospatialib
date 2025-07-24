@@ -7,7 +7,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const feature = layer.feature
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
 
-    const group = layer._group || geojsonLayer?._group
+    const group = layer._group ?? geojsonLayer?._group
     if (!group) return
     
     const layerGeoJSON = await (async () => {
@@ -299,7 +299,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 } else {
                     createLeafletLayer(layer._params, {
                         ...(layer._dbIndexedKey ? {dbIndexedKey: layer._dbIndexedKey} : {data: layerGeoJSON}),
-                        group: isLegendGroup ? group : map._handlers.getLayerGroups().local,
+                        group: feature || !isLegendGroup ? map._handlers.getLayerGroups().local : group,
                         add: true,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
                     })
