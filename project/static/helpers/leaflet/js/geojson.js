@@ -96,7 +96,6 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            console.log(group._name, geojsonLayer._dbIndexedKey, group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
             const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
             const properties = cleanFeatureProperties(feature.properties)
 
@@ -133,7 +132,6 @@ const getLeafletGeoJSONLayer = async ({
                     
                     const content = createFeaturePropertiesTable(popupProperties, {header: getPopupHeader()})
                     
-                    console.log(isMapDrawControlLayer)
                     if (isMapDrawControlLayer) {
                         content.classList.remove('table-striped')
 
