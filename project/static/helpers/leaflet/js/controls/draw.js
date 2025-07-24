@@ -433,6 +433,7 @@ const handleLeafletDrawBtns = (map, {
     Object.keys(drawEvents).forEach(i => map.on(`draw:${i}`, drawEvents[i]))
     drawControl.onRemove = (map) => {
         try {
+            drawControl?._toolbars?.draw?.disable?.()
             drawControl?._toolbars?.edit?.disable?.()
         } catch (error) {
             console.log(error)
