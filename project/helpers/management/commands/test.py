@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
-from helpers.base.utils import get_response, get_response
+from helpers.base.utils import get_response, get_response, split_by_special_characters
 from helpers.base.files import get_file_names
 from helpers.main.ogc import get_ogc_layers, get_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
@@ -17,6 +17,8 @@ import validators
 import requests
 import re
 from urllib.parse import urlparse, urlunparse
+from urllib.parse import unquote
+
 
 
 
@@ -59,17 +61,12 @@ class Command(BaseCommand):
 
         for layer in Layer.objects.all():
             if type(layer.keywords) is not list or len(layer.keywords) == 0:
+                keywords = [
+                    i for i in split_by_special_characters(unquote(layer.collection.url.path)) 
+                    if i not in ['http', 'https', 'www', 'com']
+                ]
+                layer.keywords = keywords
+                layer.save()
                 print(layer)
-            # layers = collection.get_layers()
-            # if (any([i.get('keywords') in [None, [], ''] for i in layers.values()])):
-            #     print(collection)
-            #     try:
-            #         data = get_collection_data(
-            #             url=collection.url.path,
-            #             format=collection.format,
-            #             delay=False,
-            #         )
-            #     except Exception as e:
-            #         print(collection, e)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
