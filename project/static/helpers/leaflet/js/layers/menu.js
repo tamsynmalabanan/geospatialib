@@ -43,7 +43,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && localLayer
     const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
 
-    const measureId = `${geojsonLayer._leaflet_id}-${feature?.properties.__gsl_id__}`
+    const measureId = `${geojsonLayer?._leaflet_id}-${feature?.properties.__gsl_id__}`
     const isMeasured = (map._measuredFeatures ?? []).includes(measureId) && layer._measuredFeature
 
     return contextMenuHandler(event, {
