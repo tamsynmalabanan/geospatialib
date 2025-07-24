@@ -97,10 +97,11 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     if (newFeature.type !== 'Feature') return
 
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
 
                     const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                         newFeature
                     ]
 
@@ -144,10 +145,11 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     let newFeature = structuredClone(feature)
                     newFeature.properties = newProperties
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
 
                     const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                         newFeature
                     ]
 
@@ -191,9 +193,11 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     newFeature.geometry = newGeom
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
+                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+
                     const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                         newFeature
                     ]
 

@@ -92,7 +92,7 @@ const handleLeafletDrawBtns = (map, {
                     if (Object.keys(newFeatures).length === 2 && newFeatures.type && newFeatures.coordinates) newFeatures = [turf.feature(newFeatures)]
                     if (!Array.isArray(newFeatures)) return
 
-                    newFeatures = (await normalizeGeoJSON(turf.featureCollection(newFeatures))).features
+                    newFeatures = (await normalizeGeoJSON(turf.featureCollection(newFeatures), {updateGSLId:true})).features
 
                     const {gisData, queryExtent} = await getFromGISDB(targetLayer._dbIndexedKey)
                     gisData.features = [

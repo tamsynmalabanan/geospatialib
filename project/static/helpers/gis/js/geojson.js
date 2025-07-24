@@ -1,6 +1,7 @@
 const normalizeGeoJSON = async (geojson, {
     controller,
     defaultGeom,
+    updateGSLId,
 } = {}) => {
     if (!geojson) return
 
@@ -16,6 +17,7 @@ const normalizeGeoJSON = async (geojson, {
         await normalizeGeoJSONFeature(feature, {
             defaultGeom,
             crs,
+            updateGSLId,
         })
     }
 
@@ -24,7 +26,8 @@ const normalizeGeoJSON = async (geojson, {
 
 const normalizeGeoJSONFeature = async (feature, {
     defaultGeom,
-    crs
+    crs,
+    updateGSLId = false,
 }={}) => {
     const featureGeom = feature.geometry
     const geomAssigned = !featureGeom && defaultGeom
@@ -34,7 +37,7 @@ const normalizeGeoJSONFeature = async (feature, {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
     }
     
-    if (!feature.properties.__gsl_id__) feature.properties.__gsl_id__ = generateRandomString()
+    if (!feature.properties.__gsl_id__ || updateGSLId) feature.properties.__gsl_id__ = generateRandomString()
 
     if (feature.id && !feature.properties.feature_id) {
         feature.properties.feature_id = feature.id
