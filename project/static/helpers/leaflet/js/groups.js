@@ -233,11 +233,6 @@ const handleLeafletLayerGroups = async (map) => {
                 if (group._handlers.getHiddenLayers().length) return true
             }
         },
-        hasVisibleLegendLayers: () => {
-            for (const group of map._legendLayerGroups) {
-                if (group.getLayers().length) return true
-            }
-        },
         getLegendLayer: (id) => {
             for (const group of map._legendLayerGroups) {
                 const layer = group._handlers.findLayer(id)
