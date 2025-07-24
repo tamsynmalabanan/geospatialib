@@ -59,14 +59,4 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_get_collection_data()
 
-        for layer in Layer.objects.all():
-            if type(layer.keywords) is not list or len(layer.keywords) == 0:
-                keywords = [
-                    i for i in split_by_special_characters(unquote(layer.collection.url.path)) 
-                    if i not in ['http', 'https', 'www', 'com']
-                ]
-                layer.keywords = keywords
-                layer.save()
-                print(layer)
-
         self.stdout.write(self.style.SUCCESS('Done.'))
