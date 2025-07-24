@@ -55,13 +55,10 @@ class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
-
         # test_get_collection_data()
 
-        # url = 'https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.zip'
-        # collection = Collection.objects.filter(url__path=url).first()
-        # if collection:
-        #     collection.delete()
-
+        for collection in Collection.objects.all():
+            print(collection.url.path)
+            print(collection.format)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
