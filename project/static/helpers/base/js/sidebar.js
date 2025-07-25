@@ -84,6 +84,8 @@ const resizeSidebar = (sidebarSelector) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     const userMenu = document.querySelector('#userDropdownMenu')
-    userMenu.classList.toggle('rounded', userMenu.previousElementSibling.classList.contains('d-lg-none'))
-    alert(userMenu.previousElementSibling.classList)
+    const sidebarToggle = userMenu.previousElementSibling
+    const sidebar = document.querySelector(`${sidebarToggle.getAttribute('data-bs-target')}`)
+    const smallScreen = window.innerWidth < 992
+    userMenu.classList.toggle('rounded', smallScreen || !sidebar.classList.contains('offcanvas'))
 })
