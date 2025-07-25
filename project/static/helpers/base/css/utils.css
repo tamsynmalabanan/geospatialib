@@ -70,5 +70,5 @@
 }
 
 .active-border-none:active {
-    border-color: transparent;
+    border-color: transparent !important;
 }
