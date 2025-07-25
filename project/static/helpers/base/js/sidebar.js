@@ -18,8 +18,6 @@ const toggleSidebar = (sidebarSelector) => {
     if (sidebarGutter) sidebarGutter.classList.toggle('d-lg-block', isLg)
     dismiss.classList.toggle('d-lg-none', isLg)
     toggle.classList.toggle('d-lg-none', isLg)
-
-    formatUserMenu()
 }
 
 const resizeSidebar = (sidebarSelector) => {
@@ -80,15 +78,3 @@ const resizeSidebar = (sidebarSelector) => {
         })
     })
 }
-
-const formatUserMenu = () => {
-    const userMenu = document.querySelector('#userDropdownMenu')
-    const sidebarToggle = userMenu.previousElementSibling
-    const sidebar = document.querySelector(`${sidebarToggle.getAttribute('data-bs-target')}`)
-    const smallScreen = window.innerWidth < 992
-    userMenu.classList.toggle('rounded', !smallScreen && !sidebar.classList.contains('offcanvas'))
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    formatUserMenu()
-})
