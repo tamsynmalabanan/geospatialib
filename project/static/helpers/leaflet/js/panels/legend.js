@@ -558,10 +558,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
     })
 
     map.on('initComplete', async () => {
-        const storedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
-        const hasStoredLayers = Object.keys(map._handlers.getStoredLegendLayers()).length
-
-        if (storedBbox || hasStoredLayers) {
+        if (Object.keys(map._handlers.getStoredLegendLayers()).length) {
+            const storedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
             const alertPromise = new Promise((resolve, reject) => {
                 const alert = createModal({
                     titleText: 'Restore map state?',
