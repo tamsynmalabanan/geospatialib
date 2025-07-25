@@ -1,7 +1,6 @@
 const toggleSidebar = (sidebarSelector) => {
     const sidebar = document.querySelector(sidebarSelector)
     const toggle = document.querySelector(`[data-bs-toggle="offcanvas"][data-bs-target="${sidebarSelector}"]`)
-    const userMenu = toggle.nextElementSibling
     
     const sidebarGutter = sidebar.parentElement.querySelector('.sidebar-gutter')
     const button = sidebar.querySelector(`[onclick='toggleSidebar("${sidebarSelector}")']`)
@@ -20,7 +19,7 @@ const toggleSidebar = (sidebarSelector) => {
     dismiss.classList.toggle('d-lg-none', isLg)
     toggle.classList.toggle('d-lg-none', isLg)
 
-    if (userMenu.matches('#userDropdownMenu')) userMenu.classList.toggle('rounded', isLg)
+    formatUserMenu()
 }
 
 const resizeSidebar = (sidebarSelector) => {
@@ -82,10 +81,14 @@ const resizeSidebar = (sidebarSelector) => {
     })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+const formatUserMenu = () => {
     const userMenu = document.querySelector('#userDropdownMenu')
     const sidebarToggle = userMenu.previousElementSibling
     const sidebar = document.querySelector(`${sidebarToggle.getAttribute('data-bs-target')}`)
     const smallScreen = window.innerWidth < 992
     userMenu.classList.toggle('rounded', smallScreen || !sidebar.classList.contains('offcanvas'))
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    formatUserMenu()
 })
