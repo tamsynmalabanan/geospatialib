@@ -97,6 +97,12 @@
 
         {% block modals %}{% endblock modals %}
 
+
+        {% include "helpers/partials/user/delete_account.html" %}
+        {% include "helpers/partials/user/terms.html" %}
+        {% include "helpers/partials/user/privacy_policy.html" %}
+        {% include "helpers/partials/user/cookies_policy.html" %}
+
         {% include "helpers/partials/add_layers/modal.html" %}
         {% include "helpers/partials/export_layers/modal.html" %}
         <svg id='svgFillDefs' xmlns="http://www.w3.org/2000/svg" height="0" width="0" style="position: absolute; top: 0; left: 0; width: 0; height: 0;"></svg>

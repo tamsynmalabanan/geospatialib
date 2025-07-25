@@ -1,12 +1,15 @@
-<button 
-    class="btn btn-{{theme}} {% if label %}rounded-pill{% else %}rounded-circle{% endif %} {% if show_sidebar %}d-lg-none{% endif %} shadow-lg d-flex flex-nowrap" 
-    type="button" 
-    data-bs-toggle="offcanvas" 
-    data-bs-target="#{{offcanvas_id}}" 
-    aria-controls="{{offcanvas_id}}"
-    title="{{title}}"
-    tabindex="-1"
->
-    <i class='bi {{icon}}'></i>
-    {% if label %}<span class='ms-2 d-none d-md-block text-nowrap'>{{label}}</span>{% endif %}
-</button>
+<div class="btn-group shadow-lg dropup">
+    <button 
+        class="btn btn-{{theme}} {% if show_sidebar %}d-lg-none{% endif %}" 
+        type="button" 
+        data-bs-toggle="offcanvas" 
+        data-bs-target="#{{offcanvas_id}}" 
+        aria-controls="{{offcanvas_id}}"
+        title="{{title}}"
+        tabindex="-1"
+    >
+        <i class="bi {{icon}}"></i>
+    </button>
+
+    {% include "helpers/partials/user/menu.html" %}
+</div>

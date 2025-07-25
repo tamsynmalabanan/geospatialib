@@ -1,0 +1,20 @@
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title" id="deleteAccountModalLabel">Delete Account</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Do you confirm to delete your Geospatialib account?
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+            <form method="post" action="{% url 'customuser:delete_account' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Confirm</button>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>

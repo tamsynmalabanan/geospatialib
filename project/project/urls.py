@@ -20,11 +20,12 @@ from decouple import config
 
 
 urlpatterns = [
-    path(f'{config('ADMIN_PATH')}/', admin.site.urls),
+    path(f'{config('ADMIN_PATH')}/', admin.site.urls, name='admin'),
 
     # social auth paths
     path('accounts/', include('allauth.urls')),
 
     path('', include('main.urls')),
+    path('accounts/', include('customuser.urls')),
     path(f'htmx/', include('htmx.urls')),
 ]

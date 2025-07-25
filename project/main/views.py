@@ -9,3 +9,4 @@ def index(request):
     if data.get('query', '') == '':
         context['featured'] = 'featured content'
     return render(request, 'main/index.html', context)
+

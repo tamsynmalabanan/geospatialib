@@ -68,10 +68,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['username']
 
     def __str__(self) -> str:
-        return self.default_name
-
-    @property
-    def default_name(self):
         names = [name for name in [self.first_name, self.last_name] if name]
         return ' '.join(names) if names else self.username
 
