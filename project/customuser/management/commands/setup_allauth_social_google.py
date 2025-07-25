@@ -19,6 +19,7 @@ class Command(BaseCommand):
             client_id=config('GOOGLE_OAUTH_CLIENT_ID'),
             secret=config('GOOGLE_OAUTH_SECRET'),
         )
+        
         if created:
             app.sites.add(site)
 
