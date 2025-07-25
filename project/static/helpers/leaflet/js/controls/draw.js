@@ -54,9 +54,13 @@ const handleLeafletDrawBtns = (map, {
     drawControl._addChange = (data) => {
         if (!data) return
 
-        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
-        current.push(data)
-        localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+        try {
+            const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+            current.push(data)
+            localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+        } catch (error) {
+            console.log('drawControl._addChange error', error)
+        }
     }
 
     const container = drawControl.addTo(map)._container
