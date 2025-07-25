@@ -62,14 +62,29 @@ const handleLeafletDrawBtns = (map, {
         } catch (error) {
             console.log('drawControl._addChange error', error, data)
         
+            data = current.pop()
+
             if (data.type === 'created') {
-                data.features = current.pop().features.map(i => {
+                data.features = data.features.map(i => {
                     delete i.geometry
                     return i
                 })
                 current.push(data)
-                localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
             }
+   
+            if (Array('deleted', 'edited').includes(data.type)) {
+                data.features = data.features.map(i => {
+                    delete i.old.geometry
+                    if (i.new) delete i.new.geometry
+                    // for (const j in i) {
+                    //     i[j] = simplifyFeature(i[j], {maxPts:100})
+                    // }
+                    return i
+                })
+                current.push(data)
+            }
+   
+            localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
         }
     }
 

@@ -623,3 +623,41 @@ const csvToGeoJSON = (csv, params) => {
 
     return geojson
 }
+
+const simplifyFeature = (feature, {
+    maxPts,
+    tolerance = 0.001,
+    mutate = false,
+    highQuality = false,
+    maxTolerance = 1,
+} = {}) => {
+    try {
+        maxPts = !isNaN(maxPts) ? Number(maxPts) : null
+
+        if (maxPts && turf.coordAll(feature).length <= maxPts) {
+            return feature
+        }
+
+        const type = turf.getType(feature)
+        const options = {tolerance, mutate, highQuality}
+        let simpleFeature = turf.simplify(feature, options)
+        
+        if (maxPts && (
+            (type.includes('Polygon') && maxPts > 2) 
+            || ((type.includes('LineString') && maxPts > 1))
+        )) {
+            options.tolerance += 0.001
+            while (
+                turf.coordAll(simpleFeature).length > maxPts 
+                && options.tolerance <= maxTolerance
+            ) {
+                simpleFeature = turf.simplify(feature, options)
+                options.tolerance += 0.001
+            }
+        }
+
+        return simpleFeature
+    } catch (error) {
+        console.log(error)
+    }
+}
