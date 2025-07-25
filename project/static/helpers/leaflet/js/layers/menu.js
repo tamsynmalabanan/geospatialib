@@ -6,29 +6,33 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
     const feature = layer.feature
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
+    const dbIndexedKey = (geojsonLayer ?? layer)._dbIndexedKey
 
     const group = layer._group ?? geojsonLayer?._group
     if (!group) return
     
     const layerGeoJSON = await (async () => {
         if (!Array('feature', 'geojson').includes(type)) return
+
+        if (feature) return turf.featureCollection([feature])
+        
+        const featureCount = layer['getLayers']?.().length
         
         try {
-            if (feature) return turf.featureCollection([feature])
-            if (layer.getLayers().length) return layer.toGeoJSON()
-        } catch {
-            try {
-                if (type === 'geojson' && layer.getLayers().length) {
-                    return turf.featureCollection(layer.getLayers()?.map(l => l.feature))
-                } else {
-                    throw new Error('No features.')
-                }
-            } catch {
-                return (await getFromGISDB(dbKey))?.gisData
+            if (featureCount) {
+                return layer.toGeoJSON()
+            } else {
+                throw new Error('No features')
             }
+        } catch (error) {
+            if (featureCount) {
+                return turf.featureCollection(layer.getLayers().map(l => l.feature))
+            }
+
+            return (await getFromGISDB(dbIndexedKey))?.gisData
         }
     })()
-    
+
     const map = group._map
     const mapContainer = map.getContainer()
     const isLegendGroup = map._legendLayerGroups.includes(group)
@@ -38,7 +42,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const checkbox = layer._checkbox
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
-    const dbIndexedKey = (geojsonLayer ?? layer)._dbIndexedKey
     const localLayer = (dbIndexedKey ?? '').startsWith('local')
     const editableLayer = isLegendGroup && geojsonLayer && localLayer
     const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
@@ -251,13 +254,15 @@ const getLeafletLayerContextMenu = async (event, layer, {
         download: isSearch || !layerGeoJSON ? null : {
             innerText: 'Download data',
             btnCallback: () => {
-                if (layerGeoJSON) downloadGeoJSON(layerGeoJSON, layer._params.title)
+                if (layerGeoJSON) {
+                    downloadGeoJSON(turf.clone(layerGeoJSON), layer._params.title)
+                }
             }
         },
         csv: isSearch || !layerGeoJSON ? null : {
             innerText: 'Export to CSV',
             btnCallback: () => {
-                const properties = layerGeoJSON.features.map(feature => {
+                const properties = turf.clone(layerGeoJSON).features.map(feature => {
                     const [__x__, __y__] = turf.centroid(feature).geometry.coordinates
                     return {...feature.properties, __x__, __y__}
                 })
@@ -285,7 +290,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 URL.revokeObjectURL(url)
             }
         },
-
         
         divider6: isSearch ? null : {
             divider: true,
@@ -298,8 +302,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     geojsonLayer._addBtn.click()
                 } else {
                     createLeafletLayer(layer._params, {
-                        ...(layer._dbIndexedKey ? {dbIndexedKey: layer._dbIndexedKey} : {data: layerGeoJSON}),
-                        group: feature || !isLegendGroup ? map._handlers.getLayerGroups().local : group,
+                        ...(dbIndexedKey && !feature ? {dbIndexedKey} : {data: layerGeoJSON}),
+                        group: (feature || !isLegendGroup) ? map._handlers.getLayerGroups().local : group,
                         add: true,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
                     })
