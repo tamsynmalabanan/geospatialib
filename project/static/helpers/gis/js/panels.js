@@ -11,6 +11,8 @@ const createMapPanels = (container, {} = {}) => {
         titleClass: 'h6'
     })
 
+    offcanvas.style.minWidth = '200px'
+
     const [tabs, accordion] = createAccordion(`${id}-accordion`, {
         'legend': {
             label: `Legend`,

@@ -81,3 +81,8 @@ const resizeSidebar = (sidebarSelector) => {
         })
     })
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userMenu = document.querySelector('#userDropdownMenu')
+    userMenu.classList.toggle('rounded', userMenu.previousElementSibling.classList.contains('d-lg-none'))
+})
