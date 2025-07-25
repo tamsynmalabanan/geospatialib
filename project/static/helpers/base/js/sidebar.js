@@ -86,7 +86,7 @@ const formatUserMenu = () => {
     const sidebarToggle = userMenu.previousElementSibling
     const sidebar = document.querySelector(`${sidebarToggle.getAttribute('data-bs-target')}`)
     const smallScreen = window.innerWidth < 992
-    userMenu.classList.toggle('rounded', smallScreen || !sidebar.classList.contains('offcanvas'))
+    userMenu.classList.toggle('rounded', !smallScreen && !sidebar.classList.contains('offcanvas'))
 }
 
 document.addEventListener('DOMContentLoaded', () => {
