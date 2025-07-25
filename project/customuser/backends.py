@@ -11,8 +11,10 @@ class CustomAuthenticationBackend(ModelBackend):
             username = kwargs.get('email', None)
 
         try:
-            user_query = Q(**{'username__iexact':username}) | Q(**{'email__iexact':username})
-            user = User.objects.get(user_query)
+            user = User.objects.get(
+                Q(**{'username__iexact':username}) | 
+                Q(**{'email__iexact':username})
+            )
         except User.DoesNotExist:
             raise PermissionDenied("Invalid login credentials.")
         except User.MultipleObjectsReturned:

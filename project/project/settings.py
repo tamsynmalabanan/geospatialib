@@ -46,6 +46,28 @@ AUTHENTICATION_BACKENDS = (
     'customuser.backends.CustomAuthenticationBackend',
 )
 
+# allauth
+SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online'
+        },
+    }
+}
+
+SOCIALACCOUNT_ADAPTER = 'customuser.adapters.CustomSocialAccountAdapter'
+
+AUTHENTICATION_BACKENDS = (
+    'customuser.backends.CustomAuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,6 +82,13 @@ INSTALLED_APPS = [
 
     # gis
     'django.contrib.gis',
+
+    # social auth
+    'django.contrib.sites',
+    'allauth',    
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',          
 
     # plugins
     'leaflet',
@@ -187,6 +216,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    # social auth
+    'allauth.account.middleware.AccountMiddleware',
+
+    # htmx
     'django_htmx.middleware.HtmxMiddleware',
 
     'htmx.middleware.HTMXDomainRestriction',
