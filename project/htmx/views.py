@@ -72,11 +72,10 @@ class LayerList(ListView):
         )
 
         if exclusions:
-            queryset = queryset.exclude(reduce(
-                or_, 
-                (Q(name__icontains=word) | Q(title__icontains=word) for word in exclusions), 
-                Q()
-            ))
+            queryset = queryset.exclude(reduce(or_, (
+                Q(search_vector__icontains=word) 
+                for word in exclusions
+            ), Q()))
 
         if len(self.query_values) > 1:
             queryset = queryset.filter(**{
