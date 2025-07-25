@@ -60,8 +60,16 @@ const handleLeafletDrawBtns = (map, {
         try {
             localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
         } catch (error) {
-            console.log(data)
-            console.log('drawControl._addChange error', error)
+            console.log('drawControl._addChange error', error, data)
+        
+            if (data.type === 'created') {
+                data.features = current.pop().features.map(i => {
+                    delete i.geometry
+                    return i
+                })
+                current.push(data)
+                localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+            }
         }
     }
 
