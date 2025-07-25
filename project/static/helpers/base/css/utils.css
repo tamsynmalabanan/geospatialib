@@ -68,3 +68,7 @@
 .text-decoration-none {
     text-decoration: none;
 }
+
+.active-border-none:active {
+    border-color: transparent;
+}
