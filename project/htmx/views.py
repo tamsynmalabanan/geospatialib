@@ -85,9 +85,6 @@ class LayerList(ListView):
                     'bbox__bboverlaps'
                 ]
             })
-
-
-        # https://testdriven.io/blog/django-search/
         
         search_query = SearchQuery(query, search_type='websearch')
 
