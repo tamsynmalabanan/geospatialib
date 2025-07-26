@@ -7,9 +7,6 @@
     {% include "main/search/filters.html" %}
 {% endif %}
 
-{{ query_values }}
-{{ querystring }}
-
 {% if page_obj.number %}
     {% if page_obj.number == 1 %}
         <ul id='searchResults' class="border-top p-3 d-flex flex-grow-1 flex-wrap gap-3 mb-3 w-100">
