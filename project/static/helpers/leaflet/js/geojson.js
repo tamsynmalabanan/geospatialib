@@ -429,14 +429,9 @@ const getLeafletGeoJSONLayer = async ({
 }
 
 const cleanFeatureProperties = (properties) => {
-    const cleanProperties = {}
-
-    Object.keys(properties).forEach(i => {
-        if (i.startsWith('__') && i.endsWith('__')) return
-        cleanProperties[String(i)] = properties[i]
-    })                    
-
-    return cleanProperties
+    return Object.fromEntries(Object.entries(properties).filter(([key]) => {
+        return !(key.startsWith('__') && key.endsWith('__'))
+    }))
 }
 
 const getFeatureTitle = (properties) => {
