@@ -59,4 +59,11 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_get_collection_data()
 
+        import redis
+        r = redis.Redis(host='localhost', port=6379, db=0)
+
+        for key in r.scan_iter("*"):
+            print(f"{key}: {r.get(key)}")
+
+
         self.stdout.write(self.style.SUCCESS('Done.'))
