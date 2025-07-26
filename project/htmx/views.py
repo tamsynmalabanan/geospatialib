@@ -54,7 +54,7 @@ class LayerList(ListView):
     @property
     def raw_query(self):
         query, exclusions = self.query_params
-        return f'({' | '.join([f"'{i}'" for i in query.split()])}){f' & !({' | '.join([f"'i'" for i in exclusions])})' if exclusions else ''}'
+        return f'({' | '.join([f"'{i}'" for i in query.split()])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
 
     @property
