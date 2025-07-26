@@ -97,7 +97,7 @@ class LayerList(ListView):
                 search_vector=search_query,
                 rank__gte=0.001
             )
-            .order_by('-rank')
+            # .order_by('-rank')
         )
 
         return queryset
