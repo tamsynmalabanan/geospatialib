@@ -54,7 +54,7 @@ class LayerList(ListView):
 
     @cached_property
     def query_values(self):
-        return [str(i).strip() for i in list(self.request.GET.values()) if i and i != '']
+        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v and v != '']
 
     @cached_property
     def cache_key(self):
@@ -145,9 +145,7 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context['cache_key'] = self.cache_key
-        
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['values'] = self.query_values
