@@ -76,6 +76,7 @@ def onboard_collection(self, cache_key):
         print('onboard_collection error', e)
 
         if self.request.retries < self.max_retries:
+            cache.set(cache_key, cached_collection, timeout=60*15)
             raise self.retry(exc=e)
 
         if collection and collection.layers.count() == 0:

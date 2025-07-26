@@ -157,7 +157,7 @@ def get_collection_data(url, format=None, delay=True):
         layers = get_layers(url, format)
         if len(layers.keys()) > 0:
             data['layers'] = layers
-        cache.set(cache_key, data, timeout=60*60*24)
+        cache.set(cache_key, data, timeout=60*15)
     
     if delay:
         onboard_collection.delay(cache_key)
@@ -194,7 +194,7 @@ def update_collection_data(cache_key, updated_layers, delay=True):
             'layers': updated_layers,
         }
     
-    cache.set(cache_key, collection_data, timeout=60*60*24)
+    cache.set(cache_key, collection_data, timeout=60*15)
     
     if delay:
         onboard_collection.delay(cache_key)
