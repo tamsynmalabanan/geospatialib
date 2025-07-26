@@ -39,7 +39,7 @@ class LayerList(ListView):
 
     @property
     def query_params(self):
-        query = self.request.GET.get('query', '').strip().replace('"','')
+        query = self.request.GET.get('query', '').strip()
         exclusions = []
 
         if ' -' in f' {query}':
