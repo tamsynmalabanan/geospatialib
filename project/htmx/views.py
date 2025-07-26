@@ -39,22 +39,22 @@ class LayerList(ListView):
 
     @property
     def query_params(self):
-        query = self.request.GET.get('query', '').strip()
+        query = self.request.GET.get('query', '').strip().replace('"','')
         exclusions = []
 
         if ' -' in f' {query}':
             keywords = query.split(' ')
             exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
             query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+        query = ' OR '.join(query.replace('_', ' ').split())
 
         self.raw_query = f'({' | '.join([f"'{i}'" for i in query.replace('_', ' ').split()])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
-        query = ' OR '.join(query.replace('_', ' ').split())
 
         return (query, exclusions)
 
     @property
     def query_values(self):
-        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v and v != '']
+        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v != '']
 
     @property
     def cache_key(self):
