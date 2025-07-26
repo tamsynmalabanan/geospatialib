@@ -123,13 +123,10 @@ class LayerList(ListView):
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
             queryset = cache.get(self.cache_key)
-
-            if not queryset or not queryset.exists():
+            if not queryset:
                 queryset = self.filtered_queryset
-
-            if queryset.exists():
-                cache.set(self.cache_key, queryset, timeout=60*15)
-                
+                if queryset.exists():
+                    cache.set(self.cache_key, queryset, timeout=60*15)
             self.queryset = queryset
 
         queryset = self.queryset
