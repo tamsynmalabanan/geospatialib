@@ -46,13 +46,16 @@ class LayerList(ListView):
             keywords = query.split(' ')
             exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
             query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
-
         query = query.replace('_', ' ').replace('"', '')
-        self.raw_query = f'()'
-
         query = ' OR '.join(query.split())
 
         return (query, exclusions)
+    
+    @property
+    def raw_query(self):
+        query, exclusions = self.query_params
+        return f'({' | '})'
+
 
     @property
     def query_values(self):
