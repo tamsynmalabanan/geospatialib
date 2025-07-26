@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
-from django.utils.functional import cached_property
+from django.utils.functional import property
 
 import json
 import requests
@@ -32,7 +32,7 @@ class LayerList(ListView):
     context_object_name = 'layers'
     paginate_by = 24
 
-    @cached_property
+    @property
     def filter_fields(self):
         return [
             'type',
@@ -52,13 +52,13 @@ class LayerList(ListView):
 
         return (query, exclusions)
 
-    @cached_property
+    @property
     def query_values(self):
         return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v and v != '']
 
-    @cached_property
+    @property
     def cache_key(self):
-        return create_cache_key(['LayerList']+self.query_values)
+        return create_cache_key(['layer_list']+self.query_values)
 
     @property
     def filtered_queryset(self):
