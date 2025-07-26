@@ -96,7 +96,6 @@ class LayerList(ListView):
                 search_vector=search_query,
                 rank__gte=0.001
             )
-            .order_by(*['-rank', 'title', 'type'])
         )
 
         return queryset
@@ -134,6 +133,7 @@ class LayerList(ListView):
             queryset = (
                 self.queryset
                 .annotate(rank=Max('rank'))
+                .order_by(*['-rank', 'title', 'type'])
             )
 
         return queryset
