@@ -38,24 +38,16 @@ class LayerList(ListView):
         ]
 
     @property
-    def query_params(self):
+    def raw_query(self):
         query = self.request.GET.get('query', '').strip()
         exclusions = []
 
         if ' -' in f' {query}':
-            keywords = query.split(' ')
-            exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
-            query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
+            exclusions = [i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]
+            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1])
+      
         query = query.replace('_', ' ').replace('"', '')
-        # query = ' OR '.join(query.split())
-
-        return (query, exclusions)
-    
-    @property
-    def raw_query(self):
-        query, exclusions = self.query_params
         return f'({' | '.join([f"'{i}'" for i in query.split()])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
-
 
     @property
     def query_values(self):
@@ -67,20 +59,12 @@ class LayerList(ListView):
 
     @property
     def filtered_queryset(self):
-        query, exclusions = self.query_params
-
         queryset = (
             super().get_queryset()
             .select_related(
                 'collection__url',
             )
         )
-
-        if exclusions:
-            queryset = queryset.exclude(reduce(or_, (
-                Q(search_vector__icontains=word) 
-                for word in exclusions
-            ), Q()))
 
         if len(self.query_values) > 1:
             queryset = queryset.filter(**{
@@ -91,7 +75,7 @@ class LayerList(ListView):
                 ]
             })
         
-        search_query = SearchQuery(query, search_type='websearch')
+        search_query = SearchQuery(self.raw_query, search_type='raw')
 
         queryset = (
             queryset
