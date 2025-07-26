@@ -52,7 +52,7 @@ class LayerList(ListView):
 
     @property
     def query_values(self):
-        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v and v != '']
+        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v != '']
 
     @property
     def cache_key(self):
