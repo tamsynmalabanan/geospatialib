@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+from django.utils.functional import cached_property
 
 import json
 import requests
@@ -46,19 +47,19 @@ class LayerList(ListView):
             keywords = query.split(' ')
             exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
             query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
-
         query = query.replace('_', ' ')
         # query = ' OR '.join(query.replace('_', ' ').split())
 
         return (query, exclusions)
 
     @property
-    def query_values(self):
-        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v and v != '']
+    def filter_values(self):
+        return [str(v).strip() for k, v in self.request.GET.items() if k not in ['query','page'] and v]
 
     @property
     def cache_key(self):
-        return create_cache_key(['layer_list']+self.query_values)
+        query, exclusions = self.query_params
+        return create_cache_key(['layer_list']+query+' '.join(exclusions)+self.filter_values)
 
     @property
     def filtered_queryset(self):
@@ -77,7 +78,7 @@ class LayerList(ListView):
                 for word in exclusions
             ), Q()))
 
-        if len(self.query_values) > 1:
+        if self.filter_values:
             queryset = queryset.filter(**{
                 param : value 
                 for param, value in self.request.GET.items()
@@ -129,8 +130,7 @@ class LayerList(ListView):
             self.queryset = queryset
 
         queryset = self.queryset
-
-        if queryset and queryset.exists():
+        if queryset.exists():
             queryset = (
                 self.queryset
                 .annotate(rank=Max('rank'))
@@ -143,7 +143,7 @@ class LayerList(ListView):
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
-            context['values'] = self.query_values
+            context['is_filtered'] = self.filter_values
         return context
 
 @require_http_methods(['GET'])
