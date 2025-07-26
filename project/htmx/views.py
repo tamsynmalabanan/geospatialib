@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
-from django.utils.functional import property
 
 import json
 import requests
