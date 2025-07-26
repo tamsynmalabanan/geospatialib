@@ -173,6 +173,7 @@ cython_debug/
 .env
 
 notes.txt
+nginx.config
 
 **/migrations/*
 !**/migrations/__init__.py
