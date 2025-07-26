@@ -1,8 +1,6 @@
 {% load static %}
 {% load utility_tags %}
 
-{{query_values}}
-
 {% for layer in layers %}
     {% variable layer.data as data %}
     {% variable layer.collection as collection %}
