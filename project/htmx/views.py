@@ -148,6 +148,7 @@ class LayerList(ListView):
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['values'] = self.query_values
+            context['cache_key'] = self.cache_key
         return context
 
 @require_http_methods(['GET'])
