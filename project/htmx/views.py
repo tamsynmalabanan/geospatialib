@@ -91,18 +91,12 @@ class LayerList(ListView):
         queryset = (
             queryset
             .annotate(
-                rank=SearchRank(F('search_vector'), search_query)
+                rank=Max(SearchRank(F('search_vector'), search_query))
             )
             .filter(
                 search_vector=search_query,
                 rank__gte=0.001
             )
-            # .order_by('-rank')
-        )
-
-        queryset = (
-            queryset
-            .annotate(rank=Max('rank'))
             .order_by(*['-rank', 'title', 'type'])
         )
 
