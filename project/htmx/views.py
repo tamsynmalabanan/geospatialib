@@ -133,6 +133,7 @@ class LayerList(ListView):
             self.queryset = queryset
 
         queryset = self.queryset
+
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
@@ -144,7 +145,7 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context['cache_key'] = self.cache_key
-
+        
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
