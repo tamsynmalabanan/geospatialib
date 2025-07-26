@@ -124,9 +124,7 @@ class LayerList(ListView):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
             queryset = cache.get(self.cache_key)
 
-            self.none_cached = False
             if not queryset or not queryset.exists():
-                self.none_cached = True
                 queryset = self.filtered_queryset
 
             if queryset.exists():
@@ -147,7 +145,6 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['none_cached'] = self.none_cached
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['values'] = self.query_values
