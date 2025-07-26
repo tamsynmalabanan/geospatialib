@@ -39,7 +39,7 @@ class LayerList(ListView):
 
     @property
     def query_params(self):
-        query = self.request.GET.get('query', '').strip().replace('"', '')
+        query = self.request.GET.get('query', '').strip()
         exclusions = []
 
         if ' -' in f' {query}':
@@ -47,9 +47,10 @@ class LayerList(ListView):
             exclusions = [i[1:] for i in keywords if i.startswith('-') and len(i) > 2]
             query = ' '.join([i for i in keywords if not i.startswith('-') and i != ''])
 
-        self.raw_query = f''
+        query = query.replace('_', ' ').replace('"', '')
+        self.raw_query = f'()'
 
-        query = ' OR '.join(query.replace('_', ' ').split())
+        query = ' OR '.join(query.split())
 
         return (query, exclusions)
 
