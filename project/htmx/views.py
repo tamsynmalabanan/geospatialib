@@ -132,7 +132,7 @@ class LayerList(ListView):
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
-            context['values'] = self.filter_values
+            context['is_filtered'] = self.filter_values
         return context
 
 @require_http_methods(['GET'])
