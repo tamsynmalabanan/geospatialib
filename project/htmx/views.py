@@ -51,7 +51,7 @@ class LayerList(ListView):
 
     @property
     def filter_values(self):
-        return [str(v).strip() for k, v in self.request.GET.items() if k not in ['page'] and v != '']
+        return [str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != '']
 
     @property
     def cache_key(self):
@@ -66,7 +66,7 @@ class LayerList(ListView):
             )
         )
 
-        if len(self.filter_values) > 1:
+        if self.filter_values:
             queryset = queryset.filter(**{
                 param : value 
                 for param, value in self.request.GET.items()
@@ -132,7 +132,7 @@ class LayerList(ListView):
         context = super().get_context_data(**kwargs)
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
-            context['is_filtered'] = self.filter_values
+            context['is_filtered'] = self.filter_values > 0
         return context
 
 @require_http_methods(['GET'])
