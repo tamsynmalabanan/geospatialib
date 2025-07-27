@@ -123,7 +123,7 @@ class Layer(models.Model):
             old = self.old
             translator = GoogleTranslator(source='auto', target='en')
 
-            if self.abstract and (not old or (old.abstract.split(' (Translated using Google Translate)')[0] != self.abstract.split(' (Translated using Google Translate)')[0])):
+            if self.abstract and (not old or (old.abstract != self.abstract)):
                 translated_abstract = translator.translate(self.abstract)
                 if translated_abstract and translated_abstract != self.abstract:
                     self.abstract = translated_abstract + ' (Translated using Google Translate)'
