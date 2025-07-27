@@ -79,4 +79,4 @@ def endswith(value, suffix):
 
 @register.filter
 def fillers_range(count):
-    return range(find_nearest_divisible(count, [2,3,4])-count)
+    return range(find_nearest_divisible(count, [2,3])-count)
