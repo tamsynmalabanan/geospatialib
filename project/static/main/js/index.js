@@ -133,9 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     })
 
-    form.addEventListener('htmx:responseError', (e) => {
-        console.log(e)
-        if (e.detail.requestConfig.path.includes('htmx/library/search')) {
+    document.addEventListener('htmx:responseError', (e) => {
+        if (e.detail.requestConfig.path.startsWith('/htmx/library/search/')) {
             const target = e.detail.target
             target.classList.remove('htmx-indicator')
             target.innerHTML = ''
