@@ -134,7 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     form.addEventListener('htmx:responseError', (e) => {
-        console.log(e)
+        if (e.detail.requestConfig.path === '/htmx/library/search/') {
+            e.target.innerHTML = e.detail.error
+        }
     })
     
     const searchResults = document.querySelector('#searchResults')
