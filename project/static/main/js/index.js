@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('htmx:responseError', (e) => {
         if (e.detail.requestConfig.path === '/htmx/library/search/') {
-            e.target.innerHTML = e.detail.error
+            console.log(e)
         }
     })
     
