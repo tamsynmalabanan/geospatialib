@@ -14,6 +14,8 @@ from django.db.models.functions import Cast
 from django.contrib.postgres.search import SearchVectorField
 
 from urllib.parse import urlparse
+from deep_translator import GoogleTranslator
+import json
 
 from helpers.base.models import dict_to_choices
 from helpers.main.constants import WORLD_GEOM
@@ -66,20 +68,20 @@ class ToTSVector(Func):
 
 class Layer(models.Model):
     collection = models.ForeignKey("main.Collection", verbose_name='Collection', on_delete=models.CASCADE, related_name='layers')
+    name = models.CharField('Name', max_length=512)
     type = models.CharField('Type', max_length=32, blank=True, null=True)
     xField = models.CharField('X Field', max_length=32, blank=True, null=True)
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
     
-    name = models.CharField('Name', max_length=512)
     title = models.CharField('Title', max_length=512, blank=True, null=True)
-    abstract = models.TextField('Abstract', blank=True, null=True)
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
-    
-    keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
     styles = models.JSONField('Styles', default=dict, blank=True, null=True)
+    
+    abstract = models.TextField('Abstract', blank=True, null=True)
+    keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
     
     last_update = models.DateTimeField('Last update', auto_now=True)
     search_vector = GeneratedField(expression=ToTSVector(Concat(
@@ -109,3 +111,33 @@ class Layer(models.Model):
         data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
         
         return data
+    
+    @property
+    def old(self):
+        if not hasattr(self, '_cached_old'):
+            self._cached_old = type(self).objects.get(pk=self.pk) if self.pk else None
+        return self._cached_old
+
+    def translate_fields(self):
+        try:
+            translator = GoogleTranslator(source='auto', target='en')
+
+            if self.abstract and (not self.old or (self.old.abstract != self.abstract)):
+                translated_abstract = translator.translate(self.abstract)
+                if translated_abstract:
+                    self.abstract = translated_abstract
+
+            if self.keywords and (not self.old or (self.old.keywords != self.keywords)):
+                translated_keywords = json.loads(translator.translate(json.dumps(self.keywords)))
+                if translated_keywords:
+                    self.keywords = translated_keywords
+        except Exception as e:
+            print(e)
+
+    def normalize_keywords(self):
+        self.keywords = sorted([str(k).strip().lower() for k in self.keywords])
+
+    def save(self, *args, **kwargs):
+        self.normalize_keywords()
+        self.translate_fields()
+        super().save(*args, **kwargs)    
