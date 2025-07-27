@@ -120,14 +120,15 @@ class Layer(models.Model):
 
     def translate_fields(self):
         try:
+            old = self.old
             translator = GoogleTranslator(source='auto', target='en')
 
-            if self.abstract and (not self.old or (self.old.abstract != self.abstract)):
+            if self.abstract and (not old or (old.abstract != self.abstract)):
                 translated_abstract = translator.translate(self.abstract)
                 if translated_abstract:
                     self.abstract = translated_abstract
 
-            if self.keywords and (not self.old or (self.old.keywords != self.keywords)):
+            if self.keywords and (not old or (old.keywords != self.keywords)):
                 translated_keywords = json.loads(translator.translate(json.dumps(self.keywords)))
                 if translated_keywords:
                     self.keywords = translated_keywords
