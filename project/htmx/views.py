@@ -30,7 +30,7 @@ class LayerList(ListView):
     template_name = 'main/search/results.html'
     model = Layer
     context_object_name = 'layers'
-    paginate_by = 24
+    paginate_by = 30
 
     @property
     def filter_fields(self):
