@@ -44,20 +44,17 @@ class LayerList(ListView):
         exclusions = []
 
         if ' -' in f' {query}':
-            exclusions = list(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
-            exclusions.sort()
+            exclusions = sorted(list(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2])))
 
             query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1])
       
-        query = list(set(query.replace('/',' ').replace('_', ' ').replace('"', '').split()))
-        query.sort()
+        query = sorted(list(set(query.replace('/',' ').replace('_', ' ').replace('"', '').split())))
 
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
     def filter_values(self):
-        values = [str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != '']
-        values.sort()
+        values = sorted([str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != ''])
         return values
 
     @property
