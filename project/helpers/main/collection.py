@@ -1,9 +1,9 @@
 from django.core.cache import cache
-
-from urllib.parse import unquote
-import os
-from datetime import timedelta
 from django.utils import timezone
+
+import os
+from urllib.parse import unquote
+from datetime import timedelta
 
 from main.tasks import onboard_collection
 from main.models import Collection
@@ -39,12 +39,12 @@ def guess_format_from_url(url):
         pass
 
     return get_first_substring_match(url, {
-        'ogc-wcs': [
-            'wcs',
-            'mapserv',
-            'geoserver',
-            '2.0.1',
-        ],
+        # 'ogc-wcs': [
+        #     'wcs',
+        #     'mapserv',
+        #     'geoserver',
+        #     '2.0.1',
+        # ],
         'ogc-wms': [
             'wms',
             'mapserv',

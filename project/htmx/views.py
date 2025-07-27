@@ -49,7 +49,7 @@ class LayerList(ListView):
 
             query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1])
       
-        query = list(set(query.replace('_', ' ').replace('"', '').split()))
+        query = list(set(query.replace('/',' ').replace('_', ' ').replace('"', '').split()))
         query.sort()
 
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
@@ -144,28 +144,25 @@ class LayerList(ListView):
 
 @require_http_methods(['GET'])
 def validate_collection(request):
-    try:
-        data = request.GET.dict()
-        context = {'layers':{}}
-        form = ValidateCollectionForm(data)
-        if form.is_valid():
-            context = get_collection_data(
-                url = form.cleaned_data.get('url', ''),
-                format = form.cleaned_data.get('format', None),
-            ) or {}
-            layers = context.get('layers', {})
-            if layers == {}:
-                raw_format = data.get('format')
-                form.data.update({'format':raw_format})
-                if raw_format:
-                    form.add_error('format', 'No layers retrieved.')
-            else:
-                form.data.update({'url':context['url']})
-                context['layers'] = sort_layers(layers)
-        context['form'] = form
-        return render(request, 'helpers/partials/add_layers/url_fields.html', context)
-    except Exception as e:
-        return HttpResponse(e)
+    data = request.GET.dict()
+    context = {'layers':{}}
+    form = ValidateCollectionForm(data)
+    if form.is_valid():
+        context = get_collection_data(
+            url = form.cleaned_data.get('url', ''),
+            format = form.cleaned_data.get('format', None),
+        ) or {}
+        layers = context.get('layers', {})
+        if layers == {}:
+            raw_format = data.get('format')
+            form.data.update({'format':raw_format})
+            if raw_format:
+                form.add_error('format', 'No layers retrieved.')
+        else:
+            form.data.update({'url':context['url']})
+            context['layers'] = sort_layers(layers)
+    context['form'] = form
+    return render(request, 'helpers/partials/add_layers/url_fields.html', context)
 
 @require_http_methods(['POST'])
 def update_collection(request):

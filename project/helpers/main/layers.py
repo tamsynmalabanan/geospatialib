@@ -175,5 +175,5 @@ LAYER_VALIDATORS = {
     'xyz': validate_xyz,
     'ogc-wfs': validate_ogc,
     'ogc-wms': validate_ogc,
-    'ogc-wcs': validate_ogc,
+    # 'ogc-wcs': validate_ogc,
 }

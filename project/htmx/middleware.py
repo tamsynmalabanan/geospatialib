@@ -8,13 +8,13 @@ class HTMXDomainRestriction:
         self.get_response = get_response
 
     def __call__(self, request):
-        path = resolve(request.path)
-        if path.app_name == 'htmx':
-            not_htmx = not request.htmx
-            not_allowed_host = not any([i for i in settings.ALLOWED_HOSTS if i in request.META.get('HTTP_HOST')])
-            if not_htmx or not_allowed_host:
-                return redirect('main:index')
-                # return HttpResponseForbidden('You do not have permission to access this resource.')
+        if not settings.DEBUG:
+            if resolve(request.path).app_name == 'htmx':
+                not_htmx_request = not request.htmx
+                not_allowed_host = not any([i for i in settings.ALLOWED_HOSTS if i in request.META.get('HTTP_HOST')])
+                if not_htmx_request or not_allowed_host:
+                    return redirect('main:index')
+                    # return HttpResponseForbidden('You do not have permission to access this resource.')
 
         response = self.get_response(request)
         return response
