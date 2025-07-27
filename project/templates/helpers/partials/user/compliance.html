@@ -1,14 +1,16 @@
-<p class='text-wrap text-muted user-select-none lh-1 mt-2 mb-0 {% if user.is_authenticated %}px-3{% endif %}' style="width:230px;font-size:12px;">
-    By using Geospatialib, you agree to comply with our 
-    <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userTermsModal">Terms</span>, 
-    <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userPrivacyPolicyModal">Privacy Policy</span> and 
-    <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userCookiesPolicyModal">Cookies Policy</span>.
-</p>
-
-{% if user.is_authenticated %}
-    {% if user.is_superuser %}
-        <a class='px-3 mt-2 text-reset text-decoration-none text-muted fs-12' href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer">Go to admin</a>
-    {% else %}
-        <span class='px-3 mt-2 text-muted fs-12 user-select-none' data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete account</span>
+<div class="d-flex flex-column gap-2">
+    <p class="text-wrap text-muted user-select-none lh-1 mt-2 mb-0 fs-12 {% if user.is_authenticated %}px-3{% endif %}" style="width:230px;">
+        By using Geospatialib, you agree to comply with our 
+        <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userTermsModal">Terms</span>, 
+        <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userPrivacyPolicyModal">Privacy Policy</span> and 
+        <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userCookiesPolicyModal">Cookies Policy</span>.
+    </p>
+    
+    {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+            <a class='px-3 text-reset text-decoration-none text-muted fs-12' href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer">Go to admin</a>
+        {% else %}
+            <span class='px-3 text-muted fs-12 user-select-none' data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete account</span>
+        {% endif %}
     {% endif %}
-{% endif %}
+</div>

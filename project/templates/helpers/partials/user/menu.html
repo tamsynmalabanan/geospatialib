@@ -16,7 +16,7 @@
 </button>
 
 {% if user.is_authenticated %}
-    <ul class="dropdown-menu dropdown-menu-start">
+    <ul class="dropdown-menu dropdown-menu-start fs-14">
         <li><form class='dropdown-item' method="post" action="{% url 'customuser:logout' %}">
             {% csrf_token %}
             <button class='border-0 bg-transparent p-0 m-0 w-100 text-start' type="submit">Logout</button>
@@ -28,8 +28,16 @@
     <div class="dropdown-menu p-3 dropdown-menu-start">
         <a href="{% provider_login_url 'google' %}?next={% url 'main:index' %}" class="justify-content-center d-flex flex-nowrap text-reset text-decoration-none">
             <i class="bi bi-google me-2"></i>
-            <span class='text-nowrap'>Sign in with Google</span>
+            <span class='text-nowrap fw-medium'>Sign in with Google</span>
         </a>                 
         {% include "helpers/partials/user/compliance.html" %}
     </div>
+{% endif %}
+
+{% if not user.is_authenticated %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('#userDropdownMenu').click()
+        })
+    </script>
 {% endif %}
