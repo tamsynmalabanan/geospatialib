@@ -43,15 +43,21 @@ class LayerList(ListView):
         exclusions = []
 
         if ' -' in f' {query}':
-            exclusions = set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2])
+            exclusions = list(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
+            exclusions.sort()
+
             query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1])
       
-        query = set(query.replace('_', ' ').replace('"', '').split())
+        query = list(set(query.replace('_', ' ').replace('"', '').split()))
+        query.sort()
+
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & ({' & '.join([f"!'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
     def filter_values(self):
-        return [str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != '']
+        values = [str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != '']
+        values.sort()
+        return values
 
     @property
     def cache_key(self):
@@ -130,8 +136,7 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['queries'] = self.raw_query
-        # context['queries'] = [i.replace('!','').replace('(', '').replace(')','').split('|') for i in self.raw_query.replace("'", '').replace(' ', '').split('&')]
+        context['cache_key'] = self.cache_key
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['is_filtered'] = len(self.filter_values) > 0
