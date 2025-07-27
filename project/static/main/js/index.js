@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const target = e.detail.target
             target.classList.remove('htmx-indicator')
             target.innerHTML = ''
-            e.detail.target.appendChild(customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}))
+            target.appendChild(customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}))
         }
     })
     
