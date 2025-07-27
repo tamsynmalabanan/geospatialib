@@ -137,8 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.detail.requestConfig.path.startsWith('/htmx/library/search/')) {
             const target = e.detail.target
             target.classList.remove('htmx-indicator')
-            target.innerHTML = ''
-            target.appendChild(customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}))
+            target.innerHTML = customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}).outerHTML
         }
     })
     
