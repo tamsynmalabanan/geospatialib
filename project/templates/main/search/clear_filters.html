@@ -4,7 +4,7 @@
     type='submit'
     name='clear'
     title='Clear all filters'
-    {% if values|length == 1 %}disabled{% endif %}
+    {% if not is_filtered %}disabled{% endif %}
 >
     <i class="bi bi-arrow-clockwise"></i>
     <span class="">Clear filters</span>
