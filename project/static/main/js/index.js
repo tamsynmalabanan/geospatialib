@@ -135,7 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('htmx:responseError', (e) => {
         if (e.detail.requestConfig.path === '/htmx/library/search/') {
-            e.detail.target.innerHTML = ''
+            const target = e.detail.target
+            target.classList.remove('htmx-indicator')
+            target.innerHTML = ''
             e.detail.target.appendChild(customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}))
         }
     })
