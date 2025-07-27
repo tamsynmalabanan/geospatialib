@@ -3,6 +3,7 @@ from django.core.cache import cache
 from celery import shared_task
 import requests
 
+from .choices import COLLECTION_FORMATS
 from .models import URL, Collection, Layer
 from helpers.base.utils import get_domain, get_response, get_domain_url, create_cache_key
 from helpers.main.layers import LAYER_VALIDATORS, format_url
@@ -21,6 +22,9 @@ def onboard_collection(self, cache_key):
     url = cached_collection.get('url')
     format = cached_collection.get('format')
     layers = cached_collection.get('layers')
+
+    if COLLECTION_FORMATS.get(format) is None:
+        return
 
     collection = None
 
