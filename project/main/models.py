@@ -128,7 +128,7 @@ class Layer(models.Model):
                 if translated_abstract:
                     self.abstract = translated_abstract
 
-            if self.keywords and (not old or (old.keywords != self.keywords)):
+            if self.keywords and (not old or (set(old.keywords) != set(self.keywords))):
                 translated_keywords = json.loads(translator.translate(json.dumps(self.keywords)))
                 if translated_keywords:
                     self.keywords = translated_keywords
@@ -141,4 +141,4 @@ class Layer(models.Model):
     def save(self, *args, **kwargs):
         self.normalize_keywords()
         self.translate_fields()
-        super().save(*args, **kwargs)    
+        super().save(*args, **kwargs)
