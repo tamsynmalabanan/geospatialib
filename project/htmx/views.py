@@ -48,7 +48,6 @@ class LayerList(ListView):
             query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1])
       
         query = sorted(set(query.replace('/',' ').replace('_', ' ').replace('"', '').split()))
-
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
