@@ -132,6 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     
     })
+
+    form.addEventListener('htmx:responseError', (e) => {
+        console.log(e)
+    })
     
     const searchResults = document.querySelector('#searchResults')
     searchResults.parentElement.addEventListener('htmx:afterSwap', (e) => {
