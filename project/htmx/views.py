@@ -130,7 +130,7 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['queries'] = [i.replace('(', '').replace(')','').split('|') for i in self.raw_query.replace(' ', '').replace("'", '').replace('!','').split('&')]
+        context['queries'] = [i.replace('(', '').replace(')','').split('|').sort() for i in self.raw_query.replace(' ', '').replace("'", '').replace('!','').split('&')]
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['is_filtered'] = len(self.filter_values) > 0
