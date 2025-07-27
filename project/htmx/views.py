@@ -51,7 +51,7 @@ class LayerList(ListView):
         query = list(set(query.replace('_', ' ').replace('"', '').split()))
         query.sort()
 
-        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"!'{i}'" for i in exclusions])})' if exclusions else ''}'
+        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
     def filter_values(self):
