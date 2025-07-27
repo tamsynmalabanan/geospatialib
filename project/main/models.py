@@ -136,7 +136,7 @@ class Layer(models.Model):
             print(e)
 
     def normalize_keywords(self):
-        self.keywords = sorted([str(k).strip().lower() for k in self.keywords])
+        self.keywords = sorted(set([str(k).strip().lower() for k in self.keywords]))
 
     def save(self, *args, **kwargs):
         self.normalize_keywords()
