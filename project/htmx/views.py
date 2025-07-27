@@ -51,7 +51,7 @@ class LayerList(ListView):
 
     @property
     def query_values(self):
-        return [str(v).strip() for k, v in self.request.GET.items() if k != 'page' and v != '']
+        return [str(v).strip() for k, v in self.request.GET.items() if k not in ['page'] and v != '']
 
     @property
     def cache_key(self):
@@ -84,7 +84,7 @@ class LayerList(ListView):
             )
             .filter(
                 search_vector=search_query,
-                rank__gte=0.001
+                rank__gte=0.01
             )
         )
 
