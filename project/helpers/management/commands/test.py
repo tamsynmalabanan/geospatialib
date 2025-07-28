@@ -59,7 +59,21 @@ def test_ai_agent():
 
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
-    # completion = client.
+    completion = client.chat.completions.create(
+        model='gpt-4o',
+        messages=[
+            {'role': 'system', 'content': 'You are a helpful assitant.'},
+            {
+                'role': 'user',
+                'content': 'Write a limerick about the Python programming language.'
+            }
+        ]
+    )
+
+    response = completion.choices
+    print(response)
+    content = response[0].message.content
+    print(content)
 
 class Command(BaseCommand):
     help = 'Test'
