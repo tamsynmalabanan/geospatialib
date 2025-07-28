@@ -59,7 +59,7 @@ def test_ai_agent():
 
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
-    completion = client.
+    # completion = client.
 
 class Command(BaseCommand):
     help = 'Test'
