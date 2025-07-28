@@ -140,7 +140,6 @@ class Layer(models.Model):
         if self.keywords: # and (not db_version or (set(db_version.keywords) != set(self.keywords))):
             try:
                 self.keywords = sorted(set([str(k).strip().lower() for k in self.keywords]))
-                print('OK')
             except Exception as e:
                 print(e)
 
