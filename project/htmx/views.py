@@ -45,7 +45,7 @@ class LayerList(ListView):
 
         if ' -' in f' {query}':
             exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
-            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1])
+            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions])
       
         query = sorted(set(query.replace('/',' ').replace('_', ' ').replace('"', '').split()))
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
@@ -132,6 +132,7 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['raw_query'] = self.raw_query
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['is_filtered'] = len(self.filter_values) > 0
