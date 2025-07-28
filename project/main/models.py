@@ -113,22 +113,22 @@ class Layer(models.Model):
         return data
     
     @property
-    def old(self):
-        if not hasattr(self, '_cached_old'):
-            self._cached_old = type(self).objects.get(pk=self.pk) if self.pk else None
-        return self._cached_old
+    def db_version(self):
+        if not hasattr(self, '_db_version'):
+            self._db_version = type(self).objects.get(pk=self.pk) if self.pk else None
+        return self._db_version
 
     def translate_fields(self):
         try:
-            old = self.old
+            db_version = self.db_version
             translator = GoogleTranslator(source='auto', target='en')
 
-            if self.abstract and (not old or (old.abstract != self.abstract)):
+            if self.abstract and (not db_version or (db_version.abstract != self.abstract)):
                 translated_abstract = translator.translate(self.abstract)
                 if translated_abstract and translated_abstract != self.abstract:
-                    self.abstract = translated_abstract + ' (Translated using Google Translate)'
+                    self.abstract = translated_abstract + ' (Translated via <a href="https://github.com/nidhaloff/deep-translator" target="_blank">deep-translator</a> and <a href="https://translate.google.com/?sl=auto&tl=en&op=translate" target="_blank">Google Translate API</a>)'
 
-            if self.keywords and (not old or (set(old.keywords) != set(self.keywords))):
+            if self.keywords and (not db_version or (set(db_version.keywords) != set(self.keywords))):
                 translated_keywords = json.loads(translator.translate(json.dumps(self.keywords)))
                 if translated_keywords:
                     self.keywords = translated_keywords
