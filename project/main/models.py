@@ -136,8 +136,8 @@ class Layer(models.Model):
             print(e)
 
     def normalize_keywords(self):
-        # db_version = self.db_version
-        if self.keywords: # and (not db_version or (set(db_version.keywords) != set(self.keywords))):
+        db_version = self.db_version
+        if self.keywords and (not db_version or (set(db_version.keywords) != set(self.keywords))):
             self.keywords = sorted(set([str(k).strip().lower() for k in self.keywords]))
 
     def save(self, *args, **kwargs):
