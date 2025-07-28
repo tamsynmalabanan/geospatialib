@@ -8,6 +8,7 @@
 {% endif %}
 
 {% if page_obj.number %}
+    {{raw_query}}
     {% if page_obj.number == 1 %}
         <ul id='searchResults' class="border-top p-3 d-flex flex-grow-1 flex-wrap gap-3 mb-3 w-100">
             {% include "main/search/items.html" %}
