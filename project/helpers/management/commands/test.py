@@ -54,9 +54,12 @@ def test_get_collection_data():
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
 def test_ai_agent():
-    # 
-    
-    pass
+    from openai import OpenAI
+    from decouple import config
+
+    client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
+
+    completion = client.
 
 class Command(BaseCommand):
     help = 'Test'
