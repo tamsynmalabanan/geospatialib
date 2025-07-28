@@ -53,13 +53,17 @@ def test_get_collection_data():
     data = get_collection_data(url, delay=False)
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
+def test_ai_agent():
+    # 
+    
+    pass
+
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         # URL.objects.all().delete()
         # test_get_collection_data()
 
-        for layer in Layer.objects.all():
-            layer.save()
+        test_ai_agent()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
