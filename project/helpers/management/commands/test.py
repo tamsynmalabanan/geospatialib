@@ -59,4 +59,7 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_get_collection_data()
 
+        for layer in Layer.objects.all():
+            layer.save()
+
         self.stdout.write(self.style.SUCCESS('Done.'))
