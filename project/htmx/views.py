@@ -86,7 +86,7 @@ class LayerList(ListView):
             )
             .filter(
                 search_vector=search_query,
-                rank__gte=0.001
+                rank__gte=0.01
             )
         )
 
