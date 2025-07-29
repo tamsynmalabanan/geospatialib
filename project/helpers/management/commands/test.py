@@ -142,7 +142,7 @@ def test_ai_agent():
             description='The JSON of categories and paramters.'
         )
 
-    system_prompt = f'''
+    system_prompt = '''
         You are a helpful thematic map creation assistant.
 
         The user will provide a subject they want to map, and optionally a place of interest. Your task is to:
