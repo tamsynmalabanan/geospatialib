@@ -77,7 +77,7 @@ def test_ai_agent():
 
             search_query = SearchQuery(query, search_type='raw')
             queryset = queryset.annotate(rank=SearchRank(F('search_vector'), search_query))
-            queryset = queryset.filter(search_vector=search_query,rank__gte=0.05)
+            queryset = queryset.filter(search_vector=search_query,rank__gte=0.001)
 
             return {layer.pk: layer.data for layer in queryset}
         except Exception as e:
