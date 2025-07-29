@@ -84,7 +84,7 @@ def test_ai_agent():
                 )
                 categories[id]['layers'] = [layer.data for layer in filtered_queryset]
 
-            return json.dumps(categories)
+            return categories
         except Exception as e:
             print(e)
 
@@ -218,13 +218,18 @@ def test_ai_agent():
         )
 
     if completion.choices:
-        content = json.loads(completion.choices[0].message.content)
-        print('Title:', content.get('title'))
-        print('Bbox:', content.get('bbox'))
-        for key1, value1 in json.loads(content.get('categories')).items():
-            print(key1)
-            for key2, value2 in value1.items():
-                print(key2, value2)
+        content_json = completion.choices[0].message.content
+        if content_json:
+            content = json.loads(content_json)
+            print('Title:', content.get('title'))
+            print('Bbox:', content.get('bbox'))
+            for key1, value1 in json.loads(content.get('categories')).items():
+                print(key1)
+                for key2, value2 in value1.items():
+                    print(key2, value2)
+            return
+    print(completion)
+    
 
 class Command(BaseCommand):
     help = 'Test'
