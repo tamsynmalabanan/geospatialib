@@ -163,7 +163,7 @@ def test_ai_agent():
             description='The bounding box of the place of interest, if any.'
         )
         categories: str = Field(
-            description='The JSON of categories and paramters including title, description, query words, overpass tags and layers.'
+            description='The JSON of categories and paramters including title, description, 5 query words, 10 overpass tags and 5 layers.'
         )
 
     system_prompt = '''
@@ -211,20 +211,19 @@ def test_ai_agent():
         tools=tools,
     )
 
-    if completion.choices:
+    while completion.choices and completion.choices[0].finish_reason == 'tool_calls' and completion.choices[0].message.tool_calls:
         tool_calls = completion.choices[0].message.tool_calls
-        if tool_calls:
-            for tool_call in completion.choices[0].message.tool_calls:
-                name = tool_call.function.name
-                print(name)
-                args = json.loads(tool_call.function.arguments)
-                messages.append(completion.choices[0].message)
+        print('tool_calls', tool_calls)
+        for tool_call in completion.choices[0].message.tool_calls:
+            name = tool_call.function.name
+            print('tool name', name)
+            args = json.loads(tool_call.function.arguments)
+            messages.append(completion.choices[0].message)
 
-                result = call_function(name, args)
-                print(result)
-                messages.append(
-                    {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
-                )
+            result = call_function(name, args)
+            messages.append(
+                {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+            )
 
         completion = client.beta.chat.completions.parse(
             model='gpt-4o',
@@ -249,9 +248,6 @@ def test_ai_agent():
             # except Exception as e:
             #     print(e)
             #     print(categories)
-            # return
-    print(completion)
-    
 
 class Command(BaseCommand):
     help = 'Test'
