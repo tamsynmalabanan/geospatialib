@@ -56,24 +56,147 @@ def test_get_collection_data():
 def test_ai_agent():
     from openai import OpenAI
     from decouple import config
+    from pydantic import BaseModel, Field
+    from geopy.geocoders import Nominatim
+    from django.contrib.gis.geos import Polygon, GEOSGeometry
+    import json
+    from main.models import Layer
+    from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+    from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
+
+
+    def get_category_layers_data(query, bbox):
+        try:
+            queryset = Layer.objects.all()
+
+            if bbox:
+                w,s,e,n = [float(i) for i in bbox]
+                geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+                queryset = queryset.filter(bbox__bboverlaps=geom)
+
+            search_query = SearchQuery(query, search_type='raw')
+            queryset = queryset.annotate(rank=SearchRank(F('search_vector'), search_query))
+            queryset = queryset.filter(search_vector=search_query,rank__gte=0.001)
+
+            return {layer.pk: layer.data for layer in queryset}
+        except Exception as e:
+            print(e)
+
+    def get_place_geom(place):
+        try:
+            geolocator = Nominatim(user_agent="geospatialib/1.0")
+            location = geolocator.geocode(place, exactly_one=True)
+            if location:
+                s,n,w,e = [float(i) for i in location.raw['boundingbox']]
+                geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+                geom_proj = geom.transform(3857, clone=True)
+                buffered_geom = geom_proj.buffer(1000)
+                buffered_geom.transform(4326)
+                return buffered_geom.extent
+        except Exception as e:
+            print(e)
+
+    def call_function(name, args):
+        fn = {
+            'get_place_geom': get_place_geom
+        }.get(name)
+
+        if fn:
+            return fn(**args)
+        
+        raise ValueError(f"Unknown function: {name}")
+        
+    tools = [
+        {
+            'type': 'function',
+            'function': {
+                'name': 'get_place_geom',
+                'description': 'Get bounding box for provided place.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'place': {'type': 'string'}
+                    },
+                    'required': ['place'],
+                    'additionalProperties': False
+                },
+                'strict': True,
+            }
+        }
+    ]
 
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
+    class ThematicMap(BaseModel):
+        title: str = Field(
+            description='The title of the thematic map. Incorporate the place of interest, if any.'
+        )
+        bbox: list[float] = Field(
+            description='The bounding box of the place of interest, if any. Format: [w,s,e,n]'
+        )
+        categories: str = Field(
+            description='A json of categories and corresponding title, query words, description and Overpass QL filter tags, in this format: '
+            + '{"category_id": {"title": "Category Title 1", "query": "(\'word1\' | \'word2\' | \'word3\')", '
+            + '"description": "A detailed paragrapth describing the relevance of the category to the subject.", '
+            + '"overpass_tags": ["tag1", "tag2", "tag3",...]}}'
+        )
+
+    system_prompt = '''
+        You are a helpful thematic map creation assistant.
+
+        The user will provide a subject they want to map, and optionally a place of interest. Your task is to:
+        1. If a place is mentioned in the subject, use 'get_place_geom' to identify the bounding box for the place.
+        2. Identify 10 diverse spatially-applicable categories most relevant to the subject and to the place, if a place is mentioned.
+            - Prioritize categories that correspond to territorial boundary, natural resources, topography, environmental, infrastructure, regulatory, or domain-specific datasets.
+            - Be concise but informative in your reasoning. Avoid listing layers — focus on thematic scope and spatial context.
+        3. Identify 3 search query words most relevant to each category ordered based on relevance to the category and subject.
+            - Each search query word should be an individual real english word, no caps, no conjunctions, no special characters, just a word relevant to the category.
+            - Make sure search query words are suitable for filtering geospatial layers.
+        4. For each category, identify 10 Overpass QL filter tags that are relevant to the category ordered based on relevance to the category and subject.
+    '''
+    
+    messages=[
+        {'role': 'system', 'content': system_prompt},
+        {'role': 'user', 'content': 'solar plant site screening in palauig zambales'}
+    ]
+
     completion = client.chat.completions.create(
         model='gpt-4o',
-        messages=[
-            {'role': 'system', 'content': 'You are a helpful assitant.'},
-            {
-                'role': 'user',
-                'content': 'Write a limerick about the Python programming language.'
-            }
-        ]
+        messages=messages,
+        tools=tools,
     )
 
-    response = completion.choices
-    print(response)
-    content = response[0].message.content
-    print(content)
+    if completion.choices:
+        tool_calls = completion.choices[0].message.tool_calls
+        if tool_calls:
+            for tool_call in completion.choices[0].message.tool_calls:
+                name = tool_call.function.name
+                args = json.loads(tool_call.function.arguments)
+                messages.append(completion.choices[0].message)
+
+                result = call_function(name, args)
+                messages.append(
+                    {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+                )
+
+        completion = client.beta.chat.completions.parse(
+            model='gpt-4o',
+            messages=messages,
+            tools=tools,
+            response_format=ThematicMap
+        )
+
+    if completion.choices:
+        content = json.loads(completion.choices[0].message.content)
+        print('Title:', content.get('title'))
+        print('Bbox:', content.get('bbox'))
+        for key1, value1 in json.loads(content.get('categories')).items():
+            print(key1)
+            for key2, value2 in value1.items():
+                print(key2, value2)
+            layers = get_category_layers_data(value1.get('query'), content.get('bbox'))
+            print('layers', layers)
+            print('\n')
 
 class Command(BaseCommand):
     help = 'Test'

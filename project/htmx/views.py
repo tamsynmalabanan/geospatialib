@@ -40,14 +40,14 @@ class LayerList(ListView):
 
     @property
     def raw_query(self):
-        query = self.request.GET.get('query', '').strip()
+        query = self.request.GET.get('query', '').strip().replace('\'', '').replace('"','')
         exclusions = []
 
         if ' -' in f' {query}':
             exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
             query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions])
       
-        query = sorted(set(query.replace('/',' ').replace('_', ' ').replace('"', '').split()))
+        query = sorted(set(query.replace('/',' ').replace('_', ' ').split()))
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property

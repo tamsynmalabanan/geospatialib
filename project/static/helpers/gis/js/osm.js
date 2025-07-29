@@ -52,6 +52,7 @@ const fetchOverpass = async ({
     zoom,
     abortBtns,
     controller,
+    body = getOverpassRequestBody(queryGeom, zoom),
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
@@ -67,7 +68,7 @@ const fetchOverpass = async ({
         },
         fetchParams: {
             method: "POST",
-            body: getOverpassRequestBody(queryGeom, zoom)
+            body,
         }
     }).catch(error => {
         console.log(error)
@@ -82,7 +83,7 @@ const overpassToGeoJSON = async (data, {
     for (const key in properties) geojson[key] = properties[key]
 
     for (const element of data) {
-        if (controller.signal.aborted) return
+        if (controller?.signal?.aborted) return
 
         const id = element.id
         const type = element.type
