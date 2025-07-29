@@ -69,7 +69,7 @@ def test_ai_agent():
         try:
             queryset = Layer.objects.all()
             if bbox:
-                w,s,e,n = [float(i) for i in bbox]
+                w,s,e,n = [float(i) for i in json.loads(bbox)]
                 geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
                 queryset = queryset.filter(bbox__bboverlaps=geom)
 
@@ -139,7 +139,7 @@ def test_ai_agent():
                     'type': 'object',
                     'properties': {
                         'categories': {'type': 'string'},
-                        'bbox': {'type': 'list'},
+                        'bbox': {'type': 'string'},
                     },
                     'required': ['categories'],
                     'additionalProperties': False
@@ -155,7 +155,7 @@ def test_ai_agent():
         title: str = Field(
             description='The title of the thematic map. Incorporate the place of interest, if any.'
         )
-        bbox: list[float] = Field(
+        bbox: str = Field(
             description='The bounding box of the place of interest, if any.'
         )
         categories: str = Field(
