@@ -144,7 +144,7 @@ def test_ai_agent():
                     'required': ['categories'],
                     'additionalProperties': False
                 },
-                'strict': True,
+                'strict': False,
             }
         },
     ]
