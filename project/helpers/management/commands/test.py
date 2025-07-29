@@ -82,7 +82,7 @@ def test_ai_agent():
                     .filter(search_vector=search_query,rank__gte=0.01)
                     .order_by(*['-rank'])
                 )
-                categories[id]['layers'] = [layer.name for layer in filtered_queryset[:10]]
+                categories[id]['layers'] = [layer.data for layer in filtered_queryset[:10]]
 
             return categories
         except Exception as e:
@@ -159,7 +159,7 @@ def test_ai_agent():
             description='The bounding box of the place of interest, if any.'
         )
         categories: str = Field(
-            description='The JSON of categories and paramters.'
+            description='The JSON of categories and paramters including title, description, query words, overpass tags and layers.'
         )
 
     system_prompt = '''
@@ -180,9 +180,15 @@ def test_ai_agent():
                 "title": "Category Title 1", 
                 "description": "A detailed paragrapth describing the relevance of the category to the subject.",
                 "query": "(\'word1\' | \'word2\' | \'word3\')", 
-                "overpass_tags": ["tag1", "tag2", "tag3",...]
+                "overpass_tags": ["tag1", "tag2", "tag3",...],
             }}
-            6. User 'get_category_layers_data' to update the categories JSON with a list of database layers data for each category.
+            6. User 'get_category_layers_data' to update the categories JSON with a list of database layers data for each category. Updated format: {"category_id": {
+                "title": "Category Title 1", 
+                "description": "A detailed paragrapth describing the relevance of the category to the subject.",
+                "query": "(\'word1\' | \'word2\' | \'word3\')", 
+                "overpass_tags": ["tag1", "tag2", "tag3",...],
+                "layers": [{"layer1_field1":"layer1_value1",...}, {"layer2_field1":"layer2_value1",...},...],
+            }}
     '''
     
     messages=[
@@ -201,7 +207,6 @@ def test_ai_agent():
         if tool_calls:
             for tool_call in completion.choices[0].message.tool_calls:
                 name = tool_call.function.name
-                print(name)
                 args = json.loads(tool_call.function.arguments)
                 messages.append(completion.choices[0].message)
 
@@ -225,7 +230,7 @@ def test_ai_agent():
             print('Bbox:', content.get('bbox'))
             categories = content.get('categories')
             try:
-                for key1, value1 in json.loads().items():
+                for key1, value1 in json.loads(categories).items():
                     print(key1)
                     for key2, value2 in value1.items():
                         print(key2, value2)
