@@ -82,7 +82,7 @@ def test_ai_agent():
                 .order_by(*['-rank'])
             )
 
-            return {layer.pk: layer.data for layer in queryset}
+            return {layer.pk: layer.data for layer in queryset[:30]}
         except Exception as e:
             print(e)
 
@@ -131,6 +131,13 @@ def test_ai_agent():
 
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
+    categories_description = '''JSON of categories and corresponding title, query words, description and Overpass QL filter tags, in this format: {"category_id": {
+        "title": "Category Title 1", 
+        "description": "A detailed paragrapth describing the relevance of the category to the subject.",
+        "query": "(\'word1\' | \'word2\' | \'word3\')", 
+        "overpass_tags": ["tag1", "tag2", "tag3",...]
+    }}'''
+
     class ThematicMap(BaseModel):
         title: str = Field(
             description='The title of the thematic map. Incorporate the place of interest, if any.'
@@ -139,13 +146,10 @@ def test_ai_agent():
             description='The bounding box of the place of interest, if any. Format: [w,s,e,n]'
         )
         categories: str = Field(
-            description='A json of categories and corresponding title, query words, description and Overpass QL filter tags, in this format: '
-            + '{"category_id": {"title": "Category Title 1", "query": "(\'word1\' | \'word2\' | \'word3\')", '
-            + '"description": "A detailed paragrapth describing the relevance of the category to the subject.", '
-            + '"overpass_tags": ["tag1", "tag2", "tag3",...]}}'
+            description=categories_description
         )
 
-    system_prompt = '''
+    system_prompt = f'''
         You are a helpful thematic map creation assistant.
 
         The user will provide a subject they want to map, and optionally a place of interest. Your task is to:
@@ -153,10 +157,11 @@ def test_ai_agent():
         2. Identify 10 diverse spatially-applicable categories most relevant to the subject and to the place, if a place is mentioned.
             - Prioritize categories that correspond to territorial boundary, natural resources, topography, environmental, infrastructure, regulatory, or domain-specific datasets.
             - Be concise but informative in your reasoning. Avoid listing layers — focus on thematic scope and spatial context.
-        3. Identify 3 search query words most relevant to each category ordered based on relevance to the category and subject.
+        3. Identify 5 search query words most relevant to each category ordered based on relevance to the category and subject.
             - Each search query word should be an individual real english word, no caps, no conjunctions, no special characters, just a word relevant to the category.
             - Make sure search query words are suitable for filtering geospatial layers.
         4. For each category, identify 10 Overpass QL filter tags that are relevant to the category ordered based on relevance to the category and subject.
+        5. Create a {categories_description}
     '''
     
     messages=[
@@ -175,6 +180,7 @@ def test_ai_agent():
         if tool_calls:
             for tool_call in completion.choices[0].message.tool_calls:
                 name = tool_call.function.name
+                print(name)
                 args = json.loads(tool_call.function.arguments)
                 messages.append(completion.choices[0].message)
 
@@ -199,7 +205,7 @@ def test_ai_agent():
             for key2, value2 in value1.items():
                 print(key2, value2)
             layers = get_category_layers_data(value1.get('query'), content.get('bbox'))
-            print('layers', len(layers.keys()), {k:v.get('name') for k,v in layers.items()})
+            print('layers', len(layers.keys()), {k:v.get('title') for k,v in layers.items()})
             print('\n')
 
 class Command(BaseCommand):
