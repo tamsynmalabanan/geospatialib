@@ -65,24 +65,26 @@ def test_ai_agent():
     from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 
 
-    def get_category_layers_data(query, bbox):
+    def get_category_layers_data(categories_json, bbox):
         try:
             queryset = Layer.objects.all()
-
             if bbox:
                 w,s,e,n = [float(i) for i in bbox]
                 geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
                 queryset = queryset.filter(bbox__bboverlaps=geom)
 
-            search_query = SearchQuery(query, search_type='raw')
-            queryset = (
-                queryset
-                .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
-                .filter(search_vector=search_query,rank__gte=0.001)
-                .order_by(*['-rank'])
-            )
+            categories = json.loads(categories_json)
+            for id, params in categories.items():
+                search_query = SearchQuery(params.get('query'), search_type='raw')
+                filtered_queryset = (
+                    queryset
+                    .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
+                    .filter(search_vector=search_query,rank__gte=0.01)
+                    .order_by(*['-rank'])
+                )
+                categories[id]['layers'] = [layer.data for layer in filtered_queryset]
 
-            return {layer.pk: layer.data for layer in queryset[:30]}
+            return json.dumps(categories)
         except Exception as e:
             print(e)
 
@@ -102,7 +104,8 @@ def test_ai_agent():
 
     def call_function(name, args):
         fn = {
-            'get_place_geom': get_place_geom
+            'get_place_geom': get_place_geom,
+            'get_category_layers_data': get_category_layers_data,
         }.get(name)
 
         if fn:
@@ -126,7 +129,24 @@ def test_ai_agent():
                 },
                 'strict': True,
             }
-        }
+        },
+        {
+            'type': 'function',
+            'function': {
+                'name': 'get_category_layers_data',
+                'description': 'Update the categories JSON with a list of database layers data for each category.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'categories': {'type': 'string'},
+                        'bbox': {'type': 'list'},
+                    },
+                    'required': ['categories'],
+                    'additionalProperties': False
+                },
+                'strict': True,
+            }
+        },
     ]
 
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
@@ -162,6 +182,7 @@ def test_ai_agent():
                 "query": "(\'word1\' | \'word2\' | \'word3\')", 
                 "overpass_tags": ["tag1", "tag2", "tag3",...]
             }}
+            6. User 'get_category_layers_data' to update the categories JSON with a list of database layers data for each category.
     '''
     
     messages=[
@@ -204,9 +225,6 @@ def test_ai_agent():
             print(key1)
             for key2, value2 in value1.items():
                 print(key2, value2)
-            layers = get_category_layers_data(value1.get('query'), content.get('bbox'))
-            print('layers', len(layers.keys()), {k:v.get('title') for k,v in layers.items()})
-            print('\n')
 
 class Command(BaseCommand):
     help = 'Test'
