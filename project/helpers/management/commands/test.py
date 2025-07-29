@@ -82,8 +82,12 @@ def test_ai_agent():
                     .filter(search_vector=search_query,rank__gte=0.01)
                     .order_by(*['-rank'])
                 )
-                categories[id]['layers'] = [layer.search_vector for layer in filtered_queryset[:10]]
-
+                categories[id]['layers'] = {layer.pk:{
+                    'name': layer.name,
+                    'title': layer.title,
+                    'abstract': layer.abstract,
+                    'keywords': ', '.join(layer.keywords) if layer.keywords else '' 
+                } for layer in filtered_queryset[:5]}
             return categories
         except Exception as e:
             print(e)
@@ -187,7 +191,12 @@ def test_ai_agent():
                 "description": "A detailed paragrapth describing the relevance of the category to the subject.",
                 "query": "(\'word1\' | \'word2\' | \'word3\')", 
                 "overpass_tags": ["tag1", "tag2", "tag3",...],
-                "layers": [{"layer1_field1":"layer1_value1",...}, {"layer2_field1":"layer2_value1",...},...],
+                "layers": {layer1.pk:{
+                    "name": "layer1.name",
+                    "title": "layer1.title",
+                    "abstract": "layer1.abstract",
+                    "keywords": "layer1.keywords" 
+                },...},
             }}
     '''
     
@@ -206,6 +215,7 @@ def test_ai_agent():
         tool_calls = completion.choices[0].message.tool_calls
         if tool_calls:
             for tool_call in completion.choices[0].message.tool_calls:
+                print(name)
                 name = tool_call.function.name
                 args = json.loads(tool_call.function.arguments)
                 messages.append(completion.choices[0].message)
