@@ -131,37 +131,37 @@ def test_ai_agent():
 
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
-    categories_description = '''JSON of categories and corresponding title, query words, description and Overpass QL filter tags, in this format: {"category_id": {
-        "title": "Category Title 1", 
-        "description": "A detailed paragrapth describing the relevance of the category to the subject.",
-        "query": "(\'word1\' | \'word2\' | \'word3\')", 
-        "overpass_tags": ["tag1", "tag2", "tag3",...]
-    }}'''
-
     class ThematicMap(BaseModel):
         title: str = Field(
             description='The title of the thematic map. Incorporate the place of interest, if any.'
         )
         bbox: list[float] = Field(
-            description='The bounding box of the place of interest, if any. Format: [w,s,e,n]'
+            description='The bounding box of the place of interest, if any.'
         )
         categories: str = Field(
-            description=categories_description
+            description='The JSON of categories and paramters.'
         )
 
     system_prompt = f'''
         You are a helpful thematic map creation assistant.
 
         The user will provide a subject they want to map, and optionally a place of interest. Your task is to:
-        1. If a place is mentioned in the subject, use 'get_place_geom' to identify the bounding box for the place.
-        2. Identify 10 diverse spatially-applicable categories most relevant to the subject and to the place, if a place is mentioned.
-            - Prioritize categories that correspond to territorial boundary, natural resources, topography, environmental, infrastructure, regulatory, or domain-specific datasets.
-            - Be concise but informative in your reasoning. Avoid listing layers — focus on thematic scope and spatial context.
-        3. Identify 5 search query words most relevant to each category ordered based on relevance to the category and subject.
-            - Each search query word should be an individual real english word, no caps, no conjunctions, no special characters, just a word relevant to the category.
-            - Make sure search query words are suitable for filtering geospatial layers.
-        4. For each category, identify 10 Overpass QL filter tags that are relevant to the category ordered based on relevance to the category and subject.
-        5. Create a {categories_description}
+        1. Determine whether the user's prompt is a valid subject for a thematic map. If not, respond that it is invalid.
+        2. If prompt is valid:
+            1. If a place is mentioned in the subject, use 'get_place_geom' to identify the bounding box for the place. Format: [w,s,e,n].
+            2. Identify 10 diverse spatially-applicable categories most relevant to the subject and to the place, if a place is mentioned.
+                - Prioritize categories that correspond to territorial boundary, natural resources, topography, environmental, infrastructure, regulatory, or domain-specific datasets.
+                - Be concise but informative in your reasoning. Avoid listing layers — focus on thematic scope and spatial context.
+            3. Identify 5 search query words most relevant to each category ordered based on relevance to the category and subject.
+                - Each search query word should be an individual real english word, no caps, no conjunctions, no special characters, just a word relevant to the category.
+                - Make sure search query words are suitable for filtering geospatial layers.
+            4. For each category, identify 10 Overpass QL filter tags that are relevant to the category ordered based on relevance to the category and subject.
+            5. Create a JSON of categories and corresponding parameters i.e. title, query words, description and Overpass QL filter tags, in this format: {"category_id": {
+                "title": "Category Title 1", 
+                "description": "A detailed paragrapth describing the relevance of the category to the subject.",
+                "query": "(\'word1\' | \'word2\' | \'word3\')", 
+                "overpass_tags": ["tag1", "tag2", "tag3",...]
+            }}
     '''
     
     messages=[
