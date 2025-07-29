@@ -138,10 +138,10 @@ def test_ai_agent():
                 'parameters': {
                     'type': 'object',
                     'properties': {
-                        'categories': {'type': 'string'},
+                        'categories_json': {'type': 'string'},
                         'bbox': {'type': 'string'},
                     },
-                    'required': ['categories', 'bbox'],
+                    'required': ['categories_json', 'bbox'],
                     'additionalProperties': False
                 },
                 'strict': True,
