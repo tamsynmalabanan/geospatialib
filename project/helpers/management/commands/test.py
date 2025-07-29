@@ -186,7 +186,7 @@ def test_ai_agent():
                 "query": "(\'word1\' | \'word2\' | \'word3\')", 
                 "overpass_tags": ["tag1", "tag2", "tag3",...],
             }}
-            6. User 'get_category_layers_data' to update the categories JSON with a list of database layers data for each category. Updated format: {"category_id": {
+            6. If the categories in the JSON have no layers property yet, use 'get_category_layers_data' to update the categories JSON with a list of database layers data for each category. Updated format: {"category_id": {
                 "title": "Category Title 1", 
                 "description": "A detailed paragrapth describing the relevance of the category to the subject.",
                 "query": "(\'word1\' | \'word2\' | \'word3\')", 
