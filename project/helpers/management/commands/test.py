@@ -211,6 +211,7 @@ def test_ai_agent():
                 messages.append(completion.choices[0].message)
 
                 result = call_function(name, args)
+                print(result)
                 messages.append(
                     {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
                 )
@@ -229,15 +230,16 @@ def test_ai_agent():
             print('Title:', content.get('title'))
             print('Bbox:', content.get('bbox'))
             categories = content.get('categories')
-            try:
-                for key1, value1 in json.loads(categories).items():
-                    print(key1)
-                    for key2, value2 in value1.items():
-                        print(key2, value2)
-            except Exception as e:
-                print(e)
-                print(categories)
-            return
+            print(categories)
+            # try:
+            #     for key1, value1 in json.loads(categories).items():
+            #         print(key1)
+            #         for key2, value2 in value1.items():
+            #             print(key2, value2)
+            # except Exception as e:
+            #     print(e)
+            #     print(categories)
+            # return
     print(completion)
     
 
