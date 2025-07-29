@@ -142,7 +142,7 @@ def test_ai_agent():
                         'bbox': {'type': 'string'},
                     },
                     'required': ['categories'],
-                    'additionalProperties': False
+                    'additionalProperties': ['bbox'],
                 },
                 'strict': True,
             }
