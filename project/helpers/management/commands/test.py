@@ -82,7 +82,7 @@ def test_ai_agent():
                     .filter(search_vector=search_query,rank__gte=0.01)
                     .order_by(*['-rank'])
                 )
-                categories[id]['layers'] = [layer.data for layer in filtered_queryset[:10]]
+                categories[id]['layers'] = [layer.name for layer in filtered_queryset[:10]]
 
             return categories
         except Exception as e:
@@ -223,10 +223,15 @@ def test_ai_agent():
             content = json.loads(content_json)
             print('Title:', content.get('title'))
             print('Bbox:', content.get('bbox'))
-            for key1, value1 in json.loads(content.get('categories')).items():
-                print(key1)
-                for key2, value2 in value1.items():
-                    print(key2, value2)
+            categories = content.get('categories')
+            try:
+                for key1, value1 in json.loads().items():
+                    print(key1)
+                    for key2, value2 in value1.items():
+                        print(key2, value2)
+            except Exception as e:
+                print(e)
+                print(categories)
             return
     print(completion)
     
