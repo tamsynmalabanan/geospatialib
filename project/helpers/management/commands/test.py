@@ -70,16 +70,19 @@ def test_ai_agent():
             queryset = Layer.objects.all()
 
             if bbox:
-                print('has bbox')
                 w,s,e,n = [float(i) for i in bbox]
                 geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
                 queryset = queryset.filter(bbox__bboverlaps=geom)
 
             search_query = SearchQuery(query, search_type='raw')
-            queryset = queryset.annotate(rank=SearchRank(F('search_vector'), search_query))
-            queryset = queryset.filter(search_vector=search_query,rank__gte=0.001)
+            queryset = (
+                queryset
+                .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
+                .filter(search_vector=search_query,rank__gte=0.001)
+                .order_by(*['-rank'])
+            )
 
-            return {layer.pk: layer.data for layer in queryset}
+            return {layer.pk: layer.data for layer in queryset[:10]}
         except Exception as e:
             print(e)
 
@@ -196,7 +199,7 @@ def test_ai_agent():
             for key2, value2 in value1.items():
                 print(key2, value2)
             layers = get_category_layers_data(value1.get('query'), content.get('bbox'))
-            print('layers', len(layers.keys()))
+            print('layers', len(layers.keys()), {k:v.get('name') for k,v in layers.items()})
             print('\n')
 
 class Command(BaseCommand):
