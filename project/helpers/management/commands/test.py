@@ -82,7 +82,7 @@ def test_ai_agent():
                     .filter(search_vector=search_query,rank__gte=0.01)
                     .order_by(*['-rank'])
                 )
-                categories[id]['layers'] = [layer.data for layer in filtered_queryset]
+                categories[id]['layers'] = [layer.data for layer in filtered_queryset[:10]]
 
             return categories
         except Exception as e:
