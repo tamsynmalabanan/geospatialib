@@ -82,7 +82,7 @@ def test_ai_agent():
                 .order_by(*['-rank'])
             )
 
-            return {layer.pk: layer.data for layer in queryset[:10]}
+            return {layer.pk: layer.data for layer in queryset}
         except Exception as e:
             print(e)
 
