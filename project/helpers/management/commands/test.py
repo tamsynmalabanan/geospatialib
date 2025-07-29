@@ -215,8 +215,8 @@ def test_ai_agent():
         tool_calls = completion.choices[0].message.tool_calls
         if tool_calls:
             for tool_call in completion.choices[0].message.tool_calls:
-                print(name)
                 name = tool_call.function.name
+                print(name)
                 args = json.loads(tool_call.function.arguments)
                 messages.append(completion.choices[0].message)
 
