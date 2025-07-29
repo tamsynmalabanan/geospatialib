@@ -65,7 +65,7 @@ def test_ai_agent():
     from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 
 
-    def get_category_layers_data(categories_json, bbox):
+    def get_category_layers_data(categories_json, bbox=''):
         try:
             queryset = Layer.objects.all()
             if bbox:
@@ -141,10 +141,10 @@ def test_ai_agent():
                         'categories': {'type': 'string'},
                         'bbox': {'type': 'string'},
                     },
-                    'required': ['categories'],
+                    'required': ['categories', 'bbox'],
                     'additionalProperties': False
                 },
-                'strict': False,
+                'strict': True,
             }
         },
     ]
