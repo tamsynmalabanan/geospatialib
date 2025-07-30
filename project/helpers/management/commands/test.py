@@ -239,20 +239,12 @@ def test_ai_agent():
         result = completion.choices[0].message.parsed
         return result
 
-
-    class ThematicMapParams(BaseModel):
-        pass
-
-    def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
+    def create_thematic_map(user_prompt:str) -> Optional[ParamsExtraction]:
         init_eval = params_eval_info(user_prompt)
-        print(init_eval)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
         params = extract_map_params(user_prompt)
-        print('title', params.title)
-        print('place', params.place)
-        print('bbox', params.bbox)
 
         queryset = Layer.objects.all()
         if params.bbox:
@@ -263,8 +255,7 @@ def test_ai_agent():
 
         categories = json.loads(params.categories)
         for id, values in categories.items():
-            print('category: ', values.get('title'))
-            categories[id]['layers'] = []
+            categories[id]['layers'] = {}
             
             search_query = SearchQuery(values.get('query'), search_type='raw')
             filtered_queryset = (
@@ -272,6 +263,7 @@ def test_ai_agent():
                 .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
                 .filter(search_vector=search_query,rank__gte=0.001)
                 .order_by(*['-rank'])
+                .distinct(id)
             )[:10]
             
             for layer in filtered_queryset:
@@ -283,17 +275,19 @@ def test_ai_agent():
                 }
                 layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
                 if layer_eval.is_valid_layer and layer_eval.confidence_score >= 0.7:
-                    print(data['title'], layer_eval)
-                    categories[id]['layers'].append(layer.pk)
-            
-            print('category: ', values.get('title'))
-            print('layers: ', len(categories[id]['layers']))
+                    categories[id]['layers'][layer.pk] = data.get('title')
+        
+        params.categories = categories
+        return params
 
     user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-    result = create_thematic_map(user_prompt)
-    print(result)
+    params = create_thematic_map(user_prompt)
+    print('title: ', params.title)
+    print('place: ', params.place)
+    print('bbox: ', params.bbox)
+    print('categories: ', params.categories)
 
 class Command(BaseCommand):
     help = 'Test'
