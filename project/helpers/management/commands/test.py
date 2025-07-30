@@ -325,26 +325,28 @@ def test_ai_agent():
                 response_format=ParamsExtraction
             )
 
-            tool_calls = completion.choices[0].message.tool_calls
-            if tool_calls:
-                print('tool_calls', tool_calls)
-                for tool_call in tool_calls:
-                    name = tool_call.function.name
-                    print('tool name', name)
-                    args = json.loads(tool_call.function.arguments)
-                    messages.append(completion.choices[0].message)
+            # while completion.choices[0].message.tool_calls:
+            #     tool_calls = completion.choices[0].message.tool_calls
+            #     print('tool_calls', tool_calls)
+            #     for tool_call in tool_calls:
+            #         name = tool_call.function.name
+            #         print('tool name', name)
+            #         args = json.loads(tool_call.function.arguments)
+            #         messages.append(completion.choices[0].message)
 
-                    result = call_function(name, args)
-                    messages.append(
-                        {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
-                    )
+            #         result = call_function(name, args)
+            #         messages.append(
+            #             {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+            #         )
 
-                completion = client.beta.chat.completions.parse(
-                    model=model,
-                    messages=messages,
-                    tools=tools,
-                    response_format=ParamsExtraction
-                )
+            #     completion = client.beta.chat.completions.parse(
+            #         model=model,
+            #         messages=messages,
+            #         tools=tools,
+            #         response_format=ParamsExtraction
+            #     )
+
+            print(completion.choices[0].message.tool_calls)
 
             result = completion.choices[0].message.parsed
             return result
