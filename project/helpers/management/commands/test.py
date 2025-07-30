@@ -326,7 +326,7 @@ def test_ai_agent():
             )
 
             tool_calls = completion.choices[0].message.tool_calls
-            while tool_calls:
+            if tool_calls:
                 print('tool_calls', tool_calls)
                 for tool_call in tool_calls:
                     name = tool_call.function.name
