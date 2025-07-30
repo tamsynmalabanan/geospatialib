@@ -355,7 +355,7 @@ def test_ai_agent():
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
-            params = extract_map_params(init_eval.place)
+            params = extract_map_params(user_prompt)
             print('params', params)
             
         user_prompt = "San Marcelino Zambales solar site screening"
