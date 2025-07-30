@@ -254,7 +254,7 @@ def test_ai_agent():
             
             layers = {layer.pk: {'data': layer.data} for layer in filtered_queryset}
             layers_eval = layers_eval_info(user_prompt, values['title'], layers)
-            print(json.loads(layers_eval))
+            print(json.loads(layers_eval.layers))
             
         return {
             'title': title,
