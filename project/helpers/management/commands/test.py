@@ -184,13 +184,13 @@ def test_ai_agent():
                 {
                     'role':'system', 
                     'content':'''
-                        For each layer in layers, determine whether the layer properties contain information that supports or enhances understanding of the 
+                        For each layer in layers, determine whether the layer's search vector contains keywords that supports or enhances understanding of the 
                         current category within the specified thematic map subject. Assess relevance based only on:
-                        - Semantic Alignment: Do the layer's name, title, abstract, or keywords conceptually relate to the category's focus?
+                        - Semantic Alignment: Does the layer's search vector conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
                         Assign the following properties to each layer:
-                            is_valid_layer: 0 if false or 1 or true, whether layer properties describe a layer that is relevant to the thematic map subject and the current category.
+                            is_valid_layer: 0 if false or 1 of true, whether layer search vector suggests that the layer is relevant to the thematic map subject and the current category.
                             confidence_score: between 0 and 1
                         
                         Make sure layers JSON is formatted as a valid JSON string.
@@ -239,8 +239,6 @@ def test_ai_agent():
                 queryset = queryset.filter(bbox__bboverlaps=buffered_geom)
 
         for id, values in categories.items():
-            categories[id]['layers'] = []
-            
             search_query = SearchQuery(values.get('query'), search_type='raw')
             filtered_queryset = (
                 queryset
@@ -249,14 +247,11 @@ def test_ai_agent():
                 .order_by(*['-rank'])
             )[:10]
             
-            layers = {layer.pk: {
-                'name': layer.name,
-                'title': layer.title,
-                'abstract': layer.abstract,
-                'keywords': ', '.join(layer.keywords if layer.keywords else []),
-            } for layer in filtered_queryset}
-            layers_eval = layers_eval_info(user_prompt, values['title'], layers)
-            print(json.loads(layers_eval.layers))
+            if filtered_queryset.exists():
+                layers = {layer.pk: layer.search_vector for layer in filtered_queryset}
+                layers_eval = layers_eval_info(user_prompt, values['title'], layers)
+                print(json.loads(layers_eval.layers))
+                # categories[id]['layers'] = 
             
         return {
             'title': title,
