@@ -85,15 +85,15 @@ def test_ai_agent():
                 filtered_queryset = (
                     queryset
                     .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
-                    .filter(search_vector=search_query,rank__gte=0.025)
+                    .filter(search_vector=search_query,rank__gte=0.001)
                     .order_by(*['-rank'])
                 )
                 categories[id]['layers'] = {layer.pk:{
                     'name': layer.name,
                     'title': layer.title,
                     'abstract': layer.abstract,
-                    'keywords': ', '.join(layer.keywords) if layer.keywords else '' 
-                } for layer in filtered_queryset[:5]}
+                    'keywords': ', '.join(layer.keywords if layer.keywords else []) 
+                } for layer in filtered_queryset[:10]}
             return categories
         except Exception as e:
             print(e)
@@ -140,23 +140,23 @@ def test_ai_agent():
                 'strict': True,
             }
         },
-        # {
-        #     'type': 'function',
-        #     'function': {
-        #         'name': 'get_category_layers_data',
-        #         'description': 'Returns an updated categories JSON with a dictionary of database layers\' primary key and data for each category.',
-        #         'parameters': {
-        #             'type': 'object',
-        #             'properties': {
-        #                 'categories_json': {'type': 'string'},
-        #                 'bbox_json': {'type': 'string'},
-        #             },
-        #             'required': ['categories_json', 'bbox_json'],
-        #             'additionalProperties': False
-        #         },
-        #         'strict': True,
-        #     }
-        # },
+        {
+            'type': 'function',
+            'function': {
+                'name': 'get_category_layers_data',
+                'description': 'Returns an updated categories JSON with a dictionary of database layers\' primary key and data for each category.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'categories_json': {'type': 'string'},
+                        'bbox_json': {'type': 'string'},
+                    },
+                    'required': ['categories_json', 'bbox_json'],
+                    'additionalProperties': False
+                },
+                'strict': True,
+            }
+        },
     ]
 
 
@@ -251,12 +251,6 @@ def test_ai_agent():
                     for key2, value2 in value1.items():
                         print(key2, value2)
 
-    # Steps:
-    # 2. Get place bbox and categories with id, title, query words
-    # 3. Update categories with database layers
-    # 4. Filter database layers in each category based on layer data
-    # 5. Get title, bbox and categories with id, title, description, query words, overpass filter tags 
-
     def call_ai_agent_v2():
 
         class ParamsEvaluation(BaseModel):
@@ -268,8 +262,8 @@ def test_ai_agent():
             bbox: str = Field(description='Bounding box of the place of interest, if any. Blank if none.')
             categories: str = Field(description='''
                 A JSON of 10 categories relevant to the subject and place of interest, if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
-                    "category1_id": {
-                        "title": "Category 1 Title",
+                    "category_id": {
+                        "title": "Category Title",
                         "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
                         "query": "('word1' | 'word2' | 'word3'...)",
                         "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
@@ -277,7 +271,22 @@ def test_ai_agent():
                 }
             ''')
 
-        # class LayersExtraction(BaseModel):
+        class LayersExtraction(BaseModel):
+            categories: str = Field(description='''
+                A JSON of categories with query and dictionary of database layer primary keys and layer data, formatted: {
+                    "category_id": {
+                        "query": "('word1' | 'word2' | 'word3'...)",
+                        "layers": {
+                            "layer_pk" : {
+                                "name": "layer_name",
+                                "title": "layer_title",
+                                "abstract": "layer_abstract",
+                                "keywords": "layer_keywords",
+                            }
+                        }
+                    },...
+                }
+            ''')
 
         class ThematicMapParams(BaseModel):
             pass
@@ -353,15 +362,69 @@ def test_ai_agent():
             result = completion.choices[0].message.parsed
             return result
 
+        def extract_map_layers(categories_json:str, bbox_json:str=None) -> LayersExtraction:
+            messages = [
+                {
+                    'role': 'system',
+                    'content': '''
+                        1. Use 'get_category_layers_data' to update categories JSON with database layers data. Pass the BBOX JSON as an argument, if any.
+                    '''
+                },
+                {
+                    'role': 'user', 
+                    'content': f'''
+                        Categories JSON:
+                        {categories_json}
+
+                        {f'BBOX JSON: {bbox_json}' if bbox_json else ''}
+                    '''
+                }
+            ]
+
+            completion = client.beta.chat.completions.parse(
+                model=model,
+                messages=messages,
+                tools=tools,
+                response_format=LayersExtraction
+            )
+
+            for tool_call in completion.choices[0].message.tool_calls:
+                name = tool_call.function.name
+                args = json.loads(tool_call.function.arguments)
+                result = call_function(name, args)
+
+                messages.append(completion.choices[0].message)
+                messages.append(
+                    {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+                )
+
+            completion = client.beta.chat.completions.parse(
+                model=model,
+                messages=messages,
+                tools=tools,
+                response_format=LayersExtraction
+            )
+
+            result = completion.choices[0].message.parsed
+            return result
+
+
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
+            print(init_eval)
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
             params = extract_map_params(user_prompt)
-            print('place', params.place)
-            print('bbox', params.bbox)
-            for key, value in json.loads(params.categories).items():
+            # print('place', params.place)
+            # print('bbox', params.bbox)
+            # for key, value in json.loads(params.categories).items():
+            #     print(key)
+            #     for key1, value1 in value.items():
+            #         print(key1, value1)
+
+            layers = extract_map_layers(params.categories, params.bbox)
+            for key, value in json.loads(layers.categories).items():
                 print(key)
                 for key1, value1 in value.items():
                     print(key1, value1)
