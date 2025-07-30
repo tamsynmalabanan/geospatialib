@@ -169,7 +169,12 @@ def test_ai_agent():
 
     class LayersEvaluation(BaseModel):
         layers:str = Field(description='''
-            A JSON array of primary keys of layers that are relevant to the thematic map subject and current category. Format: ["primary_key1", "primary_key2",...]
+            A JSON of layers primary key with 'is_valid_layer' and 'confidence_score' properties. Format: {
+                "layer_pk": {
+                    "is_valid_layer": 0 if false or 1 if true,
+                    "confidence_score": between 0 to 1,
+                },...
+            }
         ''')
 
     def layers_eval_info(user_prompt:str, category:str, layers:dict) -> LayersEvaluation:
@@ -183,8 +188,12 @@ def test_ai_agent():
                         current category within the specified thematic map subject. Assess relevance based only on:
                         - Semantic Alignment: Does the layer's search vector conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
+
+                        Assign the following properties to each layer:
+                            is_valid_layer: 0 if false or 1 of true, whether layer search vector suggests that the layer is relevant to the thematic map subject and the current category.
+                            confidence_score: between 0 and 1
                         
-                        Make sure layers JSON array is formatted as a valid JSON string.
+                        Make sure layers JSON is formatted as a valid JSON string.
                     '''
                 },
                 {
@@ -239,14 +248,14 @@ def test_ai_agent():
             )[:10]
             
             if filtered_queryset.exists():
-                layers = {layer.pk: layer.search_vector for layer in filtered_queryset}
-                params = layers_eval_info(user_prompt, values['title'], layers)
-                layers_eval = json.loads(params.layers)
-                print(layers_eval)
+                # layers = {layer.pk: layer.search_vector for layer in filtered_queryset}
+                # params = layers_eval_info(user_prompt, values['title'], layers)
+                # layers_eval = json.loads(params.layers)
                 # categories[id]['layers'] = [i.data for i in filtered_queryset if (
                 #     layers_eval[str(i.pk)].get('is_valid_layer', 0) == 1
                 #     and layers_eval[str(i.pk)].get('confidence_score', 0) > 0.7
                 # )]
+                categories[id]['layers'] = [layer.data for layer in filtered_queryset]
             
         return {
             'title': title,
