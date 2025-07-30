@@ -262,10 +262,10 @@ def test_ai_agent():
         class ParamsEvaluation(BaseModel):
             is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
             confidence_score: float = Field(description='Confidence score between 0 and 1.')
-        
+
         class ParamsExtraction(BaseModel):
-            place: str = Field(description='Place of interest for the thematic map that is mentioned in the user prompt, if any. Blank if none.')
-            bbox: str = Field(description='Bounding box of the place of interest in "[w,s,e,n]" format. Blank if none.')
+            place: str = Field(description='Name of a place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
+            bbox: str = Field(description='Bounding box of the place of interest, if any. Blank if none.')
             categories: str = Field(description='''
                 A JSON of 10 categories relevant to the subject and place of interest if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
                     "category1_id": {
@@ -305,14 +305,14 @@ def test_ai_agent():
                 {
                     'role': 'system',
                     'content': '''
-                        1. If a place of interest is mentioned in the subject, extract its bounding box.
-                        2. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject and place of interest, if any.
+                        1. If a place of interest is mentioned in the subject, extract its bounding box using 'get_place_bbox' tool.
+                        2. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject.
                             - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                             - Focus on thematic scope and spatial context; do not list layers.
-                        3. For each category, identify 5 query words most relevant to the category, subject and place of interest, if any.
+                        3. For each category, identify 5 query words most relevant to the category and subject.
                             - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                             - Make sure query words are suitable for filtering geospatial layers.
-                        4. For each category, identify 5 Overpass QL filter tags most relevant to the category, subject and place of interest, if any.
+                        4. For each category, identify 5 Overpass QL filter tags most relevant to the category and subject.
                     '''
                 },
                 {'role': 'user', 'content': user_prompt}
@@ -325,27 +325,29 @@ def test_ai_agent():
                 response_format=ParamsExtraction
             )
 
-            for tool_call in completion.choices[0].message.tool_calls:
-                name = tool_call.function.name
-                print('tool name', name)
-                args = json.loads(tool_call.function.arguments)
-                messages.append(completion.choices[0].message)
+            print(completion.choices[0].message.tool_calls)
 
-                result = call_function(name, args)
-                print('tool result', result)
-                messages.append(
-                    {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
-                )
+            # for tool_call in completion.choices[0].message.tool_calls:
+            #     name = tool_call.function.name
+            #     args = json.loads(tool_call.function.arguments)
+            #     result = call_function(name, args)
+            #     print('tool name', name)
+            #     print('tool result', result)
 
-            completion = client.beta.chat.completions.parse(
-                model=model,
-                messages=messages,
-                tools=tools,
-                response_format=ParamsExtraction
-            )
+            #     messages.append(completion.choices[0].message)
+            #     messages.append(
+            #         {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+            #     )
 
-            result = completion.choices[0].message.parsed
-            return result
+            # completion = client.beta.chat.completions.parse(
+            #     model=model,
+            #     messages=messages,
+            #     tools=tools,
+            #     response_format=ParamsExtraction
+            # )
+
+            # result = completion.choices[0].message.parsed
+            # return result
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
@@ -353,11 +355,9 @@ def test_ai_agent():
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
-            map_params = extract_map_params(user_prompt)
-            print('map_params', map_params)
+            params = extract_map_params(init_eval.place)
+            print('params', params)
             
-
-
         user_prompt = "San Marcelino Zambales solar site screening"
         # user_prompt = "solar site screening"
         # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
