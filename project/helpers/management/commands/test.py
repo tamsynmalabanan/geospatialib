@@ -255,7 +255,7 @@ def test_ai_agent():
     # 2. Get place bbox and categories with id, title, query words
     # 3. Update categories with database layers
     # 4. Filter database layers in each category based on layer data
-    # 5. Get title, bbox and categories with id, title, rationale, query words, overpass filter tags 
+    # 5. Get title, bbox and categories with id, title, description, query words, overpass filter tags 
 
     def call_ai_agent_v2():
 
@@ -267,15 +267,17 @@ def test_ai_agent():
             place: str = Field(description='Name of a place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
             bbox: str = Field(description='Bounding box of the place of interest, if any. Blank if none.')
             categories: str = Field(description='''
-                A JSON of 10 categories relevant to the subject and place of interest if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
+                A JSON of 10 categories relevant to the subject and place of interest, if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
                     "category1_id": {
                         "title": "Category 1 Title",
-                        "rationale": "A rationale for the relevance of category 1 to the thematic map subject and place of interest, if any.",
+                        "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
                         "query": "('word1' | 'word2' | 'word3'...)",
-                        "overpass": ["tag_filter1", "tag_filter2", "tag_filter3"... ]
+                        "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
                     },...
                 }
             ''')
+
+        # class LayersExtraction(BaseModel):
 
         class ThematicMapParams(BaseModel):
             pass
@@ -312,7 +314,13 @@ def test_ai_agent():
                         3. For each category, identify 5 query words most relevant to the category and subject.
                             - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                             - Make sure query words are suitable for filtering geospatial layers.
-                        4. For each category, identify 5 Overpass QL filter tags most relevant to the category and subject.
+                        4. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
+                            - Only include tags that exist in the OpenStreetMap tagging schema.
+                            - Use only keys and values listed on the OpenStreetMap wiki or Taginfo.
+                            - Exclude invented or uncommon tags not used in OpenStreetMap data.
+                            - Validate tags against the Overpass QL specification and common usage.
+                            - Return only tags that are supported by Overpass QL filters like [key=value], [key~(value1|value2)], or [key].
+
                     '''
                 },
                 {'role': 'user', 'content': user_prompt}
@@ -347,13 +355,18 @@ def test_ai_agent():
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
-            print('init_eval', init_eval)
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
             params = extract_map_params(user_prompt)
-            print('params', params)
+            print('place', params.place)
+            print('bbox', params.bbox)
+            for key, value in json.loads(params.categories).items():
+                print(key)
+                for key1, value1 in value.items():
+                    print(key1, value1)
             
+
         user_prompt = "San Marcelino Zambales solar site screening"
         # user_prompt = "solar site screening"
         # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
