@@ -252,7 +252,6 @@ def test_ai_agent():
                         print(key2, value2)
 
     # Steps:
-    # 1. Confirm whether prompt is a valid thematic map subject - OK
     # 2. Get place bbox and categories with id, title, query words
     # 3. Update categories with database layers
     # 4. Filter database layers in each category based on layer data
@@ -261,13 +260,12 @@ def test_ai_agent():
     def call_ai_agent_v2():
 
         class ParamsEvaluation(BaseModel):
-            title: str = Field(description='Title for the thematic map. Include the place of interest, if any.')
-            place: str = Field(description='Place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
             is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
             confidence_score: float = Field(description='Confidence score between 0 and 1.')
         
-        class ParamsExtraction(BaseModel):
-            pass
+        class BboxExtraction(BaseModel):
+            place: str = Field(description='Place of interest for the thematic map that is specified in the user prompt, if any. Blank if none.')
+            bbox: str = Field(description='Bounding box of the place of interest in "[w,s,e,n]" format. Blank if none.')
 
         class ThematicMapParams(BaseModel):
             pass
@@ -292,18 +290,28 @@ def test_ai_agent():
             result = completion.choices[0].message.parsed
             return result
         
-        def parse_map_params(subject:str, place:str=None) -> ParamsExtraction:
-            pass
+        def extract_map_bbox(user_prompt:str) -> BboxExtraction:
+            completion = client.beta.chat.completions.parse(
+                model=model,
+                messages=[
+                    {
+                        'role': 'system',
+                        'content': 'If a place of interest is specificied in the user prompt, extract its bounding box.'
+                    },
+                    {'role': 'user', 'content': user_prompt}
+                ],
+                tools=tools,
+                response_format=BboxExtraction
+            )
+            result = completion.choices[0].message.parsed
+            return result
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
-            init_eval = params_eval_info(user_prompt)
-            print(init_eval)
-            
+            init_eval = params_eval_info(user_prompt) ; print('init_eval', init_eval)
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
-            params = parse_map_params(init_eval.title, init_eval.place)
-
+            params = extract_map_bbox(user_prompt)
             return params
 
 
