@@ -245,7 +245,7 @@ def test_ai_agent():
                 .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
                 .filter(search_vector=search_query,rank__gte=0.001)
                 .order_by(*['-rank'])
-            )[:10]
+            )[:5]
             
             if filtered_queryset.exists():
                 # layers = {layer.pk: {
