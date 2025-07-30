@@ -69,28 +69,6 @@ def test_ai_agent():
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
     model = 'gpt-4o'
 
-    def get_layers_data(query, geom=None, limit=5):
-        try:
-            queryset = Layer.objects.all()
-            if geom:
-                queryset = queryset.filter(bbox__bboverlaps=geom)
-            search_query = SearchQuery(query, search_type='raw')
-            filtered_queryset = (
-                queryset
-                .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
-                .filter(search_vector=search_query, rank__gte=0.001)
-                .order_by(*['-rank'])
-            )[:limit]
-            return [{
-                'pk': i.pk,
-                'name': i.name,
-                'title': i.title,
-                'abstract': i.abstract,
-                'keywords': ', '.join(i.keywords if i.keywords else []),
-            } for i in filtered_queryset]
-        except Exception as e:
-            print(e)
-
     def get_place_bbox(place):
         try:
             geolocator = Nominatim(user_agent="geospatialib/1.0")
@@ -108,7 +86,6 @@ def test_ai_agent():
     def call_function(name, args):
         fn = {
             'get_place_bbox': get_place_bbox,
-            'get_layers_data': get_layers_data,
         }.get(name)
 
         if fn:
@@ -229,88 +206,6 @@ def test_ai_agent():
         return result
 
 
-    # class LayersExtraction(BaseModel):
-    #     categories: str = Field(description='''
-    #         A JSON of categories with dictionary of database layer primary keys and layer data, formatted: {
-    #             "category_id": {
-    #                 "layer_pk" : {
-    #                     "name": "layer_name",
-    #                     "title": "layer_title",
-    #                     "abstract": "layer_abstract",
-    #                     "keywords": "layer_keywords",
-    #                 },...
-    #             },...
-    #         }
-    #     ''')
-
-    # def extract_map_layers(categories_json:str, bbox_json:str=None) -> LayersExtraction:
-    #     messages = [
-    #         {
-    #             'role': 'system',
-    #             'content': '''
-    #                 1. Use 'get_layers_data' to update categories JSON with database layers data.
-    #                     - Make sure categories JSON is formatted as a valid JSON string.
-    #             '''
-    #         },
-    #         {
-    #             'role': 'user', 
-    #             'content': f'''
-    #                 Categories JSON:
-    #                 {categories_json}
-
-    #                 {f'bbox JSON: {bbox_json}' if bbox_json else ''}
-    #             '''
-    #         }
-    #     ]
-
-    #     completion = client.beta.chat.completions.parse(
-    #         model=model,
-    #         messages=messages,
-    #         tools=[
-    #             {
-    #                 'type': 'function',
-    #                 'function': {
-    #                     'name': 'get_layers_data',
-    #                     'description': 'Returns an updated categories JSON with a dictionary of database layers\' primary key and data for each category.',
-    #                     'parameters': {
-    #                         'type': 'object',
-    #                         'properties': {
-    #                             'categories_json': {'type': 'string'},
-    #                             'bbox_json': {'type': 'string'},
-    #                         },
-    #                         'required': ['categories_json', 'bbox_json'],
-    #                         'additionalProperties': False
-    #                     },
-    #                     'strict': True,
-    #                 }
-    #             },
-    #         ],
-    #         response_format=LayersExtraction
-    #     )
-
-    #     for tool_call in completion.choices[0].message.tool_calls:
-    #         name = tool_call.function.name
-    #         print('tool name', name)
-    #         args = json.loads(tool_call.function.arguments)
-    #         result = call_function(name, args)
-    #         print('tool result', result)
-
-    #         messages.append(completion.choices[0].message)
-    #         messages.append(
-    #             {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
-    #         )
-
-    #     completion = client.beta.chat.completions.parse(
-    #         model=model,
-    #         messages=messages,
-    #         tools=tools,
-    #         response_format=LayersExtraction
-    #     )
-
-    #     result = completion.choices[0].message.parsed
-    #     return result
-
-
     class ThematicMapParams(BaseModel):
         pass
 
@@ -321,13 +216,37 @@ def test_ai_agent():
             return None
         
         params = extract_map_params(user_prompt)
-        print('initial categories', json.loads(params.categories).keys())
         print('place', params.place)
         print('bbox', params.bbox)
-        for key, value in json.loads(params.categories).items():
-            print(key)
-            for key1, value1 in value.items():
-                print(key1, value1)
+
+        queryset = Layer.objects.all()
+        if params.bbox:
+            bbox = json.loads(params.bbox)
+            w,s,e,n = [float(i) for i in bbox]
+            geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+            queryset = queryset.filter(bbox__bboverlaps=geom)
+
+        categories = json.loads(params.categories)
+        for id, values in categories.items():
+            categories[id]['layers'] = []
+            
+            search_query = SearchQuery(values.get('query'), search_type='raw')
+            filtered_queryset = (
+                queryset
+                .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
+                .filter(search_vector=search_query,rank__gte=0.001)
+                .order_by(*['-rank'])
+            )[:5]
+            
+            for layer in filtered_queryset:
+                data = {
+                    'name': layer.name,
+                    'title': layer.title,
+                    'abstract': layer.abstract,
+                    'keywords': ', '.join(layer.keywords if layer.keywords else []) 
+                }
+                print(values.get('query'), data)
+            
 
 
     user_prompt = "San Marcelino Zambales solar site screening"
