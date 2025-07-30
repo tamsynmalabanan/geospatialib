@@ -252,7 +252,7 @@ def test_ai_agent():
                         print(key2, value2)
 
     # Steps:
-    # 1. Confirm whether prompt is a valid thematic map subject - get subject, place, confidence
+    # 1. Confirm whether prompt is a valid thematic map subject - OK
     # 2. Get place bbox and categories with id, title, query words
     # 3. Update categories with database layers
     # 4. Filter database layers in each category based on layer data
@@ -260,10 +260,14 @@ def test_ai_agent():
 
     def call_ai_agent_v2():
         class ParamsEvaluation(BaseModel):
-            description: str = Field(description='Raw description of the thematic map.')
-            is_thematic_map: bool = Field(description='Whether prompt is spatially-applicable and describes a valid subject for a thematic map.')
+            subject: str = Field(description='Subject for the thematic map.')
+            place: str = Field(description='Place of interest for the thematic map.')
+            is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
             confidence_score: float = Field(description='Confidence score between 0 and 1.')
         
+        class ParamsExtraction(BaseModel):
+            pass
+
         class ThematicMapParams(BaseModel):
             pass
 
@@ -287,12 +291,19 @@ def test_ai_agent():
             result = completion.choices[0].message.parsed
             return result
         
+        def parse_map_params(user_prompt:str):
+            pass
+
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
+            print(init_eval)
+            
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
-            return init_eval
+            params = parse_map_params(user_prompt)
+
+            return params
 
         # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
         user_prompt = "San Marcelino Zambales solar site screening"
