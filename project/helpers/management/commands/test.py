@@ -261,7 +261,7 @@ def test_ai_agent():
     def call_ai_agent_v2():
         class ParamsEvaluation(BaseModel):
             description: str = Field(description='Raw description of the thematic map.')
-            is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
+            is_thematic_map: bool = Field(description='Whether prompt is spatially-applicable and describes a valid subject for a thematic map.')
             confidence_score: float = Field(description='Confidence score between 0 and 1.')
         
         class ThematicMapParams(BaseModel):
