@@ -316,7 +316,8 @@ def test_ai_agent():
 
 
         # user_prompt = "San Marcelino Zambales solar site screening"
-        user_prompt = "solar site screening"
+        # user_prompt = "solar site screening"
+        user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
         result = create_thematic_map(user_prompt)
         print(result)
 
