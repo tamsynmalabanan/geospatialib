@@ -266,6 +266,8 @@ def test_ai_agent():
             )[:10]
             
             for layer in filtered_queryset:
+                if len(categories[id]['layers'].keys()) >= 5:
+                    break
                 data = {
                     'name': layer.name,
                     'title': layer.title,
@@ -286,7 +288,15 @@ def test_ai_agent():
     print('title: ', params.title)
     print('place: ', params.place)
     print('bbox: ', params.bbox)
-    print('categories: ', params.categories)
+    
+    for id, values in params.categories.items():
+        print('category: ', id, values['title'])
+        print('description: ', values['description'])
+        print('query: ', values['query'])
+        print('overpass: ', values['overpass'])
+        print('layers: ', len(values['layers'].items()))
+        for pk, title in values['layers'].items():
+            print(pk, title)
 
 class Command(BaseCommand):
     help = 'Test'
