@@ -97,7 +97,7 @@ def test_ai_agent():
 
     class CategoriesExtraction(BaseModel):
         categories: str = Field(description='''
-            A JSON of 5 categories relevant to the subject and place of interest, if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
+            A JSON of 10 categories relevant to the subject and place of interest, if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
                 "category_id": {
                     "title": "Category Title",
                     "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
@@ -112,10 +112,10 @@ def test_ai_agent():
             {
                 'role': 'system',
                 'content': '''
-                    1. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
+                    1. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject.
                         - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                         - Focus on thematic scope and spatial context; do not list layers.
-                        - Make sure there are 5 categories.
+                        - Make sure there are 10 categories.
                     2. For each category, identify 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
@@ -226,8 +226,7 @@ def test_ai_agent():
             
         params = layers_eval_info(user_prompt, category_layers)
         layers_eval = json.loads(params.layers)
-        for id in list(categories.keys()):
-            categories[id]['layers'] = [queryset.get(pk=int(i)).data for i in layers_eval.get(id, [])]
+        print(layers_eval)
             
         return {
             'title': title,
@@ -240,18 +239,18 @@ def test_ai_agent():
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
     params = create_thematic_map(user_prompt)
-    print('title: ', params['title'])
-    print('place: ', params['place'])
-    print('bbox: ', params['bbox'])
+    # print('title: ', params['title'])
+    # print('place: ', params['place'])
+    # print('bbox: ', params['bbox'])
     
-    for id, values in params['categories'].items():
-        print('category: ', id, values['title'])
-        print('description: ', values['description'])
-        print('query: ', values['query'])
-        print('overpass: ', values['overpass'])
-        print('layers: ', len(values.get('layers', [])))
-        for data in values.get('layers', []):
-            print(data['title'])
+    # for id, values in params['categories'].items():
+    #     print('category: ', id, values['title'])
+    #     print('description: ', values['description'])
+    #     print('query: ', values['query'])
+    #     print('overpass: ', values['overpass'])
+    #     print('layers: ', len(values.get('layers', [])))
+    #     for data in values.get('layers', []):
+    #         print(data['title'])
 
 class Command(BaseCommand):
     help = 'Test'
