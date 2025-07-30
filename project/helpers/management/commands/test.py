@@ -146,7 +146,7 @@ def test_ai_agent():
                     '''
                 }
             ],
-            response_format=ParamsEvaluation,
+            response_format=LayerEvaluation,
         )
         result = completion.choices[0].message.parsed
         return result
