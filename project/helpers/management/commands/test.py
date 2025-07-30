@@ -169,12 +169,9 @@ def test_ai_agent():
 
     class LayersEvaluation(BaseModel):
         layers:str = Field(description='''
-            A JSON of layers data with 'is_valid_layer' and 'confidence_score' properties. Format: {
+            A JSON of layers primary key with 'is_valid_layer' and 'confidence_score' properties. Format: {
                 "layer_pk": {
-                    "data": {
-                        "property1": "value1",...
-                    },
-                    "is_valid_layer": 0 if false or 1 or true,
+                    "is_valid_layer": 0 if false or 1 if true,
                     "confidence_score": between 0 to 1,
                 },...
             }
@@ -187,13 +184,13 @@ def test_ai_agent():
                 {
                     'role':'system', 
                     'content':'''
-                        For each layer in layers, determine whether the data properties contains information that supports or enhances understanding of the 
+                        For each layer in layers, determine whether the layer properties contain information that supports or enhances understanding of the 
                         current category within the specified thematic map subject. Assess relevance based only on:
-                        - Semantic Alignment: Do the data's name, title, abstract, or keywords conceptually relate to the category's focus?
-                        - Analytical Utility: Would the data's content contribute meaningful insights, classifications, or visualization under this category?
+                        - Semantic Alignment: Do the layer's name, title, abstract, or keywords conceptually relate to the category's focus?
+                        - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
                         Assign the following properties to each layer:
-                            is_valid_layer: 0 if false or 1 or true, whether data describes a layer that is relevant to the thematic map subject and the current category.
+                            is_valid_layer: 0 if false or 1 or true, whether layer properties describe a layer that is relevant to the thematic map subject and the current category.
                             confidence_score: between 0 and 1
                         
                         Make sure layers JSON is formatted as a valid JSON string.
@@ -252,7 +249,12 @@ def test_ai_agent():
                 .order_by(*['-rank'])
             )[:10]
             
-            layers = {layer.pk: {'data': layer.data} for layer in filtered_queryset}
+            layers = {layer.pk: {
+                'name': layer.name,
+                'title': layer.title,
+                'abstract': layer.abstract,
+                'keywords': ', '.join(layer.keywords if layer.keywords else []),
+            } for layer in filtered_queryset}
             layers_eval = layers_eval_info(user_prompt, values['title'], layers)
             print(json.loads(layers_eval.layers))
             
