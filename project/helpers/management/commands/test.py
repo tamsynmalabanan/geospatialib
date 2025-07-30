@@ -240,18 +240,18 @@ def test_ai_agent():
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
     params = create_thematic_map(user_prompt)
-    # print('title: ', params['title'])
-    # print('place: ', params['place'])
-    # print('bbox: ', params['bbox'])
+    print('title: ', params['title'])
+    print('place: ', params['place'])
+    print('bbox: ', params['bbox'])
     
-    # for id, values in params['categories'].items():
-    #     print('category: ', id, values['title'])
-    #     print('description: ', values['description'])
-    #     print('query: ', values['query'])
-    #     print('overpass: ', values['overpass'])
-    #     print('layers: ', len(values.get('layers', [])))
-    #     for data in values.get('layers', []):
-    #         print(data['title'])
+    for id, values in params['categories'].items():
+        print('category: ', id, values['title'])
+        print('description: ', values['description'])
+        print('query: ', values['query'])
+        print('overpass: ', values['overpass'])
+        print('layers: ', len(values.get('layers', [])))
+        for data in values.get('layers', []):
+            print(data['title'])
 
 class Command(BaseCommand):
     help = 'Test'
