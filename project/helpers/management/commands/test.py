@@ -289,15 +289,13 @@ def test_ai_agent():
         
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
-            print('init_eval', init_eval)
-
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
             return init_eval
 
-        user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-        # user_prompt = "San Marcelino Zambales solar site screening"
+        # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
+        user_prompt = "San Marcelino Zambales solar site screening"
         result = create_thematic_map(user_prompt)
         print(result)
 
