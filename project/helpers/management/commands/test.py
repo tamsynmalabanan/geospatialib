@@ -184,13 +184,13 @@ def test_ai_agent():
                 {
                     'role':'system', 
                     'content':'''
-                        For each layer in layers, determine whether the layer's search vector contains keywords that supports or enhances understanding of the 
+                        For each layer in layers, determine whether the layer properties contain information that supports or enhances understanding of the 
                         current category within the specified thematic map subject. Assess relevance based only on:
-                        - Semantic Alignment: Does the layer's search vector conceptually relate to the category's focus?
+                        - Semantic Alignment: Do the layer's name, title, abstract, or keywords conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
                         Assign the following properties to each layer:
-                            is_valid_layer: 0 if false or 1 of true, whether layer search vector suggests that the layer is relevant to the thematic map subject and the current category.
+                            is_valid_layer: 0 if false or 1 if true, whether layer properties describe a layer that is relevant to the thematic map subject and the current category.
                             confidence_score: between 0 and 1
                         
                         Make sure layers JSON is formatted as a valid JSON string.
@@ -248,7 +248,12 @@ def test_ai_agent():
             )[:10]
             
             if filtered_queryset.exists():
-                # layers = {layer.pk: layer.search_vector for layer in filtered_queryset}
+                # layers = {layer.pk: {
+                #     'name': layer.name,
+                #     'title': layer.title,
+                #     'abstract': layer.abstract,
+                #     'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                # } for layer in filtered_queryset}
                 # params = layers_eval_info(user_prompt, values['title'], layers)
                 # layers_eval = json.loads(params.layers)
                 # categories[id]['layers'] = [i.data for i in filtered_queryset if (
@@ -267,19 +272,19 @@ def test_ai_agent():
     user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-    # params = create_thematic_map(user_prompt)
-    # print('title: ', params['title'])
-    # print('place: ', params['place'])
-    # print('bbox: ', params['bbox'])
+    params = create_thematic_map(user_prompt)
+    print('title: ', params['title'])
+    print('place: ', params['place'])
+    print('bbox: ', params['bbox'])
     
-    # for id, values in params['categories'].items():
-    #     print('category: ', id, values['title'])
-    #     print('description: ', values['description'])
-    #     print('query: ', values['query'])
-    #     print('overpass: ', values['overpass'])
-    #     print('layers: ', len(values['layers']))
-    #     for data in values['layers']:
-    #         print(data['title'])
+    for id, values in params['categories'].items():
+        print('category: ', id, values['title'])
+        print('description: ', values['description'])
+        print('query: ', values['query'])
+        print('overpass: ', values['overpass'])
+        print('layers: ', len(values['layers']))
+        for data in values['layers']:
+            print(data['title'])
 
 class Command(BaseCommand):
     help = 'Test'
