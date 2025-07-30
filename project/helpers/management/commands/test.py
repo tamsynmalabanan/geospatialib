@@ -259,6 +259,7 @@ def test_ai_agent():
     # 5. Get title, bbox and categories with id, title, rationale, query words, overpass filter tags 
 
     def call_ai_agent_v2():
+
         class ParamsEvaluation(BaseModel):
             title: str = Field(description='Title for the thematic map. Include the place of interest, if any.')
             place: str = Field(description='Place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
@@ -306,8 +307,8 @@ def test_ai_agent():
             return params
 
 
-        # user_prompt = "San Marcelino Zambales solar site screening"
-        user_prompt = "solar site screening"
+        user_prompt = "San Marcelino Zambales solar site screening"
+        # user_prompt = "solar site screening"
         result = create_thematic_map(user_prompt)
         print(result)
 
