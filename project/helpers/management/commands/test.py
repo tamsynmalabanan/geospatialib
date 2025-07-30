@@ -145,8 +145,6 @@ def test_ai_agent():
                     2. For each category, identify 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
-                        - Avoid ambiguous words that have multiple applications, particularly in geospatial context,
-                            e.g. "grid", which may refer to transmission grid system but may also refer to graticules or raster datasets.
                         - Make sure there are 5 query words.
                     3. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
                         - Only include tags that exist in the OpenStreetMap tagging schema.
@@ -250,19 +248,19 @@ def test_ai_agent():
             )[:5]
             
             if filtered_queryset.exists():
-                # layers = {layer.pk: {
-                #     'name': layer.name,
-                #     'title': layer.title,
-                #     'abstract': layer.abstract,
-                #     'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                # } for layer in filtered_queryset}
-                # params = layers_eval_info(user_prompt, values['title'], layers)
-                # layers_eval = json.loads(params.layers)
-                # categories[id]['layers'] = [i.data for i in filtered_queryset if (
-                #     layers_eval[str(i.pk)].get('is_valid_layer', 0) == 1
-                #     and layers_eval[str(i.pk)].get('confidence_score', 0) > 0.7
-                # )]
-                categories[id]['layers'] = [layer.data for layer in filtered_queryset]
+                layers = {layer.pk: {
+                    'name': layer.name,
+                    'title': layer.title,
+                    'abstract': layer.abstract,
+                    'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                } for layer in filtered_queryset}
+                params = layers_eval_info(user_prompt, values['title'], layers)
+                layers_eval = json.loads(params.layers)
+                categories[id]['layers'] = [i.data for i in filtered_queryset if (
+                    layers_eval[str(i.pk)].get('is_valid_layer', 0) == 1
+                    and layers_eval[str(i.pk)].get('confidence_score', 0) > 0.7
+                )]
+                # categories[id]['layers'] = [layer.data for layer in filtered_queryset]
             
         return {
             'title': title,
