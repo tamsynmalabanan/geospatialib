@@ -226,7 +226,9 @@ def test_ai_agent():
             
         params = layers_eval_info(user_prompt, category_layers)
         layers_eval = json.loads(params.layers)
-        print(layers_eval)
+        
+        for id, layers in layers_eval.items():
+            categories[id]['layers'] = [queryset.filter(pk=int(i)).first().data for i in layers]
             
         return {
             'title': title,
