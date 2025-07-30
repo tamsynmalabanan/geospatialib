@@ -385,7 +385,7 @@ def test_ai_agent():
                 {
                     'role': 'system',
                     'content': '''
-                        1. Use 'get_category_layers_data' to update categories JSON with database layers data. Pass the BBOX JSON as an argument, if any.
+                        1. Use 'get_category_layers_data' to update categories JSON with database layers data.
                     '''
                 },
                 {
@@ -394,7 +394,7 @@ def test_ai_agent():
                         Categories JSON:
                         {categories_json}
 
-                        {f'BBOX JSON: {bbox_json}' if bbox_json else ''}
+                        {f'bbox JSON: {bbox_json}' if bbox_json else ''}
                     '''
                 }
             ]
@@ -451,18 +451,18 @@ def test_ai_agent():
                 return None
             
             params = extract_map_params(user_prompt)
-            print('place', params.place)
-            print('bbox', params.bbox)
-            for key, value in json.loads(params.categories).items():
-                print(key)
-                for key1, value1 in value.items():
-                    print(key1, value1)
-
-            # layers = extract_map_layers(params.categories, params.bbox)
-            # for key, value in json.loads(layers.categories).items():
+            # print('place', params.place)
+            # print('bbox', params.bbox)
+            # for key, value in json.loads(params.categories).items():
             #     print(key)
             #     for key1, value1 in value.items():
             #         print(key1, value1)
+
+            layers = extract_map_layers(params.categories, params.bbox)
+            for key, value in json.loads(layers.categories).items():
+                print(key)
+                for key1, value1 in value.items():
+                    print(key1, value1)
             
 
         user_prompt = "San Marcelino Zambales solar site screening"
