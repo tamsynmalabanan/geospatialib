@@ -339,7 +339,24 @@ def test_ai_agent():
             completion = client.beta.chat.completions.parse(
                 model=model,
                 messages=messages,
-                tools=tools,
+                tools=[
+                    {
+                        'type': 'function',
+                        'function': {
+                            'name': 'get_place_bbox',
+                            'description': 'Returns the bounding box for a place in [w,s,e,n] format.',
+                            'parameters': {
+                                'type': 'object',
+                                'properties': {
+                                    'place': {'type': 'string'}
+                                },
+                                'required': ['place'],
+                                'additionalProperties': False
+                            },
+                            'strict': True,
+                        }
+                    },
+                ],
                 response_format=ParamsExtraction
             )
 
@@ -385,7 +402,25 @@ def test_ai_agent():
             completion = client.beta.chat.completions.parse(
                 model=model,
                 messages=messages,
-                tools=tools,
+                tools=[
+                    {
+                        'type': 'function',
+                        'function': {
+                            'name': 'get_category_layers_data',
+                            'description': 'Returns an updated categories JSON with a dictionary of database layers\' primary key and data for each category.',
+                            'parameters': {
+                                'type': 'object',
+                                'properties': {
+                                    'categories_json': {'type': 'string'},
+                                    'bbox_json': {'type': 'string'},
+                                },
+                                'required': ['categories_json', 'bbox_json'],
+                                'additionalProperties': False
+                            },
+                            'strict': True,
+                        }
+                    },
+                ],
                 response_format=LayersExtraction
             )
 
@@ -408,7 +443,6 @@ def test_ai_agent():
 
             result = completion.choices[0].message.parsed
             return result
-
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
