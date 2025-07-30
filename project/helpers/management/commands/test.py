@@ -120,6 +120,7 @@ def test_ai_agent():
     
 
     class ParamsExtraction(BaseModel):
+        title: str = Field(description='Title for the thematic map. Include the place of interest, if any.')
         place: str = Field(description='Name of a place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
         bbox: str = Field(description='Bounding box of the place of interest, if any. Blank if none.')
         categories: str = Field(description='''
@@ -216,6 +217,7 @@ def test_ai_agent():
             return None
         
         params = extract_map_params(user_prompt)
+        print('title', params.title)
         print('place', params.place)
         print('bbox', params.bbox)
 
@@ -228,6 +230,7 @@ def test_ai_agent():
 
         categories = json.loads(params.categories)
         for id, values in categories.items():
+            print('category: ', values.get('title'))
             categories[id]['layers'] = []
             
             search_query = SearchQuery(values.get('query'), search_type='raw')
@@ -245,7 +248,7 @@ def test_ai_agent():
                     'abstract': layer.abstract,
                     'keywords': ', '.join(layer.keywords if layer.keywords else []) 
                 }
-                print(values.get('query'), data)
+                print(data)
             
 
 
