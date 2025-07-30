@@ -213,62 +213,62 @@ def test_ai_agent():
         categories = json.loads(params.categories)
         print(categories)
 
-        # queryset = Layer.objects.all()
-        # if place:
-        #     geolocator = Nominatim(user_agent="geospatialib/1.0")
-        #     location = geolocator.geocode(place, exactly_one=True)
-        #     if location:
-        #         s,n,w,e = [float(i) for i in location.raw['boundingbox']]
-        #         raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-        #         geom_proj = raw_geom.transform(3857, clone=True)
-        #         buffered_geom = geom_proj.buffer(1000)
-        #         buffered_geom.transform(4326)
+        queryset = Layer.objects.all()
+        if place:
+            geolocator = Nominatim(user_agent="geospatialib/1.0")
+            location = geolocator.geocode(place, exactly_one=True)
+            if location:
+                s,n,w,e = [float(i) for i in location.raw['boundingbox']]
+                raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+                geom_proj = raw_geom.transform(3857, clone=True)
+                buffered_geom = geom_proj.buffer(1000)
+                buffered_geom.transform(4326)
 
-        #         bbox = buffered_geom.extent
-        #         queryset = queryset.filter(bbox__bboverlaps=buffered_geom)
+                bbox = buffered_geom.extent
+                queryset = queryset.filter(bbox__bboverlaps=buffered_geom)
 
-        # for id, values in categories.items():
-        #     categories[id]['layers'] = []
+        for id, values in categories.items():
+            categories[id]['layers'] = []
             
-        #     search_query = SearchQuery(values.get('query'), search_type='raw')
-        #     filtered_queryset = (
-        #         queryset
-        #         .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
-        #         .filter(search_vector=search_query,rank__gte=0.001)
-        #         .order_by(*['-rank'])
-        #     )[:10]
+            search_query = SearchQuery(values.get('query'), search_type='raw')
+            filtered_queryset = (
+                queryset
+                .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
+                .filter(search_vector=search_query,rank__gte=0.001)
+                .order_by(*['-rank'])
+            )[:10]
             
-        #     for layer in filtered_queryset:
-        #         if len(categories[id]['layers']) >= 5:
-        #             break
-        #         data = layer.data
-        #         # layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
-        #         # if layer_eval.is_valid_layer and layer_eval.confidence_score >= 0.7:
-        #         categories[id]['layers'].append(data)
+            for layer in filtered_queryset:
+                if len(categories[id]['layers']) >= 5:
+                    break
+                data = layer.data
+                # layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
+                # if layer_eval.is_valid_layer and layer_eval.confidence_score >= 0.7:
+                categories[id]['layers'].append(data)
             
-        # return {
-        #     'title': title,
-        #     'place': place,
-        #     'bbox': bbox,
-        #     'categories': categories
-        # }
+        return {
+            'title': title,
+            'place': place,
+            'bbox': bbox,
+            'categories': categories
+        }
 
     user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
     params = create_thematic_map(user_prompt)
-    # print('title: ', params['title'])
-    # print('place: ', params['place'])
-    # print('bbox: ', params['bbox'])
+    print('title: ', params['title'])
+    print('place: ', params['place'])
+    print('bbox: ', params['bbox'])
     
-    # for id, values in params['categories'].items():
-    #     print('category: ', id, values['title'])
-    #     print('description: ', values['description'])
-    #     print('query: ', values['query'])
-    #     print('overpass: ', values['overpass'])
-    #     print('layers: ', len(values['layers'].items()))
-    #     for data in values['layers']:
-    #         print(data['title'])
+    for id, values in params['categories'].items():
+        print('category: ', id, values['title'])
+        print('description: ', values['description'])
+        print('query: ', values['query'])
+        print('overpass: ', values['overpass'])
+        print('layers: ', len(values['layers'].items()))
+        for data in values['layers']:
+            print(data['title'])
 
 class Command(BaseCommand):
     help = 'Test'
