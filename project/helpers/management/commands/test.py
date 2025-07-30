@@ -167,37 +167,51 @@ def test_ai_agent():
         return result
 
 
-    # class LayerEvaluation(BaseModel):
-    #     is_valid_layer: bool = Field(description='Whether data in prompt describes a layer that is relevant to the thematic map subject and the current category.')
-    #     confidence_score: float = Field(description='Confidence score between 0 and 1.')
+    class LayersEvaluation(BaseModel):
+        layers:str = Field(description='''
+            A JSON of layers data with 'is_valid_layer' and 'confidence_score' properties. Format: {
+                "layer_pk": {
+                    "data": {
+                        "property1": "value1",...
+                    },
+                    "is_valid_layer": 0 if false or 1 or true,
+                    "confidence_score": between 0 to 1,
+                },...
+            }
+        ''')
 
-    # def layer_eval_info(user_prompt:str, category:str, data:dict) -> LayerEvaluation:
-    #     completion = client.beta.chat.completions.parse(
-    #         model=model,
-    #         messages=[
-    #             {
-    #                 'role':'system', 
-    #                 'content':'''
-    #                     Determine whether the data in prompt contains information that supports or enhances understanding of the current category within the specified thematic map subject.
-    #                     Assess relevance based only on:
-    #                     - Semantic Alignment: Do the data's name, title, abstract, or keywords conceptually relate to the category's focus?
-    #                     - Analytical Utility: Would the data's content contribute meaningful insights, classifications, or visualization under this category?
-    #                 '''
-    #             },
-    #             {
-    #                 'role':'user', 
-    #                 'content': f'''
-    #                     thematic map subject: {user_prompt}
-    #                     current category: {category}
-    #                     data:
-    #                     {json.dumps(data)}
-    #                 '''
-    #             }
-    #         ],
-    #         response_format=LayerEvaluation,
-    #     )
-    #     result = completion.choices[0].message.parsed
-    #     return result
+    def layers_eval_info(user_prompt:str, category:str, layers:dict) -> LayersEvaluation:
+        completion = client.beta.chat.completions.parse(
+            model=model,
+            messages=[
+                {
+                    'role':'system', 
+                    'content':'''
+                        For each layer in layers, determine whether the data properties contains information that supports or enhances understanding of the 
+                        current category within the specified thematic map subject. Assess relevance based only on:
+                        - Semantic Alignment: Do the data's name, title, abstract, or keywords conceptually relate to the category's focus?
+                        - Analytical Utility: Would the data's content contribute meaningful insights, classifications, or visualization under this category?
+
+                        Assign the following properties to each layer:
+                            is_valid_layer: 0 if false or 1 or true, whether data describes a layer that is relevant to the thematic map subject and the current category.
+                            confidence_score: between 0 and 1
+
+                    '''
+                },
+                {
+                    'role':'user', 
+                    'content': f'''
+                        thematic map subject: {user_prompt}
+                        current category: {category}
+                        layers:
+                        {json.dumps(layers)}
+                    '''
+                }
+            ],
+            response_format=LayersEvaluation,
+        )
+        result = completion.choices[0].message.parsed
+        return result
     
 
     def create_thematic_map(user_prompt:str):
@@ -211,7 +225,6 @@ def test_ai_agent():
 
         params = extract_theme_categories(user_prompt)
         categories = json.loads(params.categories)
-        print(categories)
 
         queryset = Layer.objects.all()
         if place:
@@ -238,13 +251,9 @@ def test_ai_agent():
                 .order_by(*['-rank'])
             )[:10]
             
-            for layer in filtered_queryset:
-                if len(categories[id]['layers']) >= 5:
-                    break
-                data = layer.data
-                # layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
-                # if layer_eval.is_valid_layer and layer_eval.confidence_score >= 0.7:
-                categories[id]['layers'].append(data)
+            layers = {layer.pk: {'data': layer.data} for layer in filtered_queryset}
+            layers_eval = layers_eval_info(user_prompt, values['title'], layers)
+            print(layers_eval)
             
         return {
             'title': title,
@@ -257,18 +266,18 @@ def test_ai_agent():
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
     params = create_thematic_map(user_prompt)
-    print('title: ', params['title'])
-    print('place: ', params['place'])
-    print('bbox: ', params['bbox'])
+    # print('title: ', params['title'])
+    # print('place: ', params['place'])
+    # print('bbox: ', params['bbox'])
     
-    for id, values in params['categories'].items():
-        print('category: ', id, values['title'])
-        print('description: ', values['description'])
-        print('query: ', values['query'])
-        print('overpass: ', values['overpass'])
-        print('layers: ', len(values['layers']))
-        for data in values['layers']:
-            print(data['title'])
+    # for id, values in params['categories'].items():
+    #     print('category: ', id, values['title'])
+    #     print('description: ', values['description'])
+    #     print('query: ', values['query'])
+    #     print('overpass: ', values['overpass'])
+    #     print('layers: ', len(values['layers']))
+    #     for data in values['layers']:
+    #         print(data['title'])
 
 class Command(BaseCommand):
     help = 'Test'
