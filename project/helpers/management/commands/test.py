@@ -325,29 +325,25 @@ def test_ai_agent():
                 response_format=ParamsExtraction
             )
 
-            print(completion.choices[0].message.tool_calls)
+            for tool_call in completion.choices[0].message.tool_calls:
+                name = tool_call.function.name
+                args = json.loads(tool_call.function.arguments)
+                result = call_function(name, args)
 
-            # for tool_call in completion.choices[0].message.tool_calls:
-            #     name = tool_call.function.name
-            #     args = json.loads(tool_call.function.arguments)
-            #     result = call_function(name, args)
-            #     print('tool name', name)
-            #     print('tool result', result)
+                messages.append(completion.choices[0].message)
+                messages.append(
+                    {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+                )
 
-            #     messages.append(completion.choices[0].message)
-            #     messages.append(
-            #         {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
-            #     )
+            completion = client.beta.chat.completions.parse(
+                model=model,
+                messages=messages,
+                tools=tools,
+                response_format=ParamsExtraction
+            )
 
-            # completion = client.beta.chat.completions.parse(
-            #     model=model,
-            #     messages=messages,
-            #     tools=tools,
-            #     response_format=ParamsExtraction
-            # )
-
-            # result = completion.choices[0].message.parsed
-            # return result
+            result = completion.choices[0].message.parsed
+            return result
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
