@@ -301,61 +301,63 @@ def test_ai_agent():
             return result
         
         def extract_map_params(user_prompt:str) -> ParamsExtraction:
+            messages = [
+                {
+                    'role': 'system',
+                    'content': '''
+                        1. If a place of interest is mentioned in the subject, extract its bounding box.
+                        2. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject and place of interest, if any.
+                            - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
+                            - Focus on thematic scope and spatial context; do not list layers.
+                        3. For each category, identify 5 query words most relevant to the category, subject and place of interest, if any.
+                            - Each query word should be an individual real english word, without caps, conjunctions or special characters.
+                            - Make sure query words are suitable for filtering geospatial layers.
+                        4. For each category, identify 5 Overpass QL filter tags most relevant to the category, subject and place of interest, if any.
+                    '''
+                },
+                {'role': 'user', 'content': user_prompt}
+            ]
+
             completion = client.beta.chat.completions.parse(
                 model=model,
-                messages=[
-                    {
-                        'role': 'system',
-                        'content': '''
-                            1. If a place of interest is mentioned in the subject, extract its bounding box.
-                            2. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject and place of interest, if any.
-                                - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
-                                - Focus on thematic scope and spatial context; do not list layers.
-                            3. For each category, identify 5 query words most relevant to the category, subject and place of interest, if any.
-                                - Each query word should be an individual real english word, without caps, conjunctions or special characters.
-                                - Make sure query words are suitable for filtering geospatial layers.
-                            4. For each category, identify 5 Overpass QL filter tags most relevant to the category, subject and place of interest, if any.
-                        '''
-                    },
-                    {'role': 'user', 'content': user_prompt}
-                ],
+                messages=messages,
                 tools=tools,
                 response_format=ParamsExtraction
             )
 
             tool_calls = completion.choices[0].message.tool_calls
-            print('tool_calls', tool_calls)
-            
-            # while completion.choices and completion.choices[0].finish_reason == 'tool_calls' and completion.choices[0].message.tool_calls:
-            #     print('tool_calls', tool_calls)
-            #     for tool_call in completion.choices[0].message.tool_calls:
-            #         name = tool_call.function.name
-            #         print('tool name', name)
-            #         args = json.loads(tool_call.function.arguments)
-            #         messages.append(completion.choices[0].message)
+            while tool_calls:
+                print('tool_calls', tool_calls)
+                for tool_call in tool_calls:
+                    name = tool_call.function.name
+                    print('tool name', name)
+                    args = json.loads(tool_call.function.arguments)
+                    messages.append(completion.choices[0].message)
 
-            #         result = call_function(name, args)
-            #         messages.append(
-            #             {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
-            #         )
+                    result = call_function(name, args)
+                    messages.append(
+                        {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+                    )
 
-            #     completion = client.beta.chat.completions.parse(
-            #         model='gpt-4o',
-            #         messages=messages,
-            #         tools=tools,
-            #         response_format=ThematicMap
-            #     )
+                completion = client.beta.chat.completions.parse(
+                    model=model,
+                    messages=messages,
+                    tools=tools,
+                    response_format=ParamsExtraction
+                )
 
             result = completion.choices[0].message.parsed
             return result
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
-            init_eval = params_eval_info(user_prompt) ; print('init_eval', init_eval)
+            init_eval = params_eval_info(user_prompt)
+            print('init_eval', init_eval)
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
             map_params = extract_map_params(user_prompt)
-            return map_params
+            print('map_params', map_params)
+            
 
 
         user_prompt = "San Marcelino Zambales solar site screening"
