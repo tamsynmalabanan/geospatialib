@@ -266,7 +266,7 @@ def test_ai_agent():
         print('description: ', values['description'])
         print('query: ', values['query'])
         print('overpass: ', values['overpass'])
-        print('layers: ', len(values['layers'].items()))
+        print('layers: ', len(values['layers']))
         for data in values['layers']:
             print(data['title'])
 
