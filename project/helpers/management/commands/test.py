@@ -73,6 +73,7 @@ def test_ai_agent():
         try:
             queryset = Layer.objects.all()
             if bbox_json:
+                print('bbox_json', bbox_json)
                 bbox = json.loads(bbox_json)
                 w,s,e,n = [float(i) for i in bbox]
                 geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
@@ -80,6 +81,7 @@ def test_ai_agent():
 
             categories = json.loads(categories_json)
             for id, params in categories.items():
+                print('category: ', id)
                 query = params.get('query')
                 search_query = SearchQuery(query, search_type='raw')
                 filtered_queryset = (
@@ -93,7 +95,8 @@ def test_ai_agent():
                     'title': layer.title,
                     'abstract': layer.abstract,
                     'keywords': ', '.join(layer.keywords if layer.keywords else []) 
-                } for layer in filtered_queryset[:10]}
+                } for layer in filtered_queryset[:5]}
+                print(categories[id]['layers'].keys())
             return categories
         except Exception as e:
             print(e)
@@ -431,10 +434,12 @@ def test_ai_agent():
 
             for tool_call in completion.choices[0].message.tool_calls:
                 name = tool_call.function.name
+                print('tool name', name)
                 args = json.loads(tool_call.function.arguments)
                 result = call_function(name, args)
 
                 messages.append(completion.choices[0].message)
+                print('result', result)
                 messages.append(
                     {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
                 )
