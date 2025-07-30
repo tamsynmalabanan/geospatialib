@@ -195,7 +195,8 @@ def test_ai_agent():
                         Assign the following properties to each layer:
                             is_valid_layer: 0 if false or 1 or true, whether data describes a layer that is relevant to the thematic map subject and the current category.
                             confidence_score: between 0 and 1
-
+                        
+                        Make sure layers JSON is formatted as a valid JSON string.
                     '''
                 },
                 {
