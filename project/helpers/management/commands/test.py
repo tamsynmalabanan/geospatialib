@@ -292,6 +292,8 @@ def test_ai_agent():
         result = create_thematic_map(user_prompt)
         print(result)
 
+    call_ai_agent_v2()
+
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
