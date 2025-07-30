@@ -272,7 +272,7 @@ def test_ai_agent():
                 .annotate(rank=Max(SearchRank(F('search_vector'), search_query)))
                 .filter(search_vector=search_query,rank__gte=0.001)
                 .order_by(*['-rank'])
-            )[:5]
+            )[:10]
             
             for layer in filtered_queryset:
                 data = {
@@ -282,9 +282,12 @@ def test_ai_agent():
                     'keywords': ', '.join(layer.keywords if layer.keywords else []) 
                 }
                 layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
-                print(layer.title, layer_eval)
+                if layer_eval.is_valid_layer and layer_eval.confidence_score >= 0.7:
+                    print(data['title'], layer_eval)
+                    categories[id]['layers'].append(layer.pk)
             
-
+            print('category: ', values.get('title'))
+            print('layers: ', len(categories[id]['layers']))
 
     user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
