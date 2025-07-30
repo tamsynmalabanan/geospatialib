@@ -459,8 +459,8 @@ def test_ai_agent():
             #     for key1, value1 in value.items():
             #         print(key1, value1)
 
-            layers = extract_map_layers(params.categories, params.bbox)
-            print(layers.categories)
+            # layers = extract_map_layers(params.categories, params.bbox)
+            # print(layers.categories)
             # for key, value in json.loads(layers.categories).items():
             #     print(key)
             #     for key1, value1 in value.items():
