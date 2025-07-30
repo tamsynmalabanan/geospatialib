@@ -140,23 +140,23 @@ def test_ai_agent():
                 'strict': True,
             }
         },
-        {
-            'type': 'function',
-            'function': {
-                'name': 'get_category_layers_data',
-                'description': 'Returns an updated categories JSON with a dictionary of database layers\' primary key and data for each category.',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'categories_json': {'type': 'string'},
-                        'bbox_json': {'type': 'string'},
-                    },
-                    'required': ['categories_json', 'bbox_json'],
-                    'additionalProperties': False
-                },
-                'strict': True,
-            }
-        },
+        # {
+        #     'type': 'function',
+        #     'function': {
+        #         'name': 'get_category_layers_data',
+        #         'description': 'Returns an updated categories JSON with a dictionary of database layers\' primary key and data for each category.',
+        #         'parameters': {
+        #             'type': 'object',
+        #             'properties': {
+        #                 'categories_json': {'type': 'string'},
+        #                 'bbox_json': {'type': 'string'},
+        #             },
+        #             'required': ['categories_json', 'bbox_json'],
+        #             'additionalProperties': False
+        #         },
+        #         'strict': True,
+        #     }
+        # },
     ]
 
 
@@ -262,10 +262,20 @@ def test_ai_agent():
         class ParamsEvaluation(BaseModel):
             is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
             confidence_score: float = Field(description='Confidence score between 0 and 1.')
-            place: str = Field(description='Place of interest for the thematic map that is mentioned in the user prompt, if any. Blank if none.')
         
-        # class BboxExtraction(BaseModel):
-        #     bbox: str = Field(description='Bounding box of the place of interest in "[w,s,e,n]" format. Blank if none.')
+        class ParamsExtraction(BaseModel):
+            place: str = Field(description='Place of interest for the thematic map that is mentioned in the user prompt, if any. Blank if none.')
+            bbox: str = Field(description='Bounding box of the place of interest in "[w,s,e,n]" format. Blank if none.')
+            categories: str = Field(description='''
+                A JSON of 10 categories relevant to the subject and place of interest if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
+                    "category1_id": {
+                        "title": "Category 1 Title",
+                        "rationale": "A rationale for the relevance of category 1 to the thematic map subject and place of interest, if any.",
+                        "query": "('word1' | 'word2' | 'word3'...)",
+                        "overpass": ["tag_filter1", "tag_filter2", "tag_filter3"... ]
+                    },...
+                }
+            ''')
 
         class ThematicMapParams(BaseModel):
             pass
@@ -290,34 +300,67 @@ def test_ai_agent():
             result = completion.choices[0].message.parsed
             return result
         
-        # def extract_map_bbox(user_prompt:str) -> BboxExtraction:
-        #     completion = client.beta.chat.completions.parse(
-        #         model=model,
-        #         messages=[
-        #             {
-        #                 'role': 'system',
-        #                 'content': 'If a place of interest is specificied in the user prompt, extract its bounding box.'
-        #             },
-        #             {'role': 'user', 'content': user_prompt}
-        #         ],
-        #         tools=tools,
-        #         response_format=BboxExtraction
-        #     )
-        #     result = completion.choices[0].message.parsed
-        #     return result
+        def extract_map_params(user_prompt:str) -> ParamsExtraction:
+            completion = client.beta.chat.completions.parse(
+                model=model,
+                messages=[
+                    {
+                        'role': 'system',
+                        'content': '''
+                            1. If a place of interest is mentioned in the subject, extract its bounding box.
+                            2. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject and place of interest, if any.
+                                - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
+                                - Focus on thematic scope and spatial context; do not list layers.
+                            3. For each category, identify 5 query words most relevant to the category, subject and place of interest, if any.
+                                - Each query word should be an individual real english word, without caps, conjunctions or special characters.
+                                - Make sure query words are suitable for filtering geospatial layers.
+                            4. For each category, identify 5 Overpass QL filter tags most relevant to the category, subject and place of interest, if any.
+                        '''
+                    },
+                    {'role': 'user', 'content': user_prompt}
+                ],
+                tools=tools,
+                response_format=ParamsExtraction
+            )
+
+            tool_calls = completion.choices[0].message.tool_calls
+            print('tool_calls', tool_calls)
+            
+            # while completion.choices and completion.choices[0].finish_reason == 'tool_calls' and completion.choices[0].message.tool_calls:
+            #     print('tool_calls', tool_calls)
+            #     for tool_call in completion.choices[0].message.tool_calls:
+            #         name = tool_call.function.name
+            #         print('tool name', name)
+            #         args = json.loads(tool_call.function.arguments)
+            #         messages.append(completion.choices[0].message)
+
+            #         result = call_function(name, args)
+            #         messages.append(
+            #             {'role': 'tool', 'tool_call_id': tool_call.id, 'content': json.dumps(result)}
+            #         )
+
+            #     completion = client.beta.chat.completions.parse(
+            #         model='gpt-4o',
+            #         messages=messages,
+            #         tools=tools,
+            #         response_format=ThematicMap
+            #     )
+
+            result = completion.choices[0].message.parsed
+            return result
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt) ; print('init_eval', init_eval)
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
-            # bbox = extract_map_bbox(init_eval.place)
-            # return bbox
+            map_params = extract_map_params(user_prompt)
+            return map_params
 
 
-        # user_prompt = "San Marcelino Zambales solar site screening"
+        user_prompt = "San Marcelino Zambales solar site screening"
         # user_prompt = "solar site screening"
-        user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
+        # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
         result = create_thematic_map(user_prompt)
         print(result)
 
