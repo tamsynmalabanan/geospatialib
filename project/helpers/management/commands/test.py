@@ -255,7 +255,7 @@ def test_ai_agent():
 
         categories = json.loads(params.categories)
         for id, values in categories.items():
-            categories[id]['layers'] = {}
+            categories[id]['layers'] = []
             
             search_query = SearchQuery(values.get('query'), search_type='raw')
             filtered_queryset = (
@@ -266,7 +266,7 @@ def test_ai_agent():
             )[:10]
             
             for layer in filtered_queryset:
-                if len(categories[id]['layers'].keys()) >= 5:
+                if len(categories[id]['layers']) >= 5:
                     break
                 data = {
                     'name': layer.name,
@@ -276,7 +276,7 @@ def test_ai_agent():
                 }
                 layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
                 if layer_eval.is_valid_layer and layer_eval.confidence_score >= 0.7:
-                    categories[id]['layers'][layer.pk] = data.get('title')
+                    categories[id]['layers'].append(layer.data)
         
         params.categories = categories
         return params
@@ -294,9 +294,8 @@ def test_ai_agent():
         print('description: ', values['description'])
         print('query: ', values['query'])
         print('overpass: ', values['overpass'])
-        print('layers: ', len(values['layers'].items()))
-        for pk, title in values['layers'].items():
-            print(pk, title)
+        print('layers: ', len(values['layers']))
+        print(values['layers'])
 
 class Command(BaseCommand):
     help = 'Test'
