@@ -119,6 +119,39 @@ def test_ai_agent():
         return result
     
 
+    class LayerEvaluation(BaseModel):
+        is_valid_layer: bool = Field(description='Whether data in prompt describes a layer that is relevant to the thematic map subject and the current category.')
+        confidence_score: float = Field(description='Confidence score between 0 and 1.')
+
+    def layer_eval_info(user_prompt:str, category:str, data:dict) -> LayerEvaluation:
+        completion = client.beta.chat.completions.parse(
+            model=model,
+            messages=[
+                {
+                    'role':'system', 
+                    'content':'''
+                        Determine whether the data in prompt contains information that supports or enhances understanding of the current category within the specified thematic map subject.
+                        Assess relevance based only on:
+                        - Semantic Alignment: Do the data's name, title, abstract, or keywords conceptually relate to the category's focus?
+                        - Analytical Utility: Would the data's content contribute meaningful insights, classifications, or visualization under this category?
+                    '''
+                },
+                {
+                    'role':'user', 
+                    'content': f'''
+                        thematic map subject: {user_prompt}
+                        current category: {category}
+                        data:
+                        {json.dumps(data)}
+                    '''
+                }
+            ],
+            response_format=ParamsEvaluation,
+        )
+        result = completion.choices[0].message.parsed
+        return result
+    
+
     class ParamsExtraction(BaseModel):
         title: str = Field(description='Title for the thematic map. Include the place of interest, if any.')
         place: str = Field(description='Name of a place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
@@ -248,7 +281,8 @@ def test_ai_agent():
                     'abstract': layer.abstract,
                     'keywords': ', '.join(layer.keywords if layer.keywords else []) 
                 }
-                print(data)
+                layer_eval = layer_eval_info(user_prompt, values.get('title'), data)
+                print(layer.title, layer_eval)
             
 
 
