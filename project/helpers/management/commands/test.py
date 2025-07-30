@@ -330,7 +330,8 @@ def test_ai_agent():
                             - Exclude invented or uncommon tags not used in OpenStreetMap data.
                             - Validate tags against the Overpass QL specification and common usage.
                             - Return only tags that are supported by Overpass QL filters like [key=value], [key~(value1|value2)], or [key].
-
+                        
+                        Make sure categories JSON is formatted as a valid JSON string.
                     '''
                 },
                 {'role': 'user', 'content': user_prompt}
@@ -386,6 +387,7 @@ def test_ai_agent():
                     'role': 'system',
                     'content': '''
                         1. Use 'get_category_layers_data' to update categories JSON with database layers data.
+                            - Make sure categories JSON is formatted as a valid JSON string.
                     '''
                 },
                 {
@@ -451,13 +453,12 @@ def test_ai_agent():
                 return None
             
             params = extract_map_params(user_prompt)
-            print(params.categories)
-            # print('place', params.place)
-            # print('bbox', params.bbox)
-            # for key, value in json.loads(params.categories).items():
-            #     print(key)
-            #     for key1, value1 in value.items():
-            #         print(key1, value1)
+            print('place', params.place)
+            print('bbox', params.bbox)
+            for key, value in json.loads(params.categories).items():
+                print(key)
+                for key1, value1 in value.items():
+                    print(key1, value1)
 
             # layers = extract_map_layers(params.categories, params.bbox)
             # print(layers.categories)
