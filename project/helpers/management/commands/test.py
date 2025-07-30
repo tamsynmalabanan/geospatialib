@@ -317,6 +317,7 @@ def test_ai_agent():
                     'role': 'system',
                     'content': '''
                         1. If a place of interest is mentioned in the subject, extract its bounding box using 'get_place_bbox' tool.
+                            - call 'get_place_bbox' only for this purpose and only once.
                         2. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject.
                             - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                             - Focus on thematic scope and spatial context; do not list layers.
@@ -411,23 +412,23 @@ def test_ai_agent():
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
             init_eval = params_eval_info(user_prompt)
-            print(init_eval)
+            # print(init_eval)
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
             params = extract_map_params(user_prompt)
-            # print('place', params.place)
-            # print('bbox', params.bbox)
-            # for key, value in json.loads(params.categories).items():
-            #     print(key)
-            #     for key1, value1 in value.items():
-            #         print(key1, value1)
-
-            layers = extract_map_layers(params.categories, params.bbox)
-            for key, value in json.loads(layers.categories).items():
+            print('place', params.place)
+            print('bbox', params.bbox)
+            for key, value in json.loads(params.categories).items():
                 print(key)
                 for key1, value1 in value.items():
                     print(key1, value1)
+
+            # layers = extract_map_layers(params.categories, params.bbox)
+            # for key, value in json.loads(layers.categories).items():
+            #     print(key)
+            #     for key1, value1 in value.items():
+            #         print(key1, value1)
             
 
         user_prompt = "San Marcelino Zambales solar site screening"
