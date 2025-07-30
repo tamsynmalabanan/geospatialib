@@ -169,12 +169,7 @@ def test_ai_agent():
 
     class LayersEvaluation(BaseModel):
         layers:str = Field(description='''
-            A JSON of layers primary key with 'is_valid_layer' and 'confidence_score' properties. Format: {
-                "layer_pk": {
-                    "is_valid_layer": 0 if false or 1 if true,
-                    "confidence_score": between 0 to 1,
-                },...
-            }
+            A JSON array of primary keys of layers that are relevant to the thematic map subject and current category. Format: ["primary_key1", "primary_key2",...]
         ''')
 
     def layers_eval_info(user_prompt:str, category:str, layers:dict) -> LayersEvaluation:
@@ -188,12 +183,8 @@ def test_ai_agent():
                         current category within the specified thematic map subject. Assess relevance based only on:
                         - Semantic Alignment: Does the layer's search vector conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
-
-                        Assign the following properties to each layer:
-                            is_valid_layer: 0 if false or 1 of true, whether layer search vector suggests that the layer is relevant to the thematic map subject and the current category.
-                            confidence_score: between 0 and 1
                         
-                        Make sure layers JSON is formatted as a valid JSON string.
+                        Make sure layers JSON array is formatted as a valid JSON string.
                     '''
                 },
                 {
@@ -249,9 +240,13 @@ def test_ai_agent():
             
             if filtered_queryset.exists():
                 layers = {layer.pk: layer.search_vector for layer in filtered_queryset}
-                layers_eval = layers_eval_info(user_prompt, values['title'], layers)
-                print(json.loads(layers_eval.layers))
-                # categories[id]['layers'] = 
+                params = layers_eval_info(user_prompt, values['title'], layers)
+                layers_eval = json.loads(params.layers)
+                print(layers_eval)
+                # categories[id]['layers'] = [i.data for i in filtered_queryset if (
+                #     layers_eval[str(i.pk)].get('is_valid_layer', 0) == 1
+                #     and layers_eval[str(i.pk)].get('confidence_score', 0) > 0.7
+                # )]
             
         return {
             'title': title,
@@ -264,18 +259,18 @@ def test_ai_agent():
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
     params = create_thematic_map(user_prompt)
-    # print('title: ', params['title'])
-    # print('place: ', params['place'])
-    # print('bbox: ', params['bbox'])
+    print('title: ', params['title'])
+    print('place: ', params['place'])
+    print('bbox: ', params['bbox'])
     
-    # for id, values in params['categories'].items():
-    #     print('category: ', id, values['title'])
-    #     print('description: ', values['description'])
-    #     print('query: ', values['query'])
-    #     print('overpass: ', values['overpass'])
-    #     print('layers: ', len(values['layers']))
-    #     for data in values['layers']:
-    #         print(data['title'])
+    for id, values in params['categories'].items():
+        print('category: ', id, values['title'])
+        print('description: ', values['description'])
+        print('query: ', values['query'])
+        print('overpass: ', values['overpass'])
+        print('layers: ', len(values['layers']))
+        for data in values['layers']:
+            print(data['title'])
 
 class Command(BaseCommand):
     help = 'Test'
