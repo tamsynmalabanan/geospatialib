@@ -145,6 +145,8 @@ def test_ai_agent():
                     2. For each category, identify 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
+                        - Avoid ambiguous words that have multiple applications, particularly in geospatial context,
+                            e.g. "grid", which may refer to transmission grid system but may also refer to graticules or raster datasets.
                         - Make sure there are 5 query words.
                     3. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
                         - Only include tags that exist in the OpenStreetMap tagging schema.
