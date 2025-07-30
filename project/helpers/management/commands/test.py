@@ -291,7 +291,7 @@ def test_ai_agent():
             result = completion.choices[0].message.parsed
             return result
         
-        def parse_map_params(user_prompt:str):
+        def parse_map_params(subject:str, place:str=None) -> ParamsExtraction:
             pass
 
         def create_thematic_map(user_prompt:str) -> Optional[ThematicMapParams]:
@@ -301,12 +301,13 @@ def test_ai_agent():
             if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
                 return None
             
-            params = parse_map_params(user_prompt)
+            params = parse_map_params(init_eval.subject, init_eval.place)
 
             return params
 
-        # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-        user_prompt = "San Marcelino Zambales solar site screening"
+
+        # user_prompt = "San Marcelino Zambales solar site screening"
+        user_prompt = "solar site screening"
         result = create_thematic_map(user_prompt)
         print(result)
 
