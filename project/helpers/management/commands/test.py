@@ -456,19 +456,19 @@ def test_ai_agent():
                 return None
             
             params = extract_map_params(user_prompt)
-            print('place', params.place)
-            print('bbox', params.bbox)
-            for key, value in json.loads(params.categories).items():
-                print(key)
-                for key1, value1 in value.items():
-                    print(key1, value1)
-
-            # layers = extract_map_layers(params.categories, params.bbox)
-            # print(layers.categories)
-            # for key, value in json.loads(layers.categories).items():
+            print('initial categories', json.loads(params.categories).keys())
+            # print('place', params.place)
+            # print('bbox', params.bbox)
+            # for key, value in json.loads(params.categories).items():
             #     print(key)
             #     for key1, value1 in value.items():
             #         print(key1, value1)
+
+            layers = extract_map_layers(params.categories, params.bbox)
+            for key, value in json.loads(layers.categories).items():
+                print(key)
+                for key1, value1 in value.items():
+                    print(key1, value1)
             
 
         user_prompt = "San Marcelino Zambales solar site screening"
