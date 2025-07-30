@@ -210,8 +210,8 @@ def test_ai_agent():
         bbox = []
 
         params = extract_theme_categories(user_prompt)
-        print(params)
-        # categories = json.loads(params.categories)
+        categories = json.loads(params.categories)
+        print(categories)
 
         # queryset = Layer.objects.all()
         # if place:
