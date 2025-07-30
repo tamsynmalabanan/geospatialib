@@ -282,8 +282,8 @@ def test_ai_agent():
         print('description: ', values['description'])
         print('query: ', values['query'])
         print('overpass: ', values['overpass'])
-        print('layers: ', len(values['layers']))
-        for data in values['layers']:
+        print('layers: ', len(values.get('layers', [])))
+        for data in values.get('layers', []):
             print(data['title'])
 
 class Command(BaseCommand):
