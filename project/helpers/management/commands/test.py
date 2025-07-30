@@ -271,7 +271,15 @@ def test_ai_agent():
             completion = client.beta.chat.completions.parse(
                 model=model,
                 messages=[
-                    {'role':'system', 'content':'Analyze if the user prompt is a valid subject for a thematic map.'},
+                    {
+                        'role':'system', 
+                        'content':'''
+                            Determine whether the user prompt describes a subject for a valid thematic map. A valid subject must:
+                            - Clearly imply geographic or spatial distribution based on real-world attributes.
+                            - Use quantifiable data with direct spatial applicability (e.g. environmental, infrastructural, demographic).
+                            - Avoid abstract, speculative, or symbolic groupings not grounded in geographic reality (e.g. astrology, personality types).
+                        '''
+                    },
                     {'role':'user', 'content': user_prompt}
                 ],
                 response_format=ParamsEvaluation,
