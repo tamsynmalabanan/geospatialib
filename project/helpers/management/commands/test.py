@@ -451,6 +451,7 @@ def test_ai_agent():
                 return None
             
             params = extract_map_params(user_prompt)
+            print(json.loads(params.categories).keys())
             # print('place', params.place)
             # print('bbox', params.bbox)
             # for key, value in json.loads(params.categories).items():
