@@ -118,7 +118,6 @@ def test_ai_agent():
                         - Make sure there are 10 categories.
                     2. For each category, identify 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
-                        - Avoid selecting polysemous words or using GIS-related concepts.
                         - Make sure query words are suitable for filtering geospatial layers.
                         - Make sure there are 5 query words.
                     3. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
