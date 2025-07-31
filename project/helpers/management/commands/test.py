@@ -218,13 +218,16 @@ def test_ai_agent():
         for id, values in categories.items():
             category_layers[id] = {'title': values.get('title')}
             
-        #     factory = RequestFactory()
-        #     request = factory.get('/dummy-url/', {
-        #         'query': values.get('query'),
-        #         'bbox__bboverlaps': geom.geojson
-        #     })
-        #     view = LayerList()
-        #     view.request = request
+            factory = RequestFactory()
+            request = factory.get('/dummy-url/', {
+                'query': values.get('query'),
+                'bbox__bboverlaps': geom.geojson
+            })
+            view = LayerList()
+            view.request = request
+
+            print(request, view)
+
         #     queryset = view.get_queryset()
         #     if queryset.exists():
         #         category_layers[id]['layers'] = {layer.pk: {
