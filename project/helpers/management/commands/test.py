@@ -222,16 +222,14 @@ def test_ai_agent():
                 })
                 view = LayerList()
                 view.request = request
-
-                print(request, view)
-                # queryset = view.get_queryset()
-                # if queryset.exists():
-                #     category_layers[id]['layers'] = {layer.pk: {
-                #         # 'name': layer.name,
-                #         'title': layer.title,
-                #         # 'abstract': layer.abstract,
-                #         # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                #     } for layer in queryset}
+                queryset = view.get_queryset()
+                if queryset.exists():
+                    category_layers[id]['layers'] = {layer.pk: {
+                        # 'name': layer.name,
+                        'title': layer.title,
+                        # 'abstract': layer.abstract,
+                        # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                    } for layer in queryset}
                 print(category_layers[id])
                     
             print(category_layers)
