@@ -213,6 +213,7 @@ def test_ai_agent():
             
             queryset = Layer.objects.all()
             if geom:
+                print(geom)
                 queryset = queryset.filter(bbox__bboverlaps=geom)
 
             category_layers = {}
