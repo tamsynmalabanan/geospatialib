@@ -68,6 +68,12 @@ def test_ai_agent():
     client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
     model = 'gpt-4o'
 
+    json_prompt_guide = '''
+        Return only the raw JSON string with double quotes for all keys and string values, 
+        using standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
+        Do not wrap the output in triple quotes or additional characters.
+    '''
+
     class ParamsEvaluation(BaseModel):
         is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
         confidence_score: float = Field(description='Confidence score between 0 and 1.')
@@ -105,8 +111,7 @@ def test_ai_agent():
                     "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
                 },...
             }
-            Make sure categories JSON is formatted as a valid JSON string.
-        ''')
+        ''' + '\n' + json_prompt_guide)
 
     def extract_theme_categories(user_prompt:str) -> CategoriesExtraction:
         messages = [
@@ -128,8 +133,7 @@ def test_ai_agent():
                         - Validate tags against the Overpass QL specification and common usage.
                         - Return only tags that are supported by Overpass QL filters like [key=value], [key~(value1|value2)], or [key].
                         - Make sure there are 10 filter tags.
-                    Make sure categories JSON is formatted as a valid JSON string.
-                '''
+                ''' + '\n' + json_prompt_guide
             },
             {'role': 'user', 'content': user_prompt}
         ]
@@ -146,8 +150,7 @@ def test_ai_agent():
         layers:str = Field(description='''
             A JSON of category ID and corresponding array of primary keys of layers that are relevant to the thematic map subject and respective category.
             Format: {"category1": ["layer_pk1", "layer_pk2", "layer_pk3",...], "category2": ["layer_pk4", "layer_pk5", "layer_pk6",...],...}
-            Make sure categories JSON is formatted as a valid JSON string.
-        ''')
+        ''' + '\n' + json_prompt_guide)
 
     def layers_eval_info(user_prompt:str, category_layers:dict) -> LayersEvaluation:
         completion = client.beta.chat.completions.parse(
@@ -162,8 +165,7 @@ def test_ai_agent():
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
                         Filter out layers that are not relevant.
-                        Make sure the response JSON is formatted as a valid JSON string.
-                    '''
+                    ''' + '\n' + json_prompt_guide
                 },
                 {
                     'role':'user', 
