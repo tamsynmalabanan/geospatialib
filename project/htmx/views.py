@@ -107,10 +107,10 @@ class LayerList(ListView):
             .annotate(
                 rank=SearchRank(F('search_vector'), search_query)
             )
-            # .filter(
-            #     search_vector=search_query,
-            #     rank__gte=0.001
-            # )
+            .filter(
+                search_vector=search_query,
+                # rank__gte=0.001
+            )
         )
 
         return queryset
