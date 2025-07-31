@@ -57,7 +57,7 @@ class LayerList(ListView):
             'arcgis',
         ] + list(COLLECTION_FORMATS.keys())))
 
-        query = self.request.GET.get('query', '').replace('\'', '').replace('"','').strip()
+        query = self.request.GET.get('query', '').replace('\'', '').replace('"','').strip().lower()
         exclusions = []
 
         if ' -' in f' {query}':
