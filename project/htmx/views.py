@@ -144,12 +144,12 @@ class LayerList(ListView):
 
         queryset = self.queryset
 
-        # if queryset and queryset.exists():
-        #     queryset = (
-        #         self.queryset
-        #         .annotate(rank=Max('rank'))
-        #         .order_by(*['-rank', 'title', 'type'])
-        #     )
+        if queryset and queryset.exists():
+            queryset = (
+                self.queryset
+                .annotate(rank=Max('rank'))
+                .order_by(*['-rank', 'title', 'type'])
+            )
 
         return queryset
 
