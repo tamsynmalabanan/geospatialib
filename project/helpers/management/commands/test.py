@@ -212,6 +212,8 @@ def test_ai_agent():
         except Exception as e:
             print(e)
 
+        print(categories)
+
         # category_layers = {}
         # for id, values in categories.items():
         #     category_layers[id] = {'title': values.get('title')}
