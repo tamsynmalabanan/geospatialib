@@ -91,14 +91,14 @@ class LayerList(ListView):
             )
         )
 
-        # if self.filter_values:
-        #     queryset = queryset.filter(**{
-        #         param : value 
-        #         for param, value in self.request.GET.items()
-        #         if value and param in self.filter_fields + [
-        #             'bbox__bboverlaps'
-        #         ]
-        #     })
+        if self.filter_values:
+            queryset = queryset.filter(**{
+                param : value 
+                for param, value in self.request.GET.items()
+                if value and param in self.filter_fields + [
+                    'bbox__bboverlaps'
+                ]
+            })
         
         # search_query = SearchQuery(self.raw_query, search_type='raw')
 
