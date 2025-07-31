@@ -151,7 +151,7 @@ def test_ai_agent():
 
     class LayersEvaluation(BaseModel):
         layers:str = Field(description='''
-            A JSON of category ID and corresponding array of primary keys (integers) of layers.
+            A JSON of category ID and corresponding array of primary keys (integers) of layers that are relevant to the category and the thematic map subject.
             Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
         ''' + '\n' + json_prompt_guide)
 
@@ -235,25 +235,22 @@ def test_ai_agent():
                 )
 
                 if filtered_queryset.exists():
-                    category_layers[id]['layers'] = {layer.pk: layer.title for layer in filtered_queryset[:30]}
-                    # category_layers[id]['layers'] = {layer.pk: {
-                    #     # 'name': layer.name,
-                    #     'title': layer.title,
-                    #     # 'abstract': layer.abstract,
-                    #     # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                    # } for layer in filtered_queryset[:30]}
-                print(id, values.get('title'), len(category_layers[id]['layers']))
+                    category_layers[id]['layers'] = {layer.pk: {
+                        'name': layer.name,
+                        'title': layer.title,
+                        'abstract': layer.abstract,
+                        'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                    } for layer in filtered_queryset[:5]}
 
             params = layers_eval_info(user_prompt, category_layers)
             layers_eval = json.loads(params.layers)
             
             for id, layers in layers_eval.items():
-                print(id, len(layers),[category_layers[id]['layers'][int(i)] for i in layers])
-                # categories[id]['layers'] = [queryset.filter(pk=int(i)).first().data for i in layers]
+                categories[id]['layers'] = [i.data for i in queryset.filter(pk__in=map(int, layers))]
         except Exception as e:
             print(e)
             print(params.categories)
-            categories = None
+            categories = {}
 
         return {
             'title': title,
@@ -267,16 +264,16 @@ def test_ai_agent():
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
 
     params = create_thematic_map(user_prompt)
-    # print('title: ', params.get('title'))
-    # print('place: ', params.get('place'))
-    # print('bbox: ', params.get('bbox'))
-    # print('categories keys', params.get('categories', {}).keys())
-    # for id, values in params.get('categories', {}).items():
-    #     print('category: ', id, values.get('title'))
-    #     print('description: ', values.get('description'))
-    #     print('query: ', values.get('query'))
-    #     print('overpass: ', values.get('overpass'))
-    #     print('layers: ', values.get('layers', []))
+    print('title: ', params.get('title'))
+    print('place: ', params.get('place'))
+    print('bbox: ', params.get('bbox'))
+    print('categories keys', params.get('categories', {}).keys())
+    for id, values in params.get('categories', {}).items():
+        print('category: ', id, values.get('title'))
+        print('description: ', values.get('description'))
+        print('query: ', values.get('query'))
+        print('overpass: ', values.get('overpass'))
+        print('layers: ', values.get('layers', []))
 
 class Command(BaseCommand):
     help = 'Test'
