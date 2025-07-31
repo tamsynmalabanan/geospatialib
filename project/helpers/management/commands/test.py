@@ -9,7 +9,7 @@ from helpers.main.collection import get_collection_data, get_layers, get_file_na
 from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
 from main.forms import ValidateCollectionForm
-
+from main.agent import create_thematic_map
 
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
@@ -54,229 +54,25 @@ def test_get_collection_data():
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
 def test_ai_agent():
-    from django.contrib.gis.geos import Polygon, GEOSGeometry
-    from django.contrib.postgres.search import SearchQuery, SearchRank
-    from django.db.models import F, Max
-    from django.test import RequestFactory
 
-    from main.models import Layer
-    from htmx.views import LayerList
-    from helpers.main.constants import QUERY_BLACKLIST
-
-    from openai import OpenAI
-    from decouple import config
-    from pydantic import BaseModel, Field
-    from geopy.geocoders import Nominatim
-    import json
-    
-    
-    client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
-    model = 'gpt-4o'
-
-    json_prompt_guide = '''
-        Return only the raw JSON string with double quotes for all keys and string values. 
-        Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
-        Do not wrap the output in triple quotes or additional characters.
-    '''
-
-    class ParamsEvaluation(BaseModel):
-        is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
-        confidence_score: float = Field(description='Confidence score between 0 and 1.')
-        place: str = Field(description='Name of a place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
-        title: str = Field(description='Title for the thematic map. Include the place of interest, if any.')
-
-    def params_eval_info(user_prompt:str) -> ParamsEvaluation:
-        completion = client.beta.chat.completions.parse(
-            model=model,
-            messages=[
-                {
-                    'role':'system', 
-                    'content':'''
-                        Determine whether the user prompt describes a subject for a valid thematic map. A valid subject must:
-                        - Clearly imply geographic or spatial distribution based on real-world attributes.
-                        - Use quantifiable data with direct spatial applicability (e.g. environmental, infrastructural, demographic).
-                        - Avoid abstract, speculative, or symbolic groupings not grounded in geographic reality (e.g. astrology, personality types).
-                    '''
-                },
-                {'role':'user', 'content': user_prompt}
-            ],
-            response_format=ParamsEvaluation,
-        )
-        result = completion.choices[0].message.parsed
-        return result
-    
-
-    class CategoriesExtraction(BaseModel):
-        categories: str = Field(description='''
-            A JSON of 10 categories relevant to the subject and place of interest, if any, with 10 query words and 10 Overpass QL filter tags, formatted: {
-                "category_id": {
-                    "title": "Category Title",
-                    "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
-                    "query": "word1 word2 word3...",
-                    "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
-                },...
-            }
-        ''' + '\n' + json_prompt_guide)
-
-    def extract_theme_categories(user_prompt:str) -> CategoriesExtraction:
-        messages = [
-            {
-                'role': 'system',
-                'content': '''
-                    1. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject.
-                        - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
-                        - Focus on thematic scope and spatial context; do not list layers.
-                        - You must include **exactly 10 categories**.
-                    2. For each category, identify 10 query words most relevant to the category and subject.
-                        - Each query word should be an individual real english word, without caps, conjunctions or special characters.
-                        - Make sure query words are suitable for filtering geospatial layers.
-                        - You must include **exactly 10 words** for each category—**no fewer, no more**.
-                    3. For each category, identify 10 valid Overpass QL filter tags most relevant to the category and subject.
-                        - Tags must be valid OpenStreetMap tags supported by Overpass QL, using formats like [key=value], [key~(value1|value2)], or [key].
-                        - Use only keys and values listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                        - Validate tags against the Overpass QL specification and common usage.
-                        - You must include **exactly 10 tags** for each category—**no fewer, no more**.
-                ''' + '\n' + json_prompt_guide
-            },
-            {'role': 'user', 'content': user_prompt}
-        ]
-        completion = client.beta.chat.completions.parse(
-            model=model,
-            messages=messages,
-            response_format=CategoriesExtraction
-        )
-        result = completion.choices[0].message.parsed
-        return result
-
-
-    class LayersEvaluation(BaseModel):
-        layers:str = Field(description='''
-            A JSON of category ID and corresponding array of primary keys (integers) of layers that are relevant to the category and the thematic map subject.
-            Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
-        ''' + '\n' + json_prompt_guide)
-
-    def layers_eval_info(user_prompt:str, category_layers:dict) -> LayersEvaluation:
-        completion = client.beta.chat.completions.parse(
-            model=model,
-            messages=[
-                {
-                    'role':'system', 
-                    'content':'''
-                        For each category in category layers, assess each layer in layers to determine whether the layer properties contain information that supports or enhances understanding of the 
-                        current category within the specified thematic map subject. Assess relevance based only on:
-                        - Semantic Alignment: Do the layer's name, title, abstract, keywords or any other available properties conceptually relate to the category's focus?
-                        - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
-
-                        Remove layers that are not relevant to their respective categories and to the thematic map subject.
-                    ''' + '\n' + json_prompt_guide
-                },
-                {
-                    'role':'user', 
-                    'content': f'''
-                        thematic map subject: {user_prompt}
-                        category layers:
-                        {json.dumps(category_layers)}
-                    '''
-                }
-            ],
-            response_format=LayersEvaluation,
-        )
-        result = completion.choices[0].message.parsed
-        return result
-    
-
-    def create_thematic_map(user_prompt:str):
-        init_eval = params_eval_info(user_prompt)
-        if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
-            return None
-        
-        title = init_eval.title
-        place = init_eval.place
-
-        geom = None
-        bbox = []
-        if place:
-            geolocator = Nominatim(user_agent="geospatialib/1.0")
-            location = geolocator.geocode(place, exactly_one=True)
-            if location:
-                s,n,w,e = [float(i) for i in location.raw['boundingbox']]
-                raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-                geom_proj = raw_geom.transform(3857, clone=True)
-                buffered_geom = geom_proj.buffer(1000)
-                buffered_geom.transform(4326)
-                geom = buffered_geom.envelope
-                bbox = geom.extent
-
-        params = extract_theme_categories(user_prompt)
-        try:
-            categories = json.loads(params.categories)
-            
-            queryset = Layer.objects.all()
-            if geom:
-                queryset = queryset.filter(bbox__bboverlaps=geom)
-
-            category_layers = {}
-            for id, values in categories.items():
-                category_layers[id] = {'title': values.get('title')}
-                
-                query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
-
-                filtered_queryset = (
-                    queryset
-                    .filter(search_vector=SearchQuery(
-                        f'({' | '.join(query)})', 
-                        search_type='raw'
-                    ))
-                    .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
-                        ' OR '.join(query), 
-                        search_type='websearch'
-                    ))))
-                    .order_by(*['-rank'])
-                )
-
-                if filtered_queryset.exists():
-                    category_layers[id]['layers'] = {layer.pk: {
-                        'name': layer.name,
-                        'title': layer.title,
-                        'abstract': layer.abstract,
-                        'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                    } for layer in filtered_queryset[:5]}
-
-            params = layers_eval_info(user_prompt, category_layers)
-            layers_eval = json.loads(params.layers)
-            
-            for id, layers in layers_eval.items():
-                categories[id]['layers'] = [i.data for i in queryset.filter(pk__in=map(int, layers))]
-        except Exception as e:
-            print(e)
-            print(params.categories)
-            categories = {}
-
-        return {
-            'title': title,
-            'place': place,
-            'bbox': bbox,
-            'categories': categories
-        }
-
-    user_prompt = "Heat island intensity across urban landscapes in New Delhi, India"
+    user_prompt = "Heat island intensity across urban landscapes in Metro Manila"
     # user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
 
-    params = create_thematic_map(user_prompt)
-    print('title: ', params.get('title'))
-    print('place: ', params.get('place'))
-    print('bbox: ', params.get('bbox'))
-    print('categories keys', params.get('categories', {}).keys())
-    for id, values in params.get('categories', {}).items():
-        print('category: ', id, values.get('title'))
-        print('description: ', values.get('description'))
-        print('query: ', values.get('query'))
-        print('overpass: ', values.get('overpass'))
-        print('layers: ', len(values.get('layers', [])))
-        for layer in values.get('layers', []):
-            print(layer.get('title', ''))
+    # params = create_thematic_map(user_prompt)
+    # if params:
+    #     print('title: ', params.get('title'))
+    #     print('place: ', params.get('place'))
+    #     print('bbox: ', params.get('bbox'))
+    #     for id, values in params.get('categories', {}).items():
+    #         print('category: ', id, values.get('title'))
+    #         print('description: ', values.get('description'))
+    #         print('query: ', values.get('query'))
+    #         print('overpass: ', values.get('overpass'))
+    #         print('layers: ', len(values.get('layers', [])))
+    #         for layer in values.get('layers', []):
+    #             print(layer.get('title', ''))
 
 class Command(BaseCommand):
     help = 'Test'
