@@ -209,7 +209,6 @@ def test_ai_agent():
         params = extract_theme_categories(user_prompt)
         try:
             categories = json.loads(params.categories)
-            print('CATEGORIES', categories)
             
             queryset = Layer.objects.all()
             if geom:
@@ -218,17 +217,22 @@ def test_ai_agent():
             category_layers = {}
             for id, values in categories.items():
                 category_layers[id] = {'title': values.get('title')}
+                print(category_layers[id])
 
-                query = values.get('query','')
+                query = values.get('query','').split()
+                print(query)
 
                 filtered_queryset = (
                     queryset
-                    .filter(
-                        search_vector=SearchQuery(f'({query.replace(' ',' | ')})', search_type='raw'),
-                    )
-                    .annotate(
-                        rank=SearchRank(F('search_vector'), SearchQuery(query.replace(' ', ' OR '), search_type='websearch'))
-                    )
+                    .filter(search_vector=SearchQuery(
+                        f'({' | '.join(query)})', 
+                        search_type='raw'
+                    ))
+                    .annotate(rank=SearchRank(F('search_vector'), SearchQuery(
+                        ' OR '.join(query), 
+                        search_type='websearch'
+                    )))
+                    .order_by(*['-rank'])
                 )
 
                 if filtered_queryset.exists():
@@ -238,8 +242,6 @@ def test_ai_agent():
                         # 'abstract': layer.abstract,
                         # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
                     } for layer in filtered_queryset[:30]}
-                print(category_layers[id])
-                    
             print(category_layers)
         except Exception as e:
             print(e)
