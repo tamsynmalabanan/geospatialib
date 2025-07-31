@@ -203,7 +203,7 @@ def test_ai_agent():
                 geom_proj = raw_geom.transform(3857, clone=True)
                 buffered_geom = geom_proj.buffer(1000)
                 buffered_geom.transform(4326)
-                geom = buffered_geom
+                geom = buffered_geom.envelope
                 bbox = geom.extent
 
         params = extract_theme_categories(user_prompt)
@@ -231,6 +231,7 @@ def test_ai_agent():
                     # 'abstract': layer.abstract,
                     # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
                 } for layer in queryset}
+            print(category_layers[id])
             
         print(category_layers)
 
