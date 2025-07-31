@@ -97,7 +97,7 @@ def test_ai_agent():
 
     class CategoriesExtraction(BaseModel):
         categories: str = Field(description='''
-            A JSON of 10 categories relevant to the subject and place of interest, if any, with 5 query words and 5 Overpass QL filter tags, formatted: {
+            A JSON of 10 categories relevant to the subject and place of interest, if any, with 10 query words and 10 Overpass QL filter tags, formatted: {
                 "category_id": {
                     "title": "Category Title",
                     "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
@@ -116,10 +116,10 @@ def test_ai_agent():
                         - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                         - Focus on thematic scope and spatial context; do not list layers.
                         - Make sure there are 10 categories.
-                    2. For each category, identify 5 query words most relevant to the category and subject.
+                    2. For each category, identify 10 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
-                        - Make sure there are 5 query words.
+                        - Make sure there are 10 query words.
                     3. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
                         - Only include tags that exist in the OpenStreetMap tagging schema.
                         - Use only keys and values listed on the OpenStreetMap wiki or Taginfo.
@@ -240,17 +240,17 @@ def test_ai_agent():
     user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-    params = create_thematic_map(user_prompt)
-    print('title: ', params['title'])
-    print('place: ', params['place'])
-    print('bbox: ', params['bbox'])
+    # params = create_thematic_map(user_prompt)
+    # print('title: ', params['title'])
+    # print('place: ', params['place'])
+    # print('bbox: ', params['bbox'])
     
-    for id, values in params['categories'].items():
-        print('category: ', id, values['title'])
-        print('description: ', values['description'])
-        print('query: ', values['query'])
-        print('overpass: ', values['overpass'])
-        print('layers: ', values.get('layers', []))
+    # for id, values in params['categories'].items():
+    #     print('category: ', id, values['title'])
+    #     print('description: ', values['description'])
+    #     print('query: ', values['query'])
+    #     print('overpass: ', values['overpass'])
+    #     print('layers: ', values.get('layers', []))
 
 class Command(BaseCommand):
     help = 'Test'
