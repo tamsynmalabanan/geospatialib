@@ -214,9 +214,9 @@ def test_ai_agent():
 
         print(categories)
 
-        # category_layers = {}
-        # for id, values in categories.items():
-        #     category_layers[id] = {'title': values.get('title')}
+        category_layers = {}
+        for id, values in categories.items():
+            category_layers[id] = {'title': values.get('title')}
             
         #     factory = RequestFactory()
         #     request = factory.get('/dummy-url/', {
@@ -233,9 +233,9 @@ def test_ai_agent():
         #             # 'abstract': layer.abstract,
         #             # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
         #         } for layer in queryset}
-        #     print(category_layers[id])
+            print(category_layers[id])
             
-        # print(category_layers)
+        print(category_layers)
 
         # params = layers_eval_info(user_prompt, category_layers)
         # layers_eval = json.loads(params.layers)
