@@ -105,6 +105,7 @@ def test_ai_agent():
                     "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
                 },...
             }
+            Make sure categories JSON is formatted as a valid JSON string.
         ''')
 
     def extract_theme_categories(user_prompt:str) -> CategoriesExtraction:
@@ -144,7 +145,8 @@ def test_ai_agent():
     class LayersEvaluation(BaseModel):
         layers:str = Field(description='''
             A JSON of category ID and corresponding array of primary keys of layers that are relevant to the thematic map subject and respective category.
-            Format: {"category1": ["layer_pk1", "layer_pk2", "layer_pk3",...]
+            Format: {"category1": ["layer_pk1", "layer_pk2", "layer_pk3",...], "category2": ["layer_pk4", "layer_pk5", "layer_pk6",...],...}
+            Make sure categories JSON is formatted as a valid JSON string.
         ''')
 
     def layers_eval_info(user_prompt:str, category_layers:dict) -> LayersEvaluation:
@@ -202,7 +204,11 @@ def test_ai_agent():
                 bbox = geom.extent
 
         params = extract_theme_categories(user_prompt)
-        categories = json.loads(params.categories)
+        try:
+            categories = json.loads(params.categories)
+        except Exception as e:
+            print(e)
+            print(params.categories)
 
         # queryset = Layer.objects.all()
         # if geom:
