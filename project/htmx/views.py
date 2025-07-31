@@ -40,13 +40,14 @@ class LayerList(ListView):
         ]
 
     @property
-    def query_blacklist(self):
-        return list(set([
+    def raw_query(self):
+        keywords_blacklist = list(set([
             'dataset', 
             'layer', 
             'vector', 
             'raster', 
             'grid', 
+            'dem', 
             'shapefile', 
             'projection', 
             'ogc', 
@@ -55,24 +56,16 @@ class LayerList(ListView):
             'wcs',
             'arcgis',
         ] + list(COLLECTION_FORMATS.keys())))
-
-    @property
-    def raw_query(self):
-        query = self.request.GET.get('query', '').strip().lower()
-        for i in ['\'', '"']:
-            query = query.replace(i, '')
+        
+        query = self.request.GET.get('query', '').strip().replace('\'', '').replace('"','')
         exclusions = []
 
         if ' -' in f' {query}':
-            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 3]))
-            query = ' '.join([i for i in query.split() if not i.startswith('-') and i not in exclusions])
-
-        for i in ['/', '\\', '_']:
-            query = query.replace(i, ' ')
-        query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
-        raw_query = f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
-        print(query, exclusions, raw_query)
-        return raw_query
+            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
+            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions])
+      
+        query = sorted(set(query.replace('/',' ').replace('_', ' ').split()))
+        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
     def filter_values(self):
