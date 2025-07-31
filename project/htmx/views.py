@@ -57,7 +57,7 @@ class LayerList(ListView):
         ] + list(COLLECTION_FORMATS.keys())))
 
     @property
-    def raw_query(self):
+    def clean_keywords(self):
         query = self.request.GET.get('query', '').strip().lower()
         for i in ['\'', '"']:
             query = query.replace(i, '')
@@ -70,8 +70,13 @@ class LayerList(ListView):
         for i in ['/', '\\', '_']:
             query = query.replace(i, ' ')
         query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
-        raw_query = f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
-        return raw_query
+        
+        return query, exclusions
+
+    @property
+    def raw_query(self):
+        query, exclusions = self.clean_keywords
+        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
     
     @property
     def filter_values(self):
@@ -105,7 +110,7 @@ class LayerList(ListView):
         queryset = (
             queryset
             .annotate(
-                rank=SearchRank(F('search_vector'), search_query)
+                rank=SearchRank(F('search_vector'), ' '.join(self.clean_keywords[0]))
             )
             .filter(
                 search_vector=search_query,
