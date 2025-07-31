@@ -9,7 +9,6 @@ from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
 
-
 import json
 import requests
 import validators
@@ -25,7 +24,7 @@ from main.tasks import onboard_collection
 from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
 from helpers.main.constants import QUERY_BLACKLIST
-
+from .agent import create_thematic_map
 
 class LayerList(ListView):
     template_name = 'main/search/results.html'
@@ -148,6 +147,10 @@ class LayerList(ListView):
             context['filters'] = self.query_filters
             context['is_filtered'] = len(self.filter_values) > 0
         return context
+
+@require_http_methods(['POST'])
+def create_map(request):
+    return HttpResponse('test')
 
 @require_http_methods(['GET'])
 def validate_collection(request):

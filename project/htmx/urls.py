@@ -5,6 +5,7 @@ from . import views
 app_name = 'htmx'
 
 urlpatterns = [
+    path('map/create/', views.create_map, name='create_map'),
     path('cors/proxy/', views.cors_proxy, name='cors_proxy'),
     path('library/search/', views.LayerList.as_view(), name='search_library'),
     path('collection/validate/', views.validate_collection, name='validate_collection'),

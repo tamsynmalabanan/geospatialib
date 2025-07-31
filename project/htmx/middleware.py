@@ -8,8 +8,9 @@ class HTMXDomainRestriction:
         self.get_response = get_response
 
     def __call__(self, request):
-        if not settings.DEBUG:
-            if resolve(request.path).app_name == 'htmx':
+        exceptions = ['create_map']
+        app = resolve(request.path)
+        if not settings.DEBUG and app.app_name == 'htmx' and app.url_name not in exceptions:
                 not_htmx_request = not request.htmx
                 not_allowed_host = not any([i for i in settings.ALLOWED_HOSTS if i in request.META.get('HTTP_HOST')])
                 if not_htmx_request or not_allowed_host:
