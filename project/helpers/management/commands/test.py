@@ -101,7 +101,7 @@ def test_ai_agent():
                 "category_id": {
                     "title": "Category Title",
                     "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
-                    "query": ["word1", "word2", "word3",...],
+                    "query": "word1, word2, word3...",
                     "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
                 },...
             }
