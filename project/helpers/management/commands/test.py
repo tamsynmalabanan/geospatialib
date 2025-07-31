@@ -151,11 +151,11 @@ def test_ai_agent():
 
     class LayersEvaluation(BaseModel):
         layers:str = Field(description='''
-            A JSON of category ID and corresponding array of primary keys (integers) of layers that are relevant to the thematic map subject and respective category.
+            A JSON of category ID and corresponding array of primary keys (integers) of layers.
             Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
         ''' + '\n' + json_prompt_guide)
 
-    def layers_eval_info(user_prompt:str, category_layers:dict) -> LayersEvaluation:
+    def layers_eval_info(user_prompt:str, category_layers:dict, action:str) -> LayersEvaluation:
         completion = client.beta.chat.completions.parse(
             model=model,
             messages=[
@@ -167,12 +167,14 @@ def test_ai_agent():
                         - Semantic Alignment: Do the layer's name, title, abstract, keywords or any other available properties conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
-                        Remove layers that are not relevant to their respective categories and to the thematic map subject.
+                        If action is "filter", remove layers that are not relevant to their respective categories and to the thematic map subject.
+                        If action is "sort", do not filter the layers, instead just sort them from most relevant to least relevant.
                     ''' + '\n' + json_prompt_guide
                 },
                 {
                     'role':'user', 
                     'content': f'''
+                        action: {action}
                         thematic map subject: {user_prompt}
                         category layers:
                         {json.dumps(category_layers)}
@@ -213,13 +215,11 @@ def test_ai_agent():
             
             queryset = Layer.objects.all()
             if geom:
-                print(geom)
                 queryset = queryset.filter(bbox__bboverlaps=geom)
 
             category_layers = {}
             for id, values in categories.items():
                 category_layers[id] = {'title': values.get('title')}
-                print(category_layers[id])
                 
                 query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
 
@@ -244,19 +244,19 @@ def test_ai_agent():
                     #     # 'abstract': layer.abstract,
                     #     # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
                     # } for layer in filtered_queryset[:30]}
-                print(category_layers[id]['layers'])
+                print(id, values.get('title'), len(category_layers[id]['layers']))
 
+            params = layers_eval_info(user_prompt, category_layers, action='sort')
+            layers_eval = json.loads(params.layers)
+            
+            for id, layers in layers_eval.items():
+                print(id, len(layers), layers)
+                # categories[id]['layers'] = [queryset.filter(pk=int(i)).first().data for i in layers]
         except Exception as e:
             print(e)
             print(params.categories)
+            categories = None
 
-
-        # params = layers_eval_info(user_prompt, category_layers)
-        # layers_eval = json.loads(params.layers)
-        
-        # for id, layers in layers_eval.items():
-        #     categories[id]['layers'] = [queryset.filter(pk=int(i)).first().data for i in layers]
-            
         return {
             'title': title,
             'place': place,
