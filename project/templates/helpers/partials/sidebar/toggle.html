@@ -1,4 +1,4 @@
-<div class="btn-group dropup shadow-lg bg-{{theme}}" x-data {% if not user.is_authenticated %}x-init="$nextTick(() => if (localStorage.getItem('legend-layers-{{map_id}}')) $refs.userDropdownMenu.click())"{% endif %}>
+<div class="btn-group dropup shadow-lg bg-{{theme}}" x-data {% if not user.is_authenticated %}x-init="$nextTick(() => {if (!localStorage.getItem('legend-layers-{{map_id}}')) $refs.userDropdownMenu.click()})"{% endif %}>
     <button 
         class="btn btn-{{theme}} {% if show_sidebar %}d-lg-none{% endif %} active-border-none" 
         type="button" 
