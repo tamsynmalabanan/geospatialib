@@ -111,7 +111,7 @@ class LayerList(ListView):
                 search_vector=SearchQuery(self.raw_query, search_type='raw'),
             )
             .annotate(
-                rank=SearchRank(F('search_vector'), SearchQuery(' '.join(self.clean_keywords[0], search_type='websearch')))
+                rank=SearchRank(F('search_vector'), SearchQuery(' '.join(self.clean_keywords[0]), search_type='websearch'))
             )
         )
 
