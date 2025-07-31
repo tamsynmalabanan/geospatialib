@@ -70,7 +70,8 @@ class LayerList(ListView):
         for i in ['/', '\\', '_']:
             query = query.replace(i, ' ')
         query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
-        raw_query = f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
+        raw_query = f'(({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''})'
+        print(raw_query)
         return raw_query
     
     @property
@@ -109,7 +110,7 @@ class LayerList(ListView):
             )
             .filter(
                 search_vector=search_query,
-                rank__gte=0.025
+                rank__gte=0.001
             )
         )
 
