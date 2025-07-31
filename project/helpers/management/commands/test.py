@@ -259,7 +259,8 @@ def test_ai_agent():
             'categories': categories
         }
 
-    user_prompt = "San Marcelino Zambales solar site screening"
+    user_prompt = "Heat island intensity across urban landscapes in New Delhi, India"
+    # user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
 
@@ -273,7 +274,9 @@ def test_ai_agent():
         print('description: ', values.get('description'))
         print('query: ', values.get('query'))
         print('overpass: ', values.get('overpass'))
-        print('layers: ', values.get('layers', []))
+        print('layers: ', len(values.get('layers', [])))
+        for layer in values.get('layers', []):
+            print(layer.get('title', ''))
 
 class Command(BaseCommand):
     help = 'Test'
