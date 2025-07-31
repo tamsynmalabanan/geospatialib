@@ -122,7 +122,7 @@ class LayerList(ListView):
                 self.queryset
                 .values(field)
                 .annotate(count=Count('id', distinct=True))
-                .order_by('-count')
+                # .order_by('-count')
             ) for field in self.filter_fields
         }
 
