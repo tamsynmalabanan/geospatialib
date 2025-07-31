@@ -209,27 +209,35 @@ def test_ai_agent():
         params = extract_theme_categories(user_prompt)
         try:
             categories = json.loads(params.categories)
-            print(categories)
+            print('CATEGORIES', categories)
+            
+            queryset = Layer.objects.all()
+            if geom:
+                queryset = queryset.filter(bbox__bboverlaps=geom)
 
             category_layers = {}
             for id, values in categories.items():
                 category_layers[id] = {'title': values.get('title')}
-                
-                factory = RequestFactory()
-                request = factory.get('/dummy-url/', {
-                    'query': values.get('query'),
-                    'bbox__bboverlaps': geom.geojson
-                })
-                view = LayerList()
-                view.request = request
-                queryset = view.get_queryset()
-                if queryset.exists():
+
+                query = values.get('query','')
+
+                filtered_queryset = (
+                    queryset
+                    .filter(
+                        search_vector=SearchQuery(f'({query.replace(' ',' | ')})', search_type='raw'),
+                    )
+                    .annotate(
+                        rank=SearchRank(F('search_vector'), SearchQuery(query.replace(' ', ' OR '), search_type='websearch'))
+                    )
+                )
+
+                if filtered_queryset.exists():
                     category_layers[id]['layers'] = {layer.pk: {
                         # 'name': layer.name,
                         'title': layer.title,
                         # 'abstract': layer.abstract,
                         # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                    } for layer in queryset}
+                    } for layer in filtered_queryset[:30]}
                 print(category_layers[id])
                     
             print(category_layers)
