@@ -40,8 +40,8 @@ class LayerList(ListView):
         ]
 
     @property
-    def raw_query(self):
-        keywords_blacklist = list(set([
+    def query_blacklist(self):
+        return list(set([
             'dataset', 
             'layer', 
             'vector', 
@@ -57,14 +57,17 @@ class LayerList(ListView):
             'arcgis',
         ] + list(COLLECTION_FORMATS.keys())))
 
+    @property
+    def raw_query(self):
         query = self.request.GET.get('query', '').replace('\'', '').replace('"','').strip().lower()
         exclusions = []
 
         if ' -' in f' {query}':
             exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
-            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions+keywords_blacklist])
+            query = ' '.join([i for i in query.split() if not i.startswith('-') and i not in exclusions])
       
-        query = sorted(set(query.replace('/',' ').replace('_', ' ').split()))
+        query = query.replace('/',' ').prelace('\\',' ').replace('_', ' ').split()
+        query = sorted(set([i for i in query if len(i) > 1 and i not in self.query_blacklist]))
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
