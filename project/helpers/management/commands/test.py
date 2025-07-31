@@ -155,7 +155,7 @@ def test_ai_agent():
             Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
         ''' + '\n' + json_prompt_guide)
 
-    def layers_eval_info(user_prompt:str, category_layers:dict, action:str) -> LayersEvaluation:
+    def layers_eval_info(user_prompt:str, category_layers:dict) -> LayersEvaluation:
         completion = client.beta.chat.completions.parse(
             model=model,
             messages=[
@@ -167,14 +167,12 @@ def test_ai_agent():
                         - Semantic Alignment: Do the layer's name, title, abstract, keywords or any other available properties conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
-                        **If action is "filter", remove layers that are not relevant to their respective categories and to the thematic map subject.**
-                        **If action is "sort", do not filter the layers, instead just sort them from most relevant to least relevant.**
+                        Remove layers that are not relevant to their respective categories and to the thematic map subject.
                     ''' + '\n' + json_prompt_guide
                 },
                 {
                     'role':'user', 
                     'content': f'''
-                        **action: {action}**
                         thematic map subject: {user_prompt}
                         category layers:
                         {json.dumps(category_layers)}
@@ -246,11 +244,11 @@ def test_ai_agent():
                     # } for layer in filtered_queryset[:30]}
                 print(id, values.get('title'), len(category_layers[id]['layers']))
 
-            params = layers_eval_info(user_prompt, category_layers, action='sort')
+            params = layers_eval_info(user_prompt, category_layers)
             layers_eval = json.loads(params.layers)
             
             for id, layers in layers_eval.items():
-                print(id, len(layers), layers)
+                print(id, len(layers),[category_layers[id]['layers'][int(i)] for i in layers])
                 # categories[id]['layers'] = [queryset.filter(pk=int(i)).first().data for i in layers]
         except Exception as e:
             print(e)
