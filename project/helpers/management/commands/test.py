@@ -244,7 +244,7 @@ def test_ai_agent():
                     #     # 'abstract': layer.abstract,
                     #     # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
                     # } for layer in filtered_queryset[:30]}
-                print(len(category_layers[id]['layers']))
+                print(category_layers[id]['layers'])
 
         except Exception as e:
             print(e)
