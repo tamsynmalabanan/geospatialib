@@ -21,6 +21,7 @@ from urllib.parse import urlparse
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer
 from main.forms import ValidateCollectionForm
+from main.choices import COLLECTION_FORMATS
 from main.tasks import onboard_collection
 from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
@@ -40,12 +41,28 @@ class LayerList(ListView):
 
     @property
     def raw_query(self):
-        query = self.request.GET.get('query', '').strip().replace('\'', '').replace('"','')
+        keywords_blacklist = list(set([
+            'dataset', 
+            'layer', 
+            'vector', 
+            'raster', 
+            'grid', 
+            'dem', 
+            'shapefile', 
+            'projection', 
+            'ogc', 
+            'wms', 
+            'wfs',
+            'wcs',
+            'arcgis',
+        ] + list(COLLECTION_FORMATS.keys())))
+
+        query = self.request.GET.get('query', '').replace('\'', '').replace('"','').strip()
         exclusions = []
 
         if ' -' in f' {query}':
             exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
-            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions])
+            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions+keywords_blacklist])
       
         query = sorted(set(query.replace('/',' ').replace('_', ' ').split()))
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'

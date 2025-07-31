@@ -118,6 +118,7 @@ def test_ai_agent():
                         - Make sure there are 10 categories.
                     2. For each category, identify 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
+                        - Avoid selecting polysemous words or using GIS-related concepts.
                         - Make sure query words are suitable for filtering geospatial layers.
                         - Make sure there are 5 query words.
                     3. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
@@ -238,19 +239,17 @@ def test_ai_agent():
         }
 
     user_prompt = "San Marcelino Zambales solar site screening"
-    # user_prompt = "solar site screening"
-    # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-    params = create_thematic_map(user_prompt)
-    print('title: ', params['title'])
-    print('place: ', params['place'])
-    print('bbox: ', params['bbox'])
+    # params = create_thematic_map(user_prompt)
+    # print('title: ', params['title'])
+    # print('place: ', params['place'])
+    # print('bbox: ', params['bbox'])
     
-    for id, values in params['categories'].items():
-        print('category: ', id, values['title'])
-        print('description: ', values['description'])
-        print('query: ', values['query'])
-        print('overpass: ', values['overpass'])
-        print('layers: ', values.get('layers', []))
+    # for id, values in params['categories'].items():
+    #     print('category: ', id, values['title'])
+    #     print('description: ', values['description'])
+    #     print('query: ', values['query'])
+    #     print('overpass: ', values['overpass'])
+    #     print('layers: ', values.get('layers', []))
 
 class Command(BaseCommand):
     help = 'Test'
