@@ -59,15 +59,18 @@ class LayerList(ListView):
 
     @property
     def raw_query(self):
-        query = self.request.GET.get('query', '').replace('\'', '').replace('"','').strip().lower()
+        query = self.request.GET.get('query', '').strip().lower()
+        for i in ['\'', '"']:
+            query = query.replace(i, '')
         exclusions = []
 
         if ' -' in f' {query}':
-            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
+            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 3]))
             query = ' '.join([i for i in query.split() if not i.startswith('-') and i not in exclusions])
-      
-        query = query.replace('/',' ').prelace('\\',' ').replace('_', ' ').split()
-        query = sorted(set([i for i in query if len(i) > 1 and i not in self.query_blacklist]))
+
+        for i in ['/', '\\', '_']:
+            query = query.replace(i, ' ')
+        query = sorted(set([i for i in query if len(i) >= 3 and i not in self.query_blacklist]))
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
 
     @property
