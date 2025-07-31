@@ -120,13 +120,13 @@ def test_ai_agent():
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
                         - Make sure there are 10 query words.
-                    3. For each category, identify 5 valid Overpass QL filter tags most relevant to the category and subject.
+                    3. For each category, identify 10 valid Overpass QL filter tags most relevant to the category and subject.
                         - Only include tags that exist in the OpenStreetMap tagging schema.
                         - Use only keys and values listed on the OpenStreetMap wiki or Taginfo.
                         - Exclude invented or uncommon tags not used in OpenStreetMap data.
                         - Validate tags against the Overpass QL specification and common usage.
                         - Return only tags that are supported by Overpass QL filters like [key=value], [key~(value1|value2)], or [key].
-                        - Make sure there are 5 filter tags.
+                        - Make sure there are 10 filter tags.
                     Make sure categories JSON is formatted as a valid JSON string.
                 '''
             },
