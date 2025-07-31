@@ -40,14 +40,13 @@ class LayerList(ListView):
         ]
 
     @property
-    def raw_query(self):
-        keywords_blacklist = list(set([
+    def query_blacklist(self):
+        return list(set([
             'dataset', 
             'layer', 
             'vector', 
             'raster', 
             'grid', 
-            'dem', 
             'shapefile', 
             'projection', 
             'ogc', 
@@ -56,17 +55,24 @@ class LayerList(ListView):
             'wcs',
             'arcgis',
         ] + list(COLLECTION_FORMATS.keys())))
-        
-        query = self.request.GET.get('query', '').strip().replace('\'', '').replace('"','')
+
+    @property
+    def raw_query(self):
+        query = self.request.GET.get('query', '').strip().lower()
+        for i in ['\'', '"']:
+            query = query.replace(i, '')
         exclusions = []
 
         if ' -' in f' {query}':
-            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 2]))
-            query = ' '.join([i for i in query.split() if not i.startswith('-') and len(i) > 1 and i not in exclusions])
-      
-        query = sorted(set(query.replace('/',' ').replace('_', ' ').split()))
-        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
+            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 3]))
+            query = ' '.join([i for i in query.split() if not i.startswith('-') and i not in exclusions])
 
+        for i in ['/', '\\', '_']:
+            query = query.replace(i, ' ')
+        query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
+        raw_query = f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
+        return raw_query
+    
     @property
     def filter_values(self):
         values = sorted([str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != ''])
