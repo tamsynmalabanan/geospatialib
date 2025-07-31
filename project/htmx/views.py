@@ -70,8 +70,7 @@ class LayerList(ListView):
         for i in ['/', '\\', '_']:
             query = query.replace(i, ' ')
         query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
-        raw_query = f'(({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''})'
-        print(raw_query)
+        raw_query = f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
         return raw_query
     
     @property
@@ -92,29 +91,29 @@ class LayerList(ListView):
             )
         )
 
-        if self.filter_values:
-            queryset = queryset.filter(**{
-                param : value 
-                for param, value in self.request.GET.items()
-                if value and param in self.filter_fields + [
-                    'bbox__bboverlaps'
-                ]
-            })
+        # if self.filter_values:
+        #     queryset = queryset.filter(**{
+        #         param : value 
+        #         for param, value in self.request.GET.items()
+        #         if value and param in self.filter_fields + [
+        #             'bbox__bboverlaps'
+        #         ]
+        #     })
         
-        search_query = SearchQuery(self.raw_query, search_type='raw')
+        # search_query = SearchQuery(self.raw_query, search_type='raw')
 
-        queryset = (
-            queryset
-            .annotate(
-                rank=SearchRank(F('search_vector'), search_query)
-            )
-            .filter(
-                search_vector=search_query,
-                rank__gte=0.001
-            )
-        )
+        # queryset = (
+        #     queryset
+        #     .annotate(
+        #         rank=SearchRank(F('search_vector'), search_query)
+        #     )
+        #     .filter(
+        #         search_vector=search_query,
+        #         rank__gte=0.001
+        #     )
+        # )
 
-        return queryset
+        return queryset[:10]
 
     @property
     def query_filters(self):
