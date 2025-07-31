@@ -113,7 +113,7 @@ class LayerList(ListView):
         #     )
         # )
 
-        return queryset[:10]
+        return queryset
 
     @property
     def query_filters(self):
