@@ -21,10 +21,10 @@ from urllib.parse import urlparse
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer
 from main.forms import ValidateCollectionForm
-from main.choices import COLLECTION_FORMATS
 from main.tasks import onboard_collection
 from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
+from helpers.main.constants import QUERY_BLACKLIST
 
 
 class LayerList(ListView):
@@ -40,23 +40,6 @@ class LayerList(ListView):
         ]
 
     @property
-    def query_blacklist(self):
-        return list(set([
-            'dataset', 
-            'layer', 
-            'vector', 
-            'raster', 
-            'grid', 
-            'shapefile', 
-            'projection', 
-            'ogc', 
-            'wms', 
-            'wfs',
-            'wcs',
-            'arcgis',
-        ] + list(COLLECTION_FORMATS.keys())))
-
-    @property
     def clean_keywords(self):
         query = self.request.GET.get('query', '').strip().lower()
         for i in ['\'', '"']:
@@ -69,7 +52,7 @@ class LayerList(ListView):
 
         for i in ['/', '\\', '_']:
             query = query.replace(i, ' ')
-        query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
+        query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in QUERY_BLACKLIST]))
         
         return query, exclusions
 

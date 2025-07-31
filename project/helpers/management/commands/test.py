@@ -61,6 +61,7 @@ def test_ai_agent():
 
     from main.models import Layer
     from htmx.views import LayerList
+    from helpers.main.constants import QUERY_BLACKLIST
 
     from openai import OpenAI
     from decouple import config
@@ -217,9 +218,8 @@ def test_ai_agent():
             category_layers = {}
             for id, values in categories.items():
                 category_layers[id] = {'title': values.get('title')}
-                print(category_layers[id])
-
-                query = values.get('query','').split()
+                
+                query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
                 print(query)
 
                 filtered_queryset = (
@@ -228,10 +228,10 @@ def test_ai_agent():
                         f'({' | '.join(query)})', 
                         search_type='raw'
                     ))
-                    .annotate(rank=SearchRank(F('search_vector'), SearchQuery(
+                    .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
                         ' OR '.join(query), 
                         search_type='websearch'
-                    )))
+                    ))))
                     .order_by(*['-rank'])
                 )
 
@@ -242,7 +242,8 @@ def test_ai_agent():
                         # 'abstract': layer.abstract,
                         # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
                     } for layer in filtered_queryset[:30]}
-            print(category_layers)
+                print(category_layers[id])
+
         except Exception as e:
             print(e)
             print(params.categories)

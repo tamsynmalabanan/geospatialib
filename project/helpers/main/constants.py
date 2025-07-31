@@ -1,4 +1,6 @@
 from django.contrib.gis.geos import GEOSGeometry, Polygon
+from main.choices import COLLECTION_FORMATS
+
 
 XYZ_TILES_CHARS = ['{', '}', '%7B', '%7D']
 
@@ -18,3 +20,18 @@ LATITUDE_ALIASES = [
     'phi', 'parallel', 'geo_y', 'geom_y', 'y_coord',
     'north_south', 'south_north', 'vertical_position', 'north', 'south'
 ]
+
+QUERY_BLACKLIST = list(set([
+    'dataset', 
+    'layer', 
+    'vector', 
+    'raster', 
+    'grid', 
+    'shapefile', 
+    'projection', 
+    'ogc', 
+    'wms', 
+    'wfs',
+    'wcs',
+    'arcgis',
+] + list(COLLECTION_FORMATS.keys())))
