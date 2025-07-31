@@ -150,7 +150,15 @@ class LayerList(ListView):
 
 @require_http_methods(['POST'])
 def create_map(request):
-    return HttpResponse('test')
+    response = 'test'
+
+    subject = request.POST.get('subject')
+    if subject:
+        params = create_thematic_map(subject)
+        if params:
+            response = json.dumps(params)
+
+    return HttpResponse(response)
 
 @require_http_methods(['GET'])
 def validate_collection(request):
