@@ -219,6 +219,7 @@ def test_ai_agent():
             category_layers = {}
             for id, values in categories.items():
                 category_layers[id] = {'title': values.get('title')}
+                print(category_layers[id])
                 
                 query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
                 print(query)
@@ -243,7 +244,7 @@ def test_ai_agent():
                         # 'abstract': layer.abstract,
                         # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
                     } for layer in filtered_queryset[:30]}
-                print(category_layers[id])
+                print(len(category_layers[id]['layers'].keys()))
 
         except Exception as e:
             print(e)
