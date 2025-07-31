@@ -101,6 +101,8 @@ const getLeafletGeoJSONLayer = async ({
 
             if (Object.keys(properties).length || isMapDrawControlLayer) {
                 const info = geojsonLayer._properties.info
+                info.attributes = Array.from(new Set([...Object.keys(properties), ...(info.attributes ?? [])]))
+
                 const tooltip = info.tooltip
                 const popup = info.popup
     

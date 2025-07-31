@@ -46,12 +46,12 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
 
 class CategoriesExtraction(BaseModel):
     categories: str = Field(description='''
-        A JSON of 10 categories relevant to the subject and place of interest, if any, with 10 query words and 10 Overpass QL filter tags, formatted: {
+        A JSON of 10 categories relevant to the subject and place of interest, if any, with 10 query words and 10 Overpass QL tag keys, formatted: {
             "category_id": {
                 "title": "Category Title",
                 "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
                 "query": "word1 word2 word3...",
-                "overpass": ["[tag_filter1]", "[tag_filter2]", "[tag_filter3]"... ]
+                "overpass": ["[tag_key1]", "[tag_key2]", "[tag_key3]"... ]
             },...
         }
     ''' + '\n' + JSON_PROMPT_GUIDE)
@@ -69,11 +69,11 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
                     - You must include **exactly 10 words** for each category—**no fewer, no more**.
-                3. For each category, identify 10 valid Overpass QL filter tags most relevant to the category and subject.
-                    - Tags must be valid OpenStreetMap tags supported by Overpass QL, using formats like [key=value], [key~(value1|value2)], or [key].
-                    - Use only keys and values listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
+                3. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
+                    - Tag keys must be valid OpenStreetMap tag keys supported by Overpass QL, using format [key].
+                    - Use only keys listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
                     - Validate tags against the Overpass QL specification and common usage.
-                    - You must include **exactly 10 tags** for each category—**no fewer, no more**.
+                    - You must include **exactly 10 tag keys** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
         {'role': 'user', 'content': user_prompt}
@@ -155,8 +155,6 @@ def create_thematic_map(user_prompt:str):
 
         category_layers = {}
         for id, values in categories.items():
-            category_layers[id] = {'title': values.get('title')}
-            
             query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
 
             filtered_queryset = (
@@ -173,18 +171,24 @@ def create_thematic_map(user_prompt:str):
             )
 
             if filtered_queryset.exists():
-                category_layers[id]['layers'] = {layer.pk: {
-                    'name': layer.name,
-                    'title': layer.title,
-                    'abstract': layer.abstract,
-                    'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                } for layer in filtered_queryset[:5]}
+                category_layers[id] = {
+                    'title': values.get('title'),
+                    'layers': {
+                        layer.pk: {
+                            'name': layer.name,
+                            'title': layer.title,
+                            'abstract': layer.abstract,
+                            'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                        } for layer in filtered_queryset[:5]
+                    }
+                }
 
-        params = layers_eval_info(user_prompt, category_layers, client)
-        layers_eval = json.loads(params.layers)
-        
-        for id, layers in layers_eval.items():
-            categories[id]['layers'] = [i.data for i in queryset.filter(pk__in=map(int, layers))]
+        if category_layers:
+            params = layers_eval_info(user_prompt, category_layers, client)
+            layers_eval = json.loads(params.layers)
+            
+            for id, layers in layers_eval.items():
+                categories[id]['layers'] = [i.data for i in queryset.filter(pk__in=map(int, layers))]
         
         return {
             'title': title,

@@ -24,7 +24,7 @@ const fetchNominatim = async ({
     })
 }
 
-const getOverpassRequestBody = (queryGeom, zoom) => {
+const getOverpassQueryBlock = (queryGeom, zoom, {tag=''}={}) => {
     let params
 
     if (turf.getType(queryGeom) === 'Point') {
@@ -36,15 +36,15 @@ const getOverpassRequestBody = (queryGeom, zoom) => {
         params = s + ',' + w + ',' + n + ',' + e
     }
 
-    return "data="+ encodeURIComponent(`
-        [out:json][timeout:180];
-        (
-            node(${params});
-            way(${params});
-            relation(${params});
-        );
-        out tags geom body;
-    `)
+    const query = `(
+        node${tag}(${params});
+        way${tag}(${params});
+        relation${tag}(${params});
+    );`
+
+    console.log(query)
+
+    return query
 }
 
 const fetchOverpass = async ({
@@ -52,7 +52,8 @@ const fetchOverpass = async ({
     zoom,
     abortBtns,
     controller,
-    body = getOverpassRequestBody(queryGeom, zoom),
+    tag,
+    query = getOverpassQueryBlock(queryGeom, zoom, {tag}),
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
@@ -68,7 +69,7 @@ const fetchOverpass = async ({
         },
         fetchParams: {
             method: "POST",
-            body,
+            body: "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`),
         }
     }).catch(error => {
         console.log(error)

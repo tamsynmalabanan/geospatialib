@@ -150,9 +150,11 @@ class LayerList(ListView):
 
 @require_http_methods(['POST'])
 def create_map(request):
-    response = 'test'
+    response = '{}'
 
-    subject = request.POST.get('subject')
+    data = json.loads(request.body.decode('utf-8'))
+    subject = data.get('subject')
+
     if subject:
         params = create_thematic_map(subject)
         if params:
