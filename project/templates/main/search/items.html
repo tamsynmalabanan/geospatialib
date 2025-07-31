@@ -64,8 +64,8 @@
                     onclick="zoomToSearchResultBbox()"
                 ></button>
             </div>
-            {{raw_query}}
-            {{layer.rank}}
+            {% comment %} {{raw_query}}
+            {{layer.rank}} {% endcomment %}
         </div>
     </li>
     {% if forloop.last and page_obj.has_next %}
