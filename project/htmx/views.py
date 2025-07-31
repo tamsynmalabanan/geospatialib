@@ -47,7 +47,6 @@ class LayerList(ListView):
             'vector', 
             'raster', 
             'grid', 
-            'dem', 
             'shapefile', 
             'projection', 
             'ogc', 
@@ -71,7 +70,9 @@ class LayerList(ListView):
         for i in ['/', '\\', '_']:
             query = query.replace(i, ' ')
         query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in self.query_blacklist]))
-        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
+        raw_query = f'({' | '.join([f"'{i}'" for i in query])}){f' & ({' & '.join([f"!'{i}'" for i in exclusions])})' if exclusions else ''}'
+        print(query, exclusions, raw_query)
+        return raw_query
 
     @property
     def filter_values(self):
@@ -155,7 +156,6 @@ class LayerList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['raw_query'] = self.raw_query
         if context['page_obj'].number == 1:
             context['filters'] = self.query_filters
             context['is_filtered'] = len(self.filter_values) > 0
