@@ -167,14 +167,14 @@ def test_ai_agent():
                         - Semantic Alignment: Do the layer's name, title, abstract, keywords or any other available properties conceptually relate to the category's focus?
                         - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
-                        If action is "filter", remove layers that are not relevant to their respective categories and to the thematic map subject.
-                        If action is "sort", do not filter the layers, instead just sort them from most relevant to least relevant.
+                        **If action is "filter", remove layers that are not relevant to their respective categories and to the thematic map subject.**
+                        **If action is "sort", do not filter the layers, instead just sort them from most relevant to least relevant.**
                     ''' + '\n' + json_prompt_guide
                 },
                 {
                     'role':'user', 
                     'content': f'''
-                        action: {action}
+                        **action: {action}**
                         thematic map subject: {user_prompt}
                         category layers:
                         {json.dumps(category_layers)}
