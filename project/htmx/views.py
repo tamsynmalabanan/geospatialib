@@ -105,16 +105,14 @@ class LayerList(ListView):
                 ]
             })
         
-        search_query = SearchQuery(self.raw_query, search_type='raw')
-
         queryset = (
             queryset
             .annotate(
                 rank=SearchRank(F('search_vector'), ' '.join(self.clean_keywords[0]))
             )
             .filter(
-                search_vector=search_query,
-                # rank__gte=0.001
+                search_vector=SearchQuery(self.raw_query, search_type='raw'),
+                rank__gte=0.001
             )
         )
 
