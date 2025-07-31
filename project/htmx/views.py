@@ -108,7 +108,7 @@ class LayerList(ListView):
                 rank=SearchRank(F('search_vector'), search_query)
             )
             .filter(
-                search_vector=search_query,
+                # search_vector=search_query,
                 # rank__gte=0.001
             )
         )
