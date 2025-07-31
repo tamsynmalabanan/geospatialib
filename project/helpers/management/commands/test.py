@@ -185,24 +185,28 @@ def test_ai_agent():
         
         title = init_eval.title
         place = init_eval.place
+
+        geom = None
         bbox = []
+        if place:
+            geolocator = Nominatim(user_agent="geospatialib/1.0")
+            location = geolocator.geocode(place, exactly_one=True)
+            if location:
+                s,n,w,e = [float(i) for i in location.raw['boundingbox']]
+                raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+                geom_proj = raw_geom.transform(3857, clone=True)
+                buffered_geom = geom_proj.buffer(1000)
+                buffered_geom.transform(4326)
+
+                geom = buffered_geom
+                bbox = geom.extent
 
         params = extract_theme_categories(user_prompt)
         categories = json.loads(params.categories)
 
         # queryset = Layer.objects.all()
-        # if place:
-        #     geolocator = Nominatim(user_agent="geospatialib/1.0")
-        #     location = geolocator.geocode(place, exactly_one=True)
-        #     if location:
-        #         s,n,w,e = [float(i) for i in location.raw['boundingbox']]
-        #         raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-        #         geom_proj = raw_geom.transform(3857, clone=True)
-        #         buffered_geom = geom_proj.buffer(1000)
-        #         buffered_geom.transform(4326)
-
-        #         bbox = buffered_geom.extent
-        #         queryset = queryset.filter(bbox__bboverlaps=buffered_geom)
+        # if geom:
+        #     queryset = queryset.filter(bbox__bboverlaps=geom)
 
         # category_layers = {}
 
@@ -240,17 +244,18 @@ def test_ai_agent():
     user_prompt = "San Marcelino Zambales solar site screening"
     # user_prompt = "solar site screening"
     # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-    # params = create_thematic_map(user_prompt)
-    # print('title: ', params['title'])
-    # print('place: ', params['place'])
-    # print('bbox: ', params['bbox'])
-    
-    # for id, values in params['categories'].items():
-    #     print('category: ', id, values['title'])
-    #     print('description: ', values['description'])
-    #     print('query: ', values['query'])
-    #     print('overpass: ', values['overpass'])
-    #     print('layers: ', values.get('layers', []))
+
+    params = create_thematic_map(user_prompt)
+    print('title: ', params.get('title'))
+    print('place: ', params.get('place'))
+    print('bbox: ', params.get('bbox'))
+    print('categories keys', params.get('categories', {}).keys())
+    for id, values in params.get('categories', {}).items():
+        print('category: ', id, values.get('title'))
+        print('description: ', values.get('description'))
+        print('query: ', values.get('query'))
+        print('overpass: ', values.get('overpass'))
+        print('layers: ', values.get('layers', []))
 
 class Command(BaseCommand):
     help = 'Test'
