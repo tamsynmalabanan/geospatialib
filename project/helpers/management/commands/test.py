@@ -222,7 +222,6 @@ def test_ai_agent():
                 print(category_layers[id])
                 
                 query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
-                print(query)
 
                 filtered_queryset = (
                     queryset
@@ -238,13 +237,14 @@ def test_ai_agent():
                 )
 
                 if filtered_queryset.exists():
-                    category_layers[id]['layers'] = {layer.pk: {
-                        # 'name': layer.name,
-                        'title': layer.title,
-                        # 'abstract': layer.abstract,
-                        # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
-                    } for layer in filtered_queryset[:30]}
-                print(len(category_layers[id]['layers'].keys()))
+                    category_layers[id]['layers'] = {layer.pk: layer.title for layer in filtered_queryset[:30]}
+                    # category_layers[id]['layers'] = {layer.pk: {
+                    #     # 'name': layer.name,
+                    #     'title': layer.title,
+                    #     # 'abstract': layer.abstract,
+                    #     # 'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                    # } for layer in filtered_queryset[:30]}
+                print(len(category_layers[id]['layers']))
 
         except Exception as e:
             print(e)
