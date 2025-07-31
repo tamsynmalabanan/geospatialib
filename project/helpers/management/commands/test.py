@@ -237,6 +237,7 @@ def test_ai_agent():
             print(category_layers)
         except Exception as e:
             print(e)
+            print(params.categories)
 
 
         # params = layers_eval_info(user_prompt, category_layers)
