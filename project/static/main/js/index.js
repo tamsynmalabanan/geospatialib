@@ -68,6 +68,7 @@ const toggleSearchResultBbox = async () => {
     
     if (group?.getLayers().length) {
         group.clearLayers()
+        map.getPane('searchPane').innerHTML = ''
     } else {
         for (i of Array.from(searchResults.querySelectorAll(`[onclick="zoomToSearchResultBbox()"]`))) {
             await addSearchResultBboxToMap(i)
