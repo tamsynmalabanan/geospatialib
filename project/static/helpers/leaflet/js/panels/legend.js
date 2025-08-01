@@ -520,6 +520,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
                     createGeoJSONLayerLegend(layer, legendDetails)
+
+                    const legendHeader = container.firstChild
+                    const filterIcon = legendHeader.querySelector('i.bi.bi-filter')
+                    if (layer._properties.limits.active) {
+                        if (!filterIcon) {
+                            legendHeader.insertBefore(customCreateElement({tag:'i', className:'bi bi-filter', attrs: {title: 'Filter count limit applied'}}), container.firstChild.lastChild)
+                        }
+                    } else if (filterIcon) {
+                        filterIcon.remove()
+                    }
                 })
                 
                 layer.on('dataerror', () => {
