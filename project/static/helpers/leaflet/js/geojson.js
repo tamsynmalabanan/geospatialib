@@ -21,6 +21,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._params = params
     
     properties = geojsonLayer._properties = properties ?? {}
+
     properties.info = properties.info ?? {
         showLegend: true,
         showAttribution: true,
@@ -54,6 +55,13 @@ const getLeafletGeoJSONLayer = async ({
         min: 10,
         max: 5000000,
     }
+
+    properties.limits = properties.limits ?? {
+        active: true,
+        max: 1000,
+        method: 'limit'
+    }
+
     properties.filters = properties.filters ?? {
         type: {active: false, values: {
             Point: true,
@@ -605,18 +613,55 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
 
     if (controller?.signal?.aborted) return
 
-    const count = data?.features?.length ?? 0
-
-    const renderer = count > 1000 ? L.Canvas : L.SVG
-    if (!(layer.options.renderer instanceof renderer)) {
-        layer.options.renderer._container?.classList.add('d-none')
-        layer.options.renderer = layer._renderers.find(r => {
-            return r instanceof renderer
-        })
-    }
-    layer.options.renderer._container?.classList.remove('d-none')
     
     if (!preventUpdate) {
+        const limits = layer._properties.limits
+        limits.totalCount = data?.features?.length
+
+        if (!isEditable && limits.active && limits.totalCount > limits.max) {
+            if (limits.method === 'limit') {
+                data.features = data.features.slice(0, limits.max)
+            } else {
+                let nextZoom = layer._map.getZoom() + 1
+    
+                if (limits.method === 'zoomin' && nextZoom <= 20) {
+                    layer._map.setZoom(nextZoom)
+                }
+    
+                if (limits.method === 'scale') {
+                    
+                    const currentScale = getLeafletMeterScale(layer._map)
+                    let minScale = currentScale
+                    while (minScale >= currentScale) {
+                        minScale = leafletZoomToMeter(nextZoom)
+                        nextZoom+=1
+                    }
+                    
+                    const maxScale = layer._properties.visibility.min
+                    layer._properties.visibility.max = maxScale > minScale ? maxScale : minScale
+                    layer._properties.visibility.active = true
+    
+                    updateLeafletGeoJSONLayer(layer, {geojson, controller, abortBtns, updateCache})
+                    
+                    const event = new Event("change", { bubbles: true })
+                    const mapContainer = layer._group._map.getContainer()
+                    mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`).parentElement.firstChild.querySelector('select').dispatchEvent(event)
+                }
+
+                return
+            }
+        }
+    
+        const renderer = data?.features?.length > 1000 ? L.Canvas : L.SVG
+        if (!(layer.options.renderer instanceof renderer)) {
+            layer.options.renderer._container?.classList.add('d-none')
+            layer.options.renderer = layer._renderers.find(r => {
+                return r instanceof renderer
+            })
+        }
+    
+        layer.options.renderer._container?.classList.remove('d-none')
+        
         layer.clearLayers()
         layer.addData(data)
     }

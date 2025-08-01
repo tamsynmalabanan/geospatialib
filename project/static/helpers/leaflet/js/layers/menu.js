@@ -43,7 +43,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
     const localLayer = (dbIndexedKey ?? '').startsWith('local')
-    const editableLayer = isLegendGroup && geojsonLayer && localLayer
+    const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(dbIndexedKey)).gisData.features.length <= 1000
     const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
 
     const measureId = `${geojsonLayer?._leaflet_id}-${feature?.properties.__gsl_id__}`

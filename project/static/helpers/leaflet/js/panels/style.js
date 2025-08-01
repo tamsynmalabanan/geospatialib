@@ -1767,6 +1767,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
         const info = layerStyles.info
+        const limits = layerStyles.limits
         const filterContainerId = generateRandomString()
 
         const styleFields = {
@@ -2105,6 +2106,106 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         className: 'gap-2 flex-wrap'
                     },
+                } : {})
+            },
+            'Rendering': {
+                'Visibility': {
+                    fields: {
+                        enableScale: {
+                            handler: createFormCheck,
+                            checked: visibility.active,
+                            formCheckClass: 'w-100',
+                            labelInnerText: 'Enable scale-dependent rendering',
+                            role: 'switch',
+                            events: {
+                                click: (e) => {
+                                    const value = e.target.checked
+                                    if (value === visibility.active) return
+                
+                                    form.elements.minScale.disabled = !value
+                                    form.elements.maxScale.disabled = !value
+
+                                    visibility.active = value
+                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                }
+                            }
+                        },
+                        minScale: {
+                            handler: createInputGroup,
+                            fieldAttrs: {
+                                name:'minScale',
+                                type:'number',
+                                min: '10',
+                                max: visibility.max,
+                                step: '10',
+                                value: visibility.min,
+                                placeholder: 'Maximum',
+                            },
+                            prefixHTML: '1:',
+                            suffixHTML: 'm',
+                            fieldClass: 'form-control-sm',
+                            disabled: !visibility.active,
+                            inputGroupClass: 'w-25 flex-grow-1',
+                            events: {
+                                'change': (e) => {
+                                    const field = e.target
+                                    const maxScaleField = form.elements.maxScale
+                                    
+                                    if (!field.value) {
+                                        field.value = 10
+                                    } else {
+                                        const maxScaleValue = parseInt(maxScaleField.value)
+                                        if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
+                                    }
+    
+                                    visibility.min = parseInt(field.value)
+                                    maxScaleField.setAttribute('min', field.value)
+    
+                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                },
+                                'click': visibilityFieldsClick,
+                            }
+                        },
+                        maxScale: {
+                            handler: createInputGroup,
+                            fieldAttrs: {
+                                name:'maxScale',
+                                type:'number',
+                                min: visibility.min,
+                                max: '5000000',
+                                step: '10',
+                                value: visibility.max,
+                                placeholder: 'Minimum',
+                            },
+                            prefixHTML: '1:',
+                            suffixHTML: 'm',
+                            fieldClass: 'form-control-sm',
+                            disabled: !visibility.active,
+                            inputGroupClass: 'w-25 flex-grow-1',
+                            events: {
+                                'change': (e) => {
+                                    const field = e.target
+                                    const minScaleField = form.elements.minScale
+                                    
+                                    if (!field.value) {
+                                        field.value = 5000000
+                                    } else {
+                                        const minScaleValue = parseInt(minScaleField.value)
+                                        if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
+                                    }
+                                    
+                                    visibility.max = parseInt(field.value)
+                                    minScaleField.setAttribute('max', field.value)
+                                    
+                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                },
+                                'click': visibilityFieldsClick,
+                            }
+                        },
+                    },
+                    className: 'flex-wrap gap-2'
+                },
+                ...(layer instanceof L.GeoJSON ? {
                     'Feature Interactivity': {
                         fields: {
                             enableTooltip: {
@@ -2237,7 +2338,6 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }
                             },
 
-
                             enablePopup: {
                                 handler: createFormCheck,
                                 checked: info.popup.active,
@@ -2301,106 +2401,81 @@ const handleLeafletStylePanel = (map, parent) => {
                         },
                         className: 'flex-wrap gap-1'
                     },
-                } : {})
-            },
-            'Rendering': {
-                'Visibility': {
-                    fields: {
-                        enableScale: {
-                            handler: createFormCheck,
-                            checked: visibility.active,
-                            formCheckClass: 'w-100',
-                            labelInnerText: 'Enable scale-dependent rendering',
-                            role: 'switch',
-                            events: {
-                                click: (e) => {
-                                    const value = e.target.checked
-                                    if (value === visibility.active) return
-                
-                                    form.elements.minScale.disabled = !value
-                                    form.elements.maxScale.disabled = !value
+                    'Feature Count Limit': {
+                        fields: {
+                            enableFeatureLimit: {
+                                handler: createFormCheck,
+                                checked: limits.active,
+                                formCheckClass: 'w-100 flex-grow-1 mt-2',
+                                labelInnerText: 'Enable feature count limit',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === limits.active) return
+                    
+                                        limits.active = value
 
-                                    visibility.active = value
-                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
+                                    }
                                 }
-                            }
-                        },
-                        minScale: {
-                            handler: createInputGroup,
-                            fieldAttrs: {
-                                name:'minScale',
-                                type:'number',
-                                min: '10',
-                                max: visibility.max,
-                                step: '10',
-                                value: visibility.min,
-                                placeholder: 'Maximum',
                             },
-                            prefixHTML: '1:',
-                            suffixHTML: 'm',
-                            fieldClass: 'form-control-sm',
-                            disabled: !visibility.active,
-                            inputGroupClass: 'w-25 flex-grow-1',
-                            events: {
-                                'change': (e) => {
-                                    const field = e.target
-                                    const maxScaleField = form.elements.maxScale
-                                    
-                                    if (!field.value) {
-                                        field.value = 10
-                                    } else {
-                                        const maxScaleValue = parseInt(maxScaleField.value)
-                                        if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
-                                    }
-    
-                                    visibility.min = parseInt(field.value)
-                                    maxScaleField.setAttribute('min', field.value)
-    
-                                    leafletLayerIsVisible(layer, {updateCache:true})
+                            maxFeatureCount: {
+                                handler: createFormFloating,
+                                containerClass: 'w-10 flex-grow-1',
+                                fieldAttrs: {
+                                    type: 'number',
+                                    min: 0,
+                                    max: 50000,
+                                    value: limits.max,
                                 },
-                                'click': visibilityFieldsClick,
-                            }
-                        },
-                        maxScale: {
-                            handler: createInputGroup,
-                            fieldAttrs: {
-                                name:'maxScale',
-                                type:'number',
-                                min: visibility.min,
-                                max: '5000000',
-                                step: '10',
-                                value: visibility.max,
-                                placeholder: 'Minimum',
+                                fieldClass: 'form-control-sm',
+                                labelText: 'Maximum feature count',
+                                labelClass: 'text-wrap',
+                                events: {
+                                    change: (e) => {
+                                        const value = e.target.value = Number(e.target.value)
+                                        if (value === limits.max) return
+                    
+                                        limits.max = value
+                                        
+                                        if (limits.active) updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
+                                    }
+                                }
                             },
-                            prefixHTML: '1:',
-                            suffixHTML: 'm',
-                            fieldClass: 'form-control-sm',
-                            disabled: !visibility.active,
-                            inputGroupClass: 'w-25 flex-grow-1',
-                            events: {
-                                'change': (e) => {
-                                    const field = e.target
-                                    const minScaleField = form.elements.minScale
-                                    
-                                    if (!field.value) {
-                                        field.value = 5000000
-                                    } else {
-                                        const minScaleValue = parseInt(minScaleField.value)
-                                        if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
-                                    }
-                                    
-                                    visibility.max = parseInt(field.value)
-                                    minScaleField.setAttribute('max', field.value)
-                                    
-                                    leafletLayerIsVisible(layer, {updateCache:true})
+                            limitMethod: {
+                                handler: createFormFloating,
+                                containerClass: 'w-50',
+                                fieldTag:'select',
+                                labelText: 'Method',
+                                options:{
+                                    'limit':'Limit to set maximum',
+                                    'scale':'Increase minimum visible scale',
+                                    'zoomin':'Zoom in to meet set maximum',
                                 },
-                                'click': visibilityFieldsClick,
-                            }
+                                currentValue: limits.method,
+                                fieldClass:'form-select-sm',
+                                events: {
+                                    change: (e) => {
+                                        const field = e.target
+                                        const value = field.value
+                                        
+                                        limits.method = value
+                                        
+                                        if (limits.active) updateLeafletGeoJSONLayer(layer, {
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
                         },
+                        className: 'flex-wrap gap-2'
                     },
-                    className: 'flex-wrap gap-2'
-                },
-                ...(layer instanceof L.GeoJSON ? {
                     'Filter': {
                         fields: {
                             enableType: {

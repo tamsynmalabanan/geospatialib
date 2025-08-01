@@ -28,7 +28,7 @@ const createLeafletLegendItem = (layer) => {
     })
     
     const layerToggle = createFormCheck({
-        checked: group.hasLayer(layer),
+        checked: group.hasLayer(layer) || map._handlers.hasInvisibleLegendLayer(layer),
         events: {
             click: (e) => {
                 e.target.checked ?
@@ -434,7 +434,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 if (layer instanceof L.GeoJSON) {
                     if (controllerId !== controller.id) return
 
-                    const geojson = turf.booleanWithin(newBbox, previousBbox) && layer.getLayers().length ? layer.toGeoJSON() : null
+                    const geojson = (
+                        turf.booleanWithin(newBbox, previousBbox) 
+                        && layer.getLayers().length >= layer._properties.limits.totalCount
+                    ) ? layer.toGeoJSON() : null
 
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson,
@@ -469,7 +472,11 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         if ((isHidden || isInvisible)) {
             clearLegend(layerLegend, {isInvisible})
-            if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
+            
+            if (layer instanceof L.GeoJSON) {
+                layer.options.renderer?._container?.classList.add('d-none')
+            }
+
             map._handlers.updateStoredLegendLayers({layer})
         } else {
             if (layerLegend) {
@@ -522,7 +529,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             }
         }
 
-        if ((isHidden || isInvisible)) {
+        if (isHidden || isInvisible) {
             map.removeLayer(layer)
         } else {
             map._handlers.updateStoredLegendLayers({layer})
