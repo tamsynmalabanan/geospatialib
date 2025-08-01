@@ -182,7 +182,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                     parent: container,
                     tag: 'span',
                     attrs: {tabindex:'-1'},
-                    innerHTML: 'For more info check out <a href="https://taginfo.openstreetmap.org/tags" target="_blank">taginfo.openstreetmap.org</a>'
+                    innerHTML: 'For more info check out <a href="https://taginfo.openstreetmap.org/tags" target="_blank" tabindex="-1">taginfo.openstreetmap.org</a>'
                 })
 
                 const queryBtn = createButton({
