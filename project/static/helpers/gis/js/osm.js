@@ -24,12 +24,12 @@ const fetchNominatim = async ({
     })
 }
 
+const ALL_OVERPASS_ELEMENT_TYPES = ['node','way','relation']
+
 const getOverpassQueryBlock = (queryGeom, {
     zoom=5, 
-    tag='',
-    node=true,
-    way=true,
-    relation=true,
+    types=ALL_OVERPASS_ELEMENT_TYPES,
+    tags='',
 }={}) => {
     let params
 
@@ -42,27 +42,24 @@ const getOverpassQueryBlock = (queryGeom, {
         params = s + ',' + w + ',' + n + ',' + e
     }
 
-    if (tag !== '') {
-        tag = tag.startsWith('[') ? tag : `[${tag}`
-        tag = tag.endsWith(']') ? tag : `${tag}]`
+    if (tags !== '') {
+        tags = tags.startsWith('[') ? tags : `[${tags}`
+        tags = tags.endsWith(']') ? tags : `${tags}]`
     }
 
     const query = `(
-        ${node ? `node${tag}(${params});` : ''}
-        ${way ? `way${tag}(${params});` : ''}
-        ${relation ? `relation${tag}(${params});` : ''}
+        ${types.map(type => `${type}${tags}(${params});`).join('')}
     );`
 
     return query
 }
 
-const fetchOverpass = async ({
+const fetchOverpass = async (types, tags, {
     queryGeom,
     zoom,
     abortBtns,
     controller,
-    tag,
-    query = getOverpassQueryBlock(queryGeom, {zoom, tag}),
+    query = getOverpassQueryBlock(queryGeom, {zoom, types, tags}),
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {

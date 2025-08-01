@@ -2,6 +2,7 @@ const contextMenuHandler = (e, menuItems, {
     title,
     dismissBtn = false,
     style = {},
+    movable = false,
 } = {}) => {
     L.DomEvent.stopPropagation(e)
     L.DomEvent.preventDefault(e)
@@ -32,7 +33,6 @@ const contextMenuHandler = (e, menuItems, {
         }
 
         if (dismissBtn) {
-            makeMovable(menuContainer)
             const dismissIcon = createIcon({
                 parent: header,
                 peNone: false,
@@ -42,6 +42,10 @@ const contextMenuHandler = (e, menuItems, {
                 }
             })
         }
+    }
+
+    if (movable) {
+        makeMovable(menuContainer)
     }
 
     for (const item in menuItems) {

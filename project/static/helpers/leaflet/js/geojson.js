@@ -45,7 +45,7 @@ const getLeafletGeoJSONLayer = async ({
             showLabel: true,
             styleParams: getLeafletStyleParams(customStyleParams),
         },
-        case: true,
+        case: false,
         method: 'single',
         groupBy: [],
     }

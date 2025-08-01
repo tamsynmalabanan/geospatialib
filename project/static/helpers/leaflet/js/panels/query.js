@@ -1,6 +1,35 @@
 const handleLeafletQueryPanel = (map, parent) => {
     let controller = resetController()
 
+    const toolHandler = async (e, handler) => {
+        await clearLayers(tools)
+        
+        if (typeof handler !== 'function') return
+
+        controller = resetController({controller, message: 'New query started.'})
+
+        spinner.classList.remove('d-none')
+        
+        const cancelBtn = getCancelBtn()
+        cancelBtn.disabled = false
+
+        errorRemark = 'Query was interrupted.'
+
+        await handler(e, {
+            controller,
+            abortBtns: [getCancelBtn()], 
+        })
+    
+        cancelBtn.disabled = true
+        
+        spinner.classList.add('d-none')
+        
+        if (layers.innerHTML === '') {
+            error.lastChild.innerText = errorRemark
+            error.classList.remove('d-none')
+        }
+    }
+
     const queryGroup = map._handlers.getLayerGroups().query
     const {
         toolbar, 
@@ -14,34 +43,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         statusBar: true,
         spinnerRemark: 'Running query...',
         clearLayersHandler: () => queryGroup.clearLayers(),
-        toolHandler: async (e, handler) => {
-            await clearLayers(tools)
-            
-            if (typeof handler !== 'function') return
-    
-            controller = resetController({controller, message: 'New query started.'})
-    
-            spinner.classList.remove('d-none')
-            
-            const cancelBtn = getCancelBtn()
-            cancelBtn.disabled = false
-
-            errorRemark = 'Query was interrupted.'
-
-            await handler(e, {
-                controller,
-                abortBtns: [getCancelBtn()], 
-            })
-        
-            cancelBtn.disabled = true
-            
-            spinner.classList.add('d-none')
-            
-            if (layers.innerHTML === '') {
-                error.lastChild.innerText = errorRemark
-                error.classList.remove('d-none')
-            }
-        }
+        toolHandler,
     })
 
     const customStyleParams = {
@@ -71,10 +73,12 @@ const handleLeafletQueryPanel = (map, parent) => {
         layers.classList.remove('d-none')
     }
 
-    const osmDataFetchers = [
-        {key: 'nominatim;{}', title: 'OpenStreetMap via Nominatim',},
-        {key: 'overpass;{}', title: 'OpenStreetMap via Overpass',},
-    ]
+    const getOSMDataFetchers = ({types=ALL_OVERPASS_ELEMENT_TYPES, tags=''}={}) => {
+        return [
+            {key: 'nominatim;{}', title: 'OpenStreetMap via Nominatim',},
+            {key: `overpass;${JSON.stringify({types,tags})}`, title: 'OpenStreetMap via Overpass',},
+        ]
+    } 
 
     const dataToChecklist = async (fetchers, {queryGeom, abortBtns, controller, event}={}) => {
         for (const fetcher of fetchers) {
@@ -139,16 +143,78 @@ const handleLeafletQueryPanel = (map, parent) => {
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
-                await dataToChecklist(osmDataFetchers, {queryGeom, abortBtns, controller})
+                await dataToChecklist(getOSMDataFetchers(), {queryGeom, abortBtns, controller})
             }
         },
         osmView: {
             iconSpecs: 'bi-bounding-box-circles',
             title: 'Query OSM in map view',
             altShortcut: 'e',
+            toolHandler: false,
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
-                const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry
-                await dataToChecklist(osmDataFetchers, {queryGeom, abortBtns, controller})
+                const container = customCreateElement({
+                    className: 'px-3 fs-12 flex-column d-flex gap-2'
+                })
+
+                const checkboxes = createCheckboxOptions({
+                    parent: container,
+                    containerClass: 'gap-3',
+                    options: {
+                        'node': {
+                            checked: true,
+                        },
+                        'way': {
+                            checked: true,
+                        },
+                        'relation': {
+                            checked: true,
+                        },
+                    }
+                })
+
+                const filterField = createFormFloating({
+                    parent: container,
+                    fieldAttrs: {name:'overpassTag'},
+                    labelText: 'Overpass tag/s',
+                })
+
+                const link = customCreateElement({
+                    parent: container,
+                    tag: 'span',
+                    attrs: {tabindex:'-1'},
+                    innerHTML: 'For more info check out <a href="https://taginfo.openstreetmap.org/tags" target="_blank">taginfo.openstreetmap.org</a>'
+                })
+
+                const queryBtn = createButton({
+                    parent: container,
+                    innerText: 'Query',
+                    className: 'btn-sm btn-primary fs-12',
+                    attrs: {type:'button'},
+                    events: {
+                        click: async (e) => {
+                            await toolHandler(e, async (e) => {
+                                const types = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.checked).map(i => i.value)
+                                
+                                let tags = container.querySelector('input[name="overpassTag"]').value
+                                if (tags !== '') {
+                                    tags = tags.startsWith('[') ? tags : `[${tags}`
+                                    tags = tags.endsWith(']') ? tags : `${tags}]`
+                                }
+                                
+                                menuContainer.remove()
+
+                                const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry
+                                await dataToChecklist(getOSMDataFetchers({types, tags}), {queryGeom, abortBtns, controller})
+                            })
+                        }
+                    }
+                })
+
+                const menuContainer = contextMenuHandler(e, {
+                    confirm: {child: container}
+                }, {
+                    title: 'Overpass API filters', dismissBtn:true
+                })
             }
         },
         layerPoint: {
