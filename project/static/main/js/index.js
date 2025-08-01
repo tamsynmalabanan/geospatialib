@@ -118,7 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `)
     
-        getSearchMap()?._handlers.getLayerGroups().search.clearLayers()
+        const map = getSearchMap()
+        if (map) {
+            map._handlers.getLayerGroups().search.clearLayers()
+            map.getPane('searchPane').innerHTML = ''
+        }
     
         const urlParams = e.detail.pathInfo.finalRequestPath.split('?')
         window.history.pushState(
