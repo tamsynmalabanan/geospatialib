@@ -403,7 +403,8 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer.options.pointToLayer = (feature, latlng) => {
         const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
         const icon = getLeafletLayerStyle(feature, styleParams, {renderer:geojsonLayer.options.renderer})
-        return icon instanceof L.DivIcon ? L.marker(latlng, {icon}) : L.circleMarker(latlng, icon)
+        const pane = geojsonLayer.options.pane
+        return icon instanceof L.DivIcon ? L.marker(latlng, {icon, pane}) : L.circleMarker(latlng, {...icon, pane})
     }
 
     if (geojson) {
