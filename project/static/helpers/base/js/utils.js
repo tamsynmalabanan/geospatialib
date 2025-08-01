@@ -140,7 +140,7 @@ const hslToHex = ({h, s, l}={}) => {
 }
 
 const hexToRGB = (hex) => {
-    hex = hex.replaceAll(/^#/, '');
+    hex = hex.replace(/^#/, '');
     if (hex.length === 3) {
       hex = hex.split('').map(c => c + c).join('')
     }
