@@ -80,6 +80,9 @@ class Command(BaseCommand):
         # URL.objects.all().delete()
         # test_get_collection_data()
 
-        test_ai_agent()
+        # test_ai_agent()
+
+        # layers = get_ogc_layers('https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?', 'ogc-wfs')
+        # print(layers)
 
         self.stdout.write(self.style.SUCCESS('Done.'))

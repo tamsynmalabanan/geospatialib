@@ -11,6 +11,15 @@ import json
 from helpers.main.layers import WORLD_GEOM
 from helpers.base.utils import get_response
 
+def bbox_to_polygon(bbox):
+    try:
+        w,s,e,n,*crs = bbox
+        crs = str(crs[0]).replace('::', ':') if len(crs) > 0 else 'EPSG:4326'
+        srid = int(crs.split(':')[-1])
+        return Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
+    except Exception as e:
+        print(e, bbox)
+
 def get_layers_via_owslib(service, format):
     layers = {}
     
