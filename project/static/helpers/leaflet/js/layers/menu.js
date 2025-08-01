@@ -274,7 +274,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 const rows = properties.map(prop =>
                     headers.map(header => {
                         const value = prop[header] !== undefined ? prop[header] : ''
-                        return `"${String(value).replace(/"/g, '""')}"`
+                        return `"${String(value).replaceAll(/"/g, '""')}"`
                     }).join(',')
                 )
 

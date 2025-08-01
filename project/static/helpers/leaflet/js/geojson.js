@@ -650,7 +650,7 @@ const getGeoJSONLayerStyles = (layer) => {
             }
         }
         
-        typeNames = typeNames?.map(i => i.toLowerCase().replace('multi', '')) || Array('point', 'linestring', 'polygon')
+        typeNames = typeNames?.map(i => i.toLowerCase().replaceAll('multi', '')) || Array('point', 'linestring', 'polygon')
 
         const styleParams = style.styleParams
         typeNames.forEach(typeName => {

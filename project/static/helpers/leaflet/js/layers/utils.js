@@ -676,11 +676,11 @@ const cloneFillPatternDefs = (currentId) => {
     svgFillDefs.appendChild(clonedDefs)
     
     Array.from(clonedDefs.children).forEach(e => {
-        e.id = `${newId}-${e.id.replace(`${currentId}-`,'')}`
+        e.id = `${newId}-${e.id.replaceAll(`${currentId}-`,'')}`
     })
 
     Array.from(clonedDefs.querySelectorAll('use')).forEach(e => {
-        e.setAttribute('href', `#${newId}-${e.getAttribute('href').replace(`#${currentId}-`,'')}`)
+        e.setAttribute('href', `#${newId}-${e.getAttribute('href').replaceAll(`#${currentId}-`,'')}`)
     })
 
     return clonedDefs

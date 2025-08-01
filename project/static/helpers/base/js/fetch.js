@@ -70,7 +70,7 @@ const fetchTimeout = async (url, {
     
     const timeoutId = setTimeout(abortController, timeoutMs)
     const fetchPromise = fetch(
-        url.replace('http:', 'https:'), 
+        url.replaceAll('http:', 'https:'), 
         {...fetchParams, signal: controller.signal}
     ).then(async response => {
         clearTimeout(timeoutId)

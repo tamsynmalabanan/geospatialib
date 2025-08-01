@@ -150,17 +150,17 @@ class LayerList(ListView):
 
 @require_http_methods(['POST'])
 def create_map(request):
-    response = '{}'
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        subject = data.get('subject')
+        if subject:
+            response = create_thematic_map(subject)
+            if response:
+                return JsonResponse(response, status=200)
+    except Exception as e:
+        print(e)
 
-    data = json.loads(request.body.decode('utf-8'))
-    subject = data.get('subject')
-
-    if subject:
-        params = create_thematic_map(subject)
-        if params:
-            response = json.dumps(params)
-
-    return HttpResponse(response)
+    return JsonResponse({'error': 'Failed to create map.'}, status=400)
 
 @require_http_methods(['GET'])
 def validate_collection(request):

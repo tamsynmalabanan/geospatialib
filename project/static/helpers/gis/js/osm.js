@@ -24,7 +24,13 @@ const fetchNominatim = async ({
     })
 }
 
-const getOverpassQueryBlock = (queryGeom, zoom, {tag=''}={}) => {
+const getOverpassQueryBlock = (queryGeom, {
+    zoom=5, 
+    tag='',
+    node=true,
+    way=true,
+    relation=true,
+}={}) => {
     let params
 
     if (turf.getType(queryGeom) === 'Point') {
@@ -36,13 +42,16 @@ const getOverpassQueryBlock = (queryGeom, zoom, {tag=''}={}) => {
         params = s + ',' + w + ',' + n + ',' + e
     }
 
-    const query = `(
-        node${tag}(${params});
-        way${tag}(${params});
-        relation${tag}(${params});
-    );`
+    if (tag !== '') {
+        tag = tag.startsWith('[') ? tag : `[${tag}`
+        tag = tag.endsWith(']') ? tag : `${tag}]`
+    }
 
-    console.log(query)
+    const query = `(
+        ${node ? `node${tag}(${params});` : ''}
+        ${way ? `way${tag}(${params});` : ''}
+        ${relation ? `relation${tag}(${params});` : ''}
+    );`
 
     return query
 }
@@ -53,7 +62,7 @@ const fetchOverpass = async ({
     abortBtns,
     controller,
     tag,
-    query = getOverpassQueryBlock(queryGeom, zoom, {tag}),
+    query = getOverpassQueryBlock(queryGeom, {zoom, tag}),
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {

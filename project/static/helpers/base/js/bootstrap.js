@@ -6,8 +6,8 @@ if (!Object.keys(bootstrapIcons).length) {
         return response.text()
     })
     .then(text => {
-        text.replace(' ', '').split('.bi-').slice(1).forEach(i => {
-            const [name, unicode] = i.replace('"}', '').split('::before{content:"\\')
+        text.replaceAll(' ', '').split('.bi-').slice(1).forEach(i => {
+            const [name, unicode] = i.replaceAll('"}', '').split('::before{content:"\\')
             bootstrapIcons[name] = unicode
         })
 

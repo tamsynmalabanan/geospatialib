@@ -112,7 +112,7 @@ const pushURLParams = (url, params) => {
 
 const formatNumberWithCommas = (number) => {
     let [integer, decimal] = number.toString().split(".")
-    integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    integer = integer.replaceAll(/\B(?=(\d{3})+(?!\d))/g, ",")
     return integer + (decimal ? "." + decimal : '')
 }
 
@@ -140,7 +140,7 @@ const hslToHex = ({h, s, l}={}) => {
 }
 
 const hexToRGB = (hex) => {
-    hex = hex.replace(/^#/, '');
+    hex = hex.replaceAll(/^#/, '');
     if (hex.length === 3) {
       hex = hex.split('').map(c => c + c).join('')
     }
@@ -343,7 +343,7 @@ const relationHandlers = (name) => {
     }[name]
 }
 
-const removeWhitespace = (str) => (str.replace(/\s{2,}/g, ' ')).trim()
+const removeWhitespace = (str) => (str.replaceAll(/\s{2,}/g, ' ')).trim()
 
 const makeMovable = (element) => {
     let isDragging = false, offsetX, offsetY
