@@ -79,7 +79,7 @@ const handleLeafletQueryPanel = (map, parent) => {
             {key: `overpass;${JSON.stringify({types,tags})}`, title: `osm ${
                 types.map(i => `${i}s`).join(', ')
             } ${
-                tags ? `for ${tags.replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
+                tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
             } via overpass`,},
         ]
     } 
@@ -198,14 +198,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                         click: async (e) => {
                             await toolHandler(e, async (e) => {
                                 const types = Array.from(container.querySelectorAll('.form-check-input')).filter(i => i.checked).map(i => i.value)
-                                
-                                let tags = container.querySelector('input[name="overpassTag"]').value
-                                if (tags !== '') {
-                                    tags = tags.replaceAll(' ', '').toLowerCase()
-                                    tags = tags.startsWith('[') ? tags : `[${tags}`
-                                    tags = tags.endsWith(']') ? tags : `${tags}]`
-                                }
-                                
+                                const tags = cleanOverpassTags(container.querySelector('input[name="overpassTag"]').value)
                                 menuContainer.remove()
 
                                 const queryGeom = turf.bboxPolygon(getLeafletMapBbox(map)).geometry

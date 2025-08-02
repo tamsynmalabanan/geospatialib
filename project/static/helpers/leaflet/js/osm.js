@@ -20,7 +20,7 @@ const addOverpassDataToLeafletMap = async ({
         params: {name: `osm ${
             types.map(i => `${i}s`).join(', ')
         } ${
-            tags ? `for ${tags.replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
+            tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
         } via overpass`},
     })
 

@@ -24,6 +24,28 @@ const fetchNominatim = async ({
     })
 }
 
+const cleanOverpassTags = (tags) => {
+    if (tags === '') return tags
+
+    tags = tags.toLowerCase()
+    tags = tags.replaceAll(' ', '')
+    tags = tags.startsWith('[') ? tags : `[${tags}`
+    tags = tags.endsWith(']') ? tags : `${tags}]`
+
+    const sc = getSpecialCharacters(tags).filter(i => !Array('"', ':').includes(i))
+    let parts = tags
+    for (const i of sc) {
+        parts = parts.replaceAll(i, ' ')
+    }
+
+    parts = removeWhitespace(parts).split(' ').filter(i => !i.startsWith('"') && !i.endsWith('"'))
+    for (const i of parts) {
+        tags = tags.replaceAll(i, `"${i}"`)
+    }
+
+    return tags
+}
+
 const ALL_OVERPASS_ELEMENT_TYPES = ['node','way','relation']
 
 const getOverpassQueryBlock = (queryGeom, {
@@ -42,14 +64,8 @@ const getOverpassQueryBlock = (queryGeom, {
         params = s + ',' + w + ',' + n + ',' + e
     }
 
-    if (tags !== '') {
-        tags = tags.replaceAll(' ', '').toLowerCase()
-        tags = tags.startsWith('[') ? tags : `[${tags}`
-        tags = tags.endsWith(']') ? tags : `${tags}]`
-    }
-
     const query = `(
-        ${types.map(type => `${type}${tags}(${params});`).join('')}
+        ${types.map(type => `${type}${cleanOverpassTags(tags)}(${params});`).join('')}
     );`
 
     return query
@@ -62,6 +78,7 @@ const fetchOverpass = async (types, tags, {
     controller,
     query = getOverpassQueryBlock(queryGeom, {zoom, types, tags}),
 } = {}) => {
+    const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
     const url = 'https://overpass-api.de/api/interpreter'    
     return fetchTimeout(url, {
         abortBtns,
@@ -76,7 +93,7 @@ const fetchOverpass = async (types, tags, {
         },
         fetchParams: {
             method: "POST",
-            body: "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`),
+            body,
         }
     }).catch(error => {
         console.log(error)
