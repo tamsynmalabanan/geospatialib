@@ -11,7 +11,7 @@ const addOverpassDataToLeafletMap = async ({
     if (!geojson || !geojson.features?.length) return    
     
     const name = !tags ? 'osm elements' : removeWhitespace(
-        tags.replaceAll('[', ' ').replaceAll(']', ' ').replaceAll(':', '=')
+        tags.replaceAll('[', ' ').replaceAll(']', ' ')
     )
 
     const group = map._layerGroups.local
