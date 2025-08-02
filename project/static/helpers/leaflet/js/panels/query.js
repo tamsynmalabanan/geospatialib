@@ -75,8 +75,12 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const getOSMDataFetchers = ({types=ALL_OVERPASS_ELEMENT_TYPES, tags=''}={}) => {
         return [
-            {key: 'nominatim;{}', title: 'OpenStreetMap via Nominatim',},
-            {key: `overpass;${JSON.stringify({types,tags})}`, title: 'OpenStreetMap via Overpass',},
+            {key: 'nominatim;{}', title: 'osm element via nominatim',},
+            {key: `overpass;${JSON.stringify({types,tags})}`, title: `osm ${
+                types.map(i => `${i}s`).join(', ')
+            } ${
+                tags ? `for ${tags.replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
+            } via overpass`,},
         ]
     } 
 
@@ -197,6 +201,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                                 
                                 let tags = container.querySelector('input[name="overpassTag"]').value
                                 if (tags !== '') {
+                                    tags = tags.replaceAll(' ', '').toLowerCase()
                                     tags = tags.startsWith('[') ? tags : `[${tags}`
                                     tags = tags.endsWith(']') ? tags : `${tags}]`
                                 }

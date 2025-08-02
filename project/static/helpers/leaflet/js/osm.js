@@ -4,23 +4,24 @@ const addOverpassDataToLeafletMap = async ({
     queryGeom,
     zoom,
     tags,
+    types,
 } = {}) => {
     if (!query && !queryGeom) return
 
-    const geojson = await fetchOverpass(types=ALL_OVERPASS_ELEMENT_TYPES, tags='', {queryGeom, zoom, query})
+    const geojson = await fetchOverpass(types, tags, {queryGeom, zoom, query})
     if (!geojson || !geojson.features?.length) return    
     
-    const name = !tags ? 'osm elements' : removeWhitespace(
-        tags.replaceAll('[', ' ').replaceAll(']', ' ')
-    )
-
     const group = map._layerGroups.local
 
     const layer = await getLeafletGeoJSONLayer({
         geojson,
         group,
         pane: createCustomPane(map),
-        params: {name},
+        params: {name: `osm ${
+            types.map(i => `${i}s`).join(', ')
+        } ${
+            tags ? `for ${tags.replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
+        } via overpass`},
     })
 
     if (!layer) return

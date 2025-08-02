@@ -43,6 +43,7 @@ const getOverpassQueryBlock = (queryGeom, {
     }
 
     if (tags !== '') {
+        tags = tags.replaceAll(' ', '').toLowerCase()
         tags = tags.startsWith('[') ? tags : `[${tags}`
         tags = tags.endsWith(']') ? tags : `${tags}]`
     }
