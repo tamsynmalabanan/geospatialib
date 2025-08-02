@@ -98,7 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // const escape = e.type !== 'click' || !document.elementsFromPoint(
             //     e.localX, e.clientY
             // ).find(i => i === menu)
-            if (!dismissBtn || escape) menu.remove()
+            if (!dismissBtn || escape) {
+                alert(e.type)
+                menu.remove()
+            }
         }
     }
 
