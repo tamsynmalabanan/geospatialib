@@ -163,7 +163,7 @@ const createLeafletLegendItem = (layer) => {
     const collapseToggle = createIcon({
         parent: toggleContainer,
         peNone: false,
-        className: 'dropdown-toggle onblur-fade',
+        className: 'dropdown-toggle',
         attrs: {
             'data-bs-toggle': 'collapse',
             'data-bs-target': `#${legendCollapse.id}`,
@@ -175,7 +175,7 @@ const createLeafletLegendItem = (layer) => {
     const menuToggle = createIcon({
         parent: toggleContainer,
         peNone: false,
-        className: 'bi bi-three-dots onblur-fade',
+        className: 'bi bi-three-dots',
         events: {
             'click': (e) => getLeafletLayerContextMenu(e, layer)
         }
@@ -521,11 +521,15 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     legendDetails.innerHTML = ''
                     createGeoJSONLayerLegend(layer, legendDetails)
 
-                    const legendHeader = container.firstChild
-                    const filterIcon = legendHeader.querySelector('i.bi.bi-filter')
+                    const legendMenu = container.firstChild.lastChild
+                    const filterIcon = legendMenu.querySelector('i.bi.bi-filter')
                     if (layer._properties.limits.active) {
                         if (!filterIcon) {
-                            legendHeader.insertBefore(customCreateElement({tag:'i', className:'bi bi-filter', attrs: {title: 'Filter count limit applied'}}), container.firstChild.lastChild)
+                            legendMenu.insertBefore(titleToTooltip(customCreateElement({
+                                tag:'i', 
+                                className:'bi bi-filter', 
+                                attrs: {title: `Feature count limit is active. It can be deactivated in the layer properties`}
+                            })), legendMenu.firstChild)
                         }
                     } else if (filterIcon) {
                         filterIcon.remove()
