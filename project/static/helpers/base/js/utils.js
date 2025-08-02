@@ -473,3 +473,14 @@ const parseXML = (xmlString) => {
 
     return [namespace, rootElement]
 }
+
+const isElementFullyVisible = (el, {margin=0}={}) => {
+  const rect = el.getBoundingClientRect()
+
+  return (
+    rect.top >= margin &&
+    rect.left >= margin &&
+    rect.bottom <= ((window.innerHeight || document.documentElement.clientHeight) - margin) &&
+    rect.right <= ((window.innerWidth || document.documentElement.clientWidth) - margin)
+  )
+}

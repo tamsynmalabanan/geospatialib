@@ -94,12 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const menu = document.querySelector(`.custom-context-menu`)
         if (menu) {
             const dismissBtn = menu.querySelector('.custom-context-menu-dismiss')
-            const escape = e.type === 'resize'
-            // const escape = e.type !== 'click' || !document.elementsFromPoint(
-            //     e.localX, e.clientY
-            // ).find(i => i === menu)
+            const escape = e.type === 'resize' && !isElementFullyVisible(menu)
             if (!dismissBtn || escape) {
-                alert(e.type)
                 menu.remove()
             }
         }
