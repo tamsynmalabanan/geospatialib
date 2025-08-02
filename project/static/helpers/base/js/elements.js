@@ -6,7 +6,8 @@ const customCreateElement = ({
     style = {},
     innerHTML = '',
     attrs = {},
-    events = {}
+    events = {},
+    innerText = ''
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id || generateRandomString()
@@ -15,7 +16,10 @@ const customCreateElement = ({
     Object.keys(style).forEach(k => element.style[k] = style[k])
     Object.keys(attrs).forEach(k => element.setAttribute(k, attrs[k]))
     Object.keys(events).forEach(k => element.addEventListener(k, events[k]))
-    element.innerHTML = innerHTML
+    
+    if (innerHTML) element.innerHTML = innerHTML
+    if (innerText) element.innerText = innerText
+
     return element
 }
 

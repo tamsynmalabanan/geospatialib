@@ -39,10 +39,12 @@ const createLeafletMapPanel = (map, parent, name, {
         spinnerIcon.className = 'spinner-border spinner-border-sm'
         spinnerIcon.setAttribute('role', 'status')
         spinner.appendChild(spinnerIcon)
-        
-        const spinnerRemarkDiv = document.createElement('div')
-        spinnerRemarkDiv.innerText = spinnerRemark
-        spinner.appendChild(spinnerRemarkDiv)
+
+        const spinnerRemarkDiv = customCreateElement({
+            parent: spinner,
+            className: 'd-flex justify-content-end',
+            innerText: spinnerRemark,
+        })
     
         const error = document.createElement('div')
         error.id = `${status.id}-error`
