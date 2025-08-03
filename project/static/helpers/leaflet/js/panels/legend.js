@@ -528,7 +528,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                             legendMenu.insertBefore(titleToTooltip(customCreateElement({
                                 tag:'i', 
                                 className:'bi bi-filter', 
-                                attrs: {title: `Feature count limit is active. It can be deactivated in the layer properties`}
+                                attrs: {title: `Feature count limit is active. It can be deactivated in the layer properties.`}
                             })), legendMenu.firstChild)
                         }
                     } else if (filterIcon) {

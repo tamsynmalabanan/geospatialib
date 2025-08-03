@@ -179,7 +179,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                 const filterField = createFormFloating({
                     parent: container,
                     fieldAttrs: {name:'overpassTag'},
-                    labelText: 'Overpass tag/s',
+                    labelText: 'Overpass tag/s (case-sensitive)',
                 })
 
                 const link = customCreateElement({

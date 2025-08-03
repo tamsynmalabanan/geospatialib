@@ -27,21 +27,18 @@ const fetchNominatim = async ({
 const cleanOverpassTags = (tags) => {
     if (tags === '') return tags
 
-    tags = tags.toLowerCase()
-    tags = tags.replaceAll(' ', '')
     tags = tags.startsWith('[') ? tags : `[${tags}`
     tags = tags.endsWith(']') ? tags : `${tags}]`
+    tags = tags.split(/([\[\]=~])/).filter(Boolean)
+    tags = tags.map(i => {
+        i = i.trim()
+        if (['[', ']', '=', '~'].includes(i)) return i
 
-    const sc = getSpecialCharacters(tags).filter(i => !Array('"', ':').includes(i))
-    let parts = tags
-    for (const i of sc) {
-        parts = parts.replaceAll(i, ' ')
-    }
-
-    parts = removeWhitespace(parts).split(' ').filter(i => !i.startsWith('"') && !i.endsWith('"'))
-    for (const i of parts) {
-        tags = tags.replaceAll(i, `"${i}"`)
-    }
+        i = i.startsWith('"') ? i : `"${i}`
+        i = i.endsWith('"') ? i : `${i}"`
+        return i
+    })
+    tags = tags.join('')
 
     return tags
 }
