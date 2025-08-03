@@ -623,7 +623,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
      
         const textCheckboxes = customCreateElement({
-            className:'d-flex flex-column flex-wrap justify-content-center border px-3 rounded pt-1 flex-grow-1', 
+            className:'d-flex flex-column flex-wrap justify-content-center border px-2 rounded pt-1 flex-grow-1', 
             style: {maxHeight:'58px'},
             parent:iconFields3
         })
@@ -663,6 +663,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const boldFont = createFormCheck({
             parent:textCheckboxes,
+            formCheckClass:'me-3',
             labelInnerText: 'Bold font',
             checked: styleParams.boldFont,
             labelClass: 'text-nowrap',
@@ -695,7 +696,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const textAlignment = createBadgeSelect({
             parent:textCheckboxes,
-            selectClass: `border-0 text-start mb-1`,
+            selectClass: `border-0 text-start mb-1 w-25`,
             rounded: false,
             options: {
                 'center': 'Text center',
@@ -716,7 +717,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const justifytAlignment = createBadgeSelect({
             parent:textCheckboxes,
-            selectClass: `border-0 text-start mb-1`,
+            selectClass: `border-0 text-start mb-1 w-25`,
             rounded: false,
             options: {
                 'center': 'Justify center',
