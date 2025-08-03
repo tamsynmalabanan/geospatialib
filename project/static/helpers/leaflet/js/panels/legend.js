@@ -436,7 +436,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     const geojson = (
                         turf.booleanWithin(newBbox, previousBbox) 
-                        && layer.getLayers().length >= layer._properties.limits.totalCount
+                        && layer.getLayers().length === layer._properties.limits.totalCount
                     ) ? layer.toGeoJSON() : null
 
                     promises.push(updateLeafletGeoJSONLayer(layer, {
@@ -522,17 +522,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     createGeoJSONLayerLegend(layer, legendDetails)
 
                     const legendMenu = container.firstChild.lastChild
-                    const filterIcon = legendMenu.querySelector('i.bi.bi-filter')
+                    legendMenu.querySelector('i.bi.bi-filter')?.remove()
+                    
                     if (layer._properties.limits.active) {
-                        if (!filterIcon) {
-                            legendMenu.insertBefore(titleToTooltip(customCreateElement({
-                                tag:'i', 
-                                className:'bi bi-filter', 
-                                attrs: {title: `Feature count limit is active. It can be deactivated in the layer properties.`}
-                            })), legendMenu.firstChild)
-                        }
-                    } else if (filterIcon) {
-                        filterIcon.remove()
+                        legendMenu.insertBefore(titleToTooltip(customCreateElement({
+                            tag:'i', 
+                            className:'bi bi-filter', 
+                            attrs: {title: `Feature count is limited to ${
+                                formatNumberWithCommas(layer._properties.limits.max)
+                            }. You can change this in the layer properties.`}
+                        })), legendMenu.firstChild)
                     }
                 })
                 
