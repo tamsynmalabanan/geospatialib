@@ -1822,7 +1822,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             
                                             layers.classList.toggle(
                                                 'd-none', 
-                                                Array.from(layers.children)
+                                                Array.from(layers?.querySelectorAll('[data-layer-legend="true"]'))
                                                 .every(el => el.classList.contains('d-none'))
                                             )                    
 

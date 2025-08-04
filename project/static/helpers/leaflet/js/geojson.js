@@ -593,8 +593,12 @@ const getLeafletGeoJSONData = async (layer, {
     return data
 }
 
+const isUnderenderedLayer = (layer) => {
+    return layer._group._map._handlers.hasHiddenLegendLayer(layer) || layer._group._map._handlers.hasHiddenLegendGroupLayer(layer) || !leafletLayerIsVisible(layer)
+}
+
 const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateCache=true} = {}) => {
-    if (!layer || !layer._map || layer._map._handlers.hasHiddenLegendLayer(layer) || !leafletLayerIsVisible(layer)) return
+    if (!layer || !layer._map || isUnderenderedLayer(layer)) return
 
     const isEditable = layer._dbIndexedKey === layer._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
     const preventUpdate = isEditable && layer._map._drawControl?._editMode
@@ -663,6 +667,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
         layer.options.renderer._container?.classList.remove('d-none')
         
         layer.clearLayers()
+
         layer.addData(data)
     }
     layer.fire('dataupdate')
@@ -775,11 +780,12 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
         const icon = document.createElement('td')
         icon.id = `${tr.id}-icon`
-        icon.className = 'd-flex flex-no-wrap gap-2 align-items-center justify-content-center'
+        icon.className = 'd-flex flex-no-wrap gap-2 align-items-center justify-content-center bg-transparent'
         tr.appendChild(icon)
 
         const totalCount = formatNumberWithCommas(style.totalCount)
         const label = document.createElement('td')
+        label.className = 'bg-transparent'
         tr.appendChild(label)
         
         const labelContent = document.createElement('p')

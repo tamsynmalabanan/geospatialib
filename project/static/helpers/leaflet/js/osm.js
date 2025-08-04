@@ -3,8 +3,13 @@ const addOverpassDataToLeafletMap = async ({
     query,
     queryGeom,
     zoom,
-    tags,
-    types,
+    tags='',
+    types=ALL_OVERPASS_ELEMENT_TYPES,
+    name=removeWhitespace(`osm ${
+        types ? types.map(i => `${i}s`).join(', ') : 'elements'
+    } ${
+        tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
+    } via overpass`)
 } = {}) => {
     if (!query && !queryGeom) return
 
@@ -17,11 +22,7 @@ const addOverpassDataToLeafletMap = async ({
         geojson,
         group,
         pane: createCustomPane(map),
-        params: {name: `osm ${
-            types.map(i => `${i}s`).join(', ')
-        } ${
-            tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
-        } via overpass`},
+        params: {name},
     })
 
     if (!layer) return
@@ -33,7 +34,7 @@ const addOverpassDataToLeafletMap = async ({
 //     const response = await htmxFetch('/htmx/map/create/', {
 //         method:'POST', 
 //         data:{
-//             subject:'Renewable Energy Potential in Zambales, Philippines'
+//             subject:'Renewable Energy Potential in San Marcelino, Zambales'
 //         }
 //     })
 
@@ -43,12 +44,18 @@ const addOverpassDataToLeafletMap = async ({
 
 //     const map = window.maps[0]
 
+//     const usedTags = []
+
 //     for (const category of Object.values(params.categories)) {
 //         for (const tags of category.overpass) {
+//             if (usedTags.includes(tags)) continue
+
+//             usedTags.push(tags)
 //             await addOverpassDataToLeafletMap({
 //                 map,
 //                 queryGeom,
 //                 tags,
+//                 name: category.title + ' - ' + tags.slice(1, -1),
 //             })
 //         }
 //     }

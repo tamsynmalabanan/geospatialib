@@ -1,4 +1,4 @@
-const handleLeafletLayerGroups = async (map) => {
+const handleLeafletLayerGroups = async (map) => {   
     map._layerGroups = {}
     Array(
         'library',
@@ -12,13 +12,43 @@ const handleLeafletLayerGroups = async (map) => {
         group._name = groupName
         group._hiddenLayers = []
         group._invisibileLayers = []
-      
+        group._hiddenGroupLayers = []
+        
         group._handlers = {
+            getHiddenGroupLayers: () => group._hiddenGroupLayers,
+            getHiddenGroupLayer: (id) => group._handlers.getHiddenGroupLayers().find(l => l._leaflet_id === parseInt(id)),
+            hasHiddenGroupLayer: (layer) => group._handlers.getHiddenGroupLayers().includes(layer),
+            unhideGroupLayer: async (layer, {addLayer=true}={}) => {
+                let match
+                
+                const hiddenLayers = group._handlers.getHiddenGroupLayers().filter(l => {
+                    const matched = l === layer
+                    if (matched) { match = l }
+                    return !matched
+                })
+                
+                group._hiddenGroupLayers = hiddenLayers
+
+                if (addLayer) {
+                    group.addLayer(layer)
+                } else if (match) {
+                    map.fire('layerremove', {layer})
+                }
+            },
+            hideGroupLayer: (layer) => {
+                if (!group._hiddenGroupLayers.includes(layer)) group._hiddenGroupLayers.push(layer)
+                group._map.hasLayer(layer) ? group.removeLayer(layer) : map.fire('layerremove', {layer})
+            },
+
             getHiddenLayers: () => group._hiddenLayers,
             setHiddenLayers: (hiddenLayers=[]) => group._hiddenLayers = hiddenLayers,
             hideLayer: (layer) => {
                 if (!group._hiddenLayers.includes(layer)) group._hiddenLayers.push(layer)
-                group.hasLayer(layer) ? group.removeLayer(layer) : map.fire('layerremove', {layer})
+                if (group._map.hasLayer(layer)) {
+                    group.removeLayer(layer)
+                } else {
+                    map.fire('layerremove', {layer})
+                }
             },
             getHiddenLayer: (id) => group._handlers.getHiddenLayers().find(l => l._leaflet_id === parseInt(id)),
             hasHiddenLayer: (layer) => group._handlers.getHiddenLayers().includes(layer),
@@ -40,21 +70,15 @@ const handleLeafletLayerGroups = async (map) => {
                 }
             },
 
-            getInvisibleLayers: () => {
-                return group._invisibileLayers
-            },
+            getInvisibleLayers: () =>  group._invisibileLayers,
             getInvisibleLayer: (id) => {
                 return group._handlers.getInvisibleLayers().find(l => l._leaflet_id === parseInt(id))
             },
-            setInvisibleLayers: (invisibleLayers=[]) => {
-                group._invisibileLayers = invisibleLayers
-            },
-            hasInvisibleLayer: (layer) => {
-                return group._handlers.getInvisibleLayers().includes(layer)
-            },
+            setInvisibleLayers: (invisibleLayers=[]) => group._invisibileLayers = invisibleLayers,
+            hasInvisibleLayer: (layer) => group._handlers.getInvisibleLayers().includes(layer),
             addInvisibleLayer: (layer) => {
                 group._invisibileLayers.push(layer)
-                if (group.hasLayer(layer)) {
+                if (group._map.hasLayer(layer)) {
                     group.removeLayer(layer)
                 } else {
                     map.fire('layerremove', {layer})
@@ -81,16 +105,18 @@ const handleLeafletLayerGroups = async (map) => {
                 return [
                     ...group.getLayers(),
                     ...group._handlers.getHiddenLayers(),
-                    ...group._handlers.getInvisibleLayers()
+                    ...group._handlers.getInvisibleLayers(),
+                    ...group._handlers.getHiddenGroupLayers(),
                 ]
             },
             findLayer: (id) => {
-                return group.getLayer(id) ?? group._handlers.getHiddenLayer(id) ?? group._handlers.getInvisibleLayer(id) 
+                return group.getLayer(id) ?? group._handlers.getHiddenLayer(id) ?? group._handlers.getInvisibleLayer(id) ?? group._handlers.getHiddenGroupLayer(id) 
             },
                     
             clearLayer: async (layer) => {
-                if (group.hasLayer(layer)) group.removeLayer(layer)
+                if (group._map.hasLayer(layer)) group.removeLayer(layer)
                 await group._handlers.unhideLayer(layer, {addLayer:false})
+                await group._handlers.unhideGroupLayer(layer, {addLayer:false})
                 await group._handlers.removeInvisibleLayer(layer, {addLayer:false})
                 
                 const paneName = layer.options.pane
@@ -119,6 +145,7 @@ const handleLeafletLayerGroups = async (map) => {
                 Array(
                     ...group.getLayers(),
                     ...group._handlers.getInvisibleLayers(),
+                    ...group._handlers.getHiddenGroupLayers(),
                 ).forEach(l => {
                     group._handlers.hideLayer(l)
                 })
@@ -193,7 +220,12 @@ const handleLeafletLayerGroups = async (map) => {
 
             if (layer) {
                 if (isHidden) group._handlers.hideLayer(layer)
+
+                const legendGroup = properties.legendGroup
+                if (![undefined, 'layers'].includes(legendGroup.id) && legendGroup.checked === false) group._handlers.hideGroupLayer(layer)
+                
                 group.addLayer(layer)
+                
                 if (editable && (dbIndexedKey !== map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)) {
                     await toggleLeafletLayerEditor(layer, {dbIndexedKey})
                 }
@@ -204,7 +236,7 @@ const handleLeafletLayerGroups = async (map) => {
         },
         getLayerGroup: (layer) => {
             for (const group of Object.values(map._handlers.getLayerGroups())) {
-                if (group.hasLayer(layer) || group._handlers.hasHiddenLayer(layer)) {
+                if (group.hasLayer(layer) || group._handlers.hasHiddenLayer(layer) || group._handlers.hasInvisibleLayer(layer) || group._handlers.hasHiddenLegendGroupLayer(layer)) {
                     return group
                 }
             }
@@ -219,6 +251,11 @@ const handleLeafletLayerGroups = async (map) => {
         hasHiddenLegendLayer: (layer) => {
             for (const group of map._legendLayerGroups) {
                 if (group._handlers.hasHiddenLayer(layer)) return group
+            }
+        },
+        hasHiddenLegendGroupLayer: (layer) => {
+            for (const group of map._legendLayerGroups) {
+                if (group._handlers.hasHiddenGroupLayer(layer)) return group
             }
         },
         hasInvisibleLegendLayer: (layer) => {
@@ -288,6 +325,7 @@ const handleLeafletLayerGroups = async (map) => {
             if (!bounds.length) return
             await zoomToLeafletLayer(L.geoJSON(turf.featureCollection(bounds)), map)
         },
+        
     }
 
     map._legendLayerGroups = Object.values(map._handlers.getLayerGroups())

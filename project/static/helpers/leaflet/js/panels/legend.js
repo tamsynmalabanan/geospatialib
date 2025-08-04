@@ -1,3 +1,249 @@
+const updateLayerLegendParams = (map) => {
+    const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
+    
+    const legendUpdate = {}
+    const layerLegends = Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).reverse()
+    for (let i=0; i<layerLegends.length; i++) {
+        const child = layerLegends[i]
+        const paneName = child.dataset.layerPane
+        const pane = map.getPane(paneName)
+        pane.style.zIndex = i + 200
+        
+        legendUpdate[child.dataset.layerId] = {
+            zIndex: pane.style.zIndex,
+            legendGroup: {
+                id: child.parentElement.id.split('-').reverse()[0],
+                title: child.closest('[data-layer-legend="false"')?.firstChild.firstChild.nextElementSibling.innerText,
+                checked: child.closest('[data-layer-legend="false"')?.firstChild.querySelector('.form-check-input').checked
+            }
+        }
+    }
+
+    map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(legendUpdate).forEach(j => {
+        i[j].zIndex = legendUpdate[j].zIndex
+        i[j].properties.legendGroup = legendUpdate[j].legendGroup
+    })})
+}
+
+const createNewGroup = (map, {
+    groupId=generateRandomString(),
+    titleText='New Group',
+    checked=true,
+} = {}) => {
+    const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
+
+    const container = customCreateElement({
+        id: `${layers.id}-${groupId}-container`,
+        attrs: {'data-layer-legend': false},
+        className: 'd-flex flex-nowrap flex-column gap-1 position-relative',
+    })
+    layers.insertBefore(container, layers.firstChild)
+
+    const head = customCreateElement({
+        parent: container,
+        className: 'd-flex flex-nowrap gap-2',
+    })
+
+    const groupToggle = createFormCheck({
+        parent: head,
+        checked,
+        events: {
+            click: (e) => {
+                const groupId = e.target.closest('[data-layer-legend="false"]').lastChild.id.split('-').reverse()[0]
+                map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(i).forEach(j => {
+                    if (i[j].properties.legendGroup.id !== groupId) return
+                    i[j].properties.legendGroup.checked = e.target.checked
+
+                    const layer = map._handlers.getLegendLayer(j)
+                    const group = layer._group
+                    e.target.checked ? group._handlers.unhideGroupLayer(layer) : group._handlers.hideGroupLayer(layer)
+                })})
+            }
+        }
+    })
+
+    const title = customCreateElement({
+        parent: head,
+        tag: 'span',
+        className: 'text-break text-wrap user-select-none',
+        innerText: titleText
+    })
+
+    const menu = customCreateElement({
+        parent: head,
+        className: 'ms-auto ps-5 d-flex flex-nowrap gap-2'
+    })
+
+    const collapseToggle = customCreateElement({
+        parent: menu,
+        tag: 'i',
+        className: 'dropdown-toggle',
+        attrs: {
+            'data-bs-toggle': "collapse",
+            'data-bs-target': `#${layers.id}-${groupId}`,
+            'aria-controls': `${layers.id}-${groupId}`,
+            'aria-expanded': "true",
+            'style':"cursor: pointer;"
+        }
+    })
+
+    const menuToggle = customCreateElement({
+        parent: menu,
+        tag: 'i',
+        className: 'bi bi-three-dots',
+        attrs: {
+            'style':"cursor: pointer;"
+        },
+        events: {
+            click: (e) => {
+                contextMenuHandler(e, {
+                    // divider1: false ? null : {
+                    //     divider: true,
+                    // },
+                    rename: {
+                        innerText: 'Rename group',
+                        btnCallback: async (e) => {
+                            const form = customCreateElement({
+                                className: 'd-flex flex-nowrap gap-2',
+                            })
+                            
+                            const field = customCreateElement({
+                                parent: form,
+                                tag: 'input',
+                                attrs: {type:'text', value: title.innerText},
+                                className: 'form-control form-control-sm',
+                                events: {
+                                    change: (e) => {
+                                        if (e.target.value.trim() === '') {
+                                            e.target.value = title.innerText
+                                        }
+                                    },
+                                    blur: (e) => {
+                                        const value = field.value.trim()
+                                        if (value === title.innerText.trim()) return
+
+                                        title.innerText = value
+                                        
+                                        map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(i).forEach(j => {
+                                            if (i[j].properties.legendGroup.id !== groupId) return
+                                            i[j].properties.legendGroup.title = value
+                                        })})
+
+                                        head.insertBefore(title, form)
+                                        form.remove()
+                                    }
+                                }
+                            })
+
+                            head.insertBefore(form, title)
+                            field.focus()
+                            title.remove()
+                        }
+                    },
+                    remove: {
+                        innerText: 'Remove group',
+                        keepMenuOn: true,
+                        btnCallback: (e) => {
+                            const parentElement = e.target.parentElement
+                            parentElement.innerHTML = ''
+                            
+                            const btn = document.createElement('button')
+                            btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
+                            btn.addEventListener('click', () => {
+                                const layers = Array.from(collapse.children).map(i => i._leafletLayer)
+                                layers.forEach(l => {
+                                    l._group._handlers.clearLayer(l)
+                                })
+                                container.remove()
+                            })
+                            parentElement.appendChild(btn)
+                            
+                            const label = createSpan(
+                                'Confirm to remove group and sublayers', 
+                                {className:'pe-none text-wrap'}
+                            )
+                            btn.appendChild(label)
+                        }
+                    },
+                })
+            }
+        }
+    })
+
+    const collapse = customCreateElement({
+        parent: container,
+        id: `${layers.id}-${groupId}`,
+        className: 'collapse show ps-4',
+        style: {minHeight: '20px'}
+    })
+
+    Array('mousedown', 'touchstart').forEach(t1 => {
+        let elementsFromPoint
+        let referenceLegend
+        
+        title.addEventListener(t1, (e1) => {
+            const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
+            container.classList.add('highlight', 'z-3')
+            document.body.classList.add('user-select-none')
+
+            const mouseMoveHandler = (e2) => {
+                const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
+                container.style.top =`${newY - startY}px`
+
+                elementsFromPoint = document.elementsFromPoint(e2.x, e2.y)
+                referenceLegend = elementsFromPoint.find(el => {
+                    if (el === container) return
+                    return el.matches(`[data-layer-legend="false"], #${layers.id} > [data-layer-legend="true"]`)
+                })
+                
+                Array.from(layers.querySelectorAll(`[data-layer-legend="false"], #${layers.id} > [data-layer-legend="true"]`)).forEach(c => c.classList.toggle(
+                    'highlight', Array(referenceLegend, container).includes(c)
+                )) 
+            }   
+            
+            const mouseUpHandler = (e3) => {
+                const offset = parseInt(container.style.top)
+                if (Math.abs(offset) >= 10) {
+                    if (offset < 0) {
+                        if (referenceLegend) {
+                            referenceLegend.parentElement.insertBefore(container, referenceLegend)
+                        } else {
+                            layers.insertBefore(container, layers.firstChild)
+                        }
+                    } else {
+                        if (referenceLegend) {
+                            if (referenceLegend.nextSibling) {
+                                referenceLegend.parentElement.insertBefore(container, referenceLegend.nextSibling)
+                            } else {
+                                referenceLegend.parentElement.appendChild(container)
+                            }
+                        } else {
+                            layers.appendChild(container)
+                        }
+                    }
+
+                    Array.from(layers.querySelectorAll('[data-layer-legend]')).forEach(child => child.style.top = '0px')
+                    updateLayerLegendParams(map)
+                }
+
+                container.style.top = '0px'
+                container.classList.remove('z-3')
+                Array.from(layers.querySelectorAll('.highlight')).forEach(c => c.classList.remove('highlight')) 
+                document.body.classList.remove('user-select-none')
+            }                
+
+            Array('mousemove', 'touchmove').forEach(t2 => document.addEventListener(t2, mouseMoveHandler))                
+            Array('mouseup', 'touchend').forEach(t3 => document.addEventListener(t3, (e3) => {
+                mouseUpHandler(e3)
+                Array('mousemove', 'touchmove').forEach(i => document.removeEventListener(i, mouseMoveHandler))
+                Array('mouseup', 'touchend').forEach(i => document.removeEventListener(i, mouseUpHandler))
+            }))                
+        })
+    })
+
+    return collapse
+}
+
 const createLeafletLegendItem = (layer) => {
     const group = layer._group
     const map = group._map
@@ -5,7 +251,7 @@ const createLeafletLegendItem = (layer) => {
 
     const paneName = layer.options.pane
     const pane = map.getPane(paneName)
-    pane.style.zIndex = (layers?.children ?? []).length + 200
+    pane.style.zIndex = (Array.from(layers?.querySelectorAll('[data-layer-legend="true"]')) ?? []).length + 200
     
     const container = customCreateElement({
         tag: 'div',
@@ -17,7 +263,26 @@ const createLeafletLegendItem = (layer) => {
             'data-layer-id': layer._leaflet_id,
         }
     })
-    layers.insertBefore(container, layers.firstChild)
+    layer._legendContainer = container
+    container._leafletLayer = layer
+
+    const legendGroup = layer._properties.legendGroup
+    if ([undefined, 'layers'].includes(legendGroup?.id)) {
+        layers.insertBefore(container, layers.firstChild)
+    } else {
+        let groupElement = layers.querySelector(`#${layers.id}-${legendGroup.id}`)
+        if (!groupElement) {
+            groupElement = createNewGroup(map, {
+                groupId: legendGroup.id,
+                titleText: legendGroup.title,
+                checked: legendGroup.checked
+            })
+
+            groupElement.appendChild(container)
+        } else {
+            groupElement.insertBefore(container, groupElement.firstChild)
+        }
+    }
     
     const legendTitle = customCreateElement({
         tag: 'div',
@@ -28,7 +293,7 @@ const createLeafletLegendItem = (layer) => {
     })
     
     const layerToggle = createFormCheck({
-        checked: group.hasLayer(layer) || map._handlers.hasInvisibleLegendLayer(layer),
+        checked: !map._handlers.hasHiddenLegendLayer(layer),
         events: {
             click: (e) => {
                 e.target.checked ?
@@ -38,25 +303,28 @@ const createLeafletLegendItem = (layer) => {
         }
     })
     legendTitle.insertBefore(layerToggle, legendTitle.firstChild)
-    layer.on('add remove', (e) => {
-        layerToggle.querySelector('input').checked = !group._handlers.hasHiddenLayer(layer)
-    })
     
     Array('mousedown', 'touchstart').forEach(t1 => {
-        legendTitle.querySelector('span').addEventListener(t1, (e1) => {
+        let elementsFromPoint
+        let referenceLegend
+        
+        legendTitle.firstChild.nextElementSibling.addEventListener(t1, (e1) => {
             const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
 
             const mouseMoveHandler = (e2) => {
                 const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
-                container.style.top =`${newY - startY}px`;
-            
-                const referenceLegend = document.elementsFromPoint(e2.x, e2.y).find(el => {
-                    if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                })
+                container.style.top =`${newY - startY}px`
+
+                elementsFromPoint = document.elementsFromPoint(e2.x, e2.y)
+                referenceLegend = (
+                    elementsFromPoint.find(el => el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`))
+                    ?? elementsFromPoint.find(el => el.matches(`[data-layer-legend="false"] > .collapse`))
+                    ?? elementsFromPoint.find(el => el.matches(`[data-layer-legend="false"]`))
+                )
                 
-                Array.from(layers.children).forEach(c => c.classList.toggle(
+                Array.from(layers.querySelectorAll('[data-layer-legend], [data-layer-legend="false"] > .collapse')).forEach(c => c.classList.toggle(
                     'highlight', Array(referenceLegend, container).includes(c)
                 )) 
             }   
@@ -64,63 +332,54 @@ const createLeafletLegendItem = (layer) => {
             const mouseUpHandler = (e3) => {
                 const offset = parseInt(container.style.top)
                 if (Math.abs(offset) >= 10) {
-                    const referenceLegend = document.elementsFromPoint(e3.x, e3.y).find(el => {
-                        if (el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`)) return el
-                    }) 
-
-                    if (offset < 0) {
-                        if (referenceLegend) {
-                            layers.insertBefore(container, referenceLegend)
+                    if (referenceLegend?.matches('[data-layer-legend="false"] > .collapse')) {
+                        referenceLegend.appendChild(container)
+                    } else {
+                        if (offset < 0) {
+                            if (referenceLegend) {
+                                referenceLegend.parentElement.insertBefore(container, referenceLegend)
+                            } else {
+                                layers.insertBefore(container, layers.firstChild)
+                            }
                         } else {
-                            layers.insertBefore(container, layers.firstChild)
+                            if (referenceLegend) {
+                                if (referenceLegend.nextSibling) {
+                                    referenceLegend.parentElement.insertBefore(container, referenceLegend.nextSibling)
+                                } else {
+                                    referenceLegend.parentElement.appendChild(container)
+                                }
+                            } else {
+                                layers.appendChild(container)
+                            }
+                        }
+                    }
+
+                    if (referenceLegend.parentElement.matches('[data-layer-legend="false"]')) {
+                        if (referenceLegend.parentElement.firstChild.querySelector('.form-check-input').checked) {
+                            group._handlers.unhideGroupLayer(layer)
+                        } else {
+                            group._handlers.hideGroupLayer(layer)
                         }
                     } else {
-                        if (referenceLegend && referenceLegend.nextSibling) {
-                            layers.insertBefore(container, referenceLegend.nextSibling)
-                        } else {
-                            layers.appendChild(container)
-                        }
+                        group._handlers.unhideGroupLayer(layer)
                     }
 
-                    const zIdnexUpdate = {}
-                    const layerLegends = Array.from(layers.children).reverse()
-                    for (let i=0; i<layerLegends.length; i++) {
-                        const child = layerLegends[i]
-                        child.style.top = '0px'
-                        
-                        const paneName = child.dataset.layerPane
-                        const pane = map.getPane(paneName)
-                        pane.style.zIndex = i + 200
-                        
-                        zIdnexUpdate[child.dataset.layerId] = pane.style.zIndex
-                    }
-
-                    map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(zIdnexUpdate).forEach(j => i[j].zIndex = zIdnexUpdate[j])})
+                    Array.from(layers.querySelectorAll('[data-layer-legend]')).forEach(child => child.style.top = '0px')
+                    updateLayerLegendParams(map)
                 }
 
                 container.style.top = '0px'
                 container.classList.remove('z-3')
-                Array.from(layers.children).forEach(c => c.classList.remove('highlight')) 
+                Array.from(layers.querySelectorAll('.highlight')).forEach(c => c.classList.remove('highlight')) 
                 document.body.classList.remove('user-select-none')
             }                
 
-            Array('mousemove', 'touchmove').forEach(t2 => {
-                document.addEventListener(t2, mouseMoveHandler)
-            })                
-
-            Array('mouseup', 'touchend').forEach(t3 => {
-                document.addEventListener(t3, (e3) => {
-                    mouseUpHandler(e3)
-                    
-                    Array('mousemove', 'touchmove').forEach(t2 => {
-                        document.removeEventListener(t2, mouseMoveHandler)
-                    })
-                    
-                    Array('mouseup', 'touchend').forEach(t3 => {
-                        document.removeEventListener(t3, mouseUpHandler)
-                    })
-                })
-            })                
+            Array('mousemove', 'touchmove').forEach(t2 => document.addEventListener(t2, mouseMoveHandler))                
+            Array('mouseup', 'touchend').forEach(t3 => document.addEventListener(t3, (e3) => {
+                mouseUpHandler(e3)
+                Array('mousemove', 'touchmove').forEach(i => document.removeEventListener(i, mouseMoveHandler))
+                Array('mouseup', 'touchend').forEach(i => document.removeEventListener(i, mouseUpHandler))
+            }))                
         })
     })
 
@@ -211,11 +470,39 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle visibility',
             disabled: true,
             btnClickHandler: () => {
-                Array.from(layers.querySelectorAll('.form-check-input'))
-                .some(i => i.checked) ?
-                map._handlers.hideLegendLayers() :
-                map._handlers.showLegendLayers() 
+                const legendChecks = Array.from(layers.querySelectorAll('.form-check-input'))
+                const show = legendChecks.every(i => !i.checked)
+                
+                if (show) {
+                    legendChecks.forEach(i => i.checked = true)
+                    map._handlers.showLegendLayers() 
+                } else {
+                    legendChecks.forEach(i => i.checked = false)
+                    map._handlers.hideLegendLayers()
+                }
+
+                map._handlers.getAllLegendLayers().forEach(l => {
+                    if (l._legendContainer.parentElement === layers) return
+                    show ? l._group._handlers.unhideGroupLayer(l) : l._group._handlers.hideGroupLayer(l)
+                })
+
+                map._handlers.updateStoredLegendLayers({handler: (i) => Object.values(i).forEach(j => {
+                    const id = j.properties.legendGroup.id
+                    if (id && id !== 'layers') {
+                        j.properties.legendGroup.checked = show
+                    }
+                })})
             },
+        },
+        divider3: {
+            tag: 'div',
+            className: 'vr m-2',
+        },
+        newGroup: {
+            iconSpecs: 'bi bi-collection',
+            title: 'Create group',
+            disabled: true,
+            btnClickHandler: () => createNewGroup(map),
         },
         divider1: {
             tag: 'div',
@@ -232,7 +519,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle legends',
             disabled: true,
             btnClickHandler: () => {
-                const elements = Array.from(layers.children)
+                const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
                 const show = elements.some(el => el.classList.contains('d-none'))
                 layers.classList.toggle('d-none', !show)
                 elements.forEach(el =>  {
@@ -252,7 +539,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             title: 'Toggle attributions',
             disabled: true,
             btnClickHandler: () => {
-                const elements = Array.from(layers.children)
+                const elements = Array.from(layers?.querySelectorAll('[data-layer-legend="true"]'))
                 const show = elements.some(el => el.querySelector(`#${el.id}-attribution`).classList.contains('d-none'))
                 elements.forEach(el =>  {
                     el.querySelector(`#${el.id}-attribution`).classList.toggle('d-none', !show)
@@ -413,7 +700,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             const controllerId = controller.id
             const promises = []
 
-            Array.from(layers.children).reverse().forEach(async legend => {
+            Array.from(layers?.querySelectorAll('[data-layer-legend="true"]')).reverse().forEach(async legend => {
                 if (controllerId !== controller.id) return
                 
                 const leafletId = parseInt(legend.dataset.layerId)
@@ -422,11 +709,12 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 const isHidden = map._handlers.hasHiddenLegendLayer(layer)
                 const isInvisible = !leafletLayerIsVisible(layer)
+                const isInHiddenGroup = map._handlers.hasHiddenLegendGroupLayer(layer)
                 
                 const bbox = await getLeafletLayerBbox(layer)
                 const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(bbox))
 
-                if (isHidden || isInvisible || !withinBbox) {
+                if (isHidden || isInHiddenGroup || isInvisible || !withinBbox) {
                     if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
                     return clearLegend(legend, {isInvisible})
                 }
@@ -461,6 +749,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }, 500)
     })
 
+    const toggleLayersVisibility = () => {
+        layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).every(el => el.classList.contains('d-none')))
+    }
+
     map.on('layerremove', (event) => {
         const layer = event.layer
         if (!map._legendLayerGroups.includes(layer._group)) return
@@ -469,8 +761,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         const isHidden = map._handlers.hasHiddenLegendLayer(layer)
         const isInvisible = map._handlers.hasInvisibleLegendLayer(layer)
-        
-        if ((isHidden || isInvisible)) {
+        const isInHiddenGroup = map._handlers.hasHiddenLegendGroupLayer(layer)
+
+
+        if ((isHidden || isInvisible || isInHiddenGroup)) {
             clearLegend(layerLegend, {isInvisible})
             
             if (layer instanceof L.GeoJSON) {
@@ -482,7 +776,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             if (layerLegend) {
                 layerLegend.remove()
 
-                layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+                toggleLayersVisibility()
                 if (layers.innerHTML === '') clearLayers(tools)
             }
             
@@ -501,6 +795,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         const isHidden = map._handlers.hasHiddenLegendLayer(layer)
         const isInvisible = map._handlers.hasInvisibleLegendLayer(layer)
+        const isInHiddenGroup = map._handlers.hasHiddenLegendGroupLayer(layer)
         const isGeoJSON = layer instanceof L.GeoJSON
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
@@ -519,6 +814,8 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
+                    if (isUnderenderedLayer(layer)) return
+
                     createGeoJSONLayerLegend(layer, legendDetails)
 
                     const legendMenu = container.firstChild.lastChild
@@ -542,7 +839,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
             }
         }
 
-        if (isHidden || isInvisible) {
+        container.querySelector('.form-check-input').checked = !isHidden
+
+        if (isHidden || isInvisible || isInHiddenGroup) {
             map.removeLayer(layer)
         } else {
             map._handlers.updateStoredLegendLayers({layer})
@@ -565,7 +864,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             }
         }
 
-        layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+        toggleLayersVisibility()
         if (layers.innerHTML !== '') {
             disableStyleLayerSelect(false)
             for (const tool in tools) {
@@ -620,7 +919,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
             
                 map._handlers.addStoredLegendLayers().then(() => {
-                    layers.classList.toggle('d-none', layers.innerHTML === '' || Array.from(layers.children).every(el => el.classList.contains('d-none')))
+                    toggleLayersVisibility()
                 })
             } else {
                 Object.keys(localStorage).forEach(i => {

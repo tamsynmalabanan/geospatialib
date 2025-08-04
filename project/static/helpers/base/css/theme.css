@@ -6,9 +6,10 @@
 }
 
 .highlight {
-    border-radius: var(--bs-border-radius);
+    /* border-radius: var(--bs-border-radius);
     padding: 10px;
-    margin: 5px;
+    margin: 5px; */
+    background-color: var(--bs-primary);
 }
 
 [data-bs-theme="light"] {
@@ -32,10 +33,10 @@
         background-color: white;
     }    
 
-    .highlight {
+    /* .highlight {
         border: 2px solid var(--adjusted-bg-light);
         background-color: var(--default-bg-light);
-    }
+    } */
 }
 
 [data-bs-theme="dark"] {
@@ -43,10 +44,10 @@
         background-color: var(--adjusted-bg-dark) !important;
     }
     
-    .highlight {
+    /* .highlight {
         border: 2px solid var(--adjusted-bg-dark);
         background-color: var(--default-bg-dark);
-    }
+    } */
 
     .offcanvas, .offcanvas-lg {
         background-color: var(--adjusted-bg-dark) !important;

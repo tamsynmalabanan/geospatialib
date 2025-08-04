@@ -3,7 +3,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Max
 
 from main.models import Layer
-from helpers.main.constants import QUERY_BLACKLIST
+from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
 
 from openai import OpenAI
 from decouple import config
@@ -73,6 +73,7 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Tag keys must be valid OpenStreetMap tag keys supported by Overpass QL, using format [key].
                     - Use only keys listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
                     - Validate tags against the Overpass QL specification and common usage.
+                    - Tag keys must be enclosed in blackets.
                     - You must include **exactly 10 tag keys** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
@@ -133,7 +134,7 @@ def create_thematic_map(user_prompt:str):
         place = init_eval.place
 
         geom = None
-        bbox = []
+        bbox = list(WORLD_GEOM.extent)
         if place:
             geolocator = Nominatim(user_agent="geospatialib/1.0")
             location = geolocator.geocode(place, exactly_one=True)
@@ -141,7 +142,7 @@ def create_thematic_map(user_prompt:str):
                 s,n,w,e = [float(i) for i in location.raw['boundingbox']]
                 raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
                 geom_proj = raw_geom.transform(3857, clone=True)
-                buffered_geom = geom_proj.buffer(1000)
+                buffered_geom = geom_proj.buffer(10000)
                 buffered_geom.transform(4326)
                 geom = buffered_geom.envelope
                 bbox = geom.extent

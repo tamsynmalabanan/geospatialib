@@ -76,11 +76,11 @@ const handleLeafletQueryPanel = (map, parent) => {
     const getOSMDataFetchers = ({types=ALL_OVERPASS_ELEMENT_TYPES, tags=''}={}) => {
         return [
             {key: 'nominatim;{}', title: 'osm element via nominatim',},
-            {key: `overpass;${JSON.stringify({types,tags})}`, title: `osm ${
-                types.map(i => `${i}s`).join(', ')
+            {key: `overpass;${JSON.stringify({types,tags})}`, title: removeWhitespace(`osm ${
+                types ? types.map(i => `${i}s`).join(', ') : 'elements'
             } ${
                 tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
-            } via overpass`,},
+            } via overpass`),},
         ]
     } 
 

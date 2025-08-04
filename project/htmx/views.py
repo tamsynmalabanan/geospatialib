@@ -154,8 +154,13 @@ def create_map(request):
         data = json.loads(request.body.decode('utf-8'))
         subject = data.get('subject')
         if subject:
-            response = create_thematic_map(subject)
+            tries = 0
+            response = None
+            while not response and tries < 3:
+                response = create_thematic_map(subject)
+                tries +=1
             if response:
+                print(response)
                 return JsonResponse(response, status=200)
     except Exception as e:
         print(e)

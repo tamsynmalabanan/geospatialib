@@ -37,9 +37,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const mapContainer = map.getContainer()
     const isLegendGroup = map._legendLayerGroups.includes(group)
     const isLegendFeature = isLegendGroup && feature
-    const isHidden = group._handlers.hasHiddenLayer(layer)
     const isSearch = group._name === 'search'
-    const checkbox = layer._checkbox
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
     const localLayer = (dbIndexedKey ?? '').startsWith('local')
