@@ -8,7 +8,28 @@ const createMapPanels = (container, {} = {}) => {
         show: getCookie(`show_#${id}`) === 'true',
         offcanvasClass: 'offcanvas-end',
         offcanvasToggleIcon: 'bi-layout-sidebar-inset-reverse',
-        titleClass: 'h6'
+        titleClass: 'h6',
+        toggleBtns: [
+            createButton({
+                className: 'bi bi-plus-square border-0 bg-transparent fs-20 p-0 text-muted ms-3',
+                attrs: {
+                    type:'button', 
+                    title:'Add layers',
+                    'data-bs-toggle':"modal",
+                    'data-bs-target':"#addLayersModal",
+                },
+                
+            }),
+            createButton({
+                className: 'bi bi-save border-0 bg-transparent fs-20 p-0 text-muted ms-3',
+                attrs: {
+                    type:'button', 
+                    title:'Export layers',
+                    'data-bs-toggle':"modal",
+                    'data-bs-target':"#exportLayersModal",
+                },
+            }),
+        ]
     })
 
     offcanvas.style.minWidth = '200px'

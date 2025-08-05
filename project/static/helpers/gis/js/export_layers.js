@@ -82,13 +82,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = form.elements.reset
     const submitBtn = form.elements.submit
     const modalBody = modalElement.querySelector('.modal-body')
+
+    let map
+    modalElement.addEventListener('show.bs.modal', (e) => {
+        map = getLeafletMap(e.relatedTarget.closest('.leaflet-container').id)
+    })
     
     let layers
     
     const resetLayers = async () => {
         modalBody.innerHTML = getSpinnerHTML({text: 'Fetching layers...'})
     
-        layers = JSON.parse(localStorage.getItem(`legend-layers-${form._leafletMap.getContainer().id}` ?? '{}'))
+        layers = JSON.parse(localStorage.getItem(`legend-layers-${map.getContainer().id}` ?? '{}'))
         
         for (const layer of Object.values(layers)) {
             let currentKey = layer.dbIndexedKey
@@ -157,3 +162,4 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleSubmitBtn()
     })
 })
+

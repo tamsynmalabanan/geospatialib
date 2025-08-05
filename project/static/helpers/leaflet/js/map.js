@@ -1,3 +1,7 @@
+const getLeafletMap = (id) => {
+    return window.maps.find(i => i.getContainer().id === id)
+}
+
 const disableMapInteractivity = (map) => {
     if (!map._enabledInteractivity || map._enabledInteractivity === true) {
         map.dragging.disable()

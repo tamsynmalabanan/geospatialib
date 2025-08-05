@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const vectorBtn = form.elements.vector
     const submitBtn = form.elements.submit
     
+    let map
+    modalElement.addEventListener('show.bs.modal', (e) => {
+        map = getLeafletMap(e.relatedTarget.closest('.leaflet-container').id)
+    })
+
     const getLayerNamesContainer = (source) => form.querySelector(`#${formId}-${source}-layerNames`)
     
     const getFileSource = () => sourceRadios.find(i => i.checked).value
@@ -79,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (e) => e.preventDefault())
     
     submitBtn.addEventListener('click', async (e) => {
-        const map = form._leafletMap
         const group = map._handlers.getLayerGroups().local
         
         const source = getFileSource()
@@ -174,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     
     vectorBtn.addEventListener('click', async (e) => {
-        const map = form._leafletMap
         const group = map._handlers.getLayerGroups().local
     
         const layer = await getLeafletGeoJSONLayer({

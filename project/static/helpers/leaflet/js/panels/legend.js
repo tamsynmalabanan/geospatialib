@@ -587,45 +587,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
         className:`d-flex gap-2 flex-nowrap`,
     })
 
-    const modalBtns = {
-        addLayersModal: {
-            iconSpecs: 'bi-stack',
-            title: 'Add new layers',
-            innerText: 'Add layers',
-            className: 'btn-primary', 
-        },
-        exportLayersModal: {
-            iconSpecs: 'bi-file-zip-fill',
-            title: 'Export map layers',
-            innerText: 'Export map',
-            className: 'btn-warning',
-        }
-    }
-    
-    Object.keys(modalBtns).forEach(i => {
-        const modalElement = document.querySelector(`#${i}`)
-
-        modalBtnsContainer.appendChild(createButton({
-            ...modalBtns[i],
-            textClass: 'd-none d-xxl-inline',
-            className: `${modalBtns[i].className} d-flex flex-nowrap gap-2 fs-12 badge align-items-center btn btn-sm`,
-            style: {color: 'white'},
-            attrs: {disabled: true},
-            events: {
-                'click': (e) => {
-                    modalElement.querySelector('form')._leafletMap = map
-        
-                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
-                    modalInstance.show()
-                }            
-            }
-        }))
-
-        modalElement.addEventListener('hide.bs.modal', () => {
-            delete modalElement.querySelector('form')._leafletMap
-        })
-    })
-
     const clearLegend = (layerLegend, {isInvisible=false, error=false} = {}) => {
         if (!layerLegend) return
 

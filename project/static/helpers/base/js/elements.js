@@ -125,6 +125,7 @@ const createOffcanvasElement = (id, {
     titleText, 
     titleClass,
     toggleIcon = 'bi-layout-sidebar-inset',
+    toggleBtns = []
 } = {}) => {
     const offcanvas = document.createElement('div')
     offcanvas.id = id
@@ -152,6 +153,10 @@ const createOffcanvasElement = (id, {
     toggleContainer.className = 'd-flex flex-nowrap ms-5'
     header.appendChild(toggleContainer)
     const toggleClassName = 'border-0 bg-transparent fs-20 p-0 ms-3 text-muted bi'
+
+    toggleBtns.forEach(i => {
+        toggleContainer.appendChild(i)
+    })
 
     const sidebarToggle = document.createElement('button')
     sidebarToggle.className = `${toggleClassName} ${show ? toggleIcon : 'bi-window-sidebar'} d-none d-lg-inline`
@@ -193,6 +198,7 @@ const createOffcanvas = (id, {
     titleText = toggleLabelText,
     titleClass,
     offcanvasToggleIcon,
+    toggleBtns,
 } = {}) => {
     const toggle = createOffcanvasToggle(id, {
         themed: themed,
@@ -214,6 +220,7 @@ const createOffcanvas = (id, {
         titleText: titleText,
         titleClass: titleClass,
         toggleIcon: offcanvasToggleIcon,
+        toggleBtns, 
     })
 
     return [toggle, offcanvas]
