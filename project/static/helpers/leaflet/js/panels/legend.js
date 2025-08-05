@@ -1,4 +1,4 @@
-const updateLayerLegendParams = (map) => {
+const updateLayerLegendProperties = (map) => {
     const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
     
     const legendUpdate = {}
@@ -35,7 +35,7 @@ const createNewGroup = (map, {
     const container = customCreateElement({
         id: `${layers.id}-${groupId}-container`,
         attrs: {'data-layer-legend': false},
-        className: 'd-flex flex-nowrap flex-column gap-1 position-relative',
+        className: 'd-flex flex-nowrap flex-column gap-1 position-relative user-select-none',
     })
     layers.insertBefore(container, layers.firstChild)
 
@@ -97,9 +97,6 @@ const createNewGroup = (map, {
         events: {
             click: (e) => {
                 contextMenuHandler(e, {
-                    // divider1: false ? null : {
-                    //     divider: true,
-                    // },
                     rename: {
                         innerText: 'Rename group',
                         btnCallback: async (e) => {
@@ -183,21 +180,27 @@ const createNewGroup = (map, {
         
         title.addEventListener(t1, (e1) => {
             const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
+
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
 
             const mouseMoveHandler = (e2) => {
+                const newX = e2.type === 'touchmove' ? e2.touches[0].clientX : e2.clientX
                 const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
+               
                 container.style.top =`${newY - startY}px`
 
-                elementsFromPoint = document.elementsFromPoint(e2.x, e2.y)
+                elementsFromPoint = document.elementsFromPoint(newX, newY)
+
+                const selector = `[data-layer-legend="false"], #${layers.id} > [data-layer-legend="true"]`
+
                 referenceLegend = elementsFromPoint.find(el => {
                     if (el === container) return
-                    return el.matches(`[data-layer-legend="false"], #${layers.id} > [data-layer-legend="true"]`)
+                    return el.matches(selector)
                 })
                 
-                Array.from(layers.querySelectorAll(`[data-layer-legend="false"], #${layers.id} > [data-layer-legend="true"]`)).forEach(c => c.classList.toggle(
-                    'highlight', Array(referenceLegend, container).includes(c)
+                Array.from(layers.querySelectorAll(selector)).forEach(el => el.classList.toggle(
+                    'highlight', Array(referenceLegend, container).includes(el)
                 )) 
             }   
             
@@ -223,7 +226,7 @@ const createNewGroup = (map, {
                     }
 
                     Array.from(layers.querySelectorAll('[data-layer-legend]')).forEach(child => child.style.top = '0px')
-                    updateLayerLegendParams(map)
+                    updateLayerLegendProperties(map)
                 }
 
                 container.style.top = '0px'
@@ -314,10 +317,13 @@ const createLeafletLegendItem = (layer) => {
             document.body.classList.add('user-select-none')
 
             const mouseMoveHandler = (e2) => {
+                const newX = e2.type === 'touchmove' ? e2.touches[0].clientX : e2.clientX
                 const newY = e2.type === 'touchmove' ? e2.touches[0].clientY : e2.clientY
+               
                 container.style.top =`${newY - startY}px`
 
-                elementsFromPoint = document.elementsFromPoint(e2.x, e2.y)
+                elementsFromPoint = document.elementsFromPoint(newX, newY)
+
                 referenceLegend = (
                     elementsFromPoint.find(el => el.matches(`[data-layer-legend="true"]:not([data-layer-id="${layer._leaflet_id}"]`))
                     ?? elementsFromPoint.find(el => el.matches(`[data-layer-legend="false"] > .collapse`))
@@ -354,8 +360,8 @@ const createLeafletLegendItem = (layer) => {
                         }
                     }
 
-                    if (referenceLegend.parentElement.matches('[data-layer-legend="false"]')) {
-                        if (referenceLegend.parentElement.firstChild.querySelector('.form-check-input').checked) {
+                    if (container.parentElement.matches('[data-layer-legend="false"] > .collapse')) {
+                        if (container.closest(`[data-layer-legend="false"]`).firstChild.querySelector('.form-check-input').checked) {
                             group._handlers.unhideGroupLayer(layer)
                         } else {
                             group._handlers.hideGroupLayer(layer)
@@ -365,7 +371,8 @@ const createLeafletLegendItem = (layer) => {
                     }
 
                     Array.from(layers.querySelectorAll('[data-layer-legend]')).forEach(child => child.style.top = '0px')
-                    updateLayerLegendParams(map)
+                    
+                    updateLayerLegendProperties(map)
                 }
 
                 container.style.top = '0px'
