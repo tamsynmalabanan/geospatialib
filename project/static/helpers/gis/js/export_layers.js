@@ -95,22 +95,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
         layers = JSON.parse(localStorage.getItem(`legend-layers-${map.getContainer().id}` ?? '{}'))
         
-        for (const layer of Object.values(layers)) {
-            let currentKey = layer.dbIndexedKey
-            if (!currentKey.startsWith('local')) continue
-            
-            if (layer.editable) {
-                layer.editable = false
+        if (layers) {
+            for (const layer of Object.values(layers)) {
+                let currentKey = layer.dbIndexedKey
+                if (!currentKey.startsWith('local')) continue
                 
-                const [id, version] = currentKey.split('--version')
-                currentKey = `${id}--version${Number(version ?? 2)-1}`
+                if (layer.editable) {
+                    layer.editable = false
+                    
+                    const [id, version] = currentKey.split('--version')
+                    currentKey = `${id}--version${Number(version ?? 2)-1}`
+                }
+                
+                layer.dbIndexedKey = currentKey
+                layer.data = await getFromGISDB(currentKey)
             }
-            
-            layer.dbIndexedKey = currentKey
-            layer.data = await getFromGISDB(currentKey)
+        
+            handleGSLLayers(layers, modalBody)
+        } else {
+            modalBody.innerHTML = `<div class="d-flex justify-content-center m-3"><span>No layers found.</span></div>`
         }
-    
-        handleGSLLayers(layers, modalBody)
     
         toggleSubmitBtn()
     }

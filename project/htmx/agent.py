@@ -21,8 +21,7 @@ JSON_PROMPT_GUIDE = '''
 class ParamsEvaluation(BaseModel):
     is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
     confidence_score: float = Field(description='Confidence score between 0 and 1.')
-    place: str = Field(description='Name of a place of interest for the thematic map that is mentioned in the prompt, if any. Blank if none.')
-    title: str = Field(description='Title for the thematic map. Include the place of interest, if any.')
+    title: str = Field(description='Title for the thematic map.')
 
 def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> ParamsEvaluation:
     completion = client.beta.chat.completions.parse(
@@ -46,10 +45,10 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
 
 class CategoriesExtraction(BaseModel):
     categories: str = Field(description='''
-        A JSON of 10 categories relevant to the subject and place of interest, if any, with 10 query words and 10 Overpass QL tag keys, formatted: {
+        A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tag keys, following this format: {
             "category_id": {
                 "title": "Category Title",
-                "description": "A detailed description of the relevance of the category to the subject and place of interest, if any.",
+                "description": "A detailed description of the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": ["[tag_key1]", "[tag_key2]", "[tag_key3]"... ]
             },...
@@ -70,10 +69,9 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Make sure query words are suitable for filtering geospatial layers.
                     - You must include **exactly 10 words** for each category—**no fewer, no more**.
                 3. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
-                    - Tag keys must be valid OpenStreetMap tag keys supported by Overpass QL, using format [key].
+                    - Tag keys must be valid OpenStreetMap tag keys supported by Overpass QL, using format "[key]".
                     - Use only keys listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                    - Validate tags against the Overpass QL specification and common usage.
-                    - Tag keys must be enclosed in blackets.
+                    - Tag keys must be enclosed within brackets.
                     - You must include **exactly 10 tag keys** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
@@ -122,7 +120,7 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model
     result = completion.choices[0].message.parsed
     return result
 
-def create_thematic_map(user_prompt:str):
+def create_thematic_map(user_prompt:str, bbox:str):
     try:
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
@@ -131,28 +129,14 @@ def create_thematic_map(user_prompt:str):
             return None
         
         title = init_eval.title
-        place = init_eval.place
-
-        geom = None
-        bbox = list(WORLD_GEOM.extent)
-        if place:
-            geolocator = Nominatim(user_agent="geospatialib/1.0")
-            location = geolocator.geocode(place, exactly_one=True)
-            if location:
-                s,n,w,e = [float(i) for i in location.raw['boundingbox']]
-                raw_geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-                geom_proj = raw_geom.transform(3857, clone=True)
-                buffered_geom = geom_proj.buffer(10000)
-                buffered_geom.transform(4326)
-                geom = buffered_geom.envelope
-                bbox = geom.extent
+        
+        w,s,e,n = json.loads(bbox)
+        geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
 
         params = extract_theme_categories(user_prompt, client)
         categories = json.loads(params.categories)
         
-        queryset = Layer.objects.all()
-        if geom:
-            queryset = queryset.filter(bbox__bboverlaps=geom)
+        queryset = Layer.objects.filter(bbox__bboverlaps=geom)
 
         category_layers = {}
         for id, values in categories.items():
@@ -184,17 +168,19 @@ def create_thematic_map(user_prompt:str):
                     }
                 }
 
+            del categories[id]['query']
+
         if category_layers:
             params = layers_eval_info(user_prompt, category_layers, client)
             layers_eval = json.loads(params.layers)
             
             for id, layers in layers_eval.items():
                 categories[id]['layers'] = [i.data for i in queryset.filter(pk__in=map(int, layers))]
-        
+
         return {
-            'title': title,
-            'place': place,
+            'subject': user_prompt,
             'bbox': bbox,
+            'title': title,
             'categories': categories
         }
     except Exception as e:

@@ -1,4 +1,4 @@
-const createMapPanels = (container, {} = {}) => {
+const findLayersPanels = (container, {} = {}) => {
     const id = `${container.id}-panels`
     const [toggle, offcanvas] = createOffcanvas(id, {
         themed: true,
@@ -11,7 +11,17 @@ const createMapPanels = (container, {} = {}) => {
         titleClass: 'h6',
         toggleBtns: [
             createButton({
-                className: 'bi bi-plus-square border-0 bg-transparent fs-20 p-0 text-muted ms-3',
+                className: 'bi bi-stars border-0 bg-transparent fs-16 p-0 ms-3',
+                attrs: {
+                    type:'button', 
+                    title:'Find layers',
+                    'data-bs-toggle':"modal",
+                    'data-bs-target':"#findLayersModal",
+                },
+                
+            }),
+            createButton({
+                className: 'bi bi-plus-square border-0 bg-transparent fs-16 p-0 text-muted ms-3',
                 attrs: {
                     type:'button', 
                     title:'Add layers',
@@ -21,7 +31,7 @@ const createMapPanels = (container, {} = {}) => {
                 
             }),
             createButton({
-                className: 'bi bi-save border-0 bg-transparent fs-20 p-0 text-muted ms-3',
+                className: 'bi bi-save border-0 bg-transparent fs-16 p-0 text-muted ms-3',
                 attrs: {
                     type:'button', 
                     title:'Export layers',

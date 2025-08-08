@@ -149,23 +149,20 @@ class LayerList(ListView):
         return context
 
 @require_http_methods(['POST'])
-def create_map(request):
-    try:
-        data = json.loads(request.body.decode('utf-8'))
-        subject = data.get('subject')
-        if subject:
-            tries = 0
-            response = None
-            while not response and tries < 3:
-                response = create_thematic_map(subject)
-                tries +=1
-            if response:
-                print(response)
-                return JsonResponse(response, status=200)
-    except Exception as e:
-        print(e)
+def find_layers(request):
+    response = None
 
-    return JsonResponse({'error': 'Failed to create map.'}, status=400)
+    data = request.POST.dict()
+    subject = data.get('subject')
+    bbox = data.get('bbox')
+  
+    if subject and bbox:
+        tries = 0
+        while not response and tries < 3:
+            response = create_thematic_map(subject, bbox)
+            tries +=1
+
+    return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
 
 @require_http_methods(['GET'])
 def validate_collection(request):

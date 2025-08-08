@@ -25,3 +25,4 @@ const loopThroughCoordinates = (coordinates, handler) => {
     return coordinates
 }
 
+const isBbox = (value) => /^\[\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*\]$/.test(value)

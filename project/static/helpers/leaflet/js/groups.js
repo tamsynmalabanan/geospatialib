@@ -221,8 +221,8 @@ const handleLeafletLayerGroups = async (map) => {
             if (layer) {
                 if (isHidden) group._handlers.hideLayer(layer)
 
-                const legendGroup = properties.legendGroup
-                if (![undefined, 'layers'].includes(legendGroup.id) && legendGroup.checked === false) group._handlers.hideGroupLayer(layer)
+                const legendGroup = properties.legendGroup ?? {}
+                if (!Array(undefined, 'layers').includes(legendGroup.id) && legendGroup.checked === false) group._handlers.hideGroupLayer(layer)
                 
                 group.addLayer(layer)
                 

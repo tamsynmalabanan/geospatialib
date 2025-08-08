@@ -165,7 +165,7 @@ const handleLeafletMapPanels = async (map) => {
         const panel = L.DomUtil.create('div', 'map-panel')
         panel.classList.add('d-flex', 'flex-column')
         
-        const [toggle, body] = createMapPanels(mapContainer)
+        const [toggle, body] = findLayersPanels(mapContainer)
         panel.appendChild(toggle)
         panel.appendChild(body)
         
