@@ -83,7 +83,8 @@ class Layer(models.Model):
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
     srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
-    
+    overpass = models.CharField('Overpass Tag', max_length=512, blank=True, null=True)
+
     title = models.CharField('Title', max_length=512, blank=True, null=True)
     attribution = models.TextField('Attribution', blank=True, null=True)
     fees = models.TextField('Fees', blank=True, null=True)
