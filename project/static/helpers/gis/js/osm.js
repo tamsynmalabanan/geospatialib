@@ -68,15 +68,16 @@ const getOverpassQueryBlock = (queryGeom, {
     return query
 }
 
-const fetchOverpass = async (types, tags, {
+const fetchOverpass = async (params, {
     queryGeom,
     zoom,
     abortBtns,
     controller,
-    query = getOverpassQueryBlock(queryGeom, {zoom, types, tags}),
+    query = getOverpassQueryBlock(queryGeom, {zoom, ...params}),
 } = {}) => {
-    const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
     const url = 'https://overpass-api.de/api/interpreter'    
+    const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
+
     return fetchTimeout(url, {
         abortBtns,
         controller,

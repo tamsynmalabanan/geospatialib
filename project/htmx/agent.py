@@ -51,12 +51,11 @@ class CategoriesExtraction(BaseModel):
                 "description": "A detailed description of the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": {
-                    "tag_key": "",
-                    "tag_key": "tag_value",
-                    "tag_key:spec": "",
-                    "tag_key:spec": "tag_value",
-                    "tag_key": "(tag_value|tag_value)",
-                    "tag_key:spec": "(tag_value|tag_value)",...
+                    "tag_key": [],
+                    "tag_key": ["tag_value1", "tag_value2"...],
+                    "tag_key:spec": [],
+                    "tag_key:spec": ["tag_value1", "tag_value2"...],
+                    ...
                 },
             },...
         }

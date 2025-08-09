@@ -1,4 +1,5 @@
 COLLECTION_FORMATS = {
+    'overpass': 'Overpass API',
     'geojson': 'GeoJSON',
     'csv': 'CSV',
     'file': 'File',

@@ -75,8 +75,8 @@ const handleLeafletQueryPanel = (map, parent) => {
 
     const getOSMDataFetchers = ({types=ALL_OVERPASS_ELEMENT_TYPES, tags=''}={}) => {
         return [
-            {key: 'nominatim;{}', title: 'osm element via nominatim',},
-            {key: `overpass;${JSON.stringify({types,tags})}`, title: removeWhitespace(`osm ${
+            {key: 'nominatim;{}', title: 'OpenStreetMap element via nominatim',},
+            {key: `overpass;${JSON.stringify({params:{types,tags}})}`, title: removeWhitespace(`OpenStreetMap ${
                 types ? types.map(i => `${i}s`).join(', ') : 'elements'
             } ${
                 tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
@@ -143,7 +143,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         osmPoint: {
             iconSpecs: 'bi-pin-map-fill',
-            title: 'Query OSM at point',
+            title: 'Query OpenStreetMap at point',
             altShortcut: 'w',
             mapClickHandler: async (e, {abortBtns, controller} = {}) => {
                 const queryGeom = turf.point(Object.values(e.latlng).reverse())
@@ -152,7 +152,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         },
         osmView: {
             iconSpecs: 'bi-bounding-box-circles',
-            title: 'Query OSM in map view',
+            title: 'Query OpenStreetMap in map view',
             altShortcut: 'e',
             toolHandler: false,
             btnClickHandler: async (e, {abortBtns, controller} = {}) => {
