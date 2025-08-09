@@ -33,10 +33,17 @@ class Command(BaseCommand):
             data = json.load(file)['data']
             for i in data:
                 try:
-                    key, created = TaginfoKey.objects.get_or_create(key=i['key'])
-                    key.count_all = i['count_all']
-                    key.values_all = i['values_all']
-                    key.in_wiki = i['in_wiki']
+                    key_value = i.get('key', None)
+                    if not key_value:
+                        continue
+
+                    key, created = TaginfoKey.objects.get_or_create(key=key_value)
+                    if not created:
+                        continue
+                    
+                    key.count_all = i.get('count_all', 0)
+                    key.values_all = i.get('values_all', 0)
+                    key.in_wiki = i.get('in_wiki', False)
                     key.save()
                 except Exception as e:
                     print(e)

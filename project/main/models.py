@@ -23,9 +23,9 @@ from . import choices
 
 class TaginfoKey(models.Model):
     key = models.CharField('Key', max_length=512, unique=True)
-    count_all = models.PositiveIntegerField('Elements count')
-    values_all = models.PositiveIntegerField('Values count')
-    in_wiki = models.BooleanField('in_wiki')
+    count_all = models.PositiveIntegerField('Elements count', default=0)
+    values_all = models.PositiveIntegerField('Values count', default=0)
+    in_wiki = models.BooleanField('in_wiki', default=False)
 
 class SpatialRefSys(models.Model):
     srid = models.IntegerField(primary_key=True)
