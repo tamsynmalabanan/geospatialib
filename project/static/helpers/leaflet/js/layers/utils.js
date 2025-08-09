@@ -869,8 +869,8 @@ const fileToLeafletLayer = async ({
 }
 
 const addLayerFromData = async (params) => {
-    params.bbox = JSON.stringify(params.bbox)
-    params.tags = cleanOverpassTags(params.tags)
+    if (params.bbox) params.bbox = JSON.stringify(params.bbox)
+    if (params.tags) params.tags = cleanOverpassTags(params.tags)
 
     let dbIndexedKey
     if (params.type === 'overpass') {
