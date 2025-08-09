@@ -1,24 +1,4 @@
 from django.core.management.base import BaseCommand
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
-
-from helpers.base.utils import get_response, get_response, split_by_special_characters
-from helpers.base.files import get_file_names
-from helpers.main.ogc import get_ogc_layers, get_layers_via_et
-from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
-from main.tasks import onboard_collection
-from main.models import URL, Collection, Layer
-from main.forms import ValidateCollectionForm
-from htmx.agent import create_thematic_map
-
-import xml.etree.ElementTree as ET
-from owslib.wms import WebMapService
-import validators
-import requests
-import re
-from urllib.parse import urlparse, urlunparse
-from urllib.parse import unquote
-
 import json
 import os
 from django.conf import settings
@@ -27,9 +7,12 @@ from main.models import TaginfoKey
 class Command(BaseCommand):
     help = 'Onboard taginfo keys'
     def handle(self, *args, **kwargs):
-        json_path = os.path.join(settings.BASE_DIR, 'data', 'all_taginfo_keys.json')
+        TaginfoKey.objects.filter(in_wiki=False).delete()
 
-        with open(json_path, 'r', encoding='utf-8') as file:
+        with open(os.path.join(
+            settings.BASE_DIR,
+            'data', 'all_taginfo_keys.json'
+        ), 'r', encoding='utf-8') as file:
             data = json.load(file)['data']
             for i in data:
                 try:
@@ -37,13 +20,17 @@ class Command(BaseCommand):
                     if not key_value:
                         continue
 
-                    key, created = TaginfoKey.objects.get_or_create(key=key_value)
-                    if not created:
+                    in_wiki = i.get('in_wiki', False)
+                    if not in_wiki:
                         continue
+
+                    key, created = TaginfoKey.objects.get_or_create(key=key_value)
+                    # if not created:
+                    #     continue
                     
                     key.count_all = i.get('count_all', 0)
                     key.values_all = i.get('values_all', 0)
-                    key.in_wiki = i.get('in_wiki', False)
+                    key.in_wiki = in_wiki
                     key.save()
                 except Exception as e:
                     print(e)

@@ -2,7 +2,7 @@ from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Max
 
-from main.models import Layer
+from main.models import Layer, TaginfoKey
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
 
 from openai import OpenAI

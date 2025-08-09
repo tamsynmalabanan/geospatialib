@@ -4,6 +4,12 @@ from . import models, choices
 
 from urllib.parse import urlparse
 
+class TaginfoKeyAdmin(admin.ModelAdmin):
+    list_per_page = 20
+    search_fields = ['key']
+    list_display = ['key', 'count_all', 'values_all']
+    readonly_fields = ['key', 'count_all', 'values_all']
+
 class CollectionAdmin(admin.ModelAdmin):
     list_per_page = 20
     list_filter = ['format']
@@ -37,4 +43,4 @@ admin.site.register(models.SpatialRefSys)
 admin.site.register(models.URL)
 admin.site.register(models.Collection, CollectionAdmin)
 admin.site.register(models.Layer, LayerAdmin)
-admin.site.register(models.TaginfoKey)
+admin.site.register(models.TaginfoKey, TaginfoKeyAdmin)
