@@ -9,7 +9,7 @@ import mimetypes
 import io
 import requests
 import re
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, unquote
 
 DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
@@ -185,3 +185,9 @@ def find_nearest_divisible(num, divisors):
             else:
                 num += 1
     return num
+
+def get_keywords_from_url(url):
+    return [
+        i for i in split_by_special_characters(unquote(url)) 
+        if i not in ['http', 'https', 'www', 'com']
+    ]

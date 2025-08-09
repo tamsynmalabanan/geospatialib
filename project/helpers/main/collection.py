@@ -15,6 +15,7 @@ from helpers.base.utils import (
     get_domain_name, 
     get_domain, 
     split_by_special_characters,
+    get_keywords_from_url,
 )
 from helpers.base.files import get_file_names
 from helpers.main.layers import format_url, WORLD_GEOM
@@ -109,10 +110,7 @@ def get_layers(url, format):
     except Exception as e:
         print(e)
 
-    keywords = [
-        i for i in split_by_special_characters(unquote(url)) 
-        if i not in ['http', 'https', 'www', 'com']
-    ]
+    keywords = get_keywords_from_url(url)
 
     for name, params in layers.items():
         params['keywords'] = params.get('keywords', []) + keywords

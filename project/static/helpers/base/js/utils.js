@@ -489,3 +489,4 @@ const getSpecialCharacters = (str) => {
   const matches = str.match(/[^a-zA-Z0-9]/g)
   return matches ? [...new Set(matches)] : []
 }
+

@@ -2,14 +2,16 @@ from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Max
 
-from main.models import Layer, TaginfoKey
+from main.models import Layer, TaginfoKey, Collection, URL
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
+from helpers.base.utils import get_response, get_keywords_from_url
 
 from openai import OpenAI
 from decouple import config
 from pydantic import BaseModel, Field
 from geopy.geocoders import Nominatim
 import json
+
 
 
 JSON_PROMPT_GUIDE = '''
@@ -51,10 +53,10 @@ class CategoriesExtraction(BaseModel):
                 "description": "A detailed description of the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": {
-                    "tag_key": [],
-                    "tag_key": ["tag_value1", "tag_value2"...],
-                    "tag_key:spec": [],
-                    "tag_key:spec": ["tag_value1", "tag_value2"...],
+                    "tag_key1": [],
+                    "tag_key2": ["tag_value1", "tag_value2"...],
+                    "tag_key3:spec": [],
+                    "tag_key4:spec": ["tag_value1", "tag_value2"...],
                     ...
                 },
             },...
@@ -143,8 +145,16 @@ def create_thematic_map(user_prompt:str, bbox:str):
         
         queryset = Layer.objects.filter(bbox__bboverlaps=geom)
 
+        overpass_url = 'https://overpass-api.de/api/interpreter'
+        overpass_collection, _ = Collection.objects.get_or_create(
+            url=URL.objects.get_or_create(path=overpass_url)[0],
+            format='overpass',
+        )
+
         category_layers = {}
         for id, values in categories.items():
+            categories[id]['layers'] = {}
+
             query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
 
             filtered_queryset = (
@@ -175,12 +185,68 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
             del categories[id]['query']
 
+            for tag_key, tag_values in values.get('overpass', {}).items():
+                tag_values = sorted(list(set(tag_values)))
+                count = len(tag_values)
+                tag = (
+                    tag_key if count == 0 
+                    else f'{tag_key}={tag_values[0]}' if count == 1 
+                    else f'{tag_key}~({'|'.join(tag_values)})'
+                )
+                
+                layer = queryset.filter(overpass=tag).first()
+
+                if not layer:
+                    taginfokey = TaginfoKey.objects.filter(key=tag_key).first()
+                    if not taginfokey:
+                        continue
+                    
+                    if count > 0:
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
+                        
+                        if not response:
+                            continue
+                        
+                        prevalent_values = [i.get('value') for i in response.json().get('data', [])]
+                        tag_values = sorted([i for i in tag_values if i in prevalent_values])
+                        
+                        count = len(tag_values)
+                        tag = (
+                            tag_key if count == 0 
+                            else f'{tag_key}={tag_values[0]}' if count == 1 
+                            else f'{tag_key}~({'|'.join(tag_values)})'
+                        )
+
+                    layer, _ = Layer.objects.get_or_create(
+                        collection=overpass_collection,
+                        name=tag,
+                        type='overpass',
+                        srid__srid=4326,
+                        bbox=WORLD_GEOM,
+                        tags=tag,
+                        title=f'OpenStreetMap nodes, ways, relations for {tag} via Overpass API',
+                        attribution='The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+                        keywords=get_keywords_from_url(overpass_url) + [tag_key] + tag_values
+                    )
+
+                if layer and layer.pk not in categories[id]['layers']:
+                    categories[id]['layers'][layer.pk] = layer.data
+
+            del categories[id]['overpass']
+
         if category_layers:
             params = layers_eval_info(user_prompt, category_layers, client)
             layers_eval = json.loads(params.layers)
             
             for id, layers in layers_eval.items():
-                categories[id]['layers'] = [i.data for i in queryset.filter(pk__in=map(int, layers))]
+                for layer in queryset.filter(pk__in=map(int, layers)):
+                    if layer.pk not in categories[id]['layers']:
+                        categories[id]['layers'][layer.pk] = layer.data
 
         return {
             'subject': user_prompt,
