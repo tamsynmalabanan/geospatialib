@@ -32,12 +32,15 @@ class Command(BaseCommand):
         with open(json_path, 'r', encoding='utf-8') as file:
             data = json.load(file)['data']
             for i in data:
-                TaginfoKey.objects.get_or_create(
-                    key=i['key'],
-                    count_all=i['count_all'],
-                    values_all=i['values_all'],
-                    in_wiki=i['in_wiki'],
-                )
-
+                try:
+                    TaginfoKey.objects.get_or_create(
+                        key=i['key'],
+                        count_all=i['count_all'],
+                        values_all=i['values_all'],
+                        in_wiki=i['in_wiki'],
+                    )
+                except Exception as e:
+                    print(e)
+                    print(i)
 
         self.stdout.write(self.style.SUCCESS('Done.'))
