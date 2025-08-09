@@ -21,7 +21,7 @@ from helpers.base.models import dict_to_choices
 from helpers.main.constants import WORLD_GEOM
 from . import choices
 
-class TaginfoKeys(models.Model):
+class TaginfoKey(models.Model):
     key = models.CharField('Key', max_length=64)
     count_all = models.PositiveIntegerField('Elements count')
     values_all = models.PositiveIntegerField('Values count')
