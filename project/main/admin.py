@@ -24,7 +24,7 @@ class LayerAdmin(admin.ModelAdmin):
     list_per_page = 20
     list_filter = ['type']
     list_display  = ['collection', 'name', 'title', 'type']
-    search_fields = ['name', 'title', 'abstract', 'attribution', 'fees', 'overpass']
+    search_fields = ['name', 'title', 'abstract', 'attribution', 'fees', 'tags']
     readonly_fields = ('id', 'search_vector', 'last_update', 'url', 'format', 'bbox_extent')
 
     def url(self, obj):

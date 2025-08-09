@@ -1,21 +1,32 @@
 {% load static %}
+{% load utility_tags %}
 
-<div>
-    <div>
-        {{response.subject}}
+{% variable request.COOKIES|get:'theme' 'dark' as theme %}
+
+<div class='d-flex flex-column gap-2'>
+    <div class="d-flex justify-content-between sticky-top p-3 bg-{{theme}}">
+        <h6>{{response.title}}</h6>
+        <button type="button" class="btn btn-primary btn-sm">Add layers</button>
     </div>
-    <div>
-        {{response.bbox}}
-    </div>
-    <div>
-        {{response.title}}
-    </div>
-    <div>
+    <div id='findLayersResponseLayers' class='d-flex flex-column gap-2 px-3 pb-3'>
         {% for id, params in response.categories.items %}
-            <div>{{id}}</div>
-            <div>{{params.title}}</div>
-            <div>{{params.description}}</div>
-            <div>{{params.layers}}</div>
+            <div>
+                <div class="form-check fs-14 fw-bold">
+                    {% random_string as group_id %}
+                    <input id="{{group_id}}" class="form-check-input" type="checkbox" value="{{params.title}}" checked>
+                    <label class="form-check-label" for="{{group_id}}">{{params.title}}</label>
+                </div>
+                <p class='ps-3'>{{params.description}}</p>
+                <div class='ps-3'>
+                    {% for pk, data in params.layers.items %}
+                        <div class="form-check">
+                            {% random_string as layer_id %}
+                            <input id="{{layer_id}}" class="form-check-input" type="checkbox" value="{{data|dump_json}}" checked>
+                            <label class="form-check-label" for="{{layer_id}}">{{data.title}}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         {% endfor %}
     </div>
 </div>

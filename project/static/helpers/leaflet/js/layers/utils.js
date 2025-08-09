@@ -771,7 +771,7 @@ const createLeafletLayer = async (params, {
 
     let layer
     
-    if (Array('geojson', 'csv', 'wfs').includes(type)) {
+    if (Array('geojson', 'csv', 'wfs', 'overpass').includes(type)) {
         layer = await getLeafletGeoJSONLayer({
             dbIndexedKey,
             geojson: data,
@@ -866,4 +866,26 @@ const fileToLeafletLayer = async ({
     const layer = await createLeafletLayer(params, {data, group, add})
     
     return layer
+}
+
+const addLayerFromData = async (params) => {
+    params.bbox = JSON.stringify(params.bbox)
+    params.tags = cleanOverpassTags(params.tags)
+
+    let dbIndexedKey
+    if (params.type === 'overpass') {
+        dbIndexedKey = `overpass;${JSON.stringify({params: {
+            types: ALL_OVERPASS_ELEMENT_TYPES,
+            tags: params.tags
+        }})}`
+    } else {
+        dbIndexedKey = Array(params.format, JSON.stringify({params})).join(';')
+        console.log(dbIndexedKey)
+    }
+
+    createLeafletLayer(params, {
+        dbIndexedKey,
+        group: getSearchMap()?._handlers.getLayerGroups().library,
+        add: true,
+    })
 }

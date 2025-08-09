@@ -120,6 +120,10 @@ class Layer(models.Model):
         bbox = self.bbox
         data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
         
+        collection = self.collection
+        data['url'] = collection.url.path
+        data['format'] = collection.format
+
         return data
     
     @property

@@ -4,32 +4,6 @@ const getSearchMap = () => (window.maps ?? []).find(map => map.getContainer().id
 
 const zoomToSearchResultBbox = () => getSearchMap()?.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(event.target.dataset.layerBbox))).getBounds())
 
-const addSearchResultToMap = async () => {
-    const el = event.target
-    const dataset = el.dataset
-    const data = JSON.parse(dataset.layerData)
-    const params = {
-        url: dataset.layerUrl,
-        format: dataset.layerFormat,
-        name: data.name,
-        title: data.title,
-        type: data.type,
-        id: data.id,
-        bbox: JSON.stringify(data.bbox),
-        attribution: data.attribution,
-        styles: data.styles,
-        xField: data.xField,
-        yField: data.yField,
-        srid: data.srid,
-    }
-
-    createLeafletLayer(params, {
-        dbIndexedKey: Array(params.format, JSON.stringify({params})).join(';'),
-        group: getSearchMap()?._handlers.getLayerGroups().library,
-        add: true,
-    })
-}
-
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
     const properties = JSON.parse(addBtn.dataset.layerData)

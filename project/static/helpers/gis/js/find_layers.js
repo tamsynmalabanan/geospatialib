@@ -100,6 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     
     form.addEventListener('htmx:responseError', (e) => {
-        console.log(e)
+        responseContainer.innerHTML = customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}).outerHTML
+
+        submitBtn.innerHTML = '<i class="bi bi-search"></i>'
+        toggleSubmitBtn()
     })
 })

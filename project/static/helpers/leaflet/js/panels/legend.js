@@ -494,7 +494,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 })
 
                 map._handlers.updateStoredLegendLayers({handler: (i) => Object.values(i).forEach(j => {
-                    const id = j.properties.legendGroup.id
+                    const id = j?.properties?.legendGroup?.id
                     if (id && id !== 'layers') {
                         j.properties.legendGroup.checked = show
                     }

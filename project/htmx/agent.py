@@ -2,7 +2,7 @@ from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Max
 
-from main.models import Layer, TaginfoKey, Collection, URL
+from main.models import Layer, TaginfoKey, Collection, URL, SpatialRefSys
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
 from helpers.base.utils import get_response, get_keywords_from_url
 
@@ -47,7 +47,7 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
 
 class CategoriesExtraction(BaseModel):
     categories: str = Field(description='''
-        A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tags, following this format: {
+        A JSON of 10 categories relevant to the subject with 5 query words and 5 Overpass QL tags, following this format: {
             "category_id": {
                 "title": "Category Title",
                 "description": "A detailed description of the relevance of the category to the subject.",
@@ -72,14 +72,14 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
                     - You must include **exactly 10 categories**.
-                2. For each category, identify 10 query words most relevant to the category and subject.
+                2. For each category, identify 5 query words most relevant to the category and subject.
                     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
-                    - You must include **exactly 10 words** for each category—**no fewer, no more**.
-                3. For each category, identify 10 valid Overpass QL tags most relevant to the category and subject.
+                    - You must include **exactly 5 words** for each category—**no fewer, no more**.
+                3. For each category, identify 5 valid Overpass QL tags most relevant to the category and subject.
                     - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                     - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                    - You must include **exactly 10 tags** for each category—**no fewer, no more**.
+                    - You must include **exactly 5 tags** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
         {'role': 'user', 'content': user_prompt}
@@ -150,6 +150,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             url=URL.objects.get_or_create(path=overpass_url)[0],
             format='overpass',
         )
+        srs = SpatialRefSys.objects.filter(srid=4326).first()
 
         category_layers = {}
         for id, values in categories.items():
@@ -194,7 +195,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     else f'{tag_key}~({'|'.join(tag_values)})'
                 )
                 
-                layer = queryset.filter(overpass=tag).first()
+                layer = queryset.filter(tags=tag).first()
 
                 if not layer:
                     taginfokey = TaginfoKey.objects.filter(key=tag_key).first()
@@ -225,13 +226,15 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     layer, _ = Layer.objects.get_or_create(
                         collection=overpass_collection,
                         name=tag,
-                        type='overpass',
-                        srid__srid=4326,
-                        bbox=WORLD_GEOM,
-                        tags=tag,
-                        title=f'OpenStreetMap nodes, ways, relations for {tag} via Overpass API',
-                        attribution='The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-                        keywords=get_keywords_from_url(overpass_url) + [tag_key] + tag_values
+                        defaults={
+                            'type':'overpass',
+                            'srid':srs,
+                            'bbox':WORLD_GEOM,
+                            'tags':tag,
+                            'title':f'OpenStreetMap nodes, ways, relations for {tag} via Overpass API',
+                            'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+                            'keywords':get_keywords_from_url(overpass_url) + [tag_key] + tag_values
+                        }
                     )
 
                 if layer and layer.pk not in categories[id]['layers']:
