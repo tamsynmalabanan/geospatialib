@@ -868,8 +868,7 @@ const fileToLeafletLayer = async ({
     return layer
 }
 
-const addLayerFromData = async (data) => {
-    params = JSON.parse(data)
+const addLayerFromData = async (params) => {
     params.bbox = JSON.stringify(params.bbox)
     params.tags = cleanOverpassTags(params.tags)
 

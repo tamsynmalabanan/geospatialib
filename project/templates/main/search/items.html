@@ -53,7 +53,7 @@
                     title='Add layer to map'
                     class="bg-transparent border-0 p-0 fs-14 add-layer-button bi bi-plus-lg" 
                     tabindex="-1"
-                    onclick="addLayerFromData('{{data|dump_json}}')"
+                    onclick="addLayerFromData({{data|escape|safe}})"
                 ></button>
                 <button 
                     title='Zoom to layer'
