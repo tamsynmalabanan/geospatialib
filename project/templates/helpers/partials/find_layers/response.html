@@ -1,5 +1,21 @@
 {% load static %}
 
-<script>
-    updateFindLayersResponses({{response|safe}})
-</script>
+<div>
+    <div>
+        {{response.subject}}
+    </div>
+    <div>
+        {{response.bbox}}
+    </div>
+    <div>
+        {{response.title}}
+    </div>
+    <div>
+        {% for id, params in response.categories.items %}
+            <div>{{id}}</div>
+            <div>{{params.title}}</div>
+            <div>{{params.description}}</div>
+            <div>{{params.overpass}}</div>
+        {% endfor %}
+    </div>
+</div>

@@ -89,10 +89,17 @@ const enableLeafletLayerClick = (map) => {
 }
 
 const getLeafletMapBbox = (map) => {
-    return loopThroughCoordinates(
+    const [w,s,e,n] = loopThroughCoordinates(
         map.getBounds(), 
         validateLeafletLayerCoords
-    ).toBBoxString().split(',') // w,s,e,n
+    ).toBBoxString().split(',')
+    
+    if (w < -180) w = -180
+    if (s < -90) s = -90
+    if (e > 180) e = 180
+    if (n > 90) n = 90
+
+    return [w,s,e,n]
 }
 
 const zoomLeafletMapToBounds = (map, bounds, {zoom=18}={}) => {

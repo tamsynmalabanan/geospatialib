@@ -10,7 +10,8 @@
             hx-post="{% url 'htmx:find_layers' %}"
             hx-trigger='submit'
             hx-target='#findLayersResponse'
-            hx-swap='beforeend'
+            hx-swap='innerHTML'
+            {% comment %} hx-swap='beforeend' {% endcomment %}
         >
             {% csrf_token %}
             <div class="modal-header d-flex flex-column gap-1">
@@ -30,7 +31,8 @@
                     <div class="input-group">
                         {% random_string as id %}
                         <span class="input-group-text fs-12">Area of interest</span>
-                        <input name='bbox' type="search" class="form-control form-control-sm fs-12 rounded-end" id="{{id}}" placeholder='type in a place name or bounding box in [west, south, east, north] format'>
+                        <input name='bbox' type="search" class="form-control form-control-sm fs-12" id="{{id}}" placeholder='type in a place name or bounding box in [west, south, east, north] format'>
+                        <button class="btn btn-secondary fs-12 rounded-end" tabindex='-1' type="button" name='setMapBbox'>use current map extent</button>
                         <div class="invalid-feedback fs-12"></div>
                     </div>
                 </div>
@@ -38,7 +40,7 @@
                     <button name='submit' type="submit" disabled class="btn btn-sm btn-primary" title='Find layers' style="width: 32px; height:32px;">
                         <i class="bi bi-search"></i>
                     </button>
-                    <button name='reset' type="button" class="btn btn-sm btn-secondary" title='Reset thread' style="width: 32px; height:32px;">
+                    <button name='reset' type="button" class="btn btn-sm btn-secondary" title='Reset thread' style="width: 32px; height:32px;" tabindex='-1'>
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </button>
                 </div>

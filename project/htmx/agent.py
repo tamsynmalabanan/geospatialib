@@ -45,12 +45,19 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
 
 class CategoriesExtraction(BaseModel):
     categories: str = Field(description='''
-        A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tag keys, following this format: {
+        A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tags, following this format: {
             "category_id": {
                 "title": "Category Title",
                 "description": "A detailed description of the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
-                "overpass": ["[tag_key1]", "[tag_key2]", "[tag_key3]"... ]
+                "overpass": {
+                    "tag_key": "",
+                    "tag_key": "tag_value",
+                    "tag_key:spec": "",
+                    "tag_key:spec": "tag_value",
+                    "tag_key": "(tag_value|tag_value)",
+                    "tag_key:spec": "(tag_value|tag_value)",...
+                },
             },...
         }
     ''' + '\n' + JSON_PROMPT_GUIDE)
@@ -68,11 +75,10 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
                     - You must include **exactly 10 words** for each category—**no fewer, no more**.
-                3. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
-                    - Tag keys must be valid OpenStreetMap tag keys supported by Overpass QL, using format "[key]".
-                    - Use only keys listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                    - Tag keys must be enclosed within brackets.
-                    - You must include **exactly 10 tag keys** for each category—**no fewer, no more**.
+                3. For each category, identify 10 valid Overpass QL tags most relevant to the category and subject.
+                    - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
+                    - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
+                    - You must include **exactly 10 tags** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
         {'role': 'user', 'content': user_prompt}
