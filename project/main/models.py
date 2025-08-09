@@ -27,6 +27,9 @@ class TaginfoKey(models.Model):
     values_all = models.PositiveIntegerField('Values count', default=0)
     in_wiki = models.BooleanField('in_wiki', default=False)
 
+    def __str__(self):
+        return self.key
+
 class SpatialRefSys(models.Model):
     srid = models.IntegerField(primary_key=True)
     auth_name = models.CharField(max_length=256)
