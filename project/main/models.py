@@ -22,7 +22,7 @@ from helpers.main.constants import WORLD_GEOM
 from . import choices
 
 class TaginfoKey(models.Model):
-    key = models.CharField('Key', max_length=512)
+    key = models.CharField('Key', max_length=512, unique=True)
     count_all = models.PositiveIntegerField('Elements count')
     values_all = models.PositiveIntegerField('Values count')
     in_wiki = models.BooleanField('in_wiki')
