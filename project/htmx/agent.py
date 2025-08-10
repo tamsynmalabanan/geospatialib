@@ -46,13 +46,13 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
     return result
 
 class CategoriesExtraction(BaseModel):
-    landmarks: str = Field(description='''
-        A JSON array of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]
-            - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
-            - Excludes names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
-            - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
-            - Return each landmark only once, preserving the original casing and spelling as written in the subject.
-    ''')
+    # landmarks: str = Field(description='''
+    #     A JSON array of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]
+    #         - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
+    #         - Excludes names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
+    #         - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
+    #         - Return each landmark only once, preserving the original casing and spelling as written in the subject.
+    # ''')
     categories: str = Field(description='''
         A JSON of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
