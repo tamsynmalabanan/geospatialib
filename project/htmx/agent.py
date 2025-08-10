@@ -137,10 +137,10 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model
 
 def create_thematic_map(user_prompt:str, bbox:str):
     try:
-        return user_prompt, bbox
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
+        return init_eval
 
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
