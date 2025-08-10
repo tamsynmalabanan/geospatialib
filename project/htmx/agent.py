@@ -57,7 +57,7 @@ class CategoriesExtraction(BaseModel):
         A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
                 "title": "Category Title",
-                "description": "Three (3) sentences detailing the relevance of the category to the subject.",
+                "description": "Description of the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": {
                     "tag_key1": ["tag_value1", "tag_value2"...],
@@ -78,12 +78,11 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
                     - You must include **exactly 10 categories**.
-                2. For each category, provide a detailed description of the relevance of the category to the subject in three (3) sentences.
-                3. For each category, identify 10 query words most relevant to the category and subject.
+                2. For each category, identify 10 query words most relevant to the category and subject.
                     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
                     - You must include **exactly 10 words** for each category—**no fewer, no more**.
-                4. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
+                3. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
                     - Each key must have at least one value that is relevent to the category and subject.
                     - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                     - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
