@@ -150,25 +150,24 @@ class LayerList(ListView):
 
 @require_http_methods(['POST'])
 def find_layers(request):
-    # tries = 0
-    # response = None
+    tries = 0
+    response = None
     
-    # try:
+    try:
 
-    #     data = request.POST.dict()
-    #     subject = data.get('subject')
-    #     bbox = data.get('bbox')
+        data = request.POST.dict()
+        subject = data.get('subject')
+        bbox = data.get('bbox')
     
-    #     if subject and bbox:
-    #         while not response and tries < 3:
-    #             response = create_thematic_map(subject, bbox)
-    #             tries +=1
+        if subject and bbox:
+            while not response and tries < 3:
+                response = create_thematic_map(subject, bbox)
+                tries +=1
 
-    #     return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
-    # except Exception as e:
-    #     return HttpResponse(e)
-    
-    return render(request, 'helpers/partials/find_layers/response.html', {'response':{}})
+        return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
+    except Exception as e:
+        return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
+
 
 @require_http_methods(['GET'])
 def validate_collection(request):

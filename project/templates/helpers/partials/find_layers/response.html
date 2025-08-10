@@ -1,32 +1,37 @@
 {% load static %}
 {% load utility_tags %}
 
-{% variable request.COOKIES|get:'theme' 'dark' as theme %}
-
-<div class='d-flex flex-column gap-3'>
-    <div class="d-flex justify-content-between sticky-top pt-3 px-3 bg-{{theme}}">
-        <h6>{{response.title}}</h6>
-        <button type="button" class="btn btn-primary btn-sm">Add layers</button>
-    </div>
-    <div id='findLayersResponseLayers' class='d-flex flex-column gap-2 px-3 pb-3'>
-        {% for id, params in response.categories.items %}
-            <div>
-                <div class="form-check fs-14 fw-bold">
-                    {% random_string as group_id %}
-                    <input id="{{group_id}}" class="form-check-input" type="checkbox" value="{{params.title}}" checked>
-                    <label class="form-check-label" for="{{group_id}}">{{params.title}}</label>
+{% if response %}
+    {% variable request.COOKIES|get:'theme' 'dark' as theme %}
+    <div class='d-flex flex-column gap-3'>
+        <div class="d-flex justify-content-between sticky-top pt-3 px-3 bg-{{theme}}">
+            <h6>{{response.title}}</h6>
+            <button type="button" class="btn btn-primary btn-sm">Add layers</button>
+        </div>
+        <div id='findLayersResponseLayers' class='d-flex flex-column gap-2 px-3 pb-3'>
+            {% for id, params in response.categories.items %}
+                <div>
+                    <div class="form-check fs-14 fw-bold">
+                        {% random_string as group_id %}
+                        <input id="{{group_id}}" class="form-check-input" type="checkbox" value="{{params.title}}" checked>
+                        <label class="form-check-label" for="{{group_id}}">{{params.title}}</label>
+                    </div>
+                    <p class='ps-3'>{{params.description}}</p>
+                    <div class='ps-3'>
+                        {% for pk, data in params.layers.items %}
+                            <div class="form-check">
+                                {% random_string as layer_id %}
+                                <input id="{{layer_id}}" class="form-check-input" type="checkbox" value="{{data|dump_json}}" checked>
+                                <label class="form-check-label" for="{{layer_id}}">{{data.title}}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <p class='ps-3'>{{params.description}}</p>
-                <div class='ps-3'>
-                    {% for pk, data in params.layers.items %}
-                        <div class="form-check">
-                            {% random_string as layer_id %}
-                            <input id="{{layer_id}}" class="form-check-input" type="checkbox" value="{{data|dump_json}}" checked>
-                            <label class="form-check-label" for="{{layer_id}}">{{data.title}}</label>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-</div>
+{% else %}
+    <div class='d-flex w-100 justify-content-center'>
+        Server error. Please try again.
+    </div>
+{% endif %}
