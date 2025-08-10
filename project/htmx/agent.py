@@ -176,7 +176,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     layer_tags = queryset.filter(tags__in=tags).values_list('tags', flat=True)
 
                     if len(layer_tags) == len(name_keys):
-                        keys = [key for key in name_keys if f'"{key}"~"{tag_value}",i' in layer_tags]
+                        keys = name_keys
                     else:
                         response = get_response(
                             url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
