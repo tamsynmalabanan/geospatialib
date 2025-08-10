@@ -595,7 +595,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         if (isInvisible) {
             createIcon({
-                className: 'bi-eye-slash me-1',
+                className: 'bi-eye-slash me-1 mb-2',
                 parent: legendDetails,
                 peNone: false,
                 title: 'Beyond visible range',
@@ -604,7 +604,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
         
         if (error) {
             createIcon({
-                className: 'bi-bug me-1',
+                className: 'bi-bug me-1 mb-2',
                 parent: legendDetails,
                 peNone: false,
                 title: 'Data source error',

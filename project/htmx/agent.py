@@ -46,17 +46,23 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
     return result
 
 class CategoriesExtraction(BaseModel):
+    landmarks: str = Field(description='''
+        A JSON array of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]
+            - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
+            - Excludes names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
+            - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
+            - Return each landmark only once, preserving the original casing and spelling as written in the subject.
+    ''')
     categories: str = Field(description='''
-        A JSON of 10 categories relevant to the subject with 5 query words and 5 Overpass QL tags, following this format: {
+        A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
                 "title": "Category Title",
-                "description": "A detailed description of the relevance of the category to the subject.",
+                "description": "Three (3) sentences detailing the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": {
-                    "tag_key1": [],
+                    "tag_key1": ["tag_value1", "tag_value2"...],
                     "tag_key2": ["tag_value1", "tag_value2"...],
-                    "tag_key3:spec": [],
-                    "tag_key4:spec": ["tag_value1", "tag_value2"...],
+                    "tag_key3": ["tag_value1", "tag_value2"...],
                     ...
                 },
             },...
@@ -72,14 +78,16 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
                     - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
                     - You must include **exactly 10 categories**.
-                2. For each category, identify 5 query words most relevant to the category and subject.
+                2. For each category, provide a detailed description of the relevance of the category to the subject in three (3) sentences.
+                3. For each category, identify 10 query words most relevant to the category and subject.
                     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
-                    - You must include **exactly 5 words** for each category—**no fewer, no more**.
-                3. For each category, identify 5 valid Overpass QL tags most relevant to the category and subject.
+                    - You must include **exactly 10 words** for each category—**no fewer, no more**.
+                4. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
+                    - Each key must have at least one value that is relevent to the category and subject.
                     - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                     - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                    - You must include **exactly 5 tags** for each category—**no fewer, no more**.
+                    - You must include **exactly 10 tags** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
         {'role': 'user', 'content': user_prompt}
@@ -135,15 +143,58 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
-        title = init_eval.title
-        
-        w,s,e,n = json.loads(bbox)
-        geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-
         params = extract_theme_categories(user_prompt, client)
-        categories = json.loads(params.categories)
         
-        queryset = Layer.objects.filter(bbox__bboverlaps=geom)
+        try:
+            categories = json.loads(params.categories)
+        except Exception as e:
+            print(e)
+            return None
+
+        try:
+            w,s,e,n = json.loads(bbox)
+            geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+            queryset = Layer.objects.filter(bbox__bboverlaps=geom)
+        except Exception as e:
+            print(e)
+            queryset = Layer.objects.all()
+
+        try:
+            landmarks = json.loads(params.landmarks)
+            if len(landmarks) > 0:
+                name_keys = ['name', 'name:en']
+
+                categories = {'landmarks': {
+                    'title': 'Landmarks',
+                    'query': ' '.join(landmarks),
+                    'overpass': {key:[] for key in name_keys},
+                }} | categories
+
+                for i in landmarks:
+                    tag_value = f'.*{i}.*'
+                    tags = [f'"{key}"~"{tag_value}",i' for key in name_keys]
+                    layer_tags = queryset.filter(tags__in=tags).values_list('tags', flat=True)
+
+                    if len(layer_tags) == len(name_keys):
+                        keys = [key for key in name_keys if f'"{key}"~"{tag_value}",i' in layer_tags]
+                    else:
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
+                        
+                        if not response:
+                            continue
+                    
+                        keys = set([i.get('key') for i in response.json().get('data', [])])
+                    
+                    for key in name_keys:
+                        if key in keys:
+                            categories['landmarks']['overpass'][key].append(tag_value)     
+        except Exception as e:
+            print(e)
 
         overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
@@ -154,12 +205,74 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
         category_layers = {}
         for id, values in categories.items():
+            is_landmarks = id == 'landmarks'
             categories[id]['layers'] = {}
+            
+            filter_tags = []
+            for tag_key, tag_values in values.get('overpass', {}).items():
+                if len(tag_values) == 0:
+                    continue
+                
+                tag_values = list(set(tag_values))
+                filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
+
+                layers = queryset.filter(tags__in=filter_tags)
+                matched_tags = set(layers.values_list('tags', flat=True))
+
+                if filter_tags != matched_tags:
+                    if not is_landmarks:
+                        is_valid_tag_key = TaginfoKey.objects.filter(key=tag_key).exists()
+                        if not is_valid_tag_key:
+                            continue
+
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
+                        
+                        if not response:
+                            continue
+                    
+                        prevalent_values = [i.get('value') for i in response.json().get('data', [])]
+                        tag_values = [i for i in tag_values if i in prevalent_values]
+                        filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
+
+                    if filter_tags != matched_tags:
+                        layers = list(layers)
+
+                        for tag in filter_tags:
+                            if tag in matched_tags:
+                                continue
+
+                            layer, _ = Layer.objects.get_or_create(
+                                collection=overpass_collection,
+                                name=f'osm-{tag}',
+                                defaults={
+                                    'type':'overpass',
+                                    'srid':srs,
+                                    'bbox':WORLD_GEOM,
+                                    'tags':tag,
+                                    'title':tag,
+                                    'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+                                    'keywords':get_keywords_from_url(overpass_url) + [tag_key, 'openstreetmap'] + tag_values
+                                }
+                            )
+
+                            if layer:
+                                layers.append(layer)
+
+                for layer in set(list(layers)):
+                    categories[id]['layers'][layer.pk] = layer.data
+
+            del categories[id]['overpass']
 
             query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
 
             filtered_queryset = (
                 queryset
+                .exclude(tags__in=filter_tags)
                 .filter(search_vector=SearchQuery(
                     f'({' | '.join(query)})', 
                     search_type='raw'
@@ -186,75 +299,20 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
             del categories[id]['query']
 
-            for tag_key, tag_values in values.get('overpass', {}).items():
-                tag_values = sorted(list(set(tag_values)))
-                count = len(tag_values)
-                tag = (
-                    tag_key if count == 0 
-                    else f'{tag_key}={tag_values[0]}' if count == 1 
-                    else f'{tag_key}~({'|'.join(tag_values)})'
-                )
-                
-                layer = queryset.filter(tags=tag).first()
-
-                if not layer:
-                    taginfokey = TaginfoKey.objects.filter(key=tag_key).first()
-                    if not taginfokey:
-                        continue
-                    
-                    if count > 0:
-                        response = get_response(
-                            url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
-                            header_only=False,
-                            with_default_headers=False,
-                            raise_for_status=True
-                        )
-                        
-                        if not response:
-                            continue
-                        
-                        prevalent_values = [i.get('value') for i in response.json().get('data', [])]
-                        tag_values = sorted([i for i in tag_values if i in prevalent_values])
-                        
-                        count = len(tag_values)
-                        tag = (
-                            tag_key if count == 0 
-                            else f'{tag_key}={tag_values[0]}' if count == 1 
-                            else f'{tag_key}~({'|'.join(tag_values)})'
-                        )
-
-                    layer, _ = Layer.objects.get_or_create(
-                        collection=overpass_collection,
-                        name=tag,
-                        defaults={
-                            'type':'overpass',
-                            'srid':srs,
-                            'bbox':WORLD_GEOM,
-                            'tags':tag,
-                            'title':f'OpenStreetMap nodes, ways, relations for {tag} via Overpass API',
-                            'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-                            'keywords':get_keywords_from_url(overpass_url) + [tag_key] + tag_values
-                        }
-                    )
-
-                if layer and layer.pk not in categories[id]['layers']:
-                    categories[id]['layers'][layer.pk] = layer.data
-
-            del categories[id]['overpass']
-
         if category_layers:
             params = layers_eval_info(user_prompt, category_layers, client)
             layers_eval = json.loads(params.layers)
             
             for id, layers in layers_eval.items():
-                for layer in queryset.filter(pk__in=map(int, layers)):
-                    if layer.pk not in categories[id]['layers']:
-                        categories[id]['layers'][layer.pk] = layer.data
+                layers = queryset.filter(pk__in=set(map(int, layers)))
+                categories[id]['layers'] = {layer.pk: layer.data for layer in layers} | categories[id]['layers']
+
+        categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
         return {
             'subject': user_prompt,
             'bbox': bbox,
-            'title': title,
+            'title': init_eval.title,
             'categories': categories
         }
     except Exception as e:

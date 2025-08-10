@@ -3,8 +3,8 @@
 
 {% variable request.COOKIES|get:'theme' 'dark' as theme %}
 
-<div class='d-flex flex-column gap-2'>
-    <div class="d-flex justify-content-between sticky-top p-3 bg-{{theme}}">
+<div class='d-flex flex-column gap-3'>
+    <div class="d-flex justify-content-between sticky-top pt-3 px-3 bg-{{theme}}">
         <h6>{{response.title}}</h6>
         <button type="button" class="btn btn-primary btn-sm">Add layers</button>
     </div>

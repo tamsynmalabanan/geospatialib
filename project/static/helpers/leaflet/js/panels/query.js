@@ -77,7 +77,7 @@ const handleLeafletQueryPanel = (map, parent) => {
         return [
             {key: 'nominatim;{}', title: 'OpenStreetMap element via Nominatim API',},
             {key: `overpass;${JSON.stringify({params:{types,tags}})}`, title: removeWhitespace(`OpenStreetMap ${
-                types ? types.map(i => `${i}s`).join(', ') : 'elements'
+                types.length === 1 ? types[0] : 'elements'
             } ${
                 tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''
             } via Overpass API`),},

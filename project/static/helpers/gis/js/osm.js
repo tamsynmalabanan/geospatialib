@@ -27,18 +27,24 @@ const fetchNominatim = async ({
 const cleanOverpassTags = (tags) => {
     if (tags === '') return tags
 
-    tags = tags.startsWith('[') ? tags : `[${tags}`
-    tags = tags.endsWith(']') ? tags : `${tags}]`
-    tags = tags.split(/([\[\]=~])/).filter(Boolean)
-    tags = tags.map(i => {
-        i = i.trim()
-        if (['[', ']', '=', '~'].includes(i)) return i
+    if (!tags.includes('[') || !tags.includes(']')) {
+        tags = tags.startsWith('[') ? tags : `[${tags}`
+        tags = tags.endsWith(']') ? tags : `${tags}]`
+    }
 
-        i = i.startsWith('"') ? i : `"${i}`
-        i = i.endsWith('"') ? i : `${i}"`
-        return i
-    })
-    tags = tags.join('')
+    if (!tags.includes('"')) {
+        tags = tags.split(/([\[\]=~]|, ?i)/).filter(Boolean)
+        tags = tags.map(i => {
+            i = i.trim()
+            if (['[', ']', '=', '~', ',i'].includes(i)) return i
+            if ([', i'].includes(i)) return i.replace(' ', '')
+    
+            i = i.startsWith('"') ? i : `"${i}`
+            i = i.endsWith('"') ? i : `${i}"`
+            return i
+        })
+        tags = tags.join('')
+    }
 
     return tags
 }
@@ -77,6 +83,7 @@ const fetchOverpass = async (params, {
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'    
     const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
+    
     return fetchTimeout(url, {
         abortBtns,
         controller,
