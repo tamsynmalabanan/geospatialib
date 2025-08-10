@@ -1,4 +1,6 @@
-{% load static %}
+{{response}}
+
+{% comment %} {% load static %}
 {% load utility_tags %}
 
 {% if response %}
@@ -34,4 +36,4 @@
     <div class='d-flex w-100 justify-content-center'>
         Server error. Please try again. {{error}}
     </div>
-{% endif %}
+{% endif %} {% endcomment %}
