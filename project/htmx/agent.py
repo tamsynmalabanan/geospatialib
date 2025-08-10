@@ -160,7 +160,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
         try:
             landmarks = json.loads(params.landmarks)
-            return landmarks
             if len(landmarks) > 0:
                 name_keys = ['name', 'name:en']
 
@@ -169,6 +168,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     'query': ' '.join(landmarks),
                     'overpass': {key:[] for key in name_keys},
                 }} | categories
+
+                return categories
 
                 for i in landmarks:
                     tag_value = f'.*{i}.*'
