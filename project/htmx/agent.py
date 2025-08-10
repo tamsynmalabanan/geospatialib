@@ -146,7 +146,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
         params = extract_theme_categories(user_prompt, client)
         try:
             categories = json.loads(params.categories)
-            return categories
         except Exception as e:
             print(e)
             return None
@@ -161,6 +160,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
         try:
             landmarks = json.loads(params.landmarks)
+            return landmarks
             if len(landmarks) > 0:
                 name_keys = ['name', 'name:en']
 
