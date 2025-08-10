@@ -167,7 +167,8 @@ def find_layers(request):
     #     return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
     # except Exception as e:
     #     return HttpResponse(e)
-    return HttpResponse(request.POST)
+    
+    return render(request, 'helpers/partials/find_layers/response.html', {'response':{}})
 
 @require_http_methods(['GET'])
 def validate_collection(request):
