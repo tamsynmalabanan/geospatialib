@@ -54,7 +54,7 @@ class CategoriesExtraction(BaseModel):
     #         - Return each landmark only once, preserving the original casing and spelling as written in the subject.
     # ''')
     categories: str = Field(description='''
-        A JSON of 10 categories relevant to the subject with 10 query words and 10 Overpass QL tag keys and list of relevant values, following this format: {
+        A JSON of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
                 "title": "Category Title",
                 "description": "Description of the relevance of the category to the subject.",
@@ -74,19 +74,19 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o')
         {
             'role': 'system',
             'content': '''
-                1. Identify 10 diverse and spatially-applicable categories that are most relevant to the subject.
+                1. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
                     - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
-                    - You must include **exactly 10 categories**.
-                2. For each category, identify 10 query words most relevant to the category and subject.
+                    - You must include **exactly 5 categories**.
+                2. For each category, identify 5 query words most relevant to the category and subject.
                     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
-                    - You must include **exactly 10 words** for each category—**no fewer, no more**.
-                3. For each category, identify 10 valid Overpass QL tag keys most relevant to the category and subject.
+                    - You must include **exactly 5 words** for each category—**no fewer, no more**.
+                3. For each category, identify 5 valid Overpass QL tag keys most relevant to the category and subject.
                     - Each key must have at least one value that is relevent to the category and subject.
                     - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                     - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                    - You must include **exactly 10 tags** for each category—**no fewer, no more**.
+                    - You must include **exactly 5 tags** for each category—**no fewer, no more**.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
         {'role': 'user', 'content': user_prompt}
