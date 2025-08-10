@@ -57,7 +57,7 @@ class CategoriesExtraction(BaseModel):
         A JSON of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
                 "title": "Category Title",
-                "description": "Description of the relevance of the category to the subject.",
+                "description": "Three (3) sentences describing the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": {
                     "tag_key1": ["tag_value1", "tag_value2"...],
