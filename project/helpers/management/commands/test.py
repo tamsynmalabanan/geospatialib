@@ -85,6 +85,6 @@ class Command(BaseCommand):
         # layers = get_ogc_layers('https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?', 'ogc-wfs')
         # print(layers)
 
-        # Layer.objects.filter(type='overpass').delete()
+        Layer.objects.filter(type='overpass').delete()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
