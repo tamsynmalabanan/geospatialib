@@ -143,13 +143,12 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
+        params = extract_theme_categories(user_prompt, client)
+
         try:
-            params = extract_theme_categories(user_prompt, client)
-            return params
             categories = json.loads(params.categories)
         except Exception as e:
             print(e)
-            return e
             return None
 
         try:
@@ -160,42 +159,42 @@ def create_thematic_map(user_prompt:str, bbox:str):
             print(e)
             queryset = Layer.objects.all()
 
-        # try:
-        #     landmarks = json.loads(params.landmarks)
-        #     if len(landmarks) > 0:
-        #         name_keys = ['name', 'name:en']
+        try:
+            landmarks = json.loads(params.landmarks)
+            if len(landmarks) > 0:
+                name_keys = ['name', 'name:en']
 
-        #         categories = {'landmarks': {
-        #             'title': 'Landmarks',
-        #             'query': ' '.join(landmarks),
-        #             'overpass': {key:[] for key in name_keys},
-        #         }} | categories
+                categories = {'landmarks': {
+                    'title': 'Landmarks',
+                    'query': ' '.join(landmarks),
+                    'overpass': {key:[] for key in name_keys},
+                }} | categories
 
-        #         for i in landmarks:
-        #             tag_value = f'.*{i}.*'
-        #             tags = [f'"{key}"~"{tag_value}",i' for key in name_keys]
-        #             layer_tags = queryset.filter(tags__in=tags).values_list('tags', flat=True)
+                for i in landmarks:
+                    tag_value = f'.*{i}.*'
+                    tags = [f'"{key}"~"{tag_value}",i' for key in name_keys]
+                    layer_tags = queryset.filter(tags__in=tags).values_list('tags', flat=True)
 
-        #             if len(layer_tags) == len(name_keys):
-        #                 keys = [key for key in name_keys if f'"{key}"~"{tag_value}",i' in layer_tags]
-        #             else:
-        #                 response = get_response(
-        #                     url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
-        #                     header_only=False,
-        #                     with_default_headers=False,
-        #                     raise_for_status=True
-        #                 )
+                    if len(layer_tags) == len(name_keys):
+                        keys = [key for key in name_keys if f'"{key}"~"{tag_value}",i' in layer_tags]
+                    else:
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
                         
-        #                 if not response:
-        #                     continue
+                        if not response:
+                            continue
                     
-        #                 keys = set([i.get('key') for i in response.json().get('data', [])])
+                        keys = set([i.get('key') for i in response.json().get('data', [])])
                     
-        #             for key in name_keys:
-        #                 if key in keys:
-        #                     categories['landmarks']['overpass'][key].append(tag_value)     
-        # except Exception as e:
-        #     print(e)
+                    for key in name_keys:
+                        if key in keys:
+                            categories['landmarks']['overpass'][key].append(tag_value)     
+        except Exception as e:
+            print(e)
 
         overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
@@ -204,111 +203,111 @@ def create_thematic_map(user_prompt:str, bbox:str):
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
 
-        # category_layers = {}
-        # for id, values in categories.items():
-        #     is_landmarks = id == 'landmarks'
-        #     categories[id]['layers'] = {}
+        category_layers = {}
+        for id, values in categories.items():
+            is_landmarks = id == 'landmarks'
+            categories[id]['layers'] = {}
             
-        #     filter_tags = []
-        #     for tag_key, tag_values in values.get('overpass', {}).items():
-        #         if len(tag_values) == 0:
-        #             continue
+            filter_tags = []
+            for tag_key, tag_values in values.get('overpass', {}).items():
+                if len(tag_values) == 0:
+                    continue
                 
-        #         tag_values = list(set(tag_values))
-        #         filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
+                tag_values = list(set(tag_values))
+                filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
 
-        #         layers = queryset.filter(tags__in=filter_tags)
-        #         matched_tags = set(layers.values_list('tags', flat=True))
+                layers = queryset.filter(tags__in=filter_tags)
+                matched_tags = set(layers.values_list('tags', flat=True))
 
-        #         if filter_tags != matched_tags:
-        #             if not is_landmarks:
-        #                 is_valid_tag_key = TaginfoKey.objects.filter(key=tag_key).exists()
-        #                 if not is_valid_tag_key:
-        #                     continue
+                if filter_tags != matched_tags:
+                    if not is_landmarks:
+                        is_valid_tag_key = TaginfoKey.objects.filter(key=tag_key).exists()
+                        if not is_valid_tag_key:
+                            continue
 
-        #                 response = get_response(
-        #                     url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
-        #                     header_only=False,
-        #                     with_default_headers=False,
-        #                     raise_for_status=True
-        #                 )
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
                         
-        #                 if not response:
-        #                     continue
+                        if not response:
+                            continue
                     
-        #                 prevalent_values = [i.get('value') for i in response.json().get('data', [])]
-        #                 tag_values = [i for i in tag_values if i in prevalent_values]
-        #                 filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
+                        prevalent_values = [i.get('value') for i in response.json().get('data', [])]
+                        tag_values = [i for i in tag_values if i in prevalent_values]
+                        filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
 
-        #             if filter_tags != matched_tags:
-        #                 layers = list(layers)
+                    if filter_tags != matched_tags:
+                        layers = list(layers)
 
-        #                 for tag in filter_tags:
-        #                     if tag in matched_tags:
-        #                         continue
+                        for tag in filter_tags:
+                            if tag in matched_tags:
+                                continue
 
-        #                     layer, _ = Layer.objects.get_or_create(
-        #                         collection=overpass_collection,
-        #                         name=f'osm-{tag}',
-        #                         defaults={
-        #                             'type':'overpass',
-        #                             'srid':srs,
-        #                             'bbox':WORLD_GEOM,
-        #                             'tags':tag,
-        #                             'title':tag,
-        #                             'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-        #                             'keywords':get_keywords_from_url(overpass_url) + [tag_key, 'openstreetmap'] + tag_values
-        #                         }
-        #                     )
+                            layer, _ = Layer.objects.get_or_create(
+                                collection=overpass_collection,
+                                name=f'osm-{tag}',
+                                defaults={
+                                    'type':'overpass',
+                                    'srid':srs,
+                                    'bbox':WORLD_GEOM,
+                                    'tags':tag,
+                                    'title':tag,
+                                    'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+                                    'keywords':get_keywords_from_url(overpass_url) + [tag_key, 'openstreetmap'] + tag_values
+                                }
+                            )
 
-        #                     if layer:
-        #                         layers.append(layer)
+                            if layer:
+                                layers.append(layer)
 
-        #         for layer in set(list(layers)):
-        #             categories[id]['layers'][layer.pk] = layer.data
+                for layer in set(list(layers)):
+                    categories[id]['layers'][layer.pk] = layer.data
 
-        #     del categories[id]['overpass']
+            del categories[id]['overpass']
 
-        #     query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
+            query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
 
-        #     filtered_queryset = (
-        #         queryset
-        #         .exclude(tags__in=filter_tags)
-        #         .filter(search_vector=SearchQuery(
-        #             f'({' | '.join(query)})', 
-        #             search_type='raw'
-        #         ))
-        #         .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
-        #             ' OR '.join(query), 
-        #             search_type='websearch'
-        #         ))))
-        #         .order_by(*['-rank'])
-        #     )
+            filtered_queryset = (
+                queryset
+                .exclude(tags__in=filter_tags)
+                .filter(search_vector=SearchQuery(
+                    f'({' | '.join(query)})', 
+                    search_type='raw'
+                ))
+                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
+                    ' OR '.join(query), 
+                    search_type='websearch'
+                ))))
+                .order_by(*['-rank'])
+            )
 
-        #     if filtered_queryset.exists():
-        #         category_layers[id] = {
-        #             'title': values.get('title'),
-        #             'layers': {
-        #                 layer.pk: {
-        #                     'name': layer.name,
-        #                     'title': layer.title,
-        #                     'abstract': layer.abstract,
-        #                     'keywords': ', '.join(layer.keywords if layer.keywords else []),
-        #                 } for layer in filtered_queryset[:5]
-        #             }
-        #         }
+            if filtered_queryset.exists():
+                category_layers[id] = {
+                    'title': values.get('title'),
+                    'layers': {
+                        layer.pk: {
+                            'name': layer.name,
+                            'title': layer.title,
+                            'abstract': layer.abstract,
+                            'keywords': ', '.join(layer.keywords if layer.keywords else []),
+                        } for layer in filtered_queryset[:5]
+                    }
+                }
 
-        #     del categories[id]['query']
+            del categories[id]['query']
 
-        # if category_layers:
-        #     params = layers_eval_info(user_prompt, category_layers, client)
-        #     layers_eval = json.loads(params.layers)
+        if category_layers:
+            params = layers_eval_info(user_prompt, category_layers, client)
+            layers_eval = json.loads(params.layers)
             
-        #     for id, layers in layers_eval.items():
-        #         layers = queryset.filter(pk__in=set(map(int, layers)))
-        #         categories[id]['layers'] = {layer.pk: layer.data for layer in layers} | categories[id]['layers']
+            for id, layers in layers_eval.items():
+                layers = queryset.filter(pk__in=set(map(int, layers)))
+                categories[id]['layers'] = {layer.pk: layer.data for layer in layers} | categories[id]['layers']
 
-        # categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
+        categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
         return {
             'subject': user_prompt,
