@@ -46,13 +46,13 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> Para
     return result
 
 class CategoriesExtraction(BaseModel):
-    # landmarks: str = Field(description='''
-    #     A JSON array of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]
-    #         - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
-    #         - Excludes names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
-    #         - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
-    #         - Return each landmark only once, preserving the original casing and spelling as written in the subject.
-    # ''')
+    landmarks: str = Field(description='''
+        A JSON array of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]
+            - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
+            - Excludes names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
+            - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
+            - Return each landmark only once, preserving the original casing and spelling as written in the subject.
+    ''')
     categories: str = Field(description='''
         A JSON of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
@@ -210,11 +210,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
             
             filter_tags = []
             for tag_key, tag_values in values.get('overpass', {}).items():
-                if len(tag_values) == 0:
-                    continue
-                
                 tag_values = list(set(tag_values))
-                filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
+                filter_tags = set([tag_key]) if len(tag_values) == 0 else set([f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
 
                 layers = queryset.filter(tags__in=filter_tags)
                 matched_tags = set(layers.values_list('tags', flat=True))
@@ -225,19 +222,20 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         if not is_valid_tag_key:
                             continue
 
-                        response = get_response(
-                            url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
-                            header_only=False,
-                            with_default_headers=False,
-                            raise_for_status=True
-                        )
+                        if len(tag_values) > 0:
+                            response = get_response(
+                                url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
+                                header_only=False,
+                                with_default_headers=False,
+                                raise_for_status=True
+                            )
+                            
+                            if not response:
+                                continue
                         
-                        if not response:
-                            continue
-                    
-                        prevalent_values = [i.get('value') for i in response.json().get('data', [])]
-                        tag_values = [i for i in tag_values if i in prevalent_values]
-                        filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
+                            prevalent_values = [i.get('value') for i in response.json().get('data', [])]
+                            tag_values = [i for i in tag_values if i in prevalent_values]
+                            filter_tags = set([tag_key]) if len(tag_values) == 0 else set([f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
 
                     if filter_tags != matched_tags:
                         layers = list(layers)
