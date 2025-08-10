@@ -220,24 +220,24 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 matched_tags = set(layers.values_list('tags', flat=True))
 
                 if filter_tags != matched_tags:
-                    # if not is_landmarks:
-                    #     is_valid_tag_key = TaginfoKey.objects.filter(key=tag_key).exists()
-                    #     if not is_valid_tag_key:
-                    #         continue
+                    if not is_landmarks:
+                        is_valid_tag_key = TaginfoKey.objects.filter(key=tag_key).exists()
+                        if not is_valid_tag_key:
+                            continue
 
-                    #     response = get_response(
-                    #         url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
-                    #         header_only=False,
-                    #         with_default_headers=False,
-                    #         raise_for_status=True
-                    #     )
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
                         
-                    #     if not response:
-                    #         continue
+                        if not response:
+                            continue
                     
-                    #     prevalent_values = [i.get('value') for i in response.json().get('data', [])]
-                    #     tag_values = [i for i in tag_values if i in prevalent_values]
-                    #     filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
+                        prevalent_values = [i.get('value') for i in response.json().get('data', [])]
+                        tag_values = [i for i in tag_values if i in prevalent_values]
+                        filter_tags = set([f'{tag_key}={i}' if not is_landmarks else f'"{tag_key}"~"{i}",i' for i in tag_values])
 
                     if filter_tags != matched_tags:
                         layers = list(layers)
