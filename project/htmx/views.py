@@ -154,7 +154,6 @@ def find_layers(request):
     response = None
     
     try:
-
         data = request.POST.dict()
         subject = data.get('subject')
         bbox = data.get('bbox')
@@ -166,7 +165,7 @@ def find_layers(request):
 
         return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
     except Exception as e:
-        return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
+        return render(request, 'helpers/partials/find_layers/response.html', {'error':e})
 
 
 @require_http_methods(['GET'])
