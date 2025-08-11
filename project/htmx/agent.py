@@ -56,18 +56,20 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
             'role': 'system',
             'content': '''
                 With the user prompt as the subject, provide the following:
-                    1. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
+                    1. Identify at least 5 diverse and spatially-applicable categories that are most relevant to the subject.
                         - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                         - Focus on thematic scope and spatial context; do not list layers.
-                    2. For each category, identify 5 query words most relevant to the category and subject.
+                    2. For each category, identify at least 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
+                    3. For each category, identify at least 5 valid Overpass QL tag keys most relevant to the category and subject.
 
                 Strictly follow this format for the response:
                 {"category_id": {
                     "title": "Category Title",
                     "description": "Three (3) sentences describing the relevance of the category to the subject.",
                     "query": "word1 word2 word3...",
+                    "overpass": ["tag_key1", "tag_key2", "tag_key3"...],
                 },...}
 
                 Return only a raw JSON string with double quotes for all keys and string values.
