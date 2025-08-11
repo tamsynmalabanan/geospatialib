@@ -22,6 +22,9 @@ from helpers.main.layers import format_url, WORLD_GEOM
 from helpers.main.ogc import get_ogc_layers
 from helpers.main.constants import XYZ_TILES_CHARS
 
+import logging
+logger = logging.getLogger('django')
+
 def guess_format_from_url(url):
     if not url:
         return
@@ -108,7 +111,7 @@ def get_layers(url, format):
                 'type': i.split('.')[-1],
             } for i in get_file_names(url)}
     except Exception as e:
-        print(e)
+        logger.error(f'get layers, {e}')
 
     keywords = get_keywords_from_url(url)
 

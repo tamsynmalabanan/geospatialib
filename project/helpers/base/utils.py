@@ -11,6 +11,9 @@ import requests
 import re
 from urllib.parse import urlparse, urlunparse, unquote
 
+import logging
+logger = logging.getLogger('django')
+
 DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
 def get_special_characters(value):
@@ -76,7 +79,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
         try:
             dict_copy[key] = str(value)
         except Exception as e:
-            print('ERROR with dict_to_choices: ', e)
+            logger.error(f'dict_to_choices, {e}')
 
     if sort:
         dict_copy = OrderedDict(sorted(dict_copy.items(), key=lambda item: item[1]))
@@ -107,7 +110,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
             if response.status_code != 404:
                 cache.set(cache_key, response, 60*15)
         except Exception as e:
-            print('get_response', e)
+            logger.error(f'get_response, {e}')
     
     return response
     
@@ -125,14 +128,14 @@ def get_response_file(url):
             'filename': filename
         }
     except Exception as e:
-        print(e)
+        logger.error(f'get_response_file, {e}')
     return None
     
 def get_decoded_response(response):
     try:
         return response.content.decode('utf-8')
     except Exception as e:
-        print('get_decoded_response',e)
+        logger.error(f'get_decoded_response, {e}')
 
 def replace_url_placeholders(url, values={}):
     placeholders = re.findall(r'\{(.*?)\}', url)

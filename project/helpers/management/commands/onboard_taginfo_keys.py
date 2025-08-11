@@ -4,6 +4,9 @@ import os
 from django.conf import settings
 from main.models import TaginfoKey
 
+import logging
+logger = logging.getLogger('django')
+
 class Command(BaseCommand):
     help = 'Onboard taginfo keys'
     def handle(self, *args, **kwargs):
@@ -23,15 +26,11 @@ class Command(BaseCommand):
                         continue
 
                     key, created = TaginfoKey.objects.get_or_create(key=key_value)
-                    # if not created:
-                    #     continue
-                    
                     key.count_all = i.get('count_all', 0)
                     key.values_all = i.get('values_all', 0)
                     key.in_wiki = in_wiki
                     key.save()
                 except Exception as e:
-                    print(e)
-                    print(i)
+                    logger.error(f'{self.help}, {e}, {i}')
 
         self.stdout.write(self.style.SUCCESS('Done.'))

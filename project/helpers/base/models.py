@@ -1,5 +1,8 @@
 from collections import OrderedDict
 
+import logging
+logger = logging.getLogger('django')
+
 def dict_to_choices(dict, blank_choice=None, sort=False):
     dict_copy = {'':str(blank_choice)} if blank_choice is not None else {}
 
@@ -7,7 +10,7 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
         try:
             dict_copy[key] = str(value)
         except Exception as e:
-            print('ERROR with dict_to_choices: ', e)
+            logger.error(f'dict_to_choices, {e}')
 
     if sort:
         dict_copy = OrderedDict(sorted(dict_copy.items(), key=lambda item: item[1]))

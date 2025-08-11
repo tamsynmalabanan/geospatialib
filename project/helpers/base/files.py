@@ -7,6 +7,8 @@ from io import BytesIO
 import json
 from urllib.parse import unquote
 
+import logging
+logger = logging.getLogger('django')
 
 from helpers.base.utils import get_response_file
 
@@ -38,5 +40,5 @@ def get_file_names(url):
             return extract_zip(file_details.get('file'), filename).keys()
         return [filename]
     except Exception as e:
-        print(e)
+        logger.error(f'get_file_names, {e}')
         return []

@@ -11,6 +11,9 @@ import json
 from helpers.main.layers import WORLD_GEOM
 from helpers.base.utils import get_response
 
+import logging
+logger = logging.getLogger('django')
+
 def bbox_to_polygon(bbox):
     try:
         w,s,e,n,*crs = bbox
@@ -18,7 +21,7 @@ def bbox_to_polygon(bbox):
         srid = int(crs.split(':')[-1])
         return Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)], srid=srid)
     except Exception as e:
-        print(e, bbox)
+        logger.error(f'bbox_to_polygon. {e}, {bbox}')
 
 def get_layers_via_owslib(service, format):
     layers = {}
@@ -121,7 +124,7 @@ def get_layers_via_et(content, format):
                         bbox = geom.extent
                         break
                     except Exception as error:
-                        print(error)
+                        logger.error(f'get_layers_via_et, {error}')
             
             if format == 'wfs':
                 crs = layer.find(f"{format}:DefaultCRS", ns)
@@ -184,6 +187,6 @@ def get_ogc_layers(url, format):
         else:
             layers = get_layers_via_et(content, type)
     except Exception as e:
-        print('get_ogc_layers', e)
+        logger.error(f'get_ogc_layers, {e}')
     
     return layers

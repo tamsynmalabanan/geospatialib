@@ -12,6 +12,9 @@ from helpers.base.utils import get_response, get_response_file, get_domain_url, 
 from helpers.base.files import extract_zip
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES
 
+import logging
+logger = logging.getLogger('django')
+
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 
 def format_url(url, format):
@@ -60,7 +63,7 @@ def csv_to_geojson(file, params):
         gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
         return json.loads(gdf.to_json()), params
     except Exception as e:
-        print(e)
+        logger.error(f'csv_to_geojson, {e}')
         return None, None
 
 def get_geojson_metadata(data):
@@ -93,7 +96,7 @@ def validate_geojson(url, name, params):
         })
         return params
     except Exception as e:
-        print(e)
+        logger.error(f'validate_geojson, {e}')
 
 def validate_csv(url, name, params):
     try:
@@ -107,7 +110,7 @@ def validate_csv(url, name, params):
         })
         return params
     except Exception as e:
-        print(e)
+        logger.error(f'validate_csv, {e}')
 
 def validate_file(url, name, params):
     try:
@@ -144,7 +147,7 @@ def validate_file(url, name, params):
 
         return params
     except Exception as e:
-        print('validate_file error', e)
+        logger.error(f'validate_file error, {e}')
        
 def validate_xyz(url, name, params):
     try:
@@ -154,7 +157,7 @@ def validate_xyz(url, name, params):
         })
         return params
     except Exception as e:
-        print(e)
+        logger.error(f'validate_xyz, {e}')
        
 def validate_ogc(url, name, params):
     try:
@@ -166,7 +169,7 @@ def validate_ogc(url, name, params):
 
         return params
     except Exception as e:
-        print(e)
+        logger.error(f'validate_ogc, {e}')
        
 LAYER_VALIDATORS = {
     'geojson': validate_geojson,

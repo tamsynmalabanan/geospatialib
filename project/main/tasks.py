@@ -8,6 +8,9 @@ from .models import URL, Collection, Layer
 from helpers.base.utils import get_domain, get_response, get_domain_url, create_cache_key
 from helpers.main.layers import LAYER_VALIDATORS, format_url
 
+import logging
+logger = logging.getLogger('django')
+
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,),
@@ -77,7 +80,7 @@ def onboard_collection(self, cache_key):
         if set(layers.keys()) != set(onboarded_layers):
             raise Exception('Not all layers have been onboarded.')
     except Exception as e:
-        print('onboard_collection error', e)
+        logger.error(f'onboard_collection error, {e}')
 
         if self.request.retries < self.max_retries:
             cache.set(cache_key, cached_collection, timeout=60*15)

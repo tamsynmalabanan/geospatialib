@@ -21,6 +21,9 @@ from helpers.base.models import dict_to_choices
 from helpers.main.constants import WORLD_GEOM
 from . import choices
 
+import logging
+logger = logging.getLogger('django')
+
 class TaginfoKey(models.Model):
     key = models.CharField('Key', max_length=512, unique=True)
     count_all = models.PositiveIntegerField('Elements count', default=0)
@@ -147,7 +150,7 @@ class Layer(models.Model):
                 if translated_keywords:
                     self.keywords = translated_keywords
         except Exception as e:
-            print(e)
+            logger.error(f'translate_fields, {e}')
 
     def normalize_keywords(self):
         db_version = self.db_version
