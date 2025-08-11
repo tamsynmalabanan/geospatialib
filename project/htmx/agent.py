@@ -169,12 +169,12 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     'overpass': {key:[] for key in name_keys},
                 }} | categories
 
-                return categories
-
                 for i in landmarks:
                     tag_value = f'.*{i}.*'
                     tags = [f'{key}~{tag_value},i' for key in name_keys]
                     layer_tags = queryset.filter(tags__in=tags).values_list('tags', flat=True)
+
+                    return layer_tags
 
                     if len(layer_tags) == len(name_keys):
                         keys = name_keys
@@ -212,7 +212,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             filter_tags = []
             for tag_key, tag_values in values.get('overpass', {}).items():
                 tag_values = list(set(tag_values))
-                filter_tags = set([tag_key]) if len(tag_values) == 0 else set([f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
+                filter_tags = set([tag_key] if len(tag_values) == 0 else [f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
 
                 layers = queryset.filter(tags__in=filter_tags)
                 matched_tags = set(layers.values_list('tags', flat=True))
@@ -236,7 +236,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         
                             prevalent_values = [i.get('value') for i in response.json().get('data', [])]
                             tag_values = [i for i in tag_values if i in prevalent_values]
-                            filter_tags = set([tag_key]) if len(tag_values) == 0 else set([f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
+                            filter_tags = set([tag_key] if len(tag_values) == 0 else [f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
 
                     if filter_tags != matched_tags:
                         layers = list(layers)
