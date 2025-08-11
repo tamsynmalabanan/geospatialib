@@ -25,7 +25,7 @@ class ParamsEvaluation(BaseModel):
     confidence_score: float = Field(description='Confidence score between 0 and 1.')
     title: str = Field(description='Title for the thematic map.')
 
-def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> ParamsEvaluation:
+def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> ParamsEvaluation:
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=[
@@ -69,7 +69,7 @@ class CategoriesExtraction(BaseModel):
         }
     ''' + '\n' + JSON_PROMPT_GUIDE)
 
-def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-4o') -> CategoriesExtraction:
+def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> CategoriesExtraction:
     messages = [
         {
             'role': 'system',
@@ -105,7 +105,7 @@ class LayersEvaluation(BaseModel):
         Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
     ''' + '\n' + JSON_PROMPT_GUIDE)
 
-def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-4o') -> LayersEvaluation:
+def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5-mini') -> LayersEvaluation:
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=[
@@ -143,11 +143,13 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
-        params = extract_theme_categories(user_prompt, client)
+        params = None
         try:
+            params = extract_theme_categories(user_prompt, client)
+            return init_eval, params
             categories = json.loads(params.categories)
         except Exception as e:
-            print(e)
+            print('extract_theme_categories', e)
             return None
 
         try:
@@ -155,7 +157,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
             queryset = Layer.objects.filter(bbox__bboverlaps=geom)
         except Exception as e:
-            print(e)
+            print('json.loads(bbox)', e)
             queryset = Layer.objects.all()
 
         try:
@@ -176,9 +178,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
                     if layer_tags.count() == len(name_keys):
                         keys = name_keys
-                        return 1, keys
                     else:
-                        return 2, i
                         response = get_response(
                             url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
                             header_only=False,
@@ -195,7 +195,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         if key in keys:
                             categories['landmarks']['overpass'][key].append(tag_value)     
         except Exception as e:
-            print(e)
+            print('json.loads(params.landmarks)', e)
 
         overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
@@ -315,4 +315,4 @@ def create_thematic_map(user_prompt:str, bbox:str):
             'categories': categories
         }
     except Exception as e:
-        print(e)
+        print('create_thematic_map', e)
