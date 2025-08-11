@@ -174,11 +174,11 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     tags = [f'{key}~{tag_value},i' for key in name_keys]
                     layer_tags = queryset.filter(tags__in=tags).values_list('tags', flat=True)
 
-                    return (init_eval, params, layer_tags)
-
-                    if len(layer_tags) == len(name_keys):
+                    if layer_tags.count() == len(name_keys):
                         keys = name_keys
+                        return 1, keys
                     else:
+                        return 2, i
                         response = get_response(
                             url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
                             header_only=False,
