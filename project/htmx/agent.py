@@ -20,6 +20,7 @@ class ParamsEvaluation(BaseModel):
     is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
     confidence_score: float = Field(description='Confidence score between 0 and 1.')
     title: str = Field(description='Title for the thematic map.')
+    landmarks: str = Field(description='A JSON array string of the landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]')
 
 def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> ParamsEvaluation:
     completion = client.beta.chat.completions.parse(
@@ -32,6 +33,14 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> 
                     - Clearly imply geographic or spatial distribution based on real-world attributes.
                     - Use quantifiable data with direct spatial applicability (e.g. environmental, infrastructural, demographic).
                     - Avoid abstract, speculative, or symbolic groupings not grounded in geographic reality (e.g. astrology, personality types).
+
+                    If the subject is valid, identify the following:
+                    1. Title for the thematic map
+                    2. Landmarks or names of establishments that are mentioned in the subject:
+                        - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
+                        - Exclude names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
+                        - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
+                        - Return each landmark only once, preserving the original casing and spelling as written in the subject.
                 '''
             },
             {'role':'user', 'content': user_prompt}
@@ -41,15 +50,7 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> 
     result = completion.choices[0].message.parsed
     return result
 
-
-JSON_PROMPT_GUIDE = '''
-    Return only the raw JSON string with double quotes for all keys and string values. 
-    Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
-    Do not wrap the output in triple quotes or additional characters.
-'''
-
 class CategoriesExtraction(BaseModel):
-    landmarks: str = Field(description='A JSON array string of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]')
     categories: str = Field(description='''
         A JSON object string of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
@@ -62,7 +63,7 @@ class CategoriesExtraction(BaseModel):
                 },
             },...
         }
-    ''' + '\n' + JSON_PROMPT_GUIDE)
+    ''')
 
 def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> CategoriesExtraction:
     messages = [
@@ -70,22 +71,17 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
             'role': 'system',
             'content': '''
                 With the user prompt as the subject, provide the following:
-                    1. Names of establishments or landmarks that are mentioned in the subject, following this format,
-                        - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
-                        - Exclude names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
-                        - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
-                        - Return each landmark only once, preserving the original casing and spelling as written in the subject.
-                    2. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
+                    1. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
                         - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
                         - Focus on thematic scope and spatial context; do not list layers.
-                    3. For each category, identify 5 query words most relevant to the category and subject.
+                    2. For each category, identify 5 query words most relevant to the category and subject.
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
-                    4. For each category, identify 5 valid Overpass QL tag keys most relevant to the category and subject.
+                    3. For each category, identify 5 valid Overpass QL tag keys most relevant to the category and subject.
                         - Each key must have at least one value that is relevent to the category and subject.
                         - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                         - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-            ''' + '\n' + JSON_PROMPT_GUIDE
+            '''
         },
         {'role': 'user', 'content': user_prompt}
     ]
@@ -106,7 +102,7 @@ class LayersEvaluation(BaseModel):
     layers:str = Field(description='''
         A JSON of category ID and corresponding array of primary keys (integers) of layers that are relevant to the category and the thematic map subject.
         Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
-    ''' + '\n' + JSON_PROMPT_GUIDE)
+    ''')
 
 def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5-mini') -> LayersEvaluation:
     completion = client.beta.chat.completions.parse(
@@ -121,7 +117,7 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model
                     - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
                     Remove layers that are not relevant to their respective categories and to the thematic map subject.
-                ''' + '\n' + JSON_PROMPT_GUIDE
+                '''
             },
             {
                 'role':'user', 
