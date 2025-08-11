@@ -178,6 +178,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     if layer_tags.count() == len(name_keys):
                         keys = name_keys
                     else:
+                        return i
                         response = get_response(
                             url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={i}',
                             header_only=False,
@@ -185,7 +186,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
                             raise_for_status=True
                         )
 
-                        return 'response', response
                         
                         if not response:
                             continue
