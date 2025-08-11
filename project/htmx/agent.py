@@ -63,12 +63,14 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
                         - Each query word should be an individual real english word, without caps, conjunctions or special characters.
                         - Make sure query words are suitable for filtering geospatial layers.
                     3. For each category, identify 5 valid Overpass QL tag keys most relevant to the category and subject.
-                        - Each key must have at least one value that is relevent to the category and subject.
-                        - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
-                        - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
 
                 Strictly follow this format for the response:
-                {"category_id":{"title": "Category Title","description": "Three (3) sentences describing the relevance of the category to the subject.","query": "word1 word2 word3...","overpass": {"tag_key1": ["tag_value1", "tag_value2"...],...},},...}
+                {"category_id": {
+                    "title": "Category Title",
+                    "description": "Three (3) sentences describing the relevance of the category to the subject.",
+                    "query": "word1 word2 word3...",
+                    "overpass": {"tag_key1": ["tag_value1", "tag_value2"...],...},
+                },...}
 
                 Return only a raw JSON string with double quotes for all keys and string values.
                 Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
