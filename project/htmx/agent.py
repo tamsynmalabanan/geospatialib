@@ -81,6 +81,10 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
                         - Each key must have at least one value that is relevent to the category and subject.
                         - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                         - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
+
+                Return only the raw JSON string with double quotes for all keys and string values. 
+                Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
+                Do not wrap the output in triple quotes or additional characters.
             '''
         },
         {'role': 'user', 'content': user_prompt}
