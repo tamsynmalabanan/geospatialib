@@ -50,22 +50,7 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> 
     result = completion.choices[0].message.parsed
     return result
 
-class CategoriesExtraction(BaseModel):
-    categories: str = Field(description='''
-        A JSON object string of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
-            "category_id": {
-                "title": "Category Title",
-                "description": "Three (3) sentences describing the relevance of the category to the subject.",
-                "query": "word1 word2 word3...",
-                "overpass": {
-                    "tag_key1": ["tag_value1", "tag_value2"...],
-                    ...
-                },
-            },...
-        }
-    ''')
-
-def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> CategoriesExtraction:
+def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mini'):
     messages = [
         {
             'role': 'system',
@@ -82,7 +67,10 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
                         - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
                         - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
 
-                Return only the raw JSON string with double quotes for all keys and string values. 
+                Strictly follow this format for the response:
+                {"category_id":{"title": "Category Title","description": "Three (3) sentences describing the relevance of the category to the subject.","query": "word1 word2 word3...","overpass": {"tag_key1": ["tag_value1", "tag_value2"...],...},},...}
+
+                Return only a raw JSON string with double quotes for all keys and string values.
                 Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
                 Do not wrap the output in triple quotes or additional characters.
             '''
@@ -90,26 +78,19 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
         {'role': 'user', 'content': user_prompt}
     ]
 
-    completion = client.beta.chat.completions.parse(
+    completion = client.chat.completions.create(
         model=model,
         messages=messages,
-        response_format=CategoriesExtraction
     )
 
     if completion.choices:
         try:
-            return completion.choices[0].message.parsed
+            return completion.choices[0].message.content.strip()
         except Exception as e:
-            logger.error(f'extract_theme_categories, {e}') 
+            logger.error(f'extract_theme_categories, {e}')
 
-class LayersEvaluation(BaseModel):
-    layers:str = Field(description='''
-        A JSON of category ID and corresponding array of primary keys (integers) of layers that are relevant to the category and the thematic map subject.
-        Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
-    ''')
-
-def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5-mini') -> LayersEvaluation:
-    completion = client.beta.chat.completions.parse(
+def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5-mini'):
+    completion = client.chat.completions.create(
         model=model,
         messages=[
             {
@@ -121,6 +102,13 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model
                     - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
 
                     Remove layers that are not relevant to their respective categories and to the thematic map subject.
+
+                    Strictly follow this format for the response:
+                    {"category1":[layer_pk1, layer_pk2, layer_pk3,...],"category2":[layer_pk4, layer_pk5, layer_pk6,...],...}
+
+                    Return only a raw JSON string with double quotes for all keys and string values.
+                    Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
+                    Do not wrap the output in triple quotes or additional characters.
                 '''
             },
             {
@@ -132,26 +120,28 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model
                 '''
             }
         ],
-        response_format=LayersEvaluation,
     )
-    result = completion.choices[0].message.parsed
-    return result
+
+    if completion.choices:
+        try:
+            return completion.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error(f'layers_eval_info, {e}')
 
 def create_thematic_map(user_prompt:str, bbox:str):
     try:
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
+        logger.info(f'create_thematic_map, {init_eval}')
         
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
         params = None
         try:
-            params = extract_theme_categories(user_prompt, client)
-            return init_eval, params
-        
-            categories = json.loads(params.categories)
+            categories = json.loads(extract_theme_categories(user_prompt, client))
+            return categories
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}')
             return None
