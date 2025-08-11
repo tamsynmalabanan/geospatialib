@@ -100,10 +100,12 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
         response_format=CategoriesExtraction
     )
 
-    try:
-        return completion.choices[0].message.parsed
-    except Exception as e:
-        logger.error(f'extract_theme_categories, {e}') 
+    if completion.choices:
+        try:
+            logger.info(f'extract_theme_categories, {completion.choices[0].message.content}')
+            return completion.choices[0].message.parsed
+        except Exception as e:
+            logger.error(f'extract_theme_categories, {e}') 
 
 class LayersEvaluation(BaseModel):
     layers:str = Field(description='''
