@@ -8,19 +8,13 @@ from helpers.base.utils import get_response, get_keywords_from_url
 
 from openai import OpenAI
 from decouple import config
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from geopy.geocoders import Nominatim
 import json
 
 import logging
 logger = logging.getLogger('django')
 
-
-JSON_PROMPT_GUIDE = '''
-    Return only the raw JSON string with double quotes for all keys and string values. 
-    Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
-    Do not wrap the output in triple quotes or additional characters.
-'''
 
 class ParamsEvaluation(BaseModel):
     is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
@@ -47,24 +41,23 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> 
     result = completion.choices[0].message.parsed
     return result
 
+
+JSON_PROMPT_GUIDE = '''
+    Return only the raw JSON string with double quotes for all keys and string values. 
+    Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
+    Do not wrap the output in triple quotes or additional characters.
+'''
+
 class CategoriesExtraction(BaseModel):
-    landmarks: str = Field(description='''
-        A JSON array of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]
-            - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
-            - Excludes names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
-            - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
-            - Return each landmark only once, preserving the original casing and spelling as written in the subject.
-    ''')
+    landmarks: str = Field(description='A JSON array string of the names of establishments or landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]')
     categories: str = Field(description='''
-        A JSON of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
+        A JSON object string of 5 categories relevant to the subject with 5 query words and 5 Overpass QL tag keys and list of relevant values, following this format: {
             "category_id": {
                 "title": "Category Title",
                 "description": "Three (3) sentences describing the relevance of the category to the subject.",
                 "query": "word1 word2 word3...",
                 "overpass": {
                     "tag_key1": ["tag_value1", "tag_value2"...],
-                    "tag_key2": ["tag_value1", "tag_value2"...],
-                    "tag_key3": ["tag_value1", "tag_value2"...],
                     ...
                 },
             },...
@@ -76,19 +69,22 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
         {
             'role': 'system',
             'content': '''
-                1. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
-                    - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
-                    - Focus on thematic scope and spatial context; do not list layers.
-                    - You must include **exactly 5 categories**.
-                2. For each category, identify 5 query words most relevant to the category and subject.
-                    - Each query word should be an individual real english word, without caps, conjunctions or special characters.
-                    - Make sure query words are suitable for filtering geospatial layers.
-                    - You must include **exactly 5 words** for each category—**no fewer, no more**.
-                3. For each category, identify 5 valid Overpass QL tag keys most relevant to the category and subject.
-                    - Each key must have at least one value that is relevent to the category and subject.
-                    - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
-                    - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
-                    - You must include **exactly 5 tags** for each category—**no fewer, no more**.
+                With the user prompt as the subject, provide the following:
+                    1. Names of establishments or landmarks that are mentioned in the subject, following this format,
+                        - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
+                        - Exclude names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
+                        - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
+                        - Return each landmark only once, preserving the original casing and spelling as written in the subject.
+                    2. Identify 5 diverse and spatially-applicable categories that are most relevant to the subject.
+                        - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
+                        - Focus on thematic scope and spatial context; do not list layers.
+                    3. For each category, identify 5 query words most relevant to the category and subject.
+                        - Each query word should be an individual real english word, without caps, conjunctions or special characters.
+                        - Make sure query words are suitable for filtering geospatial layers.
+                    4. For each category, identify 5 valid Overpass QL tag keys most relevant to the category and subject.
+                        - Each key must have at least one value that is relevent to the category and subject.
+                        - Tags must be valid OpenStreetMap tags supported by Overpass QL, using format.
+                        - Use only tags listed on the OpenStreetMap wiki or Taginfo; exclude invented or rare tags.
             ''' + '\n' + JSON_PROMPT_GUIDE
         },
         {'role': 'user', 'content': user_prompt}
@@ -102,7 +98,6 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
 
     if completion.choices:
         try:
-            logger.info(f'extract_theme_categories, {completion.choices[0].message.content}')
             return completion.choices[0].message.parsed
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}') 
@@ -147,6 +142,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
+        return init_eval
         
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
@@ -154,7 +150,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
         params = None
         try:
             params = extract_theme_categories(user_prompt, client)
-            return init_eval, params
             categories = json.loads(params.categories)
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}')
