@@ -146,7 +146,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
         params = None
         try:
             params = extract_theme_categories(user_prompt, client)
-            return init_eval, params
             categories = json.loads(params.categories)
         except Exception as e:
             print('extract_theme_categories', e)
@@ -185,6 +184,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
                             with_default_headers=False,
                             raise_for_status=True
                         )
+
+                        return 'response', response
                         
                         if not response:
                             continue
