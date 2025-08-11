@@ -25,7 +25,7 @@ class ParamsEvaluation(BaseModel):
     confidence_score: float = Field(description='Confidence score between 0 and 1.')
     title: str = Field(description='Title for the thematic map.')
 
-def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5') -> ParamsEvaluation:
+def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> ParamsEvaluation:
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=[
@@ -69,7 +69,7 @@ class CategoriesExtraction(BaseModel):
         }
     ''' + '\n' + JSON_PROMPT_GUIDE)
 
-def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5') -> CategoriesExtraction:
+def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> CategoriesExtraction:
     messages = [
         {
             'role': 'system',
@@ -105,7 +105,7 @@ class LayersEvaluation(BaseModel):
         Format: {"category1": [layer_pk1, layer_pk2, layer_pk3,...], "category2": [layer_pk4, layer_pk5, layer_pk6,...],...}
     ''' + '\n' + JSON_PROMPT_GUIDE)
 
-def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5') -> LayersEvaluation:
+def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5-mini') -> LayersEvaluation:
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=[
