@@ -93,13 +93,17 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
         },
         {'role': 'user', 'content': user_prompt}
     ]
+    
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=messages,
         response_format=CategoriesExtraction
     )
-    result = completion.choices[0].message.parsed
-    return result
+
+    try:
+        return completion.choices[0].message.parsed
+    except Exception as e:
+        logger.error(f'extract_theme_categories, {e}') 
 
 class LayersEvaluation(BaseModel):
     layers:str = Field(description='''
