@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
+
 
 if os.name == 'nt':
     VENV_BASE = os.environ['VIRTUAL_ENV']
@@ -338,3 +340,52 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 LOGOUT_REDIRECT_URL = '/'
+
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'info_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': LOG_DIR / 'info.log',
+            'when': 'midnight',
+            'backupCount': 7,
+            'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / 'error.log',
+            'maxBytes': 1024 * 1024 * 5,  # 5MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+
+    'loggers': {
+        'django': {
+            'handlers': ['info_file', 'error_file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

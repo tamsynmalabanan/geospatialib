@@ -12,6 +12,8 @@ from pydantic import BaseModel, Field
 from geopy.geocoders import Nominatim
 import json
 
+import logging
+logger = logging.getLogger('django')
 
 
 JSON_PROMPT_GUIDE = '''
@@ -146,11 +148,9 @@ def create_thematic_map(user_prompt:str, bbox:str):
         params = None
         try:
             params = extract_theme_categories(user_prompt, client)
-            return init_eval, params
-
             categories = json.loads(params.categories)
         except Exception as e:
-            print('extract_theme_categories', e)
+            logger.error(f'extract_theme_categories, {e}')
             return None
 
         try:
@@ -158,7 +158,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
             queryset = Layer.objects.filter(bbox__bboverlaps=geom)
         except Exception as e:
-            print('json.loads(bbox)', e)
+            logger.error(f'json.loads(bbox), {e}')
             queryset = Layer.objects.all()
 
         try:
@@ -186,7 +186,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
                             with_default_headers=False,
                             raise_for_status=True
                         )
-
                         
                         if not response:
                             continue
@@ -197,7 +196,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         if key in keys:
                             categories['landmarks']['overpass'][key].append(tag_value)     
         except Exception as e:
-            print('json.loads(params.landmarks)', e)
+            logger.error(f'json.loads(params.landmarks), {e}')
 
         overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
@@ -317,4 +316,4 @@ def create_thematic_map(user_prompt:str, bbox:str):
             'categories': categories
         }
     except Exception as e:
-        print('create_thematic_map', e)
+        logger.error(f'create_thematic_map, {e}')
