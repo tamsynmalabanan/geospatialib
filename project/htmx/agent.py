@@ -93,7 +93,7 @@ def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mi
         },
         {'role': 'user', 'content': user_prompt}
     ]
-    
+
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=messages,
@@ -145,7 +145,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-        return init_eval
         
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
@@ -153,6 +152,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
         params = None
         try:
             params = extract_theme_categories(user_prompt, client)
+            return init_eval, params
             categories = json.loads(params.categories)
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}')
