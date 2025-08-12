@@ -28,11 +28,16 @@ class Command(BaseCommand):
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
         keywords = get_keywords_from_url(overpass_url) + ['openstreetmap', 'osm']
-        
+
+        existing_layers = Layer.objects.filter(collection=overpass_collection).values_list('tags', flat=True)
+
         with open(file_path, "r") as json_file:
             data = json.load(json_file)
   
             for tag, keywords in data.items():
+                if tag in existing_layers:
+                    continue
+                
                 layer, _ = Layer.objects.get_or_create(
                     collection=overpass_collection,
                     name=f'osm-{tag}',

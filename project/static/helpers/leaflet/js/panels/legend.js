@@ -254,7 +254,7 @@ const createLeafletLegendItem = (layer) => {
 
     const paneName = layer.options.pane
     const pane = map.getPane(paneName)
-    pane.style.zIndex = (Array.from(layers?.querySelectorAll('[data-layer-legend="true"]')) ?? []).length + 200
+    if (pane) pane.style.zIndex = (Array.from(layers?.querySelectorAll('[data-layer-legend="true"]')) ?? []).length + 200
     
     const container = customCreateElement({
         tag: 'div',
@@ -779,6 +779,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         innerHTML: '<div class="spinner-border spinner-border-sm" role="status"></div><div class="ms-2"></div>'
                     }))
                 })
+                layer.fire('dataupdating')
 
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
