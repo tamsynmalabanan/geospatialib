@@ -15,6 +15,13 @@ import json
 import logging
 logger = logging.getLogger('django')
 
+MODEL = 'gpt-5-mini'
+
+JSON_RESPONSE_PROMPT = '''
+    Return only a raw JSON string with double quotes for all keys and string values.
+    Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
+    Do not wrap the output in triple quotes or additional characters.
+'''
 
 class ParamsEvaluation(BaseModel):
     is_thematic_map: bool = Field(description='Whether prompt describes a valid subject for a thematic map.')
@@ -22,25 +29,25 @@ class ParamsEvaluation(BaseModel):
     title: str = Field(description='Title for the thematic map.')
     landmarks: str = Field(description='A JSON array string of the landmarks that are mentioned in the subject, following this format: ["Landmark 1", "Landmark 2", "Landmark 3"...]')
 
-def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> ParamsEvaluation:
+def params_eval_info(user_prompt:str, client:OpenAI) -> ParamsEvaluation:
     completion = client.beta.chat.completions.parse(
-        model=model,
+        model=MODEL,
         messages=[
             {
                 'role':'system', 
                 'content':'''
                     Determine whether the user prompt describes a subject for a valid thematic map. A valid subject must:
-                    - Clearly imply geographic or spatial distribution based on real-world attributes.
-                    - Use quantifiable data with direct spatial applicability (e.g. environmental, infrastructural, demographic).
-                    - Avoid abstract, speculative, or symbolic groupings not grounded in geographic reality (e.g. astrology, personality types).
+                        - Clearly imply geographic or spatial distribution based on real-world attributes.
+                        - Use quantifiable data with direct spatial applicability (e.g. environmental, infrastructural, demographic).
+                        - Avoid abstract, speculative, or symbolic groupings not grounded in geographic reality (e.g. astrology, personality types).
 
-                    If the subject is valid, identify the following:
-                    1. Title for the thematic map
-                    2. Landmarks or names of establishments that are mentioned in the subject:
-                        - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
-                        - Exclude names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
-                        - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
-                        - Return each landmark only once, preserving the original casing and spelling as written in the subject.
+                    If the subject is valid, provide the following:
+                        1. Title for the thematic map.
+                        2. Landmarks or names of establishments that are mentioned in the subject:
+                            - Only consider proper names that refer to specific branded or uniquely named establishments, e.g. "IKEA" or "KFC", excluding generic categories like "restaurant", "mall", or "government office".
+                            - Exclude names of geographic places, e.g. "New York" or "Manila". Do not include country, city, or regional names—even if they appear alongside landmarks.
+                            - Write the names as they are written in the subject, e.g. in the subject "locations of Jollibee branches in the Philippines", the landmarks should be ["Jollibee"] only, and not ["Jollibee", "Philippines"].
+                            - Return each landmark only once, preserving the original casing and spelling as written in the subject.
                 '''
             },
             {'role':'user', 'content': user_prompt}
@@ -50,50 +57,42 @@ def params_eval_info(user_prompt:str, client:OpenAI, model:str='gpt-5-mini') -> 
     result = completion.choices[0].message.parsed
     return result
 
-def extract_theme_categories(user_prompt:str, client:OpenAI, model:str='gpt-5-mini'):
+def extract_theme_categories(user_prompt:str, client:OpenAI):
     messages = [
         {
             'role': 'system',
             'content': '''
-                With the user prompt as the subject, provide the following:
-                    1. Identify at least 5 diverse and spatially-applicable categories that are most relevant to the subject.
-                        - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
-                        - Focus on thematic scope and spatial context; do not list layers.
-                    2. For each category, identify at least 5 query words most relevant to the category and subject.
-                        - Each query word should be an individual real english word, without caps, conjunctions or special characters.
-                        - Make sure query words are suitable for filtering geospatial layers.
-                    3. For each category, identify at least 5 valid OpenStreetMap (OSM) tag keys and corresponding values most relevant to the category and subject.
+                With the user prompt as the subject, identify at least 5 diverse and spatially-applicable categories that are most relevant to the subject.
+                    - Prioritize categories that correspond to topography, environmental, infrastructure, regulatory, or domain-specific datasets.
+                    - Focus on thematic scope and spatial context; do not list layers.
+                    - For each category, provide an id, title and a three-sentence description of its relevance to the subject.
 
                 Strictly follow this format for the response:
-                {"category_id": {
-                    "title": "Category Title",
-                    "description": "Three (3) sentences describing the relevance of the category to the subject.",
-                    "query": "word1 word2 word3...",
-                    "osm": {"tag_key1":["tag_value1", "tag_value2"...],...},
-                },...}
-
-                Return only a raw JSON string with double quotes for all keys and string values.
-                Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
-                Do not wrap the output in triple quotes or additional characters.
-            '''
+                {"category_id":{"title": "Category Title","description": "Three (3) sentences describing the relevance of the category to the subject.",},...}
+            ''' + '\n' + JSON_RESPONSE_PROMPT
         },
         {'role': 'user', 'content': user_prompt}
     ]
 
     completion = client.chat.completions.create(
-        model=model,
+        model=MODEL,
         messages=messages,
     )
 
     if completion.choices:
         try:
-            return completion.choices[0].message.content.strip()
+            return json.loads(completion.choices[0].message.content.strip())
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}')
 
-def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI, model:str='gpt-5-mini'):
+# "query": "word1 word2 word3...",
+# 2. For each category, identify at least 5 query words most relevant to the category and subject.
+#     - Each query word should be an individual real english word, without caps, conjunctions or special characters.
+#     - Make sure query words are suitable for filtering geospatial layers.
+
+def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
     completion = client.chat.completions.create(
-        model=model,
+        model=MODEL,
         messages=[
             {
                 'role':'system', 
@@ -135,18 +134,19 @@ def create_thematic_map(user_prompt:str, bbox:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-        logger.info(f'create_thematic_map, {init_eval}')
+        logger.info(f'create_thematic_map, init_eval, {init_eval}')
         
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
-        params = None
         try:
-            categories = json.loads(extract_theme_categories(user_prompt, client))
-            return categories
+            categories = extract_theme_categories(user_prompt, client)
+            logger.info(f'create_thematic_map, categories, {categories}')
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}')
             return None
+        
+        return categories
 
         try:
             w,s,e,n = json.loads(bbox)

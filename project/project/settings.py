@@ -15,6 +15,10 @@ from pathlib import Path
 from decouple import config
 from datetime import timedelta
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
+import logging
+from concurrent_log_handler import ConcurrentRotatingFileHandler
+import logging.config  
+
 
 
 if os.name == 'nt':
@@ -359,14 +363,14 @@ LOGGING = {
     },
 
     'handlers': {
-        'info_file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': LOG_DIR / 'info.log',
-            'when': 'midnight',
-            'backupCount': 7,
-            'formatter': 'verbose',
-        },
+        # 'info_file': {
+        #     'level': 'INFO',
+        #     'class': 'logging.handlers.TimedRotatingFileHandler',
+        #     'filename': LOG_DIR / 'info.log',
+        #     'when': 'midnight',
+        #     'backupCount': 7,
+        #     'formatter': 'verbose',
+        # },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -383,9 +387,24 @@ LOGGING = {
 
     'loggers': {
         'django': {
-            'handlers': ['info_file', 'error_file', 'console'],
+            'handlers': ['error_file', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
     },
 }
+
+LOGGING_CONFIG = None
+logging.config.dictConfig(LOGGING)
+
+rotating_handler = ConcurrentRotatingFileHandler(
+    filename=LOG_DIR / 'info.log',
+    maxBytes=10 * 1024 * 1024,
+    backupCount=5
+)
+rotating_handler.setLevel(logging.INFO)
+rotating_handler.setFormatter(logging.Formatter(
+    '[{asctime}] {levelname} {name} {message}', style='{')
+)
+
+logging.getLogger('django').addHandler(rotating_handler)
