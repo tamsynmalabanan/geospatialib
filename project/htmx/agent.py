@@ -207,7 +207,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
         logger.info(query_per_category)
         
         tags_per_category = create_categories_tags(user_prompt, categories, client)
-        return tags_per_category
 
 
         try:
