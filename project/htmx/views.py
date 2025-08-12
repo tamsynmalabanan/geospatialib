@@ -156,12 +156,11 @@ def find_layers(request):
     try:
         data = request.POST.dict()
         subject = data.get('subject')
-        bbox = data.get('bbox')
     
-        if subject and bbox:
+        if subject:
             tries = 0
             while not response and tries < 3:
-                response = create_thematic_map(subject, bbox)
+                response = create_thematic_map(subject, data.get('bbox'))
                 tries +=1
     except Exception as e:
         response = e
