@@ -148,22 +148,21 @@ class LayerList(ListView):
             context['is_filtered'] = len(self.filter_values) > 0
         return context
 
-@require_http_methods(['POST', 'GET'])
-# @require_http_methods(['POST'])
+@require_http_methods(['POST'])
 def find_layers(request):
-    response = None
+    response = 'Sorry, this feature is currently not available.'
     
-    try:
-        data = request.POST.dict() if request.method == 'POST' else request.GET.dict()
-        subject = data.get('subject')
+    # try:
+    #     data = request.POST.dict()
+    #     subject = data.get('subject')
     
-        if subject:
-            tries = 0
-            while not response and tries < 3:
-                response = create_thematic_map(subject, data.get('bbox'))
-                tries +=1
-    except Exception as e:
-        response = e
+    #     if subject:
+    #         tries = 0
+    #         while not response and tries < 3:
+    #             response = create_thematic_map(subject, data.get('bbox'))
+    #             tries +=1
+    # except Exception as e:
+    #     response = e
     
     return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
 
