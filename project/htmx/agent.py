@@ -118,15 +118,34 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
             return {}
 
 def create_categories_tags(user_prompt:str, categories:dict, client:OpenAI):
+    # messages = [
+    #     {
+    #         'role': 'system',
+    #         'content': '''
+    #             For each category, provide at least 5 OpenStreetMap tag keys and corresponding values most relevant to the category based on its title and description and the thematic map subject. 
+    #                 - Only assign values to a key if the values are nomical or categorical i.e. they can be used for classification, and not numerical or heirarchical.
+
+    #             Strictly follow this format for the response:
+    #             {"category_id":{"tag_key1":["tag_value1","tag_value2",...]},...}
+    #         ''' + '\n' + JSON_RESPONSE_PROMPT
+    #     },
+    #     {'role': 'user', 'content': f'''
+    #         thematic map subject: {user_prompt}
+    #         categories:
+    #         {json.dumps(categories)}
+    #     '''}
+    # ]
+
     messages = [
         {
             'role': 'system',
             'content': '''
-                For each category, provide at least 5 OpenStreetMap tag keys and corresponding values most relevant to the category based on its title and description and the thematic map subject. 
-                    - Only assign values to a key if the values are nomical or categorical i.e. they can be used for classification, and not numerical or heirarchical.
+                For each category, provide at least 5 query words most relevant to the category based on its title and description and the thematic map subject. 
+                    - Each query word should be an individual real english word, without caps, conjunctions or special characters.
+                    - Make sure query words are suitable for filtering geospatial layers.
 
                 Strictly follow this format for the response:
-                {"category_id":{"tag_key1":["tag_value1","tag_value2",...]},...}
+                {"category_id":["word1", "word2", "word3",...],...}
             ''' + '\n' + JSON_RESPONSE_PROMPT
         },
         {'role': 'user', 'content': f'''
