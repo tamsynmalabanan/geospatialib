@@ -15,7 +15,7 @@ import json
 import logging
 logger = logging.getLogger('django')
 
-MODEL = 'gpt-5-mini'
+MODEL = 'gpt-5'
 
 JSON_RESPONSE_PROMPT = '''
     Return only a raw JSON string with double quotes for all keys and string values.
@@ -118,34 +118,15 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
             return {}
 
 def create_categories_tags(user_prompt:str, categories:dict, client:OpenAI):
-    # messages = [
-    #     {
-    #         'role': 'system',
-    #         'content': '''
-    #             For each category, provide at least 5 OpenStreetMap tag keys and corresponding values most relevant to the category based on its title and description and the thematic map subject. 
-    #                 - Only assign values to a key if the values are nomical or categorical i.e. they can be used for classification, and not numerical or heirarchical.
-
-    #             Strictly follow this format for the response:
-    #             {"category_id":{"tag_key1":["tag_value1","tag_value2",...]},...}
-    #         ''' + '\n' + JSON_RESPONSE_PROMPT
-    #     },
-    #     {'role': 'user', 'content': f'''
-    #         thematic map subject: {user_prompt}
-    #         categories:
-    #         {json.dumps(categories)}
-    #     '''}
-    # ]
-
     messages = [
         {
             'role': 'system',
             'content': '''
-                For each category, provide at least 5 query words most relevant to the category based on its title and description and the thematic map subject. 
-                    - Each query word should be an individual real english word, without caps, conjunctions or special characters.
-                    - Make sure query words are suitable for filtering geospatial layers.
+                For each category, provide at least 5 OpenStreetMap tag keys and corresponding values most relevant to the category based on its title and description and the thematic map subject. 
+                    - Only assign values to a key if the values are nomical or categorical i.e. they can be used for classification, and not numerical or heirarchical.
 
                 Strictly follow this format for the response:
-                {"category_id":["word1", "word2", "word3",...],...}
+                {"category_id":{"tag_key1":["tag_value1","tag_value2",...]},...}
             ''' + '\n' + JSON_RESPONSE_PROMPT
         },
         {'role': 'user', 'content': f'''
