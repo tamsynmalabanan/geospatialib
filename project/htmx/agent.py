@@ -134,19 +134,17 @@ def create_thematic_map(user_prompt:str, bbox:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-        logger.info(f'create_thematic_map, init_eval, {init_eval}')
+        return init_eval
         
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return None
         
         try:
             categories = extract_theme_categories(user_prompt, client)
-            logger.info(f'create_thematic_map, categories, {categories}')
         except Exception as e:
             logger.error(f'extract_theme_categories, {e}')
             return None
         
-        return categories
 
         try:
             w,s,e,n = json.loads(bbox)
