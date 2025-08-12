@@ -2,7 +2,7 @@ from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Max
 
-from main.models import Layer, TaginfoKey, Collection, URL, SpatialRefSys
+from main.models import Layer, Collection, URL, SpatialRefSys
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
 from helpers.base.utils import get_response, get_keywords_from_url
 
@@ -277,10 +277,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
 
                 if filter_tags != matched_tags:
                     if not is_landmarks:
-                        is_valid_tag_key = TaginfoKey.objects.filter(key=tag_key).exists()
-                        if not is_valid_tag_key:
-                            continue
-
                         if len(tag_values) > 0:
                             response = get_response(
                                 url=f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={tag_key}',

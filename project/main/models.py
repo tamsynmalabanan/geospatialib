@@ -24,15 +24,6 @@ from . import choices
 import logging
 logger = logging.getLogger('django')
 
-class TaginfoKey(models.Model):
-    key = models.CharField('Key', max_length=512, unique=True)
-    count_all = models.PositiveIntegerField('Elements count', default=0)
-    values_all = models.PositiveIntegerField('Values count', default=0)
-    in_wiki = models.BooleanField('in_wiki', default=False)
-
-    def __str__(self):
-        return self.key
-
 class SpatialRefSys(models.Model):
     srid = models.IntegerField(primary_key=True)
     auth_name = models.CharField(max_length=256)
