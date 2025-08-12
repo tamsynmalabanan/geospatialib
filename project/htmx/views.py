@@ -148,7 +148,8 @@ class LayerList(ListView):
             context['is_filtered'] = len(self.filter_values) > 0
         return context
 
-@require_http_methods(['POST'])
+@require_http_methods(['POST', 'GET'])
+# @require_http_methods(['POST'])
 def find_layers(request):
     response = None
     
