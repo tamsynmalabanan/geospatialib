@@ -8,7 +8,7 @@ class HTMXDomainRestriction:
         self.get_response = get_response
 
     def __call__(self, request):
-        exceptions = []
+        exceptions = ['find_layers']
         app = resolve(request.path)
         if not settings.DEBUG and app.app_name == 'htmx' and app.url_name not in exceptions:
             not_htmx_request = not request.htmx

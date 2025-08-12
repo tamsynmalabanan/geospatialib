@@ -15,7 +15,7 @@ import json
 import logging
 logger = logging.getLogger('django')
 
-MODEL = 'gpt-5'
+MODEL = 'gpt-5-mini'
 
 JSON_RESPONSE_PROMPT = '''
     Return only a raw JSON string with double quotes for all keys and string values.
