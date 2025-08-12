@@ -154,7 +154,7 @@ def find_layers(request):
     response = None
     
     try:
-        data = request.POST.dict()
+        data = request.POST.dict() if request.method == 'POST' else request.GET.dict()
         subject = data.get('subject')
     
         if subject:
