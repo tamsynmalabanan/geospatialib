@@ -115,13 +115,11 @@ class LayerList(ListView):
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
             layer_pks = cache.get(self.cache_key)
-            logger.info(f'CACHED PKS: {len(layer_pks)}')
             queryset = (
                 super().get_queryset().select_related(
                     'collection__url',
                 ).filter(pk__in=layer_pks)
             ) if layer_pks else None
-            logger.info(f'CACHED QUERYSET: {queryset.count()}')
 
             if not queryset:
                 queryset = self.filtered_queryset
@@ -129,6 +127,7 @@ class LayerList(ListView):
                     layer_pks = list(queryset.values_list('pk', flat=True))
                     cache.set(self.cache_key, layer_pks, timeout=60*15)
 
+            logger.info(f'CACHED QUERYSET: {queryset.count()}')
             self.queryset = queryset
 
         queryset = self.queryset
