@@ -136,6 +136,7 @@ class LayerList(ListView):
             self.queryset = queryset
 
         queryset = self.queryset
+        logger.info(queryset)
 
         if queryset and queryset.exists():
             queryset = (
