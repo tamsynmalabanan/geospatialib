@@ -39,9 +39,8 @@ const normalizeGeoJSONFeature = async (feature, {
     
     if (!feature.properties.__gsl_id__ || updateGSLId) feature.properties.__gsl_id__ = generateRandomString()
 
-    if (feature.id && !feature.properties.feature_id) {
-        feature.properties.feature_id = feature.id
-        delete feature.id
+    if (feature.id) {
+        feature.properties.__feature_id__ = feature.id
     }
 
     feature.properties = normalizeFeatureProperties(feature.properties)

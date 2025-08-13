@@ -454,6 +454,7 @@ const getFeatureTitle = (properties) => {
         'name:en',
         'name',
         'feature_id',
+        '__feature_id__',
         'type',
     ]) {
         const matches = Object.keys(properties).filter(i => i === key || i.includes(key))
