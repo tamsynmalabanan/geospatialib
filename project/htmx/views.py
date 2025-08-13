@@ -150,8 +150,9 @@ class LayerList(ListView):
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
-                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))))
-                .order_by(*['-rank', 'title', 'type'])
+                # .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))))
+                # .order_by(*['-rank', 'title', 'type'])
+                .order_by(*['title', 'type'])
             )
             logger.info(f'ORDERED QUERYSET: {queryset.exists()}')
 
