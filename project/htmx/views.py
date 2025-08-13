@@ -128,9 +128,9 @@ class LayerList(ListView):
                     'collection__url',
                 )
                 .filter(pk__in=layer_pks)
-            ) if layer_pks else Q()
+            ) if layer_pks else None
 
-            logger.info(f'QUERYSET FROM CACHED LAYER PKS EXISTS: {queryset.exists()}')
+            logger.info(f'QUERYSET FROM CACHED LAYER PKS EXISTS: {queryset and queryset.exists()}')
 
             if not queryset.exists():
                 queryset = self.filtered_queryset
