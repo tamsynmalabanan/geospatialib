@@ -121,6 +121,7 @@ class LayerList(ListView):
                     'collection__url',
                 ).filter(pk__in=layer_pks)
             ) if layer_pks else None
+            logger.info(f'CACHED QUERYSET: {queryset.count()}')
 
             if not queryset:
                 queryset = self.filtered_queryset
