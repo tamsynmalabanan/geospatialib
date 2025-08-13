@@ -102,6 +102,8 @@ class LayerList(ListView):
             )
         )
 
+        logger.info(f'queryset: {queryset}')
+
         return queryset
 
     @property
