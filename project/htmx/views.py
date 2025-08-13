@@ -95,6 +95,9 @@ class LayerList(ListView):
             .filter(
                 search_vector=SearchQuery(self.raw_query, search_type='raw'),
             )
+            .annotate(
+                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
+            )
         )
 
         return queryset
@@ -119,42 +122,23 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            layer_pks = cache.get(self.cache_key, [])
-            logger.info(f'CACHED LAYER PKS: {len(layer_pks)}')
-
-            queryset = (
-                super().get_queryset()
-                .select_related(
-                    'collection__url',
-                )
-                .filter(pk__in=layer_pks)
-            ) if layer_pks else None
-
-            logger.info(f'QUERYSET FROM CACHED LAYER PKS EXISTS: {queryset and queryset.exists()}')
+            queryset = cache.get(self.cache_key)
 
             if not queryset:
                 queryset = self.filtered_queryset
-                logger.info(f'FILTERED QUERYSEY: {queryset.exists()}')
                 if queryset.exists():
-                    layer_pks = list(queryset.values_list('pk', flat=True))
-                    logger.info(f'FILTERED QUERYSEY LAYER PKS: {len(layer_pks)}')
-                    cache.set(self.cache_key, layer_pks, timeout=60*15)
+                    cache.set(self.cache_key, queryset, timeout=60*15)
 
-            logger.info(f'BEFORE SELF.QUERYSET: {queryset.exists()}')
             self.queryset = queryset
-            logger.info(f'AFTER SELF.QUERYSET: {queryset.exists()}')
 
         queryset = self.queryset
-        logger.info(f'QUERYSET: {queryset.exists()}')
 
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
-                # .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))))
-                # .order_by(*['-rank', 'title', 'type'])
-                .order_by(*['title', 'type'])
+                .annotate(rank=Max('rank'))
+                .order_by(*['-rank', 'title', 'type'])
             )
-            logger.info(f'ORDERED QUERYSET: {queryset.exists()}')
 
         return queryset
 
