@@ -121,13 +121,15 @@ class LayerList(ListView):
                 ).filter(pk__in=layer_pks)
             ) if layer_pks else None
 
+            logger.info(f'BEFORE CACHED QUERYSET: {queryset.count()}')
             if not queryset:
+                logger.info(f'NOT QUERYSET: {queryset.count()}')
                 queryset = self.filtered_queryset
                 if queryset.exists():
                     layer_pks = list(queryset.values_list('pk', flat=True))
                     cache.set(self.cache_key, layer_pks, timeout=60*15)
+            logger.info(f'AFTER CACHED QUERYSET: {queryset.count()}')
 
-            logger.info(f'CACHED QUERYSET: {queryset.count()}')
             self.queryset = queryset
 
         queryset = self.queryset
