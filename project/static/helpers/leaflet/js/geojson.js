@@ -625,7 +625,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
 
         if (!isEditable && limits.active && limits.totalCount > limits.max) {
             if (limits.method === 'limit') {
-                data.features = data.features.slice(0, limits.max)
+                data.features = data.features.slice(-1000)
             } else {
                 let nextZoom = layer._map.getZoom() + 1
     
@@ -634,8 +634,8 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
                 }
     
                 if (limits.method === 'scale') {
-                    
                     const currentScale = getLeafletMeterScale(layer._map)
+                    
                     let minScale = currentScale
                     while (minScale >= currentScale) {
                         minScale = leafletZoomToMeter(nextZoom)

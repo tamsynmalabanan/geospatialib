@@ -582,11 +582,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
         },
     })
 
-    const modalBtnsContainer = customCreateElement({
-        parent:toolbar,
-        className:`d-flex gap-2 flex-nowrap`,
-    })
-
     const clearLegend = (layerLegend, {isInvisible=false, error=false} = {}) => {
         if (!layerLegend) return
 
@@ -846,58 +841,57 @@ const handleLeafletLegendPanel = async (map, parent) => {
     })
 
     map.on('initComplete', async () => {
-        if (Object.keys(map._handlers.getStoredLegendLayers()).length) {
-            const storedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
-            const alertPromise = new Promise((resolve, reject) => {
-                const alert = createModal({
-                    titleText: 'Restore map state?',
-                    parent: document.body,
-                    show: true,
-                    static: true,
-                    closeBtn: false,
-                    centered: true,
-                    contentBody: customCreateElement({
-                        className: 'p-3',
-                        innerHTML: `Do you want to restore the previous map extent and layers?`
-                    }),
-                    footerBtns: {
-                        no: createButton({
-                            className: `btn-danger ms-auto`,
-                            innerText: 'No',
-                            attrs: {'data-bs-dismiss': 'modal'},
-                            events: {click: (e) => {
-                                alert.remove()
-                                resolve(false)
-                            }},
-                        }),
-                        yes: createButton({
-                            className: `btn-success`,
-                            innerText: 'Yes',
-                            attrs: {'data-bs-dismiss': 'modal'},
-                            events: {click: (e) => {
-                                alert.remove()
-                                resolve(true)
-                            }},
-                        }),
-                    }
-                })
-            })
+        if (!Object.keys(map._handlers.getStoredLegendLayers()).length) return
 
-            const restoreMap = await alertPromise
-            if (restoreMap) {
-                if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
-            
-                map._handlers.addStoredLegendLayers().then(() => {
-                    toggleLayersVisibility()
-                })
-            } else {
-                Object.keys(localStorage).forEach(i => {
-                    if (!i.includes(map.getContainer().id)) return
-                    localStorage.removeItem(i)
-                })
-            }
-        }        
-            
-        Array.from(modalBtnsContainer.querySelectorAll('button')).forEach(i => i.removeAttribute('disabled'))
+        const storedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
+        
+        const alertPromise = new Promise((resolve, reject) => {
+            const alert = createModal({
+                titleText: 'Restore map state?',
+                parent: document.body,
+                show: true,
+                static: true,
+                closeBtn: false,
+                centered: true,
+                contentBody: customCreateElement({
+                    className: 'p-3',
+                    innerHTML: `Do you want to restore the previous map extent and layers?`
+                }),
+                footerBtns: {
+                    no: createButton({
+                        className: `btn-danger ms-auto`,
+                        innerText: 'No',
+                        attrs: {'data-bs-dismiss': 'modal', 'tabindex': '-1'},
+                        events: {click: (e) => {
+                            alert.remove()
+                            resolve(false)
+                        }},
+                    }),
+                    yes: createButton({
+                        className: `btn-success`,
+                        innerText: 'Yes',
+                        attrs: {'data-bs-dismiss': 'modal', autofocus: true},
+                        events: {click: (e) => {
+                            alert.remove()
+                            resolve(true)
+                        }},
+                    }),
+                }
+            })
+        })
+
+        const restoreMap = await alertPromise
+        if (restoreMap) {
+            if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
+        
+            map._handlers.addStoredLegendLayers().then(() => {
+                toggleLayersVisibility()
+            })
+        } else {
+            Object.keys(localStorage).forEach(i => {
+                if (!i.includes(map.getContainer().id)) return
+                localStorage.removeItem(i)
+            })
+        }
     })
 }
