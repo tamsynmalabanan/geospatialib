@@ -26,6 +26,9 @@ from helpers.base.utils import create_cache_key, find_nearest_divisible
 from helpers.main.constants import QUERY_BLACKLIST
 from .agent import create_thematic_map
 
+import logging
+logger = logging.getLogger('django')
+
 class LayerList(ListView):
     template_name = 'main/search/results.html'
     model = Layer
@@ -53,6 +56,9 @@ class LayerList(ListView):
             query = query.replace(i, ' ')
         query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in QUERY_BLACKLIST]))
         
+        logger.info(f'query: {query}')
+        logger.info(f'exclusions: {exclusions}')
+
         return query, exclusions
 
     @property
@@ -95,9 +101,6 @@ class LayerList(ListView):
             .annotate(
                 rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
             )
-            # .filter(
-            #     rank__gte=0.01
-            # )
         )
 
         return queryset
@@ -123,10 +126,12 @@ class LayerList(ListView):
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
             queryset = cache.get(self.cache_key)
+
             if not queryset:
                 queryset = self.filtered_queryset
                 if queryset.exists():
                     cache.set(self.cache_key, queryset, timeout=60*15)
+
             self.queryset = queryset
 
         queryset = self.queryset
