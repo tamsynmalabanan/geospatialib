@@ -878,6 +878,13 @@ const addLayerFromData = async (params) => {
             types: ALL_OVERPASS_ELEMENT_TYPES,
             tags: params.tags
         }})}`
+    } else if (params.format.startsWith('ogc-')) {
+        dbIndexedKey = `${params.format};${JSON.stringify({params: {
+            url: params.url,
+            name: params.name,
+            styles: params.styles,
+            srid: params.srid,
+        }})}`
     } else {
         dbIndexedKey = Array(params.format, JSON.stringify({params})).join(';')
         console.log(dbIndexedKey)
