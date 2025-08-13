@@ -119,7 +119,7 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            layer_pks = cache.get(self.cache_key)
+            layer_pks = cache.get(self.cache_key, [])
             logger.info(f'CACHED LAYER PKS: {len(layer_pks)}')
 
             queryset = (
