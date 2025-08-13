@@ -90,15 +90,7 @@ class LayerList(ListView):
                 ]
             })
         
-        queryset = (
-            queryset
-            .filter(
-                search_vector=SearchQuery(self.raw_query, search_type='raw'),
-            )
-            .annotate(
-                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
-            )
-        )
+        queryset = queryset.filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
 
         return queryset
 
@@ -122,28 +114,32 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            queryset = cache.get(self.cache_key)
+            layer_pks = cache.get(self.cache_key)
+            logger.info(f'CACHED PKS: {layer_pks}')
+            queryset = (
+                super().get_queryset().select_related(
+                    'collection__url',
+                ).filter(pk__in=layer_pks)
+            ) if layer_pks else None
 
             if not queryset:
                 queryset = self.filtered_queryset
                 if queryset.exists():
-                    logger.info(f'before caching: {queryset}')
-                    cache.set(self.cache_key, queryset, timeout=60*15)
-                    logger.info(f'after caching: {queryset}')
+                    layer_pks = list(queryset.values_list('pk', flat=True))
+                    logger.info(f'BEFORE CACHING: {layer_pks}')
+                    cache.set(self.cache_key, layer_pks, timeout=60*15)
+                    logger.info(f'AFTER CACHING: {queryset}')
 
             self.queryset = queryset
 
         queryset = self.queryset
-        logger.info(f'self.queryset, {queryset}')
 
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
-                .annotate(rank=Max('rank'))
+                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))))
                 .order_by(*['-rank', 'title', 'type'])
             )
-
-            logger.info(f'queryset, {queryset}')
 
         return queryset
 
