@@ -121,7 +121,7 @@ class LayerList(ListView):
                 ).filter(pk__in=layer_pks)
             ) if layer_pks else None
 
-            logger.info(f'BEFORE CACHED QUERYSET: {queryset.count()}')
+            logger.info(f'BEFORE CACHED QUERYSET: {not queryset}')
             if not queryset:
                 logger.info(f'NOT QUERYSET: {queryset.count()}')
                 queryset = self.filtered_queryset
