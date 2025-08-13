@@ -127,7 +127,9 @@ class LayerList(ListView):
             if not queryset:
                 queryset = self.filtered_queryset
                 if queryset.exists():
+                    logger.info(f'before caching: {queryset}')
                     cache.set(self.cache_key, queryset, timeout=60*15)
+                    logger.info(f'after caching: {queryset}')
 
             self.queryset = queryset
 
