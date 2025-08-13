@@ -56,9 +56,6 @@ class LayerList(ListView):
             query = query.replace(i, ' ')
         query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in QUERY_BLACKLIST]))
         
-        logger.info(f'query: {query}')
-        logger.info(f'exclusions: {exclusions}')
-
         return query, exclusions
 
     @property
@@ -93,6 +90,8 @@ class LayerList(ListView):
                 ]
             })
         
+        logger.info(f'raw query: {self.raw_query}')
+
         queryset = (
             queryset
             .filter(
