@@ -90,7 +90,15 @@ class LayerList(ListView):
                 ]
             })
         
-        queryset = queryset.filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
+        queryset = (
+            queryset
+            .filter(
+                search_vector=SearchQuery(self.raw_query, search_type='raw'),
+            )
+            .annotate(
+                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
+            )
+        )
 
         return queryset
 
@@ -114,31 +122,21 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            layer_pks = cache.get(self.cache_key)
-            queryset = (
-                super().get_queryset().select_related(
-                    'collection__url',
-                ).filter(pk__in=layer_pks)
-            ) if layer_pks else None
+            queryset = cache.get(self.cache_key)
 
-            logger.info(f'BEFORE CACHED QUERYSET: {not queryset}')
             if not queryset:
-                logger.info(f'NOT QUERYSET: {queryset.count()}')
                 queryset = self.filtered_queryset
                 if queryset.exists():
-                    layer_pks = list(queryset.values_list('pk', flat=True))
-                    cache.set(self.cache_key, layer_pks, timeout=60*15)
-            logger.info(f'AFTER CACHED QUERYSET: {queryset.count()}')
+                    cache.set(self.cache_key, queryset, timeout=60*15)
 
             self.queryset = queryset
 
         queryset = self.queryset
-        logger.info(f'SELF.QUERYSET: {queryset.count()}')
 
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
-                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))))
+                .annotate(rank=Max('rank'))
                 .order_by(*['-rank', 'title', 'type'])
             )
 
