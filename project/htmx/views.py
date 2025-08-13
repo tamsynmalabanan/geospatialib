@@ -95,9 +95,6 @@ class LayerList(ListView):
             .filter(
                 search_vector=SearchQuery(self.raw_query, search_type='raw'),
             )
-            .annotate(
-                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
-            )
         )
 
         return queryset
@@ -136,7 +133,7 @@ class LayerList(ListView):
         if queryset and queryset.exists():
             queryset = (
                 self.queryset
-                .annotate(rank=Max('rank'))
+                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))))
                 .order_by(*['-rank', 'title', 'type'])
             )
 
