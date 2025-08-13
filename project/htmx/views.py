@@ -132,7 +132,7 @@ class LayerList(ListView):
 
             logger.info(f'QUERYSET FROM CACHED LAYER PKS EXISTS: {queryset and queryset.exists()}')
 
-            if not queryset.exists():
+            if not queryset:
                 queryset = self.filtered_queryset
                 logger.info(f'FILTERED QUERYSEY: {queryset.exists()}')
                 if queryset.exists():
