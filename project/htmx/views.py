@@ -90,8 +90,6 @@ class LayerList(ListView):
                 ]
             })
         
-        logger.info(f'raw query: {self.raw_query}')
-
         queryset = (
             queryset
             .filter(
@@ -101,8 +99,6 @@ class LayerList(ListView):
                 rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
             )
         )
-
-        logger.info(f'queryset: {queryset}')
 
         return queryset
 
@@ -136,6 +132,7 @@ class LayerList(ListView):
             self.queryset = queryset
 
         queryset = self.queryset
+        logger.info(f'self.queryset, {queryset}')
 
         if queryset and queryset.exists():
             queryset = (
@@ -143,6 +140,8 @@ class LayerList(ListView):
                 .annotate(rank=Max('rank'))
                 .order_by(*['-rank', 'title', 'type'])
             )
+
+            logger.info(f'queryset, {queryset}')
 
         return queryset
 
