@@ -74,6 +74,10 @@ class LayerList(ListView):
 
     @property
     def filtered_queryset(self):
+        query = self.clean_keywords[0]
+        if not query:
+            return
+
         queryset = (
             super().get_queryset()
             .select_related(
@@ -96,7 +100,7 @@ class LayerList(ListView):
                 search_vector=SearchQuery(self.raw_query, search_type='raw'),
             )
             .annotate(
-                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(self.clean_keywords[0]), search_type='websearch'))
+                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(query), search_type='websearch'))
             )
         )
 
