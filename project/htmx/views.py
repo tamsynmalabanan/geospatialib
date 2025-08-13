@@ -76,7 +76,7 @@ class LayerList(ListView):
     def filtered_queryset(self):
         query = self.clean_keywords[0]
         if not query:
-            return
+            return Layer.objects.none()
 
         queryset = (
             super().get_queryset()
