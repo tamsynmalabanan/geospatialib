@@ -134,7 +134,7 @@ class LayerList(ListView):
                 logger.info(f'FILTERED QUERYSET')
                 if queryset.exists():
                     logger.info(f'BEFORE CACHING')
-                    cache.set(self.cache_key, queryset, timeout=60*15)
+                    # cache.set(self.cache_key, queryset, timeout=60*15)
                     logger.info(f'AFTER CACHING')
 
             logger.info(f'BEFORE SELF.QUERYSET')
