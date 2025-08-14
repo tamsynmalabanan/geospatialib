@@ -76,7 +76,8 @@ class LayerList(ListView):
 
     @property
     def cached_queryset(self):
-        pk_list = cache.get(self.cache_key)
+        return cache.get(self.cache_key)
+        # pk_list = cache.get(self.cache_key)
         if not pk_list:
             return Layer.objects.none()
         
@@ -118,9 +119,12 @@ class LayerList(ListView):
     def query_filters(self):
         filters = {}
 
-        pk_list = cache.get(self.cache_key)
-        if pk_list:
-            queryset = Layer.objects.filter(pk__in=pk_list)
+        cached_queryset = cache.get(self.cache_key)
+        if cached_queryset:
+            queryset = Layer.objects.filter(pk__in=cached_queryset.values_list('pk', flat=True))
+        # pk_list = cache.get(self.cache_key)
+        # if pk_list:
+        #     queryset = Layer.objects.filter(pk__in=pk_list)
             
             filters = {
                 field: list(
@@ -144,7 +148,8 @@ class LayerList(ListView):
         if not queryset.exists():
             queryset = self.filtered_queryset
             if queryset.exists():
-                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=60*15)
+                cache.set(self.cache_key, queryset, timeout=60*15)
+                # cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=60*15)
 
         return queryset
 
