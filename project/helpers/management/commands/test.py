@@ -56,13 +56,9 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        # collection = Collection.objects.filter(format='overpass').first()
-        # collection.format = 'osm'
-        # collection.save()
-
-        # for layer in Layer.objects.filter(collection=collection):
-        #     layer.type = 'osm'
-        #     layer.name = layer.tags = layer.title = f'[{'='.join([f'"{i}"' for i in layer.tags.split('=')])}]'
-        #     layer.save()
+        for layer in Layer.objects.filter(type='overpass'):
+            layer.type = 'osm'
+            layer.name = layer.tags = layer.title = f'[{'='.join([f'"{i}"' for i in layer.tags.split('=')])}]'
+            layer.save()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
