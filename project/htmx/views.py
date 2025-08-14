@@ -142,6 +142,7 @@ class LayerList(ListView):
 
         queryset = self.queryset
         logger.info(f'AFTER SELF.QUERYSET')
+        logger.info(f'{queryset and queryset.exists()}')
 
         if queryset and queryset.exists():
             logger.info(f'BEFORE SORTING QUERYSET')
