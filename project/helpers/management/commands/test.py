@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
         for layer in Layer.objects.filter(collection=collection):
             layer.type = 'osm'
-            layer.name = layer.tags = layer.title = '='.join([f'"{i}"' for i in layer.tags.split('=')])
+            layer.name = layer.tags = layer.title = f'[{'='.join([f'"{i}"' for i in layer.tags.split('=')])}]'
             layer.save()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
