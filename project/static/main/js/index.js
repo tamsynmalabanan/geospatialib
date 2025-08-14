@@ -6,7 +6,7 @@ const zoomToSearchResultBbox = () => getSearchMap()?.fitBounds(L.geoJSON(turf.bb
 
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
-    const properties = JSON.parse(addBtn.dataset.layerData)
+    const properties = JSON.parse(addBtn.dataset.layerParams)
     const group = getSearchMap()._handlers.getLayerGroups().search
     const strokeColor = manageHSLAColor(rgbToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor))
     
