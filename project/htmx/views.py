@@ -75,6 +75,15 @@ class LayerList(ListView):
         return create_cache_key(['layer_list']+[self.raw_query]+self.filter_values)
 
     @property
+    def cached_queryset(self):
+        pk_list = cache.get(self.cache_key)
+        if not pk_list:
+            return Layer.objects.none()
+        
+        preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(pk_list)])
+        return super().get_queryset().select_related('collection__url').filter(pk__in=pk_list).order_by(preserved_order)
+
+    @property
     def filtered_queryset(self):
         query = self.clean_keywords[0]
         if not query:
@@ -107,16 +116,20 @@ class LayerList(ListView):
 
     @property
     def query_filters(self):
-        queryset = Layer.objects.filter(pk__in=self.queryset.values_list('pk', flat=True))
-        
-        filters = {
-            field: list(
-                queryset
-                .values(field)
-                .annotate(count=Count('id', distinct=True))
-                .order_by('-count')
-            ) for field in self.filter_fields
-        }
+        filters = {}
+
+        pk_list = cache.get(self.cache_key)
+        if pk_list:
+            queryset = Layer.objects.filter(pk__in=pk_list)
+            
+            filters = {
+                field: list(
+                    queryset
+                    .values(field)
+                    .annotate(count=Count('id', distinct=True))
+                    .order_by('-count')
+                ) for field in self.filter_fields
+            }
 
         for field in self.filter_fields:
             value = self.request.GET.get(field)
@@ -126,17 +139,14 @@ class LayerList(ListView):
         return filters
 
     def get_queryset(self):
-        if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            queryset = cache.get(self.cache_key)
+        queryset = self.cached_queryset
 
-            if not queryset:
-                queryset = self.filtered_queryset
-                if queryset.exists():
-                    cache.set(self.cache_key, queryset, timeout=60*15)
+        if not queryset.exists():
+            queryset = self.filtered_queryset
+            if queryset.exists():
+                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=60*15)
 
-            self.queryset = queryset
-
-        return self.queryset
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
