@@ -126,23 +126,31 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            queryset = cache.get(self.cache_key)
+            queryset = cache.get(self.cache_key, Layer.objects.none())
+            logger.info(f'CACHED QUERYSET')
 
             if not queryset:
                 queryset = self.filtered_queryset
+                logger.info(f'FILTERED QUERYSET')
                 if queryset.exists():
+                    logger.info(f'BEFORE CACHING')
                     cache.set(self.cache_key, queryset, timeout=60*15)
+                    logger.info(f'AFTER CACHING')
 
+            logger.info(f'BEFORE SELF.QUERYSET')
             self.queryset = queryset
 
         queryset = self.queryset
+        logger.info(f'AFTER SELF.QUERYSET')
 
         if queryset and queryset.exists():
+            logger.info(f'BEFORE SORTING QUERYSET')
             queryset = (
                 self.queryset
                 .annotate(rank=Max('rank'))
                 .order_by(*['-rank', 'title', 'type'])
             )
+            logger.info(f'AFTER SORTING QUERYSET')
 
         return queryset
 
