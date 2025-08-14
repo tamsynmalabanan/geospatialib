@@ -225,7 +225,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 categories = {'landmarks': {
                     'title': 'Landmarks',
                     'query': ' '.join(landmarks),
-                    'overpass': {key:[] for key in name_keys},
+                    'osm': {key:[] for key in name_keys},
                 }} | categories
 
                 for i in landmarks:
@@ -250,14 +250,14 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     
                     for key in name_keys:
                         if key in keys:
-                            categories['landmarks']['overpass'][key].append(tag_value)     
+                            categories['landmarks']['osm'][key].append(tag_value)     
         except Exception as e:
             logger.error(f'json.loads(params.landmarks), {e}')
 
         overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
             url=URL.objects.get_or_create(path=overpass_url)[0],
-            format='overpass',
+            format='osm',
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
 
@@ -267,7 +267,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             categories[id]['layers'] = {}
             
             filter_tags = []
-            for tag_key, tag_values in values.get('overpass', {}).items():
+            for tag_key, tag_values in values.get('osm', {}).items():
                 tag_values = list(set(tag_values))
                 filter_tags = set([tag_key] if len(tag_values) == 0 else [f'{tag_key}={i}' if not is_landmarks else f'{tag_key}~{i},i' for i in tag_values])
 
@@ -302,7 +302,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                                 collection=overpass_collection,
                                 name=f'osm-{tag}',
                                 defaults={
-                                    'type':'overpass',
+                                    'type':'osm',
                                     'srid':srs,
                                     'bbox':WORLD_GEOM,
                                     'tags':tag,
@@ -318,7 +318,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 for layer in set(list(layers)):
                     categories[id]['layers'][layer.pk] = layer.data
 
-            del categories[id]['overpass']
+            del categories[id]['osm']
 
             query = [i for i in values.get('query','').split() if i not in QUERY_BLACKLIST]
 

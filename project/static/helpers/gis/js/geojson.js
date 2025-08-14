@@ -387,7 +387,7 @@ const createFeaturePropertiesTable = (properties, {
 const fetchGeoJSONHandlers = (name) => {
     return {
         nominatim: fetchNominatim,
-        overpass: fetchOverpass,
+        osm: fetchOverpass,
         geojson: fetchGeoJSON,
         file: fetchFileData,
         csv: fetchCSV,

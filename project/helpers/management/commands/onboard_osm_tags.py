@@ -24,7 +24,7 @@ class Command(BaseCommand):
         overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
             url=URL.objects.get_or_create(path=overpass_url)[0],
-            format='overpass',
+            format='osm',
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
         keywords = get_keywords_from_url(overpass_url) + ['openstreetmap', 'osm']
@@ -40,9 +40,9 @@ class Command(BaseCommand):
                 
                 layer, _ = Layer.objects.get_or_create(
                     collection=overpass_collection,
-                    name=f'osm-{tag}',
+                    name=tag,
                     defaults={
-                        'type':'overpass',
+                        'type':'osm',
                         'srid':srs,
                         'bbox':WORLD_GEOM,
                         'tags':tag,

@@ -34,7 +34,7 @@
                                 150
                             {% elif type == 'xyz' %}
                                 200
-                            {% elif type == 'overpass' %}
+                            {% elif type == 'osm' %}
                                 250
                             {% else %}
                                 300
@@ -43,7 +43,7 @@
                     >{{type}}</span>
                 </div>
                 <h6 class="card-title">{{data.title}}</h6>
-                {% if type == 'wms' or type == 'wfs' or type == 'overpass' %}
+                {% if type == 'wms' or type == 'wfs' %}
                     <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{data.name}}</h6>
                 {% endif %}
                 <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{url|domain}}</a>

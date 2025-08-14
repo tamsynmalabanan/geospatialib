@@ -49,7 +49,7 @@ class Command(BaseCommand):
                     if values_all == 0:
                         raise Exception('No values.')
 
-                    layers[key] = [key]
+                    layers[f'"{key}"'] = [key]
 
                     response = get_response(f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={key}')
                     if not response:
@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
                     prevalent_values = [i for i in response.json().get('data', []) if i.get('value')]
                     keywords = [i.get('value', '').strip() for i in prevalent_values] + [key]
-                    layers[key] = keywords
+                    layers[f'"{key}"'] = keywords
                     
                     for j in prevalent_values[:20]:
                         try:
@@ -69,7 +69,7 @@ class Command(BaseCommand):
                             if not value or not value.strip():
                                 raise Exception('Invalid value.')
 
-                            layers[f'{key}={value}'] = keywords
+                            layers[f'"{key}"="{value}"'] = keywords
                         except Exception as e:
                             print(e)
                 except Exception as e:

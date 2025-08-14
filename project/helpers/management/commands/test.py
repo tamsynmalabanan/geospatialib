@@ -53,38 +53,16 @@ def test_get_collection_data():
     data = get_collection_data(url, delay=False)
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
-def test_ai_agent():
-
-    user_prompt = "Heat island intensity across urban landscapes in Metro Manila"
-    # user_prompt = "San Marcelino Zambales solar site screening"
-    # user_prompt = "solar site screening"
-    # user_prompt = "Favorite Ice Cream Flavors by Horoscope Sign"
-
-    # params = create_thematic_map(user_prompt)
-    # if params:
-    #     print('title: ', params.get('title'))
-    #     print('place: ', params.get('place'))
-    #     print('bbox: ', params.get('bbox'))
-    #     for id, values in params.get('categories', {}).items():
-    #         print('category: ', id, values.get('title'))
-    #         print('description: ', values.get('description'))
-    #         print('query: ', values.get('query'))
-    #         print('overpass: ', values.get('overpass'))
-    #         print('layers: ', len(values.get('layers', [])))
-    #         for layer in values.get('layers', []):
-    #             print(layer.get('title', ''))
-
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        # URL.objects.all().delete()
-        # test_get_collection_data()
+        collection = Collection.objects.filter(format='overpass').first()
+        collection.format = 'osm'
+        collection.save()
 
-        # test_ai_agent()
-
-        # layers = get_ogc_layers('https://geo.rijkswaterstaat.nl/services/ogc/gdr/militaire_gebieden/ows?', 'ogc-wfs')
-        # print(layers)
-
-        # Layer.objects.filter(type='overpass').delete()
+        for layer in Layer.objects.filter(collection=collection):
+            layer.type = 'osm'
+            layer.name = layer.tags = layer.title = '='.join([f'"{i}"' for i in layer.tags.split('=')])
+            layer.save()
 
         self.stdout.write(self.style.SUCCESS('Done.'))
