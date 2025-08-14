@@ -8,6 +8,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+from functools import cached_property
+
 
 import json
 import requests
@@ -35,13 +37,13 @@ class LayerList(ListView):
     context_object_name = 'layers'
     paginate_by = 30
 
-    @property
+    @cached_property
     def filter_fields(self):
         return [
             'type',
         ]
 
-    @property
+    @cached_property
     def clean_keywords(self):
         query = self.request.GET.get('query', '').strip().lower()
         for i in ['\'', '"']:
@@ -58,17 +60,17 @@ class LayerList(ListView):
         
         return query, exclusions
 
-    @property
+    @cached_property
     def raw_query(self):
         query, exclusions = self.clean_keywords
         return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
     
-    @property
+    @cached_property
     def filter_values(self):
         values = sorted([str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != ''])
         return values
 
-    @property
+    @cached_property
     def cache_key(self):
         return create_cache_key(['layer_list']+[self.raw_query]+self.filter_values)
 
@@ -96,21 +98,20 @@ class LayerList(ListView):
         
         queryset = (
             queryset
-            .filter(
-                search_vector=SearchQuery(self.raw_query, search_type='raw'),
-            )
-            .annotate(
-                rank=SearchRank(F('search_vector'), SearchQuery(' OR '.join(query), search_type='websearch'))
-            )
-        )
+            .filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
+            .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(query), search_type='websearch'))))
+            .order_by(*['-rank', 'title', 'type'])
+        )[:1000]
 
         return queryset
 
     @property
     def query_filters(self):
+        queryset = Layer.objects.filter(pk__in=self.queryset.values_list('pk', flat=True))
+        
         filters = {
             field: list(
-                self.queryset
+                queryset
                 .values(field)
                 .annotate(count=Count('id', distinct=True))
                 .order_by('-count')
@@ -126,34 +127,16 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'queryset') or getattr(self, 'queryset') is None:
-            queryset = cache.get(self.cache_key, Layer.objects.none())
-            logger.info(f'CACHED QUERYSET')
+            queryset = cache.get(self.cache_key)
 
             if not queryset:
                 queryset = self.filtered_queryset
-                logger.info(f'FILTERED QUERYSET')
                 if queryset.exists():
-                    logger.info(f'BEFORE CACHING')
-                    # cache.set(self.cache_key, queryset, timeout=60*15)
-                    logger.info(f'AFTER CACHING')
+                    cache.set(self.cache_key, queryset, timeout=60*15)
 
-            logger.info(f'BEFORE SELF.QUERYSET')
             self.queryset = queryset
 
-        queryset = self.queryset
-        logger.info(f'AFTER SELF.QUERYSET')
-        logger.info(f'{queryset and queryset.exists()}')
-
-        if queryset and queryset.exists():
-            logger.info(f'BEFORE SORTING QUERYSET')
-            queryset = (
-                self.queryset
-                .annotate(rank=Max('rank'))
-                .order_by(*['-rank', 'title', 'type'])
-            )
-            logger.info(f'AFTER SORTING QUERYSET')
-
-        return queryset
+        return self.queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
