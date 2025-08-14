@@ -165,6 +165,12 @@ const rawDataToLayerData = (rawData, params) => {
         if (params.type === 'csv') {
             return csvToGeoJSON(rawData, params)
         }
+
+        if (params.type === 'osm') {
+            const parser = new DOMParser()
+            const xmlDoc = parser.parseFromString(rawData, "text/xml")
+            return osmtogeojson(xmlDoc)
+        }
     } catch (error) {
         console.log(error)
     }
