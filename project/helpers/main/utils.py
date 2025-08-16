@@ -10,7 +10,7 @@ def get_clean_url(url, format, exclusions=[]):
     if format == 'xyz':
         return get_domain_url(url)
     
-    if format.startswith('ogc-'):
+    if format.startswith('ogc-') or format == 'overpass':
         return remove_query_params(url) or url
     
     return url

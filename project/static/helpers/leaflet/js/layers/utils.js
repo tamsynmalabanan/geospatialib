@@ -258,9 +258,9 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 }
 
 const getLeafletLayerBbox = async (layer) => {
-    const dbIndexedKey = layer._dbIndexedKey ?? ''
-    if (layer instanceof L.GeoJSON && staticFormats.find(i => dbIndexedKey.startsWith(i))) {
-        const geojson = (await getFromGISDB(dbIndexedKey))?.gisData
+    const indexedDBKey = layer._indexedDBKey ?? ''
+    if (layer instanceof L.GeoJSON && staticFormats.find(i => indexedDBKey.startsWith(i))) {
+        const geojson = (await getFromGISDB(indexedDBKey))?.gisData
         if (geojson) return turf.bbox(geojson)
     }
 
@@ -745,18 +745,69 @@ const urlToLeafletLayer = async ({
     if (!group) return
 
     const format = params.format
-    const dbIndexedKey = Array(format, JSON.stringify({params})).join(';')
+    const indexedDBKey = createLayerIndexedDBKey(params)
 
     const fileName = params.name.split('.')
-    params.type = format === 'file' ? fileName[fileName.length-1] : (params.type ?? format)
+    params.type = format === 'file' ? (params.type ?? fileName[fileName.length-1]) : (params.type ?? format)
 
-    const layer = await createLeafletLayer(params, {dbIndexedKey, group, add})
+    const layer = await createLeafletLayer(params, {indexedDBKey, group, add})
 
     return layer
 }
 
+const createLayerIndexedDBKey = (params) => {
+    const format = params.format
+
+    let formatParams
+    
+    if (format === 'overpass') {
+        formatParams = {
+            types: ALL_OVERPASS_ELEMENT_TYPES,
+            tags: params.tags
+        }
+    } else if (format.startsWith('ogc-')) {
+        formatParams = {
+            url: params.url,
+            name: params.name,
+            styles: params.styles,
+            srid: params.srid,
+        }
+    } else if (format === 'osm') {
+        formatParams = {
+            url: params.url,
+            format,
+            type: params.type,
+        }
+    } else if (format === 'file') {
+        formatParams = {
+            url: params.url,
+            format,
+            name: params.name,
+            type: params.type,
+        }
+    } else {
+        formatParams = params
+        console.log(formatParams)
+    }
+
+    return `${format};${JSON.stringify({params:formatParams})}`
+}
+
+const addLayerFromData = async () => {
+    const params = JSON.parse(event.target.dataset.layerParams)
+
+    if (params.bbox) params.bbox = JSON.stringify(params.bbox)
+    if (params.tags) params.tags = cleanOverpassTags(params.tags)
+
+    createLeafletLayer(params, {
+        indexedDBKey: createLayerIndexedDBKey(params),
+        group: getSearchMap()?._handlers.getLayerGroups().library,
+        add: true,
+    })
+}
+
 const createLeafletLayer = async (params, {
-    dbIndexedKey,
+    indexedDBKey,
     data,
     group,
     add,
@@ -764,16 +815,18 @@ const createLeafletLayer = async (params, {
 } = {}) => {
     const map = group._map
     const pane = createCustomPane(map)
+
+    const format = (params.format ?? 'geojson').toLowerCase()
     const type = (params.type ?? 'geojson').toLowerCase()
 
     const attribution = (params.attribution ?? '').trim()
     params.attribution = attribution && !Array('none', '').includes(attribution.toLowerCase()) ? attribution : createAttributionTable(data)?.outerHTML
 
     let layer
-    
-    if (Array('geojson', 'csv', 'wfs', 'osm', 'json', 'unknown', 'overpass').includes(type)) {
+
+    if (Array(format, type).some(i => Array('geojson', 'csv', 'wfs', 'osm', 'overpass', 'unknown', 'json').includes(i))) {
         layer = await getLeafletGeoJSONLayer({
-            dbIndexedKey,
+            indexedDBKey,
             geojson: data,
             group,
             pane,
@@ -807,7 +860,7 @@ const createLeafletLayer = async (params, {
 
         if (layer) {
             layer._params = params
-            layer._dbIndexedKey = dbIndexedKey
+            layer._indexedDBKey = indexedDBKey
             layer._group = group
             layer._properties = properties ?? {
                 info: {
@@ -867,35 +920,4 @@ const fileToLeafletLayer = async ({
     const layer = await createLeafletLayer(params, {data, group, add})
     
     return layer
-}
-
-const addLayerFromData = async () => {
-    const params = JSON.parse(event.target.dataset.layerParams)
-
-    if (params.bbox) params.bbox = JSON.stringify(params.bbox)
-    if (params.tags) params.tags = cleanOverpassTags(params.tags)
-
-    let dbIndexedKey
-    if (params.format === 'overpass') {
-        dbIndexedKey = `${params.format};${JSON.stringify({params: {
-            types: ALL_OVERPASS_ELEMENT_TYPES,
-            tags: params.tags
-        }})}`
-    } else if (params.format.startsWith('ogc-')) {
-        dbIndexedKey = `${params.format};${JSON.stringify({params: {
-            url: params.url,
-            name: params.name,
-            styles: params.styles,
-            srid: params.srid,
-        }})}`
-    } else {
-        dbIndexedKey = Array(params.format, JSON.stringify({params})).join(';')
-        console.log(dbIndexedKey)
-    }
-
-    createLeafletLayer(params, {
-        dbIndexedKey,
-        group: getSearchMap()?._handlers.getLayerGroups().library,
-        add: true,
-    })
 }

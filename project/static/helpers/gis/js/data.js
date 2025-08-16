@@ -167,14 +167,11 @@ const rawDataToLayerData = (rawData, params) => {
         }
 
         const normalRawData = rawData.toLowerCase()
-        if (params.type === 'osm' || Array('openstreetmap', 'osm').some(i => normalRawData.includes(i))) {
-            if (params.type === 'json') {
-                return osmtogeojson(JSON.parse(rawData))
-            } else {
-                const parser = new DOMParser()
-                const xmlDoc = parser.parseFromString(rawData, "text/xml")
-                return osmtogeojson(xmlDoc)
-            }
+        if (
+            Array(params.format, params.type).some(i => i === 'osm') 
+            || Array('openstreetmap', 'osm').some(i => normalRawData.includes(i))
+        ) {
+            return osmDataToGeoJSON(rawData)
         }
     } catch (error) {
         console.log(error)

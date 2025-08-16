@@ -386,6 +386,7 @@ const createFeaturePropertiesTable = (properties, {
 
 const fetchGeoJSONHandlers = (name) => {
     return {
+        osm: fetchOSMData,
         nominatim: fetchNominatim,
         overpass: fetchOverpass,
         geojson: fetchGeoJSON,
@@ -659,4 +660,19 @@ const simplifyFeature = (feature, {
     } catch (error) {
         console.log(error)
     }
+}
+
+const osmDataToGeoJSON = (data) => {
+    let parsedData
+    
+    try {
+        parsedData = JSON.parse(data)
+    } catch {
+        const parser = new DOMParser()
+        parsedData = parser.parseFromString(data, "text/xml")
+    }
+
+    if (!parsedData) return
+
+    return osmtogeojson(parsedData)
 }

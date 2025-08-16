@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (layers) {
             for (const layer of Object.values(layers)) {
-                let currentKey = layer.dbIndexedKey
+                let currentKey = layer.indexedDBKey
                 if (!currentKey.startsWith('local')) continue
                 
                 if (layer.editable) {
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentKey = `${id}--version${Number(version ?? 2)-1}`
                 }
                 
-                layer.dbIndexedKey = currentKey
+                layer.indexedDBKey = currentKey
                 layer.data = await getFromGISDB(currentKey)
             }
         

@@ -6,7 +6,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
     const feature = layer.feature
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
-    const dbIndexedKey = (geojsonLayer ?? layer)._dbIndexedKey
+    const indexedDBKey = (geojsonLayer ?? layer)._indexedDBKey
 
     const group = layer._group ?? geojsonLayer?._group
     if (!group) return
@@ -29,7 +29,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 return turf.featureCollection(layer.getLayers().map(l => l.feature))
             }
 
-            return (await getFromGISDB(dbIndexedKey))?.gisData
+            return (await getFromGISDB(indexedDBKey))?.gisData
         }
     })()
 
@@ -40,9 +40,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const isSearch = group._name === 'search'
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
-    const localLayer = (dbIndexedKey ?? '').startsWith('local')
-    const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(dbIndexedKey)).gisData.features.length <= 1000
-    const isMapDrawControlLayer = editableLayer && (dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)
+    const localLayer = (indexedDBKey ?? '').startsWith('local')
+    const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(indexedDBKey)).gisData.features.length <= 1000
+    const isMapDrawControlLayer = editableLayer && (indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey)
 
     const measureId = `${geojsonLayer?._leaflet_id}-${feature?.properties.__gsl_id__}`
     const isMeasured = (map._measuredFeatures ?? []).includes(measureId) && layer._measuredFeature
@@ -103,19 +103,19 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
                     const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
 
-                    const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                    const {gisData, queryExtent} = await getFromGISDB(indexedDBKey)
                     gisData.features = [
                         ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                         newFeature
                     ]
 
                     await saveToGISDB(turf.clone(gisData), {
-                        id: dbIndexedKey,
+                        id: indexedDBKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })
 
                     group.getLayers().forEach(i => {
-                        if (i._dbIndexedKey !== dbIndexedKey) return
+                        if (i._indexedDBKey !== indexedDBKey) return
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                     })
 
@@ -151,19 +151,19 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
                     const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
 
-                    const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                    const {gisData, queryExtent} = await getFromGISDB(indexedDBKey)
                     gisData.features = [
                         ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                         newFeature
                     ]
 
                     await saveToGISDB(turf.clone(gisData), {
-                        id: dbIndexedKey,
+                        id: indexedDBKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })
 
                     group.getLayers().forEach(i => {
-                        if (i._dbIndexedKey !== dbIndexedKey) return
+                        if (i._indexedDBKey !== indexedDBKey) return
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                     })
 
@@ -199,19 +199,19 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
                     const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
 
-                    const {gisData, queryExtent} = await getFromGISDB(dbIndexedKey)
+                    const {gisData, queryExtent} = await getFromGISDB(indexedDBKey)
                     gisData.features = [
                         ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                         newFeature
                     ]
 
                     await saveToGISDB(turf.clone(gisData), {
-                        id: dbIndexedKey,
+                        id: indexedDBKey,
                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                     })
 
                     group.getLayers().forEach(i => {
-                        if (i._dbIndexedKey !== dbIndexedKey) return
+                        if (i._indexedDBKey !== indexedDBKey) return
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                     })
 
@@ -300,7 +300,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     geojsonLayer._addBtn.click()
                 } else {
                     createLeafletLayer(layer._params, {
-                        ...(dbIndexedKey && !feature ? {dbIndexedKey} : {data: layerGeoJSON}),
+                        ...(indexedDBKey && !feature ? {indexedDBKey} : {data: layerGeoJSON}),
                         group: (feature || !isLegendGroup) ? map._handlers.getLayerGroups().local : group,
                         add: true,
                         properties: isLegendGroup ? cloneLeafletLayerStyles(layer) : null
@@ -308,10 +308,10 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 }
             }
         },
-        clearData: !layer._dbIndexedKey ? null : {
+        clearData: !layer._indexedDBKey ? null : {
             innerText: `Clear stored data`,
             btnCallback: async () => {
-                deleteFromGISDB(geojsonLayer._dbIndexedKey)
+                deleteFromGISDB(geojsonLayer._indexedDBKey)
             }
         },
         remove: !isLegendGroup || isLegendFeature ? null : {

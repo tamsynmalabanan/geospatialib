@@ -8,7 +8,7 @@ from urllib.parse import unquote, urlparse, parse_qs
 from datetime import timedelta
 
 from main.tasks import onboard_collection
-from main.models import Collection
+from main.models import Collection, SpatialRefSys
 from helpers.base.utils import (
     get_first_substring_match, 
     create_cache_key, 
@@ -88,7 +88,7 @@ def get_layers(url, format):
 
             url = unquote(url)
 
-            if format in ['geojson', 'csv']:
+            if format in ['geojson', 'csv', 'osm']:
                 name = os.path.normpath(url).split(os.sep)[-1]
                 layers = {name: {
                     'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
@@ -108,10 +108,13 @@ def get_layers(url, format):
                 }}
             
             if format == 'file':
-                layers = {i:{
-                    'title': '.'.join(os.path.normpath(i).split(os.sep)[-1].split('.')[:-1]),
-                    'type': i.split('.')[-1],
-                } for i in get_file_names(url)}
+                for i in get_file_names(url):
+                    i = i.replace('\\', '/')
+                    filename = os.path.normpath(i).split('/')[-1].split(os.sep)[-1]
+                    layers[i] = {
+                        'title': '.'.join(filename.split('.')[:-1]) if '.' in filename else filename,
+                        'type': filename.split('.')[-1] if '.' in filename else 'unknown',
+                    }
 
             if format == 'overpass':
                 parts = parse_qs(urlparse(url).query).get('data', [''])[0].split(';')
@@ -126,18 +129,6 @@ def get_layers(url, format):
                     'type': 'overpass',
                     'bbox': list(WORLD_GEOM.extent),
                 } for tag in list(set(tags))}
-            
-            if format == 'osm':
-                pass
-                # else:
-                #     name = os.path.normpath(url).split(os.sep)[-1]
-                #     layers = {name: {
-                #         'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
-                #         'tags': name,
-                #         'type': 'osm',
-                #         'bbox': list(WORLD_GEOM.extent),
-                #     }}
-                
     except Exception as e:
         logger.error(f'get layers, {e}')
 
@@ -160,15 +151,16 @@ def get_collection_data(url, format=None):
     if not format:
         return
     
-    url = get_clean_url(url, format, exclusions=['xyz'])
-    cache_key = create_cache_key(['onboard_collection', url, format])
+    clean_url = get_clean_url(url, format, exclusions=['xyz'])
+    cache_key = create_cache_key(['onboard_collection', clean_url, format])
 
-    data = {'layers':{}, 'cache_key':cache_key, 'url':url, 'format':format}
+    data = {'layers':{}, 'cache_key':cache_key, 'url':clean_url, 'format':format}
 
     collection = Collection.objects.filter(
-        url__path=url,
+        url__path=clean_url,
         format=format,
         layers__isnull=False,
+        dynamic=False,
         last_update__gte=timezone.now()-timedelta(days=7)
     ).first()
 
@@ -188,10 +180,13 @@ def get_collection_data(url, format=None):
             data['layers'] = layers
         cache.set(cache_key, data, timeout=60*15)
     
-    if settings.DEBUG:
-        onboard_collection(cache_key)
-    else:
-        onboard_collection.delay(cache_key)
+    try:
+        if settings.DEBUG:
+            onboard_collection(cache_key)
+        else:
+            onboard_collection.delay(cache_key)
+    except Exception as e:
+        logger.error(f'onboard collection error: {e}')
 
     return data
 

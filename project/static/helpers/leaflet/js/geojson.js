@@ -2,7 +2,7 @@ const getLeafletGeoJSONLayer = async ({
     geojson,
     group,
     pane = 'overlayPane',
-    dbIndexedKey,
+    indexedDBKey,
     properties = {},
     customStyleParams = {},
     params = {},
@@ -104,7 +104,7 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._dbIndexedKey === group._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
+            const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
             const properties = cleanFeatureProperties(feature.properties)
 
             if (Object.keys(properties).length || isMapDrawControlLayer) {
@@ -336,19 +336,19 @@ const getLeafletGeoJSONLayer = async ({
                                     newFeature.properties = newProperties
                                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                                    const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._dbIndexedKey)
+                                    const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
                                     gisData.features = [
                                         ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
                                         newFeature
                                     ]
 
                                     await saveToGISDB(turf.clone(gisData), {
-                                        id: geojsonLayer._dbIndexedKey,
+                                        id: geojsonLayer._indexedDBKey,
                                         queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
                                     })
 
                                     group.getLayers().forEach(i => {
-                                        if (i._dbIndexedKey !== geojsonLayer._dbIndexedKey) return
+                                        if (i._indexedDBKey !== geojsonLayer._indexedDBKey) return
                                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
                                     })
 
@@ -421,9 +421,9 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     if (group._map._legendLayerGroups.includes(group)) {
-        geojsonLayer._dbIndexedKey = geojson ? await saveToGISDB(
-            geojson, {...(dbIndexedKey ? {id:dbIndexedKey} : {name:geojsonLayer._params.name})}
-        ) : dbIndexedKey
+        geojsonLayer._indexedDBKey = geojson ? await saveToGISDB(
+            geojson, {...(indexedDBKey ? {id:indexedDBKey} : {name:geojsonLayer._params.name})}
+        ) : indexedDBKey
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
         geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false}))
@@ -492,8 +492,8 @@ const getLeafletGeoJSONData = async (layer, {
 } = {}) => {
     if (!layer) return
 
-    const dbIndexedKey = layer._dbIndexedKey
-    if (!dbIndexedKey) return
+    const indexedDBKey = layer._indexedDBKey
+    if (!indexedDBKey) return
     
     const map = layer._map ?? layer._group?._map
     if (!map) return
@@ -510,7 +510,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    let data = geojson?.features?.length ? geojson : (await getGeoJSON(dbIndexedKey, {
+    let data = geojson?.features?.length ? geojson : (await getGeoJSON(indexedDBKey, {
         queryGeom,
         zoom: map.getZoom(),
         controller,
@@ -602,7 +602,7 @@ const isUnderenderedLayer = (layer) => {
 const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateCache=true} = {}) => {
     if (!layer || !layer._map || isUnderenderedLayer(layer)) return
 
-    const isEditable = layer._dbIndexedKey === layer._map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey
+    const isEditable = layer._indexedDBKey === layer._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
     const preventUpdate = isEditable && layer._map._drawControl?._editMode
 
     layer.fire('dataupdating')

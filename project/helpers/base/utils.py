@@ -135,7 +135,7 @@ def get_decoded_response(response):
     try:
         return response.content.decode('utf-8')
     except Exception as e:
-        logger.error(f'get_decoded_response, {e}')
+        return None
 
 def replace_url_placeholders(url, values={}):
     placeholders = re.findall(r'\{(.*?)\}', url)

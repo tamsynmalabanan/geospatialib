@@ -6,6 +6,9 @@ import pandas as pd, geopandas as gpd
 import io
 from fiona.io import MemoryFile
 from urllib.parse import unquote
+import osm2geojson
+import codecs
+import os
 
 from main.models import SpatialRefSys
 from helpers.base.utils import get_response, get_response_file
@@ -82,37 +85,33 @@ def validate_geojson(url, name, params):
     try:
         response = get_response(url, raise_for_status=True)
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
-        bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-        params.update({
-            'bbox': bbox,
-            'srid': srid
-        })
+        
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
         return params
     except Exception as e:
         logger.error(f'validate_geojson, {e}')
             
 def validate_osm(url, name, params):
     try:
-        # response = get_response(url, raise_for_status=True)
-        # geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
-        # bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-        # params.update({
-        #     'bbox': bbox,
-        #     'srid': srid
-        # })
+        response = get_response(url, raise_for_status=True)
+        text = response.text
+        
+        if text.startswith('{'):
+            geojson_obj = osm2geojson.json2geojson(json.loads(text), filter_used_refs=False, log_level='INFO')
+        else:
+            geojson_obj = osm2geojson.xml2geojson(text, filter_used_refs=False, log_level='INFO')
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj)
+        params['srid'] = DEFAULT_SRID
         return params
     except Exception as e:
         logger.error(f'validate_osm, {e}')
 
 def validate_overpass(url, name, params):
     try:
-        # response = get_response(url, raise_for_status=True)
-        # geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
-        # bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-        # params.update({
-        #     'bbox': bbox,
-        #     'srid': srid
-        # })
+        params['bbox'] = WORLD_GEOM
+        params['srid'] = DEFAULT_SRID
         return params
     except Exception as e:
         logger.error(f'validate_overpass, {e}')
@@ -122,11 +121,9 @@ def validate_csv(url, name, params):
         response = get_response(url, raise_for_status=True)
         geojson_obj, params = csv_to_geojson(io.StringIO(response.text), params)
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
-        bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-        params.update({
-            'bbox': bbox,
-            'srid': srid
-        })
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
         return params
     except Exception as e:
         logger.error(f'validate_csv, {e}')
@@ -142,7 +139,7 @@ def validate_file(url, name, params):
         
         if "zip" in file_details.get('content_type', ''):
             files = extract_zip(file, filename)
-            file = files.get(name)
+            file = files.get(os.path.normpath(name))
         
         geojson_obj = None
         srid = DEFAULT_SRID
@@ -155,25 +152,29 @@ def validate_file(url, name, params):
             geojson_obj, srid = get_geojson_metadata(file)
 
         if not geojson_obj:
+            try:
+                content = file.getvalue().decode('utf-8')
+                if any([i for i in ['osm', 'openstreetmap'] if i in content.lower()]):
+                    if content.startswith('{'):
+                        geojson_obj = osm2geojson.json2geojson(json.loads(content))
+                    else:
+                        geojson_obj = osm2geojson.xml2geojson(content)
+            except Exception as e:
+                pass
+
+        if not geojson_obj:
             raise Exception('No valid geojson.')
 
-        bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
-
-        params.update({
-            'bbox': bbox,
-            'srid': srid
-        })
-
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
         return params
     except Exception as e:
         logger.error(f'validate_file error, {e}')
        
 def validate_xyz(url, name, params):
     try:
-        params.update({
-            'bbox': WORLD_GEOM,
-            'srid': DEFAULT_SRID
-        })
+        params['bbox'] = WORLD_GEOM
+        params['srid'] = DEFAULT_SRID
         return params
     except Exception as e:
         logger.error(f'validate_xyz, {e}')

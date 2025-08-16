@@ -124,12 +124,12 @@ const handleLeafletLayerGroups = async (map) => {
                     deletePane(map, paneName)
                 }
 
-                if (groupName === 'local' && !map._handlers.getAllLegendLayers().find(i => i._dbIndexedKey === layer._dbIndexedKey)) {
-                    if (layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey) {
+                if (groupName === 'local' && !map._handlers.getAllLegendLayers().find(i => i._indexedDBKey === layer._indexedDBKey)) {
+                    if (layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey) {
                         toggleLeafletLayerEditor(layer)
                     }
                     
-                    // const [id, version] = layer._dbIndexedKey.split('--version')
+                    // const [id, version] = layer._indexedDBKey.split('--version')
                     // const keys = await getAllGISDBKeys()
                     // keys.forEach(k => {
                     //     if (k.startsWith(id)) deleteFromGISDB(k)
@@ -166,12 +166,12 @@ const handleLeafletLayerGroups = async (map) => {
 
             const updateStoredLayerData = (layer) => {
                 storedData[layer._leaflet_id] = {...(storedData[layer._leaflet_id] ?? {}), ...{
-                    dbIndexedKey: layer._dbIndexedKey,
+                    indexedDBKey: layer._indexedDBKey,
                     params: layer._params,
                     properties: layer._properties,
                     zIndex: map.getPanes()[layer.options.pane].style.zIndex,
                     isHidden: map._handlers.hasHiddenLegendLayer(layer) ? true : false,
-                    editable: layer._dbIndexedKey === map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey,
+                    editable: layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey,
                 }}
             }
 
@@ -195,8 +195,8 @@ const handleLeafletLayerGroups = async (map) => {
             }
         },
         addLegendLayer: async (layerData) => {
-            let {dbIndexedKey, params, properties, isHidden, data, editable} = layerData
-            const group = map._handlers.getLayerGroups()[(dbIndexedKey.startsWith('local') ? 'local' : 'library')]
+            let {indexedDBKey, params, properties, isHidden, data, editable} = layerData
+            const group = map._handlers.getLayerGroups()[(indexedDBKey.startsWith('local') ? 'local' : 'library')]
 
             for (const i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
                 if (i?.styleParams?.fillPattern !== 'icon') continue
@@ -204,15 +204,15 @@ const handleLeafletLayerGroups = async (map) => {
             }
 
             if (data) {
-                const id = JSON.parse(dbIndexedKey.split('--version')[0].split(';')[1]).id
+                const id = JSON.parse(indexedDBKey.split('--version')[0].split(';')[1]).id
                 if (!(await getAllGISDBKeys()).find(i => i.includes(id))) {
                     const {gisData, queryExtent} = data
-                    await saveToGISDB(gisData, {id:dbIndexedKey, queryExtent})
+                    await saveToGISDB(gisData, {id:indexedDBKey, queryExtent})
                 }
             }
 
             const layer = await createLeafletLayer(params, {
-                dbIndexedKey,
+                indexedDBKey,
                 group,
                 add: false,
                 properties
@@ -226,8 +226,8 @@ const handleLeafletLayerGroups = async (map) => {
                 
                 group.addLayer(layer)
                 
-                if (editable && (dbIndexedKey !== map._drawControl?.options?.edit?.featureGroup?._dbIndexedKey)) {
-                    await toggleLeafletLayerEditor(layer, {dbIndexedKey})
+                if (editable && (indexedDBKey !== map._drawControl?.options?.edit?.featureGroup?._indexedDBKey)) {
+                    await toggleLeafletLayerEditor(layer, {indexedDBKey})
                 }
             }
         },

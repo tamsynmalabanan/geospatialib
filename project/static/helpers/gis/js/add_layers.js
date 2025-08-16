@@ -75,9 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 params[name] = j.value
             })
-    
             includedLayers[i.value] = params
         })
+
         return includedLayers
     }
     
@@ -104,14 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sortedLayers = Object.values(includedLayers).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
                 
                 for (const i of sortedLayers) {
-                    const currentKey = i.dbIndexedKey
+                    const currentKey = i.indexedDBKey
                     if (currentKey.startsWith('local')) {
                         if (!Object.keys(newDBIndexedKeys).includes(currentKey)) {
                             newDBIndexedKeys[currentKey] = createLocalLayerDBKey({
                                 name: i.params.name
                             })
                         }
-                        i.dbIndexedKey = newDBIndexedKeys[currentKey]
+                        i.indexedDBKey = newDBIndexedKeys[currentKey]
                     }
 
                     await map._handlers.addLegendLayer(i)
