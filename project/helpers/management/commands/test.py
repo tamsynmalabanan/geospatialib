@@ -56,11 +56,9 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        collection = Collection.objects.filter(format='osm').first()
-        collection.format = 'overpass'
-        collection.save()
+        collection = Collection.objects.filter(format='overpass').first()
 
-        for layer in Layer.objects.filter(collection=collection):
+        for layer in Layer.objects.filter(collection=collection, type='osm'):
             layer.type = 'overpass'
             layer.save()
 
