@@ -56,10 +56,4 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        collection = Collection.objects.filter(format='overpass').first()
-
-        for layer in Layer.objects.filter(collection=collection, type='osm'):
-            layer.type = 'overpass'
-            layer.save()
-
         self.stdout.write(self.style.SUCCESS('Done.'))

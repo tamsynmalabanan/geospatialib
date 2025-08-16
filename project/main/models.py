@@ -54,6 +54,7 @@ class URL(models.Model):
 class Collection(models.Model):
     url:URL = models.ForeignKey("main.URL", verbose_name='URL', on_delete=models.CASCADE)
     format = models.CharField('Format', max_length=16, choices=dict_to_choices(choices.COLLECTION_FORMATS))
+    dynamic = models.BooleanField('Dynamic', default=False)
     last_update = models.DateTimeField('Last update', auto_now=True)
 
     class Meta:
