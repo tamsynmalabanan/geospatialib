@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from django.utils import timezone
+from django.conf import settings
 
 import os
 from urllib.parse import unquote, urlparse, parse_qs
@@ -17,14 +18,18 @@ from helpers.base.utils import (
     get_domain, 
     split_by_special_characters,
     get_keywords_from_url,
+    remove_query_params,
+    get_domain_url,
 )
 from helpers.base.files import get_file_names
-from helpers.main.layers import format_url, WORLD_GEOM
+from helpers.main.layers import WORLD_GEOM
+from helpers.main.utils import get_clean_url
 from helpers.main.ogc import get_ogc_layers
 from helpers.main.constants import XYZ_TILES_CHARS
 
 import logging
 logger = logging.getLogger('django')
+
 
 def guess_format_from_url(url):
     if not url:
@@ -60,8 +65,9 @@ def guess_format_from_url(url):
         ],
         'geojson': [
         ],
+        'overpass': [
+        ],
         'osm': [
-            'overpass',
         ],
     })
 
@@ -71,44 +77,43 @@ def get_layers(url, format):
     try:
         if format.startswith('ogc-'):
             layers = get_ogc_layers(url, format)
+        else:
+            response = get_response(
+                url=get_clean_url(url, format),
+                raise_for_status=False,
+            )
 
-        response = get_response(
-            url=url if format == 'osm' else format_url(url, format),
-            raise_for_status=False,
-        )
+            if response.status_code == 404:
+                response.raise_for_status()
 
-        if response.status_code == 404:
-            response.raise_for_status()
+            url = unquote(url)
 
-        url = unquote(url)
-
-        if format in ['geojson', 'csv']:
-            name = os.path.normpath(url).split(os.sep)[-1]
-            layers = {name: {
-                'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
-                'type': format,
-            }}
+            if format in ['geojson', 'csv']:
+                name = os.path.normpath(url).split(os.sep)[-1]
+                layers = {name: {
+                    'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
+                    'type': format,
+                }}
+                
+            if format == 'xyz':
+                name = (' '.join([get_domain_name(url)]+[
+                    i for i in os.path.normpath(url.split(get_domain(url))[-1]).split(os.sep) 
+                    if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])
+                ])).strip()
+                
+                layers = {name: {
+                    'title': name,
+                    'type': format,
+                    'bbox': list(WORLD_GEOM.extent),
+                }}
             
-        if format == 'xyz':
-            name = (' '.join([get_domain_name(url)]+[
-                i for i in os.path.normpath(url.split(get_domain(url))[-1]).split(os.sep) 
-                if i != '' and not any([j for j in XYZ_TILES_CHARS if j in i])
-            ])).strip()
-            
-            layers = {name: {
-                'title': name,
-                'type': format,
-                'bbox': list(WORLD_GEOM.extent),
-            }}
-        
-        if format == 'file':
-            layers = {i:{
-                'title': '.'.join(os.path.normpath(i).split(os.sep)[-1].split('.')[:-1]),
-                'type': i.split('.')[-1],
-            } for i in get_file_names(url)}
+            if format == 'file':
+                layers = {i:{
+                    'title': '.'.join(os.path.normpath(i).split(os.sep)[-1].split('.')[:-1]),
+                    'type': i.split('.')[-1],
+                } for i in get_file_names(url)}
 
-        if format == 'osm':
-            if 'overpass-api.de/api/interpreter' in url:
+            if format == 'overpass':
                 parts = parse_qs(urlparse(url).query).get('data', [''])[0].split(';')
                 tags = []
                 for part in parts:
@@ -118,18 +123,21 @@ def get_layers(url, format):
                 layers = {tag: {
                     'title': tag,
                     'tags': tag,
-                    'type': 'osm',
+                    'type': 'overpass',
                     'bbox': list(WORLD_GEOM.extent),
                 } for tag in list(set(tags))}
-            else:
-                name = os.path.normpath(url).split(os.sep)[-1]
-                layers = {name: {
-                    'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
-                    'tags': name,
-                    'type': 'osm',
-                    'bbox': list(WORLD_GEOM.extent),
-                }}
             
+            if format == 'osm':
+                pass
+                # else:
+                #     name = os.path.normpath(url).split(os.sep)[-1]
+                #     layers = {name: {
+                #         'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
+                #         'tags': name,
+                #         'type': 'osm',
+                #         'bbox': list(WORLD_GEOM.extent),
+                #     }}
+                
     except Exception as e:
         logger.error(f'get layers, {e}')
 
@@ -144,29 +152,27 @@ def get_layers(url, format):
 def sort_layers(layers):
     return dict(sorted(layers.items(), key=lambda x: (x[1]["type"], x[1]["title"])))
 
-def get_collection_data(url, format=None, delay=True):
+def get_collection_data(url, format=None):
     if not url:
         return
-    
-    is_overpass = 'overpass-api.de/api/interpreter' in url
-    
+        
     format = format or guess_format_from_url(url)
     if not format:
         return
     
-    clean_url = url if format == 'xyz' or (format == 'osm' and not is_overpass) else format_url(url, format)
-    cache_key = create_cache_key(['onboard_collection', clean_url, format])
+    url = get_clean_url(url, format, exclusions=['xyz'])
+    cache_key = create_cache_key(['onboard_collection', url, format])
 
-    data = {'layers':{}, 'cache_key':cache_key, 'url':clean_url, 'format':format}
+    data = {'layers':{}, 'cache_key':cache_key, 'url':url, 'format':format}
 
     collection = Collection.objects.filter(
-        url__path=clean_url,
+        url__path=url,
         format=format,
         layers__isnull=False,
-        last_update__gte=timezone.now()-timedelta(days=1)
-    ).first() if not is_overpass else Collection.objects.none()
+        last_update__gte=timezone.now()-timedelta(days=7)
+    ).first()
 
-    cached_layers = cache.get(cache_key, {}).get('layers', {}) if not is_overpass else {}
+    cached_layers = cache.get(cache_key, {}).get('layers', {})
     cached_layers_count = len(cached_layers.keys())
 
     if collection and collection.layers.count() >= cached_layers_count:
@@ -182,14 +188,14 @@ def get_collection_data(url, format=None, delay=True):
             data['layers'] = layers
         cache.set(cache_key, data, timeout=60*15)
     
-    if delay:
-        onboard_collection.delay(cache_key)
-    else:
+    if settings.DEBUG:
         onboard_collection(cache_key)
+    else:
+        onboard_collection.delay(cache_key)
 
     return data
 
-def update_collection_data(cache_key, updated_layers, delay=True):
+def update_collection_data(cache_key, updated_layers):
     collection_data = cache.get(cache_key)
 
     if collection_data:
@@ -219,9 +225,9 @@ def update_collection_data(cache_key, updated_layers, delay=True):
     
     cache.set(cache_key, collection_data, timeout=60*15)
     
-    if delay:
-        onboard_collection.delay(cache_key)
-    else:
+    if settings.DEBUG:
         onboard_collection(cache_key)
+    else:
+        onboard_collection.delay(cache_key)
     
     return collection_data

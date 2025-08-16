@@ -50,10 +50,18 @@ def test_get_collection_data():
     if collection:
         collection.delete()
 
-    data = get_collection_data(url, delay=False)
+    data = get_collection_data(url)
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
+        collection = Collection.objects.filter(format='osm').first()
+        collection.format = 'overpass'
+        collection.save()
+
+        for layer in Layer.objects.filter(collection=collection):
+            layer.type = 'overpass'
+            layer.save()
+
         self.stdout.write(self.style.SUCCESS('Done.'))

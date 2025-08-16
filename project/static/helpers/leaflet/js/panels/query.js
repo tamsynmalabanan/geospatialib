@@ -76,7 +76,7 @@ const handleLeafletQueryPanel = (map, parent) => {
     const getOSMDataFetchers = ({types=ALL_OVERPASS_ELEMENT_TYPES, tags=''}={}) => {
         return [
             {key: 'nominatim;{}', title: 'OpenStreetMap element via Nominatim API',},
-            {key: `osm;${JSON.stringify({params:{types,tags}})}`, title: removeWhitespace(`OpenStreetMap ${
+            {key: `overpass;${JSON.stringify({params:{types,tags}})}`, title: removeWhitespace(`OpenStreetMap ${
                 types.length === 1 ? types[0] : 'elements'
             } ${
                 tags ? `for ${tags.replaceAll('"','').replaceAll('[','').split(']').filter(i => i).join(', ')}` : ''

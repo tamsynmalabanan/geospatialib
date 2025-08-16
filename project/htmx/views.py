@@ -207,8 +207,9 @@ def update_collection(request):
 def get_layer_forms(request):
     layer_names = json.loads(request.GET.get('layerNames','[]'))
     layers = {}
-    for name in layer_names:    
-        title, type = os.path.normpath(name).split(os.sep)[-1].rsplit('.', 1)
+    for name in layer_names:
+        filename = os.path.normpath(name).split(os.sep)[-1]
+        title, type = filename.rsplit('.', 1) if '.' in filename else [filename, 'unknown']
         layers[name] = {
             'title': title, 
             'type': type, 

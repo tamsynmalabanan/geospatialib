@@ -6,7 +6,8 @@ import requests
 from .choices import COLLECTION_FORMATS
 from .models import URL, Collection, Layer
 from helpers.base.utils import get_domain, get_response, get_domain_url, create_cache_key
-from helpers.main.layers import LAYER_VALIDATORS, format_url
+from helpers.main.layers import LAYER_VALIDATORS
+from helpers.main.utils import get_clean_url
 
 import logging
 logger = logging.getLogger('django')
@@ -36,7 +37,7 @@ def onboard_collection(self, cache_key):
         if not url_instance:
             is_ogc = format.startswith('ogc-')
             response = is_ogc or get_response(
-                url=format_url(url, format),
+                url=get_clean_url(url, format),
                 header_only=True,
                 raise_for_status=False,
             )

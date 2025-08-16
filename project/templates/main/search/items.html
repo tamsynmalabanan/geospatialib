@@ -27,17 +27,19 @@
                             {% if type == 'wms' %}
                                 0
                             {% elif type == 'wfs' %}
-                                50
+                                45
                             {% elif type == 'geojson' %}
-                                100
+                                90
                             {% elif type == 'csv' %}
-                                150
+                                135
                             {% elif type == 'xyz' %}
-                                200
+                                180
                             {% elif type == 'osm' %}
-                                250
+                                225
+                            {% elif type == 'overpass' %}
+                                270
                             {% else %}
-                                300
+                                315
                             {% endif %}
                         , 100%, 25%, 1);"
                     >{{type}}</span>

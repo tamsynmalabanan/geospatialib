@@ -166,10 +166,15 @@ const rawDataToLayerData = (rawData, params) => {
             return csvToGeoJSON(rawData, params)
         }
 
-        if (params.type === 'osm') {
-            const parser = new DOMParser()
-            const xmlDoc = parser.parseFromString(rawData, "text/xml")
-            return osmtogeojson(xmlDoc)
+        const normalRawData = rawData.toLowerCase()
+        if (params.type === 'osm' || Array('openstreetmap', 'osm').some(i => normalRawData.includes(i))) {
+            if (params.type === 'json') {
+                return osmtogeojson(JSON.parse(rawData))
+            } else {
+                const parser = new DOMParser()
+                const xmlDoc = parser.parseFromString(rawData, "text/xml")
+                return osmtogeojson(xmlDoc)
+            }
         }
     } catch (error) {
         console.log(error)
