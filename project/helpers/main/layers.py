@@ -20,7 +20,7 @@ DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
 def format_url(url, format):
     if format == 'xyz':
         return get_domain_url(url)
-    if format.startswith('ogc-'):
+    if format.startswith('ogc-') or format == 'osm':
         return remove_query_params(url) or url
     return url
 
@@ -97,6 +97,19 @@ def validate_geojson(url, name, params):
         return params
     except Exception as e:
         logger.error(f'validate_geojson, {e}')
+            
+def validate_osm(url, name, params):
+    try:
+        # response = get_response(url, raise_for_status=True)
+        # geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
+        # bbox = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        # params.update({
+        #     'bbox': bbox,
+        #     'srid': srid
+        # })
+        return params
+    except Exception as e:
+        logger.error(f'validate_osm, {e}')
 
 def validate_csv(url, name, params):
     try:
@@ -172,6 +185,7 @@ def validate_ogc(url, name, params):
         logger.error(f'validate_ogc, {e}')
        
 LAYER_VALIDATORS = {
+    'osm': validate_osm,
     'geojson': validate_geojson,
     'csv': validate_csv,
     'file': validate_file,

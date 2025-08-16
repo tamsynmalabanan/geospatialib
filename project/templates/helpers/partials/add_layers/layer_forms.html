@@ -35,6 +35,9 @@
                 {% if params.id %}
                     <input type="text" name='id' value="{{params.id}}" hidden>
                 {% endif %}
+                {% if params.tags %}
+                    <input type="text" name='tags' value="{{params.tags}}" hidden>
+                {% endif %}
                 {% if params.bbox %}
                     <input type="text" name='bbox' value="{{params.bbox}}" hidden>
                 {% endif %}

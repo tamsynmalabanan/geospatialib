@@ -2,7 +2,8 @@ from django.core.cache import cache
 from django.utils import timezone
 
 import os
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse, parse_qs
+
 from datetime import timedelta
 
 from main.tasks import onboard_collection
@@ -32,15 +33,9 @@ def guess_format_from_url(url):
     if any([i for i in XYZ_TILES_CHARS if i in url]):
         return 'xyz'
     
-    try:
-        response = get_response(url, raise_for_status=False)
-        response.raise_for_status()
-
-        decoded_response = get_decoded_response(response)
-        if not decoded_response:
-            return 'file'
-    except:
-        pass
+    response = get_response(url)
+    if response and not get_decoded_response(response):
+        return 'file'
 
     return get_first_substring_match(url, {
         # 'ogc-wcs': [
@@ -64,7 +59,9 @@ def guess_format_from_url(url):
         'csv': [
         ],
         'geojson': [
-            'json',
+        ],
+        'osm': [
+            'overpass',
         ],
     })
 
@@ -76,8 +73,7 @@ def get_layers(url, format):
             layers = get_ogc_layers(url, format)
 
         response = get_response(
-            url=format_url(url, format),
-            header_only=True,
+            url=url if format == 'osm' else format_url(url, format),
             raise_for_status=False,
         )
 
@@ -110,6 +106,30 @@ def get_layers(url, format):
                 'title': '.'.join(os.path.normpath(i).split(os.sep)[-1].split('.')[:-1]),
                 'type': i.split('.')[-1],
             } for i in get_file_names(url)}
+
+        if format == 'osm':
+            if 'overpass-api.de/api/interpreter' in url:
+                parts = parse_qs(urlparse(url).query).get('data', [''])[0].split(';')
+                tags = []
+                for part in parts:
+                    object_type = [i for i in ['node', 'way', 'relation'] if i in part]
+                    if object_type:
+                        tags.append(part.split(object_type[0])[1].split('(')[0])
+                layers = {tag: {
+                    'title': tag,
+                    'tags': tag,
+                    'type': 'osm',
+                    'bbox': list(WORLD_GEOM.extent),
+                } for tag in list(set(tags))}
+            else:
+                name = os.path.normpath(url).split(os.sep)[-1]
+                layers = {name: {
+                    'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
+                    'tags': name,
+                    'type': 'osm',
+                    'bbox': list(WORLD_GEOM.extent),
+                }}
+            
     except Exception as e:
         logger.error(f'get layers, {e}')
 
@@ -128,23 +148,25 @@ def get_collection_data(url, format=None, delay=True):
     if not url:
         return
     
+    is_overpass = 'overpass-api.de/api/interpreter' in url
+    
     format = format or guess_format_from_url(url)
     if not format:
         return
     
-    url = url if format == 'xyz' else format_url(url, format)
-    cache_key = create_cache_key(['onboard_collection', url, format])
+    clean_url = url if format == 'xyz' or (format == 'osm' and not is_overpass) else format_url(url, format)
+    cache_key = create_cache_key(['onboard_collection', clean_url, format])
 
-    data = {'layers':{}, 'cache_key':cache_key, 'url':url, 'format':format}
+    data = {'layers':{}, 'cache_key':cache_key, 'url':clean_url, 'format':format}
 
     collection = Collection.objects.filter(
-        url__path=url,
+        url__path=clean_url,
         format=format,
         layers__isnull=False,
         last_update__gte=timezone.now()-timedelta(days=1)
-    ).first()
+    ).first() if not is_overpass else Collection.objects.none()
 
-    cached_layers = cache.get(cache_key, {}).get('layers', {})
+    cached_layers = cache.get(cache_key, {}).get('layers', {}) if not is_overpass else {}
     cached_layers_count = len(cached_layers.keys())
 
     if collection and collection.layers.count() >= cached_layers_count:
