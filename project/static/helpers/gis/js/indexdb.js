@@ -152,23 +152,46 @@ const deleteFromGISDB = (id) => {
     }
 }
 
-setInterval(async () => {
+const clearGISDB = () => {
     const request = requestGISDB()
-
+    
     request.onsuccess = (e) => {
         const db = e.target.result
         const transaction = db.transaction(['gis'], 'readwrite')
         const objectStore = transaction.objectStore('gis')
         
-        objectStore.openCursor().onsuccess = (e) => {
-            const cursor = e.target.result
-            if (!cursor) return 
-            
-            const currentTime = Date.now()
-            if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
-                objectStore.delete(cursor.key)
-            }
-            cursor.continue()
+        const clearRequest = objectStore.clear();
+
+        clearRequest.onsuccess = function () {
+            console.log('All items deleted successfully.');
+        }
+
+        clearRequest.onerror = function (event) {
+            console.error('Error deleting items:', event.target.error);
         }
     }
-}, 1000*60*60)
+  
+    request.onerror = (e) => {
+    }
+}
+
+// setInterval(async () => {
+//     const request = requestGISDB()
+
+//     request.onsuccess = (e) => {
+//         const db = e.target.result
+//         const transaction = db.transaction(['gis'], 'readwrite')
+//         const objectStore = transaction.objectStore('gis')
+        
+//         objectStore.openCursor().onsuccess = (e) => {
+//             const cursor = e.target.result
+//             if (!cursor) return 
+            
+//             const currentTime = Date.now()
+//             if (cursor.value.expirationTime && cursor.value.expirationTime < currentTime) {
+//                 objectStore.delete(cursor.key)
+//             }
+//             cursor.continue()
+//         }
+//     }
+// }, 1000*60*60)

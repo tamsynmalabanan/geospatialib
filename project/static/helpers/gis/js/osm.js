@@ -83,7 +83,6 @@ const fetchOverpass = async (params, {
 } = {}) => {
     const url = 'https://overpass-api.de/api/interpreter'    
     const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
-    console.log(body)
 
     return fetchTimeout(url, {
         abortBtns,

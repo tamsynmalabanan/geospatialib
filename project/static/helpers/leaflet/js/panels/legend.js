@@ -560,7 +560,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 if (checkbox) checkbox.checked = show
             },
         },
-        clear: {
+        clearLegend: {
             iconSpecs: 'bi-trash-fill',
             title: 'Clear legend layers',
             disabled: true,
@@ -578,7 +578,23 @@ const handleLeafletLegendPanel = async (map, parent) => {
         },
         divider2: {
             tag: 'div',
-            className: 'mx-3 ms-auto',
+            className: 'vr m-2',
+        },
+        clearIndexedDB: {
+            iconSpecs: 'bi-database-fill-x',
+            title: 'Clear stored data',
+            disabled: false,
+            btnClickHandler: (e) => {
+                const menuContainer = contextMenuHandler(e, {
+                    confirm: {
+                        innerText: `Confirm to clear stored data`,
+                        btnCallback: async () => {
+                            clearGISDB()
+                        }
+                    },            
+                })
+                menuContainer.classList.add('bg-danger')
+            }
         },
     })
 
