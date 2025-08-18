@@ -269,13 +269,17 @@ const getLeafletLayerBbox = async (layer) => {
     }
     
     if (layer.getBounds) {
-        const b = layer.getBounds()
-        return [
-            b.getWest(),
-            b.getSouth(),
-            b.getEast(),
-            b.getNorth(),
-        ]
+        try {
+            const b = layer.getBounds()
+            return [
+                b.getWest(),
+                b.getSouth(),
+                b.getEast(),
+                b.getNorth(),
+            ]
+        } catch (error) {
+            console.log(error.message)
+        }
     }
     
     return [-180, -90, 180, 90]
