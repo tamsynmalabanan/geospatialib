@@ -183,6 +183,8 @@ const createNewGroup = (map, {
 
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
+            layers.classList.remove('overflow-auto')
+            layers.classList.add('overflow-hidden')
 
             const mouseMoveHandler = (e2) => {
                 const newX = e2.type === 'touchmove' ? e2.touches[0].clientX : e2.clientX
@@ -233,6 +235,8 @@ const createNewGroup = (map, {
                 container.classList.remove('z-3')
                 Array.from(layers.querySelectorAll('.highlight')).forEach(c => c.classList.remove('highlight')) 
                 document.body.classList.remove('user-select-none')
+                layers.classList.remove('overflow-hidden')
+                layers.classList.add('overflow-auto')
             }                
 
             Array('mousemove', 'touchmove').forEach(t2 => document.addEventListener(t2, mouseMoveHandler))                
@@ -315,6 +319,8 @@ const createLeafletLegendItem = (layer) => {
             const startY = e1.type === 'touchstart' ? e1.touches[0].clientY : e1.clientY
             container.classList.add('highlight', 'z-3')
             document.body.classList.add('user-select-none')
+            layers.classList.remove('overflow-auto')
+            layers.classList.add('overflow-hidden')
 
             const mouseMoveHandler = (e2) => {
                 const newX = e2.type === 'touchmove' ? e2.touches[0].clientX : e2.clientX
@@ -379,6 +385,8 @@ const createLeafletLegendItem = (layer) => {
                 container.classList.remove('z-3')
                 Array.from(layers.querySelectorAll('.highlight')).forEach(c => c.classList.remove('highlight')) 
                 document.body.classList.remove('user-select-none')
+                layers.classList.remove('overflow-hidden')
+                layers.classList.add('overflow-auto')
             }                
 
             Array('mousemove', 'touchmove').forEach(t2 => document.addEventListener(t2, mouseMoveHandler))                
