@@ -98,7 +98,7 @@ const fetchOverpass = async (params, {
             body,
         }
     }).catch(error => {
-        console.log(error)
+        console.log('Failed to fetch OSM data from Overpass API.')
     })
 }
 

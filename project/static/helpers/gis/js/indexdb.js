@@ -163,11 +163,9 @@ const clearGISDB = () => {
         const clearRequest = objectStore.clear();
 
         clearRequest.onsuccess = function () {
-            console.log('All items deleted successfully.');
         }
 
         clearRequest.onerror = function (event) {
-            console.error('Error deleting items:', event.target.error);
         }
     }
   
