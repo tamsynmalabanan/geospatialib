@@ -74,6 +74,8 @@ const getOverpassQueryBlock = (queryGeom, {
     return query
 }
 
+const mapForFetchOverpass = new Map()
+let fetchOverpassIsActive = false
 const fetchOverpass = async (params, {
     queryGeom,
     zoom,
@@ -81,17 +83,26 @@ const fetchOverpass = async (params, {
     controller,
     query = getOverpassQueryBlock(queryGeom, {zoom, ...params}),
 } = {}) => {
+    const mapKey = JSON.stringify({query, controller:controller?.id})
+    if (mapForFetchOverpass.has(mapKey)) {
+        return mapForFetchOverpass.get(mapKey)
+    }
+
+    while (fetchOverpassIsActive) {
+        await new Promise(res => setTimeout(res, 1000))
+    }
+
+    fetchOverpassIsActive = true
+
     const url = 'https://overpass-api.de/api/interpreter'    
     const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
 
-    return fetchTimeout(url, {
+    const fetchPromise = fetchTimeout(url, {
         abortBtns,
         controller,
         callback: async (response) => {
             const data = await parseJSONResponse(response)
-            if (!data) return
-
-            return osmtogeojson(data)
+            return data ? osmtogeojson(data) : null
         },
         fetchParams: {
             method: "POST",
@@ -99,7 +110,13 @@ const fetchOverpass = async (params, {
         }
     }).catch(error => {
         console.log('Failed to fetch OSM data from Overpass API.')
+    }).finally(() => {
+        fetchOverpassIsActive = false
+        setTimeout(() => mapForFetchOverpass.delete(mapKey), 1000)
     })
+
+    mapForFetchOverpass.set(mapKey, fetchPromise)
+    return fetchPromise
 }
 
 const overpassToGeoJSON = async (data, {
