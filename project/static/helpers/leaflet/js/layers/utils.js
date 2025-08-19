@@ -259,7 +259,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
 const getLeafletLayerBbox = async (layer) => {
     const indexedDBKey = layer._indexedDBKey ?? ''
-    if (layer instanceof L.GeoJSON && staticFormats.find(i => indexedDBKey.startsWith(i))) {
+    if (layer instanceof L.GeoJSON && staticVectorFormats.find(i => indexedDBKey.startsWith(i))) {
         const geojson = (await getFromGISDB(indexedDBKey))?.gisData
         if (geojson) return turf.bbox(geojson)
     }

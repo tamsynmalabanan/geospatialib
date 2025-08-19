@@ -420,11 +420,12 @@ const fetchGeoJSONHandlers = (name) => {
     }[name]
 }
 
-const staticFormats = [
+const staticVectorFormats = [
     'local',
     'file',
     'geojson',
     'csv',
+    'osm',
 ]
 
 const mapForGetGeoJSON = new Map()
@@ -452,7 +453,7 @@ const getGeoJSON = async (dbKey, {
             const [handlerName, handlerParams] = dbKey.split(';', 2)
 
             const isLocal = handlerName === 'local'
-            const isStatic = staticFormats.includes(handlerName)
+            const isStatic = staticVectorFormats.includes(handlerName)
             
             const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
                 queryGeom, leafletZoomToMeter(zoom)/2/1000
