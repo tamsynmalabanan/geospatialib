@@ -101,7 +101,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
     }
 
-    const updateSymbology = async (styleParams, {refresh=true, updateCache=true}={}) => {
+    const updateSymbology = async (styleParams, {refresh=true, updateLocalStorage=true}={}) => {
         const controllerId = controller.id
 
         await handleStyleParams(styleParams, {controller})
@@ -110,7 +110,7 @@ const handleLeafletStylePanel = (map, parent) => {
             updateLeafletGeoJSONLayer(layer, {
                 geojson: layer.toGeoJSON(),
                 controller,
-                updateCache,
+                updateLocalStorage,
             }).then(() => {
                 map.setZoom(map.getZoom())
             })
@@ -1038,7 +1038,8 @@ const handleLeafletStylePanel = (map, parent) => {
         if (symbology.method !== 'single' && symbology.groupBy?.length) {
             const geojson = (await getLeafletGeoJSONData(layer, {
                 controller,
-            })) || layer.toGeoJSON()
+                filter: true,
+            })) ?? layer.toGeoJSON()
             
             if (controllerId !== controller.id) return
 
@@ -1092,7 +1093,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 strokeOpacity: 1,
                                 patternBgColor: null,
                                 fillPatternId: null,
-                            }), {refresh:false, updateCache:false})
+                            }), {refresh:false, updateLocalStorage:false})
         
                             if (controllerId !== controller.id) return
                             if (!symbology.groups) return
@@ -1208,7 +1209,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     iconStroke: false,
                                     iconSize: 10 + (((50-10)/(groups.length-1 || 1))*(rank-1)),
                                     strokeWidth: 1 + (((5-1)/(groups.length-1 || 1))*(rank-1))
-                                }), {refresh:false, updateCache:false})
+                                }), {refresh:false, updateLocalStorage:false})
 
                                 if (controllerId !== controller.id) return
                                 if (!symbology.groups) return
@@ -1532,12 +1533,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 focus: async (e) => {
                     const field = e.target
                     field.innerHTML = ''
-
-                    // update to fetch properties from wfs (wms?)
-                    const geojson = (await getLeafletGeoJSONData(layer, {
-                        controller,
-                        filter:false,
-                    })) || layer.toGeoJSON()
                     
                     const options = layer._properties.info.attributes
                     const optionsSet = options.length ? new Set(options) : []
@@ -1767,6 +1762,7 @@ const handleLeafletStylePanel = (map, parent) => {
         const symbology = layerStyles.symbology 
         const visibility = layerStyles.visibility
         const filters = layerStyles.filters
+        const transformations = layerStyles.transformations
         const info = layerStyles.info
         const limits = layerStyles.limits
         const filterContainerId = generateRandomString()
@@ -2127,7 +2123,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     form.elements.maxScale.disabled = !value
 
                                     visibility.active = value
-                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                    leafletLayerIsVisible(layer, {updateLocalStorage:true})
                                 }
                             }
                         },
@@ -2162,7 +2158,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     visibility.min = parseInt(field.value)
                                     maxScaleField.setAttribute('min', field.value)
     
-                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                    leafletLayerIsVisible(layer, {updateLocalStorage:true})
                                 },
                                 'click': visibilityFieldsClick,
                             }
@@ -2198,7 +2194,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     visibility.max = parseInt(field.value)
                                     minScaleField.setAttribute('max', field.value)
                                     
-                                    leafletLayerIsVisible(layer, {updateCache:true})
+                                    leafletLayerIsVisible(layer, {updateLocalStorage:true})
                                 },
                                 'click': visibilityFieldsClick,
                             }
@@ -2852,6 +2848,109 @@ const handleLeafletStylePanel = (map, parent) => {
                             },
                         },
                         className: 'flex-wrap gap-2'
+                    },
+                    'Transform Geometries': {
+                        fields: {
+                            enableSimplify: {
+                                handler: createFormCheck,
+                                checked: transformations.simplify.active,
+                                formCheckClass: 'flex-grow-1',
+                                labelInnerText: 'Simplify feature geometries',
+                                role: 'switch',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === transformations.simplify.active) return
+
+                                        Array.from(form.simplify).forEach(f => {
+                                            f.disabled = !value
+                                        })
+    
+                                        transformations.simplify.active = value
+                                        updateLeafletGeoJSONLayer(layer, {
+                                            geojson: value ? layer.toGeoJSON() : null,
+                                            controller,
+                                        })
+                                    }
+                                }
+                            },
+                            simplifyOptions: {
+                                handler: ({parent}={}) => {
+                                    const container = createCheckboxOptions({
+                                        parent,
+                                        name: 'simplify',
+                                        type: 'radio',
+                                        containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2 mb-3',
+                                        options: (() => {
+                                            const options = {}
+                                            for (const i in transformations.simplify.values) {
+                                                const params = transformations.simplify.values[i]
+                                                options[i] = {
+                                                    checked: params.active,
+                                                    disabled: !transformations.simplify.active,
+                                                    inputAttrs: {value: params.fn},
+                                                    events: {
+                                                        click: () => {
+                                                            let changed = false
+
+                                                            Array.from(form.simplify).forEach(f => {
+                                                                const name = form.querySelector(`label[for="${f.id}"]`).innerText
+                                                                if (transformations.simplify.values[name].active === f.checked) return
+                                                                
+                                                                transformations.simplify.values[name].active = f.checked
+                                                                changed = true
+                                                            })
+                                                            
+                                                            if (changed) updateLeafletGeoJSONLayer(layer, {
+                                                                controller,
+                                                            })
+                                                        },
+                                                    }
+                                                }
+                                            }
+                                            return options
+                                        })()
+                                    })
+
+                                    const simplify = transformations.simplify.values['Simplify by tolerance']
+
+                                    const simplifyToggle = container.lastChild
+                                    const simplifyContainer = customCreateElement({
+                                        parent:container,
+                                        className:'d-flex gap-2 flex-nowrap',
+                                    })
+                                    simplifyContainer.appendChild(simplifyToggle)
+
+                                    const toleranceField = customCreateElement({
+                                        parent: simplifyContainer,
+                                        className: 'rounded border-0 small px-2',
+                                        tag: 'input',
+                                        attrs: {
+                                            type: 'number',
+                                            min: 0,
+                                            step: 0.0001,
+                                            placeholder: 'Tolerance',
+                                            value: simplify.options.tolerance
+                                        },
+                                        events: {
+                                            change: (e) => {
+                                                const value = e.target.value
+                                                if (value === '' || isNaN(value)) {
+                                                    e.target.value = simplify.options.tolerance
+                                                    return
+                                                }
+
+                                                simplify.options.tolerance = Number(value)
+                                                if (simplify.active) updateLeafletGeoJSONLayer(layer, {
+                                                    controller,
+                                                })
+                                            }
+                                        }
+                                    })
+                                },
+                            },
+                        },
+                        className: 'flex-wrap gap-2'   
                     }
                 } : {})
             }

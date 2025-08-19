@@ -716,7 +716,7 @@ const deleteLeafletLayerFillPatterns = (layer) => {
     })
 }
 
-const leafletLayerIsVisible = (layer, {addLayer=true, updateCache=false}={}) => {
+const leafletLayerIsVisible = (layer, {addLayer=true, updateLocalStorage=false}={}) => {
     if (!layer) return
 
     const group = layer._group
@@ -736,7 +736,7 @@ const leafletLayerIsVisible = (layer, {addLayer=true, updateCache=false}={}) => 
         isVisible ? group._handlers.removeInvisibleLayer(layer) : group._handlers.addInvisibleLayer(layer)
     }
 
-    if (updateCache) map._handlers.updateStoredLegendLayers({layer})
+    if (updateLocalStorage) map._handlers.updateStoredLegendLayers({layer})
     
     return isVisible
 }

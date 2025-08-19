@@ -393,7 +393,7 @@ const createDropdown = ({
 
 const createCheckboxOptions = ({
     options,
-    name,
+    name=generateRandomString(),
     containerClass = '',
     parent,
     type = 'checkbox',
@@ -401,8 +401,6 @@ const createCheckboxOptions = ({
     const container = document.createElement('div')
     container.className = `d-flex ${containerClass}`
     parent?.appendChild(container)
-
-    name = name || generateRandomString()
 
     for (const option in options) {
         const data = options[option]
@@ -417,16 +415,13 @@ const createCheckboxOptions = ({
         input.id = id
         input.value = option
         input.className = 'form-check-input'
-        input.setAttribute('type', type)
-        input.setAttribute('name', type === 'radio' ? name : `${name}-${generateRandomString()}`)
+        input.setAttribute('type', data.type ?? type)
+        input.setAttribute('name', data.name ? `${name}-${data.name}` : (type === 'radio' ? name : `${name}-${generateRandomString()}`))
         input.checked = data.checked || false
         input.disabled = data.disabled || false
-        if (data.inputAttrs) Object.keys(data.inputAttrs).forEach(attr => input.setAttribute(attr, data.inputAttrs[attr]))
+        Object.keys(data.inputAttrs ?? {}).forEach(attr => input.setAttribute(attr, data.inputAttrs[attr]))
+        Object.keys(data.events ?? {}).forEach(k => input.addEventListener(k, data.events[k]))
         formCheck.appendChild(input)
-
-        if (data.events) {
-            Object.keys(data.events).forEach(k => input.addEventListener(k, data.events[k]))
-        }
         
         const label = document.createElement('label')
         label.className = 'form-check-label'

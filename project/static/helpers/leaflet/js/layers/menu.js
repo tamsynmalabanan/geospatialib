@@ -41,7 +41,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const typeLabel = type === 'feature' && !isSearch ? type : 'layer'
     
     const localLayer = (indexedDBKey ?? '').startsWith('local')
-    const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(indexedDBKey)).gisData.features.length <= 1000
+    const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(indexedDBKey))?.gisData?.features.length <= 1000
     const isMapDrawControlLayer = editableLayer && (indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey)
 
     const measureId = `${geojsonLayer?._leaflet_id}-${feature?.properties.__gsl_id__}`
@@ -116,7 +116,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
 
                     map._drawControl._addChange({
@@ -164,7 +164,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
 
                     map._drawControl._addChange({
@@ -212,7 +212,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
 
                     map._drawControl._addChange({
@@ -258,12 +258,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
         csv: isSearch || !layerGeoJSON ? null : {
-            innerText: 'Export to CSV',
+            innerText: `Export centroid${feature ? '' : 's'} to CSV`,
             btnCallback: () => {
-                const properties = turf.clone(layerGeoJSON).features.map(feature => {
-                    const [__x__, __y__] = turf.centroid(feature).geometry.coordinates
-                    return {...feature.properties, __x__, __y__}
-                })
+                const properties = layerGeoJSON.features.map(f => f.properties)
 
                 const headers = [...Array.from(
                     new Set(properties.flatMap(prop => Object.keys(prop)))

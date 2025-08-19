@@ -62,6 +62,56 @@ const getLeafletGeoJSONLayer = async ({
         method: 'limit'
     }
 
+    properties.transformations = properties.transformations ?? {
+        simplify: {
+            active: false,
+            values: {
+                'None': {
+                    active: true,
+                    fn: null,
+                },
+                'Centroid': {
+                    active: false,
+                    fn: 'centroid',
+                },
+                'Bounding box': {
+                    active: false,
+                    fn: 'envelope',
+                },
+                'Simplify by tolerance': {
+                    active: false,
+                    fn: 'simplify',
+                    options: {
+                        tolerance: 0,
+                    }
+                },
+            }
+        },
+        // clustering: {
+        //     active: false,
+        //     method: {
+        //         'None': {
+        //             active: true,
+        //             fn: null,
+        //         },
+        //         'Density-based clustering': {
+        //             active: false,
+        //             fn: 'clustersDbscan',
+        //             params: {
+        //                 maxDistance: 10,
+        //             }
+        //         },
+        //         'K-means clustering': {
+        //             active: false,
+        //             fn: 'clustersKmeans',
+        //             options: {
+        //                 numberOfClusters: 'default',
+        //             }
+        //         },
+        //     }
+        // }
+    }
+
     properties.filters = properties.filters ?? {
         type: {active: false, values: {
             Point: true,
@@ -105,272 +155,270 @@ const getLeafletGeoJSONLayer = async ({
             layer.options.pane = geojsonLayer.options.pane
             
             const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
-            const properties = cleanFeatureProperties(feature.properties)
+            
+            const properties = feature.properties
+            const cleanProperties = cleanFeatureProperties(properties)
 
-            if (Object.keys(properties).length || isMapDrawControlLayer) {
-                const info = geojsonLayer._properties.info
-                info.attributes = Array.from(new Set([...Object.keys(properties), ...(info.attributes ?? [])]))
+            // updates an array of feature property keys
+            const info = geojsonLayer._properties.info
+            info.attributes = Array.from(new Set([...Object.keys(properties), ...(info.attributes ?? [])]))
+            
+            const tooltip = info.tooltip
+            layer._params.title = tooltip.properties.length ? (() => {
+                const values = tooltip.properties.map(i => {
+                    let value = properties[i]
+                    
+                    if (!isNaN(value)) return formatNumberWithCommas(Number(value))
 
-                const tooltip = info.tooltip
-                const popup = info.popup
-    
-                layer._params.title = tooltip.properties.length ? (() => {
-                    const values = tooltip.properties.map(i => {
-                        let value = properties[i]
-                        if (!isNaN(Number(value))) {
-                            return formatNumberWithCommas(Number(value))
-                        }
-                        value = value ?? 'null'
-                        return String(value)
-                    })
-                    return values.some(i => i !== 'null') ? [tooltip.prefix ?? '', values.join(tooltip.delimiter), tooltip.suffix ?? ''].join(' ').trim() : null
-                })() : getFeatureTitle(properties)
-    
-                if (tooltip.active && layer._params.title) layer.bindTooltip(layer._params.title, {sticky:true})
-    
-                if (popup.active) {
-                    let popupProperties = {}
-                    if (popup.properties.length && !isMapDrawControlLayer) {
-                        for (const i of popup.properties) {
-                            popupProperties[i] = properties[i]
-                        }
-                    } else {
-                        popupProperties = properties
+                    value = value ?? 'null'
+                    return String(value)
+                })
+                return values.some(i => i !== 'null') ? [tooltip.prefix ?? '', values.join(tooltip.delimiter), tooltip.suffix ?? ''].join(' ').trim() : null
+            })() : getFeatureTitle(cleanProperties)
+            if (tooltip.active && layer._params.title) layer.bindTooltip(layer._params.title, {sticky:true})
+            
+            const popup = info.popup
+            if (popup.active || isMapDrawControlLayer) {
+                let popupProperties = {}
+                if (popup.properties.length && !isMapDrawControlLayer) {
+                    for (const i of popup.properties) {
+                        popupProperties[i] = properties[i]
                     }
-    
-                    const getPopupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
-                    
-                    const content = createFeaturePropertiesTable(popupProperties, {header: getPopupHeader()})
-                    
-                    if (isMapDrawControlLayer) {
-                        content.classList.remove('table-striped')
+                } else {
+                    popupProperties = properties
+                }
 
-                        const toggleSaveBtn = () => {
-                            const rows = Array.from(content.querySelectorAll('tbody tr'))
-                            
-                            const hasChangedField = rows.find(row => {
-                                const nameChanged = row.firstChild.firstChild.value.trim() !== row.firstChild.firstChild.getAttribute('placeholder')
-                                const valueChanged = row.firstChild.nextElementSibling.firstChild.value.trim() !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
-                                return nameChanged || valueChanged || !row.lastChild.firstChild.checked
-                            })
-                            
-                            const allValidNames = rows.every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value.trim() !== '')
-                            
-                            const names = rows.filter(row => row.lastChild.firstChild.checked).map(row => row.firstChild.firstChild.value.trim())
-                            const allUniqueNames = new Set(names).size === names.length
+                const getPopupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
+                const content = createFeaturePropertiesTable(popupProperties, {header: getPopupHeader()})
+                
+                if (isMapDrawControlLayer) {
+                    content.classList.remove('table-striped')
 
-                            enable = hasChangedField && allValidNames && allUniqueNames
+                    const toggleSaveBtn = () => {
+                        const rows = Array.from(content.querySelectorAll('tbody tr'))
+                        
+                        const hasChangedField = rows.find(row => {
+                            const nameChanged = row.firstChild.firstChild.value.trim() !== row.firstChild.firstChild.getAttribute('placeholder')
+                            const valueChanged = row.firstChild.nextElementSibling.firstChild.value.trim() !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
+                            return nameChanged || valueChanged || !row.lastChild.firstChild.checked
+                        })
+                        
+                        const allValidNames = rows.every(row => !row.lastChild.firstChild.checked || row.firstChild.firstChild.value.trim() !== '')
+                        
+                        const names = rows.filter(row => row.lastChild.firstChild.checked).map(row => row.firstChild.firstChild.value.trim())
+                        const allUniqueNames = new Set(names).size === names.length
 
-                            saveBtn.classList.toggle('disabled', !enable)
+                        enable = hasChangedField && allValidNames && allUniqueNames
+
+                        saveBtn.classList.toggle('disabled', !enable)
+                    }
+
+                    const checkPropertyNameDuplicate = (e) => {
+                        const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
+                        if (duplicate.length > 1) {
+                            e.target.classList.add('bg-danger')
+                            e.target.setAttribute('title', 'Duplicate property name')
+                        } else {
+                            e.target.classList.remove('bg-danger')
+                            e.target.removeAttribute('title')
                         }
+                    }
 
-                        const checkPropertyNameDuplicate = (e) => {
-                            const duplicate = Array.from(content.querySelectorAll('tbody tr')).filter(row => row.firstChild.firstChild.value === e.target.value)
-                            if (duplicate.length > 1) {
-                                e.target.classList.add('bg-danger')
-                                e.target.setAttribute('title', 'Duplicate property name')
-                            } else {
-                                e.target.classList.remove('bg-danger')
-                                e.target.removeAttribute('title')
-                            }
-                        }
+                    Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
+                        const propertyName = row.firstChild.innerText
+                        if (propertyName.startsWith('__') && propertyName.endsWith('__')) return
 
-                        Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
-                            const propertyName = row.firstChild.innerText
-                            const propertyValue = row.firstChild.nextElementSibling.innerText
-                            
-                            Array.from(row.children).forEach(i => i.innerHTML = '')
+                        const propertyValue = row.firstChild.nextElementSibling.innerText
+                        
+                        Array.from(row.children).forEach(i => i.innerHTML = '')
 
-                            const nameField = customCreateElement({
-                                parent: row.firstChild,
-                                tag: 'input',
-                                className: 'border-0 p-0 m-0',
-                                attrs: {type: 'text', value: propertyName, placeholder: propertyName},
-                                style: {width:'100px'},
-                                events: {
-                                    change: (e) => {
-                                        if (e.target.value === '') {
-                                            e.target.value = propertyName
-                                        }
-
-                                        checkPropertyNameDuplicate(e)
-
-                                        toggleSaveBtn()
+                        const nameField = customCreateElement({
+                            parent: row.firstChild,
+                            tag: 'input',
+                            className: 'border-0 p-0 m-0',
+                            attrs: {type: 'text', value: propertyName, placeholder: propertyName},
+                            style: {width:'100px'},
+                            events: {
+                                change: (e) => {
+                                    if (e.target.value === '') {
+                                        e.target.value = propertyName
                                     }
-                                }
-                            })
-                            
-                            const valueField = customCreateElement({
-                                parent: row.firstChild.nextElementSibling,
-                                tag: 'input',
-                                className: 'border-0 p-0 m-0',
-                                attrs: {type: 'text', value: propertyValue, placeholder: propertyValue},
-                                style: {width:'100px'},
-                                events: {
-                                    change: (e) => toggleSaveBtn()
-                                }
-                            })
 
-                            const td = customCreateElement({
-                                parent: row,
-                                tag: 'td',
-                            })
+                                    checkPropertyNameDuplicate(e)
 
-                            const checkbox = customCreateElement({
-                                parent: td,
-                                tag: 'input',
-                                attrs: {type: 'checkbox'},
-                                events: {
-                                    click: (e) => toggleSaveBtn()
-                                }
-                            })
-                            .checked = true
-                        })
-
-                        const tfoot = customCreateElement({
-                            parent: content,
-                            tag: 'tfoot',
-                        })
-
-                        const tfoottr = customCreateElement({
-                            parent: tfoot,
-                            tag: 'tr',
-                        })
-
-                        const tfootth = customCreateElement({
-                            parent: tfoottr,
-                            tag: 'th',
-                            attrs: {scope:'col', colspan:'3'},
-                            style: {borderBottomWidth: '0px'}
-                        })
-
-                        const tfootdiv = customCreateElement({
-                            parent: tfootth,
-                            className: 'd-flex justify-content-between gap-5'
-                        })
-
-                        const addBtn = customCreateElement({
-                            parent: tfootdiv,
-                            tag: 'button',
-                            className: 'btn btn-primary btn-sm badge',
-                            innerHTML: 'Add',
-                            events: {
-                                click: (e) => {
-                                    const tr = customCreateElement({
-                                        parent: content.querySelector('tbody'),
-                                        tag: 'tr'
-                                    })
-
-                                    const nameTd = customCreateElement({
-                                        parent: tr,
-                                        tag: 'td'
-                                    })
-
-                                    const nameField = customCreateElement({
-                                        parent: nameTd,
-                                        tag: 'input',
-                                        className: 'border-0 p-0 m-0',
-                                        attrs: {type: 'text', value: '', placeholder: ''},
-                                        style: {width:'100px'},
-                                        events: {
-                                            change: (e) => {
-                                                checkPropertyNameDuplicate(e)
-                                                toggleSaveBtn()
-                                            }
-                                        }
-                                    })
-
-                                    const valueTd = customCreateElement({
-                                        parent: tr,
-                                        tag: 'td'
-                                    })
-                                    
-                                    const valueField = customCreateElement({
-                                        parent: valueTd,
-                                        tag: 'input',
-                                        className: 'border-0 p-0 m-0',
-                                        attrs: {type: 'text', value: '', placeholder: ''},
-                                        style: {width:'100px'},
-                                        events: {
-                                            change: (e) => toggleSaveBtn()
-                                        }
-                                    })
-
-                                    const td = customCreateElement({
-                                        parent: tr,
-                                        tag: 'td',
-                                    })
-
-                                    const checkbox = customCreateElement({
-                                        parent: td,
-                                        tag: 'input',
-                                        attrs: {type: 'checkbox'},
-                                        events: {
-                                            click: (e) => toggleSaveBtn()
-                                        }
-                                    })
-                                    .checked = true
+                                    toggleSaveBtn()
                                 }
                             }
                         })
-
-                        const saveBtn = customCreateElement({
-                            parent: tfootdiv,
-                            tag: 'button',
-                            className: 'btn btn-success btn-sm badge disabled',
-                            innerHTML: 'Save',
+                        
+                        const valueField = customCreateElement({
+                            parent: row.firstChild.nextElementSibling,
+                            tag: 'input',
+                            className: 'border-0 p-0 m-0',
+                            attrs: {type: 'text', value: propertyValue, placeholder: propertyValue},
+                            style: {width:'100px'},
                             events: {
-                                click: async (e) => {
-                                    const newProperties = {}
-                                    Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
-                                        if (row.lastChild.firstChild.checked) {
-                                            const propertyName = row.firstChild.firstChild.value.trim()
-                                            const propertyValue = row.firstChild.nextElementSibling.firstChild.value.trim()
-                                            newProperties[propertyName] = propertyValue
-                                        }
-                                    })
-
-                                    layer.closePopup()
-
-                                    let newFeature = structuredClone(feature)
-                                    newFeature.properties = newProperties
-                                    newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
-
-                                    const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
-                                    gisData.features = [
-                                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
-                                        newFeature
-                                    ]
-
-                                    await saveToGISDB(turf.clone(gisData), {
-                                        id: geojsonLayer._indexedDBKey,
-                                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                                    })
-
-                                    group.getLayers().forEach(i => {
-                                        if (i._indexedDBKey !== geojsonLayer._indexedDBKey) return
-                                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
-                                    })
-
-                                    group._map._drawControl._addChange({
-                                        type: 'edited',
-                                        features: [{
-                                            old: feature,
-                                            new: newFeature
-                                        }]
-                                    })
-
-                                    group._map._drawControl._toggleEditBtn(gisData)
-                                }
+                                change: (e) => toggleSaveBtn()
                             }
                         })
-                    }
-                    
-                    layer.bindPopup(content, {autoPan: false})
-                    layer.on('popupopen', () => {
-                        layer._popup._contentNode.querySelector('th').innerText = getPopupHeader()
+
+                        const td = customCreateElement({
+                            parent: row,
+                            tag: 'td',
+                        })
+
+                        const checkbox = customCreateElement({
+                            parent: td,
+                            tag: 'input',
+                            attrs: {type: 'checkbox'},
+                            events: {
+                                click: (e) => toggleSaveBtn()
+                            }
+                        })
+                        .checked = true
+                    })
+
+                    const tfoot = customCreateElement({
+                        parent: content,
+                        tag: 'tfoot',
+                    })
+
+                    const tfoottr = customCreateElement({
+                        parent: tfoot,
+                        tag: 'tr',
+                    })
+
+                    const tfootth = customCreateElement({
+                        parent: tfoottr,
+                        tag: 'th',
+                        attrs: {scope:'col', colspan:'3'},
+                        style: {borderBottomWidth: '0px'}
+                    })
+
+                    const tfootdiv = customCreateElement({
+                        parent: tfootth,
+                        className: 'd-flex justify-content-between gap-5'
+                    })
+
+                    const addBtn = customCreateElement({
+                        parent: tfootdiv,
+                        tag: 'button',
+                        className: 'btn btn-primary btn-sm badge',
+                        innerHTML: 'Add',
+                        events: {
+                            click: (e) => {
+                                const tr = customCreateElement({
+                                    parent: content.querySelector('tbody'),
+                                    tag: 'tr'
+                                })
+
+                                const nameTd = customCreateElement({
+                                    parent: tr,
+                                    tag: 'td'
+                                })
+
+                                const nameField = customCreateElement({
+                                    parent: nameTd,
+                                    tag: 'input',
+                                    className: 'border-0 p-0 m-0',
+                                    attrs: {type: 'text', value: '', placeholder: ''},
+                                    style: {width:'100px'},
+                                    events: {
+                                        change: (e) => {
+                                            checkPropertyNameDuplicate(e)
+                                            toggleSaveBtn()
+                                        }
+                                    }
+                                })
+
+                                const valueTd = customCreateElement({
+                                    parent: tr,
+                                    tag: 'td'
+                                })
+                                
+                                const valueField = customCreateElement({
+                                    parent: valueTd,
+                                    tag: 'input',
+                                    className: 'border-0 p-0 m-0',
+                                    attrs: {type: 'text', value: '', placeholder: ''},
+                                    style: {width:'100px'},
+                                    events: {
+                                        change: (e) => toggleSaveBtn()
+                                    }
+                                })
+
+                                const td = customCreateElement({
+                                    parent: tr,
+                                    tag: 'td',
+                                })
+
+                                const checkbox = customCreateElement({
+                                    parent: td,
+                                    tag: 'input',
+                                    attrs: {type: 'checkbox'},
+                                    events: {
+                                        click: (e) => toggleSaveBtn()
+                                    }
+                                })
+                                .checked = true
+                            }
+                        }
+                    })
+
+                    const saveBtn = customCreateElement({
+                        parent: tfootdiv,
+                        tag: 'button',
+                        className: 'btn btn-success btn-sm badge disabled',
+                        innerHTML: 'Save',
+                        events: {
+                            click: async (e) => {
+                                const newProperties = {}
+                                Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
+                                    if (row.lastChild.firstChild.checked) {
+                                        const propertyName = row.firstChild.firstChild.value.trim()
+                                        const propertyValue = row.firstChild.nextElementSibling.firstChild.value.trim()
+                                        newProperties[propertyName] = propertyValue
+                                    }
+                                })
+
+                                layer.closePopup()
+
+                                let newFeature = structuredClone(feature)
+                                newFeature.properties = newProperties
+                                newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
+
+                                const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
+                                gisData.features = [
+                                    ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                                    newFeature
+                                ]
+
+                                await saveToGISDB(turf.clone(gisData), {
+                                    id: geojsonLayer._indexedDBKey,
+                                    queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                                })
+
+                                group.getLayers().forEach(i => {
+                                    if (i._indexedDBKey !== geojsonLayer._indexedDBKey) return
+                                    updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
+                                })
+
+                                group._map._drawControl._addChange({
+                                    type: 'edited',
+                                    features: [{
+                                        old: feature,
+                                        new: newFeature
+                                    }]
+                                })
+
+                                group._map._drawControl._toggleEditBtn(gisData)
+                            }
+                        }
                     })
                 }
+                
+                layer.bindPopup(content, {autoPan: false})
+                layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = getPopupHeader())
             }
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
@@ -426,7 +474,7 @@ const getLeafletGeoJSONLayer = async ({
         ) : indexedDBKey
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
-        geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateCache:false}))
+        geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateLocalStorage:false}))
         geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
         
         if (!params?.bbox && geojson?.features.length) {
@@ -449,13 +497,11 @@ const getFeatureTitle = (properties) => {
     let title
 
     for (const key of [
-        'title',
-        'display_name',
         'name:en',
         'name',
-        'feature_id',
-        '__feature_id__',
-        'type',
+        'display',
+        'title',
+        'id',
     ]) {
         const matches = Object.keys(properties).filter(i => i === key || i.includes(key))
         if (!matches.length) {
@@ -469,7 +515,7 @@ const getFeatureTitle = (properties) => {
     if (!title) {
         for (const key in properties) {
             const value = properties[key]
-            if (typeof value === 'object' || value.length > 50) continue
+            if (value.length > 64) continue
             
             title = `${key}: ${value}`
             break
@@ -487,18 +533,19 @@ const getLeafletGeoJSONData = async (layer, {
     queryGeom=false,
     group=false,
     sort=false,
-    simplify=false,
+    transform=false,
     event,
 } = {}) => {
     if (!layer) return
-
+    
     const indexedDBKey = layer._indexedDBKey
     if (!indexedDBKey) return
     
     const map = layer._map ?? layer._group?._map
     if (!map) return
-
-    queryGeom = queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
+    
+    const isEditable = layer._indexedDBKey === layer._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
+    queryGeom = isEditable ? false : queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
 
     if (geojson?.features?.length && queryGeom) {
         const queryExtent = turf.getType(queryGeom) === 'Point' ? turf.buffer(
@@ -569,23 +616,28 @@ const getLeafletGeoJSONData = async (layer, {
                 return valid
             })
         }
+
+        if (transform ) {
+            const transformations = layer._properties.transformations
+
+            const simplifyFn = Object.values(transformations.simplify.values).find(i => i.active && i.fn && (i.fn !== 'simplify' || i.options.tolerance > 0))
+            if (transformations.simplify.active && simplifyFn) {
+                data.features = data.features.map(feature => {
+                    if (turf.getType(feature) === 'Point') return feature
+
+                    let newFeature
+                    try {
+                        newFeature = turf[simplifyFn.fn](feature, {...(simplifyFn.options ?? {})})
+                        newFeature.properties = feature.properties
+                    } catch {
+                        newFeature = feature
+                    }
+
+                    return newFeature
+                })
+            }
+        }
         
-        // let tolerance = 0
-        // if (simplify) {
-        //     if (controller?.signal?.aborted) return
-            
-        //     const scale = getLeafletMeterScale(map)
-        //     tolerance = scale > 1000 && data.features.length > 100 ? scale/10000000 : 0
-        //     if (tolerance > 0) {
-        //         turf.simplify(data, {
-        //             mutate: true,
-        //             tolerance, 
-        //             highQuality: false
-        //         })
-        //     }
-        // }
-        // layer._tolerance = tolerance
-    
         if (sort) {
             if (controller?.signal?.aborted) return
             sortGeoJSONFeatures(data, {reverse:true})
@@ -599,26 +651,29 @@ const isUnderenderedLayer = (layer) => {
     return layer._group._map._handlers.hasHiddenLegendLayer(layer) || layer._group._map._handlers.hasHiddenLegendGroupLayer(layer) || !leafletLayerIsVisible(layer)
 }
 
-const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateCache=true} = {}) => {
+const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateLocalStorage=true} = {}) => {
     if (!layer || !layer._map || isUnderenderedLayer(layer)) return
 
-    const isEditable = layer._indexedDBKey === layer._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
-    const preventUpdate = isEditable && layer._map._drawControl?._editMode
+    const map = layer._map ?? layer._group?._map
+    if (!map) return
+
+    const isEditable = layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
+    const preventUpdate = isEditable && map._drawControl?._editMode
 
     layer.fire('dataupdating')
     const data = !preventUpdate ? await getLeafletGeoJSONData(layer, {
         geojson, 
         controller, 
         abortBtns, 
-        queryGeom: !isEditable,
         group: true,
         sort: true,
-        simplify: true,
+        queryGeom: !isEditable,
+        filter: !isEditable,
+        transform: !isEditable,
     }) : layer.toGeoJSON()
     if (!data) return
 
     if (controller?.signal?.aborted) return
-
     
     if (!preventUpdate) {
         const limits = layer._properties.limits
@@ -626,16 +681,16 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
 
         if (!isEditable && limits.active && limits.totalCount > limits.max) {
             if (limits.method === 'limit') {
-                data.features = data.features.slice(-1000)
+                data.features = data.features.slice(-limits.max)
             } else {
-                let nextZoom = layer._map.getZoom() + 1
+                let nextZoom = map.getZoom() + 1
     
                 if (limits.method === 'zoomin' && nextZoom <= 20) {
-                    layer._map.setZoom(nextZoom)
+                    map.setZoom(nextZoom)
                 }
     
                 if (limits.method === 'scale') {
-                    const currentScale = getLeafletMeterScale(layer._map)
+                    const currentScale = getLeafletMeterScale(map)
                     
                     let minScale = currentScale
                     while (minScale >= currentScale) {
@@ -647,10 +702,10 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
                     layer._properties.visibility.max = maxScale > minScale ? maxScale : minScale
                     layer._properties.visibility.active = true
     
-                    updateLeafletGeoJSONLayer(layer, {geojson, controller, abortBtns, updateCache})
+                    updateLeafletGeoJSONLayer(layer, {geojson, controller, abortBtns, updateLocalStorage})
                     
                     const event = new Event("change", { bubbles: true })
-                    const mapContainer = layer._group._map.getContainer()
+                    const mapContainer = map.getContainer()
                     mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`).parentElement.firstChild.querySelector('select').dispatchEvent(event)
                 }
 
@@ -672,9 +727,10 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
 
         layer.addData(data)
     }
+
     layer.fire('dataupdate')
     
-    if (updateCache) layer._map?._handlers.updateStoredLegendLayers({layer})
+    if (updateLocalStorage) map._handlers.updateStoredLegendLayers({layer})
 }
 
 const getGeoJSONLayerStyles = (layer) => {

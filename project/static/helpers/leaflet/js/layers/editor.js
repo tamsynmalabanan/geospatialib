@@ -79,9 +79,9 @@ const toggleLeafletLayerEditor = async (layer, {
                 })
             })
 
-            const newDBIndexedKey = await alertPromise
-            if (newDBIndexedKey) {
-                endEditingSession(newDBIndexedKey)
+            const newIndexedDBKey = await alertPromise
+            if (newIndexedDBKey) {
+                endEditingSession(newIndexedDBKey)
             } else {
                 return
             }
@@ -94,14 +94,14 @@ const toggleLeafletLayerEditor = async (layer, {
             gisData: turf.featureCollection([]),
             queryExtent: turf.feature([]).geometry,
         }    
-        const newDBIndexedKey = indexedDBKey ?? await saveToGISDB(gisData, {
+        const newIndexedDBKey = indexedDBKey ?? await saveToGISDB(gisData, {
             id: `${id}--version${Number(version ?? 1)+1}`,
             queryExtent,
         })    
         
         localLayers.forEach(i => {
             if (!i._indexedDBKey.startsWith(id)) return
-            i._indexedDBKey = newDBIndexedKey
+            i._indexedDBKey = newIndexedDBKey
             
             const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
             const title = legend.querySelector(`#${legend.id}-title`)
@@ -121,7 +121,7 @@ const toggleLeafletLayerEditor = async (layer, {
 
     localLayers.forEach(i => {
         if (![editableLayer, layer].map(i => i?._indexedDBKey).includes(i._indexedDBKey)) return
-        updateLeafletGeoJSONLayer(i, {updateCache: false})
+        updateLeafletGeoJSONLayer(i, {updateLocalStorage: false})
     })
 
     map._drawControl?._toggleEditBtn((await getFromGISDB(layer._indexedDBKey)).gisData)

@@ -1,23 +1,21 @@
 const normalizeGeoJSON = async (geojson, {
     controller,
     defaultGeom,
-    updateGSLId,
 } = {}) => {
     if (!geojson) return
 
     let crs
     if (geojson.crs) {
-        const crsInfo = geojson.crs.properties?.name?.split('EPSG::')
+        const crsInfo = geojson.crs.properties?.name?.toLowerCase().replace('::', ':').split('epsg:')
         crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
         delete geojson.crs   
     }
-    
+
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
         await normalizeGeoJSONFeature(feature, {
             defaultGeom,
             crs,
-            updateGSLId,
         })
     }
 
@@ -27,24 +25,49 @@ const normalizeGeoJSON = async (geojson, {
 const normalizeGeoJSONFeature = async (feature, {
     defaultGeom,
     crs,
-    updateGSLId = false,
 }={}) => {
-    const featureGeom = feature.geometry
-    const geomAssigned = !featureGeom && defaultGeom
-    feature.geometry = featureGeom || defaultGeom
+    const assignGeom = !feature.geometry && defaultGeom
+    if (assignGeom) feature.geometry = defaultGeom
     
-    if (crs && crs !== 4326 && !geomAssigned) {
+    if (crs && crs !== 4326 && !assignGeom) {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
     }
     
-    if (!feature.properties.__gsl_id__ || updateGSLId) feature.properties.__gsl_id__ = generateRandomString()
-
-    if (feature.id) {
-        feature.properties.__feature_id__ = feature.id
-    }
-
     feature.properties = normalizeFeatureProperties(feature.properties)
 
+    if (feature.id) feature.properties.__source_id__ = feature.id
+    
+    if (!feature.properties.__gsl_id__) feature.properties.__gsl_id__ = generateRandomString()
+
+    const geomType = feature.geometry.type
+
+    try {        
+        const [x,y] = geomType === 'Point' ? feature.geometry.coordinates : turf.centroid(feature).geometry.coordinates
+        feature.properties.__x__ = x
+        feature.properties.__y__ = y
+    } catch {}
+
+    if (geomType.includes('Polygon')) {
+        try {
+            feature.properties.__area_sqm__ = turf.area(feature)
+        } catch {}
+        
+        try {
+            feature.properties.__perimeter_km__ = turf.length(turf.polygonToLine(feature))
+        } catch {}
+    }
+
+    if (geomType.includes('LineString')) {
+        try {
+            feature.properties.__length_km__ = turf.length(feature)
+        } catch {}
+    }
+
+    if (geomType !== 'Point') {
+        try {
+            feature.properties.__bbox_wsen__ = turf.bbox(feature).join(',')
+        } catch {}
+    }
 }
 
 const normalizeFeatureProperties = (properties) => {

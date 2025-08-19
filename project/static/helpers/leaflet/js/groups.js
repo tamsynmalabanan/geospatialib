@@ -165,14 +165,18 @@ const handleLeafletLayerGroups = async (map) => {
             const storedData = map._handlers.getStoredLegendLayers()
 
             const updateStoredLayerData = (layer) => {
-                storedData[layer._leaflet_id] = {...(storedData[layer._leaflet_id] ?? {}), ...{
-                    indexedDBKey: layer._indexedDBKey,
-                    params: layer._params,
-                    properties: layer._properties,
-                    zIndex: map.getPanes()[layer.options.pane].style.zIndex,
-                    isHidden: map._handlers.hasHiddenLegendLayer(layer) ? true : false,
-                    editable: layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey,
-                }}
+                try {
+                    storedData[layer._leaflet_id] = {...(storedData[layer._leaflet_id] ?? {}), ...{
+                        indexedDBKey: layer._indexedDBKey,
+                        params: layer._params,
+                        properties: layer._properties,
+                        zIndex: map.getPanes()[layer.options.pane].style.zIndex,
+                        isHidden: map._handlers.hasHiddenLegendLayer(layer) ? true : false,
+                        editable: layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey,
+                    }}
+                } catch (error) {
+                    console.log(error, layer)
+                }
             }
 
             if (layer) updateStoredLayerData(layer)

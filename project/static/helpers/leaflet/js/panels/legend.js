@@ -717,7 +717,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson,
                         controller,
-                        updateCache: false,
+                        updateLocalStorage: false,
                     }).then(() => {
                         if (layer && layer._openpopup) {
                             layer._openpopup.openOn(map)

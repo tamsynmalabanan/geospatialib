@@ -121,7 +121,8 @@ const handleLeafletDrawBtns = (map, {
                     if (Object.keys(newFeatures).length === 2 && newFeatures.type && newFeatures.coordinates) newFeatures = [turf.feature(newFeatures)]
                     if (!Array.isArray(newFeatures)) return
 
-                    newFeatures = (await normalizeGeoJSON(turf.featureCollection(newFeatures), {updateGSLId:true})).features
+                    newFeatures = (await normalizeGeoJSON(turf.featureCollection(newFeatures))).features
+                    newFeatures.forEach(f => f.properties.__gsl_id__ = generateRandomString())
 
                     const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
                     gisData.features = [
@@ -136,7 +137,7 @@ const handleLeafletDrawBtns = (map, {
 
                     targetLayer._group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
 
                     drawControl._addChange({
@@ -203,7 +204,7 @@ const handleLeafletDrawBtns = (map, {
 
                     targetLayer._group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
                     
                     localStorage.setItem(drawControlChangesKey, JSON.stringify(changes))
@@ -217,13 +218,13 @@ const handleLeafletDrawBtns = (map, {
         parent: bar,
         attrs: {
             href:'#', 
-            'data-dbindexedkey-version': Number(targetLayer._indexedDBKey.split('--version')[1])-1
+            'data-indexeddbkey-version': Number(targetLayer._indexedDBKey.split('--version')[1])-1
         },
         className: 'leaflet-draw-misc-restore bi bi-skip-backward',
         events: {
             mouseover: async (e) => {
                 const [id, version] = targetLayer._indexedDBKey.split('--version')
-                const currentVersion = Number(e.target.getAttribute('data-dbindexedkey-version'))
+                const currentVersion = Number(e.target.getAttribute('data-indexeddbkey-version'))
                 const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
                 e.target.setAttribute('title', previousVersion ? `Restore to version ${previousVersion}` : `No older version to restore`)
 
@@ -231,12 +232,12 @@ const handleLeafletDrawBtns = (map, {
             click: async (e) => {
                 const handler = async () => {
                     const [id, version] = targetLayer._indexedDBKey.split('--version')
-                    const currentVersion = Number(e.target.getAttribute('data-dbindexedkey-version'))
+                    const currentVersion = Number(e.target.getAttribute('data-indexeddbkey-version'))
                     const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
                     
                     if (!previousVersion) return
                     
-                    e.target.setAttribute('data-dbindexedkey-version', previousVersion)
+                    e.target.setAttribute('data-indexeddbkey-version', previousVersion)
                     const {gisData, queryExtent} = await getFromGISDB(`${id}--version${previousVersion}`)
 
                     await saveToGISDB(turf.clone(gisData), {
@@ -246,7 +247,7 @@ const handleLeafletDrawBtns = (map, {
 
                     targetLayer._group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
 
                     drawControl._addChange({
@@ -292,21 +293,21 @@ const handleLeafletDrawBtns = (map, {
 
                 const [id, version] = targetLayer._indexedDBKey.split('--version')
                 const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
-                const newDBIndexedKey = await saveToGISDB(gisData, {
+                const newIndexedDBKey = await saveToGISDB(gisData, {
                     id: `${id}--version${Number(version ?? 1)+1}`,
                     queryExtent,
                 })
 
                 targetLayer._group._handlers.getAllLayers().forEach(i => {
                     if (!i._indexedDBKey.startsWith(id)) return
-                    i._indexedDBKey = newDBIndexedKey
+                    i._indexedDBKey = newIndexedDBKey
                 })
 
                 map._handlers.updateStoredLegendLayers()
 
                 localStorage.removeItem(drawControlChangesKey)
 
-                restoreBtn.setAttribute('data-dbindexedkey-version', targetLayer._indexedDBKey.split('--version')[1]-1)
+                restoreBtn.setAttribute('data-indexeddbkey-version', targetLayer._indexedDBKey.split('--version')[1]-1)
             }
         }
     })
@@ -368,7 +369,7 @@ const handleLeafletDrawBtns = (map, {
 
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
 
             drawControl._addChange({
@@ -394,7 +395,7 @@ const handleLeafletDrawBtns = (map, {
 
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
             
             drawControl._addChange({
@@ -408,10 +409,12 @@ const handleLeafletDrawBtns = (map, {
         },
         'edited': async (e) => {
             if (!targetLayer._indexedDBKey) return
-            
-            const features = e.layers.getLayers().map(i => {
-                return {old: i.feature, new: i.toGeoJSON()}
-            })
+
+            const features = []
+            for (const i of e.layers.getLayers()) {
+                const newFeature = (await normalizeGeoJSON(turf.featureCollection([i.toGeoJSON()]))).features[0]
+                features.push({old: i.feature, new: newFeature})
+            }
             const gslIds = features.map(i => i.old.properties.__gsl_id__)
 
             const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
@@ -427,7 +430,7 @@ const handleLeafletDrawBtns = (map, {
     
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateCache: false})
+                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
 
             drawControl._addChange({
