@@ -557,7 +557,7 @@ const getLeafletGeoJSONData = async (layer, {
         })
     }
 
-    let data = geojson?.features?.length ? geojson : (await getGeoJSON(indexedDBKey, {
+    let data = geojson ?? (await getGeoJSON(indexedDBKey, {
         queryGeom,
         zoom: map.getZoom(),
         controller,
