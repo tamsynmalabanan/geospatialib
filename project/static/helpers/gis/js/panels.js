@@ -47,7 +47,7 @@ const findLayersPanels = (container, {} = {}) => {
     const [tabs, accordion] = createAccordion(`${id}-accordion`, {
         'legend': {
             label: `Legend`,
-            // active: true
+            active: true,
         },
         'style': {
             label: `Properties`,
@@ -57,7 +57,6 @@ const findLayersPanels = (container, {} = {}) => {
         },
         'toolbox': {
             label: `Toolbox`,
-            active: true,
         },
     }, {themed:true})
 
