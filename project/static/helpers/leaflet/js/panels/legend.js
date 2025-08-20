@@ -691,7 +691,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     const geojson = (
                         !legend.querySelector('.bi-bug')
-                        && turf.booleanWithin(newBbox, previousBbox) 
+                        && turf.booleanWithin(newBbox, previousBbox)
                         && layer.getLayers().length === layer._properties.limits.totalCount
                     ) ? layer.toGeoJSON() : null
 
