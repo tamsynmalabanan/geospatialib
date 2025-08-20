@@ -122,25 +122,25 @@ const handleLeafletQueryPanel = (map, parent) => {
     }
 
     const tools = toolsHandler({
-        locationCoords: {
-            iconSpecs: 'bi-geo-alt-fill',
-            title: 'Query point coordinates',
-            altShortcut: 'q',
-            mapClickHandler: async (e) => {
-                const feature = turf.point(Object.values(e.latlng).reverse())
+        // locationCoords: {
+        //     iconSpecs: 'bi-geo-alt-fill',
+        //     title: 'Query point coordinates',
+        //     altShortcut: 'q',
+        //     mapClickHandler: async (e) => {
+        //         const feature = turf.point(Object.values(e.latlng).reverse())
                 
-                queryGroup.addLayer((await getLeafletGeoJSONLayer({
-                    geojson: feature, 
-                    pane: 'queryPane',
-                    group: queryGroup,
-                    customStyleParams,
-                })))
+        //         queryGroup.addLayer((await getLeafletGeoJSONLayer({
+        //             geojson: feature, 
+        //             pane: 'queryPane',
+        //             group: queryGroup,
+        //             customStyleParams,
+        //         })))
 
-                const content = createPointCoordinatesTable(feature, {precision:6})
-                layers.appendChild(content)
-                if (layers.classList.contains('d-none')) enableToolbar()
-            },
-        },
+        //         const content = createPointCoordinatesTable(feature, {precision:6})
+        //         layers.appendChild(content)
+        //         if (layers.classList.contains('d-none')) enableToolbar()
+        //     },
+        // },
         osmPoint: {
             iconSpecs: 'bi-pin-map-fill',
             title: 'Query OpenStreetMap at point',

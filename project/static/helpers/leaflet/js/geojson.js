@@ -198,6 +198,8 @@ const getLeafletGeoJSONLayer = async ({
                         const rows = Array.from(content.querySelectorAll('tbody tr'))
                         
                         const hasChangedField = rows.find(row => {
+                            if (!row.querySelector('input')) return
+
                             const nameChanged = row.firstChild.firstChild.value.trim() !== row.firstChild.firstChild.getAttribute('placeholder')
                             const valueChanged = row.firstChild.nextElementSibling.firstChild.value.trim() !== row.firstChild.nextElementSibling.firstChild.getAttribute('placeholder')
                             return nameChanged || valueChanged || !row.lastChild.firstChild.checked

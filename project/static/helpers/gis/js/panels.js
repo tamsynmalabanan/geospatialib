@@ -47,7 +47,7 @@ const findLayersPanels = (container, {} = {}) => {
     const [tabs, accordion] = createAccordion(`${id}-accordion`, {
         'legend': {
             label: `Legend`,
-            active: true
+            // active: true
         },
         'style': {
             label: `Properties`,
@@ -55,9 +55,10 @@ const findLayersPanels = (container, {} = {}) => {
         'query': {
             label: `Query`,
         },
-        // 'toolbox': {
-        //     label: `Toolbox`,
-        // },
+        'toolbox': {
+            label: `Toolbox`,
+            active: true,
+        },
     }, {themed:true})
 
     offcanvas.querySelector('.offcanvas-nav').appendChild(tabs)

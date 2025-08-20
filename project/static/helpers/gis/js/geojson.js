@@ -40,6 +40,7 @@ const normalizeGeoJSONFeature = async (feature, {
     if (!feature.properties.__gsl_id__) feature.properties.__gsl_id__ = generateRandomString()
 
     const geomType = feature.geometry.type
+    feature.properties.__geom_type__ = geomType
 
     try {        
         const [x,y] = geomType === 'Point' ? feature.geometry.coordinates : turf.centroid(feature).geometry.coordinates

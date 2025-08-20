@@ -156,6 +156,38 @@ const createLeafletMapPanel = (map, parent, name, {
     return template
 }
 
+const leafletMapLegendLayersToSelectOptions = (map, select, {
+    layer,
+    validators=[],
+}={}) => {
+    select.innerHTML = ''
+
+    const mapContainer = map.getContainer()
+    const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
+    const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
+    
+    const option = document.createElement('option')
+    option.value = '-1'
+    option.text = 'Select a layer'
+    select.appendChild(option)
+    
+    Array.from(legends).map(l => {
+        const leafletId = parseInt(l.dataset.layerId)
+        return map._handlers.getLegendLayer(leafletId)
+    }).forEach(l => {
+        if (validators.length && validators.every(v => !v(l))) return
+
+        const option = document.createElement('option')
+        option.className = 'text-wrap text-break text-truncate'
+        option.value = l._leaflet_id
+        option.text = l._params.title
+        if (layer && layer._leaflet_id === l._leaflet_id) {
+            option.setAttribute('selected', true)
+        }
+        select.appendChild(option)
+    })
+}
+
 const handleLeafletMapPanels = async (map) => {
     const mapContainer = map.getContainer()
     if (mapContainer.parentElement.dataset.mapPanels !== 'true') return
@@ -172,6 +204,7 @@ const handleLeafletMapPanels = async (map) => {
         handleLeafletQueryPanel(map, body.querySelector(`#${body.id}-accordion-query .accordion-body`))
         handleLeafletLegendPanel(map, body.querySelector(`#${body.id}-accordion-legend .accordion-body`))
         handleLeafletStylePanel(map, body.querySelector(`#${body.id}-accordion-style .accordion-body`))
+        handleLeafletToolboxPanel(map, body.querySelector(`#${body.id}-accordion-toolbox .accordion-body`))
         
         return panel
     }

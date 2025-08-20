@@ -16,9 +16,8 @@ const handleLeafletStylePanel = (map, parent) => {
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
         fieldAttrs: {name: 'layer'},
-        // labelText: 'Layer'
+        disabled: true,
     }).querySelector('select')
-    select.disabled = true
 
     const styleOptions = select.nextElementSibling
     styleOptions.appendChild(createIcon({
@@ -1718,29 +1717,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }
 
     select.addEventListener('focus', (e) => {
-        select.innerHTML = ''
-
-        const legendContainer = mapContainer.querySelector(`#${mapContainer.id}-panels-legend-layers`)
-        const legends = legendContainer.querySelectorAll(`[data-layer-legend="true"]`)
-        
-        const option = document.createElement('option')
-        option.value = '-1'
-        option.text = 'Select a layer'
-        select.appendChild(option)
-        
-        Array.from(legends).map(l => {
-            const leafletId = parseInt(l.dataset.layerId)
-            return map._handlers.getLegendLayer(leafletId)
-        }).forEach(l => {
-            const option = document.createElement('option')
-            option.className = 'text-wrap text-break text-truncate'
-            option.value = l._leaflet_id
-            option.text = l._params.title
-            if (layer && layer._leaflet_id === l._leaflet_id) {
-                option.setAttribute('selected', true)
-            }
-            select.appendChild(option)
-        })
+        leafletMapLegendLayersToSelectOptions(map, select, {layer})
     })
 
     select.addEventListener('change', () => {
