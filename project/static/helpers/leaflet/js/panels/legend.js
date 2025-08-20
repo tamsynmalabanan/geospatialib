@@ -584,26 +584,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 menuContainer.classList.add('bg-danger')
             }
         },
-        divider2: {
-            tag: 'div',
-            className: 'vr m-2',
-        },
-        clearIndexedDB: {
-            iconSpecs: 'bi-database-fill-x',
-            title: 'Clear stored data',
-            disabled: false,
-            btnClickHandler: (e) => {
-                const menuContainer = contextMenuHandler(e, {
-                    confirm: {
-                        innerText: `Confirm to clear stored data`,
-                        btnCallback: async () => {
-                            clearGISDB()
-                        }
-                    },            
-                })
-                menuContainer.classList.add('bg-danger')
-            }
-        },
     })
 
     const clearLegend = (layerLegend, {isInvisible=false, error=false} = {}) => {

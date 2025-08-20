@@ -1,16 +1,21 @@
-<div class="d-flex flex-column gap-2">
-    <p class="text-wrap text-muted user-select-none lh-1 mt-2 mb-0 fs-12 {% if user.is_authenticated %}px-3{% endif %}" style="width:230px;">
+<div class="d-flex flex-column">
+    <p class="text-wrap text-muted user-select-none lh-1 mt-2 mb-0 fs-12 px-3" style="width:230px;">
         By using Geospatialib, you agree to comply with our 
         <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userTermsModal">Terms</span>, 
         <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userPrivacyPolicyModal">Privacy Policy</span> and 
         <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userCookiesPolicyModal">Cookies Policy</span>.
     </p>
-    
-    {% if user.is_authenticated %}
-        {% if user.is_superuser %}
-            <a class='px-3 text-reset text-decoration-none text-muted fs-12' href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer">Go to admin</a>
-        {% else %}
-            <span class='px-3 text-muted fs-12 user-select-none' data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete account</span>
+    <hr>
+    <div class="d-flex gap-2 justify-content-center px-3">
+        <button type="button" class="btn btn-outline-secondary text-bg-{{theme}} btn-sm badge font-monospace d-flex flex-nowrap gap-2" data-bs-toggle="modal" data-bs-target="#userOptionsModal">
+            <i class="bi bi-toggles"></i>
+            <span>Options</span>
+        </button>
+        {% if user.is_authenticated and user.is_superuser %}
+            <a class='text-reset text-decoration-none btn btn-outline-secondary text-bg-{{theme}} btn-sm badge font-monospace d-flex flex-nowrap gap-2' href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer">
+                <i class="bi bi-sliders"></i>
+                <span>ADMIN</span>
+            </a>
         {% endif %}
-    {% endif %}
+    </div>
 </div>

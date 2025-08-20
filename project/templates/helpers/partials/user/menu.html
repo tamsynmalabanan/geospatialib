@@ -25,7 +25,7 @@
         {% include "helpers/partials/user/compliance.html" %}
     </ul>
 {% else %}
-    <div class="dropdown-menu p-3 dropdown-menu-start">
+    <div class="dropdown-menu px-0 py-2 dropdown-menu-start">
         <a href="{% provider_login_url 'google' %}?next={% url 'main:index' %}" class="justify-content-center d-flex flex-nowrap text-reset text-decoration-none">
             <i class="bi bi-google me-2"></i>
             <span class='text-nowrap fw-medium'>Sign in with Google</span>
