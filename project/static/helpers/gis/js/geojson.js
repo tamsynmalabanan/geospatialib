@@ -66,7 +66,7 @@ const normalizeGeoJSONFeature = async (feature, {
 
     if (geomType !== 'Point') {
         try {
-            feature.properties.__bbox_wsen__ = turf.bbox(feature).join(',')
+            feature.properties.__bbox_wsen__ = turf.bbox(feature).join(', ')
         } catch {}
     }
 }
