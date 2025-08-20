@@ -14,7 +14,7 @@
         {% if user.is_authenticated and user.is_superuser %}
             <a class='text-reset text-decoration-none btn btn-outline-secondary text-bg-{{theme}} btn-sm badge font-monospace d-flex flex-nowrap gap-2' href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer">
                 <i class="bi bi-sliders"></i>
-                <span>ADMIN</span>
+                <span>Admin</span>
             </a>
         {% endif %}
     </div>
