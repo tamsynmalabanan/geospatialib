@@ -88,13 +88,14 @@ const fetchOverpass = async (params, {
         return mapForFetchOverpass.get(mapKey)
     }
 
-    while (fetchOverpassIsActive) {
+    while (fetchOverpassIsActive && !controller?.signal.aborted) {
         await new Promise(res => setTimeout(res, 1000))
     }
-
+    
+    if (controller?.signal.aborted) return
     fetchOverpassIsActive = true
 
-    const url = 'https://overpass-api.de/api/interpreter'    
+    const url = 'https://overpass-api.de/api/interpreter'
     const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
 
     const fetchPromise = fetchTimeout(url, {
