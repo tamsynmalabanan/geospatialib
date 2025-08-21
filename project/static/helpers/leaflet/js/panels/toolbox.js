@@ -27,8 +27,48 @@ const handleLeafletToolboxPanel = (map, parent) => {
     //     className: 'bg-transparent border-0 p-0 bi bi-play-fill text-success fs-3 position-absolute bottom-0 end-0 mb-3 me-3'
     // })
 
+    const vectorLayerValidators = [
+        (l) => l instanceof L.GeoJSON && l.getLayers().length,
+    ]
+
+    const getLayerFieldParams = ({
+        validators=vectorLayerValidators,
+        label='Layer',
+        required=true,
+        value=null,
+    }={}) => {
+        return {
+            required,
+            value,
+            createElement: ({parent, name, fieldParams}={}) => {
+                return createInputGroup({
+                    parent,
+                    prefixHTML: `<span class='fs-12'>${label}</span>`,
+                    fieldTag: 'select', 
+                    fieldClass: 'form-select-sm',
+                    fieldAttrs: {name},
+                    events: {
+                        focus: (e) => {
+                            leafletMapLegendLayersToSelectOptions(map, e.target, {
+                                layer: fieldParams.value,
+                                validators,  
+                            })
+
+                            console.log('add workflow outputs as options')
+                        },
+                        change: (e) => {
+                            const layerId = parseInt(e.target.value)
+                            const layer = map._handlers.getLegendLayer(layerId)
+                            fieldParams.value = layer ?? null
+                        },
+                    }
+                })
+            } ,
+        }
+    }
+
     const tools = {
-        transform: {
+        vectorTransform: {
             title: 'Vector Transformation',
             tools: {
                 flatten: {
@@ -39,20 +79,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         outputs: 'vector layer',
                     },
                     fields: {
-                        layer: {
-                            layerField: true,
-                            validators: [
-                                (l) => {
-                                    return l instanceof L.GeoJSON && l.getLayers().length
-                                }
-                            ],
-                            
-                            tag: 'select',
-                            className: 'form-select-sm',
-                            label: 'Layer',
-                            required: true,
-                            value: null,
-                        }
+                        layer: getLayerFieldParams()
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
@@ -78,20 +105,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         outputs: 'vector layer',
                     },
                     fields: {
-                        layer: {
-                            layerField: true,
-                            validators: [
-                                (l) => {
-                                    return l instanceof L.GeoJSON && l.getLayers().length
-                                }
-                            ],
-                            
-                            tag: 'select',
-                            className: 'form-select-sm',
-                            label: 'Layer',
-                            required: true,
-                            value: null,
-                        }
+                        layer: getLayerFieldParams()
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
@@ -111,6 +125,77 @@ const handleLeafletToolboxPanel = (map, parent) => {
                 },
             }
         },
+        vectorFilter: {
+            title: 'Vector Filtering',
+            tools: {
+                typeFilter: {
+                    title: 'Filter by Geometry Type',
+                    details: {
+                        description: 'Extracts features with selected geomtry types from the input vector layer.',
+                    },
+                    fields: {
+                        layer: getLayerFieldParams(),
+                        types: {
+                            required: true,
+                            value: null,
+                            createElement: ({parent, name, fieldParams}={}) => {
+                                return createCheckboxOptions({
+                                    parent,
+                                    name,
+                                    containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12',
+                                    options: (() => {
+                                        const options = {}
+                                        for (const suffix of Array('Point', 'LineString', 'Polygon')) {
+                                            for (const type of Array(suffix, `Multi${suffix}`)) {
+                                                options[type] = {
+                                                    checked: false,
+                                                    events: {
+                                                        click: (e) => {
+                                                            const value = e.target.value
+                                                            fieldParams.value = fieldParams.value ?? []
+                                                            
+                                                            if (e.target.checked) {
+                                                                if (!fieldParams.value.includes(value)) {
+                                                                    fieldParams.value.push(value)
+                                                                }
+                                                            } else {
+                                                                fieldParams.value = fieldParams.value.filter(i => i !== value)
+                                                            }
+
+                                                            if (!fieldParams.value.length) {
+                                                                fieldParams.value = null
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        return options
+                                    })()
+                                })
+                            }
+                        }
+                    },
+                    handler: async (params) => {
+                        const inputLayer = params.layer
+                        const geojson = turf.clone(inputLayer.toGeoJSON())
+                        geojson.features = geojson.features.filter(f => {
+                            return params.types.includes(f.geometry.type)
+                        })
+
+                        const layer = await getLeafletGeoJSONLayer({
+                            geojson,
+                            group,
+                            pane: createCustomPane(map),
+                            params: {
+                                name: `${inputLayer._params.title} > filtered by geometry type`,
+                            }
+                        })
+                        return layer
+                    }
+                },
+            }
+        }
     }
 
     const searchContainer = customCreateElement({
@@ -124,7 +209,6 @@ const handleLeafletToolboxPanel = (map, parent) => {
         tag: 'input',
         className: 'ps-0 border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent w-100 fs-14',
         attrs: {
-            list: `${searchContainer.id}-list`,
             type: 'search',
             placeholder: 'Search toolbox...'
         },
@@ -136,28 +220,11 @@ const handleLeafletToolboxPanel = (map, parent) => {
             }
         }
     })
-
-    const searchList = customCreateElement({
-        parent: searchContainer,
-        tag: 'datalist',
-        id: `${searchContainer.id}-list`,
-    })
-
-    Object.values(tools).flatMap(set => {
-        return Object.values(set.tools).map(tool => {
-            return `${tool.title} | ${set.title} | ${tool.details.description}`
-        })
-    }).forEach(i => {
-        searchList.appendChild(customCreateElement({
-            tag: 'option',
-            attrs: {value: i}
-        }))
-    })
     
     const toolsContainer = customCreateElement({
         parent,
         id: `${parent.parentElement.id}-tools`,
-        className: 'p-3 fs-14'
+        className: 'p-3 fs-14 d-flex flex-column gap-2'
     })
     
     const group = map._handlers.getLayerGroups().local
@@ -213,17 +280,18 @@ const handleLeafletToolboxPanel = (map, parent) => {
             for (const tool in setParams.tools) {
                 const toolParams = setParams.tools[tool]
 
-                if (keywords.length && keywords.every(k => !`${toolParams.title} | ${setParams.title} | ${toolParams.details.description}`.includes(k))) continue
+                const toolString = `${toolParams.title} | ${setParams.title} | ${toolParams.details.description}`.toLowerCase()
+                if (keywords.length && keywords.every(k => !toolString.includes(k.toLowerCase()))) continue
     
                 const toolContainer = customCreateElement({
                     parent: setToolsContainer,
                     id: `${setContainer.id}-${tool}`,
-                    className: 'd-flex flex-column gap-1',
+                    className: 'd-flex flex-column',
                 })
     
                 const toolHead = customCreateElement({
                     parent: toolContainer,
-                    className: 'd-flex flex-nowrap justify-content-between ',
+                    className: 'd-flex flex-nowrap justify-content-between border p-2',
                     attrs:{
                         'data-bs-toggle': "collapse",
                         'data-bs-target': `#${toolContainer.id}-collapse`,
@@ -253,7 +321,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
     
                 const toolCollapseContainer = customCreateElement({
                     parent: toolCollapse,
-                    className: 'd-flex flex-column gap-2 border-start border-2 ps-2'
+                    className: 'd-flex flex-column gap-2 border border-top-0 p-2'
                 })
     
                 const toolDetails = customCreateElement({
@@ -284,44 +352,20 @@ const handleLeafletToolboxPanel = (map, parent) => {
                 })
     
                 const toggleToolBtns = () => {
-                    const disabled = Object.values(toolParams.fields).every(i => i.required && !i.value)
+                    const disabled = Object.values(toolParams.fields).some(i => i.required && !i.value)
                     Array.from(toolForm.querySelectorAll(`#${toolForm.id}-btns > button`)).forEach(b => b.disabled = disabled)
                 }
     
                 for (const name in toolParams.fields) {
                     const fieldParams = toolParams.fields[name]
-    
-                    const field = createInputGroup({
+                    const element = fieldParams.createElement({
                         parent: toolForm,
-                        prefixHTML: `<span class='fs-12'>${fieldParams.label}</span>`,
-                        fieldTag: fieldParams.tag, 
-                        fieldClass: fieldParams.className,
-                        fieldAttrs: {name},
-                        events: {
-                            ...(fieldParams.layerField ? {
-                                focus: (e) => {
-                                    leafletMapLegendLayersToSelectOptions(map, field, {
-                                        layer: fieldParams.value,
-                                        validators: fieldParams.validators ?? [],  
-                                    })
-    
-                                    console.log('add workflow outputs as options')
-                                },
-                                change: (e) => {
-                                    const layerId = parseInt(field.value)
-                                    const layer = map._handlers.getLegendLayer(layerId)
-                                    fieldParams.value = layer
-    
-                                    toggleToolBtns()
-                                },
-                            } : {
-                                change: (e) => {
-                                    toggleToolBtns()
-                                }
-                            }),
-                        }
-                    }).querySelector('select')
+                        name,
+                        fieldParams,
+                    })
                 }
+
+                Array.from(toolForm.querySelectorAll('[name]')).forEach(f => f.addEventListener('change', toggleToolBtns))
     
                 const toolBtns = customCreateElement({
                     parent: toolForm,
@@ -340,7 +384,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     parent: toolBtns,
                     tag: 'button',
                     attrs: {type: 'button'},
-                    className: 'badge btn btn-sm btn-success',
+                    className: 'badge btn btn-sm btn-success mt-2',
                     // className: 'bg-transparent border-0 p-0 bi bi-play-fill text-success fs-5',
                     innerText: 'Run',
                     events: {
