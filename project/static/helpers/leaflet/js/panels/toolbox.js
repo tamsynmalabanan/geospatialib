@@ -123,6 +123,72 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         return layer
                     }
                 },
+                toPoints: {
+                    title: 'Features to Points',
+                    details: {
+                        description: 'Convert each feature in a vector layer into point features.',
+                        inputs: 'vector layer',
+                        outputs: 'vector layer',
+                    },
+                    fields: {
+                        layer: getLayerFieldParams(),
+                        method: {
+                            required: true,
+                            value: null,
+                            createElement: ({parent, name, fieldParams}={}) => {
+                                return createCheckboxOptions({
+                                    parent,
+                                    name,
+                                    type: 'radio',
+                                    containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12',
+                                    options: (() => {
+                                        const methods = {
+                                            center: 'Center',
+                                            centerOfMass: 'Center of mass',
+                                            centroid: 'Centroid',
+                                            pointOnFeature: 'Point on feature',
+                                            // explode: 'Corners',
+                                            // centerMean: 'Weighted mean center',
+                                            // centerMedian: 'Median center among corners',
+                                        }
+
+                                        const options = {}
+                                        for (const method in methods) {
+                                            options[method] = {
+                                                checked: false,
+                                                label: methods[method],
+                                                events: {
+                                                    click: (e) => {
+                                                        fieldParams.value = e.target.value
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        return options
+                                    })()
+                                })
+                            }
+                        },
+                    },
+                    handler: async (params) => {
+                        const inputLayer = params.layer
+                        const geojson = turf.clone(inputLayer.toGeoJSON())
+                        geojson.features = geojson.features.map(f => {
+                            f.geometry = turf[params.method](f).geometry
+                            return f
+                        })
+
+                        const layer = await getLeafletGeoJSONLayer({
+                            geojson,
+                            group,
+                            pane: createCustomPane(map),
+                            params: {
+                                name: `${inputLayer._params.title} > feature ${params.method}`,
+                            }
+                        })
+                        return layer
+                    }
+                },
             }
         },
         vectorFilter: {
@@ -188,7 +254,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                             group,
                             pane: createCustomPane(map),
                             params: {
-                                name: `${inputLayer._params.title} > filtered by geometry type`,
+                                name: `${inputLayer._params.title} > filtered ${params.types.join(', ')}`,
                             }
                         })
                         return layer
