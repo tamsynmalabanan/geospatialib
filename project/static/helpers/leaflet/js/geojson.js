@@ -154,7 +154,7 @@ const getLeafletGeoJSONLayer = async ({
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
             
-            const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
+            const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?._targetLayer?._indexedDBKey
             
             const properties = feature.properties
             const cleanProperties = cleanFeatureProperties(properties)
@@ -412,8 +412,6 @@ const getLeafletGeoJSONLayer = async ({
                                         new: newFeature
                                     }]
                                 })
-
-                                group._map._drawControl._toggleEditBtn(gisData)
                             }
                         }
                     })
@@ -546,7 +544,7 @@ const getLeafletGeoJSONData = async (layer, {
     const map = layer._map ?? layer._group?._map
     if (!map) return
     
-    const isEditable = layer._indexedDBKey === layer._map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
+    const isEditable = layer._indexedDBKey === layer._map._drawControl?._targetLayer?._indexedDBKey
     queryGeom = isEditable ? false : queryGeom === true ? turf.bboxPolygon(getLeafletMapBbox(map)).geometry : queryGeom
 
     if (geojson?.features?.length && queryGeom) {
@@ -659,11 +657,10 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     const map = layer._map ?? layer._group?._map
     if (!map) return
 
-    const isEditable = layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey
-    const preventUpdate = isEditable && map._drawControl?._editMode
+    const isEditable = layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey
 
     layer.fire('dataupdating')
-    const data = !preventUpdate ? await getLeafletGeoJSONData(layer, {
+    const data = await getLeafletGeoJSONData(layer, {
         geojson, 
         controller, 
         abortBtns, 
@@ -672,63 +669,61 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
         queryGeom: !isEditable,
         filter: !isEditable,
         transform: !isEditable,
-    }) : layer.toGeoJSON()
+    })
     if (!data) return
 
     if (controller?.signal?.aborted) return
     
-    if (!preventUpdate) {
-        const limits = layer._properties.limits
-        limits.totalCount = data?.features?.length
+    const limits = layer._properties.limits
+    limits.totalCount = data?.features?.length
 
-        if (!isEditable && limits.active && limits.totalCount > limits.max) {
-            if (limits.method === 'limit') {
-                data.features = data.features.slice(-limits.max)
-            } else {
-                let nextZoom = map.getZoom() + 1
-    
-                if (limits.method === 'zoomin' && nextZoom <= 20) {
-                    map.setZoom(nextZoom)
-                }
-    
-                if (limits.method === 'scale') {
-                    const currentScale = getLeafletMeterScale(map)
-                    
-                    let minScale = currentScale
-                    while (minScale >= currentScale) {
-                        minScale = leafletZoomToMeter(nextZoom)
-                        nextZoom+=1
-                    }
-                    
-                    const maxScale = layer._properties.visibility.min
-                    layer._properties.visibility.max = maxScale > minScale ? maxScale : minScale
-                    layer._properties.visibility.active = true
-    
-                    updateLeafletGeoJSONLayer(layer, {geojson, controller, abortBtns, updateLocalStorage})
-                    
-                    const event = new Event("change", { bubbles: true })
-                    const mapContainer = map.getContainer()
-                    mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`).parentElement.firstChild.querySelector('select').dispatchEvent(event)
-                }
+    if (!isEditable && limits.active && limits.totalCount > limits.max) {
+        if (limits.method === 'limit') {
+            data.features = data.features.slice(-limits.max)
+        } else {
+            let nextZoom = map.getZoom() + 1
 
-                return
+            if (limits.method === 'zoomin' && nextZoom <= 20) {
+                map.setZoom(nextZoom)
             }
-        }
-    
-        const renderer = data?.features?.length > 1000 ? L.Canvas : L.SVG
-        if (!(layer.options.renderer instanceof renderer)) {
-            layer.options.renderer._container?.classList.add('d-none')
-            layer.options.renderer = layer._renderers.find(r => {
-                return r instanceof renderer
-            })
-        }
-    
-        layer.options.renderer._container?.classList.remove('d-none')
-        
-        layer.clearLayers()
 
-        layer.addData(data)
+            if (limits.method === 'scale') {
+                const currentScale = getLeafletMeterScale(map)
+                
+                let minScale = currentScale
+                while (minScale >= currentScale) {
+                    minScale = leafletZoomToMeter(nextZoom)
+                    nextZoom+=1
+                }
+                
+                const maxScale = layer._properties.visibility.min
+                layer._properties.visibility.max = maxScale > minScale ? maxScale : minScale
+                layer._properties.visibility.active = true
+
+                updateLeafletGeoJSONLayer(layer, {geojson, controller, abortBtns, updateLocalStorage})
+                
+                const event = new Event("change", { bubbles: true })
+                const mapContainer = map.getContainer()
+                mapContainer.querySelector(`#${mapContainer.id}-panels-style-body`).parentElement.firstChild.querySelector('select').dispatchEvent(event)
+            }
+
+            return
+        }
     }
+
+    const renderer = data?.features?.length > 1000 ? L.Canvas : L.SVG
+    if (!(layer.options.renderer instanceof renderer)) {
+        layer.options.renderer._container?.classList.add('d-none')
+        layer.options.renderer = layer._renderers.find(r => {
+            return r instanceof renderer
+        })
+    }
+
+    layer.options.renderer._container?.classList.remove('d-none')
+    
+    layer.clearLayers()
+
+    layer.addData(data)
 
     layer.fire('dataupdate')
     

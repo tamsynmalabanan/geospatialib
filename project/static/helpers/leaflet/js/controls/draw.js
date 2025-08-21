@@ -4,10 +4,10 @@ const handleLeafletDrawBtns = (map, {
 } = {}) => {
     const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
     
-    const autoSaveDeletion = (e) => {
-        const saveBtn = container.querySelector(`.leaflet-draw-actions.leaflet-draw-actions-bottom li a[title="Save changes"]`)
-        saveBtn?.click()
-    }
+    // const autoSaveDeletion = (e) => {
+    //     const saveBtn = container.querySelector(`.leaflet-draw-actions.leaflet-draw-actions-bottom li a[title="Save changes"]`)
+    //     saveBtn?.click()
+    // }
 
     if (map._drawControl) {
         map.removeControl(map._drawControl)
@@ -38,19 +38,13 @@ const handleLeafletDrawBtns = (map, {
             circlemarker: false,
         },
         edit: {
-            featureGroup: targetLayer,
+            featureGroup: L.geoJSON(),
+            remove: false,
         }
     })
 
-    drawControl._toggleEditBtn = (data) => {
-        const editBtn = container.querySelector('.leaflet-draw-edit-edit')
-        if (data.features.find(i => i.geometry.type.startsWith('Multi'))) {
-            editBtn.classList.add('pe-none', 'text-secondary')
-        } else {
-            editBtn.classList.remove('pe-none', 'text-secondary')
-        }
-    }
-
+    drawControl._targetLayer = targetLayer
+    
     drawControl._addChange = (data) => {
         if (!data) return
 
@@ -76,9 +70,6 @@ const handleLeafletDrawBtns = (map, {
                 data.features = data.features.map(i => {
                     delete i.old.geometry
                     if (i.new) delete i.new.geometry
-                    // for (const j in i) {
-                    //     i[j] = simplifyFeature(i[j], {maxPts:100})
-                    // }
                     return i
                 })
                 current.push(data)
@@ -91,7 +82,62 @@ const handleLeafletDrawBtns = (map, {
     const container = drawControl.addTo(map)._container
     toggleMapInteractivity(map, {controls: [container]})
 
+    drawControl._toggleFeatureEdit = ({feature}={}) => {
+        const editableLayer = drawControl.options.edit.featureGroup
+        const editBtn = drawControl._toolbars.edit._modes.edit.button
+        
+        if (feature) {
+            const layer = L.geoJSON(feature).getLayers()[0]
+            layer.addTo(editableLayer)
+            editableLayer.addTo(map)
+            
+            editBtn.classList.remove('pe-none', 'text-secondary')
+            editBtn.click()
+        } else {
+            editableLayer.clearLayers()
+            editableLayer.removeFrom(map)
+            
+            editBtn.classList.add('pe-none', 'text-secondary')
+        }
+    }
     
+    drawControl._toggleFeatureEdit()
+    
+    drawControl._repairFeatureGeometry = async (feature) => {
+        try {
+            let newFeatures = turf.featureCollection([feature])
+            for (const handler of Array('flatten', 'unkinkPolygon')) {
+                newFeatures = turf[handler](newFeatures)
+            }
+            newFeatures = (await normalizeGeoJSON(newFeatures)).features
+            newFeatures.forEach(f => f.properties.__gsl_id__ = generateRandomString())
+            
+            const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
+            gisData.features = [
+                ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                ...newFeatures
+            ]
+    
+            await saveToGISDB(turf.clone(gisData), {
+                id: targetLayer._indexedDBKey,
+                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+            })
+    
+            targetLayer._group.getLayers().forEach(i => {
+                if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
+            })
+    
+            drawControl._addChange({
+                type: 'edited',
+                features: newFeatures.map(i => {
+                    return {new: i, old: feature}
+                })
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
     const section = customCreateElement({
         parent: container,
         className: 'leaflet-draw-section'
@@ -144,8 +190,6 @@ const handleLeafletDrawBtns = (map, {
                         type: 'created',
                         features: newFeatures
                     })
-
-                    drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
@@ -168,47 +212,50 @@ const handleLeafletDrawBtns = (map, {
 
                 const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
                 const lastChange = changes.pop()
+                if (!lastChange) return
 
-                if (lastChange) {
-                    const gisData = (await getFromGISDB(targetLayer._indexedDBKey)).gisData
-                    
-                    if (lastChange.type === 'created') {
-                        const gslIds = lastChange.features.map(i => i.properties.__gsl_id__)
-                        gisData.features = gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__))
-                    }
-                    
-                    if (lastChange.type === 'deleted') {
-                        gisData.features = [
-                            ...gisData.features,
-                            ...lastChange.features.map(i => i.old)
-                        ]
-                    }
-
-                    if (lastChange.type === 'edited') {
-                        const gslIds = lastChange.features.map(i => i.new.properties.__gsl_id__)
-                        gisData.features = [
-                            ...gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__)),
-                            ...lastChange.features.map(i => i.old)
-                        ]
-                    }
-
-                    if (lastChange.type === 'restore') {
-                        const [id, version] = targetLayer._indexedDBKey.split('--version')
-                        gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
-                    }
-                    
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: targetLayer._indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
-
-                    targetLayer._group.getLayers().forEach(i => {
-                        if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                        updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
-                    })
-                    
-                    localStorage.setItem(drawControlChangesKey, JSON.stringify(changes))
+                const gisData = (await getFromGISDB(targetLayer._indexedDBKey)).gisData
+                
+                if (lastChange.type === 'created') {
+                    const gslIds = lastChange.features.map(i => i.properties.__gsl_id__)
+                    gisData.features = gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__))
                 }
+                
+                if (lastChange.type === 'deleted') {
+                    gisData.features = [
+                        ...gisData.features,
+                        ...lastChange.features.map(i => i.old)
+                    ]
+                }
+
+                if (lastChange.type === 'edited') {
+                    const gslIds = lastChange.features.map(i => i.new.properties.__gsl_id__)
+                    
+                    const oldFeatures = {}
+                    lastChange.features.forEach(i => oldFeatures[i.old.properties.__gsl_id__] = i.old)
+                    
+                    gisData.features = [
+                        ...gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__)),
+                        ...Object.values(oldFeatures)
+                    ]
+                }
+
+                if (lastChange.type === 'restore') {
+                    const [id, version] = targetLayer._indexedDBKey.split('--version')
+                    gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
+                }
+                
+                await saveToGISDB(turf.clone(gisData), {
+                    id: targetLayer._indexedDBKey,
+                    queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+                })
+
+                targetLayer._group.getLayers().forEach(i => {
+                    if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                    updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
+                })
+                
+                localStorage.setItem(drawControlChangesKey, JSON.stringify(changes))
             }
         }
     })
@@ -257,8 +304,6 @@ const handleLeafletDrawBtns = (map, {
                             new: previousVersion
                         }]
                     })
-
-                    drawControl._toggleEditBtn(gisData)
                 }
 
                 e.preventDefault()
@@ -376,13 +421,12 @@ const handleLeafletDrawBtns = (map, {
                 type: 'created',
                 features: geojson.features
             })
-
-            drawControl._toggleEditBtn(gisData)
         },
         'deleted': async (e) => {
+            e.layer.removeFrom(targetLayer)
             if (!targetLayer._indexedDBKey) return
             
-            const geojson = e.layers.toGeoJSON()
+            const geojson = turf.featureCollection([e.layer.toGeoJSON()])
             const gslIds = geojson.features.map(i => i.properties.__gsl_id__)
             
             const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
@@ -404,8 +448,6 @@ const handleLeafletDrawBtns = (map, {
                     return {old: i, new: null}
                 })
             })
-
-            drawControl._toggleEditBtn(gisData)
         },
         'edited': async (e) => {
             if (!targetLayer._indexedDBKey) return
@@ -415,6 +457,7 @@ const handleLeafletDrawBtns = (map, {
                 const newFeature = (await normalizeGeoJSON(turf.featureCollection([i.toGeoJSON()]))).features[0]
                 features.push({old: i.feature, new: newFeature})
             }
+
             const gslIds = features.map(i => i.old.properties.__gsl_id__)
 
             const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
@@ -437,23 +480,18 @@ const handleLeafletDrawBtns = (map, {
                 type: 'edited',
                 features,
             })
-
-            drawControl._toggleEditBtn(gisData)
         },
         'editstart': (e) => {
-            drawControl._editMode = true
         },
         'editstop': (e) => {
-            drawControl._editMode = false
+            drawControl._toggleFeatureEdit()
         },
-        'deletestart': (e) => {
-            drawControl._editMode = true
-            map.getContainer().addEventListener('click', autoSaveDeletion)
-        },
-        'deletestop': (e) => {
-            drawControl._editMode = false
-            map.getContainer().removeEventListener('click', autoSaveDeletion)
-        },
+        // 'deletestart': (e) => {
+        //     map.getContainer().addEventListener('click', autoSaveDeletion)
+        // },
+        // 'deletestop': (e) => {
+        //     map.getContainer().removeEventListener('click', autoSaveDeletion)
+        // },
         // 'drawstart': (e) => {
         //     disableMapInteractivity(map)
         // },
@@ -471,7 +509,8 @@ const handleLeafletDrawBtns = (map, {
             console.log(error)
         }
 
-        map.off('click', autoSaveDeletion)
+        // map.off('click', autoSaveDeletion)
+        drawControl._toggleFeatureEdit()
         Object.keys(drawEvents).forEach(i => map.off(`draw:${i}`))
     }
     

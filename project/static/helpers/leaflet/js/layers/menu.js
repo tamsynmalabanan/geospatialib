@@ -5,6 +5,10 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const type = getLeafletLayerType(layer)
 
     const feature = layer.feature
+    let brokenGeom
+    try {
+        brokenGeom = feature ? Array('flatten', 'unkinkPolygon').some(i => turf[i](feature).features.length > 1) : null
+    } catch {}
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
     const indexedDBKey = (geojsonLayer ?? layer)._indexedDBKey
 
@@ -42,7 +46,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     
     const localLayer = (indexedDBKey ?? '').startsWith('local')
     const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(indexedDBKey))?.gisData?.features.length <= 1000
-    const isMapDrawControlLayer = editableLayer && (indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey)
+    const isMapDrawControlLayer = editableLayer && (indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey)
 
     const measureId = `${geojsonLayer?._leaflet_id}-${feature?.properties.__gsl_id__}`
     const isMeasured = (map._measuredFeatures ?? []).includes(measureId) && layer._measuredFeature
@@ -81,10 +85,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     cancelable: true,
                 })) 
             }
-        },
-        toggleEditor: !editableLayer ? null : {
-            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
-            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
         },
 
         divider5: !feature || !isMapDrawControlLayer ? null : {
@@ -126,8 +126,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                             new: newFeature
                         }]
                     })
-
-                    map._drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
@@ -174,8 +172,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
                             new: newFeature
                         }]
                     })
-
-                    map._drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
@@ -222,13 +218,38 @@ const getLeafletLayerContextMenu = async (event, layer, {
                             new: newFeature
                         }]
                     })
-
-                    map._drawControl._toggleEditBtn(gisData)
                 } catch (error) {
                     console.log(error)
                 }
             }
         },
+
+        divider8: !editableLayer ? null : {
+            divider: true,
+        },
+        deleteFeature: !feature || !isMapDrawControlLayer ? null : {
+            innerText: 'Delete geometry',
+            btnCallback: async (e) => {
+                map.fire('draw:deleted', {layer}) 
+            }
+        },
+        editGeometry: !feature || !isMapDrawControlLayer || brokenGeom ? null : {
+            innerText: 'Edit geometry',
+            btnCallback: async (e) => {
+                map._drawControl._toggleFeatureEdit({feature})
+            }
+        },
+        repairGeometry: !feature || !isMapDrawControlLayer || !brokenGeom ? null : {
+            innerText: 'Repair geometry',
+            btnCallback: async (e) => {
+                map._drawControl._repairFeatureGeometry(feature)
+            }
+        },
+        toggleEditor: !editableLayer ? null : {
+            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
+            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
+        },
+
 
         divider1: !feature || isSearch ? null : {
             divider: true,

@@ -398,7 +398,7 @@ const createLeafletLegendItem = (layer) => {
         })
     })
 
-    if (layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey) {
+    if (layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey) {
         legendTitle.appendChild(customCreateElement({
             tag: 'i', 
             className:'bi bi-pencil-square'

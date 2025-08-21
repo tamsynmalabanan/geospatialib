@@ -4,7 +4,7 @@ const toggleLeafletLayerEditor = async (layer, {
     const map = layer?._group?._map
     if (!map) return
      
-    const editableLayer = map._drawControl?.options?.edit?.featureGroup
+    const editableLayer = map._drawControl?._targetLayer
     const enableEditor = editableLayer?._indexedDBKey !== layer._indexedDBKey
 
     const mapContainer = map.getContainer()
@@ -23,11 +23,11 @@ const toggleLeafletLayerEditor = async (layer, {
             }
     
             localLayers.forEach(i => {
+                const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
+                Array.from(legend.querySelectorAll(`.bi.bi-pencil-square`)).forEach(i => i.remove())
+
                 if (!i._indexedDBKey.startsWith(id)) return
                 i._indexedDBKey = indexedDBKey
-    
-                const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
-                legend.querySelector(`.bi.bi-pencil-square`)?.remove()
             })
         }
 
@@ -104,6 +104,8 @@ const toggleLeafletLayerEditor = async (layer, {
             i._indexedDBKey = newIndexedDBKey
             
             const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
+            if (legend.querySelector(`.bi.bi-pencil-square`)) return
+            
             const title = legend.querySelector(`#${legend.id}-title`)
             title.insertBefore(customCreateElement({
                 tag: 'i', 
@@ -123,6 +125,4 @@ const toggleLeafletLayerEditor = async (layer, {
         if (![editableLayer, layer].map(i => i?._indexedDBKey).includes(i._indexedDBKey)) return
         updateLeafletGeoJSONLayer(i, {updateLocalStorage: false})
     })
-
-    map._drawControl?._toggleEditBtn((await getFromGISDB(layer._indexedDBKey)).gisData)
 }

@@ -125,7 +125,7 @@ const handleLeafletLayerGroups = async (map) => {
                 }
 
                 if (groupName === 'local' && !map._handlers.getAllLegendLayers().find(i => i._indexedDBKey === layer._indexedDBKey)) {
-                    if (layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey) {
+                    if (layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey) {
                         toggleLeafletLayerEditor(layer)
                     }
                     
@@ -172,7 +172,7 @@ const handleLeafletLayerGroups = async (map) => {
                         properties: layer._properties,
                         zIndex: map.getPanes()[layer.options.pane].style.zIndex,
                         isHidden: map._handlers.hasHiddenLegendLayer(layer) ? true : false,
-                        editable: layer._indexedDBKey === map._drawControl?.options?.edit?.featureGroup?._indexedDBKey,
+                        editable: layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey,
                     }}
                 } catch (error) {
                     console.log(error, layer)
@@ -230,7 +230,7 @@ const handleLeafletLayerGroups = async (map) => {
                 
                 group.addLayer(layer)
                 
-                if (editable && (indexedDBKey !== map._drawControl?.options?.edit?.featureGroup?._indexedDBKey)) {
+                if (editable && (indexedDBKey !== map._drawControl?._targetLayer?._indexedDBKey)) {
                     await toggleLeafletLayerEditor(layer, {indexedDBKey})
                 }
             }
