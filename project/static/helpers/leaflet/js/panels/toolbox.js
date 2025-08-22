@@ -90,8 +90,8 @@ const handleLeafletToolboxPanel = (map, parent) => {
                 }
             }
         },
-        processingExtent: ({
-            label='Extent',
+        coveredFeatures: ({
+            label='Covered features',
             required=true,
             value='visible',
         }={}) => {
@@ -143,15 +143,15 @@ const handleLeafletToolboxPanel = (map, parent) => {
     }
 
     const getLayerGeoJSON = async (layer, {
-        extent='visible',
+        coverage='visible',
     }={}) => {
         let geojson
 
-        if (extent === 'visible') {
+        if (coverage === 'visible') {
             geojson = layer.toGeoJSON()
         }
 
-        if (extent === 'stored') {
+        if (coverage === 'stored') {
             geojson = (await getFromGISDB(layer._indexedDBKey)).gisData
         }
 
@@ -173,7 +173,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     fields: {
                         layer: templateFieldHandlers['vectorLayer'](),
-                        extent: templateFieldHandlers['processingExtent'](),
+                        coverage: templateFieldHandlers['coveredFeatures'](),
                         dissolve: templateFieldHandlers['dissolveFeatures'](),
                         method: {
                             required: true,
@@ -227,7 +227,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     handler: async (params) => {
                         const inputLayer = params.layer
                         const geojson = await getLayerGeoJSON(inputLayer, {
-                            extent: params.extent
+                            coverage: params.coverage
                         })
                         
                         if (params.dissolve) {
@@ -260,12 +260,12 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     fields: {
                         layer: templateFieldHandlers['vectorLayer'](),
-                        extent: templateFieldHandlers['processingExtent'](),
+                        coverage: templateFieldHandlers['coveredFeatures'](),
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
                         let geojson = await getLayerGeoJSON(inputLayer, {
-                            extent: params.extent
+                            coverage: params.coverage
                         })
                         geojson = turf.flatten(geojson)
                         geojson.features.forEach(f => delete f.properties.__gsl_id__)
@@ -291,12 +291,12 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     fields: {
                         layer: templateFieldHandlers['vectorLayer'](),
-                        extent: templateFieldHandlers['processingExtent'](),
+                        coverage: templateFieldHandlers['coveredFeatures'](),
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
                         let geojson = await getLayerGeoJSON(inputLayer, {
-                            extent: params.extent
+                            coverage: params.coverage
                         })
                         geojson = turf.unkinkPolygon(geojson)
                         geojson.features.forEach(f => delete f.properties.__gsl_id__)
@@ -325,7 +325,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     fields: {
                         layer: templateFieldHandlers['vectorLayer'](),
-                        extent: templateFieldHandlers['processingExtent'](),
+                        coverage: templateFieldHandlers['coveredFeatures'](),
                         types: {
                             required: true,
                             value: null,
@@ -382,7 +382,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     handler: async (params) => {
                         const inputLayer = params.layer
                         const geojson = await getLayerGeoJSON(inputLayer, {
-                            extent: params.extent
+                            coverage: params.coverage
                         })
                         geojson.features = geojson.features.filter(f => {
                             return params.types.includes(f.geometry.type)
