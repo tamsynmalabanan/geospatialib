@@ -11,7 +11,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
     const select = createInputGroup({
         parent: toolbar,
-        prefixHTML: 'Layer',
+        prefixHTML: '<span class="fs-12">Layer</span>',
         suffixHTML: `<div class='d-flex flex-nowrap gap-2'></div>`,
         fieldTag: 'select', 
         fieldClass: 'form-select-sm',
@@ -22,7 +22,7 @@ const handleLeafletStylePanel = (map, parent) => {
     const styleOptions = select.nextElementSibling
     styleOptions.appendChild(createIcon({
         peNone: false,
-        className: 'bi bi-copy',
+        className: 'bi bi-copy fs-12',
         events: {
             click: () => {
                 navigator.clipboard.writeText(JSON.stringify(layer._properties))
@@ -31,7 +31,7 @@ const handleLeafletStylePanel = (map, parent) => {
     }))
     styleOptions.appendChild(createIcon({
         peNone: false,
-        className: 'ms-3 bi bi-clipboard',
+        className: 'ms-3 bi bi-clipboard fs-12',
         events: {
             click: async () => {
                 const text = await navigator.clipboard.readText()

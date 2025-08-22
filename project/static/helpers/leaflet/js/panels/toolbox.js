@@ -1,4 +1,6 @@
 const handleLeafletToolboxPanel = (map, parent) => {
+    const group = map._handlers.getLayerGroups().local
+
     // const workflowContainer = customCreateElement({
     //     parent,
     //     className: 'p-3 border-bottom position-relative'
@@ -27,129 +29,179 @@ const handleLeafletToolboxPanel = (map, parent) => {
     //     className: 'bg-transparent border-0 p-0 bi bi-play-fill text-success fs-3 position-absolute bottom-0 end-0 mb-3 me-3'
     // })
 
-    const vectorLayerValidators = [
-        (l) => l instanceof L.GeoJSON && l.getLayers().length,
-    ]
+    const templateFieldHandlers = {
+        vectorLayer: ({
+            label='Layer',
+            required=true,
+            value=null,
+            validators=[]
+        }={}) => {
+            return {
+                required,
+                value,
+                createElement: ({parent, name, fieldParams}={}) => {
+                    return createInputGroup({
+                        parent,
+                        prefixHTML: `<span class='fs-12'>${label}</span>`,
+                        fieldTag: 'select', 
+                        fieldClass: 'form-select-sm',
+                        fieldAttrs: {name},
+                        events: {
+                            focus: (e) => {
+                                leafletMapLegendLayersToSelectOptions(map, e.target, {
+                                    layer: fieldParams.value,
+                                    validators: [(l) => l instanceof L.GeoJSON].concat(validators),  
+                                })
 
-    const getLayerFieldParams = ({
-        validators=vectorLayerValidators,
-        label='Layer',
-        required=true,
-        value=null,
-    }={}) => {
-        return {
-            required,
-            value,
-            createElement: ({parent, name, fieldParams}={}) => {
-                return createInputGroup({
-                    parent,
-                    prefixHTML: `<span class='fs-12'>${label}</span>`,
-                    fieldTag: 'select', 
-                    fieldClass: 'form-select-sm',
-                    fieldAttrs: {name},
-                    events: {
-                        focus: (e) => {
-                            leafletMapLegendLayersToSelectOptions(map, e.target, {
-                                layer: fieldParams.value,
-                                validators,  
-                            })
+                                console.log('add workflow outputs as options')
+                            },
+                            change: (e) => {
+                                const layerId = parseInt(e.target.value)
+                                const layer = map._handlers.getLegendLayer(layerId)
+                                fieldParams.value = layer ?? null
+                            },
+                        }
+                    })
+                } ,
+            }
+        },
+        dissolveFeatures: ({
+            label='Dissolve features',
+            required=false,
+            value=false,
+        }={}) => {
+            return {
+                required,
+                value,
+                createElement: ({parent, name, fieldParams}={}) => {
+                    return createFormCheck({
+                        parent, 
+                        name, 
+                        labelInnerText:label, 
+                        fieldClass:'',
+                        formCheckClass:'border rounded py-2 pe-2 ps-4 flex-grow-1 w-25', 
+                        checked: value,
+                        labelClass:'fs-12 text-wrap',
+                        events: {
+                            click: (e) => fieldParams.value = e.target.checked
+                        },
+                        style:{}
+                    })
+                }
+            }
+        },
+        processingExtent: ({
+            label='Extent',
+            required=true,
+            value='visible',
+        }={}) => {
+            return {
+                required,
+                value,
+                createElement: ({parent, name, fieldParams}={}) => {
+                    const container = customCreateElement({
+                        parent,
+                        className: 'input-group d-flex flex-nowrap w-50 flex-grow-1'
+                    })
 
-                            console.log('add workflow outputs as options')
-                        },
-                        change: (e) => {
-                            const layerId = parseInt(e.target.value)
-                            const layer = map._handlers.getLegendLayer(layerId)
-                            fieldParams.value = layer ?? null
-                        },
-                    }
-                })
-            } ,
+                    customCreateElement({
+                        parent: container,
+                        tag: 'span',
+                        innerText: label,
+                        className: 'fs-12 input-group-text',
+                    })
+
+                    const checkbox = createCheckboxOptions({
+                        parent: container,
+                        name,
+                        type: 'radio',
+                        containerClass: 'p-2 rounded flex-wrap flex-grow-1 gap-2 fs-12 border flex-grow-1 rounded-start-0 border-start-0',
+                        options: (() => {
+                            const methods = {
+                                visible: 'visible',
+                                stored: 'stored',
+                            }
+
+                            const options = {}
+                            for (const method in methods) {
+                                options[method] = {
+                                    checked: method === value,
+                                    label: methods[method],
+                                    events: {
+                                        click: (e) => fieldParams.value = e.target.value
+                                    }
+                                }
+                            }
+                            return options
+                        })()
+                    })
+
+                    return container
+                }
+            }
         }
+    }
+
+    const getLayerGeoJSON = async (layer, {
+        extent='visible',
+    }={}) => {
+        let geojson
+
+        if (extent === 'visible') {
+            geojson = layer.toGeoJSON()
+        }
+
+        if (extent === 'stored') {
+            geojson = (await getFromGISDB(layer._indexedDBKey)).gisData
+        }
+
+        geojson = geojson ? turf.clone(geojson) : turf.featureCollection([])
+
+        return geojson
     }
 
     const tools = {
         vectorTransform: {
             title: 'Vector Transformation',
             tools: {
-                flatten: {
-                    title: 'Flatten Multi-part Geometries',
-                    details: {
-                        description: 'Convert multi-part vector features in a layer into single-part features.',
-                        inputs: 'vector layer',
-                        outputs: 'vector layer',
-                    },
-                    fields: {
-                        layer: getLayerFieldParams()
-                    },
-                    handler: async (params) => {
-                        const inputLayer = params.layer
-                        const geojson = turf.flatten(turf.clone(inputLayer.toGeoJSON()))
-                        geojson.features.forEach(f => delete f.properties.__gsl_id__)
-
-                        const layer = await getLeafletGeoJSONLayer({
-                            geojson,
-                            group,
-                            pane: createCustomPane(map),
-                            params: {
-                                name: `${inputLayer._params.title} > flattened`,
-                            }
-                        })
-                        return layer
-                    }
-                },
-                unkink: {
-                    title: 'Unkink Polygons',
-                    details: {
-                        description: 'Convert self-intersecting polygon features in a layer into single-part features.',
-                        inputs: 'vector layer',
-                        outputs: 'vector layer',
-                    },
-                    fields: {
-                        layer: getLayerFieldParams()
-                    },
-                    handler: async (params) => {
-                        const inputLayer = params.layer
-                        const geojson = turf.unkinkPolygon(turf.clone(inputLayer.toGeoJSON()))
-                        geojson.features.forEach(f => delete f.properties.__gsl_id__)
-
-                        const layer = await getLeafletGeoJSONLayer({
-                            geojson,
-                            group,
-                            pane: createCustomPane(map),
-                            params: {
-                                name: `${inputLayer._params.title} > unkinked`,
-                            }
-                        })
-                        return layer
-                    }
-                },
                 toPoints: {
-                    title: 'Features to Points',
+                    title: 'Features to Point/s',
                     details: {
-                        description: 'Convert each feature in a vector layer into point features.',
+                        description: 'Convert features in a vector layer to point feature/s. Based on Turf.js <a href="https://turfjs.org/docs/api/centerMedian" target="_blank">functions</a>.',
                         inputs: 'vector layer',
                         outputs: 'vector layer',
                     },
                     fields: {
-                        layer: getLayerFieldParams(),
+                        layer: templateFieldHandlers['vectorLayer'](),
+                        extent: templateFieldHandlers['processingExtent'](),
+                        dissolve: templateFieldHandlers['dissolveFeatures'](),
                         method: {
                             required: true,
                             value: null,
                             createElement: ({parent, name, fieldParams}={}) => {
-                                return createCheckboxOptions({
+                                const container = customCreateElement({
                                     parent,
+                                    className: 'input-group d-flex flex-nowrap',
+                                })
+
+                                const label = customCreateElement({
+                                    parent: container,
+                                    tag: 'span',
+                                    innerText: 'Method',
+                                    className: 'input-group-text fs-12',
+                                })
+
+                                const checkboxes = createCheckboxOptions({
+                                    parent: container,
                                     name,
                                     type: 'radio',
-                                    containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12',
+                                    containerClass: 'p-2 rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12 border rounded rounded-start-0 border-start-0',
                                     options: (() => {
                                         const methods = {
                                             center: 'Center',
                                             centerOfMass: 'Center of mass',
                                             centroid: 'Centroid',
                                             pointOnFeature: 'Point on feature',
-                                            // explode: 'Corners',
-                                            // centerMean: 'Weighted mean center',
-                                            // centerMedian: 'Median center among corners',
                                         }
 
                                         const options = {}
@@ -167,25 +219,97 @@ const handleLeafletToolboxPanel = (map, parent) => {
                                         return options
                                     })()
                                 })
+
+                                return container
                             }
                         },
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        const geojson = turf.clone(inputLayer.toGeoJSON())
-                        geojson.features = geojson.features.map(f => {
-                            f.geometry = turf[params.method](f).geometry
-                            return f
+                        const geojson = await getLayerGeoJSON(inputLayer, {
+                            extent: params.extent
                         })
+                        
+                        if (params.dissolve) {
+                            geojson = turf[params.method](geojson)
+                        } else {
+                            geojson.features = geojson.features.map(f => {
+                                f.geometry = turf[params.method](f).geometry
+                                return f
+                            })
+                        }
+                        
+                        const layer = await getLeafletGeoJSONLayer({
+                            geojson,
+                            group,
+                            pane: createCustomPane(map),
+                            params: {
+                                name: `${inputLayer._params.title} > ${params.dissolve ? 'layer' : 'feature'} ${params.method}`,
+                            }
+                        })
+
+                        return layer
+                    }
+                },
+                flatten: {
+                    title: 'Flatten Multi-part Geometries',
+                    details: {
+                        description: 'Convert multi-part vector features in a layer into single-part features. Based on Turf.js <a href="https://turfjs.org/docs/api/flatten" target="_blank">flatten function</a>.',
+                        inputs: 'vector layer',
+                        outputs: 'vector layer',
+                    },
+                    fields: {
+                        layer: templateFieldHandlers['vectorLayer'](),
+                        extent: templateFieldHandlers['processingExtent'](),
+                    },
+                    handler: async (params) => {
+                        const inputLayer = params.layer
+                        let geojson = await getLayerGeoJSON(inputLayer, {
+                            extent: params.extent
+                        })
+                        geojson = turf.flatten(geojson)
+                        geojson.features.forEach(f => delete f.properties.__gsl_id__)
+                        
+                        const layer = await getLeafletGeoJSONLayer({
+                            geojson,
+                            group,
+                            pane: createCustomPane(map),
+                            params: {
+                                name: `${inputLayer._params.title} > flattened`,
+                            }
+                        })
+                        
+                        return layer
+                    }
+                },
+                unkink: {
+                    title: 'Unkink Polygons',
+                    details: {
+                        description: 'Convert self-intersecting polygon features in a layer into single-part features. Based on Turf.js <a href="https://turfjs.org/docs/api/unkinkPolygon" target="_blank">unkinkPolygon function</a>.',
+                        inputs: 'vector layer',
+                        outputs: 'vector layer',
+                    },
+                    fields: {
+                        layer: templateFieldHandlers['vectorLayer'](),
+                        extent: templateFieldHandlers['processingExtent'](),
+                    },
+                    handler: async (params) => {
+                        const inputLayer = params.layer
+                        let geojson = await getLayerGeoJSON(inputLayer, {
+                            extent: params.extent
+                        })
+                        geojson = turf.unkinkPolygon(geojson)
+                        geojson.features.forEach(f => delete f.properties.__gsl_id__)
 
                         const layer = await getLeafletGeoJSONLayer({
                             geojson,
                             group,
                             pane: createCustomPane(map),
                             params: {
-                                name: `${inputLayer._params.title} > feature ${params.method}`,
+                                name: `${inputLayer._params.title} > unkinked`,
                             }
                         })
+
                         return layer
                     }
                 },
@@ -200,15 +324,28 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         description: 'Extracts features with selected geomtry types from the input vector layer.',
                     },
                     fields: {
-                        layer: getLayerFieldParams(),
+                        layer: templateFieldHandlers['vectorLayer'](),
+                        extent: templateFieldHandlers['processingExtent'](),
                         types: {
                             required: true,
                             value: null,
                             createElement: ({parent, name, fieldParams}={}) => {
-                                return createCheckboxOptions({
+                                const container = customCreateElement({
                                     parent,
+                                    className: 'input-group d-flex flex-nowrap',
+                                })
+
+                                const label = customCreateElement({
+                                    parent: container,
+                                    tag: 'span',
+                                    innerText: 'Geometry type',
+                                    className: 'input-group-text fs-12 text-wrap text-start',
+                                })
+
+                                const field = createCheckboxOptions({
+                                    parent: container,
                                     name,
-                                    containerClass: 'p-2 border rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12',
+                                    containerClass: 'p-2 rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12 border rounded rounded-start-0 border-start-0',
                                     options: (() => {
                                         const options = {}
                                         for (const suffix of Array('Point', 'LineString', 'Polygon')) {
@@ -244,7 +381,9 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        const geojson = turf.clone(inputLayer.toGeoJSON())
+                        const geojson = await getLayerGeoJSON(inputLayer, {
+                            extent: params.extent
+                        })
                         geojson.features = geojson.features.filter(f => {
                             return params.types.includes(f.geometry.type)
                         })
@@ -267,13 +406,13 @@ const handleLeafletToolboxPanel = (map, parent) => {
     const searchContainer = customCreateElement({
         parent,
         id: `${parent.parentElement.id}-search`,
-        className: 'px-3 pt-3 pb-0 fs-14'
+        className: 'px-3 pt-3 pb-0 fs-12'
     })
 
     const searchField = customCreateElement({
         parent: searchContainer,
         tag: 'input',
-        className: 'ps-0 border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent w-100 fs-14',
+        className: 'ps-0 border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent w-100 fs-12',
         attrs: {
             type: 'search',
             placeholder: 'Search toolbox...'
@@ -290,10 +429,9 @@ const handleLeafletToolboxPanel = (map, parent) => {
     const toolsContainer = customCreateElement({
         parent,
         id: `${parent.parentElement.id}-tools`,
-        className: 'p-3 fs-14 d-flex flex-column gap-2'
+        className: 'm-3 fs-12 d-flex flex-column border border-bottom-0'
     })
     
-    const group = map._handlers.getLayerGroups().local
 
     const renderTools = ({keywords=[]}={}) => {
         toolsContainer.innerHTML = ''
@@ -302,14 +440,14 @@ const handleLeafletToolboxPanel = (map, parent) => {
             const setParams = tools[set]
     
             const setContainer = customCreateElement({
-                parent: toolsContainer,
+                // parent: toolsContainer,
                 id: `${toolsContainer.id}-${set}`,
-                className: 'd-flex flex-column gap-1',
+                className: 'd-flex flex-column',
             })
     
             const setHeader = customCreateElement({
                 parent: setContainer,
-                className: 'd-flex flex-nowrap justify-content-between fw-bold',
+                className: 'd-flex flex-nowrap justify-content-between fw-bold p-2 border-bottom',
                 attrs:{
                     'data-bs-toggle': "collapse",
                     'data-bs-target': `#${setContainer.id}-collapse`,
@@ -336,11 +474,11 @@ const handleLeafletToolboxPanel = (map, parent) => {
                 id: `${setContainer.id}-collapse`,
                 className: 'collapse show'
             })
-    
+            
             const setToolsContainer = customCreateElement({
                 parent: setToolsCollapse,
-                className: 'd-flex flex-column gap-2 border-start border-2 ps-2'
-    
+                id: `${setContainer.id}-accordion`,
+                className: 'accordion d-flex flex-column rounded-0',
             })
     
             for (const tool in setParams.tools) {
@@ -352,12 +490,12 @@ const handleLeafletToolboxPanel = (map, parent) => {
                 const toolContainer = customCreateElement({
                     parent: setToolsContainer,
                     id: `${setContainer.id}-${tool}`,
-                    className: 'd-flex flex-column',
+                    className: 'accordion-item d-flex flex-column border-0 rounded-0',
                 })
     
                 const toolHead = customCreateElement({
                     parent: toolContainer,
-                    className: 'd-flex flex-nowrap justify-content-between border p-2',
+                    className: 'accordion-header d-flex flex-nowrap justify-content-between p-2 ps-3 border-bottom',
                     attrs:{
                         'data-bs-toggle': "collapse",
                         'data-bs-target': `#${toolContainer.id}-collapse`,
@@ -382,12 +520,15 @@ const handleLeafletToolboxPanel = (map, parent) => {
                 const toolCollapse = customCreateElement({
                     parent: toolContainer,
                     id: `${toolContainer.id}-collapse`,
-                    className: 'collapse'
+                    className: 'accordion-collapse collapse',
+                    attrs: {
+                        'data-bs-parent': `#${setContainer.id}-accordion`
+                    }
                 })
     
                 const toolCollapseContainer = customCreateElement({
                     parent: toolCollapse,
-                    className: 'd-flex flex-column gap-2 border border-top-0 p-2'
+                    className: 'accordion-body d-flex flex-column gap-3 p-3 border-bottom'
                 })
     
                 const toolDetails = customCreateElement({
@@ -424,7 +565,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
     
                 for (const name in toolParams.fields) {
                     const fieldParams = toolParams.fields[name]
-                    const element = fieldParams.createElement({
+                    fieldParams.createElement({
                         parent: toolForm,
                         name,
                         fieldParams,
@@ -459,14 +600,28 @@ const handleLeafletToolboxPanel = (map, parent) => {
                             Object.keys(toolParams.fields).forEach(name => params[name] = toolParams.fields[name].value)
                             
                             const layer = await toolParams.handler(params)
-                            if (layer) group.addLayer(layer)
+                            if (layer) {
+                                group.addLayer(layer)
+                            }
                         }
                     }
                 })
     
                 toggleToolBtns()
             }
+
+            if (setToolsContainer.innerHTML !== '') {
+                toolsContainer.appendChild(setContainer)
+            }
         }
+
+        if (toolsContainer.innerHTML === '') {
+            customCreateElement({
+                parent: toolsContainer,
+                innerText: 'No matching tools found.',
+                className: 'border-bottom p-3'
+            })
+        } 
     }
 
     renderTools()
