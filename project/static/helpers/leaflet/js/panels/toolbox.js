@@ -164,6 +164,116 @@ const handleLeafletToolboxPanel = (map, parent) => {
         vectorTransform: {
             title: 'Vector Transformation',
             tools: {
+                toBounds: {
+                    title: 'Features to Bounding Geometry',
+                    details: {
+                        description: removeWhitespace(`
+                            Convert feature geometries in a vector layer to their bounding geometries.
+                            Based on Turf.js
+                            <a href="https://turfjs.org/docs/api/envelope" target="_blank">envelope</a>, 
+                            <a href="https://turfjs.org/docs/api/bbox" target="_blank">bbox</a>,
+                            <a href="https://turfjs.org/docs/api/square" target="_blank">square</a>,
+                            <a href="https://turfjs.org/docs/api/bboxPolygon" target="_blank">bboxPolygon</a> and
+                            <a href="https://turfjs.org/docs/api/convex" target="_blank">convex</a> functions.
+                        `),
+                        inputs: 'vector layer',
+                        outputs: 'vector layer',
+                    },
+                    fields: {
+                        layer: templateFieldHandlers['vectorLayer'](),
+                        coverage: templateFieldHandlers['coveredFeatures'](),
+                        dissolve: templateFieldHandlers['dissolveFeatures'](),
+                        method: {
+                            required: true,
+                            value: null,
+                            createElement: ({parent, name, fieldParams}={}) => {
+                                const container = customCreateElement({
+                                    parent,
+                                    className: 'input-group d-flex flex-nowrap',
+                                })
+
+                                const label = customCreateElement({
+                                    parent: container,
+                                    tag: 'span',
+                                    innerText: 'Method',
+                                    className: 'input-group-text fs-12',
+                                })
+
+                                const checkboxes = createCheckboxOptions({
+                                    parent: container,
+                                    name,
+                                    type: 'radio',
+                                    containerClass: 'p-2 rounded flex-wrap flex-grow-1 w-100 gap-2 fs-12 border rounded rounded-start-0 border-start-0',
+                                    options: (() => {
+                                        const methods = {
+                                            envelope: 'Envelope',
+                                            square: 'Square',
+                                            convex: 'Convex',
+                                        }
+
+                                        const options = {}
+                                        for (const method in methods) {
+                                            options[method] = {
+                                                checked: false,
+                                                label: methods[method],
+                                                events: {click: (e) => fieldParams.value = e.target.value}
+                                            }
+                                        }
+                                        return options
+                                    })()
+                                })
+
+                                return container
+                            }
+                        },
+                    },
+                    handler: async (params) => {
+                        const inputLayer = params.layer
+                        let geojson = await getLayerGeoJSON(inputLayer, {
+                            coverage: params.coverage
+                        })
+                        
+                        const handler = (() => {
+                            const method = params.method
+
+                            if (Array('envelope', 'convex').includes(method)) {
+                                return turf[method]
+                            }
+
+                            if (Array('square').includes(method)) {
+                                return (d) => {
+                                    const bbox = turf.bbox(d)
+                                    const square = turf.square(bbox)
+                                    return turf.bboxPolygon(square)
+                                }
+                            }
+                        })()
+
+                        if (params.dissolve) {
+                            geojson = handler(geojson)
+                        } else {
+                            geojson.features = geojson.features.map(f => {
+                                try {
+                                    f.geometry = handler(f).geometry
+                                    return f
+                                } catch (error) {
+                                    return f
+                                }
+                            })
+                        }
+
+                        const layer = await getLeafletGeoJSONLayer({
+                            geojson,
+                            group,
+                            pane: createCustomPane(map),
+                            params: {
+                                name: `${inputLayer._params.title} > ${params.dissolve ? 'layer' : 'feature'} ${params.method}`,
+                            }
+                        })
+
+                        return layer
+                    }
+                },
                 toPoints: {
                     title: 'Features to Point/s',
                     details: {
