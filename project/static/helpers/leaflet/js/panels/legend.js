@@ -51,7 +51,7 @@ const createNewGroup = (map, {
             click: (e) => {
                 const groupId = e.target.closest('[data-layer-legend="false"]').lastChild.id.split('-').reverse()[0]
                 map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(i).forEach(j => {
-                    if (i[j].properties.legendGroup.id !== groupId) return
+                    if (i[j]?.properties?.legendGroup?.id !== groupId) return
                     i[j].properties.legendGroup.checked = e.target.checked
 
                     const layer = map._handlers.getLegendLayer(j)
@@ -574,14 +574,58 @@ const handleLeafletLegendPanel = async (map, parent) => {
             disabled: true,
             btnClickHandler: (e) => {
                 const menuContainer = contextMenuHandler(e, {
-                    confirm: {
-                        innerText: `Confirm to clear legend`,
+                    all: {
+                        innerText: `Remove all layers`,
                         btnCallback: async () => {
                             clearLayers(tools)
                         }
                     },            
+                    checked: {
+                        innerText: `Remove all checked layers`,
+                        btnCallback: async () => {
+                            const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
+                            if (elements.every(el => el.querySelector('.form-check-input').checked)) {
+                                clearLayers(tools)
+                            } else {
+                                const checked = elements.filter(el => el.querySelector('.form-check-input').checked)
+                                checked.forEach(el => {
+                                    const layer = el._leafletLayer
+                                    layer._group._handlers.clearLayer(layer)
+                                })
+                            }
+                        }
+                    },            
+                    unchecked: {
+                        innerText: `Remove all unchecked layers`,
+                        btnCallback: async () => {
+                            const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
+                            if (elements.every(el => !el.querySelector('.form-check-input').checked)) {
+                                clearLayers(tools)
+                            } else {
+                                const unchecked = elements.filter(el => !el.querySelector('.form-check-input').checked)
+                                unchecked.forEach(el => {
+                                    const layer = el._leafletLayer
+                                    layer._group._handlers.clearLayer(layer)
+                                })
+                            }
+                        }
+                    },            
+                    broken: {
+                        innerText: `Remove all broken layers`,
+                        btnCallback: async () => {
+                            const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
+                            if (elements.every(el => el.querySelector('.bi-bug'))) {
+                                clearLayers(tools)
+                            } else {
+                                const broken = elements.filter(el => el.querySelector('.bi-bug'))
+                                broken.forEach(el => {
+                                    const layer = el._leafletLayer
+                                    layer._group._handlers.clearLayer(layer)
+                                })
+                            }
+                        }
+                    },            
                 })
-                menuContainer.classList.add('bg-danger')
             }
         },
     })
