@@ -406,13 +406,13 @@ const handleLeafletToolboxPanel = (map, parent) => {
     const searchContainer = customCreateElement({
         parent,
         id: `${parent.parentElement.id}-search`,
-        className: 'px-3 pt-3 pb-0 fs-12'
+        className: 'p-3 fs-12'
     })
 
     const searchField = customCreateElement({
         parent: searchContainer,
         tag: 'input',
-        className: 'ps-0 border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent w-100 fs-12',
+        className: 'ps-0 border-0 rounded-0 box-shadow-none bg-transparent w-100 fs-12',
         attrs: {
             type: 'search',
             placeholder: 'Search toolbox...'
@@ -429,7 +429,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
     const toolsContainer = customCreateElement({
         parent,
         id: `${parent.parentElement.id}-tools`,
-        className: 'm-3 fs-12 d-flex flex-column border border-bottom-0'
+        className: 'fs-12 d-flex flex-column border-top mb-3'
     })
     
 
