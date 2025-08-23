@@ -250,7 +250,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
             btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
         },
 
-
         divider1: !feature || isSearch ? null : {
             divider: true,
         },

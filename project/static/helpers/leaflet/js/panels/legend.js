@@ -466,7 +466,7 @@ const createLeafletLegendItem = (layer, {clearLayers}={}) => {
     return container
 }
 
-const handleLeafletLegendPanel = async (map, parent) => {
+const handleLeafletLegendPanel = async (map, parent) => {   
     const {
         toolbar, 
         layers,
@@ -758,13 +758,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 
                 const bbox = await getLeafletLayerBbox(layer)
                 const withinBbox = turf.booleanIntersects(newBbox, turf.bboxPolygon(bbox))
-
+                
                 if (isHidden || isInHiddenGroup || isInvisible || !withinBbox) {
                     if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
-                    return clearLegend(legend, {isInvisible})
+                        return clearLegend(legend, {isInvisible})
                 }
 
                 if (layer instanceof L.GeoJSON) {
+                    const isEditable = layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey
+                    if (isEditable) return
+
                     if (controllerId !== controller.id) return
 
                     const geojson = (
