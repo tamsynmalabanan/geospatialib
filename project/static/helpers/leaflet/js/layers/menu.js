@@ -326,7 +326,18 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 }
             }
         },
-        clearData: !layer._indexedDBKey ? null : {
+        addStoredData: feature || !indexedDBKey || group._name === 'local' ? null : {
+            innerText: `Localize stored data`,
+            btnCallback: async () => {
+                const data = (await getFromGISDB(indexedDBKey)).gisData
+                createLeafletLayer({name: layer._params.name, title: layer._params.title}, {
+                    data,
+                    group: map._handlers.getLayerGroups().local,
+                    add: true,
+                })
+            }
+        },
+        clearData: feature || !indexedDBKey ? null : {
             innerText: `Clear stored data`,
             btnCallback: async () => {
                 deleteFromGISDB(geojsonLayer._indexedDBKey)
