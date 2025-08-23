@@ -25,6 +25,18 @@ const updateLayerLegendProperties = (map) => {
     })})
 }
 
+const toggleLeafletLegendGroup = (map, layerGroup) => {
+    const groupId = layerGroup.closest('[data-layer-legend="false"]').lastChild.id.split('-').reverse()[0]
+    map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(i).forEach(j => {
+        if (i[j]?.properties?.legendGroup?.id !== groupId) return
+        i[j].properties.legendGroup.checked = layerGroup.checked
+
+        const layer = map._handlers.getLegendLayer(j)
+        const group = layer._group
+        layerGroup.checked ? group._handlers.unhideGroupLayer(layer) : group._handlers.hideGroupLayer(layer)
+    })})
+}
+
 const createNewGroup = (map, {
     groupId=generateRandomString(),
     titleText='New Group',
@@ -49,17 +61,7 @@ const createNewGroup = (map, {
         parent: head,
         checked,
         events: {
-            click: (e) => {
-                const groupId = e.target.closest('[data-layer-legend="false"]').lastChild.id.split('-').reverse()[0]
-                map._handlers.updateStoredLegendLayers({handler: (i) => Object.keys(i).forEach(j => {
-                    if (i[j]?.properties?.legendGroup?.id !== groupId) return
-                    i[j].properties.legendGroup.checked = e.target.checked
-
-                    const layer = map._handlers.getLegendLayer(j)
-                    const group = layer._group
-                    e.target.checked ? group._handlers.unhideGroupLayer(layer) : group._handlers.hideGroupLayer(layer)
-                })})
-            }
+            click: (e) => toggleLeafletLegendGroup(map, e.target)
         }
     })
 
@@ -521,7 +523,22 @@ const handleLeafletLegendPanel = async (map, parent) => {
             disabled: true,
             btnClickHandler: () => {
                 const elements = Array.from(layers.querySelectorAll('[data-layer-legend]'))
-                elements.forEach(el => el.querySelector('.form-check-input').click())
+                elements.forEach(el => {
+                    const layer = el._leafletLayer
+                    const group = layer?._group
+                    const checkbox = el.querySelector('.form-check-input')
+                    
+                    if (!checkbox.checked || checkbox.getAttribute('type') === 'checkbox') {
+                        checkbox.click()
+                    } else {
+                        checkbox.checked = false
+                        if (layer) {
+                            group._handlers.hideLayer(layer)
+                        } else {
+                            toggleLeafletLegendGroup(map, checkbox)
+                        }
+                    }
+                })
             },
         },
         

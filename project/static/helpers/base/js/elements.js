@@ -447,6 +447,7 @@ const createFormCheck = ({
     events = {},
     role,
     name,
+    type='checkbox',
     style={},
 } = {}) => {
     const formCheck = document.createElement('div')
@@ -456,7 +457,7 @@ const createFormCheck = ({
     const input = document.createElement('input')
     input.id = inputId
     input.className = `form-check-input ${fieldClass}`
-    input.setAttribute('type', 'checkbox')
+    input.setAttribute('type', type)
     if (role) input.setAttribute('role', role)
     if (name) input.setAttribute('name', name)
     input.value = inputValue
