@@ -477,7 +477,9 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
         geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {
             geojson: (
-                geojsonLayer.getLayers().length 
+                geojsonLayer.getLayers().length
+                && geojsonLayer !== geojsonLayer._group?._map?._drawControl?._targetLayer
+                && geojsonLayer._previousVersion === geojsonLayer._indexedDBKey
                 && turf.booleanEqual(
                     geojsonLayer._previousBbox.geometry, 
                     geojsonLayer._group._map._previousBbox.geometry
@@ -732,6 +734,7 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     layer.clearLayers()
     layer.addData(data)
     layer._previousBbox = turf.bboxPolygon(getLeafletMapBbox(map))
+    layer._previousVersion = layer._indexedDBKey
     layer.fire('dataupdate')
     
     if (updateLocalStorage) map._handlers.updateStoredLegendLayers({layer})
