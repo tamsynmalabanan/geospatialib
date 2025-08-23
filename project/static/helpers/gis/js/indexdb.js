@@ -173,6 +173,32 @@ const clearGISDB = () => {
     }
 }
 
+const getAllGISDBData = async ({keys=[]}={}) => {
+    return new Promise((resolve, reject) => {
+        const request = requestGISDB()
+  
+        request.onsuccess = (e) => {
+            const db = e.target.result
+            const transaction = db.transaction(['gis'], 'readonly')
+            const objectStore = transaction.objectStore('gis')
+            const gisDataRequest = objectStore.getAll()
+    
+            gisDataRequest.onsuccess = async (e) => {
+                const result = keys.length ? gisDataRequest.result.filter(i => keys.includes(i.id)) : gisDataRequest.result
+                resolve(result)
+            }
+    
+            gisDataRequest.onerror = (e) => {
+                reject(e.target.errorCode)
+            }
+        }
+  
+        request.onerror = (e) => {
+            reject(e.target.errorCode)
+        }
+    })
+}
+
 // setInterval(async () => {
 //     const request = requestGISDB()
 

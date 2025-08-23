@@ -472,10 +472,18 @@ const getLeafletGeoJSONLayer = async ({
         geojsonLayer._indexedDBKey = geojson ? await saveToGISDB(
             geojson, {...(indexedDBKey ? {id:indexedDBKey} : {name:geojsonLayer._params.name})}
         ) : indexedDBKey
+
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
-        geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {updateLocalStorage:false}))
-        geojsonLayer.on('remove', () => geojsonLayer.clearLayers())
+        geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {
+            geojson: (
+                geojsonLayer.getLayers().length 
+                && turf.booleanEqual(
+                    geojsonLayer._previousBbox.geometry, 
+                    geojsonLayer._group._map._previousBbox.geometry
+                ) ? geojsonLayer.toGeoJSON() : null),
+            updateLocalStorage:false
+        }))
         
         if (!params?.bbox && geojson?.features.length) {
             geojsonLayer._params.bbox = JSON.stringify(turf.bbox(geojson))
@@ -722,9 +730,8 @@ const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns,
     layer.options.renderer._container?.classList.remove('d-none')
     
     layer.clearLayers()
-
     layer.addData(data)
-
+    layer._previousBbox = turf.bboxPolygon(getLeafletMapBbox(map))
     layer.fire('dataupdate')
     
     if (updateLocalStorage) map._handlers.updateStoredLegendLayers({layer})

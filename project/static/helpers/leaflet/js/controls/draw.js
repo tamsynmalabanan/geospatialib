@@ -138,6 +138,7 @@ const handleLeafletDrawBtns = (map, {
             console.log(error)
         }
     }
+    
     const section = customCreateElement({
         parent: container,
         className: 'leaflet-draw-section'

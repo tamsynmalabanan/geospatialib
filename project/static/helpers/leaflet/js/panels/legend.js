@@ -515,6 +515,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 })})
             },
         },
+        reverse: {
+            iconSpecs: 'bi bi-shuffle',
+            title: 'Reverse checked items',
+            disabled: true,
+            btnClickHandler: () => {
+                const elements = Array.from(layers.querySelectorAll('[data-layer-legend]'))
+                elements.forEach(el => el.querySelector('.form-check-input').click())
+            },
+        },
+        
         divider3: {
             tag: 'div',
             className: 'vr m-2',
@@ -525,15 +535,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
             disabled: true,
             btnClickHandler: () => createNewGroup(map, {clearLayers: () => {clearLayers(tools)}}),
         },
-        reverse: {
-            iconSpecs: 'bi bi-shuffle',
-            title: 'Reverse checked items',
-            disabled: true,
-            btnClickHandler: () => {
-                const elements = Array.from(layers.querySelectorAll('[data-layer-legend]'))
-                elements.forEach(el => el.querySelector('.form-check-input').click())
-            },
-        },
+        
         divider1: {
             tag: 'div',
             className: 'vr m-2',
