@@ -29,6 +29,7 @@ const createNewGroup = (map, {
     groupId=generateRandomString(),
     titleText='New Group',
     checked=true,
+    clearLayers,
 } = {}) => {
     const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
 
@@ -147,11 +148,15 @@ const createNewGroup = (map, {
                             const btn = document.createElement('button')
                             btn.className = 'dropdown-item bg-danger border-0 btn btn-sm fs-12'
                             btn.addEventListener('click', () => {
-                                const layers = Array.from(collapse.children).map(i => i._leafletLayer)
-                                layers.forEach(l => {
+                                const groupLayers = Array.from(collapse.children).map(i => i._leafletLayer)
+                                groupLayers.forEach(l => {
                                     l._group._handlers.clearLayer(l)
                                 })
                                 container.remove()
+
+                                if (layers.innerHTML === '') {
+                                    clearLayers()
+                                }
                             })
                             parentElement.appendChild(btn)
                             
@@ -251,7 +256,7 @@ const createNewGroup = (map, {
     return collapse
 }
 
-const createLeafletLegendItem = (layer) => {
+const createLeafletLegendItem = (layer, {clearLayers}={}) => {
     const group = layer._group
     const map = group._map
     const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
@@ -282,7 +287,8 @@ const createLeafletLegendItem = (layer) => {
             groupElement = createNewGroup(map, {
                 groupId: legendGroup.id,
                 titleText: legendGroup.title,
-                checked: legendGroup.checked
+                checked: legendGroup.checked,
+                clearLayers,
             })
 
             groupElement.appendChild(container)
@@ -517,7 +523,16 @@ const handleLeafletLegendPanel = async (map, parent) => {
             iconSpecs: 'bi bi-collection',
             title: 'Create group',
             disabled: true,
-            btnClickHandler: () => createNewGroup(map),
+            btnClickHandler: () => createNewGroup(map, {clearLayers: () => {clearLayers(tools)}}),
+        },
+        reverse: {
+            iconSpecs: 'bi bi-shuffle',
+            title: 'Reverse checked items',
+            disabled: true,
+            btnClickHandler: () => {
+                const elements = Array.from(layers.querySelectorAll('[data-layer-legend]'))
+                elements.forEach(el => el.querySelector('.form-check-input').click())
+            },
         },
         divider1: {
             tag: 'div',
@@ -812,7 +827,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
         let container = layers.querySelector(`#${layers.id}-${layer._leaflet_id}`)
         if (!container) {
-            container = createLeafletLegendItem(layer)
+            container = createLeafletLegendItem(layer, {clearLayers: () => {clearLayers(tools)}})
             const legendDetails = container.querySelector(`#${container.id}-details`)
 
             if (isGeoJSON) {
