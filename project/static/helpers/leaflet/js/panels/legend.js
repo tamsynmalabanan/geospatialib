@@ -100,6 +100,28 @@ const createNewGroup = (map, {
         events: {
             click: (e) => {
                 contextMenuHandler(e, {
+                    toggle: {
+                        innerText: 'Toggle layers',
+                        btnCallback: async (e) => {
+                            const legendChecks = Array.from(collapse.querySelectorAll('.form-check-input'))
+                            const show = legendChecks.every(i => !i.checked)
+                            
+                            legendChecks.forEach(i => {
+                                if (i.checked !== show) {
+                                    i.click()
+                                }
+                            })
+                        }
+                    },
+                    reverse: {
+                        innerText: 'Reverse checked layers',
+                        btnCallback: async (e) => {
+                            const legendChecks = Array.from(collapse.querySelectorAll('.form-check-input'))
+                            legendChecks.forEach(i => {
+                                i.click()
+                            })
+                        }
+                    },
                     rename: {
                         innerText: 'Rename group',
                         btnCallback: async (e) => {
