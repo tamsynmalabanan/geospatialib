@@ -9,7 +9,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
     try {
         brokenGeom = feature ? Array('flatten', 'unkinkPolygon').some(i => turf[i](feature).features.length > 1) : null
     } catch {}
+    const featureType = feature ? turf.getType(feature) : null
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
+    const gslId = feature ? feature?.properties?.__gsl_id__ : null
     const indexedDBKey = (geojsonLayer ?? layer)._indexedDBKey
 
     const group = layer._group ?? geojsonLayer?._group
@@ -48,24 +50,26 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(indexedDBKey))?.gisData?.features.length <= 1000
     const isMapDrawControlLayer = editableLayer && (indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey)
 
-    const measureId = `${geojsonLayer?._leaflet_id}-${feature?.properties.__gsl_id__}`
-    const isMeasured = (map._measuredFeatures ?? []).includes(measureId) && layer._measuredFeature
+    const isMeasured = (geojsonLayer._measuredFeatures ?? []).includes(gslId)
+
+    let selectedFeatures = geojsonLayer ? geojsonLayer._selectedFeatures ?? [] : null
+    const selectFeature = selectedFeatures ? (feature && !selectedFeatures.includes(gslId)) || (!feature && !selectedFeatures.length) : null
 
     return contextMenuHandler(event, {
         zoomin: {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
-        measure: !feature || feature.geometry.type.startsWith('Multi') || feature.geometry.type === 'Point' || isSearch ? null : {
+        measure: !feature || brokenGeom || featureType === 'Point' || isSearch ? null : {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
             btnCallback: async () => {
+                geojsonLayer._measuredFeatures = geojsonLayer._measuredFeatures ?? []
+                
                 if (isMeasured) {
-                    map._measuredFeatures = (map._measuredFeatures ?? []).filter(i => i !== measureId)
-                    delete layer._measuredFeature
+                    geojsonLayer._measuredFeatures = geojsonLayer._measuredFeatures.filter(i => i !== gslId)
                     layer.hideMeasurements()
                 } else {
-                    map._measuredFeatures = [...(map._measuredFeatures ?? []), measureId]
-                    layer._measuredFeature = true
+                    geojsonLayer._measuredFeatures.push(gslId)
                     layer.showMeasurements() 
                 }
             }
@@ -87,7 +91,70 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
 
-        divider5: !feature || !isMapDrawControlLayer ? null : {
+        selection: !geojsonLayer ? null : {
+            divider: true,
+        },
+        select: !geojsonLayer ? null : {
+            innerText: `${selectFeature ? 'Select' : 'Deselect'} ${feature ? 'feature' : `all ${selectFeature ? 'visible features' : 'features'}`}`,
+            btnCallback: async () => {
+                (feature ? [layer] : layer.getLayers()).forEach(l => {
+                    const gslId = l.feature.properties.__gsl_id__
+                    const styleParams = geojsonLayer._handlers.getFeatureStyleParams(l.feature)
+                    
+                    if (selectFeature) {
+                        if (!selectedFeatures.includes(gslId)) {
+                            l.setStyle(getLeafletLayerStyle(l.feature, {
+                                ...styleParams,
+                                strokeColor: 'hsla(53, 100%, 54%, 1.00)',
+                                strokeWidth: 3,
+                            }, {renderer: geojsonLayer.options.renderer}))
+                            selectedFeatures.push(gslId)
+                        }
+                    } else {
+                        if (selectedFeatures.includes(gslId)) {
+                            l.setStyle(getLeafletLayerStyle(l.feature, styleParams, {renderer: geojsonLayer.options.renderer}))
+                            selectedFeatures = selectedFeatures.filter(i => i !== gslId)
+                        }
+                    }
+                })
+                geojsonLayer._selectedFeatures = selectedFeatures
+            }
+        },
+
+        // indexeddb update, if 
+        //separate select/deselect
+        // reverse selection
+        // tools covrage - selected
+        // export geojson/csv - selected
+
+
+        edit: !editableLayer ? null : {
+            divider: true,
+        },
+        deleteFeature: !feature || !isMapDrawControlLayer ? null : {
+            innerText: 'Delete geometry',
+            btnCallback: async (e) => {
+                map.fire('draw:deleted', {layer}) 
+            }
+        },
+        editGeometry: !feature || !isMapDrawControlLayer || brokenGeom ? null : {
+            innerText: 'Edit geometry',
+            btnCallback: async (e) => {
+                map._drawControl._toggleFeatureEdit({feature})
+            }
+        },
+        repairGeometry: !feature || !isMapDrawControlLayer || !brokenGeom ? null : {
+            innerText: 'Repair geometry',
+            btnCallback: async (e) => {
+                map._drawControl._repairFeatureGeometry(feature)
+            }
+        },
+        toggleEditor: !editableLayer ? null : {
+            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
+            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
+        },
+
+        paste: !feature || !isMapDrawControlLayer ? null : {
             divider: true,
         },
         pasteFeature: !feature || !isMapDrawControlLayer ? null : {
@@ -224,33 +291,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
 
-        divider8: !editableLayer ? null : {
-            divider: true,
-        },
-        deleteFeature: !feature || !isMapDrawControlLayer ? null : {
-            innerText: 'Delete geometry',
-            btnCallback: async (e) => {
-                map.fire('draw:deleted', {layer}) 
-            }
-        },
-        editGeometry: !feature || !isMapDrawControlLayer || brokenGeom ? null : {
-            innerText: 'Edit geometry',
-            btnCallback: async (e) => {
-                map._drawControl._toggleFeatureEdit({feature})
-            }
-        },
-        repairGeometry: !feature || !isMapDrawControlLayer || !brokenGeom ? null : {
-            innerText: 'Repair geometry',
-            btnCallback: async (e) => {
-                map._drawControl._repairFeatureGeometry(feature)
-            }
-        },
-        toggleEditor: !editableLayer ? null : {
-            innerText: `${isMapDrawControlLayer ? 'Disable' : 'Enable'} layer editor`,
-            btnCallback: async () => await toggleLeafletLayerEditor(geojsonLayer)
-        },
-
-        divider1: !feature || isSearch ? null : {
+        copy: !feature || isSearch ? null : {
             divider: true,
         },
         copyFeature: !feature || isSearch ? null : {
@@ -266,7 +307,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             btnCallback: () => navigator.clipboard.writeText(JSON.stringify(feature.geometry))
         },
 
-        divider7: isSearch || !layerGeoJSON ? null : {
+        export: isSearch || !layerGeoJSON ? null : {
             divider: true,
         },
         download: isSearch || !layerGeoJSON ? null : {
@@ -306,7 +347,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
         
-        divider6: isSearch ? null : {
+        misc: isSearch ? null : {
             divider: true,
         },
         legend: {

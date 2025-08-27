@@ -150,6 +150,9 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
+        const gslId = feature.properties.__gsl_id__
+        const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
+
         const handler = (layer) => {
             layer._params = layer._params ?? {}
             layer.options.pane = geojsonLayer.options.pane
@@ -417,19 +420,27 @@ const getLeafletGeoJSONLayer = async ({
                     })
                 }
                 
-                layer.bindPopup(content, {autoPan: false})
+                layer.bindPopup(content, {autoPan: false, maxHeight: 300})
                 layer.on('popupopen', () => layer._popup._contentNode.querySelector('th').innerText = getPopupHeader())
             }
 
             layer.on('contextmenu', (e) => getLeafletLayerContextMenu(e.originalEvent, layer))
 
-            if ((group._map._measuredFeatures ?? []).includes(`${geojsonLayer._leaflet_id}-${feature?.properties.__gsl_id__}`)) {
-                layer._measuredFeature = true
+            if (gslId && (geojsonLayer._measuredFeatures ?? []).includes(gslId)) {
                 layer.options.showMeasurements = true
+            }
+
+            if (gslId && (geojsonLayer._selectedFeatures ?? []).includes(gslId)) {
+                layer.setStyle(getLeafletLayerStyle(feature, {
+                    ...styleParams,
+                    strokeColor: 'hsla(53, 100%, 54%, 1.00)',
+                    strokeWidth: 3,
+                }, {
+                    renderer: layer.options.renderer
+                }))
             }
         }
     
-        const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
         if (geojsonLayer._handlers.isPatternFilledPolygonInCanvas(feature)) {
             layer.once('add', () => {
                 geojsonLayer.removeLayer(layer)
