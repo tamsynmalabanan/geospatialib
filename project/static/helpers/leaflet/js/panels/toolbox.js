@@ -143,7 +143,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
         }
     }
 
-    const getLayerGeoJSON = async (layer, {
+    const getInputLayerGeoJSON = async (layer, {
         coverage='visible',
     }={}) => {
         if (coverage === 'visible') {
@@ -156,8 +156,9 @@ const handleLeafletToolboxPanel = (map, parent) => {
             }
 
             if (coverage === 'selected') {
-                storedData.features = storedData.features.filter(f => (layer._selectedFeatures ?? []).includes(f.properties.__gsl_id__))
-                return storedData
+                return turf.featureCollection(storedData.features.filter(f => {
+                    return (layer._selectedFeatures ?? []).includes(f.properties.__gsl_id__)
+                }))
             }
         }
 
@@ -233,7 +234,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        let geojson = await getLayerGeoJSON(inputLayer, {
+                        let geojson = await getInputLayerGeoJSON(inputLayer, {
                             coverage: params.coverage
                         })
                         
@@ -340,7 +341,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        const geojson = await getLayerGeoJSON(inputLayer, {
+                        const geojson = await getInputLayerGeoJSON(inputLayer, {
                             coverage: params.coverage
                         })
                         
@@ -378,11 +379,34 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        let geojson = await getLayerGeoJSON(inputLayer, {
+                        const geojson = await getInputLayerGeoJSON(inputLayer, {
                             coverage: params.coverage
                         })
-                        geojson = turf.flatten(geojson)
-                        geojson.features.forEach(f => delete f.properties.__gsl_id__)
+
+                        geojson.features = geojson.features.flatMap(f => {
+                            const newFeatures = turf.flatten(f).features
+
+                            for (const index in newFeatures) {
+                                const feature = newFeatures[index]
+                                const properties = structuredClone(feature.properties)
+                                
+                                const prefix = `flatten_index`
+                                let propKey = `__${prefix}__`
+                                let count = 0
+                                while (Object.keys(properties).includes(propKey)) {
+                                    count +=1
+                                    propKey = `__${prefix}_${count}__`
+                                }
+
+                                properties[`${propKey}`] = index
+                                properties[`__flattened_feature${count ? `_${count}` : ''}__`] = properties.__gsl_id__
+
+                                delete properties.__gsl_id__
+                                feature.properties = properties
+                            }
+
+                            return newFeatures
+                        })
                         
                         const layer = await getLeafletGeoJSONLayer({
                             geojson,
@@ -409,11 +433,34 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        let geojson = await getLayerGeoJSON(inputLayer, {
+                        let geojson = await getInputLayerGeoJSON(inputLayer, {
                             coverage: params.coverage
                         })
-                        geojson = turf.unkinkPolygon(geojson)
-                        geojson.features.forEach(f => delete f.properties.__gsl_id__)
+
+                        geojson.features = geojson.features.flatMap(f => {
+                            const newFeatures = turf.unkinkPolygon(f).features
+
+                            for (const index in newFeatures) {
+                                const feature = newFeatures[index]
+                                const properties = structuredClone(feature.properties)
+                                
+                                const prefix = `unkink_index`
+                                let propKey = `__${prefix}__`
+                                let count = 0
+                                while (Object.keys(properties).includes(propKey)) {
+                                    count +=1
+                                    propKey = `__${prefix}_${count}__`
+                                }
+
+                                properties[`${propKey}`] = index
+                                properties[`__unkinked_feature${count ? `_${count}` : ''}__`] = properties.__gsl_id__
+
+                                delete properties.__gsl_id__
+                                feature.properties = properties
+                            }
+
+                            return newFeatures
+                        })
 
                         const layer = await getLeafletGeoJSONLayer({
                             geojson,
@@ -495,7 +542,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                     },
                     handler: async (params) => {
                         const inputLayer = params.layer
-                        const geojson = await getLayerGeoJSON(inputLayer, {
+                        const geojson = await getInputLayerGeoJSON(inputLayer, {
                             coverage: params.coverage
                         })
                         geojson.features = geojson.features.filter(f => {
