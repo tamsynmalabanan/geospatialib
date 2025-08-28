@@ -162,7 +162,7 @@ const getLeafletGeoJSONLayer = async ({
                 }, {renderer: geojsonLayer.options.renderer}
             ))
 
-            if (!geojsonLayer._selectedFeatures(includes(gslId))) {
+            if (!geojsonLayer._selectedFeatures.includes(gslId)) {
                 geojsonLayer._selectedFeatures.push(gslId)
             }
         },
