@@ -21,26 +21,32 @@ self.onmessage = (e) => {
         currentQueryExtent,
     } = e.data
     
+    let queryExtent = currentQueryExtent
+
+    const [fewerData, gisData] = Array(newGISData, currentGISData).sort((a, b) => {
+        const countA = Array.isArray(a.features) ? a.features.length : 0
+        const countB = Array.isArray(b.features) ? b.features.length : 0
+        return countA - countB
+    })
+
     try {
-        const filteredFeatures = currentGISData.features.filter(feature1 => {
-            return !newGISData.features.find(feature2 => featuresAreSimilar(feature1, feature2))
+        const filteredData = fewerData.features.filter(feature1 => {
+            return !gisData.features.find(feature2 => featuresAreSimilar(feature1, feature2))
         })
 
-        if (filteredFeatures.length) {
-            newGISData.features = newGISData.features.concat(filteredFeatures)
-            const unionQueryExtent = turf.union(turf.featureCollection([
-                turf.feature(newQueryExtent),
+        if (filteredData.length) {
+            gisData.features = gisData.features.concat(filteredData)
+            queryExtent = turf.union(turf.featureCollection([
                 turf.feature(currentQueryExtent),
+                turf.feature(newQueryExtent),
             ])).geometry
-            newQueryExtent.type = unionQueryExtent.type
-            newQueryExtent.coordinates = unionQueryExtent.coordinates
         }
     } catch (error) {
         console.log(error, e.data)
     }
     
     self.postMessage({
-        gisData:newGISData,
-        queryExtent:newQueryExtent,
+        gisData,
+        queryExtent,
     })
 }
