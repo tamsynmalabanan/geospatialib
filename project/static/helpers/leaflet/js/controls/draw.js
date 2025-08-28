@@ -50,32 +50,26 @@ const handleLeafletDrawBtns = (map, {
 
         const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
         current.push(data)
-
+        
         try {
             localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
         } catch (error) {
             console.log('drawControl._addChange error', error, data)
-        
-            data = current.pop()
+            alert('Recent change cannot be backed up and cannot be undone using the Undo button.')
 
-            if (data.type === 'created') {
-                data.features = data.features.map(i => {
-                    delete i.geometry
-                    return i
-                })
-                current.push(data)
-            }
+            // data = current.pop()
    
-            if (Array('deleted', 'edited').includes(data.type)) {
-                data.features = data.features.map(i => {
-                    delete i.old.geometry
-                    if (i.new) delete i.new.geometry
-                    return i
-                })
-                current.push(data)
-            }
-   
-            localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+            // if (Array('deleted', 'edited').includes(data.type)) {
+            //     data.features = data.features.map(i => {
+            //         Object.values(i).forEach(f => {
+            //             f.geometry = turf.envelope(f).geometry
+            //         })
+            //         return i
+            //     })
+            // }
+            
+            // current.push(data)
+            // localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
         }
     }
 
@@ -103,14 +97,33 @@ const handleLeafletDrawBtns = (map, {
     
     drawControl._toggleFeatureEdit()
     
-    drawControl._repairFeatureGeometry = async (feature) => {
+    drawControl._explodeFeatureGeometry = async (feature) => {
         try {
-            let newFeatures = turf.featureCollection([feature])
+            let newGeoJSON = turf.featureCollection([feature])
             for (const handler of Array('flatten', 'unkinkPolygon')) {
-                newFeatures = turf[handler](newFeatures)
+                newGeoJSON = turf[handler](newGeoJSON)
             }
-            newFeatures = (await normalizeGeoJSON(newFeatures)).features
-            newFeatures.forEach(f => f.properties.__gsl_id__ = generateRandomString())
+            
+            const newFeatures = (await normalizeGeoJSON(newGeoJSON)).features
+            if (newFeatures.length > 1) {
+                for (const index in newFeatures) {
+                    const properties = newFeatures[index].properties
+                    
+                    const prefix = `explode_index`
+                    let propKey = `__${prefix}__`
+                    let count = 0
+                    while (Object.keys(properties).includes(propKey)) {
+                        count +=1
+                        propKey = `__${prefix}_${count}__`
+                    }
+
+                    properties[`${propKey}`] = index
+                    properties[`__exploded_feature${count ? `_${count}` : ''}__`] = properties.__gsl_id__
+
+                    delete properties.__gsl_id__
+                    newFeatures[index].properties.__gsl_id__ = await hashJSON(properties)
+                }
+            }
             
             const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
             gisData.features = [
@@ -169,7 +182,25 @@ const handleLeafletDrawBtns = (map, {
                     if (!Array.isArray(newFeatures)) return
 
                     newFeatures = (await normalizeGeoJSON(turf.featureCollection(newFeatures))).features
-                    newFeatures.forEach(f => f.properties.__gsl_id__ = generateRandomString())
+    
+                    const copyId = generateRandomString()
+                    newFeatures.forEach(async f => {
+                        const prefix = `copied_feature`
+                        let propKey = `__${prefix}__`
+
+                        let count = 0
+                        while (Object.keys(f.properties).includes(propKey)) {
+                            count +=1
+                            propKey = `__${prefix}_${count}__`
+                        }
+                        
+                        f.properties[`${propKey}`] = f.properties.__gsl_id__
+                        
+                        f.properties[`__copy_id${count ? `_${count}` : ''}__`] = copyId
+                        
+                        delete f.properties.__gsl_id__
+                        f.properties.__gsl_id__ = await hashJSON(f.properties)
+                    })
 
                     const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
                     gisData.features = [
@@ -189,7 +220,7 @@ const handleLeafletDrawBtns = (map, {
 
                     drawControl._addChange({
                         type: 'created',
-                        features: newFeatures
+                        features: newFeatures.map(i => i.properties.__gsl_id__)
                     })
                 } catch (error) {
                     console.log(error)
@@ -218,8 +249,7 @@ const handleLeafletDrawBtns = (map, {
                 const gisData = (await getFromGISDB(targetLayer._indexedDBKey)).gisData
                 
                 if (lastChange.type === 'created') {
-                    const gslIds = lastChange.features.map(i => i.properties.__gsl_id__)
-                    gisData.features = gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__))
+                    gisData.features = gisData.features.filter(i => !lastChange.features.includes(i.properties.__gsl_id__))
                 }
                 
                 if (lastChange.type === 'deleted') {
@@ -420,7 +450,7 @@ const handleLeafletDrawBtns = (map, {
 
             drawControl._addChange({
                 type: 'created',
-                features: geojson.features
+                features: geojson.features.map(i => i.properties.__gsl_id__)
             })
         },
         'deleted': async (e) => {

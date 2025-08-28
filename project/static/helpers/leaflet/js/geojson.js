@@ -133,6 +133,8 @@ const getLeafletGeoJSONLayer = async ({
         },
     }
 
+    geojsonLayer._selectedFeatures = []
+
     geojsonLayer._handlers = {
         getFeatureStyleParams: (feature) => {
             const symbology = geojsonLayer._properties?.symbology
@@ -146,7 +148,35 @@ const getLeafletGeoJSONLayer = async ({
                 && styleParams.fillPattern === 'icon' 
                 && document.querySelector(`#${styleParams.fillPatternId}-img`)?.getAttribute('src')
             )
-        }
+        },
+        selectFeatureLayer: (layer, {updated=false}={}) => {
+            const feature = layer.feature
+            const gslId = feature.properties.__gsl_id__
+            if (geojsonLayer._selectedFeatures.includes(gslId) && !updated) return
+
+            const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
+            layer[handler](getLeafletLayerStyle(feature, {
+                    ...geojsonLayer._handlers.getFeatureStyleParams(feature),
+                    strokeColor: 'hsla(53, 100%, 54%, 1.00)',
+                    strokeWidth: 3,
+                }, {renderer: geojsonLayer.options.renderer}
+            ))
+
+            geojsonLayer._selectedFeatures.push(gslId)
+        },
+        deselectFeatureLayer: (layer) => {
+            const feature = layer.feature
+            const gslId = feature.properties.__gsl_id__
+            if (!geojsonLayer._selectedFeatures.includes(gslId)) return
+
+            const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
+            layer[handler](getLeafletLayerStyle(feature, {
+                    ...geojsonLayer._handlers.getFeatureStyleParams(feature),
+                }, {renderer: geojsonLayer.options.renderer}
+            ))
+
+            geojsonLayer._selectedFeatures = geojsonLayer._selectedFeatures.filter(i => i !== gslId)
+        },
     }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
@@ -160,9 +190,7 @@ const getLeafletGeoJSONLayer = async ({
             const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?._targetLayer?._indexedDBKey
             
             const properties = feature.properties
-            const cleanProperties = cleanFeatureProperties(properties)
 
-            // updates an array of feature property keys
             const info = geojsonLayer._properties.info
             info.attributes = Array.from(new Set([...Object.keys(properties), ...(info.attributes ?? [])]))
             
@@ -177,7 +205,7 @@ const getLeafletGeoJSONLayer = async ({
                     return String(value)
                 })
                 return values.some(i => i !== 'null') ? [tooltip.prefix ?? '', values.join(tooltip.delimiter), tooltip.suffix ?? ''].join(' ').trim() : null
-            })() : getFeatureTitle(cleanProperties)
+            })() : getFeatureTitle(properties)
             if (tooltip.active && layer._params.title) layer.bindTooltip(layer._params.title, {sticky:true})
             
             const popup = info.popup
@@ -394,7 +422,7 @@ const getLeafletGeoJSONLayer = async ({
 
                                 const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
                                 gisData.features = [
-                                    ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                                    ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
                                     newFeature
                                 ]
 
@@ -431,13 +459,7 @@ const getLeafletGeoJSONLayer = async ({
             }
 
             if (gslId && (geojsonLayer._selectedFeatures ?? []).includes(gslId)) {
-                layer.setStyle(getLeafletLayerStyle(feature, {
-                    ...styleParams,
-                    strokeColor: 'hsla(53, 100%, 54%, 1.00)',
-                    strokeWidth: 3,
-                }, {
-                    renderer: layer.options.renderer
-                }))
+                geojsonLayer._handlers.selectFeatureLayer(layer, {updated:true})
             }
         }
     
@@ -506,12 +528,6 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     return geojsonLayer
-}
-
-const cleanFeatureProperties = (properties) => {
-    return Object.fromEntries(Object.entries(properties).filter(([key]) => {
-        return !(key.startsWith('__') && key.endsWith('__'))
-    }))
 }
 
 const getFeatureTitle = (properties) => {

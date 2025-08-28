@@ -70,6 +70,19 @@ const generateRandomString = (length=16) => {
     return result
 }
 
+const canonicalize = (obj) => {
+    return JSON.stringify(obj, Object.keys(obj).sort())
+}
+
+const hashJSON = async (jsonObj) => {
+    const jsonStr = canonicalize(jsonObj)
+    const encoder = new TextEncoder()
+    const data = encoder.encode(jsonStr)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
 const generateRandomColor = () => `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
 
 const parseNumberFromString = (string) => {

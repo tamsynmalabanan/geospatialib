@@ -59,7 +59,7 @@ const fetchTimeout = async (url, {
     abortBtns,
     callback=(response) => response,
 } = {}) => {
-    const mapKey = `${url}_${JSON.stringify(fetchParams)}` 
+    const mapKey = `${url}_${canonicalize(fetchParams)}` 
     if (mapForFetchTimeout.has(mapKey)) {
         const response = (await mapForFetchTimeout.get(mapKey)).clone()
         return callback(response)

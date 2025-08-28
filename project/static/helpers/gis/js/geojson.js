@@ -37,8 +37,6 @@ const normalizeGeoJSONFeature = async (feature, {
 
     if (feature.id) feature.properties.__source_id__ = feature.id
     
-    if (!feature.properties.__gsl_id__) feature.properties.__gsl_id__ = generateRandomString()
-
     const geomType = feature.geometry.type
     feature.properties.__geom_type__ = geomType
 
@@ -68,6 +66,10 @@ const normalizeGeoJSONFeature = async (feature, {
         try {
             feature.properties.__bbox_wsen__ = turf.bbox(feature).join(', ')
         } catch {}
+    }
+
+    if (!feature.properties.__gsl_id__) {
+        feature.properties.__gsl_id__ = await hashJSON(feature.properties)
     }
 }
 

@@ -52,8 +52,11 @@ const getLeafletLayerContextMenu = async (event, layer, {
 
     const isMeasured = (geojsonLayer._measuredFeatures ?? []).includes(gslId)
 
-    let selectedFeatures = geojsonLayer ? geojsonLayer._selectedFeatures ?? [] : null
-    const selectFeature = selectedFeatures ? (feature && !selectedFeatures.includes(gslId)) || (!feature && !selectedFeatures.length) : null
+    const isLegendGeoJSONLayer = geojsonLayer && isLegendGroup
+    const selectedFeatures = isLegendGeoJSONLayer ? geojsonLayer._selectedFeatures ?? [] : null
+    const isSelectedFeature = selectedFeatures?.includes(gslId)
+    const featureCountAll = geojsonLayer?.getLayers().length ?? 0
+    const featureCountSelected = geojsonLayer?.getLayers().filter(l => selectedFeatures?.includes(l.feature.properties.__gsl_id__)).length ?? 0
 
     return contextMenuHandler(event, {
         zoomin: {
@@ -91,42 +94,50 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
 
-        selection: !geojsonLayer ? null : {
+        selection: !isLegendGeoJSONLayer || !featureCountAll ? null : {
             divider: true,
         },
-        select: !geojsonLayer ? null : {
-            innerText: `${selectFeature ? 'Select' : 'Deselect'} ${feature ? 'feature' : `all ${selectFeature ? 'visible features' : 'features'}`}`,
+        selectFeature: !isLegendGeoJSONLayer || !feature ? null : {
+            innerText: `${isSelectedFeature ? 'Deselect' : 'Select'} feature`,
             btnCallback: async () => {
-                (feature ? [layer] : layer.getLayers()).forEach(l => {
-                    const gslId = l.feature.properties.__gsl_id__
-                    const styleParams = geojsonLayer._handlers.getFeatureStyleParams(l.feature)
-                    
-                    if (selectFeature) {
-                        if (!selectedFeatures.includes(gslId)) {
-                            l.setStyle(getLeafletLayerStyle(l.feature, {
-                                ...styleParams,
-                                strokeColor: 'hsla(53, 100%, 54%, 1.00)',
-                                strokeWidth: 3,
-                            }, {renderer: geojsonLayer.options.renderer}))
-                            selectedFeatures.push(gslId)
-                        }
-                    } else {
-                        if (selectedFeatures.includes(gslId)) {
-                            l.setStyle(getLeafletLayerStyle(l.feature, styleParams, {renderer: geojsonLayer.options.renderer}))
-                            selectedFeatures = selectedFeatures.filter(i => i !== gslId)
-                        }
-                    }
+                isSelectedFeature 
+                ? geojsonLayer._handlers.deselectFeatureLayer(layer) 
+                : geojsonLayer._handlers.selectFeatureLayer(layer)
+            }
+        },
+        selectVisible: !isLegendGeoJSONLayer || feature || !featureCountAll || featureCountAll === featureCountSelected ? null : {
+            innerText: `Select visible features (${formatNumberWithCommas(featureCountAll)})`,
+            btnCallback: async () => {
+                geojsonLayer.eachLayer(l => {
+                    geojsonLayer._handlers.selectFeatureLayer(l)
                 })
-                geojsonLayer._selectedFeatures = selectedFeatures
+            }
+        },
+        deselectVisible: !isLegendGeoJSONLayer || feature || !featureCountSelected ? null : {
+            innerText: `Deselect visible features (${formatNumberWithCommas(featureCountSelected)})`,
+            btnCallback: async () => {
+                geojsonLayer.eachLayer(l => {
+                    geojsonLayer._handlers.deselectFeatureLayer(l)
+                })
+            }
+        },
+        deselectAll: !isLegendGeoJSONLayer || feature || !selectedFeatures.length ? null : {
+            innerText: `Deselect all features`,
+            btnCallback: async () => {
+                geojsonLayer.eachLayer(l => {
+                    geojsonLayer._handlers.deselectFeatureLayer(l)
+                })
+
+                geojsonLayer._selectedFeatures = []
             }
         },
 
-        // indexeddb update, if 
-        //separate select/deselect
+        // (de)select all,
+        // separate select/deselect
         // reverse selection
         // tools covrage - selected
         // export geojson/csv - selected
-
+        // indexeddb update, if 
 
         edit: !editableLayer ? null : {
             divider: true,
@@ -144,9 +155,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
         repairGeometry: !feature || !isMapDrawControlLayer || !brokenGeom ? null : {
-            innerText: 'Repair geometry',
+            innerText: 'Explode geometry',
             btnCallback: async (e) => {
-                map._drawControl._repairFeatureGeometry(feature)
+                map._drawControl._explodeFeatureGeometry(feature)
             }
         },
         toggleEditor: !editableLayer ? null : {

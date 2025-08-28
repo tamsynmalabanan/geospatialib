@@ -83,7 +83,7 @@ const fetchOverpass = async (params, {
     controller,
     query = getOverpassQueryBlock(queryGeom, {zoom, ...params}),
 } = {}) => {
-    const mapKey = JSON.stringify({query, controller:controller?.id})
+    const mapKey = canonicalize({query, controller:controller?.id})
     if (mapForFetchOverpass.has(mapKey)) {
         return mapForFetchOverpass.get(mapKey)
     }

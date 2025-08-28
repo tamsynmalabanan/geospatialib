@@ -31,7 +31,7 @@ const createLocalLayerDBKey = ({
     id = generateRandomString(64),
     name = 'new layer',
     version = 1
-}={}) => `local;${JSON.stringify({id, name})}--version${version}`
+}={}) => `local;${canonicalize({id, name})}--version${version}`
 
 const saveToGISDB = async (gisData, {
     id,
