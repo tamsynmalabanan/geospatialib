@@ -120,6 +120,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                             const methods = {
                                 visible: 'visible',
                                 stored: 'stored',
+                                selected: 'selected',
                             }
 
                             const options = {}
@@ -145,19 +146,22 @@ const handleLeafletToolboxPanel = (map, parent) => {
     const getLayerGeoJSON = async (layer, {
         coverage='visible',
     }={}) => {
-        let geojson
-
         if (coverage === 'visible') {
-            geojson = layer.toGeoJSON()
+            return turf.clone(layer.toGeoJSON())
+        } else {
+            const storedData = turf.clone((await getFromGISDB(layer._indexedDBKey)).gisData)
+
+            if (coverage === 'stored') {
+                return storedData
+            }
+
+            if (coverage === 'selected') {
+                storedData.features = storedData.features.filter(f => (layer._selectedFeatures ?? []).includes(f.properties.__gsl_id__))
+                return storedData
+            }
         }
 
-        if (coverage === 'stored') {
-            geojson = (await getFromGISDB(layer._indexedDBKey)).gisData
-        }
-
-        geojson = geojson ? turf.clone(geojson) : turf.featureCollection([])
-
-        return geojson
+        return turf.featureCollection([])
     }
 
     const tools = {

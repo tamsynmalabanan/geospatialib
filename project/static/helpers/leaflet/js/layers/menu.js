@@ -122,7 +122,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
         deselectAll: !isLegendGeoJSONLayer || feature || !selectedFeatures.length ? null : {
-            innerText: `Deselect all features`,
+            innerText: `Deselect all features (${formatNumberWithCommas(selectedFeatures.length)})`,
             btnCallback: async () => {
                 geojsonLayer.eachLayer(l => {
                     geojsonLayer._handlers.deselectFeatureLayer(l)
