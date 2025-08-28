@@ -67,6 +67,16 @@ const zoomLeafletMapToScale = (map, scale) => {
     return newZoom
 }
 
+const leafletLayerClickHandler = (e) => {
+    const layer = e.layer
+ 
+    const clickFns = layer?._events.click
+    if (!clickFns) return
+    
+    layer._disabledClickFns = clickFns
+    delete layer._events.click
+}
+
 const disableLeafletLayerClick = (map) => {
     map.eachLayer(layer => {
         const clickFns = layer._events.click
@@ -74,7 +84,9 @@ const disableLeafletLayerClick = (map) => {
         
         layer._disabledClickFns = clickFns
         delete layer._events.click
-    });
+    })
+
+    map.on('layeradd', leafletLayerClickHandler)
 }
 
 const enableLeafletLayerClick = (map) => {
@@ -84,8 +96,9 @@ const enableLeafletLayerClick = (map) => {
         
         layer._events.click = clickFns
         delete layer._disabledClickFns
+    })
 
-    });
+    map.off('layeradd', leafletLayerClickHandler)
 }
 
 const getLeafletMapBbox = (map) => {

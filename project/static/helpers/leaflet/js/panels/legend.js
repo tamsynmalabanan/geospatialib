@@ -501,6 +501,97 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
     })
 
+    let mapFeatureSelectionCoords = []
+    let mapFeatureSelectionLayer = L.geoJSON()
+
+    const mapFeatureSelectionHandler = (e) => {
+        if (isLeafletControlElement(e.originalEvent.target)) return
+        
+        const coords = Object.values(e.latlng).reverse()
+        mapFeatureSelectionCoords.push(coords)
+        
+        const isPoint = map._featureSelector === 'point'
+        const isLine = map._featureSelector === 'line'
+        const isPolygon = map._featureSelector === 'polygon'
+        
+        let feature
+        
+        if (isPoint || mapFeatureSelectionCoords.length === 1) {
+            feature = turf.point(coords)
+        } else if (isLine || mapFeatureSelectionCoords.length === 2) {
+            feature = turf.lineString(mapFeatureSelectionCoords)
+        } else if (isPolygon && mapFeatureSelectionCoords.length > 2) {
+            feature = turf.polygon([mapFeatureSelectionCoords.concat([mapFeatureSelectionCoords[0]])])
+        }
+
+        mapFeatureSelectionLayer.clearLayers()
+        mapFeatureSelectionLayer.addData(feature)
+
+        const handler = () => {
+            Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
+                const layer = legend._leafletLayer
+                if (!(layer instanceof L.GeoJSON)) return
+                
+                layer.eachLayer(l => {
+                    if (!turf.booleanIntersects(feature, l.feature)) return
+                    if (e.originalEvent.ctrlKey) {
+                        layer._handlers.deselectFeatureLayer(l)
+                    } else {
+                        layer._handlers.selectFeatureLayer(l)
+                    }
+                })
+            })
+        }
+
+        if (isPoint || isLine) {
+            handler()
+        } else if (feature.geometry.type.includes('Polygon')) {
+            const popup = new L.popup(e.latlng, {
+                autoPan: false,
+                closeButton: false,
+                closeOnEscapeKey: false,
+                autoClose: true,
+                className: 'm-0'
+            })
+            .setContent(createButton({
+                innerText: 'Close polygon',
+                className: 'fs-12 p-0',
+                events: {
+                    click: () => {
+                        popup.close()
+                        handler()
+                        enableSelector('polygon')
+                    }
+                }
+            }))
+            .openOn(map)
+        }
+    }
+
+    const enableSelector = (selector) => {
+        const icon = toolbar.querySelector(`#${toolbar.id}-select i`)
+        icon.classList.remove('bi-hand-index', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
+        icon.classList.add('text-primary')
+        if (selector === 'point') icon.classList.add('bi-geo-alt')
+        if (selector === 'line') icon.classList.add('bi-slash-lg')
+        if (selector === 'polygon') icon.classList.add('bi-hexagon')
+        
+        mapFeatureSelectionCoords = []
+        mapFeatureSelectionLayer.clearLayers()
+        if (Array('line', 'polygon').includes(selector)) {
+            map.addLayer(mapFeatureSelectionLayer)
+        } else {
+            map.removeLayer(mapFeatureSelectionLayer)
+        }
+        
+        disableLeafletLayerClick(map)
+        map._featureSelector = selector
+        map.off('click', mapFeatureSelectionHandler)
+        map.on('click', mapFeatureSelectionHandler)
+
+        map.getContainer().style.cursor = 'pointer'
+    }
+
     let controller = resetController()
 
     const tools = toolsHandler({
@@ -562,6 +653,80 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     }
                 })
             },
+        },
+        select: {
+            iconSpecs: 'bi-hand-index',
+            title: 'Select features',
+            disabled: true,
+            btnClickHandler: (e) => {
+                const menuContainer = contextMenuHandler(e, {
+                    selectPoint: {
+                        innerText: `Select at point`,
+                        btnCallback: async () => enableSelector('point')
+                    },            
+                    selectLine: {
+                        innerText: `Select along line`,
+                        btnCallback: async () => enableSelector('line')
+                    },            
+                    selectPoly: {
+                        innerText: `Select by polygon`,
+                        btnCallback: async () => enableSelector('polygon')
+                    },            
+                    selectOff: !map._featureSelector ? null : {
+                        innerText: `Deactivate selector`,
+                        btnCallback: async () => {
+                            const icon = toolbar.querySelector(`#${toolbar.id}-select i`)
+                            icon.classList.remove('text-primary', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
+                            icon.classList.add('bi-hand-index')
+                            
+                            mapFeatureSelectionCoords = []
+                            mapFeatureSelectionLayer.clearLayers()
+                            map.removeLayer(mapFeatureSelectionLayer)
+                            
+                            enableLeafletLayerClick(map)
+                            map._featureSelector = false
+                            map.off('click', mapFeatureSelectionHandler)
+
+                            map.getContainer().style.cursor = ''
+                        }
+                    },            
+                    div: {
+                        divider: true,
+                    },
+
+                    selectVisible: {
+                        innerText: `Select visible features`,
+                        btnCallback: async () => {
+                            Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
+                                const layer = legend._leafletLayer
+                                if (!(layer instanceof L.GeoJSON)) return
+                                layer.eachLayer(l => layer._handlers.selectFeatureLayer(l))
+                            })
+                        }
+                    },            
+                    deselectVisible: {
+                        innerText: `Deselect visible features`,
+                        btnCallback: async () => {
+                            Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
+                                const layer = legend._leafletLayer
+                                if (!(layer instanceof L.GeoJSON)) return
+                                layer.eachLayer(l => layer._handlers.deselectFeatureLayer(l))
+                            })
+                        }
+                    },            
+                    deselectAll: {
+                        innerText: `Deselect all features`,
+                        btnCallback: async () => {
+                            Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
+                                const layer = legend._leafletLayer
+                                if (!(layer instanceof L.GeoJSON)) return
+                                layer.eachLayer(l => layer._handlers.deselectFeatureLayer(l))
+                                layer._selectedFeatures = []
+                            })
+                        }
+                    },            
+                })
+            }
         },
         
         divider3: {

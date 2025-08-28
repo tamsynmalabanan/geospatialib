@@ -1,35 +1,6 @@
 const handleLeafletQueryPanel = (map, parent) => {
     let controller = resetController()
 
-    const toolHandler = async (e, handler) => {
-        await clearLayers(tools)
-        
-        if (typeof handler !== 'function') return
-
-        controller = resetController({controller, message: 'New query started.'})
-
-        spinner.classList.remove('d-none')
-        
-        const cancelBtn = getCancelBtn()
-        cancelBtn.disabled = false
-
-        errorRemark = 'Query was interrupted.'
-
-        await handler(e, {
-            controller,
-            abortBtns: [getCancelBtn()], 
-        })
-    
-        cancelBtn.disabled = true
-        
-        spinner.classList.add('d-none')
-        
-        if (layers.innerHTML === '') {
-            error.lastChild.innerText = errorRemark
-            error.classList.remove('d-none')
-        }
-    }
-
     const queryGroup = map._handlers.getLayerGroups().query
     const {
         toolbar, 
@@ -43,7 +14,34 @@ const handleLeafletQueryPanel = (map, parent) => {
         statusBar: true,
         spinnerRemark: 'Running query...',
         clearLayersHandler: () => queryGroup.clearLayers(),
-        toolHandler,
+        toolHandler: async (e, handler) => {
+            await clearLayers(tools)
+            
+            if (typeof handler !== 'function') return
+
+            controller = resetController({controller, message: 'New query started.'})
+
+            spinner.classList.remove('d-none')
+            
+            const cancelBtn = getCancelBtn()
+            cancelBtn.disabled = false
+
+            errorRemark = 'Query was interrupted.'
+
+            await handler(e, {
+                controller,
+                abortBtns: [getCancelBtn()], 
+            })
+        
+            cancelBtn.disabled = true
+            
+            spinner.classList.add('d-none')
+            
+            if (layers.innerHTML === '') {
+                error.lastChild.innerText = errorRemark
+                error.classList.remove('d-none')
+            }
+        },
     })
 
     const customStyleParams = {

@@ -30,6 +30,8 @@ window.addEventListener("map:init", async (e) => {
     handleLeafletMapControls(map)
     handleLeafletMapEvents(map)
 
+    map._featureSelector = false
+
     map._initComplete = true
     map.fire('initComplete')
 })

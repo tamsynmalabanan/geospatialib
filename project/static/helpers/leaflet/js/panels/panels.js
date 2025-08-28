@@ -110,7 +110,8 @@ const createLeafletMapPanel = (map, parent, name, {
                             btn.classList.toggle(`btn-${getPreferredTheme()}`, !mapClickHandler)
                         }
 
-                        mapContainer.style.cursor = mapClickHandler ? 'pointer' : ''
+
+                        mapContainer.style.cursor = (mapClickHandler || map._featureSelector) ? 'pointer' : ''
                         map._panelMode = [name, mapClickHandler ? toolId : undefined]
         
                         if (mapClickHandler) {
@@ -118,7 +119,9 @@ const createLeafletMapPanel = (map, parent, name, {
                                 if (isLeafletControlElement(e.originalEvent.target) || map._panelMode[1] !== toolId) return
         
                                 map.off('click', panelMapClickHandler)
-                                enableLeafletLayerClick(map)
+                                if (!map._featureSelector) {
+                                    enableLeafletLayerClick(map)
+                                }
                                 
                                 skipToolHandler ? await mapClickHandler() : await toolHandler(e, mapClickHandler)
                                 if (btn.classList.contains('btn-primary')) btn.click()
@@ -127,7 +130,10 @@ const createLeafletMapPanel = (map, parent, name, {
                             disableLeafletLayerClick(map)
                             map.on('click', panelMapClickHandler)
                         } else {
-                            enableLeafletLayerClick(map)
+                            if (!map._featureSelector) {
+                                enableLeafletLayerClick(map)
+                            }
+
                             map._events.click = map._events.click?.filter(handler => {
                                 return handler.fn.name !== 'panelMapClickHandler'
                             })
