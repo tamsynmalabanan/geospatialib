@@ -463,6 +463,16 @@ const getLeafletGeoJSONLayer = async ({
             if (gslId && (geojsonLayer._selectedFeatures ?? []).includes(gslId)) {
                 geojsonLayer._handlers.selectFeatureLayer(layer, {updated:true})
             }
+
+            const selectFeature = group._map._featureSelectorLayer.getLayers()[0]?.feature
+            if (selectFeature && selectFeature.properties.done) {
+                const select = selectFeature.properties.select
+                if ((select && geojsonLayer._selectedFeatures.includes(gslId)) || (!select && !geojsonLayer._selectedFeatures.includes(gslId))) return
+                if (!featuresIntersect(selectFeature, feature)) return
+                select ? geojsonLayer._handlers.selectFeatureLayer(layer, {
+                    updated:true
+                }) : geojsonLayer._handlers.deselectFeatureLayer(layer)
+            }
         }
     
         if (geojsonLayer._handlers.isPatternFilledPolygonInCanvas(feature)) {

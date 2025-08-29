@@ -63,6 +63,16 @@ const getLeafletLayerContextMenu = async (event, layer, {
             innerText: `Zoom to ${typeLabel}`,
             btnCallback: async () => await zoomToLeafletLayer(layer, map)
         },
+        zoomSelection: feature || !featureCountSelected ? null : {
+            innerText: `Zoom to selection`,
+            btnCallback: async () => {
+                zoomLeafletMapToBounds(map, L.geoJSON(turf.featureCollection(
+                    geojsonLayer.getLayers()
+                    .map(l => turf.clone(l.feature))
+                    .filter(f => selectedFeatures.includes(f.properties.__gsl_id__))
+                )).getBounds())
+            }
+        },
         measure: !feature || brokenGeom || featureType === 'Point' || isSearch ? null : {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
             btnCallback: async () => {
@@ -100,6 +110,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
         selectFeature: !isLegendGeoJSONLayer || !feature ? null : {
             innerText: `${isSelectedFeature ? 'Deselect' : 'Select'} feature`,
             btnCallback: async () => {
+                disableLeafletMapSelector(map)
+                
                 isSelectedFeature 
                 ? geojsonLayer._handlers.deselectFeatureLayer(layer) 
                 : geojsonLayer._handlers.selectFeatureLayer(layer)
@@ -108,6 +120,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
         selectVisible: !isLegendGeoJSONLayer || feature || !featureCountAll || featureCountAll === featureCountSelected ? null : {
             innerText: `Select visible features (${formatNumberWithCommas(featureCountAll)})`,
             btnCallback: async () => {
+                disableLeafletMapSelector(map)
+
                 geojsonLayer.eachLayer(l => {
                     geojsonLayer._handlers.selectFeatureLayer(l)
                 })
@@ -116,6 +130,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
         deselectVisible: !isLegendGeoJSONLayer || feature || !featureCountSelected ? null : {
             innerText: `Deselect visible features (${formatNumberWithCommas(featureCountSelected)})`,
             btnCallback: async () => {
+                disableLeafletMapSelector(map)
+
                 geojsonLayer.eachLayer(l => {
                     geojsonLayer._handlers.deselectFeatureLayer(l)
                 })
@@ -124,6 +140,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
         deselectAll: !isLegendGeoJSONLayer || feature || !selectedFeatures.length ? null : {
             innerText: `Deselect all features (${formatNumberWithCommas(selectedFeatures.length)})`,
             btnCallback: async () => {
+                disableLeafletMapSelector(map)
+                
                 geojsonLayer.eachLayer(l => {
                     geojsonLayer._handlers.deselectFeatureLayer(l)
                 })

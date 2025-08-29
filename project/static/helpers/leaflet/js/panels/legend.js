@@ -488,6 +488,100 @@ const createLeafletLegendItem = (layer, {clearLayers}={}) => {
     return container
 }
 
+const disableLeafletMapSelector = (map) => {
+    const icon = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-toolbar-select i`)
+    icon.classList.remove('text-primary', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
+    icon.classList.add('bi-hand-index')
+    
+    map._featureSelectionCoords = []
+    map._featureSelectorLayer.clearLayers()
+    map.removeLayer(map._featureSelectorLayer)
+    
+    enableLeafletLayerClick(map)
+    map._featureSelector = false
+    map.off('click', leafletMapFeatureSelectionHandler)
+    map.closePopup()
+
+    map.getContainer().style.cursor = ''
+}
+
+const leafletMapFeatureSelectionHandler = (e) => {
+    if (isLeafletControlElement(e.originalEvent.target)) return
+    
+    const map = e.target
+    const layers = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-layers`)
+
+    const coords = Object.values(e.latlng).reverse()
+    map._featureSelectionCoords.push(coords)
+    
+    const isPoint = map._featureSelector === 'point'
+    const isLine = map._featureSelector === 'line'
+    const isPolygon = map._featureSelector === 'polygon'
+    
+    let feature
+    
+    if (isPoint || map._featureSelectionCoords.length === 1) {
+        feature = turf.point(coords)
+    } else if (isLine || map._featureSelectionCoords.length === 2) {
+        feature = turf.lineString(map._featureSelectionCoords)
+    } else if (isPolygon && map._featureSelectionCoords.length > 2) {
+        feature = turf.polygon([map._featureSelectionCoords.concat([map._featureSelectionCoords[0]])])
+    }
+
+    feature.properties.select = !e.originalEvent.ctrlKey
+    map._featureSelectorLayer.clearLayers()
+    if (isLine || isPolygon) {
+        feature.properties.done = false
+        map._featureSelectorLayer.addData(feature)
+        map.addLayer(map._featureSelectorLayer)
+    } else {
+        map.removeLayer(map._featureSelectorLayer)
+    }
+
+    const handler = () => {
+        Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
+            const layer = legend._leafletLayer
+            if (!(layer instanceof L.GeoJSON)) return
+            
+            layer.eachLayer(l => {
+                if (!featuresIntersect(feature, l.feature)) return
+                if (feature.properties.select) {
+                    layer._handlers.selectFeatureLayer(l)
+                } else {
+                    layer._handlers.deselectFeatureLayer(l)
+                }
+            })
+        })
+    }
+
+    if (isPoint) {
+        handler()
+    } else {
+        const popup = new L.popup(e.latlng, {
+            autoPan: false,
+            closeButton: false,
+            closeOnEscapeKey: false,
+            autoClose: true,
+            className: 'm-0'
+        })
+        .setContent(createButton({
+            innerText: isPolygon ? 'Close polygon' : 'Finish line',
+            className: 'fs-12 p-0',
+            events: {
+                click: () => {
+                    feature.properties.done = true
+                    zoomToLeafletLayer(map._featureSelectorLayer, map)
+    
+                    popup.close()
+                    map._featureSelectionCoords = []
+                    map.removeLayer(map._featureSelectorLayer)
+                }
+            }
+        }))
+        .openOn(map)
+    }
+}
+
 const handleLeafletLegendPanel = async (map, parent) => {   
     const {
         toolbar, 
@@ -501,73 +595,6 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
     })
 
-    let mapFeatureSelectionCoords = []
-    let mapFeatureSelectionLayer = L.geoJSON()
-
-    const mapFeatureSelectionHandler = (e) => {
-        if (isLeafletControlElement(e.originalEvent.target)) return
-        
-        const coords = Object.values(e.latlng).reverse()
-        mapFeatureSelectionCoords.push(coords)
-        
-        const isPoint = map._featureSelector === 'point'
-        const isLine = map._featureSelector === 'line'
-        const isPolygon = map._featureSelector === 'polygon'
-        
-        let feature
-        
-        if (isPoint || mapFeatureSelectionCoords.length === 1) {
-            feature = turf.point(coords)
-        } else if (isLine || mapFeatureSelectionCoords.length === 2) {
-            feature = turf.lineString(mapFeatureSelectionCoords)
-        } else if (isPolygon && mapFeatureSelectionCoords.length > 2) {
-            feature = turf.polygon([mapFeatureSelectionCoords.concat([mapFeatureSelectionCoords[0]])])
-        }
-
-        mapFeatureSelectionLayer.clearLayers()
-        mapFeatureSelectionLayer.addData(feature)
-
-        const handler = () => {
-            Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
-                const layer = legend._leafletLayer
-                if (!(layer instanceof L.GeoJSON)) return
-                
-                layer.eachLayer(l => {
-                    if (!turf.booleanIntersects(feature, l.feature)) return
-                    if (e.originalEvent.ctrlKey) {
-                        layer._handlers.deselectFeatureLayer(l)
-                    } else {
-                        layer._handlers.selectFeatureLayer(l)
-                    }
-                })
-            })
-        }
-
-        if (isPoint || isLine) {
-            handler()
-        } else if (feature.geometry.type.includes('Polygon')) {
-            const popup = new L.popup(e.latlng, {
-                autoPan: false,
-                closeButton: false,
-                closeOnEscapeKey: false,
-                autoClose: true,
-                className: 'm-0'
-            })
-            .setContent(createButton({
-                innerText: 'Close polygon',
-                className: 'fs-12 p-0',
-                events: {
-                    click: () => {
-                        popup.close()
-                        handler()
-                        enableSelector('polygon')
-                    }
-                }
-            }))
-            .openOn(map)
-        }
-    }
-
     const enableSelector = (selector) => {
         const icon = toolbar.querySelector(`#${toolbar.id}-select i`)
         icon.classList.remove('bi-hand-index', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
@@ -576,18 +603,13 @@ const handleLeafletLegendPanel = async (map, parent) => {
         if (selector === 'line') icon.classList.add('bi-slash-lg')
         if (selector === 'polygon') icon.classList.add('bi-hexagon')
         
-        mapFeatureSelectionCoords = []
-        mapFeatureSelectionLayer.clearLayers()
-        if (Array('line', 'polygon').includes(selector)) {
-            map.addLayer(mapFeatureSelectionLayer)
-        } else {
-            map.removeLayer(mapFeatureSelectionLayer)
-        }
+        map._featureSelectionCoords = []
+        map._featureSelectorLayer.clearLayers()
         
         disableLeafletLayerClick(map)
         map._featureSelector = selector
-        map.off('click', mapFeatureSelectionHandler)
-        map.on('click', mapFeatureSelectionHandler)
+        map.off('click', leafletMapFeatureSelectionHandler)
+        map.on('click', leafletMapFeatureSelectionHandler)
 
         map.getContainer().style.cursor = 'pointer'
     }
@@ -672,23 +694,33 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         innerText: `Select by polygon`,
                         btnCallback: async () => enableSelector('polygon')
                     },            
+                    selectClipboard: {
+                        innerText: `Select by clipboard feature`,
+                        btnCallback: async () => {
+                            disableLeafletMapSelector(map)
+
+                            const text = await navigator.clipboard.readText()
+                            if (!text) return
+                
+                            try {
+                                let feature = JSON.parse(text)
+                                if (feature.type === 'Feature' || Array('Point', 'LineString', 'Polygon').some(i => feature.type.endsWith(i))) {
+                                    feature = feature.type === 'Feature' ? feature : turf.feature(feature)
+                                    feature.properties = {
+                                        done: true,
+                                        select: true,
+                                    }
+                                    map._featureSelectorLayer.addData(feature)
+                                    zoomToLeafletLayer(map._featureSelectorLayer, map)
+                                }
+                            } catch (error) {
+                                console.log(error)
+                            }
+                        }
+                    },            
                     selectOff: !map._featureSelector ? null : {
                         innerText: `Deactivate selector`,
-                        btnCallback: async () => {
-                            const icon = toolbar.querySelector(`#${toolbar.id}-select i`)
-                            icon.classList.remove('text-primary', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
-                            icon.classList.add('bi-hand-index')
-                            
-                            mapFeatureSelectionCoords = []
-                            mapFeatureSelectionLayer.clearLayers()
-                            map.removeLayer(mapFeatureSelectionLayer)
-                            
-                            enableLeafletLayerClick(map)
-                            map._featureSelector = false
-                            map.off('click', mapFeatureSelectionHandler)
-
-                            map.getContainer().style.cursor = ''
-                        }
+                        btnCallback: () => disableLeafletMapSelector(map)
                     },            
                     div: {
                         divider: true,
@@ -697,6 +729,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     selectVisible: {
                         innerText: `Select visible features`,
                         btnCallback: async () => {
+                            disableLeafletMapSelector(map)
                             Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
                                 const layer = legend._leafletLayer
                                 if (!(layer instanceof L.GeoJSON)) return
@@ -707,6 +740,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     deselectVisible: {
                         innerText: `Deselect visible features`,
                         btnCallback: async () => {
+                            disableLeafletMapSelector(map)
                             Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
                                 const layer = legend._leafletLayer
                                 if (!(layer instanceof L.GeoJSON)) return
@@ -717,6 +751,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     deselectAll: {
                         innerText: `Deselect all features`,
                         btnCallback: async () => {
+                            disableLeafletMapSelector(map)
                             Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
                                 const layer = legend._leafletLayer
                                 if (!(layer instanceof L.GeoJSON)) return
@@ -981,7 +1016,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 }   
             })
 
-            Promise.all(promises).then(() => map._previousBbox = newBbox)
+            Promise.all(promises)
+            .then(() => {
+                map._previousBbox = newBbox
+            })
         }, 500)
     })
 

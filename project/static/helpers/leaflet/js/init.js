@@ -31,6 +31,8 @@ window.addEventListener("map:init", async (e) => {
     handleLeafletMapEvents(map)
 
     map._featureSelector = false
+    map._featureSelectorLayer = L.geoJSON()
+    map._featureSelectionCoords = []
 
     map._initComplete = true
     map.fire('initComplete')

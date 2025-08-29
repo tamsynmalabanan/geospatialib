@@ -712,3 +712,29 @@ const osmDataToGeoJSON = (data) => {
 
     return osmtogeojson(parsedData)
 }
+
+const explodeFeature = (feature, {
+
+}={}) => {
+    
+}
+
+const featuresIntersect = (feature1, feature2) => {
+    let intersects = false
+
+    try {
+        intersects = turf.booleanIntersects(feature1, feature2)
+    } catch {
+        try {
+            intersects = turf.booleanIntersects(feature1, turf.envelope(feature2))
+        } catch {
+            try {
+                intersects = turf.booleanIntersects(turf.envelope(feature1), feature2)
+            } catch {
+                intersects = turf.booleanIntersects(turf.envelope(feature1), turf.envelope(feature2))
+            }
+        }
+    }
+    
+    return intersects
+}
