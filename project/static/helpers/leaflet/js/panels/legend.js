@@ -428,13 +428,6 @@ const createLeafletLegendItem = (layer, {clearLayers}={}) => {
         })
     })
 
-    if (layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey) {
-        legendTitle.appendChild(customCreateElement({
-            tag: 'i', 
-            className:'bi bi-pencil-square'
-        }))
-    }
-
     const toggleContainer = customCreateElement({
         tag: 'div',
         className: 'ms-auto ps-5 d-flex flex-nowrap gap-2',
@@ -464,6 +457,24 @@ const createLeafletLegendItem = (layer, {clearLayers}={}) => {
     })
     Array.from(legendAttribution.querySelectorAll('a')).forEach(a => a.setAttribute('target', '_blank'))
 
+    if (layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey) {
+        const editIndicator = createIcon({
+            parent: toggleContainer,
+            peNone: true, 
+            attrs: {
+                title: 'Active editing sessions',
+            },
+            className:'bi bi-pencil-square'
+        })
+    }
+
+    const sourceIndicator = createIcon({
+        parent: toggleContainer,
+        peNone: true,
+        className: `bi bi-globe ${layer._indexedDBKey.startsWith('local') ? 'text-secondary' : 'text-primary'}`,
+        attrs: {title: `${layer._indexedDBKey.startsWith('local') ? 'Local' : 'Web'} layer`},
+    })
+
     const collapseToggle = createIcon({
         parent: toggleContainer,
         peNone: false,
@@ -490,7 +501,7 @@ const createLeafletLegendItem = (layer, {clearLayers}={}) => {
 
 const disableLeafletMapSelector = (map) => {
     const icon = map.getContainer().querySelector(`#${map.getContainer().id}-panels-legend-toolbar-select i`)
-    icon.classList.remove('text-primary', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
+    icon.classList.remove('text-primary', 'bi-geo-alt', 'bi-bezier2', 'bi-hexagon')
     icon.classList.add('bi-hand-index')
     
     map._featureSelectionCoords = []
@@ -597,10 +608,10 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
     const enableSelector = (selector) => {
         const icon = toolbar.querySelector(`#${toolbar.id}-select i`)
-        icon.classList.remove('bi-hand-index', 'bi-geo-alt', 'bi-slash-lg', 'bi-hexagon')
+        icon.classList.remove('bi-hand-index', 'bi-geo-alt', 'bi-bezier2', 'bi-hexagon')
         icon.classList.add('text-primary')
         if (selector === 'point') icon.classList.add('bi-geo-alt')
-        if (selector === 'line') icon.classList.add('bi-slash-lg')
+        if (selector === 'line') icon.classList.add('bi-bezier2')
         if (selector === 'polygon') icon.classList.add('bi-hexagon')
         
         map._featureSelectionCoords = []
@@ -1103,7 +1114,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                             attrs: {title: `Feature count is limited to ${
                                 formatNumberWithCommas(layer._properties.limits.max)
                             }. You can change this in the layer properties.`}
-                        })), legendMenu.firstChild)
+                        })), legendMenu.querySelector('.bi-globe'))
                     }
                 })
                 

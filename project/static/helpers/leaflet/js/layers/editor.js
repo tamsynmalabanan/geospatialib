@@ -107,10 +107,11 @@ const toggleLeafletLayerEditor = async (layer, {
             if (legend.querySelector(`.bi.bi-pencil-square`)) return
             
             const title = legend.querySelector(`#${legend.id}-title`)
-            title.insertBefore(customCreateElement({
-                tag: 'i', 
-                className:'bi bi-pencil-square'
-            }), title.lastChild)    
+            title.lastChild.insertBefore(createIcon({
+                preNone: false, 
+                className:'bi bi-pencil-square',
+                title: 'Active editing sessions',
+            }), title.lastChild.firstChild)
         })    
     }    
     

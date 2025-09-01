@@ -419,7 +419,7 @@ const handleLeafletDrawBtns = (map, {
             className: 'pe-none bi'
         })
 
-        if (btn.className.includes('polyline')) icon.classList.add('bi-slash-lg')
+        if (btn.className.includes('polyline')) icon.classList.add('bi-bezier2')
         if (btn.className.includes('polygon')) icon.classList.add('bi-pentagon')
         if (btn.className.includes('rectangle')) icon.classList.add('bi-square')
         if (btn.className.includes('marker')) icon.classList.add('bi-geo-alt')
