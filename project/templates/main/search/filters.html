@@ -58,7 +58,7 @@
             <span class='text-break'>
                 Results for "{{request.GET.query}}" ({{count|format_number}})
             </span>
-            <button class="border-0 bg-transparent px-0 ms-auto bi bi-eye" tabindex="-1" type="button" title='Toggle results footprint' onclick="toggleSearchResultBbox()" tabindex="-1"></button>
+            <button class="border-0 bg-transparent px-0 ms-auto bi bi-eye" tabindex="-1" type="button" title='Toggle results footprint' onclick="toggleSearchResultBbox(event)" tabindex="-1"></button>
             <button class="border-0 bg-transparent px-0 bi bi-chevron-expand" tabindex="-1" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="searchFormFields searchFormFilters" title='Toggle search form'></button>
         {% else %}
             <span class='text-break mb-3'>No results found for "{{request.GET.query}}"</span>
