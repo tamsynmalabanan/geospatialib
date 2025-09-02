@@ -441,6 +441,8 @@ const createFormCheck = ({
     labelInnerText = '',
     fieldClass = '',
     formCheckClass = '',
+    formCheckAttrs = {},
+    formCheckStyle = {},
     disabled=false,
     checked = false,
     labelClass = '',
@@ -452,6 +454,8 @@ const createFormCheck = ({
 } = {}) => {
     const formCheck = document.createElement('div')
     formCheck.className = `form-check m-0 ${formCheckClass} ${role == 'switch' ? 'form-switch' : ''}`
+    Object.keys(formCheckAttrs).forEach(i => formCheck.setAttribute(i, formCheckAttrs[i]))
+    Object.keys(formCheckStyle).forEach(i => formCheck.style[i] = formCheckStyle[i])
     parent?.appendChild(formCheck)
     
     const input = document.createElement('input')

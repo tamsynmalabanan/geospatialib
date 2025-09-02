@@ -93,7 +93,7 @@ const handleLeafletStylePanel = (map, parent) => {
             useDefault: {
                 innerText: `Use default scale`,
                 btnCallback: async () => {
-                    field.value = field.name === 'minScale' ? 10 : 5000000
+                    field.value = field.name.toLowerCase().includes('min') ? 10 : 5000000
                     field.dispatchEvent(changeEvent)
                 }
             },
@@ -2831,7 +2831,7 @@ const handleLeafletStylePanel = (map, parent) => {
                             enableSimplify: {
                                 handler: createFormCheck,
                                 checked: transformations.simplify.active,
-                                formCheckClass: 'flex-grow-1',
+                                formCheckClass: 'flex-grow-1 w-100',
                                 labelInnerText: 'Simplify feature geometries',
                                 role: 'switch',
                                 events: {
@@ -2857,7 +2857,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                         parent,
                                         name: 'simplify',
                                         type: 'radio',
-                                        containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2 mb-3',
+                                        containerClass: 'p-3 border rounded flex-wrap flex-grow-1 w-100 gap-2',
                                         options: (() => {
                                             const options = {}
                                             for (const i in transformations.simplify.values) {
@@ -2925,6 +2925,99 @@ const handleLeafletStylePanel = (map, parent) => {
                                         }
                                     })
                                 },
+                            },
+                            transformScaleCheck: {
+                                handler: createFormCheck,
+                                checked: transformations.simplify.scale.active,
+                                formCheckClass: 'w-25 border rounded py-1 pe-2 ps-4',
+                                formCheckStyle: {height: '32px'},
+                                labelInnerText: 'Scale',
+                                role: 'checkbox',
+                                // labelClass: '',
+                                events: {
+                                    click: (e) => {
+                                        const value = e.target.checked
+                                        if (value === transformations.simplify.scale.active) return
+                    
+                                        form.elements.transformScaleMin.disabled = !value
+                                        form.elements.transformScaleMax.disabled = !value
+
+                                        transformations.simplify.scale.active = value
+                                        updateLeafletGeoJSONLayer(layer, {controller})
+                                    }
+                                }
+                            },
+                            transformScaleMin: {    
+                                handler: createInputGroup,
+                                fieldAttrs: {
+                                    name:'transformScaleMin',
+                                    type:'number',
+                                    min: '10',
+                                    max: transformations.simplify.scale.max,
+                                    step: '10',
+                                    value: transformations.simplify.scale.min,
+                                    placeholder: 'Maximum',
+                                },
+                                prefixHTML: `<span class="fs-12">1:</span>`,
+                                suffixHTML: `<span class="fs-12">m</span>`,
+                                fieldClass: 'form-control-sm fs-12',
+                                disabled: !transformations.simplify.scale.active,
+                                inputGroupClass: 'w-25 flex-grow-1',
+                                events: {
+                                    'change': (e) => {
+                                        const field = e.target
+                                        const maxScaleField = form.elements.transformScaleMax
+                                        
+                                        if (!field.value) {
+                                            field.value = 10
+                                        } else {
+                                            const maxScaleValue = parseInt(maxScaleField.value)
+                                            if (maxScaleValue < parseInt(field.value)) field.value = maxScaleValue
+                                        }
+        
+                                        transformations.simplify.scale.min = parseInt(field.value)
+                                        maxScaleField.setAttribute('min', field.value)
+        
+                                        updateLeafletGeoJSONLayer(layer, {controller})
+                                    },
+                                    'click': visibilityFieldsClick,
+                                }
+                            },
+                            transformScaleMax: {
+                                handler: createInputGroup,
+                                fieldAttrs: {
+                                    name:'transformScaleMax',
+                                    type:'number',
+                                    min: transformations.simplify.scale.min,
+                                    max: '5000000',
+                                    step: '10',
+                                    value: transformations.simplify.scale.max,
+                                    placeholder: 'Minimum',
+                                },
+                                prefixHTML: `<span class="fs-12">1:</span>`,
+                                suffixHTML: `<span class="fs-12">m</span>`,
+                                fieldClass: 'form-control-sm fs-12',
+                                disabled: !transformations.simplify.scale.active,
+                                inputGroupClass: 'w-25 flex-grow-1',
+                                events: {
+                                    'change': (e) => {
+                                        const field = e.target
+                                        const minScaleField = form.elements.transformScaleMin
+                                        
+                                        if (!field.value) {
+                                            field.value = 5000000
+                                        } else {
+                                            const minScaleValue = parseInt(minScaleField.value)
+                                            if (minScaleValue > parseInt(field.value)) field.value = minScaleValue
+                                        }
+                                        
+                                        transformations.simplify.scale.max = parseInt(field.value)
+                                        minScaleField.setAttribute('max', field.value)
+                                        
+                                        updateLeafletGeoJSONLayer(layer, {controller})
+                                    },
+                                    'click': visibilityFieldsClick,
+                                }
                             },
                         },
                         className: 'flex-wrap gap-2'   

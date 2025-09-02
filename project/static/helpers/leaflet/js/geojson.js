@@ -65,6 +65,11 @@ const getLeafletGeoJSONLayer = async ({
     properties.transformations = properties.transformations ?? {
         simplify: {
             active: false,
+            scale: {
+                active: false,
+                min: 10,
+                max: 5000000,
+            },
             values: {
                 'None': {
                     active: true,
@@ -669,21 +674,26 @@ const getLeafletGeoJSONData = async (layer, {
         if (transform ) {
             const transformations = layer._properties.transformations
 
+            
             const simplifyFn = Object.values(transformations.simplify.values).find(i => i.active && i.fn && (i.fn !== 'simplify' || i.options.tolerance > 0))
             if (transformations.simplify.active && simplifyFn) {
-                data.features = data.features.map(feature => {
-                    if (turf.getType(feature) === 'Point') return feature
-
-                    let newFeature
-                    try {
-                        newFeature = turf[simplifyFn.fn](feature, {...(simplifyFn.options ?? {})})
-                        newFeature.properties = feature.properties
-                    } catch {
-                        newFeature = feature
-                    }
-
-                    return newFeature
-                })
+                const transformScale = transformations.simplify.scale
+                const mapScale = getLeafletMeterScale(map)
+                if (!transformScale.active || (transformScale.active && (mapScale <= transformScale.max) && (mapScale >= transformScale.min))) {
+                    data.features = data.features.map(feature => {
+                        if (turf.getType(feature) === 'Point') return feature
+    
+                        let newFeature
+                        try {
+                            newFeature = turf[simplifyFn.fn](feature, {...(simplifyFn.options ?? {})})
+                            newFeature.properties = feature.properties
+                        } catch {
+                            newFeature = feature
+                        }
+    
+                        return newFeature
+                    })
+                }
             }
         }
         
