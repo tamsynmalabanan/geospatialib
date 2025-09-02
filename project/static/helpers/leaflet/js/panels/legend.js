@@ -1003,11 +1003,17 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     if (controllerId !== controller.id) return
 
+                    const mapScale = getLeafletMeterScale(map)
+
                     const geojson = (
                         !legend.querySelector('.bi-bug')
                         && turf.booleanWithin(newBbox, previousBbox)
                         && layer.getLayers().length === layer._properties.limits.totalCount
-                        && Object.values(layer._properties.transformations).every(i => !i.scale.active)
+                        && Object.values(layer._properties.transformations).every(i => {
+                            return !i.inEffect || (i.inEffect && (!i.scale.active || (
+                                i.scale.active && (mapScale <= i.scale.max) && (mapScale >= i.scale.min)
+                            )))
+                        })
                     ) ? layer.toGeoJSON() : null
 
                     promises.push(updateLeafletGeoJSONLayer(layer, {

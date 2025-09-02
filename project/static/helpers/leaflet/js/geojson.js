@@ -674,26 +674,29 @@ const getLeafletGeoJSONData = async (layer, {
         if (transform ) {
             const transformations = layer._properties.transformations
 
-            
-            const simplifyFn = Object.values(transformations.simplify.values).find(i => i.active && i.fn && (i.fn !== 'simplify' || i.options.tolerance > 0))
-            if (transformations.simplify.active && simplifyFn) {
-                const transformScale = transformations.simplify.scale
-                const mapScale = getLeafletMeterScale(map)
-                if (!transformScale.active || (transformScale.active && (mapScale <= transformScale.max) && (mapScale >= transformScale.min))) {
-                    data.features = data.features.map(feature => {
-                        if (turf.getType(feature) === 'Point') return feature
-    
-                        let newFeature
-                        try {
-                            newFeature = turf[simplifyFn.fn](feature, {...(simplifyFn.options ?? {})})
-                            newFeature.properties = feature.properties
-                        } catch {
-                            newFeature = feature
-                        }
-    
-                        return newFeature
-                    })
-                }
+            const simplifyParams = transformations.simplify
+            const simplifyFn = Object.values(simplifyParams.values).find(i => i.active && i.fn && (i.fn !== 'simplify' || i.options.tolerance > 0))
+            const simplifyScale = simplifyParams.scale
+            const mapScale = getLeafletMeterScale(map)
+            if (simplifyParams.active && simplifyFn && (!simplifyScale.active || (
+                mapScale <= simplifyScale.max && mapScale >= simplifyScale.min
+            ))) {
+                layer._properties.transformations.simplify.inEffect = true
+                data.features = data.features.map(feature => {
+                    if (turf.getType(feature) === 'Point') return feature
+
+                    let newFeature
+                    try {
+                        newFeature = turf[simplifyFn.fn](feature, {...(simplifyFn.options ?? {})})
+                        newFeature.properties = feature.properties
+                    } catch {
+                        newFeature = feature
+                    }
+
+                    return newFeature
+                })
+            } else {
+                layer._properties.transformations.simplify.inEffect = false
             }
         }
         
