@@ -50,7 +50,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const editableLayer = isLegendGroup && geojsonLayer && localLayer && (await getFromGISDB(indexedDBKey))?.gisData?.features.length <= 1000
     const isMapDrawControlLayer = editableLayer && (indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey)
 
-    const isMeasured = (geojsonLayer._measuredFeatures ?? []).includes(gslId)
+    const isMeasured = (geojsonLayer?._measuredFeatures ?? []).includes(gslId)
 
     const isLegendGeoJSONLayer = geojsonLayer && isLegendGroup
     const selectedFeatures = isLegendGeoJSONLayer ? geojsonLayer._selectedFeatures ?? [] : null
@@ -73,7 +73,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 )).getBounds())
             }
         },
-        measure: !feature || brokenGeom || featureType === 'Point' || isSearch ? null : {
+        measure: !geojsonLayer || !feature || brokenGeom || featureType === 'Point' || isSearch ? null : {
             innerText: `${isMeasured ? 'Hide' : 'Show'} measurements`,
             btnCallback: async () => {
                 geojsonLayer._measuredFeatures = geojsonLayer._measuredFeatures ?? []
