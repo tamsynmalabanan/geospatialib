@@ -1113,6 +1113,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                     const legendMenu = container.firstChild.lastChild
                     legendMenu.querySelector('i.bi.bi-filter')?.remove()
+                    legendMenu.querySelector('i.bi-circle-square')?.remove()
                     
                     if (layer._properties.limits.active) {
                         legendMenu.insertBefore(titleToTooltip(customCreateElement({
