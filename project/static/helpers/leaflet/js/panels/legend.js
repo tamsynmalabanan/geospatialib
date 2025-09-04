@@ -1123,6 +1123,14 @@ const handleLeafletLegendPanel = async (map, parent) => {
                             }. You can change this in the layer properties.`}
                         })), legendMenu.querySelector('.bi-globe'))
                     }
+                    
+                    if (Object.values(layer._properties.transformations).some(i => i.inEffect)) {
+                        legendMenu.insertBefore(titleToTooltip(customCreateElement({
+                            tag:'i', 
+                            className:'bi bi-circle-square', 
+                            attrs: {title: `Feature geometry is transformed. You can change this in the layer properties.`}
+                        })), legendMenu.querySelector('.bi-globe'))
+                    }
                 })
                 
                 layer.on('dataerror', () => {
