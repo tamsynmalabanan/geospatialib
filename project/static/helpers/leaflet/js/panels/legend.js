@@ -541,15 +541,17 @@ const leafletMapFeatureSelectionHandler = (e) => {
 
     feature.properties.select = !e.originalEvent.ctrlKey
     map._featureSelectorLayer.clearLayers()
+
     if (isLine || isPolygon) {
         feature.properties.done = false
         map._featureSelectorLayer.addData(feature)
         map.addLayer(map._featureSelectorLayer)
     } else {
+        map._featureSelectorLayer.clearLayers()
         map.removeLayer(map._featureSelectorLayer)
     }
 
-    const handler = () => {
+    if (isPoint) {
         Array.from(layers.querySelectorAll('[data-layer-legend="true"]')).forEach(legend => {
             const layer = legend._leafletLayer
             if (!(layer instanceof L.GeoJSON)) return
@@ -563,11 +565,7 @@ const leafletMapFeatureSelectionHandler = (e) => {
                 }
             })
         })
-    }
-
-    if (isPoint) {
-        handler()
-    } else {
+    } else if ((isLine && map._featureSelectionCoords.length > 1) || (isPolygon && map._featureSelectionCoords.length > 2)) {
         const popup = new L.popup(e.latlng, {
             autoPan: false,
             closeButton: false,
@@ -707,7 +705,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     },            
                     selectClipboard: {
                         innerText: `Select by clipboard feature`,
-                        btnCallback: async () => {
+                        btnCallback: async (e) => {
                             disableLeafletMapSelector(map)
 
                             const text = await navigator.clipboard.readText()
@@ -719,7 +717,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                                     feature = feature.type === 'Feature' ? feature : turf.feature(feature)
                                     feature.properties = {
                                         done: true,
-                                        select: true,
+                                        select: !e.ctrlKey,
                                     }
                                     map._featureSelectorLayer.addData(feature)
                                     zoomToLeafletLayer(map._featureSelectorLayer, map)
@@ -990,13 +988,14 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 return bScore - aScore
             })
 
-            legendLayers.forEach(async legend => {
-                if (controllerId !== controller.id) return
+            for (const legend of legendLayers) {
+                
+                if (controllerId !== controller.id) break
                 
                 const leafletId = parseInt(legend.dataset.layerId)
                 const layer = map._handlers.getLegendLayer(leafletId)
-                if (!layer) return
-
+                if (!layer) continue
+    
                 const isHidden = map._handlers.hasHiddenLegendLayer(layer)
                 const isInvisible = !leafletLayerIsVisible(layer)
                 const isInHiddenGroup = map._handlers.hasHiddenLegendGroupLayer(layer)
@@ -1006,28 +1005,27 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 
                 if (isHidden || isInHiddenGroup || isInvisible || !withinBbox) {
                     if (layer instanceof L.GeoJSON) layer.options.renderer?._container?.classList.add('d-none')
-                        return clearLegend(legend, {isInvisible})
+                        clearLegend(legend, {isInvisible})
+                        continue
                 }
-
+    
                 if (layer instanceof L.GeoJSON) {
                     const isEditable = layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey
-                    if (isEditable) return
-
-                    if (controllerId !== controller.id) return
-
+                    if (isEditable) continue
+    
+                    if (controllerId !== controller.id) break
+    
                     const mapScale = getLeafletMeterScale(map)
-
+    
                     const geojson = (
                         !legend.querySelector('.bi-bug')
                         && turf.booleanWithin(newBbox, previousBbox)
                         && layer.getLayers().length === layer._properties.limits.totalCount
-                        && Object.values(layer._properties.transformations).every(i => {
-                            return !i.inEffect || (i.inEffect && (!i.scale.active || (
-                                i.scale.active && (mapScale <= i.scale.max) && (mapScale >= i.scale.min)
-                            )))
-                        })
+                        && Object.values(layer._properties.transformations).every(i => 
+                            !i.inEffect || (i.inEffect && (!i.scale.active || (i.scale.active && (mapScale <= i.scale.max) && (mapScale >= i.scale.min))))
+                        )
                     ) ? layer.toGeoJSON() : null
-
+    
                     promises.push(updateLeafletGeoJSONLayer(layer, {
                         geojson,
                         controller,
@@ -1044,11 +1042,12 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         createLegendImage(layer)
                     }
                 }   
-            })
+            }
 
             Promise.all(promises)
             .then(() => {
                 map._previousBbox = newBbox
+                map._featureSelectorLayer.clearLayers()
             })
         }, 500)
     })

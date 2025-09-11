@@ -470,6 +470,7 @@ const getLeafletGeoJSONLayer = async ({
             }
 
             const selectFeature = group._map._featureSelectorLayer.getLayers()[0]?.feature
+            console.log(selectFeature, selectFeature?.properties?.done)
             if (selectFeature && selectFeature.properties.done) {
                 const select = selectFeature.properties.select
                 if ((select && geojsonLayer._selectedFeatures.includes(gslId)) || (!select && !geojsonLayer._selectedFeatures.includes(gslId))) return
