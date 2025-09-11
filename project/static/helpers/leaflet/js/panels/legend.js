@@ -468,12 +468,12 @@ const createLeafletLegendItem = (layer, {clearLayers}={}) => {
         })
     }
 
-    const sourceIndicator = createIcon({
+    const sourceIndicator = titleToTooltip(customCreateElement({
         parent: toggleContainer,
-        peNone: true,
+        tag:'i', 
         className: `bi bi-globe ${layer._indexedDBKey.startsWith('local') ? 'text-secondary' : 'text-primary'}`,
         attrs: {title: `${layer._indexedDBKey.startsWith('local') ? 'Local' : 'Web'} layer`},
-    })
+    }))
 
     const collapseToggle = createIcon({
         parent: toggleContainer,
@@ -978,7 +978,19 @@ const handleLeafletLegendPanel = async (map, parent) => {
             const controllerId = controller.id
             const promises = []
 
-            Array.from(layers?.querySelectorAll('[data-layer-legend="true"]')).reverse().forEach(async legend => {
+            const legendLayers = Array.from(layers?.querySelectorAll('[data-layer-legend="true"]')).reverse().sort((a, b) => {
+                const aIsLocal = a.querySelector('.bi-globe.text-secondary') ? 1 : 0;
+                const aIsURL = a.querySelector('.bi-globe.text-primary') ? 1 : 0;
+                const bIsLocal = b.querySelector('.bi-globe.text-secondary') ? 1 : 0;
+                const bIsURL = b.querySelector('.bi-globe.text-primary') ? 1 : 0;
+
+                const aScore = aIsLocal * 2 + aIsURL
+                const bScore = bIsLocal * 2 + bIsURL
+
+                return bScore - aScore
+            })
+
+            legendLayers.forEach(async legend => {
                 if (controllerId !== controller.id) return
                 
                 const leafletId = parseInt(legend.dataset.layerId)
