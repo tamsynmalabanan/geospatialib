@@ -104,7 +104,7 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
         {
             'role': 'system',
             'content': '''
-                For each category, provide at least 3 query words most relevant to the category based on its title and description and the thematic map subject. 
+                For each category, provide query words that are relevant to the category based on its title and description and the thematic map subject. 
                     - Each query word should be a simple and valid english word in lowercase. Exclude conjunctions and special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
 
@@ -120,6 +120,8 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
             {json.dumps(categories)}
         '''}
     ]
+
+    logger.info(messages)
 
     completion = client.chat.completions.create(
         model=CLIENT_MODEL,
