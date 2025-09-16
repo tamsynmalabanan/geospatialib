@@ -184,11 +184,11 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not categories:
             return None
 
-        return categories
-
         query_per_category = create_categories_query(user_prompt, categories, client)
         if not query_per_category:
             return None
+
+        return query_per_category
 
         for id in categories.keys():
             categories[id]['query'] = ' '.join(query_per_category[id])
