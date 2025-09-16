@@ -109,7 +109,7 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
                     - Make sure query words are suitable for filtering geospatial layers.
 
                 Strictly follow this format for the response:
-                {"category_id":["word1", "word2", "word3",...],...}
+                {"category_id":"word1 word2 word3",...}
             ''' + '\n' + JSON_RESPONSE_PROMPT
         },
         {'role': 'user', 'content': f'''
