@@ -186,7 +186,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not categories:
             return None
 
-        query_per_category = create_categories_query(user_prompt, {id:params.get('title') for id, params in categories.items()}, client)
+        query_per_category = create_categories_query(user_prompt, {id:{'title':params.get('title')} for id, params in categories.items()}, client)
         if not query_per_category:
             return None
 
