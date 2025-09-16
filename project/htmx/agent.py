@@ -214,13 +214,15 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         'title': f'{landmark} landmarks',
                         'query': landmark
                     }} | categories
-                    
-                    matched_layers = queryset.filter(tags__in=[f'["{key}"~".*{landmark}.*",i]' for key in tag_keys]).values_list('tags', flat=True)
+
+                    clean_landmark = landmark.lower()
+
+                    matched_layers = queryset.filter(tags__in=[f'["{key}"~".*{clean_landmark}.*",i]' for key in tag_keys]).values_list('tags', flat=True)
                     if len(matched_layers) > 0:
                         continue
                     
                     response = get_response(
-                        url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
+                        url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={clean_landmark}',
                         header_only=False,
                         with_default_headers=False,
                         raise_for_status=True
@@ -240,7 +242,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     landmark_keys = list([i for i in tag_keys if i in landmark_keys] + [i for i in landmark_keys if i not in tag_keys])[:5]
                     
                     for key in landmark_keys:
-                        tag = f'["{key}"~".*{landmark}.*",i]'
+                        tag = f'["{key}"~".*{clean_landmark}.*",i]'
                         layer, _ = Layer.objects.get_or_create(
                             collection=overpass_collection,
                             name=tag,
