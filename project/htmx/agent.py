@@ -104,7 +104,7 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
         {
             'role': 'system',
             'content': '''
-                For each category, provide query words that are relevant to the category based on its title and description and the thematic map subject. 
+                For each category, provide query words that are relevant to the category based on its title and the thematic map subject. 
                     - Each query word should be a simple and valid english word in lowercase. Exclude conjunctions and special characters.
                     - Make sure query words are suitable for filtering geospatial layers.
 
@@ -186,7 +186,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not categories:
             return None
 
-        query_per_category = create_categories_query(user_prompt, categories, client)
+        query_per_category = create_categories_query(user_prompt, {id:params.get('title') for id, params in categories.items()}, client)
         if not query_per_category:
             return None
 
