@@ -158,21 +158,23 @@ class LayerList(ListView):
 
 @require_http_methods(['POST'])
 def find_layers(request):
-    response = 'Sorry, this feature is currently not available.'
+    response = None
     
-    # try:
-    #     data = request.POST.dict()
-    #     subject = data.get('subject')
+    data = request.POST.dict()
+    subject = data.get('subject')
+
+    if subject:
+        tries = 0
+        
+        while not response and tries < 3:
+            tries += 1
+            try:
+                response = create_thematic_map(subject, data.get('bbox'))
+            except Exception as e:
+                response = None
+                logger.error(f'Failed to find layers, {e}')
     
-    #     if subject:
-    #         tries = 0
-    #         while not response and tries < 3:
-    #             response = create_thematic_map(subject, data.get('bbox'))
-    #             tries +=1
-    # except Exception as e:
-    #     response = e
-    
-    return render(request, 'helpers/partials/find_layers/response.html', {'response':response})
+    return render(request, 'helpers/partials/find_layers/response.html', {'response': response})
 
 @require_http_methods(['GET'])
 def validate_collection(request):

@@ -99,10 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleSubmitBtn()
     })
     
-    form.addEventListener('htmx:responseError', (e) => {
-        responseContainer.innerHTML = customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}).outerHTML
-
-        submitBtn.innerHTML = '<i class="bi bi-search"></i>'
-        toggleSubmitBtn()
+    Array('responseError', 'sendError').forEach(type => {
+        form.addEventListener(`htmx:${type}`, (e) => {
+            responseContainer.innerHTML = customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}).outerHTML
+    
+            submitBtn.innerHTML = '<i class="bi bi-search"></i>'
+            toggleSubmitBtn()
+        })
     })
 })
