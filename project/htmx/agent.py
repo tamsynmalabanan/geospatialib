@@ -180,6 +180,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
+        return init_eval
+
         categories = create_categories(user_prompt, client)
         if not categories:
             return None
