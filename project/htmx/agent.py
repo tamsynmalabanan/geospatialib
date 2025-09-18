@@ -104,7 +104,7 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
         {
             'role': 'system',
             'content': '''
-                For each category, extract three (3) keywords from the description that are relevant to the category and the thematic map subject. 
+                For each category, identify three (3) keywords that are relevant to the category and the thematic map subject. 
                 - Each keyword should be a single english word. No phrases, conjunctions and special characters.
                 - Make sure keywords are suitable for filtering geospatial layers.
                 Strictly follow this format for the response: {"category_id":["word1", "word2", "word3",...],...}
@@ -115,7 +115,7 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
             {user_prompt}
             
             categories:
-            {json.dumps(categories)}
+            {json.dumps({id: params.get('title') for id, params in categories.items()})}
         '''}
     ]
 
