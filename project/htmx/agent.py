@@ -69,7 +69,7 @@ def create_categories(user_prompt:str, client:OpenAI):
                     - Prioritize categories that correspond to topography, environmental, infrastructure, economic, social, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
                     - For each category, provide an id, title, three (3) keywords, and a senstence describing its relevance to the subject.
-                    - Each keyword should be a single English word; no phrases, conjunctions and special characters. Avoid words that may refer to geographic concepts e.g. vector, spatial, location, network and grid.
+                    - Each keyword should be a single English word; no phrases, conjunctions and special characters.
 
                 Strictly follow this format for the response:
                 {"category_id":{"title":"Category Title","keywords":["keyword1","keyword2","keyword3"],"description":"Description of the relevance of the category to the subject.",},...}
