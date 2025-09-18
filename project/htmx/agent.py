@@ -140,6 +140,8 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
             logger.error(f'layers_eval_info, {e}')
 
 def create_thematic_map(user_prompt:str, bbox:str):
+    logger.info('create_thematic_map')
+    
     try:
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
