@@ -143,10 +143,10 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
                     'role': 'system',
                     'content': '''
                         Provide at least three (3) query words that are relevant to the category and the subject.
+                        Format the response as: word1 word2 word3
                     '''
                         # Each query word should be a simple and valid english word; exclude conjunctions and special characters.
                         # Make sure query words are suitable for filtering geospatial layers.
-                        # Format the response as: word1 word2 word3
                 },
                 {
                     'role': 'user',
@@ -155,7 +155,7 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
                         {user_prompt}
 
                         Category:
-                        {values}
+                        {values.get('title', '')}
                     '''
                 }
             ]
