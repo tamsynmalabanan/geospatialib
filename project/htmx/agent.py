@@ -134,6 +134,8 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
     #         logger.error(f'create_categories_query, {e}, {content}')
 
     for id, values in categories.items():
+        logger.info(f'{id}, {values}')
+        
         completion = client.chat.completions.create(
             model=CLIENT_MODEL,
             messages=[
@@ -225,11 +227,12 @@ def create_thematic_map(user_prompt:str, bbox:str):
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        return categories
+        # return categories
         if not categories:
             return None
 
         categories = create_categories_query(user_prompt, categories, client)
+        return categories
         if not categories:
             return None
 
