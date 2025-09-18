@@ -23,6 +23,8 @@ LATITUDE_ALIASES = [
 
 QUERY_BLACKLIST = list(set([
     'dataset', 
+    'spatial',
+    'location',
     'layer', 
     'vector', 
     'raster', 
