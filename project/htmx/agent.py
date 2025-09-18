@@ -148,21 +148,18 @@ def create_thematic_map(user_prompt:str, bbox:str):
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        logger.info(categories)
         if not categories:
             return None
 
-        queryset = Layer.objects.all()
-        # queryset = None
-        # try:
-        #     w,s,e,n = json.loads(bbox)
-        #     geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-        #     queryset = Layer.objects.filter(bbox__bboverlaps=geom)
-        # except Exception as e:
-        #     queryset = Layer.objects.all()
-        # if not queryset or not queryset.exists():
-        #     return None
-        # logger.info(queryset)
+        queryset = None
+        try:
+            w,s,e,n = json.loads(bbox)
+            geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+            queryset = Layer.objects.filter(bbox__bboverlaps=geom)
+        except Exception as e:
+            queryset = Layer.objects.all()
+        if not queryset or not queryset.exists():
+            return None
 
         try:
             landmarks = json.loads(init_eval.landmarks)
@@ -173,11 +170,12 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
                 
                 for landmark in landmarks:
+                    logger.info(f'landmark: {landmark}')
+
                     categories = {f'landmarks-{landmark}': {
                         'title': f'{landmark} landmarks',
                         'keywords': [landmark]
                     }} | categories
-                    logger.info(categories)
 
                     continue
 
@@ -230,10 +228,9 @@ def create_thematic_map(user_prompt:str, bbox:str):
         except Exception as e:
             pass
 
-        logger.info(categories)
-
         for id, values in categories.items():
             query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
+            logger.info(query)
 
             filtered_queryset = (
                 queryset
@@ -247,8 +244,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 ))))
                 .order_by(*['-rank'])
             )
-
-            logger.info(filtered_queryset)
 
             if filtered_queryset.exists():
                 categories[id]['layers'] = {
