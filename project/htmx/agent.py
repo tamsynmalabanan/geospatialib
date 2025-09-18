@@ -163,7 +163,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
             queryset = Layer.objects.all()
         if not queryset or not queryset.exists():
             return None
-        return queryset.exists()
 
         try:
             landmarks = json.loads(init_eval.landmarks)
@@ -232,30 +231,30 @@ def create_thematic_map(user_prompt:str, bbox:str):
         except Exception as e:
             pass
 
-        for id, values in categories.items():
-            query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
-            logger.info(query)
+        # for id, values in categories.items():
+        #     query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
+        #     logger.info(query)
 
-            filtered_queryset = (
-                queryset
-                .filter(search_vector=SearchQuery(
-                    f'({' | '.join(query)})', 
-                    search_type='raw'
-                ))
-                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
-                    ' OR '.join(query), 
-                    search_type='websearch'
-                ))))
-                .order_by(*['-rank'])
-            )
+        #     filtered_queryset = (
+        #         queryset
+        #         .filter(search_vector=SearchQuery(
+        #             f'({' | '.join(query)})', 
+        #             search_type='raw'
+        #         ))
+        #         .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
+        #             ' OR '.join(query), 
+        #             search_type='websearch'
+        #         ))))
+        #         .order_by(*['-rank'])
+        #     )
 
-            if filtered_queryset.exists():
-                categories[id]['layers'] = {
-                    layer.pk: layer.data 
-                    for layer in filtered_queryset[:5]
-                }
+        #     if filtered_queryset.exists():
+        #         categories[id]['layers'] = {
+        #             layer.pk: layer.data 
+        #             for layer in filtered_queryset[:5]
+        #         }
 
-        categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
+        # categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
         return {
             'subject': user_prompt,
