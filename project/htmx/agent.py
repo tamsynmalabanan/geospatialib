@@ -161,6 +161,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             queryset = Layer.objects.all()
         if not queryset or not queryset.exists():
             return None
+        logger.info(queryset)
 
         try:
             landmarks = json.loads(init_eval.landmarks)
@@ -175,6 +176,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         'title': f'{landmark} landmarks',
                         'keywords': [landmark]
                     }} | categories
+                    logger.info(categories)
 
                     continue
 
@@ -227,6 +229,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
         except Exception as e:
             pass
 
+        logger.info(categories)
+
         for id, values in categories.items():
             query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
 
@@ -242,6 +246,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 ))))
                 .order_by(*['-rank'])
             )
+
+            logger.info(filtered_queryset)
 
             if filtered_queryset.exists():
                 categories[id]['layers'] = {
