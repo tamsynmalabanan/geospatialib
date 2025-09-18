@@ -151,7 +151,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        logger.info(categories)
         if not categories:
             return None
 
@@ -164,7 +163,6 @@ def create_thematic_map(user_prompt:str, bbox:str):
             queryset = Layer.objects.all()
         if not queryset or not queryset.exists():
             return None
-        logger.info(queryset)
 
         try:
             landmarks = json.loads(init_eval.landmarks)
@@ -179,6 +177,8 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         'title': f'{landmark} landmarks',
                         'keywords': [landmark]
                     }} | categories
+
+                    continue
 
                     clean_landmark = landmark.lower()
                     for i in get_special_characters(clean_landmark):
