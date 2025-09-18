@@ -119,10 +119,14 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
         '''}
     ]
 
+    logger.infi(messages)
+
     completion = client.chat.completions.create(
         model=CLIENT_MODEL,
         messages=messages,
     )
+
+    logger.infi(completion)
 
     if completion.choices:
         content = completion.choices[0].message.content.strip()
