@@ -142,16 +142,16 @@ def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
                 {
                     'role': 'system',
                     'content': '''
-                        Provide at least three (3) query words that are relevant to the category and the thematic map subject.
-                        Each query word should be a simple and valid english word; exclude conjunctions and special characters.
-                        Make sure query words are suitable for filtering geospatial layers.
-                        Format the response as: word1 word2 word3
+                        Provide at least three (3) query words that are relevant to the category and the subject.
                     '''
+                        # Each query word should be a simple and valid english word; exclude conjunctions and special characters.
+                        # Make sure query words are suitable for filtering geospatial layers.
+                        # Format the response as: word1 word2 word3
                 },
                 {
                     'role': 'user',
                     'content': f'''
-                        Thematic map subject:
+                        Subject:
                         {user_prompt}
 
                         Category:
