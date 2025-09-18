@@ -141,7 +141,7 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
 
 def create_thematic_map(user_prompt:str, bbox:str):
     logger.info('create_thematic_map')
-    
+
     try:
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
@@ -150,7 +150,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        return categories
+        logger.info(categories)
         if not categories:
             return None
 
@@ -163,6 +163,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             queryset = Layer.objects.all()
         if not queryset or not queryset.exists():
             return None
+        return queryset.exists()
 
         try:
             landmarks = json.loads(init_eval.landmarks)
