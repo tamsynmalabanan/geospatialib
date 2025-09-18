@@ -10,7 +10,6 @@
             hx-post="{% url 'htmx:find_layers' %}"
             hx-trigger='submit'
             hx-target='#findLayersResponse'
-            hx-request='{"timeout":180000}'
             hx-swap='innerHTML'
             {% comment %} hx-swap='beforeend' {% endcomment %}
         >
