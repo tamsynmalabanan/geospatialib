@@ -154,15 +154,11 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not categories:
             return None
 
-        queryset = None
         try:
             w,s,e,n = json.loads(bbox)
             geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-            queryset = Layer.objects.filter(bbox__bboverlaps=geom)
         except Exception as e:
-            queryset = Layer.objects.all()
-        if not queryset or not queryset.exists():
-            return None
+            geom = None
 
         try:
             landmarks = json.loads(init_eval.landmarks)
