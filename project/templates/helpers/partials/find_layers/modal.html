@@ -11,6 +11,7 @@
             hx-trigger='submit'
             hx-target='#findLayersResponse'
             hx-swap='innerHTML'
+            hx-request='{"timeout":180000}'
             {% comment %} hx-swap='beforeend' {% endcomment %}
         >
             {% csrf_token %}
