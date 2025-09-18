@@ -162,7 +162,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
         #     queryset = Layer.objects.all()
         # if not queryset or not queryset.exists():
         #     return None
-        logger.info(queryset)
+        # logger.info(queryset)
 
         try:
             landmarks = json.loads(init_eval.landmarks)
