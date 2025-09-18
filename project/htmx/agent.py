@@ -148,7 +148,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        logger.info(f'categories: {categories}')
+        return categories
         if not categories:
             return None
 
