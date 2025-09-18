@@ -146,10 +146,12 @@ def create_thematic_map(user_prompt:str, bbox:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
+        logger.info(init_eval)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
+        logger.info(categories)
         if not categories:
             return None
 
@@ -162,6 +164,7 @@ def create_thematic_map(user_prompt:str, bbox:str):
             queryset = Layer.objects.all()
         if not queryset or not queryset.exists():
             return None
+        logger.info(queryset)
 
         try:
             landmarks = json.loads(init_eval.landmarks)
@@ -185,12 +188,15 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     if len(matched_layers) > 0:
                         continue
                     
+                    url = f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={clean_landmark}'
+                    logger.info(url)
                     response = get_response(
-                        url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={clean_landmark}',
+                        url=url,
                         header_only=False,
                         with_default_headers=False,
                         raise_for_status=True
                     )
+                    logger.info(response)
                     
                     if not response:
                         continue
