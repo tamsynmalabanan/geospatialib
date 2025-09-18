@@ -68,10 +68,11 @@ def create_categories(user_prompt:str, client:OpenAI):
                 With the user prompt as the subject, identify five (5) diverse and spatially-applicable categories that are most relevant to the subject.
                     - Prioritize categories that correspond to topography, environmental, infrastructure, economic, social, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
-                    - For each category, provide an id, title and a senstence describing its relevance to the subject.
+                    - For each category, provide an id, title, three (3) keywords, and a senstence describing its relevance to the subject.
+                    - Each keyword should be a single English word; no phrases, conjunctions and special characters.
 
                 Strictly follow this format for the response:
-                {"category_id":{"title": "Category Title","description": "Description of the relevance of the category to the subject.",},...}
+                {"category_id":{"title":"Category Title","keywords":["keyword1","keyword2","keyword3"],"description":"Description of the relevance of the category to the subject.",},...}
             ''' + '\n' + JSON_RESPONSE_PROMPT
         },
         {'role': 'user', 'content': user_prompt}
@@ -183,12 +184,11 @@ def create_thematic_map(user_prompt:str, bbox:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-        # return init_eval
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        # return categories
+        return categories
         if not categories:
             return None
 
