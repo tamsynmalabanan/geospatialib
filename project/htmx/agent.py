@@ -65,7 +65,7 @@ def create_categories(user_prompt:str, client:OpenAI):
         {
             'role': 'system',
             'content': '''
-                With the user prompt as the subject, identify at least three (3) diverse and spatially-applicable categories that are most relevant to the subject.
+                With the user prompt as the subject, identify five (5) diverse and spatially-applicable categories that are most relevant to the subject.
                     - Prioritize categories that correspond to topography, environmental, infrastructure, economic, social, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
                     - For each category, provide an id, title and a senstence describing its relevance to the subject.
@@ -100,81 +100,38 @@ def create_categories(user_prompt:str, client:OpenAI):
             logger.error(f'create_categories, {e}, {content}')
 
 def create_categories_query(user_prompt:str, categories:dict, client:OpenAI):
-    # messages = [
-    #     {
-    #         'role': 'system',
-    #         'content': '''
-    #             For each category, provide query words that are relevant to the category based on its title and the thematic map subject. 
-    #                 - Each query word should be a simple and valid english word in lowercase. Exclude conjunctions and special characters.
-    #                 - Make sure query words are suitable for filtering geospatial layers.
-
-    #             Strictly follow this format for the response:
-    #             {"category_id":["word1", "word2", "word3",...],...}
-    #         ''' + '\n' + JSON_RESPONSE_PROMPT
-    #     },
-    #     {'role': 'user', 'content': f'''
-    #         thematic map subject:
-    #         {user_prompt}
+    messages = [
+        {
+            'role': 'system',
+            'content': '''
+                For each category, extract three (3) keywords from the description that are relevant to the category and the thematic map subject. 
+                - Each keyword should be a single english word. No phrases, conjunctions and special characters.
+                - Make sure keywords are suitable for filtering geospatial layers.
+                Strictly follow this format for the response: {"category_id":["word1", "word2", "word3",...],...}
+            ''' + '\n' + JSON_RESPONSE_PROMPT
+        },
+        {'role': 'user', 'content': f'''
+            thematic map subject:
+            {user_prompt}
             
-    #         categories:
-    #         {json.dumps(categories)}
-    #     '''}
-    # ]
+            categories:
+            {json.dumps(categories)}
+        '''}
+    ]
 
-    # completion = client.chat.completions.create(
-    #     model=CLIENT_MODEL,
-    #     messages=messages,
-    # )
+    completion = client.chat.completions.create(
+        model=CLIENT_MODEL,
+        messages=messages,
+    )
 
-    # if completion.choices:
-    #     content = completion.choices[0].message.content.strip()
-    #     try:
-    #         return json.loads(content)
-    #     except Exception as e:
-    #         logger.error(f'create_categories_query, {e}, {content}')
-
-    for id, values in categories.items():
-        logger.info(f'{id}, {values}')
-        
-        completion = client.chat.completions.create(
-            model=CLIENT_MODEL,
-            messages=[
-                {
-                    'role': 'system',
-                    'content': '''
-                        Provide at least three (3) query words that are relevant to the category and the subject.
-                        Format the response as: word1 word2 word3
-                    '''
-                        # Each query word should be a simple and valid english word; exclude conjunctions and special characters.
-                        # Make sure query words are suitable for filtering geospatial layers.
-                },
-                {
-                    'role': 'user',
-                    'content': f'''
-                        Subject:
-                        {user_prompt}
-
-                        Category:
-                        {values.get('title', '')}
-                    '''
-                }
-            ]
-        )
-
-        if completion.choices:
-            content = completion.choices[0].message.content
-            for i in [' ', '"', "'", '\n', '\r']:
-                content = content.strip(i)
-            for i in get_special_characters(content):
-                if i == ' ':
-                    continue
-                content = content.replace(i, '')
-            content = re.sub(r'\s{2,}', ' ', content)
-            categories[id]['query'] = content.split(' ')
-            logger.info(content)
-
-    logger.info(categories)
-    return categories
+    if completion.choices:
+        content = completion.choices[0].message.content.strip()
+        try:
+            for id, keywords in json.loads(content).items():
+                categories[id]['query'] = keywords
+            return categories
+        except Exception as e:
+            logger.error(f'create_categories_query, {e}, {content}')
 
 def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
     completion = client.chat.completions.create(
