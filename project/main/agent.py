@@ -1,11 +1,13 @@
 from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Max
+from django.db.models import F, Max, QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, TextField, CharField, FloatField
 
 from main.models import Layer, Collection, URL, SpatialRefSys
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
+from helpers.main.layers import FilteredLayers
 from helpers.base.utils import get_response, get_keywords_from_url, get_special_characters
 
+from celery import shared_task
 from openai import OpenAI
 from decouple import config
 from pydantic import BaseModel, Field, ValidationError
@@ -69,10 +71,10 @@ def create_categories(user_prompt:str, client:OpenAI):
                     - Prioritize categories that correspond to topography, environmental, infrastructure, economic, social, regulatory, or domain-specific datasets.
                     - Focus on thematic scope and spatial context; do not list layers.
                     - For each category, provide an id, title, three (3) keywords, and a senstence describing its relevance to the subject.
-                    - Each keyword should be a single English word; no phrases, conjunctions and special characters.
+                    - Each keyword should be a single English word that can be used to query geospatial layers; no phrases, conjunctions and special characters.
 
                 Strictly follow this format for the response:
-                {"category_id":{"title":"Category Title","keywords":["keyword1","keyword2","keyword3"],"description":"Description of the relevance of the category to the subject.",},...}
+                {"category_id":{"title":"Category Title","keywords":"keyword1 keyword2 keyword3","description":"Description of the relevance of the category to the subject.",},...}
             ''' + '\n' + JSON_RESPONSE_PROMPT
         },
         {'role': 'user', 'content': user_prompt}
@@ -99,35 +101,43 @@ def create_categories(user_prompt:str, client:OpenAI):
             return json.loads(content)
         except Exception as e:
             logger.error(f'create_categories, {e}, {content}')
+            return []
 
-def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
+def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:OpenAI):
+    layer_titles = []
+    length = 0
+    for i in queryset.values_list('title', flat=True):
+        length += len(i)
+        if length > 4096:
+            break
+        layer_titles.append(i)
+    layer_titles = json.dumps(layer_titles)
+
     completion = client.chat.completions.create(
         model=CLIENT_MODEL,
         messages=[
             {
                 'role':'system', 
                 'content':'''
-                    For each category in category layers, assess each layer in layers to determine whether the layer properties contain information that supports or enhances understanding of the 
-                    current category within the specified thematic map subject. Assess relevance based only on:
-                    - Semantic Alignment: Do the layer's name, title, abstract, keywords or any other available properties conceptually relate to the category's focus?
-                    - Analytical Utility: Would the layers's content contribute meaningful insights, classifications, or visualization under this category?
-
-                    Remove layers that are not relevant to their respective categories and to the thematic map subject.
-
-                    Strictly follow this format for the response:
-                    {"category1":[layer_pk1, layer_pk2, layer_pk3,...],"category2":[layer_pk4, layer_pk5, layer_pk6,...],...}
-
-                    Return only a raw JSON string with double quotes for all keys and string values.
-                    Use standard JSON formatting (e.g. no Python dict, no single quotes, no backslashes). 
-                    Do not wrap the output in triple quotes or additional characters.
+                    Filter the layer titles array to only include at most five (5) layer titles that best align with the thematic map subject and the category details:
+                    - Semantic Alignment: Does the layer title conceptually relate to the category's and thematic map subject's focus?
+                    - Analytical Utility: Would the layer's content contribute meaningful insights, classifications, or visualization under this category and thematic map subject?
+                    - Exclude layer titles that are not relevant to their respective categories and to the thematic map subject.
+                    - Strictly follow this format for the response: ["layer_title1", "layer_title2", "layer_title3"...]
+                    - The response can be an empty array if none of the layer titles align with the category details and thematic map subject.
                 '''
             },
             {
                 'role':'user', 
                 'content': f'''
-                    thematic map subject: {user_prompt}
-                    category layers:
-                    {json.dumps(category_layers)}
+                    thematic map subject:
+                    {user_prompt}
+                    
+                    category details:
+                    {json.dumps(category)}
+                    
+                    layer titles array:
+                    {layer_titles}
                 '''
             }
         ],
@@ -135,12 +145,19 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
 
     if completion.choices:
         try:
-            return completion.choices[0].message.content.strip()
+            return json.loads(completion.choices[0].message.content)
         except Exception as e:
             logger.error(f'layers_eval_info, {e}')
 
-def create_thematic_map(user_prompt:str, bbox:str):
+@shared_task(
+    bind=True, 
+    autoretry_for=(Exception,),
+    retry_backoff=60, 
+    max_retries=3,
+)
+def create_thematic_map(self, user_prompt:str, bbox:str):
     try:
+        logger.info(user_prompt)
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
@@ -151,40 +168,30 @@ def create_thematic_map(user_prompt:str, bbox:str):
         if not categories:
             return None
 
-        queryset = None
-        try:
-            w,s,e,n = json.loads(bbox)
-            geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-            queryset = Layer.objects.filter(bbox__bboverlaps=geom)
-        except Exception as e:
-            queryset = Layer.objects.all()
-        if not queryset or not queryset.exists():
-            return None
-
         try:
             landmarks = json.loads(init_eval.landmarks)
             if len(landmarks) > 0:
                 tag_keys = ['name', 'name:en', 'brand', 'brand:en']
-                overpass_collection = Collection.objects.filter(format='overpass').first()
                 srs = SpatialRefSys.objects.filter(srid=4326).first()
                 keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
                 
+                overpass_collection = Collection.objects.filter(format='overpass').first()
+                overpass_layers = Layer.objects.filter(collection=overpass_collection)
+
                 for landmark in landmarks:
                     categories = {f'landmarks-{landmark}': {
                         'title': f'{landmark} landmarks',
-                        'keywords': [landmark]
+                        'keywords': f'{landmark} name brand'
                     }} | categories
 
-                    clean_landmark = landmark.lower()
-                    for i in get_special_characters(clean_landmark):
-                        clean_landmark = clean_landmark.replace(i, ' ')
-
-                    matched_layers = queryset.filter(tags__in=[f'["{key}"~".*{clean_landmark}.*",i]' for key in tag_keys]).values_list('tags', flat=True)
-                    if len(matched_layers) > 0:
+                    queries = Q()
+                    for key in tag_keys:
+                        queries |= Q(tags__icontains=f'["{key}"~".*{landmark}.*",i]')
+                    if overpass_layers.filter(queries).exists():
                         continue
                     
                     response = get_response(
-                        url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={clean_landmark}',
+                        url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
                         header_only=False,
                         with_default_headers=False,
                         raise_for_status=True
@@ -197,14 +204,13 @@ def create_thematic_map(user_prompt:str, bbox:str):
                         i[0] for i in sorted({
                             i.get('key', ''): i.get('count_all', 0) 
                             for i in response.json().get('data', []) 
-                            if i.get('count_all', 0) > 1
                         }.items(),
                         key=lambda x: x[1], reverse=True)
                     ]
                     landmark_keys = list([i for i in tag_keys if i in landmark_keys] + [i for i in landmark_keys if i not in tag_keys])[:5]
                     
                     for key in landmark_keys:
-                        tag = f'["{key}"~".*{clean_landmark}.*",i]'
+                        tag = f'["{key}"~".*{landmark}.*",i]'
                         layer, _ = Layer.objects.get_or_create(
                             collection=overpass_collection,
                             name=tag,
@@ -221,26 +227,24 @@ def create_thematic_map(user_prompt:str, bbox:str):
         except Exception as e:
             pass
 
-        for id, values in categories.items():
-            query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
+        try:
+            w,s,e,n = json.loads(bbox)
+            geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+        except:
+            geom = None
 
-            filtered_queryset = (
-                queryset
-                .filter(search_vector=SearchQuery(
-                    f'({' | '.join(query)})', 
-                    search_type='raw'
-                ))
-                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
-                    ' OR '.join(query), 
-                    search_type='websearch'
-                ))))
-                .order_by(*['-rank'])
-            )
+        for id, values in categories.items():
+            filtered_queryset = FilteredLayers({
+                'query': values.get('keywords', ''),
+                'bbox__bboverlaps': geom
+            }).get_queryset()
 
             if filtered_queryset.exists():
                 categories[id]['layers'] = {
-                    layer.pk: layer.data 
-                    for layer in filtered_queryset[:5]
+                    layer.pk: layer.data for layer in Layer.objects.filter(
+                        pk__in=filtered_queryset.values_list('pk', flat=True), 
+                        title__in=filter_layers(user_prompt, values, filtered_queryset, client)
+                    )
                 }
 
         categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}

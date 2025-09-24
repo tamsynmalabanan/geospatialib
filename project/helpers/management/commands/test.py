@@ -9,7 +9,7 @@ from helpers.main.collection import get_collection_data, get_layers, get_file_na
 from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
 from main.forms import ValidateCollectionForm
-from htmx.agent import create_thematic_map
+from project.main.agent import create_thematic_map
 
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService

@@ -150,7 +150,7 @@ CELERY_TASK_QUEUES = {
 
 CELERY_TASK_ROUTES = {
     'main.tasks.onboard_collection': {'queue': 'low_priority'},
-    # 'main.tasks.onboard_collection': {'queue': 'low_priority'},
+    'main.agent.create_thematic_map': {'queue': 'high_priority'},
 }
 
 

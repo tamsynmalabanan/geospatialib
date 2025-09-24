@@ -9,6 +9,7 @@ from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
 from functools import cached_property
+from django.conf import settings
 
 
 import json
@@ -27,7 +28,7 @@ from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
 from helpers.main.constants import QUERY_BLACKLIST
 from helpers.main.layers import FilteredLayers
-from .agent import create_thematic_map
+from main.agent import create_thematic_map
 
 import logging
 logger = logging.getLogger('django')
@@ -76,20 +77,14 @@ class LayerList(ListView):
 @require_http_methods(['POST'])
 def find_layers(request):
     response = None
-    
-    data = request.POST.dict()
-    subject = data.get('subject')
 
+    subject = request.POST.get('subject')
     if subject:
-        tries = 0
-        
-        while not response and tries < 3:
-            tries += 1
-            try:
-                response = create_thematic_map(subject, data.get('bbox'))
-            except Exception as e:
-                response = None
-                logger.error(f'Failed to find layers, {e}')
+        bbox = request.POST.get('bbox')
+        if settings.DEBUG:
+            response = create_thematic_map(subject, bbox)
+        else:
+            response = create_thematic_map.delay(subject, bbox)
     
     return render(request, 'helpers/partials/find_layers/response.html', {'response': response})
 
