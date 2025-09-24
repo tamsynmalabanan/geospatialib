@@ -1,4 +1,8 @@
 from django.contrib.gis.geos import GEOSGeometry, Polygon
+from django.core.cache import cache
+from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+
 
 import json
 import geojson
@@ -9,16 +13,133 @@ from urllib.parse import unquote
 import osm2geojson
 import codecs
 import os
+from functools import cached_property
 
-from main.models import SpatialRefSys
+
+from main.models import SpatialRefSys, Layer
 from helpers.base.utils import get_response, get_response_file
 from helpers.base.files import extract_zip
-from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES
+from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
+from helpers.base.utils import create_cache_key, get_special_characters
+
 
 import logging
 logger = logging.getLogger('django')
 
 DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
+
+class FilteredLayers():
+    min_keyword_length = 3
+    filter_fields = ['type']
+    filter_expressions = ['bbox__bboverlaps']
+
+    def __init__(self, params:dict):
+        self.params = params
+        self.set_clean_keywords()
+        self.set_raw_query()
+        self.set_clean_filters()
+        self.set_filter_values()
+        self.set_cache_key()
+
+    def set_clean_keywords(self):
+        query = self.params.get('query', '').strip().lower()
+        for i in ['\'', '"']:
+            query = query.replace(i, '')
+
+        if ' -' in f' {query}':
+            split_query = query.split()
+            self.exclusions = sorted(set([
+                i[1:] for i in split_query 
+                if i.startswith('-') 
+                and len(i) > self.min_keyword_length
+            ]))
+            query = ' '.join([
+                i for i in split_query
+                if not i.startswith('-') 
+                and i not in self.exclusions
+            ])
+        else:
+            self.exclusions = []
+
+        for i in get_special_characters(query):
+            query = query.replace(i, ' ')
+
+        self.query = sorted(set([
+            i for i in query.split() 
+            if len(i) >= self.min_keyword_length 
+            and i not in QUERY_BLACKLIST
+        ]))
+
+    def set_raw_query(self):
+        self.raw_query = f'({' | '.join(
+            [f"'{i}'" for i in self.query]
+        )}){f' & !({' | '.join(
+            [f"'{i}'" for i in self.exclusions]
+        )})' if self.exclusions else ''}'
+
+    def set_clean_filters(self):
+        self.clean_filters = {
+            key: value for key, value in self.params.items()
+            if key in self.filter_fields + self.filter_expressions
+            and value not in ['', None]
+        }
+
+    def set_filter_values(self):
+        self.filter_values = sorted([str(v).strip() for v in self.clean_filters.values()])
+
+    def set_cache_key(self):
+        self.cache_key = create_cache_key([
+            self.__class__.__name__, 
+            self.raw_query
+        ] + self.filter_values)
+
+    def get_cached_pks(self):
+        return cache.get(self.cache_key)
+
+    def get_cached_queryset(self):
+        pk_list = self.get_cached_pks()
+        if not pk_list:
+            return Layer.objects.none()
+        return (
+            Layer.objects.all()
+            .select_related('collection__url')
+            .filter(pk__in=pk_list)
+            .order_by(Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(pk_list)]))
+        )
+
+    def get_filtered_queryset(self):
+        if not self.query:
+            return Layer.objects.none()
+
+        queryset = (
+            Layer.objects.all()
+            .select_related('collection__url')
+        )
+
+        if self.filter_values:
+            queryset = queryset.filter(**self.clean_filters)
+        
+        queryset = (
+            queryset
+            .filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
+            .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
+                ' OR '.join(self.query), 
+                search_type='websearch')))
+            )
+            .order_by(*['-rank', 'title', 'type'])
+        )[:1000]
+
+        return queryset
+
+    def get_queryset(self):
+        queryset = self.get_cached_queryset()
+
+        if not queryset.exists():
+            queryset = self.get_filtered_queryset()
+            if queryset.exists():
+                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=60*15)
+
+        return queryset
 
 def features_to_geometries(features, srid=4326):
     geometries = []

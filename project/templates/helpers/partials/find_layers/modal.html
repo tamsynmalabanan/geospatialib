@@ -10,9 +10,9 @@
             hx-post="{% url 'htmx:find_layers' %}"
             hx-trigger='submit'
             hx-target='#findLayersResponse'
-            hx-request='{"timeout":180000}'
             hx-swap='innerHTML'
             {% comment %} hx-swap='beforeend' {% endcomment %}
+            {% comment %} hx-request='{"timeout":180000}' {% endcomment %}
         >
             {% csrf_token %}
             <div class="modal-header d-flex flex-column gap-1">

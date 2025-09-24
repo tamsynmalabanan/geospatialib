@@ -140,26 +140,26 @@ def layers_eval_info(user_prompt:str, category_layers:dict, client:OpenAI):
             logger.error(f'layers_eval_info, {e}')
 
 def create_thematic_map(user_prompt:str, bbox:str):
-    logger.info('create_thematic_map')
-
     try:
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-        logger.info(init_eval)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        return categories
         if not categories:
             return None
 
+        queryset = None
         try:
             w,s,e,n = json.loads(bbox)
             geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+            queryset = Layer.objects.filter(bbox__bboverlaps=geom)
         except Exception as e:
-            geom = None
+            queryset = Layer.objects.all()
+        if not queryset or not queryset.exists():
+            return None
 
         try:
             landmarks = json.loads(init_eval.landmarks)
@@ -170,14 +170,10 @@ def create_thematic_map(user_prompt:str, bbox:str):
                 keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
                 
                 for landmark in landmarks:
-                    logger.info(f'landmark: {landmark}')
-
                     categories = {f'landmarks-{landmark}': {
                         'title': f'{landmark} landmarks',
                         'keywords': [landmark]
                     }} | categories
-
-                    continue
 
                     clean_landmark = landmark.lower()
                     for i in get_special_characters(clean_landmark):
@@ -187,15 +183,12 @@ def create_thematic_map(user_prompt:str, bbox:str):
                     if len(matched_layers) > 0:
                         continue
                     
-                    url = f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={clean_landmark}'
-                    logger.info(url)
                     response = get_response(
-                        url=url,
+                        url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={clean_landmark}',
                         header_only=False,
                         with_default_headers=False,
                         raise_for_status=True
                     )
-                    logger.info(response)
                     
                     if not response:
                         continue
@@ -228,30 +221,29 @@ def create_thematic_map(user_prompt:str, bbox:str):
         except Exception as e:
             pass
 
-        # for id, values in categories.items():
-        #     query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
-        #     logger.info(query)
+        for id, values in categories.items():
+            query = [i for i in values.get('keywords',[]) if i not in QUERY_BLACKLIST]
 
-        #     filtered_queryset = (
-        #         queryset
-        #         .filter(search_vector=SearchQuery(
-        #             f'({' | '.join(query)})', 
-        #             search_type='raw'
-        #         ))
-        #         .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
-        #             ' OR '.join(query), 
-        #             search_type='websearch'
-        #         ))))
-        #         .order_by(*['-rank'])
-        #     )
+            filtered_queryset = (
+                queryset
+                .filter(search_vector=SearchQuery(
+                    f'({' | '.join(query)})', 
+                    search_type='raw'
+                ))
+                .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
+                    ' OR '.join(query), 
+                    search_type='websearch'
+                ))))
+                .order_by(*['-rank'])
+            )
 
-        #     if filtered_queryset.exists():
-        #         categories[id]['layers'] = {
-        #             layer.pk: layer.data 
-        #             for layer in filtered_queryset[:5]
-        #         }
+            if filtered_queryset.exists():
+                categories[id]['layers'] = {
+                    layer.pk: layer.data 
+                    for layer in filtered_queryset[:5]
+                }
 
-        # categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
+        categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
         return {
             'subject': user_prompt,

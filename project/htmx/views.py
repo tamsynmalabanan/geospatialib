@@ -26,6 +26,7 @@ from main.tasks import onboard_collection
 from main import forms
 from helpers.base.utils import create_cache_key, find_nearest_divisible
 from helpers.main.constants import QUERY_BLACKLIST
+from helpers.main.layers import FilteredLayers
 from .agent import create_thematic_map
 
 import logging
@@ -37,88 +38,10 @@ class LayerList(ListView):
     context_object_name = 'layers'
     paginate_by = 30
 
-    @cached_property
-    def filter_fields(self):
-        return [
-            'type',
-        ]
-
-    @cached_property
-    def clean_keywords(self):
-        query = self.request.GET.get('query', '').strip().lower()
-        for i in ['\'', '"']:
-            query = query.replace(i, '')
-        exclusions = []
-
-        if ' -' in f' {query}':
-            exclusions = sorted(set([i[1:] for i in query.split() if i.startswith('-') and len(i) > 3]))
-            query = ' '.join([i for i in query.split() if not i.startswith('-') and i not in exclusions])
-
-        for i in ['/', '\\', '_']:
-            query = query.replace(i, ' ')
-        query = sorted(set([i for i in query.split() if len(i) >= 3 and i not in QUERY_BLACKLIST]))
-        
-        return query, exclusions
-
-    @cached_property
-    def raw_query(self):
-        query, exclusions = self.clean_keywords
-        return f'({' | '.join([f"'{i}'" for i in query])}){f' & !({' | '.join([f"'{i}'" for i in exclusions])})' if exclusions else ''}'
-    
-    @cached_property
-    def filter_values(self):
-        values = sorted([str(v).strip() for k, v in self.request.GET.items() if k not in ['query', 'page'] and v != ''])
-        return values
-
-    @cached_property
-    def cache_key(self):
-        return create_cache_key(['layer_list']+[self.raw_query]+self.filter_values)
-
-    @property
-    def cached_queryset(self):
-        pk_list = cache.get(self.cache_key)
-        if not pk_list:
-            return Layer.objects.none()
-        
-        preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(pk_list)])
-        return super().get_queryset().select_related('collection__url').filter(pk__in=pk_list).order_by(preserved_order)
-
-    @property
-    def filtered_queryset(self):
-        query = self.clean_keywords[0]
-        if not query:
-            return Layer.objects.none()
-
-        queryset = (
-            super().get_queryset()
-            .select_related(
-                'collection__url',
-            )
-        )
-
-        if self.filter_values:
-            queryset = queryset.filter(**{
-                param : value 
-                for param, value in self.request.GET.items()
-                if value and param in self.filter_fields + [
-                    'bbox__bboverlaps'
-                ]
-            })
-        
-        queryset = (
-            queryset
-            .filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
-            .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(' OR '.join(query), search_type='websearch'))))
-            .order_by(*['-rank', 'title', 'type'])
-        )[:1000]
-
-        return queryset
-
-    @property
-    def query_filters(self):
+    def get_query_filters(self):
         filters = {}
 
-        pk_list = cache.get(self.cache_key)
+        pk_list = self.filtered_layers.get_cached_pks()
         if pk_list:
             queryset = Layer.objects.filter(pk__in=pk_list)
             
@@ -128,32 +51,26 @@ class LayerList(ListView):
                     .values(field)
                     .annotate(count=Count('id', distinct=True))
                     .order_by('-count')
-                ) for field in self.filter_fields
+                ) for field in self.filtered_layers.filter_fields
             }
 
-        for field in self.filter_fields:
-            value = self.request.GET.get(field)
-            if value and len(filters.get(field, [])) == 0:
+        for field in self.filtered_layers.filter_fields:
+            value = self.filtered_layers.clean_filters.get(field)
+            if value not in ['', None] and len(filters.get(field, [])) == 0:
                 filters[field] = [{field: value, 'count': 0}]
 
         return filters
 
     def get_queryset(self):
-        queryset = self.cached_queryset
-
-        if not queryset.exists():
-            queryset = self.filtered_queryset
-            if queryset.exists():
-                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=60*15)
-
-        return queryset
+        if not hasattr(self, 'filtered_layers') or not self.filtered_layers:
+            self.filtered_layers = FilteredLayers(self.request.GET.dict())
+        return self.filtered_layers.get_queryset()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['raw_query'] = self.raw_query
         if context['page_obj'].number == 1:
-            context['filters'] = self.query_filters
-            context['is_filtered'] = len(self.filter_values) > 0
+            context['filters'] = self.get_query_filters()
+            context['is_filtered'] = len(self.filtered_layers.filter_values) > 0
         return context
 
 @require_http_methods(['POST'])
