@@ -249,11 +249,15 @@ def create_thematic_map(self, user_prompt:str, bbox:str):
 
         categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
-        return {
+        data = {
             'subject': user_prompt,
             'bbox': bbox,
             'title': init_eval.title,
             'categories': categories
         }
+
+        logger.info(data)
+
+        return data
     except Exception as e:
         logger.error(f'create_thematic_map, {e}')
