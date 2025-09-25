@@ -253,16 +253,14 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
 
         categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
-        data = {
-            'subject': user_prompt,
-            'bbox': bbox,
-            'title': init_eval.title,
-            'categories': categories
-        }
-
         async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
             'type': 'map_generated',
-            'data': data
+            'data': {
+                'subject': user_prompt,
+                'bbox': bbox,
+                'title': init_eval.title,
+                'categories': categories
+            }
         })
     except Exception as e:
         logger.error(f'create_thematic_map, {e}')

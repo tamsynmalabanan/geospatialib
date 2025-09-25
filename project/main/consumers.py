@@ -30,3 +30,4 @@ class ThematicMapConsumer(WebsocketConsumer):
             'data': event['data']
         })
         self.send(text_data=html)
+        self.close()
