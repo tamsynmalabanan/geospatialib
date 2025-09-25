@@ -419,7 +419,7 @@ CHANNEL_LAYERS = {
     } if DEBUG else {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("{REDIS_IP}", 6379)],
+            "hosts": [(f"{REDIS_IP}", 6379)],
         },
     },
 }
