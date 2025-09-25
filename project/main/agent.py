@@ -156,7 +156,7 @@ def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:Open
 @shared_task(
     bind=True, 
     autoretry_for=(Exception,),
-    retry_backoff=60, 
+    retry_backoff=0, 
     max_retries=3,
 )
 def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
@@ -165,18 +165,16 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-
-        logger.info(init_eval)
-        async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
-            'type': 'map_generated',
-            'data': init_eval
-        })
-        return
-
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
+        logger.info(categories)
+        async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
+            'type': 'map_generated',
+            'data': categories
+        })
+        return
         if not categories:
             return None
 
