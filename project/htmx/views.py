@@ -81,10 +81,14 @@ def find_layers(request):
     subject = request.POST.get('subject')
     bbox = request.POST.get('bbox')
     
-    if settings.DEBUG:
-        threading.Thread(target=create_thematic_map, args=(subject, bbox, map_id)).start()
-    else:
-        create_thematic_map.delay(subject, bbox, map_id)
+    try:
+        if settings.DEBUG:
+            threading.Thread(target=create_thematic_map, args=(subject, bbox, map_id)).start()
+        else:
+            create_thematic_map.delay(subject, bbox, map_id)
+    except Exception as e:
+        logger.info(e)
+        
     return render(request, 'helpers/partials/find_layers/placeholder.html', {'map_id': map_id})
 
 @require_http_methods(['GET'])
