@@ -185,6 +185,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                 overpass_layers = Layer.objects.filter(collection=overpass_collection)
 
                 for landmark in landmarks:
+                    logger.info(landmark)
                     categories = {f'landmarks-{landmark}': {
                         'title': f'{landmark} landmarks',
                         'keywords': f'{landmark} name brand'
@@ -252,6 +253,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                         title__in=filter_layers(user_prompt, values, filtered_queryset, client)
                     )
                 }
+                logger.info(categories[id]['layers'])
 
         categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
