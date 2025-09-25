@@ -100,20 +100,27 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div>'
         toggleSubmitBtn()
     })
+
+    form.addEventListener('htmx:wsClose', (e) => {
+        console.log(e)
+    })
     
+    form.addEventListener('htmx:wsBeforeMessage', (e) => {
+        form.querySelector('[hx-ext="ws"]').remove()
+    })
+
     form.addEventListener('htmx:afterSwap', (e) => {
         // if swapped with final response from websocket:
         // resetSubmitBtn()
         // dismiss web socket if needed
-
         toggleSubmitBtn()
     })
     
-    Array('responseError', 'sendError').forEach(type => {
+    Array('responseError', 'sendError', 'wsError').forEach(type => {    
         form.addEventListener(`htmx:${type}`, (e) => {
             responseContainer.innerHTML = customCreateElement({
                 tag:'div', 
-                innerHTML: 'Server error. Please try again.', 
+                innerHTML: 'There was an error. Please try again.', 
                 className: 'd-flex w-100 justify-content-center'
             }).outerHTML
 

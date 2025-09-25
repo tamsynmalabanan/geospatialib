@@ -1,6 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 import logging
 from asgiref.sync import async_to_sync
+from django.template.loader import get_template
 logger = logging.getLogger('django')
 
 class ThematicMapConsumer(WebsocketConsumer):
@@ -25,7 +26,10 @@ class ThematicMapConsumer(WebsocketConsumer):
 
     def map_generated(self, event):
         logger.info(event)
-        self.send(text_data=event['text'])
+        html = get_template('helpers/partials/find_layers/response.html').render(context={
+            'data': event['data']
+        })
+        self.send(text_data=html)
 
     # def receive(self, text_data):
     #     text_data_json = json.loads(text_data)

@@ -169,7 +169,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
         logger.info(init_eval)
         async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
             'type': 'map_generated',
-            'text': init_eval.title
+            'data': init_eval
         })
         return
 

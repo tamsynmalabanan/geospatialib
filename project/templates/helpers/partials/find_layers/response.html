@@ -1,19 +1,20 @@
 {% load static %}
 {% load utility_tags %}
 
-{% if response %}
-    {% if response.is_invalid %}
-        {{ response.is_invalid }}
+<div id='findLayersResponse' hx-swap-oob="true" class="modal-body d-flex flex-column gap-3 fs-12 p-0">
+    {% if data.is_invalid %}
+        {{ data.is_invalid }}
     {% else %}
-        {% variable request.COOKIES|get:'theme' 'dark' as theme %}
+        {{data}}
+        {% comment %} {% variable request.COOKIES|get:'theme' 'dark' as theme %}
         
         <div class='d-flex flex-column gap-3'>
             <div class="d-flex justify-content-between sticky-top pt-3 px-3 bg-{{theme}}">
-                <h6>{{response.title}}</h6>
+                <h6>{{data.title}}</h6>
                 <button type="button" class="btn btn-primary btn-sm">Add layers</button>
             </div>
             <div id='findLayersResponseLayers' class='d-flex flex-column gap-2 px-3 pb-3'>
-                {% for id, params in response.categories.items %}
+                {% for id, params in data.categories.items %}
                     <div>
                         <div class="form-check fs-14 fw-bold">
                             {% random_string as group_id %}
@@ -33,6 +34,6 @@
                     </div>
                 {% endfor %}
             </div>
-        </div>
+        </div> {% endcomment %}
     {% endif %}
-{% endif %}
+</div>
