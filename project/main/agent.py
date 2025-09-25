@@ -167,12 +167,10 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
-        logger.info(init_eval)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        logger.info(categories)
         if not categories:
             return None
 
@@ -187,7 +185,6 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                 overpass_layers = Layer.objects.filter(collection=overpass_collection)
 
                 for landmark in landmarks:
-                    logger.info(landmark)
                     categories = {f'landmarks-{landmark}': {
                         'title': f'{landmark} landmarks',
                         'keywords': f'{landmark} name brand'
@@ -205,7 +202,6 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                         with_default_headers=False,
                         raise_for_status=True
                     )
-                    logger.info(response)
                     if not response:
                         continue
                 
@@ -236,8 +232,6 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
         except Exception as e:
             logger.error(e)
 
-        logger.info(categories)
-
         try:
             w,s,e,n = json.loads(bbox)
             geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
@@ -255,9 +249,8 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                     layer.pk: layer.data for layer in Layer.objects.filter(
                         pk__in=filtered_queryset.values_list('pk', flat=True), 
                         title__in=filter_layers(user_prompt, values, filtered_queryset, client)
-                    )
+                    )[:5]
                 }
-                logger.info(categories[id]['layers'])
 
         categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
