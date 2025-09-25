@@ -203,7 +203,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                         with_default_headers=False,
                         raise_for_status=True
                     )
-                    
+                    logger.info(response)
                     if not response:
                         continue
                 
@@ -232,7 +232,9 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                             }
                         )   
         except Exception as e:
-            pass
+            logger.error(e)
+
+        logger.info(categories)
 
         try:
             w,s,e,n = json.loads(bbox)
