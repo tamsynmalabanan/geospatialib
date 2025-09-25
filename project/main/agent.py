@@ -158,8 +158,8 @@ def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:Open
     autoretry_for=(Exception,),
     retry_backoff=0, 
     max_retries=3,
-    soft_time_limit=300,
-    time_limit=310,
+    soft_time_limit=600,
+    time_limit=630,
 )
 def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
     try:
