@@ -169,12 +169,6 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
-        logger.info(categories)
-        async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
-            'type': 'map_generated',
-            'data': categories
-        })
-        return
         if not categories:
             return None
 
@@ -266,8 +260,10 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
             'categories': categories
         }
 
-        logger.info(data)
-
+        async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
+            'type': 'map_generated',
+            'data': data
+        })
     except Exception as e:
         logger.error(f'create_thematic_map, {e}')
         if self.request.retries < self.max_retries:

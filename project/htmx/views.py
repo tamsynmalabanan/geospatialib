@@ -87,8 +87,8 @@ def find_layers(request):
         else:
             create_thematic_map.delay(subject, bbox, map_id)
     except Exception as e:
-        logger.info(e)
-        
+        logger.error(e)
+
     return render(request, 'helpers/partials/find_layers/placeholder.html', {'map_id': map_id})
 
 @require_http_methods(['GET'])
