@@ -416,10 +416,11 @@ ASGI_APPLICATION = 'project.asgi.application'
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
-    } if DEBUG else {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("{REDIS_IP}", 6379)],
-        },
-    },
+    }
+    # if DEBUG else {
+    #     "BACKEND": "channels_redis.core.RedisChannelLayer",
+    #     "CONFIG": {
+    #         "hosts": [("{REDIS_IP}", 6379)],
+    #     },
+    # },
 }
