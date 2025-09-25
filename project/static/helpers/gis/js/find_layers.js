@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleSubmitBtn = () => {
         submitBtn.disabled = submitBtn.querySelector('.spinner-border') || subjectInput.value === '' || !isBbox(bboxInput.value)
     }
+
+    const resetSubmitBtn = () => {
+        submitBtn.innerHTML = '<i class="bi bi-search"></i>'
+    }
     
     let map
     let defaultBbox
@@ -39,7 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         bboxInput.value = defaultBbox
         
+        resetSubmitBtn()
         toggleSubmitBtn()
+
+        // dismiss web socket here...
     })
     
     setMapBbox.addEventListener('click', (e) => {
@@ -95,15 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     
     form.addEventListener('htmx:afterSwap', (e) => {
-        submitBtn.innerHTML = '<i class="bi bi-search"></i>'
+        // if swapped with final response from websocket:
+        // resetSubmitBtn()
+        // dismiss web socket if needed
+
         toggleSubmitBtn()
     })
     
     Array('responseError', 'sendError').forEach(type => {
         form.addEventListener(`htmx:${type}`, (e) => {
-            responseContainer.innerHTML = customCreateElement({tag:'div', innerHTML: 'Server error. Please try again.', className: 'd-flex w-100 justify-content-center'}).outerHTML
-    
-            submitBtn.innerHTML = '<i class="bi bi-search"></i>'
+            responseContainer.innerHTML = customCreateElement({
+                tag:'div', 
+                innerHTML: 'Server error. Please try again.', 
+                className: 'd-flex w-100 justify-content-center'
+            }).outerHTML
+
+            resetSubmitBtn()
             toggleSubmitBtn()
         })
     })

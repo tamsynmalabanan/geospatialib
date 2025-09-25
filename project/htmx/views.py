@@ -19,13 +19,14 @@ import os
 from functools import reduce
 from operator import or_, add
 from urllib.parse import urlparse
+import threading
 
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 from main import forms
-from helpers.base.utils import create_cache_key, find_nearest_divisible
+from helpers.base.utils import generate_uuid
 from helpers.main.constants import QUERY_BLACKLIST
 from helpers.main.layers import FilteredLayers
 from main.agent import create_thematic_map
@@ -76,17 +77,16 @@ class LayerList(ListView):
 
 @require_http_methods(['POST'])
 def find_layers(request):
-    response = None
-
     subject = request.POST.get('subject')
     if subject:
+        map_id = generate_uuid()
         bbox = request.POST.get('bbox')
         if settings.DEBUG:
-            response = create_thematic_map(subject, bbox)
+            threading.Thread(target=create_thematic_map, args=(subject, bbox, map_id)).start()
         else:
-            response = create_thematic_map.delay(subject, bbox)
-    
-    return render(request, 'helpers/partials/find_layers/response.html', {'response': response})
+            create_thematic_map.delay(subject, bbox, map_id)
+        return render(request, 'helpers/partials/find_layers/placeholder.html', {'map_id': map_id})
+    return JsonResponse({'error': 'Subject is missing.'}, status=400)
 
 @require_http_methods(['GET'])
 def validate_collection(request):

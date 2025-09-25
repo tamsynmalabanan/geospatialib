@@ -2,6 +2,10 @@ from django.contrib.gis.geos import Polygon, GEOSGeometry
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Max, QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, TextField, CharField, FloatField
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
 from main.models import Layer, Collection, URL, SpatialRefSys
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
 from helpers.main.layers import FilteredLayers
@@ -147,7 +151,7 @@ def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:Open
         try:
             return json.loads(completion.choices[0].message.content)
         except Exception as e:
-            logger.error(f'layers_eval_info, {e}')
+            logger.error(f'filter_layers, {e}')
 
 @shared_task(
     bind=True, 
@@ -155,12 +159,20 @@ def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:Open
     retry_backoff=60, 
     max_retries=3,
 )
-def create_thematic_map(self, user_prompt:str, bbox:str):
+def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
     try:
         logger.info(user_prompt)
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
+
+        logger.info(init_eval)
+        async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
+            'type': 'map_generated',
+            'text': init_eval.title
+        })
+        return
+
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
@@ -258,6 +270,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str):
 
         logger.info(data)
 
-        return data
     except Exception as e:
         logger.error(f'create_thematic_map, {e}')
+        if self.request.retries < self.max_retries:
+            raise self.retry(exc=e)

@@ -10,6 +10,7 @@ import io
 import requests
 import re
 from urllib.parse import urlparse, urlunparse, unquote
+import uuid
 
 import logging
 logger = logging.getLogger('django')
@@ -194,3 +195,6 @@ def get_keywords_from_url(url):
         i for i in split_by_special_characters(unquote(url)) 
         if i not in ['http', 'https', 'www', 'com']
     ]
+
+def generate_uuid():
+    return uuid.uuid4().hex
