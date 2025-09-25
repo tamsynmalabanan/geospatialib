@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetSubmitBtn()
         toggleSubmitBtn()
 
-        // dismiss web socket here...
+        form.querySelector('[hx-ext="ws"]')?.remove()
     })
     
     setMapBbox.addEventListener('click', (e) => {
@@ -101,18 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleSubmitBtn()
     })
 
-    form.addEventListener('htmx:wsClose', (e) => {
-        console.log(e)
-    })
-    
     form.addEventListener('htmx:wsBeforeMessage', (e) => {
-        form.querySelector('[hx-ext="ws"]').remove()
-    })
-
-    form.addEventListener('htmx:afterSwap', (e) => {
-        // if swapped with final response from websocket:
-        // resetSubmitBtn()
-        // dismiss web socket if needed
+        form.querySelector('[hx-ext="ws"]')?.remove()
+        resetSubmitBtn()
         toggleSubmitBtn()
     })
     
