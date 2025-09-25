@@ -165,10 +165,12 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)
+        logger.info(init_eval)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
 
         categories = create_categories(user_prompt, client)
+        logger.info(categories)
         if not categories:
             return None
 
