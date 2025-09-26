@@ -5,7 +5,8 @@
     {% if data.is_invalid %}
         {{ data.is_invalid }}
     {% else %}
-        <div class='d-flex flex-column gap-3'>
+        {{data}}
+        {% comment %} <div class='d-flex flex-column gap-3'>
             <div 
                 class="d-flex justify-content-between sticky-top pt-3 px-3 bg-dark"
                 x-data x-init="themedElements(getPreferredTheme(), $el.parentElement)"
@@ -34,9 +35,7 @@
                     </div>
                 {% endfor %}
             </div>
-        </div>
-
-
+        </div> {% endcomment %}
     {% endif %}
 </div>
 
