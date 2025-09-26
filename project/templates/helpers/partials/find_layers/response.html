@@ -2,8 +2,8 @@
 {% load utility_tags %}
 
 <div id='findLayersResponse' hx-swap-oob="true" class="modal-body d-flex flex-column gap-3 fs-12 p-0">
-    {% if data.is_invalid %}
-        {{ data.is_invalid }}
+    {% if data.categories.is_invalid %}
+        {{ data.categories.is_invalid }}
     {% else %}
         {{data}}
         {% comment %} <div class='d-flex flex-column gap-3'>

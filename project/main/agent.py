@@ -174,63 +174,63 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
             if not categories:
                 raise Exception('Failed to generate categories.')
 
-            # try:
-            #     landmarks = json.loads(init_eval.landmarks)
-            #     if len(landmarks) > 0:
-            #         tag_keys = ['name', 'name:en', 'brand', 'brand:en']
-            #         srs = SpatialRefSys.objects.filter(srid=4326).first()
-            #         keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
+            try:
+                landmarks = json.loads(init_eval.landmarks)
+                if len(landmarks) > 0:
+                    tag_keys = ['name', 'name:en', 'brand', 'brand:en']
+                    srs = SpatialRefSys.objects.filter(srid=4326).first()
+                    keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
                     
-            #         overpass_collection = Collection.objects.filter(format='overpass').first()
-            #         overpass_layers = Layer.objects.filter(collection=overpass_collection)
+                    overpass_collection = Collection.objects.filter(format='overpass').first()
+                    overpass_layers = Layer.objects.filter(collection=overpass_collection)
 
-            #         for landmark in landmarks:
-            #             categories = {f'landmarks-{landmark}': {
-            #                 'title': f'{landmark} landmarks',
-            #                 'keywords': f'{landmark} name brand'
-            #             }} | categories
+                    for landmark in landmarks:
+                        categories = {f'landmarks-{landmark}': {
+                            'title': f'{landmark} landmarks',
+                            'keywords': f'{landmark} name brand'
+                        }} | categories
 
-            #             queries = Q()
-            #             for key in tag_keys:
-            #                 queries |= Q(tags__icontains=f'["{key}"~".*{landmark}.*",i]')
-            #             if overpass_layers.filter(queries).exists():
-            #                 continue
+                        queries = Q()
+                        for key in tag_keys:
+                            queries |= Q(tags__icontains=f'["{key}"~".*{landmark}.*",i]')
+                        if overpass_layers.filter(queries).exists():
+                            continue
                         
-            #             response = get_response(
-            #                 url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
-            #                 header_only=False,
-            #                 with_default_headers=False,
-            #                 raise_for_status=True
-            #             )
-            #             if not response:
-            #                 continue
+                        response = get_response(
+                            url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
+                            header_only=False,
+                            with_default_headers=False,
+                            raise_for_status=True
+                        )
+                        if not response:
+                            continue
                     
-            #             landmark_keys = [
-            #                 i[0] for i in sorted({
-            #                     i.get('key', ''): i.get('count_all', 0) 
-            #                     for i in response.json().get('data', []) 
-            #                 }.items(),
-            #                 key=lambda x: x[1], reverse=True)
-            #             ]
-            #             landmark_keys = list([i for i in tag_keys if i in landmark_keys] + [i for i in landmark_keys if i not in tag_keys])[:5]
+                        landmark_keys = [
+                            i[0] for i in sorted({
+                                i.get('key', ''): i.get('count_all', 0) 
+                                for i in response.json().get('data', []) 
+                            }.items(),
+                            key=lambda x: x[1], reverse=True)
+                        ]
+                        landmark_keys = list([i for i in tag_keys if i in landmark_keys] + [i for i in landmark_keys if i not in tag_keys])[:5]
                         
-            #             for key in landmark_keys:
-            #                 tag = f'["{key}"~".*{landmark}.*",i]'
-            #                 layer, _ = Layer.objects.get_or_create(
-            #                     collection=overpass_collection,
-            #                     name=tag,
-            #                     defaults={
-            #                         'type':'overpass',
-            #                         'srid':srs,
-            #                         'bbox':WORLD_GEOM,
-            #                         'tags':tag,
-            #                         'title':tag,
-            #                         'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-            #                         'keywords':keywords
-            #                     }
-            #                 )   
-            # except Exception as e:
-            #     logger.error(e)
+                        for key in landmark_keys:
+                            tag = f'["{key}"~".*{landmark}.*",i]'
+                            layer, _ = Layer.objects.get_or_create(
+                                collection=overpass_collection,
+                                name=tag,
+                                defaults={
+                                    'type':'overpass',
+                                    'srid':srs,
+                                    'bbox':WORLD_GEOM,
+                                    'tags':tag,
+                                    'title':tag,
+                                    'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+                                    'keywords':keywords
+                                }
+                            )   
+            except Exception as e:
+                logger.error(e)
 
             # try:
             #     w,s,e,n = json.loads(bbox)
