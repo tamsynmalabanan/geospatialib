@@ -33,8 +33,10 @@ class FilteredLayers():
     filter_fields = ['type']
     filter_expressions = ['bbox__bboverlaps']
 
-    def __init__(self, params:dict):
+    def __init__(self, params:dict, cache_pks:bool=True, cache_timeout:int=300):
         self.params = params
+        self.cache_pks = cache_pks
+        self.cache_timeout = cache_timeout
         self.set_clean_keywords()
         self.set_raw_query()
         self.set_clean_filters()
@@ -136,8 +138,8 @@ class FilteredLayers():
 
         if not queryset.exists():
             queryset = self.get_filtered_queryset()
-            if queryset.exists():
-                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=60*15)
+            if queryset.exists() and self.cache_pks and self.cache_timeout:
+                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=self.cache_timeout)
 
         return queryset
 

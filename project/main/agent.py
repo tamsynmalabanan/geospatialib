@@ -242,7 +242,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
             #     filtered_queryset = FilteredLayers({
             #         'query': values.get('keywords', ''),
             #         'bbox__bboverlaps': geom
-            #     }).get_queryset()
+            #     }, cache_pks=False).get_queryset()
 
             #     if filtered_queryset.exists():
             #         categories[id]['layers'] = {
