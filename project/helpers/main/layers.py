@@ -33,7 +33,7 @@ class FilteredLayers():
     filter_fields = ['type']
     filter_expressions = ['bbox__bboverlaps']
 
-    def __init__(self, params:dict, cache_pks:bool=True, cache_timeout:int=300):
+    def __init__(self, params:dict, cache_pks:bool=True, cache_timeout:int=600):
         self.params = params
         self.cache_pks = cache_pks
         self.cache_timeout = cache_timeout
