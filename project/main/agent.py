@@ -63,8 +63,8 @@ def params_eval_info(user_prompt:str, client:OpenAI) -> ParamsEvaluation:
         response_format=ParamsEvaluation,
     )
 
-    result = completion.choices[0].message.parsed
-    return result
+    if completion.choices:
+        return completion.choices[0].message.parsed
 
 def create_categories(user_prompt:str, client:OpenAI):
     messages = [
@@ -105,7 +105,6 @@ def create_categories(user_prompt:str, client:OpenAI):
             return json.loads(content)
         except Exception as e:
             logger.error(f'create_categories, {e}, {content}')
-            return []
 
 def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:OpenAI):
     layer_titles = []
@@ -152,6 +151,7 @@ def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:Open
             return json.loads(completion.choices[0].message.content)
         except Exception as e:
             logger.error(f'filter_layers, {e}')
+            return []
 
 @shared_task(
     bind=True, 
@@ -168,91 +168,91 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
 
         init_eval = params_eval_info(user_prompt, client)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
-            return {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
+            categories = {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
+        # else:
+        #     categories = create_categories(user_prompt, client)
+        #     if not categories:
+        #         raise Exception('Failed to generate categories.')
 
-        # categories = create_categories(user_prompt, client)
-        # if not categories:
-        #     return None
-
-        # try:
-        #     landmarks = json.loads(init_eval.landmarks)
-        #     if len(landmarks) > 0:
-        #         tag_keys = ['name', 'name:en', 'brand', 'brand:en']
-        #         srs = SpatialRefSys.objects.filter(srid=4326).first()
-        #         keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
-                
-        #         overpass_collection = Collection.objects.filter(format='overpass').first()
-        #         overpass_layers = Layer.objects.filter(collection=overpass_collection)
-
-        #         for landmark in landmarks:
-        #             categories = {f'landmarks-{landmark}': {
-        #                 'title': f'{landmark} landmarks',
-        #                 'keywords': f'{landmark} name brand'
-        #             }} | categories
-
-        #             queries = Q()
-        #             for key in tag_keys:
-        #                 queries |= Q(tags__icontains=f'["{key}"~".*{landmark}.*",i]')
-        #             if overpass_layers.filter(queries).exists():
-        #                 continue
+            # try:
+            #     landmarks = json.loads(init_eval.landmarks)
+            #     if len(landmarks) > 0:
+            #         tag_keys = ['name', 'name:en', 'brand', 'brand:en']
+            #         srs = SpatialRefSys.objects.filter(srid=4326).first()
+            #         keywords = get_keywords_from_url('https://overpass-api.de/api/interpreter') + ['openstreetmap', 'osm']
                     
-        #             response = get_response(
-        #                 url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
-        #                 header_only=False,
-        #                 with_default_headers=False,
-        #                 raise_for_status=True
-        #             )
-        #             if not response:
-        #                 continue
-                
-        #             landmark_keys = [
-        #                 i[0] for i in sorted({
-        #                     i.get('key', ''): i.get('count_all', 0) 
-        #                     for i in response.json().get('data', []) 
-        #                 }.items(),
-        #                 key=lambda x: x[1], reverse=True)
-        #             ]
-        #             landmark_keys = list([i for i in tag_keys if i in landmark_keys] + [i for i in landmark_keys if i not in tag_keys])[:5]
+            #         overpass_collection = Collection.objects.filter(format='overpass').first()
+            #         overpass_layers = Layer.objects.filter(collection=overpass_collection)
+
+            #         for landmark in landmarks:
+            #             categories = {f'landmarks-{landmark}': {
+            #                 'title': f'{landmark} landmarks',
+            #                 'keywords': f'{landmark} name brand'
+            #             }} | categories
+
+            #             queries = Q()
+            #             for key in tag_keys:
+            #                 queries |= Q(tags__icontains=f'["{key}"~".*{landmark}.*",i]')
+            #             if overpass_layers.filter(queries).exists():
+            #                 continue
+                        
+            #             response = get_response(
+            #                 url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
+            #                 header_only=False,
+            #                 with_default_headers=False,
+            #                 raise_for_status=True
+            #             )
+            #             if not response:
+            #                 continue
                     
-        #             for key in landmark_keys:
-        #                 tag = f'["{key}"~".*{landmark}.*",i]'
-        #                 layer, _ = Layer.objects.get_or_create(
-        #                     collection=overpass_collection,
-        #                     name=tag,
-        #                     defaults={
-        #                         'type':'overpass',
-        #                         'srid':srs,
-        #                         'bbox':WORLD_GEOM,
-        #                         'tags':tag,
-        #                         'title':tag,
-        #                         'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-        #                         'keywords':keywords
-        #                     }
-        #                 )   
-        # except Exception as e:
-        #     logger.error(e)
+            #             landmark_keys = [
+            #                 i[0] for i in sorted({
+            #                     i.get('key', ''): i.get('count_all', 0) 
+            #                     for i in response.json().get('data', []) 
+            #                 }.items(),
+            #                 key=lambda x: x[1], reverse=True)
+            #             ]
+            #             landmark_keys = list([i for i in tag_keys if i in landmark_keys] + [i for i in landmark_keys if i not in tag_keys])[:5]
+                        
+            #             for key in landmark_keys:
+            #                 tag = f'["{key}"~".*{landmark}.*",i]'
+            #                 layer, _ = Layer.objects.get_or_create(
+            #                     collection=overpass_collection,
+            #                     name=tag,
+            #                     defaults={
+            #                         'type':'overpass',
+            #                         'srid':srs,
+            #                         'bbox':WORLD_GEOM,
+            #                         'tags':tag,
+            #                         'title':tag,
+            #                         'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+            #                         'keywords':keywords
+            #                     }
+            #                 )   
+            # except Exception as e:
+            #     logger.error(e)
 
-        # try:
-        #     w,s,e,n = json.loads(bbox)
-        #     geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
-        # except:
-        #     geom = None
+            # try:
+            #     w,s,e,n = json.loads(bbox)
+            #     geom = GEOSGeometry(Polygon([(w,s),(e,s),(e,n),(w,n),(w,s)]), srid=4326)
+            # except:
+            #     geom = None
 
-        # for id, values in categories.items():
-        #     filtered_queryset = FilteredLayers({
-        #         'query': values.get('keywords', ''),
-        #         'bbox__bboverlaps': geom
-        #     }).get_queryset()
+            # for id, values in categories.items():
+            #     filtered_queryset = FilteredLayers({
+            #         'query': values.get('keywords', ''),
+            #         'bbox__bboverlaps': geom
+            #     }).get_queryset()
 
-        #     if filtered_queryset.exists():
-        #         categories[id]['layers'] = {
-        #             layer.pk: layer.data for layer in Layer.objects.filter(
-        #                 pk__in=filtered_queryset.values_list('pk', flat=True), 
-        #                 title__in=filter_layers(user_prompt, values, filtered_queryset, client)
-        #             )[:5]
-        #         }
+            #     if filtered_queryset.exists():
+            #         categories[id]['layers'] = {
+            #             layer.pk: layer.data for layer in Layer.objects.filter(
+            #                 pk__in=filtered_queryset.values_list('pk', flat=True), 
+            #                 title__in=filter_layers(user_prompt, values, filtered_queryset, client)
+            #             )[:5]
+            #         }
 
-        # categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
+            # categories = {id: params for id, params in categories.items() if len(list(params['layers'].keys())) > 0}
 
         async_to_sync(get_channel_layer().group_send)(f"map_{map_id}", {
             'type': 'map_generated',
