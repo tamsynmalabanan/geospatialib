@@ -169,10 +169,10 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
         init_eval = params_eval_info(user_prompt, client)
         if not init_eval.is_thematic_map or init_eval.confidence_score < 0.7:
             categories = {'is_invalid': 'This is not a valid subject for a thematic map. Please try again.'}
-        # else:
-        #     categories = create_categories(user_prompt, client)
-        #     if not categories:
-        #         raise Exception('Failed to generate categories.')
+        else:
+            categories = create_categories(user_prompt, client)
+            if not categories:
+                raise Exception('Failed to generate categories.')
 
             # try:
             #     landmarks = json.loads(init_eval.landmarks)
@@ -260,7 +260,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                 'subject': user_prompt,
                 'bbox': bbox,
                 'title': init_eval.title,
-                # 'categories': categories
+                'categories': categories
             }
         })
     except Exception as e:
