@@ -109,7 +109,7 @@ def get_response(url, header_only=False, with_default_headers=False, raise_for_s
                 response.raise_for_status()
             
             if response.status_code != 404:
-                cache.set(cache_key, response, 600)
+                cache.set(cache_key, response, 60*10)
         except Exception as e:
             logger.error(f'get_response, {e}')
     

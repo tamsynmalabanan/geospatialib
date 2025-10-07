@@ -232,7 +232,8 @@ MIDDLEWARE = [
     # htmx
     'django_htmx.middleware.HtmxMiddleware',
 
-    'htmx.middleware.HTMXDomainRestriction',
+    'htmx.middleware.HTMXDomainRestriction',    
+    'main.middleware.BlockScannerMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -423,3 +424,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://geospatialib.com',
+    'https://www.geospatialib.com',
+]
