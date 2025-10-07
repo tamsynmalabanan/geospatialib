@@ -76,8 +76,8 @@ AUTHENTICATION_BACKENDS = (
 
 # Application definition
 INSTALLED_APPS = [
-    'daphne',
-    'channels',
+    # 'daphne',
+    # 'channels',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -413,19 +413,20 @@ rotating_handler.setFormatter(logging.Formatter(
 
 logging.getLogger('django').addHandler(rotating_handler)
 
-ASGI_APPLICATION = 'project.asgi.application'
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    } if DEBUG else {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(f"{REDIS_IP}", 6379)],
-        },
-    },
-}
-
 CSRF_TRUSTED_ORIGINS = [
     'https://geospatialib.com',
     'https://www.geospatialib.com',
 ]
+
+# websocket config
+# ASGI_APPLICATION = 'project.asgi.application'
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     } if DEBUG else {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [(f"{REDIS_IP}", 6379)],
+#         },
+#     },
+# }

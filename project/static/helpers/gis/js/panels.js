@@ -10,16 +10,16 @@ const findLayersPanels = (container, {} = {}) => {
         offcanvasToggleIcon: 'bi-layout-sidebar-inset-reverse',
         titleClass: 'h6',
         toggleBtns: [
-            createButton({
-                className: 'bi bi-stars border-0 bg-transparent fs-16 p-0 ms-3',
-                attrs: {
-                    type:'button', 
-                    title:'Find layers',
-                    'data-bs-toggle':"modal",
-                    'data-bs-target':"#findLayersModal",
-                },
+            // createButton({
+            //     className: 'bi bi-stars border-0 bg-transparent fs-16 p-0 ms-3',
+            //     attrs: {
+            //         type:'button', 
+            //         title:'Find layers',
+            //         'data-bs-toggle':"modal",
+            //         'data-bs-target':"#findLayersModal",
+            //     },
                 
-            }),
+            // }),
             createButton({
                 className: 'bi bi-plus-square border-0 bg-transparent fs-16 p-0 text-muted ms-3',
                 attrs: {
