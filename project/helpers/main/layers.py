@@ -103,7 +103,6 @@ class FilteredLayers():
         if not pk_list:
             return Layer.objects.none()
         
-        logger.info(f'FETCHING: {self.cache_key}')
         return (
             Layer.objects.all()
             .select_related('collection__url')
@@ -139,7 +138,6 @@ class FilteredLayers():
         if not queryset.exists():
             queryset = self.get_filtered_queryset()
             if queryset.exists() and self.cache_pks and self.cache_timeout:
-                logger.info(f'CACHING: {self.cache_key}')
                 cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=self.cache_timeout)
 
         return queryset

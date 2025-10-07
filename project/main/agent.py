@@ -163,7 +163,6 @@ def filter_layers(user_prompt:str, category:dict, queryset:QuerySet, client:Open
 )
 def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
     try:
-        logger.info(user_prompt)
         client = OpenAI(api_key=config('OPENAI_SECRET_KEY'))
 
         init_eval = params_eval_info(user_prompt, client)

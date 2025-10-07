@@ -8,7 +8,6 @@ class ThematicMapConsumer(WebsocketConsumer):
     def connect(self):
         self.map_id = self.scope["url_route"]["kwargs"]["map_id"]
         self.map_group_id = f"map_{self.map_id}"
-        logger.info('Connected')
 
         async_to_sync(self.channel_layer.group_add)(
             self.map_group_id, self.channel_name
@@ -22,7 +21,6 @@ class ThematicMapConsumer(WebsocketConsumer):
         )
 
     def map_generated(self, event):
-        logger.info('Map generated')
         html = get_template('helpers/partials/find_layers/response.html').render(context={
             'data': event['data']
         })
