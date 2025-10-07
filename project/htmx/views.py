@@ -78,13 +78,13 @@ class LayerList(ListView):
 @require_http_methods(['POST'])
 def find_layers(request):
     map_id = generate_uuid()
-    subject = request.POST.get('subject')
-    bbox = request.POST.get('bbox')
+    # subject = request.POST.get('subject')
+    # bbox = request.POST.get('bbox')
     
-    # if settings.DEBUG:
-    #     threading.Thread(target=create_thematic_map, args=(subject, bbox, map_id)).start()
-    # else:
-    #     create_thematic_map.delay(subject, bbox, map_id)
+    # # if settings.DEBUG:
+    # #     threading.Thread(target=create_thematic_map, args=(subject, bbox, map_id)).start()
+    # # else:
+    # #     create_thematic_map.delay(subject, bbox, map_id)
 
     return render(request, 'helpers/partials/find_layers/placeholder.html', {'map_id': map_id})
 
