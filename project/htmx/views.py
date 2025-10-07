@@ -65,6 +65,7 @@ class LayerList(ListView):
 
     def get_queryset(self):
         if not hasattr(self, 'filtered_layers') or not self.filtered_layers:
+            logger.info(self.request.POST)
             self.filtered_layers = FilteredLayers(self.request.GET.dict())
         return self.filtered_layers.get_queryset()
 
