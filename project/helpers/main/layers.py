@@ -102,6 +102,8 @@ class FilteredLayers():
         pk_list = self.get_cached_pks()
         if not pk_list:
             return Layer.objects.none()
+        
+        logger.info(f'FETCHING: {self.cache_key}')
         return (
             Layer.objects.all()
             .select_related('collection__url')
@@ -121,7 +123,7 @@ class FilteredLayers():
         if self.filter_values:
             queryset = queryset.filter(**self.clean_filters)
         
-        queryset = (
+        return (
             queryset
             .filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
             .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
@@ -130,8 +132,6 @@ class FilteredLayers():
             )
             .order_by(*['-rank', 'title', 'type'])
         )[:1000]
-
-        return queryset
 
     def get_queryset(self):
         queryset = self.get_cached_queryset()
