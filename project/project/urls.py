@@ -29,3 +29,5 @@ urlpatterns = [
     path('accounts/', include('customuser.urls')),
     path(f'htmx/', include('htmx.urls')),
 ]
+
+handler404 = 'main.views.redirect_to_index'

@@ -234,6 +234,7 @@ MIDDLEWARE = [
 
     'htmx.middleware.HTMXDomainRestriction',    
     'main.middleware.BlockScannerMiddleware',
+    'main.middleware.BlockSuspiciousHostMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'

@@ -10,3 +10,5 @@ def index(request):
         context['featured'] = 'featured content'
     return render(request, 'main/index.html', context)
 
+def redirect_to_index(request, exception=None):
+    return redirect('/')
