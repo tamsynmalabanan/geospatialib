@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchResults = document.querySelector('#searchResults')
     searchResults.parentElement.addEventListener('htmx:afterSwap', (e) => {
         if (e.target.id === searchResults.id) return
-        if (!form.querySelector(`[onclick="toggleSearchResultBbox(event)"]`).classList.contains('bi-eye-slash')) return
+        if (!form.querySelector(`[onclick="toggleSearchResultBbox(event)"]`)?.classList.contains('bi-eye-slash')) return
     
         const el = e.target.querySelector(`[onclick="zoomToSearchResultBbox()"]`)
         if (el) addSearchResultBboxToMap(el)
