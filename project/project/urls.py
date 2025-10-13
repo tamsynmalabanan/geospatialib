@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from decouple import config
 
 
@@ -28,6 +28,8 @@ urlpatterns = [
     path('', include('main.urls')),
     path('accounts/', include('customuser.urls')),
     path(f'htmx/', include('htmx.urls')),
+
+
 ]
 
 handler404 = 'main.views.redirect_to_index'
