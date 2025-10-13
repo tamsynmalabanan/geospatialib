@@ -169,6 +169,63 @@ const handleLeafletToolboxPanel = (map, parent) => {
         vectorTransform: {
             title: 'Vector Transformation',
             tools: {
+                dissolve: {
+                    title: 'Dissolve features',
+                    details: {
+                        description: 'Dissolve features in a layer into multi-part features.',
+                        inputs: 'vector layer',
+                        outputs: 'vector layer',
+                    },
+                    fields: {
+                        layer: templateFieldHandlers['vectorLayer'](),
+                        coverage: templateFieldHandlers['coveredFeatures'](),
+                    },
+                    handler: async (params) => {
+                        const inputLayer = params.layer
+                        let geojson = await getInputLayerGeoJSON(inputLayer, {
+                            coverage: params.coverage
+                        })
+
+                        geojson.features = (() => {
+                            const id = JSON.parse(inputLayer._indexedDBKey.split(';')[1].split('--')[0]).id
+                            const features = {}
+
+                            for (const i of ['MultiPoint', 'MultiLineString', 'MultiPolygon']) {
+                                features[i] = {
+                                    "type": "Feature",
+                                    "geometry": {
+                                        "type": i,
+                                        "coordinates": []
+                                    },
+                                    "properties": {__dissolved__: id}
+                                }
+                            }
+
+                            geojson.features.forEach(f => {
+                                const geomType = f.geometry.type
+                                
+                                if (geomType.startsWith('Multi')) {
+                                    features[geomType].geometry.coordinates = [...features[geomType].geometry.coordinates, ...f.geometry.coordinates]
+                                } else {
+                                    features[`Multi${geomType}`].geometry.coordinates.push(f.geometry.coordinates)
+                                }
+                            })
+
+                            return Object.values(features)
+                        })()
+
+                        const layer = await getLeafletGeoJSONLayer({
+                            geojson,
+                            group,
+                            pane: createCustomPane(map),
+                            params: {
+                                name: `${inputLayer._params.title} > dissolved`,
+                            }
+                        })
+
+                        return layer
+                    }
+                },
                 toBounds: {
                     title: 'Features to Bounding Geometry',
                     details: {
