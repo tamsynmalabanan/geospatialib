@@ -1065,88 +1065,86 @@ const handleLeafletStylePanel = (map, parent) => {
                     return aCount !== bCount ? aCount - bCount : (a.localeCompare(b))
                 })
 
-                const count = groupsSetSorted.length
-                if (count && count <= 100) {
+                const count = groupsSetSorted.length ; console.log(count)
+                if (count) {
                     symbology.default.rank = count + 1
-                    if (count) {
-                        symbology.groups = {}
+                    symbology.groups = {}
+                    
+                    let rank = 0
+                    for (const group of groupsSetSorted) {
+                        if (controllerId !== controller.id) return
+
+                        rank +=1
+                        const filters = JSON.parse(group)
+
+                        const styleParams = await updateSymbology(getLeafletStyleParams({
+                            ...symbology.default.styleParams,
+                            fillColor: removeWhitespace(`hsla(
+                                ${Math.round(Math.random()*(
+                                    ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
+                                ))+(360/count*(rank-1))},
+                                ${Math.round(Math.random()*(100-75))+75}%,
+                                ${Math.round(Math.random()*(55-45))+45}%,
+                            1)`),
+                            fillOpacity: 0.5,
+                            strokeColor: true,
+                            strokeOpacity: 1,
+                            patternBgColor: null,
+                            fillPatternId: null,
+                        }), {refresh:false, updateLocalStorage:false})
+    
+                        if (controllerId !== controller.id) return
+                        if (!symbology.groups) return
                         
-                        let rank = 0
-                        for (const group of groupsSetSorted) {
-                            if (controllerId !== controller.id) return
-
-                            rank +=1
-                            const filters = JSON.parse(group)
-
-                            const styleParams = await updateSymbology(getLeafletStyleParams({
-                                ...symbology.default.styleParams,
-                                fillColor: removeWhitespace(`hsla(
-                                    ${Math.round(Math.random()*(
-                                        ((360/count*rank)-(360/count*0.75))-(360/count*(rank-1))
-                                    ))+(360/count*(rank-1))},
-                                    ${Math.round(Math.random()*(100-75))+75}%,
-                                    ${Math.round(Math.random()*(55-45))+45}%,
-                                1)`),
-                                fillOpacity: 0.5,
-                                strokeColor: true,
-                                strokeOpacity: 1,
-                                patternBgColor: null,
-                                fillPatternId: null,
-                            }), {refresh:false, updateLocalStorage:false})
-        
-                            if (controllerId !== controller.id) return
-                            if (!symbology.groups) return
-                            
-                            symbology.groups[generateRandomString()] = {
-                                active: true,
-                                label: Object.values(filters).join(', '),
-                                showCount: true,
-                                showLabel: true,
-                                rank,
-                                styleParams,
-                                filters: {
-                                    type: (() => {
-                                        const value = {active: false, values: {
-                                            Point: true,
-                                            MultiPoint: true,
-                                            LineString: true,
-                                            MultiLineString: true,
-                                            Polygon: true,
-                                            MultiPolygon: true,
-                                        }}
-        
-                                        if (Object.keys(filters).includes('[geometry_type]')) {
-                                            value.active = true
-                                            Object.keys(value.values).forEach(i => {
-                                                value.values[i] = i === filters['[geometry_type]']
-                                            })
-                                        }
-                                        
-                                        return value
-                                    })(),
-                                    properties: (() => {
-                                        const value = {active: false, values: {}, operator: '&&'}
-        
-                                        const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
-                                        if (propertyFilters.length) {
-                                            value.active = true
-                                            propertyFilters.forEach(i => {
-                                                value.values[generateRandomString()] = {
-                                                    active: true,
-                                                    property: i,
-                                                    handler: 'equals',
-                                                    value: true,
-                                                    case: symbology.case,
-                                                    values: [filters[i]]
-                                                }
-                                            })
-                                        }
-                                        
-                                        return value
-                                    })(),
-                                    geom: {active: false, values: {}, operator: '&&'},
-                                },
-                            }
+                        symbology.groups[generateRandomString()] = {
+                            active: true,
+                            label: Object.values(filters).join(', '),
+                            showCount: true,
+                            showLabel: true,
+                            rank,
+                            styleParams,
+                            filters: {
+                                type: (() => {
+                                    const value = {active: false, values: {
+                                        Point: true,
+                                        MultiPoint: true,
+                                        LineString: true,
+                                        MultiLineString: true,
+                                        Polygon: true,
+                                        MultiPolygon: true,
+                                    }}
+    
+                                    if (Object.keys(filters).includes('[geometry_type]')) {
+                                        value.active = true
+                                        Object.keys(value.values).forEach(i => {
+                                            value.values[i] = i === filters['[geometry_type]']
+                                        })
+                                    }
+                                    
+                                    return value
+                                })(),
+                                properties: (() => {
+                                    const value = {active: false, values: {}, operator: '&&'}
+    
+                                    const propertyFilters = Object.keys(filters).filter(i => i !== '[geometry_type]')
+                                    if (propertyFilters.length) {
+                                        value.active = true
+                                        propertyFilters.forEach(i => {
+                                            value.values[generateRandomString()] = {
+                                                active: true,
+                                                property: i,
+                                                handler: 'equals',
+                                                value: true,
+                                                case: symbology.case,
+                                                values: [filters[i]]
+                                            }
+                                        })
+                                    }
+                                    
+                                    return value
+                                })(),
+                                geom: {active: false, values: {}, operator: '&&'},
+                            },
                         }
                     }
                 }
@@ -1183,9 +1181,8 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     if (controllerId !== controller.id) return
 
-                    const count = groups.length
-                    console.log(count)
-                    if (count) {// && count <= 100) {
+                    const count = groups.length ; console.log(count)
+                    if (count) {
                         symbology.default.rank = groups.length + 1
                         if (groups.length) {
                             const hslaColor = manageHSLAColor(generateRandomColor())
