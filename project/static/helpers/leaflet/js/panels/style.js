@@ -1184,7 +1184,8 @@ const handleLeafletStylePanel = (map, parent) => {
                     if (controllerId !== controller.id) return
 
                     const count = groups.length
-                    if (count && count <= 20) {
+                    console.log(count)
+                    if (count) {// && count <= 100) {
                         symbology.default.rank = groups.length + 1
                         if (groups.length) {
                             const hslaColor = manageHSLAColor(generateRandomColor())
