@@ -25,11 +25,17 @@ const titleToTooltip = (element, altTitle) => {
     element.removeAttribute('title')
     element.setAttribute('data-bs-toggle', 'tooltip')
     element.setAttribute('data-bs-title', title)
+    element.setAttribute('data-bs-html', 'true')
     
     const tooltip = bootstrap.Tooltip.getOrCreateInstance(element)
     tooltip.setContent({'.tooltip-inner':title})
-
+    
     return element
+}
+
+const removeTooltip = (element) => {
+    const tooltip = bootstrap.Tooltip.getInstance(element)
+    tooltip.dispose()
 }
 
 document.addEventListener('DOMContentLoaded', () => {

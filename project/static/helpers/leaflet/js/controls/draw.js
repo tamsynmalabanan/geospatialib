@@ -85,13 +85,15 @@ const handleLeafletDrawBtns = (map, {
             layer.addTo(editableLayer)
             editableLayer.addTo(map)
             
-            editBtn.classList.remove('pe-none', 'text-secondary')
+            removeTooltip(editBtn)
+            editBtn.classList.remove('text-secondary')
             editBtn.click()
         } else {
             editableLayer.clearLayers()
             editableLayer.removeFrom(map)
             
-            editBtn.classList.add('pe-none', 'text-secondary')
+            editBtn.classList.add('text-secondary')
+            titleToTooltip(editBtn, 'Right-click on a feature and select <b>Edit geometry</b> to edit.')
         }
     }
     
