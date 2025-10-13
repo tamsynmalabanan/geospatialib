@@ -1065,7 +1065,7 @@ const handleLeafletStylePanel = (map, parent) => {
                     return aCount !== bCount ? aCount - bCount : (a.localeCompare(b))
                 })
 
-                const count = groupsSetSorted.length ; console.log(count)
+                const count = groupsSetSorted.length
                 if (count) {
                     symbology.default.rank = count + 1
                     symbology.groups = {}
@@ -1181,7 +1181,7 @@ const handleLeafletStylePanel = (map, parent) => {
 
                     if (controllerId !== controller.id) return
 
-                    const count = groups.length ; console.log(count)
+                    const count = groups.length
                     if (count) {
                         symbology.default.rank = groups.length + 1
                         if (groups.length) {
