@@ -4,11 +4,6 @@ const handleLeafletDrawBtns = (map, {
 } = {}) => {
     const drawControlChangesKey = `draw-control-changes-${map.getContainer().id}`
     
-    // const autoSaveDeletion = (e) => {
-    //     const saveBtn = container.querySelector(`.leaflet-draw-actions.leaflet-draw-actions-bottom li a[title="Save changes"]`)
-    //     saveBtn?.click()
-    // }
-
     if (map._drawControl) {
         map.removeControl(map._drawControl)
         delete map._drawControl
@@ -45,31 +40,51 @@ const handleLeafletDrawBtns = (map, {
 
     drawControl._targetLayer = targetLayer
     
-    drawControl._addChange = (data) => {
+    drawControl._addChange = async (data) => {
         if (!data) return
 
-        const current = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
-        current.push(data)
-        
         try {
-            localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+            const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+            changes.push(data)
+            localStorage.setItem(drawControlChangesKey, JSON.stringify(changes))
         } catch (error) {
-            console.log('drawControl._addChange error', error, data)
-            alert('Recent change cannot be backed up and cannot be undone using the Undo button.')
-
-            // data = current.pop()
-   
-            // if (Array('deleted', 'edited').includes(data.type)) {
-            //     data.features = data.features.map(i => {
-            //         Object.values(i).forEach(f => {
-            //             f.geometry = turf.envelope(f).geometry
-            //         })
-            //         return i
-            //     })
-            // }
+            const alertPromise = new Promise((resolve, reject) => {
+                const alert = createModal({
+                    titleText: 'Change will not be backed up.',
+                    parent: document.body,
+                    show: true,
+                    static: true,
+                    closeBtn: false,
+                    centered: true,
+                    contentBody: customCreateElement({
+                        className: 'p-3',
+                        innerHTML: `Recent change will not be backed up and therefore cannot be undone later via the <b>Undo</b> button. Do you want to keep the change or undo it now?`
+                    }),
+                    footerBtns: {
+                        undo: createButton({
+                            className: `btn-secondary ms-auto`,
+                            innerText: 'Undo',
+                            attrs: {'data-bs-dismiss': 'modal'},
+                            events: {click: (e) => {
+                                alert?.remove()
+                                resolve(false)
+                            }},
+                        }),
+                        keep: createButton({
+                            className: `btn-success`,
+                            innerText: 'Keep',
+                            attrs: {'data-bs-dismiss': 'modal'},
+                            events: {click: (e) => {
+                                alert?.remove()
+                                resolve(true)
+                            }},
+                        }),
+                    }
+                })
+            })
             
-            // current.push(data)
-            // localStorage.setItem(drawControlChangesKey, JSON.stringify(current))
+            const keepChange = await alertPromise
+            if (!keepChange) undoLastChange({lastChange:data})
         }
     }
 
@@ -231,6 +246,58 @@ const handleLeafletDrawBtns = (map, {
         }
     })
 
+    const undoLastChange = async ({lastChange}={}) => {
+        if (!lastChange) {
+            const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
+            lastChange = changes.pop()
+            localStorage.setItem(drawControlChangesKey, JSON.stringify(changes))
+        }
+
+        if (!lastChange) return
+
+        const gisData = (await getFromGISDB(targetLayer._indexedDBKey)).gisData
+        
+        if (lastChange.type === 'created') {
+            gisData.features = gisData.features.filter(i => !lastChange.features.includes(i.properties.__gsl_id__))
+        }
+        
+        if (lastChange.type === 'deleted') {
+            gisData.features = [
+                ...gisData.features,
+                ...lastChange.features.map(i => i.old)
+            ]
+        }
+
+        if (lastChange.type === 'edited') {
+            const gslIds = lastChange.features.map(i => i.new.properties.__gsl_id__)
+            
+            const oldFeatures = {}
+            lastChange.features.forEach(i => oldFeatures[i.old.properties.__gsl_id__] = i.old)
+            
+            gisData.features = [
+                ...gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__)),
+                ...Object.values(oldFeatures)
+            ]
+        }
+
+        if (lastChange.type === 'restore') {
+            const [id, version] = targetLayer._indexedDBKey.split('--version')
+            gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
+        }
+        
+        await saveToGISDB(turf.clone(gisData), {
+            id: targetLayer._indexedDBKey,
+            queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
+        })
+
+        targetLayer._group.getLayers().forEach(i => {
+            if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+            updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
+        })
+        
+        
+    }
+
     const undoBtn = customCreateElement({
         tag: 'a',
         parent: bar,
@@ -243,52 +310,7 @@ const handleLeafletDrawBtns = (map, {
             },
             click: async (e) => {
                 e.preventDefault()
-
-                const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
-                const lastChange = changes.pop()
-                if (!lastChange) return
-
-                const gisData = (await getFromGISDB(targetLayer._indexedDBKey)).gisData
-                
-                if (lastChange.type === 'created') {
-                    gisData.features = gisData.features.filter(i => !lastChange.features.includes(i.properties.__gsl_id__))
-                }
-                
-                if (lastChange.type === 'deleted') {
-                    gisData.features = [
-                        ...gisData.features,
-                        ...lastChange.features.map(i => i.old)
-                    ]
-                }
-
-                if (lastChange.type === 'edited') {
-                    const gslIds = lastChange.features.map(i => i.new.properties.__gsl_id__)
-                    
-                    const oldFeatures = {}
-                    lastChange.features.forEach(i => oldFeatures[i.old.properties.__gsl_id__] = i.old)
-                    
-                    gisData.features = [
-                        ...gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__)),
-                        ...Object.values(oldFeatures)
-                    ]
-                }
-
-                if (lastChange.type === 'restore') {
-                    const [id, version] = targetLayer._indexedDBKey.split('--version')
-                    gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
-                }
-                
-                await saveToGISDB(turf.clone(gisData), {
-                    id: targetLayer._indexedDBKey,
-                    queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                })
-
-                targetLayer._group.getLayers().forEach(i => {
-                    if (i._indexedDBKey !== targetLayer._indexedDBKey) return
-                    updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
-                })
-                
-                localStorage.setItem(drawControlChangesKey, JSON.stringify(changes))
+                await undoLastChange()
             }
         }
     })
