@@ -160,12 +160,28 @@ const getLeafletGeoJSONLayer = async ({
             if (geojsonLayer._selectedFeatures.includes(gslId) && !updated) return
 
             const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
-            layer[handler](getLeafletLayerStyle(feature, {
-                    ...geojsonLayer._handlers.getFeatureStyleParams(feature),
+            const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
+            const iconType = styleParams.iconType
+            
+            const style = getLeafletLayerStyle(feature, {
+                    ...styleParams,
                     strokeColor: 'hsla(53, 100%, 54%, 1.00)',
                     strokeWidth: 3,
+                    ...(Array('emoji').includes(iconType) ? {
+                        textShadow: 'yellow 3px 3px 6px'
+                    }: {}),
                 }, {renderer: geojsonLayer.options.renderer}
-            ))
+            )
+            
+            if ( Array('img', 'svg').includes(iconType)) {
+                const el = customCreateElement({innerHTML:style.options.html}).firstChild
+                if (el) {
+                    el.style.border = '3px solid yellow'
+                    style.options.html = el
+                }
+            }
+            
+            layer[handler](style)
 
             if (!geojsonLayer._selectedFeatures.includes(gslId)) {
                 geojsonLayer._selectedFeatures.push(gslId)
@@ -946,8 +962,13 @@ const createGeoJSONLayerLegend = (layer, parent) => {
 
     const maxWidth = Math.max(...pointIcons.map(i => {
         const clone = i.cloneNode(true)
-        clone.className = 'position-absolute'
-        clone.firstChild.style.maxWidth = ''
+        if (clone) {
+            clone.className = 'position-absolute'
+            if (clone.firstChild?.style) {
+                clone.firstChild.style.maxWidth = ''
+            }
+        }
+        
         document.body.appendChild(clone)
         const width = clone.offsetWidth
         clone.remove()

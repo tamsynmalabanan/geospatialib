@@ -301,9 +301,8 @@ const zoomToLeafletLayer = async (layer, map, {
 const leafletLayerStyleToHTML = (style, type) => {
     if (style.options) {
         const element = customCreateElement({innerHTML:style.options.html}).firstChild
-        element.classList.remove('position-absolute')
-
-        return element.outerHTML
+        element?.classList.remove('position-absolute')
+        return element?.outerHTML
     } else {
         const isPoint = type === 'point'
         const isLineString = type === 'linestring'
