@@ -865,8 +865,6 @@ const getGeoJSONLayerStyles = (layer) => {
         })
     }
 
-    console.log(styles)
-
     return styles
 }
 
