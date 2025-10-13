@@ -2483,7 +2483,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                 events: {
                                     click: () => {
                                         const fields = Object.values(form.elements).filter(f => {
-                                            return (f.getAttribute('name') || '').startsWith('typeFilter-')
+                                            return f.getAttribute && (f.getAttribute('name') || '').startsWith('typeFilter-')
                                             && f.getAttribute('type') === 'checkbox'
                                         })
                                         const check = fields.some(f => !f.checked)
@@ -2514,7 +2514,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                             events: {
                                                 click: () => {
                                                     Object.values(form.elements).filter(f => {
-                                                        return (f.getAttribute('name') || '').startsWith('typeFilter-')
+                                                        return f.getAttribute && (f.getAttribute('name') || '').startsWith('typeFilter-')
                                                         && f.getAttribute('type') === 'checkbox'
                                                     }).forEach(field => {
                                                         const option = form.querySelector(`label[for="${field.id}"]`).innerText
