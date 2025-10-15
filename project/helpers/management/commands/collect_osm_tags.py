@@ -3,81 +3,106 @@ import json
 import os
 
 from helpers.base.utils import get_response
+import urllib.parse
 
 import logging
 logger = logging.getLogger('django')
 
 class Command(BaseCommand):
     help = 'Onboard taginfo keys'
-    def handle(self, *args, **kwargs):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(base_dir, "data", "osm_tags.json")
+    min_count = 100
 
-        if os.path.exists(file_path):
-            return
+    def get_discardable_keys(self):
+        response = get_response(f'https://taginfo.openstreetmap.org/api/4/keys/discardable?')
+        if response:
+            return [i.get('key') for i in response.json().get('data', [])]
+        return []
+
+    def get_valid_keys(self):
+        response = get_response(f'https://taginfo.openstreetmap.org/api/4/keys/all?')
+        if response:
+            discardable_keys = self.get_discardable_keys() + ['']
+            return [
+                i.get('key') for i in response.json().get('data', [])
+                if i.get('key') not in discardable_keys
+                and i.get('count_all', 0) > self.min_count
+                and i.get('values_all', 0) != 0
+                and i.get('in_wiki') is True
+            ]
+        return []
+
+    def get_tag_description(self, key, value):
+        response = get_response(f'https://taginfo.openstreetmap.org/api/4/tag/overview?key={key}&value={value}')
+        if response:
+            descriptions = response.json().get('data', {}).get('description', {})
+            if len(descriptions) > 0:
+                return descriptions.get('en', descriptions.get(list(descriptions.keys())[0], {})).get('text', '').strip()
+        return ''
+
+    def get_key_overview(self, key):
+        response = get_response(f'https://taginfo.openstreetmap.org/api/4/key/overview?key={key}')
+        if response:
+            data = response.json().get('data', {})
+            overview = {'prevalent_values': [i.get('value') for i in data.get('prevalent_values')]}
+
+            descriptions = data.get('description', {})
+            if len(descriptions) > 0:
+                overview['description'] = descriptions.get('en', descriptions.get(list(descriptions.keys())[0], {})).get('text', '').strip()
+
+            return overview
+        return {}    
+
+    def get_related_keys(self, key):
+        response = get_response(f'https://taginfo.openstreetmap.org/api/4/key/combinations?key={key}')
+        if response:
+            return [
+                i.get('other_key') 
+                for i in response.json().get('data', [])
+                if i.get('together_count', 0) > self.min_count
+                and not any(j in i.get('other_key') for j in ['name', 'wiki'])
+            ]
+        return []
+
+    def handle(self, *args, **kwargs):
+        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "osm_tags.json")
+        # if os.path.exists(file_path):
+        #     return
         
         try:
-            response = get_response('https://taginfo.openstreetmap.org/api/4/keys/all?')
-            if not response:
-                return
-            
-            data = (response.json()).get('data', [])
+            keys = self.get_valid_keys()
+            total_count = len(keys)
 
-            print('total keys: ', len(data))
             count = 0
+            layers = []
 
-            layers = {}
-
-            for i in data:
+            for key in keys:
                 count +=1
-                print(count)
+                logger.info(f'{count}/{total_count}')
                 
-                try:
-                    key = i.get('key', '')
-                    if not key or not key.strip():
-                        raise Exception('Invalid key.')
+                key_overview = self.get_key_overview(key)
+                prevalent_values = key_overview.get('prevalent_values')
+                related_keys = self.get_related_keys(key)
+                keywords = [key] + prevalent_values + related_keys
 
-                    in_wiki = i.get('in_wiki', False)
-                    if not in_wiki:
-                        raise Exception('No tag wiki.')
-                    
-                    count_all = i.get('count_all', 0)
-                    if count_all < 1000:
-                        raise Exception('Less than 1000 count.')
+                key_data = {
+                    'tag':f'["{key}"]', 
+                    'description': key_overview.get('description', ''), 
+                    'keywords': keywords,
+                }
+                layers.append(key_data)
+                logger.info(key_data)
 
-                    values_all = i.get('values_all', 0)
-                    if values_all == 0:
-                        raise Exception('No values.')
-
-                    layers[f'"{key}"'] = [key]
-
-                    response = get_response(f'https://taginfo.openstreetmap.org/api/4/key/prevalent_values?key={key}')
-                    if not response:
-                        raise Exception('No valid response for prevalent values.')
-
-                    prevalent_values = [i for i in response.json().get('data', []) if i.get('value')]
-                    keywords = [i.get('value', '').strip() for i in prevalent_values] + [key]
-                    layers[f'"{key}"'] = keywords
-                    
-                    for j in prevalent_values[:20]:
-                        try:
-                            count = j.get('count', 0)
-                            if count == 0:
-                                raise Exception('Value count is zero.')
-
-                            value = j.get('value', '')
-                            if not value or not value.strip():
-                                raise Exception('Invalid value.')
-
-                            layers[f'"{key}"="{value}"'] = keywords
-                        except Exception as e:
-                            print(e)
-                except Exception as e:
-                    print(e)
+                for value in prevalent_values:
+                    value_data = {
+                        'tag':f'["{key}"="{value}"]', 
+                        'description': self.get_tag_description(key, value),
+                        'keywords': keywords,
+                    }
+                    layers.append(value_data)
+                    logger.info(value_data)
 
             if layers:
-                print('total keys: ', len(data))
-                print('total layers', len(layers))
+                logger.info(f'total layers: {len(layers)}')
                 with open(file_path, "w") as json_file:
                     json.dump(layers, json_file, indent=4)
         except Exception as e:
