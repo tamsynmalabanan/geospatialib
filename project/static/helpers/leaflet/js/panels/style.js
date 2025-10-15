@@ -1744,68 +1744,70 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const styleFields = {
             'Legend': {
-                'Access details': {
-                    fields: {
-                        url: {
-                            handler: createInputGroup,
-                            inputGroupClass: 'w-100 flex-grow-1 fs-12',
-                            fieldAttrs: {
-                                name: `access-url`,
-                                type: 'url',
-                                value: layer._params.url,
-                                placeholder: layer._params.url,
-                                readonly: true
-                            },
-                            prefixHTML: 'URL',
-                            suffixHTML: createButton({
-                                className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
-                                title: 'Copy to clipboard',
-                                events: {
-                                    click: (e) => {
-                                        navigator.clipboard.writeText(layer._params.url)
+                ...(layer._indexedDBKey.startsWith('local') ? {} : {
+                    'Access details': {
+                        fields: {
+                            url: {
+                                handler: createInputGroup,
+                                inputGroupClass: 'w-100 flex-grow-1 fs-12',
+                                fieldAttrs: {
+                                    name: `access-url`,
+                                    type: 'url',
+                                    value: layer._params.url,
+                                    placeholder: layer._params.url,
+                                    readonly: true
+                                },
+                                prefixHTML: 'URL',
+                                suffixHTML: createButton({
+                                    className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
+                                    title: 'Copy to clipboard',
+                                    events: {
+                                        click: (e) => {
+                                            navigator.clipboard.writeText(layer._params.url)
+                                        }
                                     }
-                                }
-                            }),
-                            fieldClass: 'form-control-sm',
-                        },
-                        format: {
-                            handler: createInputGroup,
-                            inputGroupClass: 'w-10 flex-grow-1 fs-12',
-                            fieldAttrs: {
-                                name: `access-format`,
-                                type: 'text',
-                                value: layer._params.format,
-                                placeholder: layer._params.format,
-                                readonly: true
+                                }),
+                                fieldClass: 'form-control-sm',
                             },
-                            prefixHTML: 'Format',
-                            fieldClass: 'form-control-sm',
-                        },
-                        name: {
-                            handler: createInputGroup,
-                            inputGroupClass: 'w-25 flex-grow-1 fs-12',
-                            fieldAttrs: {
-                                name: `access-name`,
-                                type: 'text',
-                                value: layer._params.name,
-                                placeholder: layer._params.name,
-                                readonly: true,
+                            format: {
+                                handler: createInputGroup,
+                                inputGroupClass: 'w-10 flex-grow-1 fs-12',
+                                fieldAttrs: {
+                                    name: `access-format`,
+                                    type: 'text',
+                                    value: layer._params.format,
+                                    placeholder: layer._params.format,
+                                    readonly: true
+                                },
+                                prefixHTML: 'Format',
+                                fieldClass: 'form-control-sm',
                             },
-                            prefixHTML: 'Name',
-                            suffixHTML: createButton({
-                                className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
-                                title: 'Copy to clipboard',
-                                events: {
-                                    click: (e) => {
-                                        navigator.clipboard.writeText(layer._params.name)
+                            name: {
+                                handler: createInputGroup,
+                                inputGroupClass: 'w-25 flex-grow-1 fs-12',
+                                fieldAttrs: {
+                                    name: `access-name`,
+                                    type: 'text',
+                                    value: layer._params.name,
+                                    placeholder: layer._params.name,
+                                    readonly: true,
+                                },
+                                prefixHTML: 'Name',
+                                suffixHTML: createButton({
+                                    className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
+                                    title: 'Copy to clipboard',
+                                    events: {
+                                        click: (e) => {
+                                            navigator.clipboard.writeText(layer._params.name)
+                                        }
                                     }
-                                }
-                            }),
-                            fieldClass: 'form-control-sm',
+                                }),
+                                fieldClass: 'form-control-sm',
+                            },
                         },
-                    },
-                    className: 'gap-2 flex-wrap'
-                },
+                        className: 'gap-2 flex-wrap'
+                    }
+                }),
                 'Identification': {
                     fields: {
                         title: {
