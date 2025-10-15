@@ -173,7 +173,7 @@ const getLeafletGeoJSONLayer = async ({
                 }, {renderer: geojsonLayer.options.renderer}
             )
             
-            if ( Array('img', 'svg').includes(iconType)) {
+            if ( Array('img', 'svg', 'html').includes(iconType)) {
                 const el = customCreateElement({innerHTML:style.options.html}).firstChild
                 if (el) {
                     el.style.border = '3px solid yellow'
