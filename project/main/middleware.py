@@ -5,7 +5,7 @@ class BlockScannerMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.blocked_exact_paths = ['/version', '/.env', '/.env.save', '.gitignore']
-        self.blocked_extensions = re.compile(r'\.(txt|php)$', re.IGNORECASE)
+        self.blocked_extensions = re.compile(r'\.(txt|php|env)$', re.IGNORECASE)
 
     def __call__(self, request):
         path = request.path
