@@ -22,13 +22,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(base_dir, "data", "osm_tags.json")
+        file_path = os.path.join(base_dir, "data", "osm_tags.txt")
         if not os.path.exists(file_path):
             return
         
-        overpass_url = 'https://overpass-api.de/api/interpreter'
         overpass_collection, _ = Collection.objects.get_or_create(
-            url=URL.objects.get_or_create(path=overpass_url)[0],
+            url=URL.objects.get_or_create(path='https://overpass-api.de/api/interpreter')[0],
             format='overpass',
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
@@ -39,14 +38,18 @@ class Command(BaseCommand):
         
         existing_layers.delete()
         existing_tags = []
+        count = 0
 
         with open(file_path, "r", encoding="utf-8") as f:
-            count = 0
             for line in f:
-                data = json.load(line)
+                data = json.loads(line)
                 tag = data.get('tag')
 
                 if tag is None or tag in existing_tags:
+                    continue
+
+                if '=' in tag and self.is_number(tag.split('="')[-1].split('"')[0]):
+                    logger.info(f'skipped: {tag}')
                     continue
                 
                 layer, _ = Layer.objects.get_or_create(
@@ -64,7 +67,7 @@ class Command(BaseCommand):
                     }
                 )
 
-                count =+1
+                count += 1
                 logger.info(f'{count}: {layer}')
 
         self.stdout.write(self.style.SUCCESS('Done.'))

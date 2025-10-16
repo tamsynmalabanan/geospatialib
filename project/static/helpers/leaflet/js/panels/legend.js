@@ -1129,7 +1129,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     if (layer._properties.limits.active) {
                         legendMenu.insertBefore(titleToTooltip(customCreateElement({
                             tag:'i', 
-                            className:'bi bi-filter', 
+                            className:'bi bi-filter text-secondary', 
                             attrs: {title: `Feature count is limited to ${
                                 formatNumberWithCommas(layer._properties.limits.max)
                             }. You can change this in the layer properties.`}
@@ -1139,7 +1139,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     if (Object.values(layer._properties.transformations).some(i => i.inEffect)) {
                         legendMenu.insertBefore(titleToTooltip(customCreateElement({
                             tag:'i', 
-                            className:'bi bi-circle-square', 
+                            className:'bi bi-circle-square text-secondary', 
                             attrs: {title: `Feature geometry is transformed. You can change this in the layer properties.`}
                         })), legendMenu.querySelector('.bi-globe'))
                     }

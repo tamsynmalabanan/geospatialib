@@ -77,6 +77,12 @@ class Command(BaseCommand):
 
         return file_path
 
+    def is_number(self, value):
+        try:
+            return int(value)
+        except Exception as e:
+            return False
+
     def handle(self, *args, **kwargs):
         file_path = self.get_file_path()
         keys = self.get_valid_keys()
@@ -96,9 +102,15 @@ class Command(BaseCommand):
                     logger.info(f'{count}/{total_count}')
                     
                     key_overview = self.get_key_overview(key)
-                    prevalent_values = key_overview.get('prevalent_values', [])
+                    prevalent_values = [
+                        i for i in key_overview.get('prevalent_values', [])
+                        if not self.is_number(i)
+                    ]
                     related_keys = self.get_related_keys(key)
-                    keywords = [key] + prevalent_values + related_keys
+                    keywords = [
+                        i for i in [key] + prevalent_values + related_keys 
+                        if len(i) > 2 and not self.is_number(i)
+                    ]
 
                     data = {
                         'tag':f'["{key}"]', 
