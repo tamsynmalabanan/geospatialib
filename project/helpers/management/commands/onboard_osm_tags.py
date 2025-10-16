@@ -26,36 +26,36 @@ class Command(BaseCommand):
         if not os.path.exists(file_path):
             return
         
-        overpass_collection, _ = Collection.objects.get_or_create(
-            url=URL.objects.get_or_create(path='https://overpass-api.de/api/interpreter')[0],
-            format='overpass',
-        )
+        overpass_url = URL.objects.get_or_create(path='https://overpass-api.de/api/interpreter')[0]
+        overpass_collection, _ = Collection.objects.get_or_create(url=overpass_url, format='overpass')
         srs = SpatialRefSys.objects.filter(srid=4326).first()
         keywords = ['openstreetmap', 'osm']
 
         existing_layers = Layer.objects.filter(collection=overpass_collection)
-        # existing_tags = existing_tags.values_list('tags', flat=True)
-        
-        existing_layers.delete()
-        existing_tags = []
-        count = 0
+        existing_tags = existing_layers.values_list('tags', flat=True)
+        count = len(existing_tags)
 
         with open(file_path, "r", encoding="utf-8") as f:
             for line in f:
                 data = json.loads(line)
                 tag = data.get('tag')
 
-                if tag is None or tag in existing_tags:
+                if tag is None:
                     continue
+
+                # if tag in existing_tags:
+                #     continue
 
                 if '=' in tag and self.is_number(tag.split('="')[-1].split('"')[0]):
                     logger.info(f'skipped: {tag}')
                     continue
-                
-                layer, _ = Layer.objects.get_or_create(
-                    collection= overpass_collection,
-                    name= tag,
-                    defaults= {
+
+                layer_keywords = keywords + data.get('keywords', [])[:1]
+
+                layer, created = Layer.objects.get_or_create(
+                    collection = overpass_collection,
+                    name = tag,
+                    defaults = {
                         'type': 'overpass',
                         'srid': srs,
                         'bbox': WORLD_GEOM,
@@ -63,9 +63,15 @@ class Command(BaseCommand):
                         'title': tag,
                         'abstract': data.get('description', ''),
                         'attribution': 'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-                        'keywords': keywords + [i for i in data.get('keywords', []) if not self.is_number(i) and len(i) > 2]
+                        'keywords': layer_keywords
                     }
                 )
+
+                if tag in existing_tags and not created:
+                    layer.keywords = layer_keywords
+                    layer.save()
+                    logger.info(f'updated: {layer}')
+                    continue
 
                 count += 1
                 logger.info(f'{count}: {layer}')
