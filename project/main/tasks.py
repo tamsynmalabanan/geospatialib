@@ -38,7 +38,7 @@ def onboard_collection(self, cache_key):
             is_ogc = format.startswith('ogc-')
             response = is_ogc or get_response(
                 url=get_clean_url(url, format),
-                header_only=True,
+                method='head',
                 raise_for_status=False,
             )
             if is_ogc or response.status_code != 404:
@@ -59,21 +59,23 @@ def onboard_collection(self, cache_key):
 
         onboarded_layers = []
         for name, params in layers.items():
-            data = LAYER_VALIDATORS[format](url, name, params)
-            if not data:
-                continue
-
             layer_instance = Layer.objects.filter(collection=collection, name=name).first()
-            if not layer_instance:
-                layer_instance, created = Layer.objects.get_or_create(**{
-                    'collection': collection,
-                    'name': name,
-                    **data
-                })
-            else:
-                for field, value in data.items():
-                    setattr(layer_instance, field, value)
-                layer_instance.save()
+            
+            if not layer_instance or format != 'overpass':
+                data = LAYER_VALIDATORS[format](url, name, params)
+                if not data:
+                    continue
+
+                if not layer_instance:
+                    layer_instance, created = Layer.objects.get_or_create(**{
+                        'collection': collection,
+                        'name': name,
+                        **data
+                    })
+                else:
+                    for field, value in data.items():
+                        setattr(layer_instance, field, value)
+                    layer_instance.save()
 
             if layer_instance:
                 onboarded_layers.append(layer_instance.name)

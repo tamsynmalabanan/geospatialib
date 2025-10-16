@@ -13,11 +13,16 @@ logger = logging.getLogger('django')
 
 class Command(BaseCommand):
     help = 'Onboard taginfo keys'
-    
+
+    def is_number(self, value):
+        try:
+            return int(value)
+        except Exception as e:
+            return False
+
     def handle(self, *args, **kwargs):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(base_dir, "data", "osm_tags.json")
-
         if not os.path.exists(file_path):
             return
         
@@ -27,31 +32,39 @@ class Command(BaseCommand):
             format='overpass',
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
-        keywords = get_keywords_from_url(overpass_url) + ['openstreetmap', 'osm']
+        keywords = ['openstreetmap', 'osm']
 
-        existing_layers = Layer.objects.filter(collection=overpass_collection).values_list('tags', flat=True)
+        existing_layers = Layer.objects.filter(collection=overpass_collection)
+        # existing_tags = existing_tags.values_list('tags', flat=True)
+        
+        existing_layers.delete()
+        existing_tags = []
 
-        with open(file_path, "r") as json_file:
-            data = json.load(json_file)
-  
-            for tag, keywords in data.items():
-                if tag in existing_layers:
+        with open(file_path, "r", encoding="utf-8") as f:
+            count = 0
+            for line in f:
+                data = json.load(line)
+                tag = data.get('tag')
+
+                if tag is None or tag in existing_tags:
                     continue
                 
                 layer, _ = Layer.objects.get_or_create(
-                    collection=overpass_collection,
-                    name=tag,
-                    defaults={
-                        'type':'overpass',
-                        'srid':srs,
-                        'bbox':WORLD_GEOM,
-                        'tags':tag,
-                        'title':tag,
-                        'attribution':'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
-                        'keywords':keywords
+                    collection= overpass_collection,
+                    name= tag,
+                    defaults= {
+                        'type': 'overpass',
+                        'srid': srs,
+                        'bbox': WORLD_GEOM,
+                        'tags': tag,
+                        'title': tag,
+                        'abstract': data.get('description', ''),
+                        'attribution': 'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.',
+                        'keywords': keywords + [i for i in data.get('keywords', []) if not self.is_number(i) and len(i) > 2]
                     }
                 )
 
-                print(layer)
+                count =+1
+                logger.info(f'{count}: {layer}')
 
         self.stdout.write(self.style.SUCCESS('Done.'))

@@ -10,7 +10,8 @@ const handleLeafletMapContainer = async (map) => {
 const handleLeafletMapBasemap = async (map) => {
     L.tileLayer("//tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        className: `layer-${getPreferredTheme()}`
+        className: `layer-${getPreferredTheme()}`,
+        maxZoom: 20,
     }).addTo(map)
 }
 

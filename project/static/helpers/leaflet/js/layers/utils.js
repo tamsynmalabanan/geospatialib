@@ -841,6 +841,7 @@ const createLeafletLayer = async (params, {
         if (type === 'xyz') {
             layer = L.tileLayer(params.url, {
                 pane,
+                maxZoom: 20,
             })
         }
 
@@ -850,6 +851,7 @@ const createLeafletLayer = async (params, {
                 format: 'image/png',
                 transparent: true,
                 pane,
+                maxZoom: 20,
             }
 
             const styles = JSON.parse(params.styles ?? '{}')

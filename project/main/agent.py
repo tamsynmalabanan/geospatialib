@@ -195,12 +195,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
                         if overpass_layers.filter(queries).exists():
                             continue
                         
-                        response = get_response(
-                            url=f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}',
-                            header_only=False,
-                            with_default_headers=False,
-                            raise_for_status=True
-                        )
+                        response = get_response(f'https://taginfo.openstreetmap.org/api/4/search/by_value?query={landmark}')
                         if not response:
                             continue
                     

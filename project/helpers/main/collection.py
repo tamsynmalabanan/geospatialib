@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.conf import settings
 
 import os
-from urllib.parse import unquote, urlparse, parse_qs
+from urllib.parse import unquote, urlparse, parse_qs, quote
 
 from datetime import timedelta
 
@@ -122,7 +122,8 @@ def get_layers(url, format):
                 for part in parts:
                     object_type = [i for i in ['node', 'way', 'relation'] if i in part]
                     if object_type:
-                        tags.append(part.split(object_type[0])[1].split('(')[0])
+                        tag = part.split(object_type[0])[1].split('(')[0]
+                        tags.append(tag)
                 layers = {tag: {
                     'title': tag,
                     'tags': tag,
@@ -152,9 +153,14 @@ def get_collection_data(url, format=None):
         return
     
     clean_url = get_clean_url(url, format, exclusions=['xyz'])
-    cache_key = create_cache_key(['onboard_collection', clean_url, format])
+    cache_key = create_cache_key(['onboard_collection', url, format])
 
-    data = {'layers':{}, 'cache_key':cache_key, 'url':clean_url, 'format':format}
+    data = {
+        'layers': {}, 
+        'cache_key': cache_key, 
+        'url': clean_url, 
+        'format': format
+    }
 
     collection = Collection.objects.filter(
         url__path=clean_url,
@@ -174,19 +180,20 @@ def get_collection_data(url, format=None):
 
     if cached_layers_count > 0:
         data['layers'] = cached_layers
-    else:
-        layers = get_layers(url, format)
-        if len(layers.keys()) > 0:
-            data['layers'] = layers
+        return data
+    
+    layers = get_layers(url, format)
+    if len(layers) > 0:
+        data['layers'] = layers
         cache.set(cache_key, data, timeout=60*60)
     
-    try:
-        if settings.DEBUG:
-            onboard_collection(cache_key)
-        else:
-            onboard_collection.delay(cache_key)
-    except Exception as e:
-        logger.error(f'onboard collection error: {e}')
+        try:
+            if settings.DEBUG:
+                onboard_collection(cache_key)
+            else:
+                onboard_collection.delay(cache_key)
+        except Exception as e:
+            logger.error(f'onboard collection error: {e}')
 
     return data
 

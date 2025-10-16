@@ -87,29 +87,54 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
     
     return [(key, value) for key, value in dict_copy.items()]
 
-def get_response(url, header_only=False, with_default_headers=False, raise_for_status=True):
-    cache_key = create_cache_key(['get_response', url, header_only])
-    response = cache.get(cache_key)
+def get_response(
+    url, 
+    method='get', 
+    with_default_headers=False, 
+    raise_for_status=True, 
+    data=None, 
+    cache_response=True
+):
+    response = None
 
-    if not response and header_only:
-        cache_key = create_cache_key(['get_response', url, False])
-        response = cache.get(cache_key)
+    if cache_response:
+        response = cache.get(create_cache_key(['get_response', url, method]))
+        if not response and method == 'head':
+            response = cache.get(
+                create_cache_key(['get_response', url, 'get']), 
+                cache.get(create_cache_key(['get_response', url, 'post']))
+            )
 
     if not response:
         try:
-            if header_only and not with_default_headers:
+            headers = DEFAULT_REQUEST_HEADERS if with_default_headers else None
+
+            if method == 'head' and not headers:
                 response = requests.head(url)
-            else:
-                response = requests.get(url, headers=DEFAULT_REQUEST_HEADERS if with_default_headers else {})
+
+            if method in ['head', 'get']:
+                method = 'get'
+                response = requests.get(url, headers=headers)
             
-            if response.status_code == 403 and not with_default_headers:
-                response = get_response(url, with_default_headers=True, raise_for_status=raise_for_status)
+            if method == 'post':
+                if data is None:
+                    data = {}
+                response = requests.post(url, data=data, headers=headers)
+
+            if response.status_code == 403 and not headers:
+                response = get_response(
+                    url, 
+                    method=method, 
+                    with_default_headers=True, 
+                    raise_for_status=raise_for_status, 
+                    data=data
+                )
             
             if raise_for_status:
                 response.raise_for_status()
             
-            if response.status_code != 404:
-                cache.set(cache_key, response, 60*10)
+            if response.status_code != 404 and cache_response:
+                cache.set(create_cache_key(['get_response', url, method]), response, 60*10)
         except Exception as e:
             logger.error(f'get_response, {e}')
     

@@ -9,7 +9,7 @@ import geojson
 import pandas as pd, geopandas as gpd
 import io
 from fiona.io import MemoryFile
-from urllib.parse import unquote
+from urllib.parse import unquote, quote
 import osm2geojson
 import codecs
 import os
@@ -232,6 +232,28 @@ def validate_osm(url, name, params):
 
 def validate_overpass(url, name, params):
     try:
+        query = f"""
+            [out:json][timeout:{60*10}];
+            (
+                node{name};
+                way{name};
+                relation{name};
+            );
+            out ids 1;
+        """
+        elements = []
+        tries = 0
+        while not elements and tries < 3:
+            tries += 1
+            try:
+                response = get_response(url, method='post', data={"data": query}, cache_response=False)
+                elements = response.json().get('elements', [])
+            except Exception as e:
+                logger.error(e)
+            logger.info(elements)
+        if not elements:
+            raise Exception('No elements.')
+
         params['bbox'] = WORLD_GEOM
         params['srid'] = DEFAULT_SRID
         return params
