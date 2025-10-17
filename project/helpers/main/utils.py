@@ -43,7 +43,6 @@ def get_world_gdf():
             "ne_110m_admin_0_countries_simplified.shp"
         )
         world = gpd.read_file(shapefile_path)
-        world = world.simplify(0.1, preserve_topology=True)
         cache.set('world_gdf', world, timeout=None)
     
     return world
