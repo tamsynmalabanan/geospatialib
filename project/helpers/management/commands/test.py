@@ -58,5 +58,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # for layer in Layer.objects.all():
         #     layer.thumbnails = ''
+        #     layer.set_thumbnails()
         #     layer.save()
         self.stdout.write(self.style.SUCCESS('Done.'))
