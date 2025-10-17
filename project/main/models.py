@@ -13,7 +13,7 @@ from django.db.models.functions import Concat
 from django.db.models.functions import Cast
 from django.contrib.postgres.search import SearchVectorField
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 from deep_translator import GoogleTranslator
 import json
 import re
@@ -143,6 +143,21 @@ class Layer(models.Model):
                         f'https://taginfo.openstreetmap.org/api/4/key/distribution/nodes?key={key}',
                         f'https://taginfo.openstreetmap.org/api/4/key/distribution/ways?key={key}',
                     ]
+                
+        if self.type == 'wms':
+            return [f"{self.collection.url.path}?{urlencode({
+                "service": "WMS",
+                "version": "1.3.0",
+                "request": "GetMap",
+                "layers": self.name,
+                "styles": style,
+                "crs": "EPSG:4326",
+                "bbox": "-180,-90,180,90",
+                "width": "2000",
+                "height": "2000",
+                "format": "image/png",
+                "transparent": "true"
+            })}" for style in json.loads(self.styles)]
 
     @property
     def db_version(self):
