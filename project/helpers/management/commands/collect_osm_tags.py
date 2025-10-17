@@ -106,11 +106,7 @@ class Command(BaseCommand):
                         i for i in key_overview.get('prevalent_values', [])
                         if not self.is_number(i)
                     ]
-                    related_keys = self.get_related_keys(key)
-                    keywords = [
-                        i for i in [key] + prevalent_values + related_keys 
-                        if len(i) > 2 and not self.is_number(i)
-                    ]
+                    keywords = ['openstreetmap', 'osm', key]
 
                     data = {
                         'tag':f'["{key}"]', 

@@ -7,7 +7,6 @@ from helpers.base.utils import get_response, get_keywords_from_url
 from main.models import Layer, Collection, SpatialRefSys, URL
 from helpers.main.constants import QUERY_BLACKLIST, WORLD_GEOM
 
-
 import logging
 logger = logging.getLogger('django')
 
@@ -43,8 +42,8 @@ class Command(BaseCommand):
                 if tag is None:
                     continue
 
-                # if tag in existing_tags:
-                #     continue
+                if tag in existing_tags:
+                    continue
 
                 if '=' in tag and self.is_number(tag.split('="')[-1].split('"')[0]):
                     logger.info(f'skipped: {tag}')
@@ -67,11 +66,11 @@ class Command(BaseCommand):
                     }
                 )
 
-                if tag in existing_tags and not created:
-                    layer.keywords = layer_keywords
-                    layer.save()
-                    logger.info(f'updated: {layer}')
-                    continue
+                # if tag in existing_tags and not created:
+                #     layer.keywords = layer_keywords
+                #     layer.save()
+                #     logger.info(f'updated: {layer}')
+                #     continue
 
                 count += 1
                 logger.info(f'{count}: {layer}')
