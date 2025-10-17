@@ -56,4 +56,10 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
+        from helpers.main.utils import create_xyz_map
+
+        print(create_xyz_map('https://tile.openstreetmap.org/{z}/{x}/{y}.png'))
+
+        
+
         self.stdout.write(self.style.SUCCESS('Done.'))

@@ -18,6 +18,7 @@ from deep_translator import GoogleTranslator
 import json
 import re
 
+from helpers.main.utils import create_extent_map, create_xyz_map
 from helpers.base.utils import get_special_characters
 from helpers.base.models import dict_to_choices
 from helpers.main.constants import WORLD_GEOM
@@ -153,11 +154,17 @@ class Layer(models.Model):
                 "styles": style,
                 "crs": "EPSG:4326",
                 "bbox": "-180,-90,180,90",
-                "width": "2000",
-                "height": "2000",
+                "width": "360",
+                "height": "180",
                 "format": "image/png",
                 "transparent": "true"
             })}" for style in json.loads(self.styles)]
+        
+        if self.type == 'xyz':
+            return [create_xyz_map(self.collection.url.path)]
+
+        if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
+            return [create_extent_map(self.bbox.extent)]
 
     @property
     def db_version(self):
