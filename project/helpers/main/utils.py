@@ -33,7 +33,9 @@ def get_clean_url(url, format, exclusions=[]):
 def create_extent_map(extent):
     try:
         shapefile_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/ne_110m_admin_0_countries", "ne_110m_admin_0_countries.shp")
+        logger.info(shapefile_path)
         world = gpd.read_file(shapefile_path)
+        logger.info(world)
 
         extent_geom = box(*extent)
         extent_gdf = gpd.GeoDataFrame(geometry=[extent_geom], crs=world.crs)
