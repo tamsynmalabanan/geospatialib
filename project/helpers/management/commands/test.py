@@ -19,9 +19,6 @@ import re
 from urllib.parse import urlparse, urlunparse
 from urllib.parse import unquote
 
-
-
-
 def test_get_collection_data():
     # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
     # # url = 'https://raw.githubusercontent.com/tamsynmalabanan/gis-data/refs/heads/main/OpenStreetMap%20via%20Overpass%20(51).geojson'
@@ -57,7 +54,6 @@ class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
         # for layer in Layer.objects.all():
-        #     layer.thumbnails = ''
-        #     layer.set_thumbnails()
-        #     layer.save()
+        #     if not layer.thumbnails:
+        #         print(layer.data)
         self.stdout.write(self.style.SUCCESS('Done.'))
