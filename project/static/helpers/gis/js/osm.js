@@ -86,6 +86,8 @@ const fetchOverpass = async (params, {
     const url = 'https://overpass-api.de/api/interpreter'
     const body = "data="+encodeURIComponent(`[out:json][timeout:${60*10}];${query}out tags geom body;`)
     
+    console.log(Array(url, body).join('?'))
+
     const mapKey = canonicalize({body, controller:controller?.id})
     if (mapForFetchOverpass.has(mapKey)) {
         return mapForFetchOverpass.get(mapKey)
