@@ -32,7 +32,11 @@ def get_clean_url(url, format, exclusions=[]):
 
 def create_extent_map(extent):
     try:
-        shapefile_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/ne_110m_admin_0_countries", "ne_110m_admin_0_countries.shp")
+        shapefile_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 
+            "data/ne_110m_admin_0_countries", 
+            "ne_110m_admin_0_countries.shp"
+        )
         world = gpd.read_file(shapefile_path)
 
         extent_geom = box(*extent)
@@ -49,7 +53,6 @@ def create_extent_map(extent):
         buffer = BytesIO()
         plt.savefig(buffer, format='png', bbox_inches='tight', dpi=100)
         plt.close()
-        return buffer
 
         # Encode as base64
         buffer.seek(0)
@@ -70,19 +73,8 @@ def create_xyz_map(xyz):
         # image.save('static_map.png')
 
         buffer = BytesIO()
-        buffer = BytesIO()
         image.save(buffer, format='PNG')
-        return buffer
-
         base64_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
         return f"data:image/png;base64,{base64_str}"
     except Exception as e:
         logger.error(f'{create_xyz_map}: e')
-        return get_fallback_thumbnail()
-
-def get_fallback_thumbnail():
-    image = Image.new('RGB', (360, 180), color='white')
-    buffer = BytesIO()
-    image.save(buffer, format='PNG')
-    return buffer
-    buffer.seek(0)

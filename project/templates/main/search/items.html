@@ -3,7 +3,7 @@
 
 {% for layer in layers %}
     {% variable layer.data as data %}
-    {% variable layer.thumbnails as thumbnails %}
+    {% variable layer.set_thumbnails as thumbnails %}
     {% variable layer.collection as collection %}
     {% variable data.type as type %}
     {% variable collection.url.path as url %}

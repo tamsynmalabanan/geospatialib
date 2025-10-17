@@ -90,6 +90,7 @@ class Layer(models.Model):
     
     abstract = models.TextField('Abstract', blank=True, null=True)
     keywords = models.JSONField('Keywords', default=list, blank=True, null=True)
+    thumbnails = models.JSONField('Thumbnails', default=list, blank=True, null=True)
     
     last_update = models.DateTimeField('Last update', auto_now=True)
     search_vector = GeneratedField(expression=ToTSVector(Concat(
@@ -109,20 +110,6 @@ class Layer(models.Model):
     def __str__(self):
         return f'{self.name} in {str(self.collection)}'
     
-    def generate_thumbnail(self):
-        thumbnail = None
-        
-        if self.type == 'xyz':
-            thumbnail = create_xyz_map(self.collection.url.path)
-
-        # if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
-        if not thumbnail:
-            thumbnail = create_extent_map(self.bbox.extent)
-        
-        if thumbnail:
-            thumbnail.seek(0)
-            return thumbnail
-
     @property
     def data(self):
         data = {key: value for key, value in model_to_dict(
@@ -139,7 +126,9 @@ class Layer(models.Model):
         return data
     
     @property
-    def thumbnails(self):
+    def set_thumbnails(self):
+        thumbnails = []
+
         if self.type == 'overpass':
             tags = [i.replace('[', '') for i in self.tags.split(']') if i.strip() != '']
             for tag in tags:
@@ -148,19 +137,19 @@ class Layer(models.Model):
                     key = key.split('"')[1]
                     value = value.split('"')[1]
                     value = value.strip(''.join(get_special_characters(value)))
-                    return [
+                    thumbnails =  [
                         f'https://taginfo.openstreetmap.org/api/4/tag/distribution/nodes?key={key}&value={value}',
                         f'https://taginfo.openstreetmap.org/api/4/tag/distribution/ways?key={key}&value={value}',
                     ]
                 else:
                     key = tag.split('"')[1]
-                    return [
+                    thumbnails =  [
                         f'https://taginfo.openstreetmap.org/api/4/key/distribution/nodes?key={key}',
                         f'https://taginfo.openstreetmap.org/api/4/key/distribution/ways?key={key}',
                     ]
                 
         if self.type == 'wms':
-            return [f"{self.collection.url.path}?{urlencode({
+            thumbnails =  [f"{self.collection.url.path}?{urlencode({
                 "service": "WMS",
                 "version": "1.3.0",
                 "request": "GetMap",
@@ -174,7 +163,13 @@ class Layer(models.Model):
                 "transparent": "true"
             })}" for style in json.loads(self.styles)]
         
-        return [f'/layer/thumbnail/{self.pk}/']
+        if self.type == 'xyz':
+            thumbnails = [create_xyz_map(self.collection.url.path)]
+        
+        if not thumbnails:
+            thumbnails = [create_extent_map(self.bbox.extent)]
+
+        return [i for i in thumbnails if i]
 
     @property
     def db_version(self):
