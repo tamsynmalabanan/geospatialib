@@ -33,5 +33,4 @@ QUERY_BLACKLIST = list(set([
     'wms', 
     'wfs',
     'wcs',
-    'arcgis',
 ] + list(COLLECTION_FORMATS.keys())))

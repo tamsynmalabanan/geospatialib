@@ -161,10 +161,14 @@ class Layer(models.Model):
             })}" for style in json.loads(self.styles)]
         
         if self.type == 'xyz':
-            return [create_xyz_map(self.collection.url.path)]
+            image = create_xyz_map(self.collection.url.path)
+            if image:
+                return [image]
 
         if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
-            return [create_extent_map(self.bbox.extent)]
+            image = create_extent_map(self.bbox.extent)
+            if image:
+                return [image]
 
     @property
     def db_version(self):
