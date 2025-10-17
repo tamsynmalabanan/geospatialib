@@ -78,3 +78,11 @@ def create_xyz_map(xyz):
         return f"data:image/png;base64,{base64_str}"
     except Exception as e:
         logger.error(f'{create_xyz_map}: e')
+        return get_fallback_thumbnail()
+
+def get_fallback_thumbnail():
+    image = Image.new('RGB', (360, 180), color='white')
+    buffer = BytesIO()
+    image.save(buffer, format='PNG')
+    return buffer
+    buffer.seek(0)

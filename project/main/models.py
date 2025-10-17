@@ -110,10 +110,13 @@ class Layer(models.Model):
         return f'{self.name} in {str(self.collection)}'
     
     def generate_thumbnail(self):
+        thumbnail = None
+        
         if self.type == 'xyz':
             thumbnail = create_xyz_map(self.collection.url.path)
 
-        if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
+        # if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
+        if not thumbnail:
             thumbnail = create_extent_map(self.bbox.extent)
         
         if thumbnail:

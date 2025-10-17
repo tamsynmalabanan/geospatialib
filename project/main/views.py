@@ -1,9 +1,9 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 
 from . import forms
 from . import models
-from helpers.main.utils import create_extent_map, create_xyz_map
+from helpers.main.utils import get_fallback_thumbnail
 
 def index(request):
     data = request.GET.dict()
@@ -16,9 +16,6 @@ def redirect_to_index(request, exception=None):
     return redirect('/')
 
 def layer_thumbnail(request, pk):
-    layer_instance = models.Layer.objects.filter(pk=pk).first()
-    if layer_instance:
-        thumbnail = layer_instance.generate_thumbnail()
-        if thumbnail:
-            return HttpResponse(thumbnail.read(), content_type='image/png')
-    return 
+    layer_instance = get_object_or_404(models.Layer, pk=pk)
+    thumbnail = layer_instance.generate_thumbnail()
+    return HttpResponse(thumbnail.read(), content_type='image/png')
