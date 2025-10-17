@@ -125,51 +125,53 @@ class Layer(models.Model):
 
         return data
     
-    @property
     def set_thumbnails(self):
-        thumbnails = []
+        if not self.thumbnails:
+            thumbnails = []
 
-        if self.type == 'overpass':
-            tags = [i.replace('[', '') for i in self.tags.split(']') if i.strip() != '']
-            for tag in tags:
-                if any(i in tag for i in ['=', '~']):
-                    key, value = re.split(r'[=~]', tag)
-                    key = key.split('"')[1]
-                    value = value.split('"')[1]
-                    value = value.strip(''.join(get_special_characters(value)))
-                    thumbnails =  [
-                        f'https://taginfo.openstreetmap.org/api/4/tag/distribution/nodes?key={key}&value={value}',
-                        f'https://taginfo.openstreetmap.org/api/4/tag/distribution/ways?key={key}&value={value}',
-                    ]
-                else:
-                    key = tag.split('"')[1]
-                    thumbnails =  [
-                        f'https://taginfo.openstreetmap.org/api/4/key/distribution/nodes?key={key}',
-                        f'https://taginfo.openstreetmap.org/api/4/key/distribution/ways?key={key}',
-                    ]
-                
-        if self.type == 'wms':
-            thumbnails =  [f"{self.collection.url.path}?{urlencode({
-                "service": "WMS",
-                "version": "1.3.0",
-                "request": "GetMap",
-                "layers": self.name,
-                "styles": style,
-                "crs": "EPSG:4326",
-                "bbox": "-180,-90,180,90",
-                "width": "360",
-                "height": "180",
-                "format": "image/png",
-                "transparent": "true"
-            })}" for style in json.loads(self.styles)]
-        
-        if self.type == 'xyz':
-            thumbnails = [create_xyz_map(self.collection.url.path)]
-        
-        if not thumbnails:
-            thumbnails = [create_extent_map(self.bbox.extent)]
+            if self.type == 'overpass':
+                tags = [i.replace('[', '') for i in self.tags.split(']') if i.strip() != '']
+                for tag in tags:
+                    try:
+                        if any(i in tag for i in ['=', '~']):
+                            key, value = re.split(r'[=~]', tag, maxsplit=1)
+                            key = key.split('"')[1]
+                            value = value.split('"')[1].strip(''.join(get_special_characters(value)))
+                            thumbnails = thumbnails + [
+                                f'https://taginfo.openstreetmap.org/api/4/tag/distribution/nodes?key={key}&value={value}',
+                                f'https://taginfo.openstreetmap.org/api/4/tag/distribution/ways?key={key}&value={value}',
+                            ]
+                        else:
+                            key = tag.split('"')[1]
+                            thumbnails = thumbnails + [
+                                f'https://taginfo.openstreetmap.org/api/4/key/distribution/nodes?key={key}',
+                                f'https://taginfo.openstreetmap.org/api/4/key/distribution/ways?key={key}',
+                            ]
+                    except Exception as e:
+                        logger.error(f'{e}, {tag}')
 
-        return [i for i in thumbnails if i]
+            if self.type == 'wms':
+                thumbnails = [f"{self.collection.url.path}?{urlencode({
+                    "service": "WMS",
+                    "version": "1.3.0",
+                    "request": "GetMap",
+                    "layers": self.name,
+                    "styles": style,
+                    "crs": "EPSG:4326",
+                    "bbox": "-180,-90,180,90",
+                    "width": "360",
+                    "height": "180",
+                    "format": "image/png",
+                    "transparent": "true"
+                })}" for style in json.loads(self.styles)]
+            
+            if self.type == 'xyz':
+                thumbnails = [i for i in [create_xyz_map(self.collection.url.path)] if i]
+            
+            if not thumbnails:
+                thumbnails = [i for i in [create_extent_map(self.bbox.extent)] if i]
+
+            self.thumbnails = [i for i in thumbnails if i]
 
     @property
     def db_version(self):
@@ -202,4 +204,5 @@ class Layer(models.Model):
     def save(self, *args, **kwargs):
         self.normalize_keywords()
         self.translate_fields()
+        self.set_thumbnails()
         super().save(*args, **kwargs)

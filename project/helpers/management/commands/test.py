@@ -56,4 +56,7 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
+        # for layer in Layer.objects.all():
+        #     layer.thumbnails = ''
+        #     layer.save()
         self.stdout.write(self.style.SUCCESS('Done.'))
