@@ -16,7 +16,9 @@ from django.contrib.postgres.search import SearchVectorField
 from urllib.parse import urlparse
 from deep_translator import GoogleTranslator
 import json
+import re
 
+from helpers.base.utils import get_special_characters
 from helpers.base.models import dict_to_choices
 from helpers.main.constants import WORLD_GEOM
 from . import choices
@@ -121,6 +123,27 @@ class Layer(models.Model):
 
         return data
     
+    @property
+    def thumbnails(self):
+        if self.type == 'overpass':
+            tags = [i.replace('[', '') for i in self.tags.split(']') if i.strip() != '']
+            for tag in tags:
+                if any(i in tag for i in ['=', '~']):
+                    key, value = re.split(r'[=~]', tag)
+                    key = key.split('"')[1]
+                    value = value.split('"')[1]
+                    value = value.strip(''.join(get_special_characters(value)))
+                    return [
+                        f'https://taginfo.openstreetmap.org/api/4/tag/distribution/nodes?key={key}&value={value}',
+                        f'https://taginfo.openstreetmap.org/api/4/tag/distribution/ways?key={key}&value={value}',
+                    ]
+                else:
+                    key = tag.split('"')[1]
+                    return [
+                        f'https://taginfo.openstreetmap.org/api/4/key/distribution/nodes?key={key}',
+                        f'https://taginfo.openstreetmap.org/api/4/key/distribution/ways?key={key}',
+                    ]
+
     @property
     def db_version(self):
         if not hasattr(self, '_db_version'):

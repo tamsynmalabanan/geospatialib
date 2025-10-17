@@ -278,8 +278,8 @@ const getLeafletLayerBbox = async (layer) => {
                 b.getNorth(),
             ]
         } catch (error) {
-            console.log(layer)
-            console.log(error.message)
+            // console.log(layer)
+            // console.log(error.message)
         }
     }
     

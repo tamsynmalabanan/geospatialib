@@ -3,6 +3,7 @@
 
 {% for layer in layers %}
     {% variable layer.data as data %}
+    {% variable layer.thumbnails as thumbnails %}
     {% variable layer.collection as collection %}
     {% variable data.type as type %}
     {% variable collection.url.path as url %}
@@ -18,6 +19,26 @@
         {% endif %}
     >   
         <div class="card w-100">
+            {% if thumbnails %}
+                {% random_string as thumbnails_id %}
+                <div id="{{thumbnails_id}}" class="carousel slide shadow">
+                    <div class= "carousel-inner">
+                        {% for i in thumbnails  %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{i}}" class="card-img-top">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#{{thumbnails_id}}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#{{thumbnails_id}}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>           
+                </div>
+            {% endif %}
             <div class="card-body w-100 d-flex flex-column">
                 <div>
                     <span 

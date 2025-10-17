@@ -83,7 +83,10 @@ const fetchOverpass = async (params, {
     controller,
     query = getOverpassQueryBlock(queryGeom, {zoom, ...params}),
 } = {}) => {
-    const mapKey = canonicalize({query, controller:controller?.id})
+    const url = 'https://overpass-api.de/api/interpreter'
+    const body = "data="+encodeURIComponent(`[out:json][timeout:${60*10}];${query}out tags geom body;`)
+    
+    const mapKey = canonicalize({body, controller:controller?.id})
     if (mapForFetchOverpass.has(mapKey)) {
         return mapForFetchOverpass.get(mapKey)
     }
@@ -95,8 +98,8 @@ const fetchOverpass = async (params, {
     if (controller?.signal.aborted) return
     fetchOverpassIsActive = true
 
-    const url = 'https://overpass-api.de/api/interpreter'
-    const body = "data="+encodeURIComponent(`[out:json][timeout:180];${query}out tags geom body;`)
+
+    console.log(Array(url, body).join('?'))
 
     const fetchPromise = fetchTimeout(url, {
         abortBtns,

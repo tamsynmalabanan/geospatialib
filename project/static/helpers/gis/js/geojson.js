@@ -590,7 +590,7 @@ const validateGeoJSONFeature = (feature, filters) => {
         const propertyFilters = Object.values(filters.properties.values)
         .filter(i => i.active && i.property && i.values?.length)
 
-        const eval = (i) => {
+        const evaluate = (i) => {
             const handler = relationHandlers(i.handler)
             if (!handler) return true
 
@@ -606,8 +606,8 @@ const validateGeoJSONFeature = (feature, filters) => {
             }
         }
 
-        if (operator === '&&' && !propertyFilters.every(i => eval(i))) return false
-        if (operator === '||' && !propertyFilters.some(i => eval(i))) return false
+        if (operator === '&&' && !propertyFilters.every(i => evaluate(i))) return false
+        if (operator === '||' && !propertyFilters.some(i => evaluate(i))) return false
     }
         
     if (filters.geom.active) {
@@ -615,7 +615,7 @@ const validateGeoJSONFeature = (feature, filters) => {
         const geomFilters = Object.values(filters.geom.values)
         .filter(i => i.active && i.geoms?.length && i.geoms.every(g => turf.booleanValid(g)))
         
-        const eval = (i) => {
+        const evaluate = (i) => {
             const handler = turf[i.handler]
             if (!handler) return true
 
@@ -626,8 +626,8 @@ const validateGeoJSONFeature = (feature, filters) => {
             }
         }
 
-        if (operator === '&&' && !geomFilters.every(i => eval(i))) return false
-        if (operator === '||' && !geomFilters.some(i => eval(i))) return false
+        if (operator === '&&' && !geomFilters.every(i => evaluate(i))) return false
+        if (operator === '||' && !geomFilters.some(i => evaluate(i))) return false
     }
 
     return true
