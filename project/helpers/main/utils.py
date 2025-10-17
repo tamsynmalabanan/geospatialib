@@ -49,11 +49,11 @@ def create_extent_map(extent):
         buffer = BytesIO()
         plt.savefig(buffer, format='png', bbox_inches='tight', dpi=100)
         plt.close()
-        buffer.seek(0)
+        return buffer
 
         # Encode as base64
+        buffer.seek(0)
         img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-        logger.info(img_base64)
         return f'data:image/png;base64,{img_base64}'
     except Exception as e:
         logger.error(f'create_extent_map: {e}')
@@ -70,9 +70,11 @@ def create_xyz_map(xyz):
         # image.save('static_map.png')
 
         buffer = BytesIO()
+        buffer = BytesIO()
         image.save(buffer, format='PNG')
-        base64_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        return buffer
 
+        base64_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
         return f"data:image/png;base64,{base64_str}"
     except Exception as e:
         logger.error(f'{create_xyz_map}: e')

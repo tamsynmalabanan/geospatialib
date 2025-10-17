@@ -109,6 +109,17 @@ class Layer(models.Model):
     def __str__(self):
         return f'{self.name} in {str(self.collection)}'
     
+    def generate_thumbnail(self):
+        if self.type == 'xyz':
+            thumbnail = create_xyz_map(self.collection.url.path)
+
+        if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
+            thumbnail = create_extent_map(self.bbox.extent)
+        
+        if thumbnail:
+            thumbnail.seek(0)
+            return thumbnail
+
     @property
     def data(self):
         data = {key: value for key, value in model_to_dict(
@@ -160,15 +171,7 @@ class Layer(models.Model):
                 "transparent": "true"
             })}" for style in json.loads(self.styles)]
         
-        if self.type == 'xyz':
-            image = create_xyz_map(self.collection.url.path)
-            if image:
-                return [image]
-
-        if self.type in ['wfs', 'osm', 'geojson', 'csv', 'file', 'json', 'unknown']:
-            image = create_extent_map(self.bbox.extent)
-            if image:
-                return [image]
+        return [f'/thumbnail/{self.pk}/']
 
     @property
     def db_version(self):
