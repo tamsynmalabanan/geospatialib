@@ -174,7 +174,7 @@ class Layer(models.Model):
                 "transparent": "true"
             })}" for style in json.loads(self.styles)]
         
-        return [f'/thumbnail/{self.pk}/']
+        return [f'/layer/thumbnail/{self.pk}/']
 
     @property
     def db_version(self):

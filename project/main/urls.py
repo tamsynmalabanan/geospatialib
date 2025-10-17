@@ -6,5 +6,5 @@ app_name = 'main'
 
 urlpatterns = [
         path('', views.index, name='index'),
-        path('thumbnail/<int:pk>/', views.layer_thumbnail, name='thumbnail'),
+        path('layer/thumbnail/<int:pk>/', views.layer_thumbnail, name='thumbnail'),
 ]
