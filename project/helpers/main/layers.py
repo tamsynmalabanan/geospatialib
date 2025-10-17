@@ -250,7 +250,6 @@ def validate_overpass(url, name, params):
                 elements = response.json().get('elements', [])
             except Exception as e:
                 logger.error(e)
-            logger.info(elements)
         if not elements:
             raise Exception('No elements.')
 
