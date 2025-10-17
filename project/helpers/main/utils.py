@@ -33,9 +33,7 @@ def get_clean_url(url, format, exclusions=[]):
 def create_extent_map(extent):
     try:
         shapefile_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/ne_110m_admin_0_countries", "ne_110m_admin_0_countries.shp")
-        logger.info(shapefile_path)
         world = gpd.read_file(shapefile_path)
-        logger.info(world)
 
         extent_geom = box(*extent)
         extent_gdf = gpd.GeoDataFrame(geometry=[extent_geom], crs=world.crs)
@@ -55,6 +53,7 @@ def create_extent_map(extent):
 
         # Encode as base64
         img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+        logger.info(img_base64)
         return f'data:image/png;base64,{img_base64}'
     except Exception as e:
         logger.error(f'create_extent_map: {e}')
