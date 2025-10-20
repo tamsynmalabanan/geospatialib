@@ -16,7 +16,7 @@ const themedElements = (theme, parent=document) => {
         [['layer-light'],['layer-dark']],
     ).forEach(classes => {
         const [addClasses, removeClasses] = theme === 'light' ? classes : classes.reverse()
-        parent.querySelectorAll(`.${addClasses.join('.')}, .${removeClasses.join('.')}`).forEach(element => {
+        parent.querySelectorAll(`.${addClasses.join('.')}:not(.ignore-theme), .${removeClasses.join('.')}:not(.ignore-theme)`).forEach(element => {
             element.classList.remove(...removeClasses)
             element.classList.add(...addClasses)
             

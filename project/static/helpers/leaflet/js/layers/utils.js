@@ -788,24 +788,36 @@ const createLayerIndexedDBKey = (params) => {
             format,
             name: params.name,
             type: params.type,
+            srid: params.srid,
+            xField: params.xField,
+            yField: params.yField,
         }
     } else {
-        formatParams = params
+        formatParams = structuredClone(params)
+        delete formatParams.abstract
+        delete formatParams.attribution
+        delete formatParams.bbox
+        delete formatParams.keywords
+        delete formatParams.styles
+        delete formatParams.thumbnails
+        delete formatParams.title
         console.log(formatParams)
     }
 
     return `${format};${JSON.stringify({params:formatParams})}`
 }
 
-const addLayerFromData = async () => {
-    const params = JSON.parse(event.target.dataset.layerParams)
+const addLayerFromData = async (el, {
+    map = getSearchMap()
+}={}) => {
+    const params = JSON.parse(el.dataset.layerParams)
 
     if (params.bbox) params.bbox = JSON.stringify(params.bbox)
     if (params.tags) params.tags = cleanOverpassTags(params.tags)
 
     createLeafletLayer(params, {
         indexedDBKey: createLayerIndexedDBKey(params),
-        group: getSearchMap()?._handlers.getLayerGroups().library,
+        group: map?._handlers.getLayerGroups().library,
         add: true,
     })
 }

@@ -191,7 +191,7 @@ const fetchFileData = async (params, {abortBtns, controller} = {}) => {
     }
 
     const url = params.url
-    const mapKey = `${url};${controller?.id}` 
+    const mapKey = `${url};${controller?.id}`
     if (mapForFetchFileData.has(mapKey)) {
         return handler(await mapForFetchFileData.get(mapKey))
     }
@@ -204,8 +204,8 @@ const fetchFileData = async (params, {abortBtns, controller} = {}) => {
                 const content = await response.blob()
                 const filesArray = await getValidFilesArray([
                     new File([content],
-                    decodeURIComponent(url.split('/')[url.split('/').length-1]))
-                ])
+                        decodeURIComponent(url.split('/')[url.split('/').length-1]))
+                    ])
                 return filesArray
             } catch (error) {
                 console.log(error)

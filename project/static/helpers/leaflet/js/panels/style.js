@@ -1,3 +1,14 @@
+const COLLECTION_FORMATS = {
+    'overpass': 'Overpass API',
+    'osm': 'OpenStreetMap',
+    'geojson': 'GeoJSON',
+    'csv': 'CSV',
+    'file': 'File',
+    'xyz': 'XYZ Tiles',
+    'ogc-wfs': 'OGC Web Feature Service',
+    'ogc-wms': 'OGC Web Map Service',
+}
+
 const handleLeafletStylePanel = (map, parent) => {
     let controller = resetController()
 
@@ -1742,6 +1753,8 @@ const handleLeafletStylePanel = (map, parent) => {
         const limits = layerStyles.limits
         const filterContainerId = generateRandomString()
 
+        const layerType = layer._params.type
+
         const styleFields = {
             'Legend': {
                 ...(layer._indexedDBKey.startsWith('local') ? {} : {
@@ -1757,7 +1770,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     placeholder: layer._params.url,
                                     readonly: true
                                 },
-                                prefixHTML: 'URL',
+                                prefixHTML: COLLECTION_FORMATS[layer._params.format],
                                 suffixHTML: createButton({
                                     className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
                                     title: 'Copy to clipboard',
@@ -1769,22 +1782,9 @@ const handleLeafletStylePanel = (map, parent) => {
                                 }),
                                 fieldClass: 'form-control-sm',
                             },
-                            format: {
+                            ...(layer._params.type === 'xyz' ? {} : {name: {
                                 handler: createInputGroup,
-                                inputGroupClass: 'w-10 flex-grow-1 fs-12',
-                                fieldAttrs: {
-                                    name: `access-format`,
-                                    type: 'text',
-                                    value: layer._params.format,
-                                    placeholder: layer._params.format,
-                                    readonly: true
-                                },
-                                prefixHTML: 'Format',
-                                fieldClass: 'form-control-sm',
-                            },
-                            name: {
-                                handler: createInputGroup,
-                                inputGroupClass: 'w-25 flex-grow-1 fs-12',
+                                inputGroupClass: 'w-100 flex-grow-1 fs-12',
                                 fieldAttrs: {
                                     name: `access-name`,
                                     type: 'text',
@@ -1792,7 +1792,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     placeholder: layer._params.name,
                                     readonly: true,
                                 },
-                                prefixHTML: 'Name',
+                                prefixHTML: (
+                                    Array('wms', 'wfs').includes(layerType) ? 'Layer' :
+                                    Array('overpass').includes(layerType) ? 'Tag' :
+                                    'Name'
+                                ),
                                 suffixHTML: createButton({
                                     className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
                                     title: 'Copy to clipboard',
@@ -1803,7 +1807,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     }
                                 }),
                                 fieldClass: 'form-control-sm',
-                            },
+                            }}),
                         },
                         className: 'gap-2 flex-wrap'
                     }

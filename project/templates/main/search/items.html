@@ -21,7 +21,7 @@
         <div class="card w-100">
             {% if thumbnails %}
                 {% random_string as thumbnails_id %}
-                <div id="{{thumbnails_id}}" class="carousel slide shadow">
+                <div id="{{thumbnails_id}}" class="carousel slide bg-light ignore-theme">
                     <div class= "carousel-inner">
                         {% for i in thumbnails  %}
                             <div class="carousel-item {% if forloop.first %}active{% endif %}">
@@ -42,9 +42,9 @@
                 </div>
             {% endif %}
             <div class="card-body w-100 d-flex flex-column">
-                <div>
-                    <span 
-                        class="badge font-monospace fs-10 align-top user-select-none "
+                <div class='card-type'>
+                    <span
+                        class="badge font-monospace align-top user-select-none fs-10"
                         title="{{type}}" 
                         style="background-color:hsla(
                             {% if type == 'wms' %}
@@ -71,22 +71,27 @@
                 {% if type == 'wms' or type == 'wfs' %}
                     <h6 class="card-subtitle mb-2 text-body-secondary fs-14">{{data.name}}</h6>
                 {% endif %}
-                <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{url|domain}}</a>
+                <a class="text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="{{url}}" target="_blank" rel="noopener noreferrer" title="Go to {{url}}">{{url|subdomain}}</a>
             </div>
-            <div class="card-footer d-flex gap-3">
+            <div class="card-footer d-flex gap-3" data-layer-params="{{data|dump_json}}"> 
                 <button 
                     title='Add layer to map'
                     class="bg-transparent border-0 p-0 fs-14 add-layer-button bi bi-plus-lg" 
                     tabindex="-1"
-                    data-layer-params="{{data|dump_json}}"
-                    onclick="addLayerFromData()"
+                    onclick="addLayerFromData(this.parentElement)"
                 ></button>
                 <button 
                     title='Zoom to layer'
                     class="bg-transparent border-0 p-0 bi bi-zoom-in fs-12"
                     tabindex="-1"
-                    data-layer-bbox="{{data.bbox}}"
                     onclick="zoomToSearchResultBbox()"
+                ></button>
+                <button 
+                    title='Layer information'
+                    class="bg-transparent border-0 p-0 bi bi-info-circle fs-12"
+                    tabindex="-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#layerInfoModal"
                 ></button>
             </div>
         </div>

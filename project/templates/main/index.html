@@ -30,3 +30,7 @@
         <script type="text/javascript" src="{% static 'main/js/index.js' %}"></script>
     {% endcompress %}
 {% endblock scripts %}
+
+{% block modals %}
+    {% include "main/search/layer_info.html" %}
+{% endblock modals %}

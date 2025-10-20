@@ -1,8 +1,8 @@
 :root {
-    --adjusted-bg-dark: #35374B;
-    --adjusted-bg-light: #e9e2d5;
-    --default-bg-light: hsl(210, 17%, 98%);
+    --default-bg-light: hsl(40, 26%, 93%);
     --default-bg-dark: hsl(210, 11%, 15%);
+    --adjusted-bg-light: hsl(40, 50%, 93%);
+    --adjusted-bg-dark: #35374B;
 }
 
 .highlight {

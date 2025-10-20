@@ -513,9 +513,11 @@ const getGeoJSON = async (dbKey, {
             if (!isLocal && ((isStatic && !geojson) || (!isStatic && !geojson?.features?.length))) {
                 geojson = await (async () => {
                     if (controller?.signal.aborted) return
-
+                    
+                    const params = JSON.parse(handlerParams)
+                    
                     const geojson = await fetchGeoJSONHandlers(handlerName)(
-                        ...Object.values(JSON.parse(handlerParams)), {
+                        ...Object.values(params), {
                             queryGeom,
                             zoom, 
                             controller, 

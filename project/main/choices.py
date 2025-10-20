@@ -1,5 +1,5 @@
 COLLECTION_FORMATS = {
-    'overpass': 'Overpass API Filter',
+    'overpass': 'Overpass API',
     'osm': 'OpenStreetMap',
     'geojson': 'GeoJSON',
     'csv': 'CSV',

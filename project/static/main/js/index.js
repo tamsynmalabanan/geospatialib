@@ -2,11 +2,74 @@ const getSearchForm = () => document.querySelector('#searchForm')
 
 const getSearchMap = () => (window.maps ?? []).find(map => map.getContainer().id === getSearchForm().getAttribute('data-form-map-id'))
 
-const zoomToSearchResultBbox = () => getSearchMap()?.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(event.target.dataset.layerBbox))).getBounds())
+const zoomToSearchResultBbox = () => {
+    const layerParams = event.target.parentElement.dataset.layerParams
+    return getSearchMap()?.fitBounds(L.geoJSON(
+        turf.bboxPolygon(JSON.parse(layerParams).bbox)
+    ).getBounds())
+}
+
+const showLayerInfo = (el) => {
+    const modal = document.querySelector(el.dataset.bsTarget)
+    const card = el.closest('.card')
+    const layerParams = card.querySelector('.card-footer').dataset.layerParams
+    const properties = JSON.parse(layerParams)
+    console.log(properties)
+    
+    const footer = modal.querySelector('.modal-footer')
+    footer.setAttribute('data-layer-params', layerParams)
+
+    const title = modal.querySelector('#layerInfoModal-title')
+    title.innerText = properties.title
+    
+    const format = modal.querySelector('#layerInfoModal-format')
+    format.innerHTML = `${
+        properties.format === 'file' 
+        ? `${properties.type.toUpperCase()} ` 
+        : ''
+    }${COLLECTION_FORMATS[properties.format]}`
+    
+    const url = modal.querySelector('#layerInfoModal-url')
+    url.innerText = properties.url
+    
+    const name = modal.querySelector('#layerInfoModal-name')
+    name.parentElement.classList.toggle('d-none', properties.type === 'xyz')
+    name.parentElement.firstElementChild.innerText = (
+        Array('wms', 'wfs').includes(properties.type) ? 'Layer' :
+        Array('overpass').includes(properties.type) ? 'Tag' :
+        'Name'
+    )
+    name.innerText = properties.name
+    
+    const bbox = modal.querySelector('#layerInfoModal-bbox')
+    bbox.innerText = properties.bbox.map(i => Math.ceil(i * 10000000) / 10000000).join(', ')
+    
+    const preview = modal.querySelector('#layerInfoModal-preview')
+    preview.parentElement.classList.toggle('d-none', properties.type === 'overpass')
+
+    const previewMap = getLeafletMap('layerInfoModal-preview-map')
+    const group = previewMap._handlers.getLayerGroups().library
+    group.clearLayers()
+    
+    if (properties.type !== 'overpass') {
+        const previewLabel = preview.parentElement.firstElementChild
+        const bboxLayer = L.geoJSON(turf.bboxPolygon(properties.bbox))
+        if (Array('wfs').includes(properties.type)) {
+            previewLabel.innerText = 'Bounding Box Map'
+            group.addLayer(bboxLayer)
+        } else {
+            previewLabel.innerText = 'Layer Map'
+            addLayerFromData(footer, {map: previewMap})
+        }
+        setTimeout(() => {
+            previewMap.fitBounds(bboxLayer.getBounds())
+        }, 100)
+    }
+}
 
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling
-    const properties = JSON.parse(addBtn.dataset.layerParams)
+    const properties = JSON.parse(addBtn.parentElement.dataset.layerParams)
     const group = getSearchMap()._handlers.getLayerGroups().search
     const strokeColor = manageHSLAColor(rgbToHSLA(el.closest('.card').querySelector(`.card-body span[title="${properties.type}"]`).style.backgroundColor))
     
@@ -20,7 +83,7 @@ const addSearchResultBboxToMap = async (el) => {
 
     const layer = await getLeafletGeoJSONLayer({
         geojson: turf.polygonToLine(turf.bboxPolygon(
-            JSON.parse(el.dataset.layerBbox), 
+            properties.bbox, 
             {properties}
         )),
         pane: 'searchPane',
@@ -136,4 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const offcanvas = form.closest('.offcanvas')
         if (offcanvas) bootstrap.Offcanvas.getOrCreateInstance(offcanvas).show()
     }
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+    const layerInfoModal = document.querySelector(`#layerInfoModal`)
+    layerInfoModal.addEventListener('shown.bs.modal', (e) => {
+        showLayerInfo(e.relatedTarget)
+    })
 })

@@ -49,8 +49,12 @@ def querystring(request, **kwargs):
     return f"?{urlencode(query)}"
 
 @register.filter
-def domain(url):
+def subdomain(url):
     return urlparse(url).netloc
+
+@register.filter
+def domain(url):
+    return '.'.join(subdomain(url).split('.')[-2:])
 
 @register.filter
 def stringify(value):
