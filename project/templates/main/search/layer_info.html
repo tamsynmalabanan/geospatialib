@@ -9,16 +9,13 @@
                 <div class='d-flex flex-column'>
                     <div class="modal-title text-muted lead fs-6">Layer Information</div>
                     <h4 id="layerInfoModal-title"></h4>
+                    <div id="layerInfoModal-format" class=''></div>
                 </div>
                 <button type="button" class="bi bi-x-lg border-0 bg-transparent p-0 m-0 ms-auto" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
             </div>
             <div class="modal-body">
-                <table class="table">
+                <table class="table table-borderless">
                     <tbody>
-                        <tr>
-                            <th scope="row">Format</th>
-                            <td id='layerInfoModal-format'></td>
-                        </tr>
                         <tr>
                             <th scope="row">URL</th>
                             <td id='layerInfoModal-url'></td>
@@ -28,7 +25,7 @@
                             <td id='layerInfoModal-name'></td>
                         </tr>
                         <tr>
-                            <th scope="row">Bounding Box</th>
+                            <th scope="row">BBOX</th>
                             <td id='layerInfoModal-bbox'></td>
                         </tr>
                         <tr>
@@ -37,23 +34,43 @@
                                 id='layerInfoModal-preview'
                                 data-map-controls-excluded = "all"
                                 data-map-class = "rounded"
-                            >{% leaflet_map "layerInfoModal-preview-map" %}</td>
+                            >
+                                {% leaflet_map "layerInfoModal-preview-map" %}
+                                <div id="layerInfoModal-thumbnails" class="carousel slide bg-light ignore-theme">
+                                    <div class= "carousel-inner"></div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#layerInfoModal-thumbnails" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#layerInfoModal-thumbnails" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>           
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">SRID</th>
+                            <td id='layerInfoModal-srid'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td id='layerInfoModal-abstract' style='text-align:justify;'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Attribution</th>
+                            <td id='layerInfoModal-attribution' style='text-align:justify;'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Fees</th>
+                            <td id='layerInfoModal-fees' style='text-align:justify;'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Styles</th>
+                            <td id='layerInfoModal-styles'></td>
                         </tr>
                     </tbody>
                 </table>
-                {% comment %} <div class='modal-abstract'>
-                    <h6>Abstract</h6>
-                    <p class='text-break' style='text-align:justify;'></p>
-                </div>
-                <div class='modal-attribution'>
-                    <h6>Attribution</h6>
-                    <p class='text-break' style='text-align:justify;'></p>
-                </div>
-                <div class='modal-fees'>
-                    <h6>Fees</h6>
-                    <p class='text-break' style='text-align:justify;'></p>
-                </div>
-                <a class="modal-domain text-decoration-none text-muted fs-12 fw-normal text-truncate w-100 mt-auto" href="" target="_blank" title='' rel="noopener noreferrer"></a> {% endcomment %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" onclick="addLayerFromData(this.parentElement)" data-bs-dismiss="modal">Add layer to map</button>
@@ -61,15 +78,3 @@
         </div>
     </div>
 </div>
-
-{% comment %} <div id="layerInfoModalThumbnails" class="carousel slide bg-light ignore-theme">
-                    <div class= "carousel-inner"></div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#layerInfoModalThumbnails" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#layerInfoModalThumbnails" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>           
-                </div> {% endcomment %}

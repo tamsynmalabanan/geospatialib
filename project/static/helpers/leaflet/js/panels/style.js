@@ -1760,6 +1760,19 @@ const handleLeafletStylePanel = (map, parent) => {
                 ...(layer._indexedDBKey.startsWith('local') ? {} : {
                     'Access details': {
                         fields: {
+                            format: {
+                                handler: createInputGroup,
+                                inputGroupClass: 'w-100 flex-grow-1 fs-12',
+                                fieldAttrs: {
+                                    name: `access-format`,
+                                    type: 'text',
+                                    value: getLayerFormat(layer._params),
+                                    placeholder: getLayerFormat(layer._params),
+                                    readonly: true
+                                },
+                                prefixHTML: '<span style="width:65px;">Format</span>',
+                                fieldClass: 'form-control-sm',
+                            },
                             url: {
                                 handler: createInputGroup,
                                 inputGroupClass: 'w-100 flex-grow-1 fs-12',
@@ -1770,7 +1783,7 @@ const handleLeafletStylePanel = (map, parent) => {
                                     placeholder: layer._params.url,
                                     readonly: true
                                 },
-                                prefixHTML: COLLECTION_FORMATS[layer._params.format],
+                                prefixHTML: '<span style="width:65px;">URL</span>',
                                 suffixHTML: createButton({
                                     className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
                                     title: 'Copy to clipboard',
@@ -1792,11 +1805,11 @@ const handleLeafletStylePanel = (map, parent) => {
                                     placeholder: layer._params.name,
                                     readonly: true,
                                 },
-                                prefixHTML: (
+                                prefixHTML: `<span style="width:65px;">${(
                                     Array('wms', 'wfs').includes(layerType) ? 'Layer' :
                                     Array('overpass').includes(layerType) ? 'Tag' :
                                     'Name'
-                                ),
+                                )}</span>`,
                                 suffixHTML: createButton({
                                     className: 'btn-sm bi bi-clipboard p-0 fs-10 active-border-none',
                                     title: 'Copy to clipboard',

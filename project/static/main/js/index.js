@@ -9,12 +9,11 @@ const zoomToSearchResultBbox = () => {
     ).getBounds())
 }
 
-const showLayerInfo = (el) => {
+const showLayerInfo = async (el) => {
     const modal = document.querySelector(el.dataset.bsTarget)
     const card = el.closest('.card')
     const layerParams = card.querySelector('.card-footer').dataset.layerParams
     const properties = JSON.parse(layerParams)
-    console.log(properties)
     
     const footer = modal.querySelector('.modal-footer')
     footer.setAttribute('data-layer-params', layerParams)
@@ -23,49 +22,131 @@ const showLayerInfo = (el) => {
     title.innerText = properties.title
     
     const format = modal.querySelector('#layerInfoModal-format')
-    format.innerHTML = `${
-        properties.format === 'file' 
-        ? `${properties.type.toUpperCase()} ` 
-        : ''
-    }${COLLECTION_FORMATS[properties.format]}`
+    format.innerHTML = card.querySelector('.card-type').innerHTML
+    format.firstElementChild.innerText = getLayerFormat(properties) 
+    format.firstElementChild.classList.remove('fs-10')
+    format.firstElementChild.classList.add('fs-12')
     
     const url = modal.querySelector('#layerInfoModal-url')
     url.innerText = properties.url
     
     const name = modal.querySelector('#layerInfoModal-name')
     name.parentElement.classList.toggle('d-none', properties.type === 'xyz')
+    name.innerText = properties.name
     name.parentElement.firstElementChild.innerText = (
         Array('wms', 'wfs').includes(properties.type) ? 'Layer' :
         Array('overpass').includes(properties.type) ? 'Tag' :
         'Name'
     )
-    name.innerText = properties.name
     
     const bbox = modal.querySelector('#layerInfoModal-bbox')
-    bbox.innerText = properties.bbox.map(i => Math.ceil(i * 10000000) / 10000000).join(', ')
+    bbox.parentElement.classList.toggle('d-none', Array('overpass', 'xyz').includes(properties.type))
+    bbox.innerText = `${properties.bbox.map(i => {
+        return Math.ceil(i * 10000000) / 10000000
+    }).join(', ')}, EPSG:4326`
     
     const preview = modal.querySelector('#layerInfoModal-preview')
-    preview.parentElement.classList.toggle('d-none', properties.type === 'overpass')
+    const previewLabel = preview.parentElement.firstElementChild
 
     const previewMap = getLeafletMap('layerInfoModal-preview-map')
+    previewMap.getContainer().classList.toggle('d-none', properties.type === 'overpass')
     const group = previewMap._handlers.getLayerGroups().library
     group.clearLayers()
     
-    if (properties.type !== 'overpass') {
-        const previewLabel = preview.parentElement.firstElementChild
-        const bboxLayer = L.geoJSON(turf.bboxPolygon(properties.bbox))
+    const previewThumbnails = modal.querySelector(`#layerInfoModal-thumbnails`)
+    previewThumbnails.classList.toggle('d-none', properties.type !== 'overpass')
+    const carouselItems = previewThumbnails.querySelector('.carousel-inner')
+    carouselItems.innerHTML = ''
+    
+    if (properties.type === 'overpass') {
+        const width = previewThumbnails.offsetWidth
+        previewLabel.innerText = 'Distribution Maps'
+        previewThumbnails.querySelector(`.carousel-control-prev`).classList.toggle('d-none', properties.thumbnails.length < 2)
+        previewThumbnails.querySelector(`.carousel-control-next`).classList.toggle('d-none', properties.thumbnails.length < 2)
+        properties.thumbnails.forEach(i => {
+            carouselItems.appendChild(customCreateElement({
+                className: `carousel-item ${properties.thumbnails[0] === i ? 'active': ''}`,
+                innerHTML: `<img src="${i}"} width="${width}" height="${width/360*180}">`,
+            }))
+        })
+    } else {
+        const bboxGeoJSON = turf.bboxPolygon(properties.bbox)
         if (Array('wfs').includes(properties.type)) {
             previewLabel.innerText = 'Bounding Box Map'
+            const bboxLayer = await getLeafletGeoJSONLayer({
+                geojson: bboxGeoJSON,
+                group,
+                customStyleParams: {
+                    strokeColor: 'hsla(0, 100%, 54%, 1.00)',
+                    fillOpacity: 0,
+                    strokeWidth: 3
+                },
+            })
             group.addLayer(bboxLayer)
         } else {
             previewLabel.innerText = 'Layer Map'
-            addLayerFromData(footer, {map: previewMap})
+            addLayerFromData(footer, {map: previewMap, customStyleParams: {
+                fillColor: 'hsla(0, 100%, 54%, 1.00)',
+                strokeWidth: 3
+            }})
         }
         setTimeout(() => {
-            previewMap.fitBounds(bboxLayer.getBounds())
-        }, 100)
+            previewMap.fitBounds(L.geoJSON(bboxGeoJSON).getBounds())
+        }, 500)
     }
-}
+
+    const srid = modal.querySelector('#layerInfoModal-srid')
+    srid.parentElement.classList.toggle('d-none', !properties.srid_title)
+    srid.innerText = properties.srid_title
+
+    const infoSource = (() => {
+        let url
+        if (properties.type === 'overpass') {
+            if (Array('=', '~').some(i => properties.tags.includes(i))) {
+                let [key, value] = properties.tags.split(/[=~]/, 2)
+                key = key.split('"')[1]
+                value = value.split('"')[1]
+                url = `https://taginfo.openstreetmap.org/api/4/tag/overview?key=${key}&value=${value}`
+            } else {
+                let key = properties.tags.split('"')[1]
+                url = `https://taginfo.openstreetmap.org/api/4/key/overview?key=${key}`
+            }
+        }
+
+        if (properties.format.startsWith('ogc-')) {
+            url = `${properties.url}?service=${properties.type.toUpperCase()}&request=GetCapabilities`
+        }
+        
+        if (url) {
+            return new URL(url)
+        }
+    })()
+    const hostname = new URL(properties.url).hostname
+    const domain = hostname.split('.').splice(-2).join('.')
+
+    const abstract = modal.querySelector('#layerInfoModal-abstract')
+    abstract.parentElement.classList.toggle('d-none', !properties.abstract?.trim())
+    abstract.parentElement.firstElementChild.innerText = properties.type === 'overpass' ? 'Description' : 'Abstract'
+    abstract.innerHTML = `${properties.abstract?.trim()} (Retreived from <a target="_blank" href="${infoSource?.href}">${infoSource?.hostname}</a>)`
+    
+    const attribution = modal.querySelector('#layerInfoModal-attribution')
+    attribution.innerHTML = (
+        Array('', null, undefined, 'none').includes((properties.attribution ?? '').trim().toLowerCase()) 
+        ? `Retreived from <a target="_blank" href="${properties.url}">${hostname}</a>, hosted by <a target="_blank" href="https://${domain}">${domain}</a>` 
+        : properties.attribution
+    )
+
+    const fees = modal.querySelector('#layerInfoModal-fees')
+    fees.parentElement.classList.toggle('d-none', Array('', null, undefined, 'none').includes((properties.fees ?? '').trim().toLowerCase()))
+    fees.innerHTML = properties.fees?.trim()
+
+    const styles = modal.querySelector('#layerInfoModal-styles')
+    const stylesObj = typeof properties.styles === 'object' ? properties.styles : JSON.parse(properties.styles || '{}')
+    styles.parentElement.classList.toggle('d-none', !Object.keys(stylesObj).length)
+    styles.innerHTML = Object.keys(stylesObj).map(i => {
+        return `Name: ${i}<br>Title: ${stylesObj[i].title}<br>Legend:<br><img src="${stylesObj[i].legend}">`
+    }).join('<br>')
+    }
 
 const addSearchResultBboxToMap = async (el) => {
     const addBtn = el.previousElementSibling

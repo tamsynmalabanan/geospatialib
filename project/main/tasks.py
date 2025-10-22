@@ -62,7 +62,6 @@ def onboard_collection(self, cache_key):
             layer_instance = Layer.objects.filter(collection=collection, name=name).first()
             
             if not layer_instance or format != 'overpass':
-                logger.error(f'{url}, {name}, {params}')
                 data = LAYER_VALIDATORS[format](url, name, params)
                 if not data:
                     continue

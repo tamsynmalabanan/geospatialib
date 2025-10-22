@@ -38,8 +38,12 @@ class SpatialRefSys(models.Model):
         managed = False
         db_table = 'spatial_ref_sys'
 
-    def __str__(self):
+    @property
+    def title(self):
         return f'{self.auth_name}:{self.srid}'
+
+    def __str__(self):
+        return self.title
 
 class URL(models.Model):
     path = models.URLField('Path', max_length=512, unique=True)
@@ -79,7 +83,7 @@ class Layer(models.Model):
     type = models.CharField('Type', max_length=32, blank=True, null=True)
     xField = models.CharField('X Field', max_length=32, blank=True, null=True)
     yField = models.CharField('Y Field', max_length=32, blank=True, null=True)
-    srid = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
+    srid:SpatialRefSys = models.ForeignKey("main.SpatialRefSys", verbose_name='SRID', on_delete=models.PROTECT, default=4326)
     bbox = models.PolygonField('Bounding Box', blank=True, null=True)
     tags = models.CharField('Overpass Tag', max_length=512, blank=True, null=True)
 
@@ -119,6 +123,9 @@ class Layer(models.Model):
         bbox = self.bbox
         data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
         
+        srid = self.srid
+        data['srid_title'] = srid.title
+
         collection = self.collection
         data['url'] = collection.url.path
         data['format'] = collection.format

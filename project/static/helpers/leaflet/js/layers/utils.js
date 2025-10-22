@@ -808,7 +808,8 @@ const createLayerIndexedDBKey = (params) => {
 }
 
 const addLayerFromData = async (el, {
-    map = getSearchMap()
+    map = getSearchMap(),
+    customStyleParams,
 }={}) => {
     const params = JSON.parse(el.dataset.layerParams)
 
@@ -819,6 +820,7 @@ const addLayerFromData = async (el, {
         indexedDBKey: createLayerIndexedDBKey(params),
         group: map?._handlers.getLayerGroups().library,
         add: true,
+        customStyleParams,
     })
 }
 
@@ -828,6 +830,7 @@ const createLeafletLayer = async (params, {
     group,
     add,
     properties,
+    customStyleParams,
 } = {}) => {
     const map = group._map
     const pane = createCustomPane(map)
@@ -848,6 +851,7 @@ const createLeafletLayer = async (params, {
             pane,
             params,
             properties,
+            customStyleParams,
         })
     } else {
         if (type === 'xyz') {
@@ -938,4 +942,10 @@ const fileToLeafletLayer = async ({
     const layer = await createLeafletLayer(params, {data, group, add})
     
     return layer
+}
+
+const getLayerFormat = (params) => {
+    return `${COLLECTION_FORMATS[params.format]}${
+        params.format === 'file' ? ` • ${params.type.toUpperCase()}` : ''
+    }`
 }
