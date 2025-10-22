@@ -176,10 +176,46 @@ const handleLeafletQueryPanel = (map, parent) => {
                     }
                 })
 
+                const overpassTagListId = generateRandomString()
+
+                let filterDatalistUpdateTimeout
                 const filterField = createFormFloating({
                     parent: container,
-                    fieldAttrs: {name:'overpassTag'},
+                    fieldAttrs: {name:'overpassTag', list: overpassTagListId},
                     labelText: 'Overpass tag/s (case-sensitive)',
+                    events: {
+                        input: (e) => {
+                            clearTimeout(filterDatalistUpdateTimeout)
+                            filterDatalistUpdateTimeout = setTimeout(async () => {
+                                const filterDatalist = container.querySelector(`#${overpassTagListId}`)
+                                filterDatalist.innerHTML = ''
+    
+                                let tags = []
+    
+                                const by_keyword = await (await fetchTimeout(`https://taginfo.openstreetmap.org/api/4/search/by_keyword?query=${e.target.value}`))?.json() ?? []
+                                if (by_keyword.total <= 100) {
+                                    by_keyword.data.forEach(i => tags.push(`["${i.key}"${i.value ? `="${i.value}"` : ''}]`))
+                                }
+                                
+                                const by_value = await (await fetchTimeout(`https://taginfo.openstreetmap.org/api/4/search/by_value?query=${e.target.value}`))?.json() ?? []
+                                by_value.data.reverse().splice(0, 100).forEach(i => {
+                                    tags.push(`["${i.key}"${i.value ? `="${i.value}"` : ''}]`)
+                                })
+    
+                                tags = Array.from(new Set(tags))
+                                tags.forEach(i => filterDatalist.appendChild(customCreateElement({
+                                    tag: 'option',
+                                    attrs: {value: i},
+                                })))
+                            }, 1000)
+                        }
+                    }
+                })
+
+                const filterDatalist = customCreateElement({
+                    parent: container,
+                    tag: 'datalist',
+                    id: overpassTagListId,
                 })
 
                 const link = customCreateElement({
