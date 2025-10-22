@@ -207,7 +207,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                                     tag: 'option',
                                     attrs: {value: i},
                                 })))
-                            }, 1000)
+                            }, 100)
                         }
                     }
                 })
