@@ -845,9 +845,10 @@ const getGeoJSONLayerStyles = (layer) => {
                 count: 0,
                 html: leafletLayerStyleToHTML(
                     getLeafletLayerStyle({
-                        properties: styleParams.iconType === 'property' ? {
-                            [styleParams.iconSpecs]:styleParams.iconSpecs
-                        } : {},
+                        properties: styleParams.iconType === 'property' ? styleParams.iconSpecs.reduce((acc, key) => {
+                            acc[key] = key
+                            return acc
+                        }, {}) : {},
                         geometry: {type:typeName}
                     }, {...styleParams, iconOffset:'0,0'}, {forLegend: true}),
                     typeName

@@ -746,6 +746,7 @@ const createTagifyField = ({
     inputClass = '',
     delimiters = null,
     whitelist = [],
+    enforceWhitelist = true,
     callbacks = {},
     dropdownClass = '', 
     userInput = true,
@@ -766,6 +767,7 @@ const createTagifyField = ({
 
     const tagifyObj = new Tagify(input, {
         whitelist,
+        enforceWhitelist,
         userInput,
         delimiters,
         callbacks,

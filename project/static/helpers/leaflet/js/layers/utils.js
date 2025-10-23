@@ -1,6 +1,7 @@
 const getLeafletStyleParams = ({
     iconType='bi',
-    iconSpecs='circle-fill',
+    iconSpecs=['circle-fill'],
+    iconDelimiter=' ',
     iconSize=10,
     iconRotation=0,
     iconOffset='0,0',
@@ -54,6 +55,7 @@ const getLeafletStyleParams = ({
         patternBg,
         fillOpacity,
         iconSpecs,
+        iconDelimiter,
         iconSize,
         iconShadow,
         iconGlow,
@@ -76,7 +78,7 @@ const getLeafletStyleParams = ({
         fontSerif,
         lineBreak,
         textShadow,
-    }    
+    }     
 }
 
 const getLeafletLayerStyle = (feature, styleParams={}, {
@@ -96,6 +98,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         patternBg,
         fillOpacity,
         iconSpecs,
+        iconDelimiter,
         iconSize,
         iconShadow,
         iconGlow,
@@ -128,7 +131,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     //     allowCircleMarker
     //     && isPoint 
     //     && iconType === 'bi' 
-    //     && iconSpecs === 'circle-fill'
+    //     && iconSpecs.length === 1
+    //     && iconSpecs[0] === 'circle-fill'
     //     && !iconShadow
     //     && !iconGlow
     //     && !boldFont
@@ -143,15 +147,15 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         const svg = document.querySelector(`svg#${fillPatternId}-svg`)
         if (forLegend || !svg || Array('html', 'property').includes(iconType) || (textWrap && Array('text').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType)
-            ? customCreateElement({innerHTML:iconSpecs}).firstChild 
+            ? customCreateElement({innerHTML:iconSpecs[0]}).firstChild 
             : iconType === 'img' ? customCreateElement({
-                innerHTML:removeWhitespace(`<img src="${iconSpecs}" alt="icon">`)
+                innerHTML:removeWhitespace(`<img src="${iconSpecs[0]}" alt="icon">`)
             }).firstChild
             : customCreateElement({
                 innerHTML: (
-                    iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : 
-                    Array('text', 'emoji').includes(iconType) ? iconSpecs : 
-                    iconType === 'property' ? feature.properties?.[iconSpecs] ?? '' : 
+                    iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs[0]] ?? 'F287'};` : 
+                    Array('text', 'emoji').includes(iconType) ? iconSpecs[0] : 
+                    iconType === 'property' ? iconSpecs.map(i => feature.properties?.[i]).join(iconDelimiter) ?? '' : 
                     ''
                 ),
                 style: {
@@ -410,6 +414,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             patternBg,
             fillOpacity,
             iconSpecs,
+            iconDelimiter,
             iconSize,
             iconShadow,
             iconGlow,
@@ -472,7 +477,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             style: {opacity:fillOpacity}
         })
 
-        if (!iconSpecs) throw new Error('No icon specification.')
+        if (!iconSpecs.length) throw new Error('No icon specification.')
 
         const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html', 'property').includes(iconType) ? 
             Math.max(
@@ -484,7 +489,15 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         const [width, height, outerHTML] = (() => {
             const style = getLeafletLayerStyle(
-                {geometry:{type:'MultiPoint'}}, {
+                {
+                    // properties: iconType === 'property' ? iconSpecs.reduce((acc, key) => {
+                    //     acc[key] = key
+                    //     return acc
+                    // }, {}) : {},
+                    geometry:{
+                        type:'MultiPoint', 
+                    }
+                }, {
                     ...styleParams, 
                     fillPatternId:null, 
                     textWrap:false,
@@ -495,6 +508,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
                     allowCircleMarker: false,
                 }
             )
+
             const tempElement =  customCreateElement({
                 innerHTML: leafletLayerStyleToHTML(style, 'point')
             }).firstChild
@@ -524,13 +538,13 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         if (Array('svg', 'img').includes(iconType)) {
             if (iconType === 'svg') {
-                defs.innerHTML = iconSpecs
+                defs.innerHTML = iconSpecs[0]
                 icon = defs.firstChild
             }
             
             if (iconType === 'img') {
                 icon = document.createElementNS(svgNS, 'image')
-                icon.setAttribute('href', iconSpecs)
+                icon.setAttribute('href', iconSpecs[0])
                 defs.appendChild(icon)
             }
             
@@ -540,7 +554,11 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         
         if (Array('bi', 'text', 'emoji', 'property').includes(iconType)) {
             icon = document.createElementNS(svgNS, 'text')
-            icon.innerHTML = iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs] ?? 'F287'};` : iconSpecs ?? ''
+            icon.innerHTML = (
+                iconType === 'bi' ? `&#x${bootstrapIcons[iconSpecs[0]] ?? 'F287'};` : 
+                iconType === 'property' ? iconSpecs.join(iconDelimiter) : 
+                iconSpecs[0] ?? ''
+            )
             icon.setAttribute('class', removeWhitespace(`
                 text-center lh-1
                 ${textWrap ? 'text-wrap' : 'text-nowrap'}
@@ -574,7 +592,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         }
 
         const imgSrc = await createNewImage(
-            iconType === 'img' ? iconSpecs : dataUrl, {
+            iconType === 'img' ? iconSpecs[0] : dataUrl, {
                 opacity:fillOpacity,
                 angle:iconRotation,
                 width: patternWidth,

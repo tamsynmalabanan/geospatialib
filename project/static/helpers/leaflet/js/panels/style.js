@@ -385,10 +385,10 @@ const handleLeafletStylePanel = (map, parent) => {
 
         const iconType = createFormFloating({
             parent: iconFields,
-            containerClass: 'w-25 flex-grow-1',
+            containerClass: 'w-10 flex-grow-1',
             fieldTag: 'select',
             fieldAttrs: {name: `${id}-iconType`},
-            fieldClass: 'form-select-sm',
+            fieldClass: 'form-select-sm h-100',
             labelText: 'Icon type',
             options: {
                 'bi': 'bootstrap icon',
@@ -397,7 +397,7 @@ const handleLeafletStylePanel = (map, parent) => {
                 'img': 'image url',
                 'svg': 'svg element',
                 'html': 'html element',
-                'property': 'feature property',
+                'property': 'feature properties',
             },
             currentValue: styleParams.iconType,
             events: {
@@ -405,63 +405,91 @@ const handleLeafletStylePanel = (map, parent) => {
                     const value = e.target.value
                     if (value === styleParams.iconType) return
 
-                    const iconSpecs = parent.querySelector(`[name="${id}-iconSpecs"]`)
-                    styleParams.iconSpecs = iconSpecs.value = value === 'bi' ? 'circle-fill' : ''
+                    styleParams.iconSpecs = value === 'bi' ? ['circle-fill'] : []
+                    
+                    const tagify = Tagify(form.elements[`${id}-iconSpecs`])
+                    tagify.removeAllTags()
+                    value === 'bi' ? tagify.addTags(['circle-fill']) : null
+
+                    tagify.settings.maxTags = value === 'property' ? 10 : 1
+
+                    form.elements[`${id}-iconDelimiter`].parentElement.classList.toggle('d-none', value !== 'property')
 
                     styleParams.iconType = value
-                    updateIconDatalistOptions()
                     update()
                 }
             }
         })
 
-        const iconDatalist = customCreateElement({
-            tag:'datalist', 
-            parent:iconFields,
-        })
-
-        const updateIconDatalistOptions = async () => {
-            iconDatalist.innerHTML = ''
-
-            const iconType = styleParams.iconType
-
-            if (iconType === 'bi') setBootstrapIconsAsOptions(iconDatalist)
-
-            if (iconType === 'property') {
-                const options = layer._properties.info.attributes
-                const sortedOptions = [...(options.length ? new Set(options) : [])].sort()
-                    
-                for (const i of sortedOptions) {
-                    const option = document.createElement('option')
-                    option.value = i
-                    iconDatalist.appendChild(option)
-                }
-            }
-        }
-
-        const iconSpecs = createFormFloating({
+        const iconSpecs = createTagifyField({
             parent: iconFields,
-            containerClass: 'd-flex w-100 flex-grow-1',
-            fieldAttrs: {
-                name:`${id}-iconSpecs`,
-                type: 'search',
-                value: styleParams.iconSpecs,
-                list: (() => {
-                    updateIconDatalistOptions()
-                    return iconDatalist.id
-                })()
-            },
-            fieldClass: 'form-control-sm',
-            labelText: 'Icon',
+            inputClass: `w-25 flex-grow-1 border rounded p-1 d-flex flex-wrap gap-1`,
+            inputTag: 'textarea',
+            maxTags: styleParams.iconType === 'property' ? 10 : 1,
+            enforceWhitelist: false,
+            delimiters: null,
+            enabled: 0,
+            disabled: false,
+            dropdownClass:  `my-1 border-0`,
+            userInput: true,
+            scopeStyle: {minHeight: '58px'},
+            name: `${id}-iconSpecs`,
+            placeholder: 'Add icon specifications',
+            currentValue: JSON.stringify((styleParams.iconSpecs || []).map(i => {return {value:i}})),
             events: {
-                change: (e) => {
-                    let value = e.target.value.trim()
+                click: async (e) => {
+                    const tagify = Tagify(form.elements[`${id}-iconSpecs`])
                     
-                    if (!value && styleParams.iconType === 'bi') {
-                        value = e.target.value = 'circle-fill'
+                    let options = []
+    
+                    const iconType = styleParams.iconType
+                    if (iconType === 'bi') {
+                        options = Object.keys(bootstrapIcons)
+                    }
+
+                    if (iconType === 'property') {
+                        options = layer._properties.info.attributes
                     }
                     
-                    styleParams.iconSpecs = value
+                    const optionsSet = options.length ? new Set(options) : []
+                    const sortedOptions = [...optionsSet].sort()
+    
+                    tagify.settings.whitelist = sortedOptions
+                },
+            },
+            callbacks: {
+                ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
+                    const tagify = e.detail.tagify
+                    let values = tagify.value.map(i => i.value)
+                    console.log(tagify, values)
+                   
+                    if (values.every(i => styleParams.iconSpecs.includes(i))
+                        && styleParams.iconSpecs.every(i => values.includes(i))
+                    ) return
+
+                    styleParams.iconSpecs = values
+                    update()
+                }])))()
+            }
+        })
+
+        const iconDelimiter = createFormFloating({
+            parent: iconFields,
+            containerClass: `w-10 flex-grow-1 ${styleParams.iconType === 'property' ? '' : 'd-none'}`,
+            fieldAttrs: {
+                type: 'text',
+                value: styleParams.iconDelimiter ?? ' ',
+                name: `${id}-iconDelimiter`,
+            },
+            fieldClass: 'form-control-sm h-100',
+            labelText: 'Delimiter',
+            labelClass: 'text-wrap',
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === styleParams.iconDelimiter) return
+
+                    styleParams.iconDelimiter = value
                     update()
                 }
             }
