@@ -193,21 +193,19 @@ const handleLeafletQueryPanel = (map, parent) => {
                                 let tags = []
                                 
                                 const by_value = await (await fetchTimeout(`https://taginfo.openstreetmap.org/api/4/search/by_value?query=${e.target.value}`))?.json() ?? []
-                                by_value.data.reverse().splice(0, 50).forEach(i => {
+                                by_value.data.reverse().forEach(i => {
                                     tags.push(`["${i.key}"${i.value ? `="${i.value}"` : ''}]`)
                                 })
     
                                 const by_keyword = await (await fetchTimeout(`https://taginfo.openstreetmap.org/api/4/search/by_keyword?query=${e.target.value}`))?.json() ?? []
-                                if (by_keyword.total <= 50) {
-                                    by_keyword.data.forEach(i => tags.push(`["${i.key}"${i.value ? `="${i.value}"` : ''}]`))
-                                }
+                                by_keyword.data.forEach(i => tags.push(`["${i.key}"${i.value ? `="${i.value}"` : ''}]`))
     
                                 tags = Array.from(new Set(tags))
                                 tags.forEach(i => filterDatalist.appendChild(customCreateElement({
                                     tag: 'option',
                                     attrs: {value: i},
                                 })))
-                            }, 100)
+                            }, 500)
                         }
                     }
                 })
