@@ -846,7 +846,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         }
                     },            
                     checked: {
-                        innerText: `Remove all checked layers`,
+                        innerText: `Remove checked layers`,
                         btnCallback: async () => {
                             const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
                             if (elements.every(el => el.querySelector('.form-check-input').checked)) {
@@ -861,7 +861,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         }
                     },            
                     unchecked: {
-                        innerText: `Remove all unchecked layers`,
+                        innerText: `Remove unchecked layers`,
                         btnCallback: async () => {
                             const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
                             if (elements.every(el => !el.querySelector('.form-check-input').checked)) {
@@ -876,7 +876,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         }
                     },            
                     broken: {
-                        innerText: `Remove all broken layers`,
+                        innerText: `Remove broken layers`,
                         btnCallback: async () => {
                             const elements = Array.from(layers.querySelectorAll('[data-layer-legend="true"]'))
                             if (elements.every(el => el.querySelector('.bi-bug'))) {
