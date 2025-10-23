@@ -31,25 +31,31 @@ class Command(BaseCommand):
         return [
             i.get('key') for i in data
             if i.get('key') not in discardable_keys
-            and i.get('count_all', 0) > self.min_count
-            and i.get('values_all', 0) != 0
             and i.get('in_wiki') is True
+            and i.get('values_all', 0) != 0
+            and i.get('count_all', 0) > self.min_count
         ]
 
     def get_tag_description(self, key, value):
         data = self.get_data(f'https://taginfo.openstreetmap.org/api/4/tag/overview?key={key}&value={value}', {})
+        return self.get_description(data)
+    
+    def get_description(self, data):
         descriptions = data.get('description', {})
         if len(descriptions) > 0:
             return descriptions.get('en', descriptions.get(list(descriptions.keys())[0], {})).get('text', '').strip()
         return ''
-
+    
     def get_key_overview(self, key):
         data = self.get_data(f'https://taginfo.openstreetmap.org/api/4/key/overview?key={key}', {})
-        overview = {'prevalent_values': [i.get('value') for i in data.get('prevalent_values', [])]}
-        descriptions = data.get('description', {})
-        if len(descriptions) > 0:
-            overview['description'] = descriptions.get('en', descriptions.get(list(descriptions.keys())[0], {})).get('text', '').strip()
-        return overview
+        return {
+            'prevalent_values': [
+                i.get('value') 
+                for i in data.get('prevalent_values', [])
+                if i.get('count') > self.min_count
+            ],
+            'description': self.get_description(data)
+        }
 
     def get_related_keys(self, key):
         data = self.get_data(f'https://taginfo.openstreetmap.org/api/4/key/combinations?key={key}', [])
@@ -77,12 +83,6 @@ class Command(BaseCommand):
 
         return file_path
 
-    def is_number(self, value):
-        try:
-            return int(value)
-        except Exception as e:
-            return False
-
     def handle(self, *args, **kwargs):
         file_path = self.get_file_path()
         keys = self.get_valid_keys()
@@ -102,10 +102,7 @@ class Command(BaseCommand):
                     logger.info(f'{count}/{total_count}')
                     
                     key_overview = self.get_key_overview(key)
-                    prevalent_values = [
-                        i for i in key_overview.get('prevalent_values', [])
-                        if not self.is_number(i)
-                    ]
+                    prevalent_values = key_overview.get('prevalent_values', [])
                     keywords = ['openstreetmap', 'osm', key]
 
                     data = {
