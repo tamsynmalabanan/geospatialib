@@ -171,7 +171,7 @@ CELERY_TASK_ROUTES = {
 # CELERY_TIMEZONE = 'UTC'
 
 # Optional: This is to ensure Django sessions are stored in Redis
-SESSION_ENGINE = f'django.contrib.sessions.backends.{config('SESSION_ENGINE')}'
+SESSION_ENGINE = f'django.contrib.sessions.backends.{config("SESSION_ENGINE")}'
 SESSION_CACHE_ALIAS = 'default'
 
 LEAFLET_CONFIG = {
