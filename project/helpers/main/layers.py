@@ -17,6 +17,8 @@ from functools import cached_property
 from geojson_transformer import GeoJsonTransformer
 import tempfile
 import gpxpy
+from osgeo import ogr
+
 
 
 from main.models import SpatialRefSys, Layer
@@ -157,7 +159,6 @@ def features_to_geometries(features, srid=4326):
 
 def get_geojson_bbox_polygon(geojson, srid=4326):
     geometries = features_to_geometries(geojson.get("features", []), srid)
-
     w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
     for geom in geometries:
         bbox = geom.extent
@@ -211,6 +212,46 @@ def gpx_to_geojson(file, params):
         return geojson.FeatureCollection(features), params
     except Exception as e:
         logger.error(f'gpx_to_geojson, {e}')
+        return None, None
+    
+def kml_to_geojson(file, params):
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".kml", delete=False) as tmp_kml:
+            content = file.getvalue()
+            if hasattr(content, 'encode'):
+                content = content.encode('utf-8')
+            tmp_kml.write(content)
+            tmp_kml.flush()
+            tmp_kml_path = tmp_kml.name
+
+        driver = ogr.GetDriverByName('KML')
+        datasource = driver.Open(tmp_kml_path)
+        if datasource is None:
+            raise RuntimeError("Failed to open KML data")
+
+        layer = datasource.GetLayer()
+        geojson = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+
+        for feature in layer:   
+            geom = feature.GetGeometryRef()
+            geojson_feature = {
+                "type": "Feature",
+                "geometry": json.loads(geom.ExportToJson()),
+                "properties": {}
+            }
+
+            for i in range(feature.GetFieldCount()):
+                field_name = feature.GetFieldDefnRef(i).GetName()
+                geojson_feature["properties"][field_name] = feature.GetField(i)
+            
+            geojson["features"].append(geojson_feature)
+
+        return geojson, params
+    except Exception as e:
+        logger.error(f'kml_to_geojson, {e}')
         return None, None
 
 def get_geojson_metadata(data):
@@ -312,6 +353,17 @@ def validate_gpx(url, name, params):
     except Exception as e:
         logger.error(f'validate_csv, {e}')
 
+def validate_kml(url, name, params):
+    try:
+        response = get_response(url, raise_for_status=True)
+        geojson_obj, params = kml_to_geojson(io.StringIO(response.text), params)
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_kml, {e}')
+
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
@@ -333,6 +385,9 @@ def validate_file(url, name, params):
 
         if name.endswith('.gpx'):
             geojson_obj, params = gpx_to_geojson(file, params)
+
+        if name.endswith('.kml'):
+            geojson_obj, params = kml_to_geojson(file, params)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)
@@ -383,6 +438,7 @@ LAYER_VALIDATORS = {
     'geojson': validate_geojson,
     'csv': validate_csv,
     'gpx': validate_gpx,
+    'kml': validate_kml,
     'file': validate_file,
     'xyz': validate_xyz,
     'ogc-wfs': validate_ogc,

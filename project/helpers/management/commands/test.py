@@ -10,6 +10,7 @@ from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
 from main.forms import ValidateCollectionForm
 from main.agent import create_thematic_map
+import io
 
 import xml.etree.ElementTree as ET
 from owslib.wms import WebMapService
@@ -53,4 +54,11 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
+        from helpers.main.layers import validate_kml, validate_file
+        print(validate_file(
+            url="https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/test_kml.zip",
+            # url="https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/test_kml.kml",
+            name='test_kml.zip/test_kml.kml',
+            params={}
+        ))
         self.stdout.write(self.style.SUCCESS('Done.'))

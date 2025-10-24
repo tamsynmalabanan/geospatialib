@@ -4,6 +4,7 @@ COLLECTION_FORMATS = {
     'geojson': 'GeoJSON',
     'csv': 'CSV',
     'gpx': 'GPX',
+    'kml': 'KML',
     'file': 'File',
     'xyz': 'XYZ Tiles',
     'ogc-wfs': 'OGC Web Feature Service',

@@ -164,7 +164,21 @@ const fetchGPX = async (params, {abortBtns, controller} = {}) => {
             const gpx = await response.text()
             const dom = (new DOMParser()).parseFromString(gpx, 'text/xml')
             const geojson = toGeoJSON.gpx(dom)
-            console.log(geojson)
+            return geojson
+        }
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
+const fetchKML = async (params, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(params.url, {
+        abortBtns,
+        controller,
+        callback: async (response) => {
+            const kml = await response.text()
+            const dom = (new DOMParser()).parseFromString(kml, 'text/xml')
+            const geojson = toGeoJSON.kml(dom, { styles: true })
             return geojson
         }
     }).catch(error => {
@@ -185,6 +199,11 @@ const rawDataToLayerData = (rawData, params) => {
         if (params.type === 'gpx') {
             const dom = (new DOMParser()).parseFromString(rawData, 'text/xml')
             return toGeoJSON.gpx(dom)
+        }
+    
+        if (params.type === 'kml') {
+            const dom = (new DOMParser()).parseFromString(rawData, 'text/xml')
+            return toGeoJSON.kml(dom, { styles: true })
         }
 
         const normalRawData = rawData.toLowerCase()

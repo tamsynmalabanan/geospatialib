@@ -59,11 +59,11 @@
                                 144
                             {% elif type == 'xyz' %}
                                 180
-                            {% elif type == 'osm' %}
+                            {% elif type == 'osm' or type === 'overpass' or type === 'json' %}
                                 216
-                            {% elif type == 'overpass' %}
-                                252
                             {% elif type == 'kml' or type == 'kmz' %}
+                                252
+                            {% elif type == 'unknown' %}
                                 288
                             {% else %}
                                 324

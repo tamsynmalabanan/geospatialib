@@ -419,6 +419,7 @@ const fetchGeoJSONHandlers = (name) => {
         file: fetchFileData,
         csv: fetchCSV,
         gpx: fetchGPX,
+        kml: fetchKML,
         'ogc-wms': fetchWMSData,
         'ogc-wfs': fetchWFSData,
     }[name]
@@ -430,6 +431,7 @@ const staticVectorFormats = [
     'geojson',
     'csv',
     'gpx',
+    'kml',
     'osm',
 ]
 
