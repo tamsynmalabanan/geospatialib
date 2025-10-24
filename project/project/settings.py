@@ -44,7 +44,7 @@ ALLOWED_HOSTS = [
     'localhost',
     config('HOST_IP'),
     config('HOST_DOMAIN'),
-    f'www.{config('HOST_DOMAIN')}',
+    f'www.{config("HOST_DOMAIN")}',
 ]
 
 AUTH_USER_MODEL = 'customuser.User'
