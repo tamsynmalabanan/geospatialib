@@ -14,6 +14,9 @@ import osm2geojson
 import codecs
 import os
 from functools import cached_property
+from geojson_transformer import GeoJsonTransformer
+import tempfile
+import gpxpy
 
 
 from main.models import SpatialRefSys, Layer
@@ -183,6 +186,32 @@ def csv_to_geojson(file, params):
     except Exception as e:
         logger.error(f'csv_to_geojson, {e}')
         return None, None
+    
+def gpx_to_geojson(file, params):
+    try:
+        gpx = gpxpy.parse(file)
+
+        features = []
+
+        for track in gpx.tracks:
+            for segment in track.segments:
+                coords = [(point.longitude, point.latitude) for point in segment.points]
+                line = geojson.LineString(coords)
+                features.append(geojson.Feature(geometry=line, properties={"name": track.name}))
+
+        for route in gpx.routes:
+            coords = [(point.longitude, point.latitude) for point in route.points]
+            line = geojson.LineString(coords)
+            features.append(geojson.Feature(geometry=line, properties={"name": route.name}))
+
+        for waypoint in gpx.waypoints:
+            point = geojson.Point((waypoint.longitude, waypoint.latitude))
+            features.append(geojson.Feature(geometry=point, properties={"name": waypoint.name}))
+
+        return geojson.FeatureCollection(features), params
+    except Exception as e:
+        logger.error(f'gpx_to_geojson, {e}')
+        return None, None
 
 def get_geojson_metadata(data):
     bounds = None
@@ -271,6 +300,18 @@ def validate_csv(url, name, params):
     except Exception as e:
         logger.error(f'validate_csv, {e}')
 
+def validate_gpx(url, name, params):
+    try:
+        response = get_response(url, raise_for_status=True)
+        geojson_obj, params = gpx_to_geojson(io.StringIO(response.text), params)
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_csv, {e}')
+
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
@@ -285,11 +326,13 @@ def validate_file(url, name, params):
             file = files.get(os.path.normpath(name))
         
         geojson_obj = None
-        srid = DEFAULT_SRID
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
 
         if name.endswith('.csv'):
-            srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
             geojson_obj, params = csv_to_geojson(file, params)
+
+        if name.endswith('.gpx'):
+            geojson_obj, params = gpx_to_geojson(file, params)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)
@@ -339,6 +382,7 @@ LAYER_VALIDATORS = {
     'osm': validate_osm,
     'geojson': validate_geojson,
     'csv': validate_csv,
+    'gpx': validate_gpx,
     'file': validate_file,
     'xyz': validate_xyz,
     'ogc-wfs': validate_ogc,

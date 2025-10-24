@@ -150,13 +150,6 @@ const getLeafletLayerContextMenu = async (event, layer, {
             }
         },
 
-        // (de)select all,
-        // separate select/deselect
-        // reverse selection
-        // tools covrage - selected
-        // export geojson/csv - selected
-        // indexeddb update, if 
-
         edit: !editableLayer ? null : {
             divider: true,
         },

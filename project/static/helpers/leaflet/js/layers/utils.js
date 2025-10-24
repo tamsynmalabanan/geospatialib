@@ -768,6 +768,7 @@ const urlToLeafletLayer = async ({
 
     const format = params.format
     const indexedDBKey = createLayerIndexedDBKey(params)
+    console.log(params, indexedDBKey)
 
     const fileName = params.name.split('.')
     params.type = format === 'file' ? (params.type ?? fileName[fileName.length-1]) : (params.type ?? format)
@@ -861,7 +862,7 @@ const createLeafletLayer = async (params, {
 
     let layer
 
-    if (Array(format, type).some(i => Array('geojson', 'csv', 'wfs', 'osm', 'overpass', 'unknown', 'json').includes(i))) {
+    if (Array(format, type).some(i => Array('geojson', 'csv', 'gpx', 'wfs', 'osm', 'overpass', 'unknown', 'json').includes(i))) {
         layer = await getLeafletGeoJSONLayer({
             indexedDBKey,
             geojson: data,

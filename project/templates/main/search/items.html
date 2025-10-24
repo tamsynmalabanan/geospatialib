@@ -50,19 +50,23 @@
                             {% if type == 'wms' %}
                                 0
                             {% elif type == 'wfs' %}
-                                45
+                                36
                             {% elif type == 'geojson' %}
-                                90
+                                72
                             {% elif type == 'csv' %}
-                                135
+                                108
+                            {% elif type == 'gpx' %}
+                                144
                             {% elif type == 'xyz' %}
                                 180
                             {% elif type == 'osm' %}
-                                225
+                                216
                             {% elif type == 'overpass' %}
-                                270
+                                252
+                            {% elif type == 'kml' or type == 'kmz' %}
+                                288
                             {% else %}
-                                315
+                                324
                             {% endif %}
                         , 100%, 25%, 1);"
                     >{{type}}</span>

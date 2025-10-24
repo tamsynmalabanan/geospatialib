@@ -63,6 +63,8 @@ def guess_format_from_url(url):
         ],
         'csv': [
         ],
+        'gpx': [
+        ],
         'geojson': [
         ],
         'overpass': [
@@ -88,7 +90,7 @@ def get_layers(url, format):
 
             url = unquote(url)
 
-            if format in ['geojson', 'csv', 'osm']:
+            if format in ['geojson', 'csv', 'gpx', 'osm']:
                 name = os.path.normpath(url).split(os.sep)[-1]
                 layers = {name: {
                     'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
@@ -178,7 +180,7 @@ def get_collection_data(url, format=None):
         data.update({'layers': layers, 'collection': collection})
         return data
 
-    if cached_layers_count > 0:
+    if cached_layers_count > 0 and format not in ['gpx']:
         data['layers'] = cached_layers
         return data
     

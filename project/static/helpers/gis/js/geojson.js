@@ -418,6 +418,7 @@ const fetchGeoJSONHandlers = (name) => {
         geojson: fetchGeoJSON,
         file: fetchFileData,
         csv: fetchCSV,
+        gpx: fetchGPX,
         'ogc-wms': fetchWMSData,
         'ogc-wfs': fetchWFSData,
     }[name]
@@ -428,6 +429,7 @@ const staticVectorFormats = [
     'file',
     'geojson',
     'csv',
+    'gpx',
     'osm',
 ]
 
@@ -515,7 +517,6 @@ const getGeoJSON = async (dbKey, {
                     if (controller?.signal.aborted) return
                     
                     const params = JSON.parse(handlerParams)
-                    
                     const geojson = await fetchGeoJSONHandlers(handlerName)(
                         ...Object.values(params), {
                             queryGeom,

@@ -156,6 +156,22 @@ const fetchCSV = async (params, {abortBtns, controller} = {}) => {
     })
 }
 
+const fetchGPX = async (params, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(params.url, {
+        abortBtns,
+        controller,
+        callback: async (response) => {
+            const gpx = await response.text()
+            const dom = (new DOMParser()).parseFromString(gpx, 'text/xml')
+            const geojson = toGeoJSON.gpx(dom)
+            console.log(geojson)
+            return geojson
+        }
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
 const rawDataToLayerData = (rawData, params) => {
     try {
         if (params.type === 'geojson') {
@@ -164,6 +180,11 @@ const rawDataToLayerData = (rawData, params) => {
     
         if (params.type === 'csv') {
             return csvToGeoJSON(rawData, params)
+        }
+    
+        if (params.type === 'gpx') {
+            const dom = (new DOMParser()).parseFromString(rawData, 'text/xml')
+            return toGeoJSON.gpx(dom)
         }
 
         const normalRawData = rawData.toLowerCase()
