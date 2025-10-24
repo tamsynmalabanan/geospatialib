@@ -193,7 +193,7 @@ const handleLeafletQueryPanel = (map, parent) => {
                                 let tags = []
                                 
                                 const by_value = await (await fetchTimeout(`https://taginfo.openstreetmap.org/api/4/search/by_value?query=${e.target.value}`))?.json() ?? []
-                                by_value.data.reverse().forEach(i => {
+                                by_value.data.reverse().splice(0,10).forEach(i => {
                                     tags.push(`["${i.key}"${i.value ? `="${i.value}"` : ''}]`)
                                 })
     
