@@ -36,7 +36,6 @@ def get_world_gdf():
     world = cache.get('world_gdf')
 
     if world is None:
-        logger.info('NO CACHED WORLD GDF!!!')
         shapefile_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 
             "data/ne_110m_admin_0_countries", 
