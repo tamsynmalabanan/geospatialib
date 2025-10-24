@@ -17,7 +17,7 @@ from functools import cached_property
 from geojson_transformer import GeoJsonTransformer
 import tempfile
 import gpxpy
-from osgeo import ogr
+# from osgeo import ogr
 
 
 
@@ -224,30 +224,30 @@ def kml_to_geojson(file, params):
             tmp_kml.flush()
             tmp_kml_path = tmp_kml.name
 
-        driver = ogr.GetDriverByName('KML')
-        datasource = driver.Open(tmp_kml_path)
-        if datasource is None:
-            raise RuntimeError("Failed to open KML data")
+        # driver = ogr.GetDriverByName('KML')
+        # datasource = driver.Open(tmp_kml_path)
+        # if datasource is None:
+        #     raise RuntimeError("Failed to open KML data")
 
-        layer = datasource.GetLayer()
-        geojson = {
-            "type": "FeatureCollection",
-            "features": []
-        }
+        # layer = datasource.GetLayer()
+        # geojson = {
+        #     "type": "FeatureCollection",
+        #     "features": []
+        # }
 
-        for feature in layer:   
-            geom = feature.GetGeometryRef()
-            geojson_feature = {
-                "type": "Feature",
-                "geometry": json.loads(geom.ExportToJson()),
-                "properties": {}
-            }
+        # for feature in layer:   
+        #     geom = feature.GetGeometryRef()
+        #     geojson_feature = {
+        #         "type": "Feature",
+        #         "geometry": json.loads(geom.ExportToJson()),
+        #         "properties": {}
+        #     }
 
-            for i in range(feature.GetFieldCount()):
-                field_name = feature.GetFieldDefnRef(i).GetName()
-                geojson_feature["properties"][field_name] = feature.GetField(i)
+        #     for i in range(feature.GetFieldCount()):
+        #         field_name = feature.GetFieldDefnRef(i).GetName()
+        #         geojson_feature["properties"][field_name] = feature.GetField(i)
             
-            geojson["features"].append(geojson_feature)
+        #     geojson["features"].append(geojson_feature)
 
         return geojson, params
     except Exception as e:
