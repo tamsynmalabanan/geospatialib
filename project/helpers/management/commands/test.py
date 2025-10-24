@@ -54,11 +54,12 @@ def test_get_collection_data():
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
-        # from helpers.main.layers import validate_kml, validate_file
-        # print(validate_file(
-        #     url="https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/test_kml.zip",
-        #     # url="https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/test_kml.kml",
-        #     name='test_kml.zip/test_kml.kml',
-        #     params={}
-        # ))
+        from helpers.main.layers import validate_kml, validate_file
+        print(validate_file(
+            url="https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/test_kml.zip",
+            name='test_kml.zip/test_kml.kml',
+            # url="https://github.com/tamsynmalabanan/gis-data/raw/refs/heads/main/test_kml.kml",
+            # name='test_kml.kml',
+            params={}
+        ))
         self.stdout.write(self.style.SUCCESS('Done.'))
