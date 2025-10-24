@@ -158,7 +158,7 @@ class Layer(models.Model):
                         logger.error(f'{e}, {tag}')
 
             if self.type == 'wms':
-                thumbnails = [f"{self.collection.url.path}?{urlencode({
+                thumbnails = [f'{self.collection.url.path}?{urlencode({
                     "service": "WMS",
                     "version": "1.3.0",
                     "request": "GetMap",
@@ -170,7 +170,7 @@ class Layer(models.Model):
                     "height": "180",
                     "format": "image/png",
                     "transparent": "true"
-                })}" for style in json.loads(self.styles)]
+                })}' for style in json.loads(self.styles)]
             
             if self.type == 'xyz':
                 thumbnails = [i for i in [create_xyz_map(self.collection.url.path)] if i]
