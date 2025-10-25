@@ -35,8 +35,9 @@ class Command(BaseCommand):
             return
         
         overpass_collection, _ = Collection.objects.get_or_create(
-            url=URL.objects.get_or_create(path='https://overpass-api.de/api/interpreter')[0], 
-            format='overpass'
+            url=URL.objects.get_or_create(path='https://overpass-api.de/api/interpreter')[0],
+            format='overpass',
+            defaults={'dynamic': True}
         )
         srs = SpatialRefSys.objects.filter(srid=4326).first()
 
