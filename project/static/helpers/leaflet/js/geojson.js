@@ -862,7 +862,11 @@ const getGeoJSONLayerStyles = (layer) => {
         const featureType = feature.geometry.type.toLowerCase()
         const groupId = feature.properties.__groupId__ ?? ""
         const style = styles[groupId] ?? styles['']
-        style.types[featureType.split('multi')[featureType.split('multi').length-1]].count +=1
+        
+        const type = style.types[featureType.split('multi')[featureType.split('multi').length-1]]
+        if (type) {
+            type.count +=1
+        }
     })
 
     Object.keys(styles).forEach(i => {
