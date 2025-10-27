@@ -221,7 +221,7 @@ const rawDataToLayerData = (rawData, params) => {
 const mapForFetchFileData = new Map()
 const fetchFileData = async (params, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
-        const file = filesArray.find(file => file.name === params.name)
+        const file = filesArray.find(file => file.name === params.name.replace('.kmz.bin', '.kmz'))
         if (!file) return
         
         const rawData = await getFileRawData(file)

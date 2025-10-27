@@ -182,7 +182,7 @@ def get_collection_data(url, format=None):
         data.update({'layers': layers, 'collection': collection})
         return data
 
-    if cached_layers_count > 0 and format not in ['kml']:
+    if cached_layers_count > 0 and format not in ['file']:
         data['layers'] = cached_layers
         return data
     

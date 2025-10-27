@@ -25,7 +25,7 @@ import re
 
 from main.models import SpatialRefSys, Layer
 from helpers.base.utils import get_response, get_response_file
-from helpers.base.files import extract_zip
+from helpers.base.files import extract_zip, is_zipped_file, ZIPPED_EXTENSIONS
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
 from helpers.base.utils import create_cache_key, get_special_characters
 
@@ -374,8 +374,7 @@ def validate_file(url, name, params):
         
         file = file_details.get('file')
         filename = file_details.get('filename','')
-        
-        if "zip" in file_details.get('content_type', ''):
+        if is_zipped_file(filename=filename, file_details=file_details):
             files = extract_zip(file, filename)
             file = files.get(os.path.normpath(name))
         
@@ -406,7 +405,7 @@ def validate_file(url, name, params):
                 pass
 
         if not geojson_obj:
-            raise Exception('No valid geojson.')
+            raise Exception(f'No valid geojson., {[url, name, params]}')
 
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
         params['srid'] = srid
