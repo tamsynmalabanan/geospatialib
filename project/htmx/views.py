@@ -117,9 +117,9 @@ def update_collection(request):
     update_collection_data(cache_key, updated_layers)
     return HttpResponse('Done.')
 
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
 def get_layer_forms(request):
-    layer_names = json.loads(request.GET.get('layerNames','[]'))
+    layer_names = json.loads(request.POST.get('layerNames','[]'))
     layers = {}
     for name in layer_names:
         filename = os.path.normpath(name).split(os.sep)[-1]

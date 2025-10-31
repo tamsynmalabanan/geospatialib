@@ -384,9 +384,10 @@ const makeMovable = (element) => {
 
 const isCompressedFile = (file) => {
     const compressedExtensions = ['zip', 'kmz', 'rar', '7z', 'tar', 'gz']
-    const fileName = file.name.toLowerCase()
-    const fileExtension = fileName.split('.').pop()
-    return compressedExtensions.includes(fileExtension)
+    return (
+        compressedExtensions.includes(file.name.toLowerCase().split('.').pop())
+        || compressedExtensions.some(i => (file.type ?? '').includes(i))
+    )
 }
 
 const getZippedFiles = async (zipFile, basePath) => {

@@ -25,7 +25,10 @@ def onboard_collection(self, cache_key):
 
     url = cached_collection.get('url')
     format = cached_collection.get('format')
-    layers = cached_collection.get('layers')
+    layers = {
+        k:v for k,v in cached_collection.get('layers', {}).items() 
+        if v.get('type') not in ['shx', 'dbf', 'prj', 'cpg']
+    }
 
     if COLLECTION_FORMATS.get(format) is None:
         return

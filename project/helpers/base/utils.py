@@ -144,12 +144,12 @@ def get_response_file(url):
     try:
         response = get_response(url, raise_for_status=True)
         content_type = response.headers.get('Content-Type', '')
-        extension = mimetypes.guess_extension(content_type)
         filename = url.split("/")[-1]
-        if extension and not filename.endswith(extension):
+        extension = mimetypes.guess_extension(content_type)
+        if len(filename.split('.')) == 1 and extension and extension != '.zip':
             filename += extension
         return {
-            'file': io.BytesIO(response.content), 
+            'file': io.BytesIO(response.content),
             'content_type': content_type,
             'filename': filename
         }

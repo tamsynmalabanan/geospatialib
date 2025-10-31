@@ -186,7 +186,23 @@ const fetchKML = async (params, {abortBtns, controller} = {}) => {
     })
 }
 
-const rawDataToLayerData = (rawData, params) => {
+const fetchSHP = async (params, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(params.url, {
+        abortBtns,
+        controller,
+        callback: async (response) => {
+            const buffer = await response.arrayBuffer()
+            const geojson = await shp({shp:buffer})
+            return geojson
+        }
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
+const rawDataToLayerData = async (rawData, params, {
+    filesArray=[]
+}) => {
     try {
         if (params.type === 'geojson') {
             return JSON.parse(rawData)
@@ -206,6 +222,21 @@ const rawDataToLayerData = (rawData, params) => {
             return toGeoJSON.kml(dom, { styles: true })
         }
 
+        if (params.type === 'shp') {
+            const name = params.name.split('.shp')[0]
+            const shpFiles = {}
+            for (const ext of ['shp', 'dbf', 'prj', 'cpg']) {
+                const file = filesArray.find(file => file.name === `${name}.${ext}`)
+                if (!file) continue
+    
+                const buffer = await file.arrayBuffer()
+                shpFiles[ext] = buffer
+            }
+            
+            const geojson = await shp(shpFiles)
+            return geojson
+        }
+
         const normalRawData = rawData.toLowerCase()
         if (
             Array(params.format, params.type).some(i => i === 'osm') 
@@ -221,13 +252,15 @@ const rawDataToLayerData = (rawData, params) => {
 const mapForFetchFileData = new Map()
 const fetchFileData = async (params, {abortBtns, controller} = {}) => {
     const handler = async (filesArray) => {
-        console.log(filesArray)
-        console.log(typeof filesArray[0])
-        const file = filesArray.find(file => file.name === params.name.replace('.kmz.bin', '.kmz'))
-        if (!file) return
+        const file = (
+            filesArray.length === 1 
+            ? filesArray[0] 
+            : filesArray.find(file => file.name === params.name)
+        )
+        if(!file) return
         
         const rawData = await getFileRawData(file)
-        const data = rawDataToLayerData(rawData, params)
+        const data = await rawDataToLayerData(rawData, params, {filesArray})
 
         return data
     }
@@ -244,10 +277,8 @@ const fetchFileData = async (params, {abortBtns, controller} = {}) => {
         callback: async (response) => {
             try {
                 const content = await response.blob()
-                const filesArray = await getValidFilesArray([
-                    new File([content],
-                        decodeURIComponent(url.split('/')[url.split('/').length-1]))
-                    ])
+                const file = new File([content], decodeURIComponent(url.split('/').splice(-1)), {type: content.type})
+                const filesArray = await getValidFilesArray([file])
                 return filesArray
             } catch (error) {
                 console.log(error)

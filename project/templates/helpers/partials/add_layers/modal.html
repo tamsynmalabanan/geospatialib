@@ -40,8 +40,22 @@
                         class="form-control"
                         type="file" 
                         multiple="true" 
-                        accept=".geojson, .zip, .csv, .gpx, .kml, .kmz, .osm, .json"
-                        hx-get="{% url 'htmx:get_layer_forms' %}" 
+                        accept="
+                            .geojson,
+                            .zip,
+                            .csv,
+                            .gpx,
+                            .kml,
+                            .kmz,
+                            .osm,
+                            .json,
+                            .shp,
+                            .dbf,
+                            .prj,
+                            .cpg,
+                            .shx,
+                        "
+                        hx-post="{% url 'htmx:get_layer_forms' %}" 
                         hx-trigger="get-file-forms" 
                         hx-target="#addLayersForm-files-layerNames"
                         hx-swap="innerHTML"

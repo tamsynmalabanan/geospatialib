@@ -10,9 +10,16 @@ from urllib.parse import unquote
 import logging
 logger = logging.getLogger('django')
 
+import re
+
+
+
 from helpers.base.utils import get_response_file
 
-ZIPPED_EXTENSIONS = ['zip', 'kmz', '.bin']
+ZIPPED_EXTENSIONS = ['zip', 'kmz', 'bin']
+
+def sanitize_filename(filename):
+    return re.sub(r'[<>:"/\\|?*]', '_', filename)
 
 def extract_zip(zip_file, base_path=""):
     files = {}
@@ -43,7 +50,7 @@ def is_zipped_file(filename:str=None, file_details:dict=None):
         i in file_details.get('content_type', '') 
         for i in ZIPPED_EXTENSIONS
     ]) or any([
-        filename.endswith(i) for i in ZIPPED_EXTENSIONS
+        filename.endswith(f'.{i}') for i in ZIPPED_EXTENSIONS
     ])
 
 def get_file_names(url):

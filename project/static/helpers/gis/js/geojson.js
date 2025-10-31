@@ -37,36 +37,39 @@ const normalizeGeoJSONFeature = async (feature, {
 
     if (feature.id) feature.properties.__source_id__ = feature.id
     
-    const geomType = feature.geometry.type
+    const geomType = feature.geometry?.type
     feature.properties.__geom_type__ = geomType
 
-    try {        
-        const [x,y] = geomType === 'Point' ? feature.geometry.coordinates : turf.centroid(feature).geometry.coordinates
-        feature.properties.__x__ = x
-        feature.properties.__y__ = y
-    } catch {}
+    if (geomType) {
+        try {        
+            const [x,y] = geomType === 'Point' ? feature.geometry.coordinates : turf.centroid(feature).geometry.coordinates
+            feature.properties.__x__ = x
+            feature.properties.__y__ = y
+        } catch {}
 
-    if (geomType.includes('Polygon')) {
-        try {
-            feature.properties.__area_sqm__ = turf.area(feature)
-        } catch {}
-        
-        try {
-            feature.properties.__perimeter_km__ = turf.length(turf.polygonToLine(feature))
-        } catch {}
+        if (geomType.includes('Polygon')) {
+            try {
+                feature.properties.__area_sqm__ = turf.area(feature)
+            } catch {}
+            
+            try {
+                feature.properties.__perimeter_km__ = turf.length(turf.polygonToLine(feature))
+            } catch {}
+        }
+    
+        if (geomType.includes('LineString')) {
+            try {
+                feature.properties.__length_km__ = turf.length(feature)
+            } catch {}
+        }
+    
+        if (geomType !== 'Point') {
+            try {
+                feature.properties.__bbox_wsen__ = turf.bbox(feature).join(', ')
+            } catch {}
+        }
     }
 
-    if (geomType.includes('LineString')) {
-        try {
-            feature.properties.__length_km__ = turf.length(feature)
-        } catch {}
-    }
-
-    if (geomType !== 'Point') {
-        try {
-            feature.properties.__bbox_wsen__ = turf.bbox(feature).join(', ')
-        } catch {}
-    }
 
     if (!feature.properties.__gsl_id__) {
         feature.properties.__gsl_id__ = await hashJSON(feature.properties)
@@ -108,7 +111,7 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "Polygon",
             "MultiPolygon",
         ]
-        const typeComparison = featureOrder.indexOf(a.geometry.type) - featureOrder.indexOf(b.geometry.type)
+        const typeComparison = featureOrder.indexOf(a.geometry?.type) - featureOrder.indexOf(b.geometry?.type)
         const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
 
         const comparison = (
@@ -420,6 +423,7 @@ const fetchGeoJSONHandlers = (name) => {
         csv: fetchCSV,
         gpx: fetchGPX,
         kml: fetchKML,
+        shp: fetchSHP,
         'ogc-wms': fetchWMSData,
         'ogc-wfs': fetchWFSData,
     }[name]
@@ -432,6 +436,7 @@ const staticVectorFormats = [
     'csv',
     'gpx',
     'kml',
+    'shp',
     'osm',
 ]
 

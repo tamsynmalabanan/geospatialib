@@ -18,14 +18,14 @@ from geojson_transformer import GeoJsonTransformer
 import tempfile
 import gpxpy
 from osgeo import ogr
-from fastkml import kml
-import re
+from zipfile import ZipFile
+import fiona
 
 
 
 from main.models import SpatialRefSys, Layer
 from helpers.base.utils import get_response, get_response_file
-from helpers.base.files import extract_zip, is_zipped_file, ZIPPED_EXTENSIONS
+from helpers.base.files import extract_zip, is_zipped_file, ZIPPED_EXTENSIONS, sanitize_filename
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
 from helpers.base.utils import create_cache_key, get_special_characters
 
@@ -188,6 +188,27 @@ def csv_to_geojson(file, params):
         return json.loads(gdf.to_json()), params
     except Exception as e:
         logger.error(f'csv_to_geojson, {e}')
+        return None, None
+
+def shp_to_geojson(files, shp_filename):
+    try:
+        name = shp_filename.split('.shp')[0]
+        sanitized_name = sanitize_filename(name)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for filename, fileobj in files.items():
+                if not filename.startswith(name):
+                    continue
+                extension = filename.split(name)[-1]
+                filepath = os.path.join(tmpdir, f'{sanitized_name}{extension}')
+                with open(filepath, 'wb') as f:
+                    f.write(fileobj.getbuffer())
+        
+            shp_path = os.path.join(tmpdir, f'{sanitized_name}.shp')
+            gdf = gpd.read_file(shp_path)
+            srid = SpatialRefSys.objects.filter(srid=gdf.crs.to_epsg()).first()
+            return json.loads(gdf.to_json()), srid
+    except Exception as e:
+        logger.error(f'shp_to_geojson, {e}')
         return None, None
     
 def gpx_to_geojson(file, params):
@@ -366,6 +387,19 @@ def validate_kml(url, name, params):
     except Exception as e:
         logger.error(f'validate_kml, {e}')
 
+def validate_shp(url, name, params):
+    try:
+        response = get_response(url, raise_for_status=True)
+        geojson_obj, params = shp_to_geojson({
+            name: io.StringIO(response.text)
+        }, name)
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_shp, {e}')
+
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
@@ -374,10 +408,13 @@ def validate_file(url, name, params):
         
         file = file_details.get('file')
         filename = file_details.get('filename','')
+        normpath = os.path.normpath(name)
         if is_zipped_file(filename=filename, file_details=file_details):
             files = extract_zip(file, filename)
-            file = files.get(os.path.normpath(name))
-        
+            file = files.get(normpath)
+        else:
+            files = None 
+
         geojson_obj = None
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
 
@@ -389,6 +426,9 @@ def validate_file(url, name, params):
 
         if name.endswith('.kml'):
             geojson_obj, params = kml_to_geojson(file, params)
+
+        if name.endswith('.shp'):
+            geojson_obj, srid = shp_to_geojson(files, normpath)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)
@@ -440,6 +480,7 @@ LAYER_VALIDATORS = {
     'csv': validate_csv,
     'gpx': validate_gpx,
     'kml': validate_kml,
+    'shp': validate_shp,
     'file': validate_file,
     'xyz': validate_xyz,
     'ogc-wfs': validate_ogc,

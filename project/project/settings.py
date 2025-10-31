@@ -378,7 +378,8 @@ LOGGING = {
         # },
         'error_file': {
             'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'concurrent_log_handler.ConcurrentRotatingFileHandler',
+            # 'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_DIR / 'error.log',
             'maxBytes': 1024 * 1024 * 5,  # 5MB
             'backupCount': 5,

@@ -67,6 +67,8 @@ def guess_format_from_url(url):
         ],
         'kml': [
         ],
+        'shp': [
+        ],
         'geojson': [
         ],
         'overpass': [
@@ -92,7 +94,7 @@ def get_layers(url, format):
 
             url = unquote(url)
 
-            if format in ['geojson', 'csv', 'gpx', 'kml', 'osm']:
+            if format in ['geojson', 'csv', 'gpx', 'kml', 'shp', 'osm']:
                 name = os.path.normpath(url).split(os.sep)[-1]
                 layers = {name: {
                     'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
