@@ -194,12 +194,15 @@ def shp_to_geojson(files, shp_filename):
     try:
         name = shp_filename.split('.shp')[0]
         sanitized_name = sanitize_filename(name)
+
         with tempfile.TemporaryDirectory() as tmpdir:
+            filepaths = []
             for filename, fileobj in files.items():
-                if not filename.startswith(name):
+                if not os.path.normpath(filename).startswith(name):
                     continue
                 extension = filename.split(name)[-1]
                 filepath = os.path.join(tmpdir, f'{sanitized_name}{extension}')
+                filepaths.append(filepath)
                 with open(filepath, 'wb') as f:
                     f.write(fileobj.getbuffer())
         
@@ -208,7 +211,7 @@ def shp_to_geojson(files, shp_filename):
             srid = SpatialRefSys.objects.filter(srid=gdf.crs.to_epsg()).first()
             return json.loads(gdf.to_json()), srid
     except Exception as e:
-        logger.error(f'shp_to_geojson, {e}')
+        # logger.error(f'shp_to_geojson, {e}')
         return None, None
     
 def gpx_to_geojson(file, params):
@@ -392,7 +395,7 @@ def validate_shp(url, name, params):
         response = get_response(url, raise_for_status=True)
         geojson_obj, params = shp_to_geojson({
             name: io.StringIO(response.text)
-        }, name)
+        }, os.path.normpath(name))
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
         params['srid'] = srid
@@ -451,7 +454,8 @@ def validate_file(url, name, params):
         params['srid'] = srid
         return params
     except Exception as e:
-        logger.error(f'validate_file error, {e}')
+        pass
+        # logger.error(f'validate_file error, {e}')
        
 def validate_xyz(url, name, params):
     try:
