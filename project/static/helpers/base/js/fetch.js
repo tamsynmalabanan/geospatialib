@@ -25,7 +25,7 @@ const htmxFetch = async (url, {
 };
 
 
-const fetchCORSProxy = async (url, fetchParams={}) => {
+const fetchContentViaCORSProxy = async (url, fetchParams={}) => {
     const params = {
         method: 'GET',
         headers: {'HX-Request': 'true'}
@@ -38,13 +38,32 @@ const fetchCORSProxy = async (url, fetchParams={}) => {
     }
     
     return fetch(
-        `/htmx/cors/proxy/?url=${encodeURIComponent(url)}`, 
+        `/htmx/cors/proxy/content/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {
             throw new Error('Response not ok.')
         }
 
+        return response
+    }).catch(error => {
+        throw error
+    })
+}
+
+const fetchHeadersViaCORSProxy = async (url) => {
+    const params = {
+        method: 'GET',
+        headers: {'HX-Request': 'true'}
+    }
+    
+    return fetch(
+        `/htmx/cors/proxy/headers/?url=${encodeURIComponent(url)}`, 
+        params
+    ).then(response => {
+        if (!response.ok && (response.status < 200 || response.status > 300)) {
+            throw new Error('Response not ok.')
+        }
         return response
     }).catch(error => {
         throw error
@@ -82,7 +101,7 @@ const fetchTimeout = async (url, {
         return response
     }).catch(async error => {
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            return await fetchCORSProxy(url, fetchParams)
+            return await fetchContentViaCORSProxy(url, fetchParams)
         } else {
             throw error
         }

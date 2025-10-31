@@ -277,7 +277,14 @@ const fetchFileData = async (params, {abortBtns, controller} = {}) => {
         callback: async (response) => {
             try {
                 const content = await response.blob()
-                const file = new File([content], decodeURIComponent(url.split('/').splice(-1)), {type: content.type})
+                const headers = await (() => {
+                    return fetchHeadersViaCORSProxy(url)
+                    .then(response => response.json())
+                    .catch(error => console.log(error))
+                })() ?? {}
+                const match = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(headers['Content-Disposition'] ?? '');
+                const filename = match ? match[1].replace(/['"]/g, '') : decodeURIComponent(url.split('/').splice(-1))
+                const file = new File([content], filename, {type: content.type})
                 const filesArray = await getValidFilesArray([file])
                 return filesArray
             } catch (error) {

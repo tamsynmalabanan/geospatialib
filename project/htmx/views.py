@@ -26,7 +26,7 @@ from main.models import SpatialRefSys, URL, Layer
 from main.forms import ValidateCollectionForm
 from main.tasks import onboard_collection
 from main import forms
-from helpers.base.utils import generate_uuid
+from helpers.base.utils import generate_uuid, get_response
 from helpers.main.constants import QUERY_BLACKLIST
 from helpers.main.layers import FilteredLayers
 from main.agent import create_thematic_map
@@ -133,8 +133,20 @@ def get_layer_forms(request):
         'layers': layers,
     })
     
+@require_http_methods(['GET'])
+def cors_proxy_headers(request):
+    url = request.GET.get('url')
+    if not url:
+        return JsonResponse({'error': 'URL parameter is required'}, status=400)
+    
+    try:
+        response = get_response(url, method='head')
+        return JsonResponse(dict(response.headers), status=200)
+    except Exception as e:
+        return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
+    
 @require_http_methods(['POST', 'GET'])
-def cors_proxy(request):
+def cors_proxy_content(request):
     url = request.GET.get('url')
     if not url:
         return JsonResponse({'error': 'URL parameter is required'}, status=400)
