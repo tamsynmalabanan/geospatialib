@@ -11,6 +11,7 @@ import requests
 import re
 from urllib.parse import urlparse, urlunparse, unquote
 import uuid
+import os
 
 import logging
 logger = logging.getLogger('django')
@@ -139,24 +140,26 @@ def get_response(
             logger.error(f'get_response, {e}')
     
     return response
+
+def get_filename_from_response(response, alt):
+    content_disposition = response.headers.get('content-disposition', '')
+    if content_disposition:
+        match = re.search(r'filename="?([^"]+)"?', content_disposition)
+        if match:
+            return match.group(1)
+    return alt
     
 def get_response_file(url):
     try:
         response = get_response(url, raise_for_status=True)
         content_type = response.headers.get('Content-Type', '')
-        content_disposition = response.headers.get('content-disposition', '')
-        
-        filename = url.split("/")[-1]
 
-        if content_disposition:
-            match = re.search(r'filename="?([^"]+)"?', content_disposition)
-            if match:
-                filename = match.group(1)
-
+        filename = get_filename_from_response(response, os.path.normpath(url).split(os.sep)[-1])
         if len(filename.split('.')) == 1:
             extension = mimetypes.guess_extension(content_type)
             if extension and extension != '.zip':
                 filename += extension
+
         return {
             'file': io.BytesIO(response.content),
             'content_type': content_type,

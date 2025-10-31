@@ -20,6 +20,7 @@ from helpers.base.utils import (
     get_keywords_from_url,
     remove_query_params,
     get_domain_url,
+    get_filename_from_response
 )
 from helpers.base.files import get_file_names
 from helpers.main.layers import WORLD_GEOM
@@ -95,7 +96,7 @@ def get_layers(url, format):
             url = unquote(url)
 
             if format in ['geojson', 'csv', 'gpx', 'kml', 'shp', 'osm']:
-                name = os.path.normpath(url).split(os.sep)[-1]
+                name = get_filename_from_response(response, os.path.normpath(url).split(os.sep)[-1])
                 layers = {name: {
                     'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
                     'type': format,
