@@ -11,6 +11,8 @@ const normalizeGeoJSON = async (geojson, {
         delete geojson.crs   
     }
 
+    geojson.features = geojson.features.filter(f => f.geometry || defaultGeom)
+
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
         await normalizeGeoJSONFeature(feature, {
