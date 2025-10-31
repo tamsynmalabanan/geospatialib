@@ -207,7 +207,7 @@ def shp_to_geojson(files, shp_filename):
         
             shp_path = os.path.join(tmpdir, f'{temp_filename}.shp')
             gdf = gpd.read_file(shp_path)
-            srid = SpatialRefSys.objects.filter(srid=gdf.crs.to_epsg()).first()
+            srid = SpatialRefSys.objects.filter(srid=int(gdf.crs.to_epsg())).first()
             return json.loads(gdf.to_json()), srid
     except Exception as e:
         logger.error(f'shp_to_geojson, {e}')
