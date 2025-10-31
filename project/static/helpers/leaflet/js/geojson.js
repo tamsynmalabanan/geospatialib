@@ -539,6 +539,8 @@ const getLeafletGeoJSONLayer = async ({
             geojson, {...(indexedDBKey ? {id:indexedDBKey} : {name:geojsonLayer._params.name})}
         ) : indexedDBKey
 
+        const previousBboxGeom = geojsonLayer._group?._map?._previousBbox?.geometry
+
         geojsonLayer.on('popupopen', (e) => geojsonLayer._openpopup = e.popup)
         geojsonLayer.on('popupclose', (e) => delete geojsonLayer._openpopup)
         geojsonLayer.on('add', () => updateLeafletGeoJSONLayer(geojsonLayer, {
@@ -546,9 +548,9 @@ const getLeafletGeoJSONLayer = async ({
                 geojsonLayer.getLayers().length
                 && geojsonLayer !== geojsonLayer._group?._map?._drawControl?._targetLayer
                 && geojsonLayer._previousVersion === geojsonLayer._indexedDBKey
-                && turf.booleanEqual(
+                && previousBboxGeom && turf.booleanEqual(
                     geojsonLayer._previousBbox.geometry, 
-                    geojsonLayer._group._map._previousBbox.geometry
+                    previousBboxGeom
                 ) ? geojsonLayer.toGeoJSON() : null),
             updateLocalStorage:false
         }))
