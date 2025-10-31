@@ -24,7 +24,7 @@ import fiona
 
 
 from main.models import SpatialRefSys, Layer
-from helpers.base.utils import get_response, get_response_file
+from helpers.base.utils import get_response, get_response_file, generate_uuid
 from helpers.base.files import extract_zip, is_zipped_file, ZIPPED_EXTENSIONS, sanitize_filename
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
 from helpers.base.utils import create_cache_key, get_special_characters
@@ -192,26 +192,25 @@ def csv_to_geojson(file, params):
 
 def shp_to_geojson(files, shp_filename):
     try:
-        name = shp_filename.split('.shp')[0]
-        sanitized_name = sanitize_filename(name)
+        name = os.path.normpath(shp_filename).split('.shp')[0]
+        temp_filename = generate_uuid()
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            filepaths = []
             for filename, fileobj in files.items():
                 if not os.path.normpath(filename).startswith(name):
                     continue
-                extension = filename.split(name)[-1]
-                filepath = os.path.join(tmpdir, f'{sanitized_name}{extension}')
-                filepaths.append(filepath)
+                extension = filename.split('.')[-1]
+
+                filepath = os.path.join(tmpdir, f'{temp_filename}.{extension}')
                 with open(filepath, 'wb') as f:
                     f.write(fileobj.getbuffer())
         
-            shp_path = os.path.join(tmpdir, f'{sanitized_name}.shp')
+            shp_path = os.path.join(tmpdir, f'{temp_filename}.shp')
             gdf = gpd.read_file(shp_path)
             srid = SpatialRefSys.objects.filter(srid=gdf.crs.to_epsg()).first()
             return json.loads(gdf.to_json()), srid
     except Exception as e:
-        # logger.error(f'shp_to_geojson, {e}')
+        logger.error(f'shp_to_geojson, {e}')
         return None, None
     
 def gpx_to_geojson(file, params):
@@ -454,8 +453,7 @@ def validate_file(url, name, params):
         params['srid'] = srid
         return params
     except Exception as e:
-        pass
-        # logger.error(f'validate_file error, {e}')
+        logger.error(f'validate_file error, {e}')
        
 def validate_xyz(url, name, params):
     try:
