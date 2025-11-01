@@ -2,8 +2,11 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.core.cache import cache
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+from django.urls import reverse
+from django.contrib.sites.models import Site
+from django.conf import settings
 
-
+import time
 import json
 import geojson
 import pandas as pd, geopandas as gpd
@@ -20,11 +23,12 @@ import gpxpy
 from osgeo import ogr
 from zipfile import ZipFile
 import fiona
-
+import base64
+import requests
 
 
 from main.models import SpatialRefSys, Layer
-from helpers.base.utils import get_response, get_response_file, generate_uuid
+from helpers.base.utils import get_response, get_response_file, generate_uuid, create_cache_key
 from helpers.base.files import extract_zip, is_zipped_file, ZIPPED_EXTENSIONS, sanitize_filename
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
 from helpers.base.utils import create_cache_key, get_special_characters
@@ -190,12 +194,17 @@ def csv_to_geojson(file, params):
         logger.error(f'csv_to_geojson, {e}')
         return None, None
 
-def shp_to_geojson(files, shp_filename):
+def shp_to_geojson(files, shp_filename, url):
     try:
         name = os.path.normpath(shp_filename).split('.shp')[0]
-        temp_filename = generate_uuid()
+        available_exts = [i.split('.')[-1] for i in list(files.keys()) if os.path.normpath(i).startswith(name)]
 
+        has_required_exts = all(ext in available_exts for ext in ['shp', 'shx', 'dbf'])
+        if not has_required_exts:
+            raise Exception('Missing some files.')
+        
         with tempfile.TemporaryDirectory() as tmpdir:
+            temp_filename = generate_uuid()
             for filename, fileobj in files.items():
                 if not os.path.normpath(filename).startswith(name):
                     continue
@@ -204,9 +213,10 @@ def shp_to_geojson(files, shp_filename):
                 filepath = os.path.join(tmpdir, f'{temp_filename}.{extension}')
                 with open(filepath, 'wb') as f:
                     f.write(fileobj.getbuffer())
-        
+
             shp_path = os.path.join(tmpdir, f'{temp_filename}.shp')
-            gdf = gpd.read_file(shp_path)
+            with fiona.Env(SHAPE_RESTORE_SHX='YES'):
+                gdf = gpd.read_file(shp_path)
             srid = SpatialRefSys.objects.filter(srid=int(gdf.crs.to_epsg())).first()
             return json.loads(gdf.to_json()), srid
     except Exception as e:
@@ -394,7 +404,7 @@ def validate_shp(url, name, params):
         response = get_response(url, raise_for_status=True)
         geojson_obj, params = shp_to_geojson({
             name: io.StringIO(response.text)
-        }, os.path.normpath(name))
+        }, os.path.normpath(name), url)
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
         params['srid'] = srid
@@ -415,7 +425,7 @@ def validate_file(url, name, params):
             files = extract_zip(file, filename)
             file = files.get(normpath)
         else:
-            files = None 
+            files = {name:file}
 
         geojson_obj = None
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
@@ -430,7 +440,7 @@ def validate_file(url, name, params):
             geojson_obj, params = kml_to_geojson(file, params)
 
         if name.endswith('.shp'):
-            geojson_obj, srid = shp_to_geojson(files, normpath)
+            geojson_obj, srid = shp_to_geojson(files, normpath, url)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)

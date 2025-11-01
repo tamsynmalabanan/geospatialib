@@ -20,6 +20,7 @@ from functools import reduce
 from operator import or_, add
 from urllib.parse import urlparse
 import threading
+import base64
 
 from helpers.main.collection import get_collection_data, sort_layers, update_collection_data
 from main.models import SpatialRefSys, URL, Layer

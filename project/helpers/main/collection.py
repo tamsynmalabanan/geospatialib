@@ -76,6 +76,9 @@ def guess_format_from_url(url):
         ],
         'osm': [
         ],
+        'file': [
+            'drive.google.com'
+        ]
     })
 
 def get_layers(url, format):
@@ -85,8 +88,10 @@ def get_layers(url, format):
         if format.startswith('ogc-'):
             layers = get_ogc_layers(url, format)
         else:
+            clean_url = get_clean_url(url, format)
+
             response = get_response(
-                url=get_clean_url(url, format),
+                url=clean_url,
                 raise_for_status=False,
             )
 
@@ -96,10 +101,11 @@ def get_layers(url, format):
             url = unquote(url)
 
             if format in ['geojson', 'csv', 'gpx', 'kml', 'shp', 'osm']:
-                name = get_filename_from_response(response, os.path.normpath(url).split(os.sep)[-1])
+                name = get_filename_from_response(response, os.path.normpath(clean_url).split(os.sep)[-1])
                 layers = {name: {
                     'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
                     'type': format,
+                    'keywords': split_by_special_characters(name)
                 }}
                 
             if format == 'xyz':
@@ -115,12 +121,13 @@ def get_layers(url, format):
                 }}
             
             if format == 'file':
-                for i in get_file_names(url):
+                for i in get_file_names(clean_url):
                     i = i.replace('\\', '/')
                     filename = os.path.normpath(i).split('/')[-1].split(os.sep)[-1]
                     layers[i] = {
                         'title': '.'.join(filename.split('.')[:-1]) if '.' in filename else filename,
                         'type': filename.split('.')[-1] if '.' in filename else 'unknown',
+                        'keywords': split_by_special_characters(i)
                     }
 
             if format == 'overpass':
@@ -174,7 +181,7 @@ def get_collection_data(url, format=None):
         format=format,
         layers__isnull=False,
         dynamic=False,
-        last_update__gte=timezone.now()-timedelta(days=7)
+        last_update__gte=timezone.now()-timedelta(days=1)
     ).first()
 
     cached_layers = cache.get(cache_key, {}).get('layers', {})

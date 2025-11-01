@@ -6,7 +6,7 @@ COLLECTION_FORMATS = {
     'gpx': 'GPX',
     'kml': 'KML',
     'shp': 'Shapefile',
-    'file': 'File',
+    'file': 'Downloadable file, zipped files, KMZ, etc.',
     'xyz': 'XYZ Tiles',
     'ogc-wfs': 'OGC Web Feature Service',
     'ogc-wms': 'OGC Web Map Service',

@@ -3,6 +3,7 @@ from django.core.cache import cache
 from helpers.base.utils import (
     remove_query_params,
     get_domain_url,
+    get_google_drive_file_download_url,
 )
 
 import matplotlib
@@ -29,6 +30,8 @@ def get_clean_url(url, format, exclusions=[]):
     
     if format.startswith('ogc-') or format == 'overpass':
         return remove_query_params(url) or url
+    
+    url = get_google_drive_file_download_url(url) or url
     
     return url
 

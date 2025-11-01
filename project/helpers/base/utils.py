@@ -235,3 +235,16 @@ def get_keywords_from_url(url):
 
 def generate_uuid():
     return uuid.uuid4().hex
+
+def get_google_drive_file_download_url(url):
+    download_pattern = r"^https://drive\.google\.com/uc\?export=download&id=([a-zA-Z0-9_-]+)$"
+    if re.match(download_pattern, url):
+        return url
+
+    view_pattern = r"^https://drive\.google\.com/file/d/([a-zA-Z0-9_-]+)/view(?:\?.*)?$"
+    view_match = re.match(view_pattern, url)
+    if view_match:
+        file_id = view_match.group(1)
+        return f"https://drive.google.com/uc?export=download&id={file_id}"
+
+    return None
