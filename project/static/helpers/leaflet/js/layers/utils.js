@@ -165,7 +165,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
                         'default'
                     ),
-                    color: iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
+                    color: iconFill ? iconGlow ? `hsla(0, 0%, 100%, ${fillOpacity})` : hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
+                    // color: iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
                     ...(textWrap ? {maxWidth:`${iconSize}px`} : {})
                 },
                 className:removeWhitespace(`
@@ -184,7 +185,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     if (iconType === 'svg') {
                         element.setAttribute('fill', (() => {
                             if (iconFill) element.setAttribute('fill-opacity', fillOpacity)
-                            return iconFill ? fillColor : 'none'
+                            return iconFill ? iconGlow ? 'white' : fillColor : 'none'
+                            // return iconFill ? fillColor : 'none'
                         })())
                         element.setAttribute('stroke', (() => {
                             if (iconStroke) {
@@ -234,7 +236,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
         if (isPoint) {
             params.radius = iconSize/2
-            params.fillColor = iconFill ? fillColor : 'none'
+            params.fillColor = iconFill ? iconGlow ? 'white' : fillColor : 'none'
             params.fillOpacity = iconFill ? fillOpacity : 0
         }
 
@@ -254,7 +256,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
-            })() : fillPattern === 'solid' ? fillColor : 'transparent'
+            })() : fillPattern === 'solid' ? iconGlow ? 'white' : fillColor : 'transparent'
         }
 
         return params
@@ -351,7 +353,7 @@ const leafletLayerStyleToHTML = (style, type) => {
                 symbol.setAttribute('height', height)
             }
 
-            symbol.setAttribute('fill', style.fillColor)
+            symbol.setAttribute('fill', style.iconGlow ? 'white' : style.fillColor)
             symbol.setAttribute('fill-opacity', style.fillOpacity)
             symbol.setAttribute('fill-rule', 'evenodd')
         }
@@ -438,18 +440,29 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
         } = styleParams
         
         const hslaColor = manageHSLAColor(fillColor)
+        const l = hslaColor.l
+        const h = hslaColor.h
+        const hCooler = 180-((180-h)/2)
+        const hWarmer = h-((180-h)/2)
+
         textShadow = styleParams.textShadow = Array(
             iconShadow ? removeWhitespace(`
                 ${iconSize*0.1}px 
                 ${iconSize*0.1}px 
                 ${iconSize*0.2}px 
-                ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
+                ${hslaColor.toString({l:l/10,a:fillOpacity})}
             `) : '',
             iconGlow ? removeWhitespace(`
-                0 0 ${iconSize*0.5}px ${hslaColor.toString({a:fillOpacity*1})}, 
-                0 0 ${iconSize*1}px ${hslaColor.toString({a:fillOpacity*0.75})}, 
-                0 0 ${iconSize*1.5}px ${hslaColor.toString({a:fillOpacity*0.5})}, 
-                0 0 ${iconSize*2}px ${hslaColor.toString({a:fillOpacity*0.25})}
+                0 0 ${iconSize*0.5}px ${hslaColor.toString({h:hCooler, l:((100-l)/4*3)+l, a:1})}, 
+                0 0 ${iconSize*1}px ${hslaColor.toString({h:hCooler, l:((100-l)/4*2)+l, a:0.9})}, 
+                0 0 ${iconSize*1.5}px ${hslaColor.toString({h:hCooler, l:((100-l)/4*1)+l, a:0.8})}, 
+                0 0 ${iconSize*2}px ${hslaColor.toString({a:0.7})}, 
+                0 0 ${iconSize*2.5}px ${hslaColor.toString({a:0.6})}, 
+                0 0 ${iconSize*3}px ${hslaColor.toString({a:0.5})}, 
+                0 0 ${iconSize*3.5}px ${hslaColor.toString({a:0.4})}, 
+                0 0 ${iconSize*4}px ${hslaColor.toString({h:hWarmer, l:l/4*3, a:0.3})}, 
+                0 0 ${iconSize*4.5}px ${hslaColor.toString({h:hWarmer, l:l/4*2, a:0.2})},
+                0 0 ${iconSize*5}px ${hslaColor.toString({h:hWarmer, l:l/4*1, a:0.1})}
             `) : ''
         ).filter(i => i !== '').join(',')
 
@@ -481,7 +494,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html', 'property').includes(iconType) ? 
             Math.max(
-                (iconGlow ? iconSize*3 : 0),
+                (iconGlow ? iconSize*6 : 0),
                 (iconShadow ? iconSize*0.2 : 0),
                 (iconType !== 'html' && italicFont ? iconSize*0.5 : 0),
             )                
@@ -615,7 +628,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
             icon.setAttribute('fill', (() => {
                 if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
-                return iconFill ? fillColor : 'none'
+                return iconFill ? iconGlow ? 'white' : fillColor : 'none'
             })())
             icon.setAttribute('stroke', (() => {
                 if (iconStroke) {
