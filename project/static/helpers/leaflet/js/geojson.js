@@ -878,7 +878,7 @@ const getGeoJSONLayerStyles = (layer) => {
         i === '' && totalCount === 0 && Object.keys(styles).length > 1 ? delete styles[i] : style.totalCount = totalCount
     })
 
-    const typesString = [...new Set(Object.values(styles).map(i => Object.keys(i.types).filter(j => i.types[j].count > 0).join(',')))]
+    const typesString = [...new Set(Object.values(styles).map(i => Object.keys(i.types).filter(j => i.types[j].count > 0).join(',')).filter(i => i))]
     if (typesString.length === 1 && typesString[0] !== '') {
         const types = typesString[0].split(',')
         Object.keys(styles).forEach(i => {
