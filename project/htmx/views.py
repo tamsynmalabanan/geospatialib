@@ -1,6 +1,6 @@
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, HttpResponse, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404, FileResponse
 from django.contrib import messages
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
@@ -9,7 +9,6 @@ from django.views.generic import ListView
 from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
 from functools import cached_property
-from django.conf import settings
 
 
 import json
@@ -123,8 +122,13 @@ def get_layer_forms(request):
     layer_names = json.loads(request.POST.get('layerNames','[]'))
     layers = {}
     for name in layer_names:
-        filename = os.path.normpath(name).split(os.sep)[-1]
+        name = name.replace('\\', '/')
+        filename = os.path.normpath(name).split('/')[-1].split(os.sep)[-1]
         title, type = filename.rsplit('.', 1) if '.' in filename else [filename, 'unknown']
+        if type == 'unknown':
+            sqliteFileTypes = [i for i in ['gpkg', 'sqlite'] if f'.{i}' in name]
+            if sqliteFileTypes:
+                type = sqliteFileTypes[0]
         layers[name] = {
             'title': title, 
             'type': type, 

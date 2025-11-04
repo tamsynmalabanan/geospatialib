@@ -34,7 +34,7 @@
                         accept=".gsl"
                     >
                 </div>
-                <div id='addLayersForm-fileFields' class="d-none d-flex flex-column gap-3 w-100">
+                <div id='addLayersForm-fileFields' class="d-none d-flex flex-column w-100">
                     <input 
                         name='files' 
                         class="form-control"
@@ -54,6 +54,8 @@
                             .prj,
                             .cpg,
                             .shx,
+                            .gpkg,
+                            .sqlite,
                         "
                         hx-post="{% url 'htmx:get_layer_forms' %}" 
                         hx-trigger="get-file-forms" 
@@ -61,6 +63,7 @@
                         hx-swap="innerHTML"
                         hx-params='not files'
                     >
+                    <div class="invalid-feedback"></div>
                 </div>
                 <div id='addLayersForm-urlFields' class="d-none d-flex flex-column gap-3 w-100">
                     {% include "helpers/partials/add_layers/url_fields.html" with form=validate_collection_form %}

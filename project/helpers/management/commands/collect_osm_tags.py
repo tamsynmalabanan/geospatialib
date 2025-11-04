@@ -67,12 +67,6 @@ class Command(BaseCommand):
         ]
 
     def get_file_path(self):
-        """
-        Constructs the file path for the "osm_tags.txt" file, ensures the directory exists,
-        and creates an empty file if it does not already exist.
-        Returns:
-            str: The absolute file path to the "osm_tags.txt" file.
-        """
         file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "osm_tags.txt")
 
         os.makedirs(os.path.dirname(file_path), exist_ok=True)

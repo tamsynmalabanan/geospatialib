@@ -21,7 +21,10 @@ logger = logging.getLogger('django')
 
 matplotlib.use('Agg')
 
-def get_clean_url(url, format, exclusions=[]):
+def get_clean_url(url, format:str=None, exclusions=[]):
+    if format is None:
+        format = ''
+        
     if format in exclusions:
         return url
 

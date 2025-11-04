@@ -25,11 +25,15 @@ from zipfile import ZipFile
 import fiona
 import base64
 import requests
+import sqlite3
+import shapely.wkb
+import shapely.wkt
+from pyproj import CRS
 
 
 from main.models import SpatialRefSys, Layer
 from helpers.base.utils import get_response, get_response_file, generate_uuid, create_cache_key
-from helpers.base.files import extract_zip, is_zipped_file, ZIPPED_EXTENSIONS, sanitize_filename
+from helpers.base.files import extract_zip, is_zipped_file, is_sqlite_file
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
 from helpers.base.utils import create_cache_key, get_special_characters
 
@@ -194,7 +198,7 @@ def csv_to_geojson(file, params):
         logger.error(f'csv_to_geojson, {e}')
         return None, None
 
-def shp_to_geojson(files, shp_filename, url):
+def shp_to_geojson(files, shp_filename):
     try:
         name = os.path.normpath(shp_filename).split('.shp')[0]
         available_exts = [i.split('.')[-1] for i in list(files.keys()) if os.path.normpath(i).startswith(name)]
@@ -221,6 +225,101 @@ def shp_to_geojson(files, shp_filename, url):
             return json.loads(gdf.to_json()), srid
     except Exception as e:
         logger.error(f'shp_to_geojson, {e}')
+        return None, None
+
+def sqlite_to_geojson(file, params):
+    try:
+        table_name = params.get('title', '')
+        geojson = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+        srid = SpatialRefSys.objects.filter(srid=4326).first()
+        
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(file.getvalue())
+            tmp_path = tmp.name
+
+        if params.get('type') == 'gpkg':
+            with fiona.open(tmp_path, layer=table_name) as src:
+                for feature in src:
+                    geometry = feature['geometry']
+                    properties = feature['properties']
+                    feature = {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": geometry.type,
+                            "coordinates": geometry.coordinates
+                        },
+                        "properties": dict(properties)
+                    }
+                    geojson["features"].append(feature)
+
+                try:
+                    crs_wkt = src.crs_wkt
+                    crs = CRS.from_wkt(crs_wkt)
+                    srid = SpatialRefSys.objects.filter(srid=int(crs.to_epsg())).first()
+                except Exception as e:
+                    pass
+
+        if params.get('type') == 'sqlite':
+            conn = sqlite3.connect(tmp_path)
+            cursor = conn.cursor()
+
+            cursor.execute(f'PRAGMA table_info({table_name})')
+            columns_info = cursor.fetchall()
+            column_names = [col[1] for col in columns_info]
+
+            geom_col = None
+            for candidate in ['GEOMETRY', 'geom']:
+                if candidate in column_names:
+                    geom_col = candidate
+                    break
+
+            if not geom_col:
+                raise ValueError("No geometry column found (expected 'GEOMETRY' or 'geom')")
+
+            cursor.execute(f'SELECT * FROM {table_name}')
+            rows = cursor.fetchall()
+
+            for row in rows:
+                row_dict = dict(zip(column_names, row))
+                geometry_blob = row_dict.pop(geom_col)
+
+                try:
+                    geom = shapely.wkb.loads(geometry_blob)
+                except Exception:
+                    try:
+                        wkt_str = geometry_blob.decode('utf-8') if isinstance(geometry_blob, bytes) else str(geometry_blob)
+                        geom = shapely.wkt.loads(wkt_str)
+                    except Exception:
+                        try:
+                            geom = shapely.wkb.loads(geometry_blob[38:])
+                        except Exception as final_err:
+                            logger.error(f"Geometry decoding failed: {final_err}")
+                            continue
+                geometry = json.loads(json.dumps(geom.__geo_interface__))
+                
+                feature = {
+                    "type": "Feature",
+                    "geometry": geometry,
+                    "properties": row_dict
+                }
+                geojson["features"].append(feature)
+
+            try:
+                cursor.execute(f"SELECT srid FROM geometry_columns WHERE f_table_name = ?", (table_name,))
+                srid_row = cursor.fetchone()
+                if srid_row:
+                    srid = SpatialRefSys.objects.filter(srid=int(srid_row[0])).first()
+            except Exception:
+                pass
+
+            conn.close()
+        
+        return geojson, srid
+    except Exception as e:
+        logger.error(f'sqlite_to_geojson, {e}')
         return None, None
     
 def gpx_to_geojson(file, params):
@@ -404,7 +503,7 @@ def validate_shp(url, name, params):
         response = get_response(url, raise_for_status=True)
         geojson_obj, params = shp_to_geojson({
             name: io.StringIO(response.text)
-        }, os.path.normpath(name), url)
+        }, os.path.normpath(name))
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
         params['srid'] = srid
@@ -419,14 +518,17 @@ def validate_file(url, name, params):
             raise Exception('Failed to download file.')
         
         file = file_details.get('file')
+        files = {name:file}
         filename = file_details.get('filename','')
         normpath = os.path.normpath(name)
+
         if is_zipped_file(filename=filename, file_details=file_details):
             files = extract_zip(file, filename)
-            file = files.get(normpath)
-        else:
-            files = {name:file}
-
+            file = files.get(name, files.get(normpath))
+        
+        if not file:
+            raise Exception('File not found.')
+        
         geojson_obj = None
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
 
@@ -440,10 +542,13 @@ def validate_file(url, name, params):
             geojson_obj, params = kml_to_geojson(file, params)
 
         if name.endswith('.shp'):
-            geojson_obj, srid = shp_to_geojson(files, normpath, url)
+            geojson_obj, srid = shp_to_geojson(files, normpath)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)
+
+        if any([i == params.get('type') or f'.{i}' in name for i in ['sqlite', 'gpkg']]) or is_sqlite_file(filename=filename, file_details=file_details):
+            geojson_obj, srid = sqlite_to_geojson(file, params)
 
         if not geojson_obj:
             try:
@@ -494,6 +599,9 @@ LAYER_VALIDATORS = {
     'kml': validate_kml,
     'shp': validate_shp,
     'file': validate_file,
+    'kmz': validate_file,
+    'gpkg': validate_file,
+    'sqlite': validate_file,
     'xyz': validate_xyz,
     'ogc-wfs': validate_ogc,
     'ogc-wms': validate_ogc,

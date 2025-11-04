@@ -5,6 +5,7 @@ from django.conf import settings
 import os
 from urllib.parse import unquote, urlparse, parse_qs, quote
 
+
 from datetime import timedelta
 
 from main.tasks import onboard_collection
@@ -36,49 +37,82 @@ def guess_format_from_url(url):
     if not url:
         return
     
+    url = get_clean_url(url)
+    
     if any([i for i in XYZ_TILES_CHARS if i in url]):
         return 'xyz'
     
+    content_type = ''
+    filename = os.path.normpath(url).split(os.sep)[-1]
     response = get_response(url)
-    if response and not get_decoded_response(response):
-        return 'file'
+    if response:
+        content_type = response.headers.get('content-type')
+        filename = get_filename_from_response(response, filename)
+        decoded_response = get_decoded_response(response)
+        if not decoded_response:
+            if filename.endswith('.shp'):
+                return 'shp'
+            if filename.endswith('.kmz'):
+                return 'kmz'
+            if filename.endswith('.gpkg'):
+                return 'gpkg'
+            if filename.endswith('.sqlite'):
+                return 'sqlite'
+            return 'file'
 
-    return get_first_substring_match(url, {
+    return get_first_substring_match(' '.join([url, filename, content_type]), {
+        # OGC FORMATS
         # 'ogc-wcs': [
         #     'wcs',
         #     'mapserv',
         #     'geoserver',
         #     '2.0.1',
+        #     'webcoverageservice',
         # ],
         'ogc-wms': [
             'wms',
             'mapserv',
             'geoserver',
             '1.1.1',
-            '1.3.0'
+            '1.3.0',
+            'webmapservice',
         ],
         'ogc-wfs': [
             'wfs',
             'mapserv',
             'geoserver',
+            'webfeatureservice',
         ],
+        
+        #  TEXT FORMATS
         'csv': [
         ],
         'gpx': [
         ],
         'kml': [
         ],
-        'shp': [
-        ],
         'geojson': [
         ],
         'overpass': [
+            'openstreetmap',
         ],
         'osm': [
+            'openstreetmap',
         ],
-        'file': [
-            'drive.google.com'
-        ]
+        
+        #  BINARY FORMATS
+        'kmz': [
+        ],
+        'gpkg': [
+            'geopackage',
+        ],
+        'sqlite': [
+            'sql',
+            'spatialite',
+        ],
+        'shp': [
+            'shapefile',
+        ],
     })
 
 def get_layers(url, format):
@@ -120,14 +154,21 @@ def get_layers(url, format):
                     'bbox': list(WORLD_GEOM.extent),
                 }}
             
-            if format == 'file':
-                for i in get_file_names(clean_url):
-                    i = i.replace('\\', '/')
-                    filename = os.path.normpath(i).split('/')[-1].split(os.sep)[-1]
-                    layers[i] = {
-                        'title': '.'.join(filename.split('.')[:-1]) if '.' in filename else filename,
-                        'type': filename.split('.')[-1] if '.' in filename else 'unknown',
-                        'keywords': split_by_special_characters(i)
+            if format in ['file', 'kmz', 'gpkg', 'sqlite']:
+                file_names = get_file_names(clean_url)
+                for name in file_names:
+                    name = name.replace('\\', '/')
+                    filename = os.path.normpath(name).split('/')[-1].split(os.sep)[-1]
+                    title = '.'.join(filename.rsplit('.', 1)[:-1]) if '.' in filename else filename
+                    type = filename.split('.')[-1] if '.' in filename else 'unknown'
+                    if type == 'unknown':
+                        sqliteFileTypes = [i for i in ['gpkg', 'sqlite'] if f'.{i}' in name or i == format]
+                        if sqliteFileTypes:
+                            type = sqliteFileTypes[0]
+                    layers[name] = {
+                        'title': title,
+                        'type': type,
+                        'keywords': split_by_special_characters(name)
                     }
 
             if format == 'overpass':
@@ -192,7 +233,7 @@ def get_collection_data(url, format=None):
         data.update({'layers': layers, 'collection': collection})
         return data
 
-    if cached_layers_count > 0 and format not in ['file']:
+    if cached_layers_count > 0 and format not in ['file', 'gpkg', 'sqlite']:
         data['layers'] = cached_layers
         return data
     

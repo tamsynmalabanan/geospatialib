@@ -422,6 +422,9 @@ const fetchGeoJSONHandlers = (name) => {
         overpass: fetchOverpass,
         geojson: fetchGeoJSON,
         file: fetchFileData,
+        kmz: fetchFileData,
+        gpkg: fetchFileData,
+        sqlite: fetchFileData,
         csv: fetchCSV,
         gpx: fetchGPX,
         kml: fetchKML,
@@ -440,6 +443,9 @@ const staticVectorFormats = [
     'kml',
     'shp',
     'osm',
+    'kmz',
+    'gpkg',
+    'sqlite',
 ]
 
 const mapForGetGeoJSON = new Map()

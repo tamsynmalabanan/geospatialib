@@ -47,6 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
         urlField.classList.remove('is-invalid')
         resetFormatField()
     }
+
+    const resetFileFields = () => {
+        fileInput.classList.remove('is-invalid')
+        fileInput.nextElementSibling.innerText = ''
+    }
     
     const resetForm = (e) => {
         fileInput.value = ''
@@ -54,7 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
         resetLayerNames('files')
         resetLayerNames('gsl')
-        resetUrlFields()        
+        resetUrlFields()
+        resetFileFields()
         
         toggleSubmitBtn()
     }
@@ -75,9 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 params[name] = j.value
             })
+            
             includedLayers[i.value] = params
         })
-
+        
         return includedLayers
     }
     
@@ -122,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     
         if (source === 'files') {
-            const filesArray = await getValidFilesArray(fileInput.files)
+            const filesArray = await getValidLayersArray(fileInput.files)
             for (const file of filesArray) {
                 if (!Object.keys(includedLayers).includes(file.name)) continue
                 const params = includedLayers[file.name]
@@ -213,13 +220,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     
     fileInput.addEventListener('change', async (e) => {
-        if (!fileInput.files.length) return resetLayerNames('files')
+        resetFileFields()
+
+        const fileList = Array.from(fileInput.files)
+        if (!fileList.length) return resetLayerNames('files')
     
-        const layerNames = (await getValidFilesArray(fileInput.files)).map(i => i.name)
-        fileInput.setAttribute('hx-vals', JSON.stringify({'layerNames': JSON.stringify(layerNames)}))
-    
-        const event = new Event("get-file-forms", { bubbles: true })
-        fileInput.dispatchEvent(event)
+        try {
+            const filesArray = await getValidLayersArray(fileList)
+            const layerNames = filesArray.map(i => i.name)
+            fileInput.setAttribute('hx-vals', JSON.stringify({layerNames: JSON.stringify(layerNames)}))
+            fileInput.dispatchEvent(new Event("get-file-forms", { bubbles: true }))
+        } catch (err) {
+            fileInput.classList.add('is-invalid')
+            fileInput.nextElementSibling.innerText = err.message
+            resetLayerNames('files')
+        }
     })
     
     mapInput.addEventListener('change', async (e) => {

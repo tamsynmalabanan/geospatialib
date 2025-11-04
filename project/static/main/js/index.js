@@ -122,7 +122,7 @@ const showLayerInfo = async (el) => {
         }
     })()
     const hostname = new URL(properties.url).hostname
-    const domain = hostname.split('.').splice(-2).join('.')
+    const domain = hostname.split('.').slice(-2).join('.')
 
     const abstract = modal.querySelector('#layerInfoModal-abstract')
     abstract.parentElement.classList.toggle('d-none', !properties.abstract?.trim())

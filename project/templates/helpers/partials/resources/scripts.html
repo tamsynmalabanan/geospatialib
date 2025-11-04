@@ -40,6 +40,15 @@
 {% comment %} leaflet draw {% endcomment %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+{% comment %} geopackage-js {% endcomment %}
+{% comment %} <script src="https://unpkg.com/@ngageoint/geopackage@latest/dist/geopackage.min.js"></script> {% endcomment %}
+
+{% comment %} sql.js {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+
+{% comment %} wkx {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/wkx@0.5.0/dist/wkx.min.js"></script>
+
 {% comment %} togeojson {% endcomment %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js" integrity="sha512-tGbo6fmjjGoMjPcSMmwn2kdL791LM73K/8dUjCdO91fBBF26AXG7/DKFcVHfOieY78XT2hl0rJkbM0GUVaPcjw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
@@ -57,6 +66,7 @@
     <script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/leaflet-line-measurement/Leaflet.LinearMeasurement.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/osmtogeojson/js/osmtogeojson.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/buffer/js/bundle.js' %}"></script>
 
     {% comment %} project {% endcomment %}
     <script type="text/javascript" src="{% static 'helpers/base/js/bootstrap.js' %}"></script>
@@ -69,6 +79,7 @@
     <script type="text/javascript" src="{% static 'helpers/base/js/sidebar.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/base/js/fetch.js' %}"></script>
 
+    <script type="text/javascript" src="{% static 'helpers/gis/js/init.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/gis/js/data.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/gis/js/geojson.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/gis/js/indexdb.js' %}"></script>

@@ -269,7 +269,7 @@ const getLeafletLayerBbox = async (layer) => {
     }
 
     if (layer._params?.bbox) {
-        return JSON.parse(layer._params?.bbox).splice(0,4)
+        return JSON.parse(layer._params?.bbox).slice(0,4)
     }
     
     if (layer.getBounds) {
@@ -769,8 +769,15 @@ const urlToLeafletLayer = async ({
     const format = params.format
     const indexedDBKey = createLayerIndexedDBKey(params)
 
-    params.type = format === 'file' ? (params.type ?? params.name.split('.').splice(-1)) : (params.type ?? format)
-
+    if (!params.type) {
+        const filename = params.name.split('/').pop()
+        params.type = format === 'file' ? (
+            filename.includes('.') 
+            ? filename.split('.').pop() 
+            : Array('gpkg', 'sqlite').find(i => params.name.includes(`.${i}`)) ?? 'unknown'
+        ) : format
+    }
+    
     const layer = await createLeafletLayer(params, {indexedDBKey, group, add})
 
     return layer
@@ -799,7 +806,7 @@ const createLayerIndexedDBKey = (params) => {
             format,
             type: params.type,
         }
-    } else if (format === 'file') {
+    } else if (Array('file').includes(format)) {
         formatParams = {
             url: params.url,
             format,
@@ -809,15 +816,25 @@ const createLayerIndexedDBKey = (params) => {
             xField: params.xField,
             yField: params.yField,
         }
+    } else if (Array('kmz', 'gpkg', 'sqlite').includes(format)) {
+        formatParams = {
+            url: params.url,
+            format,
+            name: params.name,
+            type: params.type,
+            srid: params.srid,
+        }
     } else {
         formatParams = structuredClone(params)
-        delete formatParams.abstract
-        delete formatParams.attribution
-        delete formatParams.bbox
-        delete formatParams.keywords
-        delete formatParams.styles
-        delete formatParams.thumbnails
-        delete formatParams.title
+        Array(
+            'abstract', 
+            'attribution', 
+            'bbox', 
+            'keywords', 
+            'styles', 
+            'thumbnails', 
+            'title'
+        ).forEach(i => delete formatParams[i])
         console.log(formatParams)
     }
 
@@ -860,7 +877,7 @@ const createLeafletLayer = async (params, {
 
     let layer
 
-    if (Array(format, type).some(i => Array('geojson', 'csv', 'gpx', 'kml', 'shp', 'wfs', 'osm', 'overpass', 'unknown', 'json').includes(i))) {
+    if (Array(format, type).some(i => Array('geojson', 'csv', 'gpx', 'kml', 'shp', 'wfs', 'osm', 'overpass', 'unknown', 'json', 'gpkg', 'sqlite').includes(i))) {
         layer = await getLeafletGeoJSONLayer({
             indexedDBKey,
             geojson: data,
@@ -944,12 +961,13 @@ const fileToLeafletLayer = async ({
 
     params.name = params.name ?? file.name
 
-    const fileName = file.name.split('.')
-    params.title = params.title ?? (() => {
-        const title = fileName.slice(0, -1).join('.').split('/')
-        return title[title.length-1]
-    })
-    params.type = params.type ?? fileName[fileName.length-1]
+    const filename = file.name.split('/').pop();
+    const lastDotIndex = filename.lastIndexOf('.');
+    const title = lastDotIndex !== -1 ? filename.slice(0, lastDotIndex) : filename;
+    const type = lastDotIndex !== -1 ? filename.slice(lastDotIndex + 1) : 'unknown';
+
+    params.title = params.title ?? title
+    params.type = params.type ?? type
     
     const rawData = await getFileRawData(file)
     if (!rawData) return

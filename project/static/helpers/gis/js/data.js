@@ -237,13 +237,71 @@ const rawDataToLayerData = async (rawData, params, {
             return geojson
         }
 
-        const normalRawData = rawData.toLowerCase()
-        if (
-            Array(params.format, params.type).some(i => i === 'osm') 
-            || Array('openstreetmap', 'osm').some(i => normalRawData.includes(i))
-        ) {
-            return osmDataToGeoJSON(rawData)
+        if (Array('gpkg', 'sqlite').includes(params.type)) {
+            const file = filesArray.find(file => file.name === params.name)
+            const arrayBuffer = await file.arrayBuffer()
+
+            const db = new SQL.Database(new Uint8Array(arrayBuffer))
+            const result = db.exec(`SELECT * FROM ${params.title ?? params.name.split('/').pop()}`)
+            if (!result.length) return
+
+            const { columns, values } = result[0]
+            const geomField = columns.find(i => Array("geom", "GEOMETRY").includes(i))
+            if (!geomField) return
+
+            const features = values.map(row => {
+                const properties = {}
+                let geometry = null
+
+                columns.forEach((col, i) => {
+                    if (col === geomField) {
+                        const geomBuffer = Buffer.from(row[i])
+                        
+                        if (params.type === 'sqlite') {
+                            try {
+                                const parsedGeom = wkx.Geometry.parse(geomBuffer)
+                                geometry = parsedGeom.toGeoJSON()
+                            } catch (e) {
+                                try {
+                                    const parsedGeom = wkx.Geometry.parse(geomBuffer.slice(38))
+                                    geometry = parsedGeom.toGeoJSON()
+                                } catch (e) {
+                                    geometry = null
+                                }
+                            }
+                        }
+                        
+                        if (params.type === 'gpkg') {
+                            try {
+                                const parsedGeom = wkx.Geometry.parse(geomBuffer.slice(40))
+                                geometry = parsedGeom.toGeoJSON()
+                            } catch (e) {
+                                geometry = null
+                            }
+                        }
+                    } else {
+                        properties[col] = row[i]
+                    }
+                })
+
+                return {
+                    type: 'Feature',
+                    geometry,
+                    properties,
+                }
+            })
+
+            const geojson = {
+                type: 'FeatureCollection',
+                features
+            }
+
+            return geojson
         }
+
+        const osmInType = Array(params.format, params.type).some(i => i === 'osm')
+        const osmInData = Array('openstreetmap', 'osm').some(i => rawData.toLowerCase().includes(i))
+        if (osmInType || osmInData) return osmDataToGeoJSON(rawData)
     } catch (error) {
         console.log(error)
     }
@@ -282,10 +340,10 @@ const fetchFileData = async (params, {abortBtns, controller} = {}) => {
                     .then(response => response.json())
                     .catch(error => console.log(error))
                 })() ?? {}
-                const match = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(headers['Content-Disposition'] ?? '');
-                const filename = match ? match[1].replace(/['"]/g, '') : decodeURIComponent(url.split('/').splice(-1))
+                const match = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(headers['Content-Disposition'] ?? headers['content-disposition'] ?? '');
+                const filename = match ? match[1].replace(/['"]/g, '') : decodeURIComponent(url.split('/').pop())
                 const file = new File([content], filename, {type: content.type})
-                const filesArray = await getValidFilesArray([file])
+                const filesArray = await getValidLayersArray([file])
                 return filesArray
             } catch (error) {
                 console.log(error)

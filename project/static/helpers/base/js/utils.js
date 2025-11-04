@@ -390,6 +390,14 @@ const isCompressedFile = (file) => {
     )
 }
 
+const isSqliteFile = (file) => {
+    const sqliteExtensions = ['sqlite', 'gpkg']
+    return (
+        sqliteExtensions.includes(file.name.toLowerCase().split('.').pop())
+        || sqliteExtensions.some(i => (file.type ?? '').includes(i))
+    )
+}
+
 const getZippedFiles = async (zipFile, basePath) => {
     try {
         const zip = await JSZip.loadAsync(zipFile)
@@ -417,7 +425,63 @@ const getZippedFiles = async (zipFile, basePath) => {
     }
 }
 
-const getValidFilesArray = async (filesArray) => {
+
+const isDefaultSqliteTable = (name) => {
+    const SQLITE_DEFAULT_TABLES = [
+        'spatial_ref_sys', 
+        'spatialite_history', 
+        'sqlite_sequence', 
+        'geometry_columns', 
+        'spatial_ref_sys_aux', 
+        'views_geometry_columns', 
+        'virts_geometry_columns', 
+        'geometry_columns_statistics', 
+        'views_geometry_columns_statistics', 
+        'virts_geometry_columns_statistics', 
+        'geometry_columns_field_infos', 
+        'views_geometry_columns_field_infos', 
+        'virts_geometry_columns_field_infos', 
+        'geometry_columns_time', 
+        'geometry_columns_auth', 
+        'views_geometry_columns_auth', 
+        'virts_geometry_columns_auth', 
+        'data_licenses', 
+        'sql_statements_log', 
+        'SpatialIndex', 
+        'ElementaryGeometries', 
+        'KNN2', 
+        ['idx_','_GEOMETRY'], 
+        ['idx_','_GEOMETRY_rowid'], 
+        ['idx_','_GEOMETRY_node'], 
+        ['idx_','_GEOMETRY_parent'],
+        'gpkg_spatial_ref_sys', 
+        'gpkg_contents', 
+        'gpkg_ogr_contents', 
+        'gpkg_geometry_columns', 
+        'gpkg_tile_matrix_set', 'gpkg_tile_matrix', 
+        'gpkg_extensions', 
+        'gpkg_metadata',
+        'gpkg_metadata_reference',
+        ['rtree_','_geom'], 
+        ['rtree_','_geom_rowid'], 
+        ['rtree_','_geom_node'], 
+        ['rtree_','_geom_parent'],
+    ]
+    return SQLITE_DEFAULT_TABLES.find(entry => {
+        if (typeof entry === 'string') {
+            return name === entry
+        }
+
+        if (Array.isArray(entry)) {
+            const [prefix, suffix] = entry
+            return name.startsWith(prefix) && name.endsWith(suffix)
+        }
+
+        return false
+    })
+}
+
+const getValidLayersArray = async (filesArray) => {
     const files = []
 
     const handler = async (filesArray) => {
@@ -425,6 +489,19 @@ const getValidFilesArray = async (filesArray) => {
             if (isCompressedFile(file)) {
                 const zippedFiles = await getZippedFiles(file, file.name)
                 await handler(zippedFiles)
+            } else if (isSqliteFile(file)) {
+                const arrayBuffer = await file.arrayBuffer()
+
+                const db = new SQL.Database(new Uint8Array(arrayBuffer))
+                const result = db.exec("SELECT name FROM sqlite_master WHERE type='table';")
+                const tables = result[0].values.flatMap(i => i).filter(i => !isDefaultSqliteTable(i))
+                
+                tables.forEach(tableName => {
+                    files.push(new File([file], `${file.name}/${tableName}`, {
+                        type: file.type,
+                        lastModified: file.lastModified
+                    }))
+                })
             } else {
                 files.push(file)
             }

@@ -6,4 +6,5 @@ app_name = 'main'
 
 urlpatterns = [
         path('', views.index, name='index'),
+        path('sql-wasm.wasm', views.serve_sql_wasm, name='serve_sql_wasm'),
 ]
