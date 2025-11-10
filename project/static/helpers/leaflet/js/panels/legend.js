@@ -1129,7 +1129,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     if (layer._properties.limits.active) {
                         legendMenu.insertBefore(titleToTooltip(customCreateElement({
                             tag:'i', 
-                            className:'bi bi-filter text-secondary', 
+                            className:'bi bi-filter text-primary', 
                             attrs: {title: `Feature count is limited to ${
                                 formatNumberWithCommas(layer._properties.limits.max)
                             }. You can change this in the layer properties.`}
